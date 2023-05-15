@@ -2,11 +2,26 @@ Package: nuggets
 Title: Nuggets
 Version: 0.0.1
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+    person(given = "Michal",
+           family = "Burda",
+           role = c("aut", "cre"),
+           email = "michal.burda@osu.cz",
+           comment = c(ORCID = "0000-0002-4182-4407"))
+Maintainer: Michal Burda <michal.burda@osu.cz>
 Description: A package for searching the subspaces described with elementary conjunctions.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.0.0
+RoxygenNote: 7.2.3
 Language: en-US
+Imports: 
+    assertthat
+LinkingTo: 
+    BH,
+    cpp11,
+    testthat
+SystemRequirements: C++11
+Suggests: 
+    testthat (>= 3.0.0),
+    xml2
+Config/testthat/edition: 3
