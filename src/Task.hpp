@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <set>
-#include <boost/dynamic_bitset.hpp>
 
 using namespace std;
 
@@ -45,9 +44,11 @@ public:
      */
     int getCurrentPredicate() const
     {
-        assert(hasPredicate());
         return available[current];
     }
+
+    size_t getLength() const
+    { return prefix.size() + hasPredicate(); }
 
     /**
      * Start the enumeration of available predicates from the beginning. The internal pointer to the current predicate
