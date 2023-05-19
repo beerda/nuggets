@@ -8,22 +8,23 @@ using namespace std;
 
 
 context("Chain.hpp") {
-
     writable::logicals bdata(10);
+    for (int i = 0; i < 10; i++) {
+        bdata[i] = false;
+    }
     bdata[2] = true;
     bdata[5] = true;
-    Chain bch = Chain(bdata); // 2, 5
+    Chain bch(bdata); // 2, 5
+
     bdata[5] = false;
     bdata[8] = true;
-    Chain bch2 = Chain(bdata); // 2, 8
+    Chain bch2(bdata); // 2, 8
 
     writable::doubles ndata(10);
     for(size_t i = 0; i < 10; i++) {
         ndata[i] = i / 10.0;
     }
-    Chain nch = Chain(ndata);
-
-
+    Chain nch(ndata);
 
     test_that("bit Chain") {
         expect_true(bch.isBitwise());

@@ -1,29 +1,29 @@
 #pragma once
 
-#include <cpp11.hpp>
 #include <numeric>
 #include <boost/dynamic_bitset.hpp>
-
-using namespace cpp11;
-using namespace std;
+#include "common.hpp"
 
 
 class Chain {
 public:
+    Chain()
+    { }
+
     Chain(doubles values)
-        : type(Type::NUMERIC)
+        : type(Type::NUMERIC), numData(0), bitData(0)
     {
         numData.reserve(values.size());
-        for (size_t i = 0; i < values.size(); i++) {
+        for (long int i = 0; i < values.size(); i++) {
             numData.push_back(values[i]);
         }
     }
 
     Chain(logicals values)
-        : type(Type::BITWISE)
+        : type(Type::BITWISE), numData(0), bitData(0)
     {
         bitData.reserve(values.size());
-        for (size_t i = 0; i < values.size(); i++) {
+        for (long int i = 0; i < values.size(); i++) {
             bitData.push_back(values[i]);
         }
     }
@@ -92,6 +92,21 @@ public:
         }
     }
 
+    void print() const
+    {
+        printf("\ntype: %d\n", type);
+        printf("numData:");
+        for (size_t i = 0; i < numData.size(); i++) {
+            printf(" %f", numData[i]);
+        }
+        printf("\n");
+        printf("bitData:");
+        for (size_t i = 0; i < bitData.size(); i++) {
+            printf(" %d", bitData[i]);
+        }
+        printf("\n");
+    }
+
 private:
     enum class Type {
         BITWISE,
@@ -99,6 +114,6 @@ private:
     };
 
     Type type;
-    boost::dynamic_bitset<> bitData;
     vector<double> numData;
+    boost::dynamic_bitset<> bitData;
 };
