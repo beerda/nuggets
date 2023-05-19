@@ -2,8 +2,7 @@
 
 #include <vector>
 #include <set>
-
-using namespace std;
+#include "common.hpp"
 
 
 /**
@@ -11,6 +10,20 @@ using namespace std;
  */
 class Task {
 public:
+    /**
+     * Create task representing an empty condition (condition of length 0) that may be extended
+     * with 0..n-1 predicates stored in the soFar vector
+     * @param n The number of predicates to store into soFar
+     */
+    Task(size_t n)
+        : current(0)
+    {
+        soFar.reserve(n);
+        for (size_t i = 0; i < n; i++) {
+            soFar.push_back(i);
+        }
+    }
+
     /**
      * Create task representing an empty condition (condition of length 0) that may be extended
      * @param soFar predicates for further search in sub tasks
