@@ -6,6 +6,18 @@ context("Task.hpp") {
     Task t1({}, {10, 11, 12}, {5, 6});
     Task t({0, 1, 2}, {10, 11, 12}, {5, 6});
 
+    test_that("==") {
+        Task tA({1, 2, 3}, {4, 5, 6}, {7, 8, 9});
+        Task tB({1, 2, 3}, {4, 5, 6}, {7, 8, 9});
+        tB.next();
+
+        expect_true(tA == Task({1, 2, 3}, {4, 5, 6}, {7, 8, 9}));
+        expect_false(tA == Task({2, 3}, {4, 5, 6}, {7, 8, 9}));
+        expect_false(tA == Task({1, 2, 3}, {4, 6}, {7, 8, 9}));
+        expect_false(tA == Task({1, 2, 3}, {4, 5, 6}, {7, 8}));
+        expect_false(tA == tB);
+    }
+
     test_that("getPrefix") {
         expect_true(t.getPrefix() == set<int>({0, 1, 2}));
     }
