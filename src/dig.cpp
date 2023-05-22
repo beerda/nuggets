@@ -3,23 +3,14 @@
 
 [[cpp11::register]]
 list dig_(list logicals_data,
-          list numeric_data,
+          list doubles_data,
           list config)
 {
     Data data;
+    data.addChains<logicals>(logicals_data);
+    data.addChains<doubles>(doubles_data);
 
-    for (long int i = 0; i < logicals_data.size(); i++) {
-        logicals col = logicals_data[i];
-        data.addChain(col);
-    }
-
-    for (long int i = 0; i < numeric_data.size(); i++) {
-        doubles col = numeric_data[i];
-        data.addChain(col);
-    }
-
-    Task task(data.size());
-
+    Task task(data.size()); // create task of length 0
     Digger digger(data, task);
 
 

@@ -20,6 +20,15 @@ public:
         chains.push_back(Chain(values));
     }
 
+    template <typename T>
+    void addChains(list data)
+    {
+        for (long int i = 0; i < data.size(); i++) {
+            T col = data[i];
+            addChain(col);
+        }
+    }
+
     const Chain& getChain(size_t i) const
     { return chains.at(i); }
 
