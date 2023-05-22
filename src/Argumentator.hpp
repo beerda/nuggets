@@ -1,10 +1,10 @@
 #pragma once
 
-#include "common.hpp"
+#include "Task.hpp"
 
 
 class Argumentator {
 public:
-    virtual void prepare(list& arguments) const
+    virtual void prepare(writable::list& arguments, const Task& task) const
     { }
 };

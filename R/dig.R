@@ -20,7 +20,9 @@ dig.matrix <- function(x, f, ...) {
     assert_that(is.matrix(x))
     assert_that(is.function(f))
 
-    config <- list();
+    config <- list(arguments = formalArgs(f),
+                   predicates = seq_len(ncol(x)));
+
     cols <- lapply(seq_len(ncol(x)), function(i) x[, i])
 
     fun <- function(l) {

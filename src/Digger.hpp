@@ -94,7 +94,7 @@ private:
         writable::list result;
 
         for (const Argumentator& a : argumentators)
-            a.prepare(result);
+            a.prepare(result, task);
 
         return result;
     }
