@@ -66,6 +66,17 @@ public:
         return available[current];
     }
 
+    set<int> getCurrentCondition() const
+    {
+        set<int> result = getPrefix();
+
+        if (hasPredicate()) {
+            result.insert(getCurrentPredicate());
+        }
+
+        return result;
+    }
+
     size_t getLength() const
     { return prefix.size() + hasPredicate(); }
 

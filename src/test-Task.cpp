@@ -49,13 +49,16 @@ context("Task.hpp") {
     test_that("predicate enumeration") {
         expect_true(t.hasPredicate());
         expect_true(t.getCurrentPredicate() == 10);
+        expect_true(t.getCurrentCondition() == set<int>({0, 1, 2, 10}));
         t.next();
         expect_true(t.hasPredicate());
         expect_true(t.getCurrentPredicate() == 11);
+        expect_true(t.getCurrentCondition() == set<int>({0, 1, 2, 11}));
         t.putCurrentToSoFar();
         t.next();
         expect_true(t.hasPredicate());
         expect_true(t.getCurrentPredicate() == 12);
+        expect_true(t.getCurrentCondition() == set<int>({0, 1, 2, 12}));
         t.putCurrentToSoFar();
         t.next();
         expect_true(!t.hasPredicate());
@@ -69,12 +72,15 @@ context("Task.hpp") {
 
         expect_true(t.hasPredicate());
         expect_true(t.getCurrentPredicate() == 10);
+        expect_true(t.getCurrentCondition() == set<int>({0, 1, 2, 10}));
         t.next();
         expect_true(t.hasPredicate());
         expect_true(t.getCurrentPredicate() == 11);
+        expect_true(t.getCurrentCondition() == set<int>({0, 1, 2, 11}));
         t.next();
         expect_true(t.hasPredicate());
         expect_true(t.getCurrentPredicate() == 12);
+        expect_true(t.getCurrentCondition() == set<int>({0, 1, 2, 12}));
         t.next();
         expect_true(!t.hasPredicate());
     }
