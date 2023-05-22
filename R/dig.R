@@ -24,7 +24,7 @@ if_null <- function(x, value) {
 
 #' @rdname dig
 #' @export
-dig.matrix <- function(x, f, max_length = -1, ...) {
+dig.matrix <- function(x, f, max_length = -1L, ...) {
     assert_that(is.matrix(x))
     assert_that(is.function(f))
     assert_that(is.number(max_length))
