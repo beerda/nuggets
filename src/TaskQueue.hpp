@@ -38,7 +38,7 @@ private:
         { }
 
         bool operator() (Task& lhs, Task& rhs)
-        { return TaskQueue::hasPriority(lhs, rhs); }
+        { return !TaskQueue::hasPriority(lhs, rhs); }
     };
 
     priority_queue<Task, vector<Task>, TaskCompare> queue;

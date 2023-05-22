@@ -112,6 +112,17 @@ public:
         }
     }
 
+    bool operator == (const Task& other) const
+    {
+        return current == other.current
+            && prefix == other.prefix
+            && available == other.available
+            && soFar == other.soFar;
+    }
+
+    bool operator != (const Task& other) const
+    { return !(*this == other); }
+
 private:
     /// Index of the currently processed predicate (index to the available vector)
     size_t current;
