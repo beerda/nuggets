@@ -23,6 +23,9 @@ public:
     const Chain& getChain(size_t i) const
     { return chains.at(i); }
 
+    size_t size() const
+    { return chains.size(); }
+
 private:
     vector<Chain> chains;
 };
