@@ -60,6 +60,9 @@ public:
      */
     int getCurrentPredicate() const
     {
+        if (!hasPredicate())
+            throw new runtime_error("Attempt to get unavailable predicate");
+
         return available[current];
     }
 
@@ -128,6 +131,20 @@ public:
 
     bool operator != (const Task& other) const
     { return !(*this == other); }
+
+    string toString() const
+    {
+        string res = "prefix";
+        for (int i : getPrefix()) {
+            res += " " + to_string(i);
+        }
+        res += " current";
+
+        if (hasPredicate())
+            res += " " + to_string(getCurrentPredicate());
+
+        return res;
+    }
 
 private:
     /// Index of the currently processed predicate (index to the available vector)
