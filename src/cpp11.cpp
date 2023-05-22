@@ -6,10 +6,10 @@
 #include <R_ext/Visibility.h>
 
 // dig.cpp
-list dig_(doubles_matrix<> data, list config);
-extern "C" SEXP _nuggets_dig_(SEXP data, SEXP config) {
+list dig_(list logicals_data, list numeric_data, list config);
+extern "C" SEXP _nuggets_dig_(SEXP logicals_data, SEXP numeric_data, SEXP config) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dig_(cpp11::as_cpp<cpp11::decay_t<doubles_matrix<>>>(data), cpp11::as_cpp<cpp11::decay_t<list>>(config)));
+    return cpp11::as_sexp(dig_(cpp11::as_cpp<cpp11::decay_t<list>>(logicals_data), cpp11::as_cpp<cpp11::decay_t<list>>(numeric_data), cpp11::as_cpp<cpp11::decay_t<list>>(config)));
   END_CPP11
 }
 
@@ -18,7 +18,7 @@ extern "C" {
 extern SEXP run_testthat_tests(void *);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_nuggets_dig_",      (DL_FUNC) &_nuggets_dig_,      2},
+    {"_nuggets_dig_",      (DL_FUNC) &_nuggets_dig_,      3},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

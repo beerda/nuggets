@@ -94,7 +94,7 @@ public:
 
     void print() const
     {
-        printf("\ntype: %d\n", type);
+        printf("\n");
         printf("numData:");
         for (size_t i = 0; i < numData.size(); i++) {
             printf(" %f", numData[i]);
