@@ -2,6 +2,7 @@
 #include "Config.hpp"
 #include "Digger.hpp"
 #include "ConditionArgumentator.hpp"
+#include "LengthFilter.hpp"
 
 
 [[cpp11::register]]
@@ -15,12 +16,13 @@ list dig_(list logicals_data,
     data.addChains<doubles>(doubles_data);
 
     Config config(configuration_list);
-
-    Digger digger(data, fun);
-    ConditionArgumentator conditionArgumentator;
+    Digger digger(config, data, fun);
 
     if (config.hasConditionArgument()) {
-        digger.addArgumentator(conditionArgumentator);
+        digger.addArgumentator(new ConditionArgumentator(config.getPredicates()));
+    }
+    if (config.getMaxLength() >= 0) {
+        digger.addFilter(new LengthFilter(config.getMaxLength()));
     }
 
     try {
@@ -29,7 +31,5 @@ list dig_(list logicals_data,
         cout << e.what() << endl;
     }
 
-    writable::list result;
-
-    return result;
+    return digger.getResult();
 }

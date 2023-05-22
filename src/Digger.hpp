@@ -10,14 +10,23 @@
 
 class Digger {
 public:
-    Digger(Data& data, cpp11::function fun)
-        : data(data), initialTask(data.size()), queue(), func(fun)
+    Digger(const Config& config, const Data& data, const cpp11::function fun)
+        : config(config), data(data), initialTask(data.size()), queue(), func(fun)
     { }
 
-    void addFilter(Filter& filter)
+    ~Digger()
+    {
+        for (Filter* f : filters)
+            delete f;
+
+        for (Argumentator* a : argumentators)
+            delete a;
+    }
+
+    void addFilter(Filter* filter)
     { filters.push_back(filter); }
 
-    void addArgumentator(Argumentator& argumentator)
+    void addArgumentator(Argumentator* argumentator)
     { argumentators.push_back(argumentator); }
 
     void run()
@@ -54,18 +63,23 @@ public:
         }
     }
 
+    writable::list getResult() const
+    { return result; }
+
 private:
+    Config config;
     Data data;
     Task initialTask;
     TaskQueue queue;
     cpp11::function func;
-    vector<reference_wrapper<Filter>> filters;
-    vector<reference_wrapper<Argumentator>> argumentators;
+    vector<Filter*> filters;
+    vector<Argumentator*> argumentators;
+    writable::list result;
 
     bool isRedundant(const Task& task) const
     {
-        for (const Filter& e : filters)
-            if (e.isRedundant(task))
+        for (const Filter* e : filters)
+            if (e->isRedundant(task))
                 return true;
 
         return false;
@@ -73,8 +87,8 @@ private:
 
     bool isPrunable(const Task& task) const
     {
-        for (const Filter& e : filters)
-            if (e.isPrunable(task))
+        for (const Filter* e : filters)
+            if (e->isPrunable(task))
                 return true;
 
         return false;
@@ -82,8 +96,8 @@ private:
 
     bool isExtendable(const Task& task) const
     {
-        for (const Filter& e : filters)
-            if (!e.isExtendable(task))
+        for (const Filter* e : filters)
+            if (!e->isExtendable(task))
                 return false;
 
         return true;
@@ -93,16 +107,15 @@ private:
     {
         writable::list result;
 
-        for (const Argumentator& a : argumentators)
-            a.prepare(result, task);
+        for (const Argumentator* a : argumentators)
+            a->prepare(result, task);
 
         return result;
     }
 
     void store(const Task& task)
     {
-        cout << "storing: " << task.toString() << "\n";
         list args = prepareArguments(task);
-        func(args);
+        result.push_back(func(args));
     }
 };
