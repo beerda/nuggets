@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include "Data.hpp"
 #include "TaskQueue.hpp"
 #include "Extension.hpp"
@@ -18,16 +19,18 @@ public:
     {
         queue.add(initialTask);
         while (!queue.empty()) {
+            Task child;
             Task task = queue.pop();
+            //cout << "processing: " << task.toString() << "\n";
 
             if (!isRedundant(task)) {
                 //updateChain(task);
                 //computeStatistics(task);
                 if (!isPrunable(task)) {
-                    //storeCandidate(task);
+                    store(task);
                     if (isExtendable(task)) {
                         if (task.hasSoFar()) {
-                            Task child = task.createChild();
+                            child = task.createChild();
                         }
                         if (task.hasPredicate()) {
                             task.putCurrentToSoFar();
@@ -39,6 +42,9 @@ public:
             task.next();
             if (task.hasPredicate()) {
                 queue.add(task);
+            }
+            if (!child.empty()) {
+                queue.add(child);
             }
         }
     }
@@ -74,5 +80,10 @@ private:
                 return false;
 
         return true;
+    }
+
+    void store(const Task& task)
+    {
+        cout << "storing: " << task.toString() << "\n";
     }
 };

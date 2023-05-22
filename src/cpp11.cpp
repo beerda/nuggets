@@ -6,10 +6,10 @@
 #include <R_ext/Visibility.h>
 
 // dig.cpp
-list dig_(list logicals_data, list numeric_data, list config);
-extern "C" SEXP _nuggets_dig_(SEXP logicals_data, SEXP numeric_data, SEXP config) {
+list dig_(list logicals_data, list doubles_data, list config);
+extern "C" SEXP _nuggets_dig_(SEXP logicals_data, SEXP doubles_data, SEXP config) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dig_(cpp11::as_cpp<cpp11::decay_t<list>>(logicals_data), cpp11::as_cpp<cpp11::decay_t<list>>(numeric_data), cpp11::as_cpp<cpp11::decay_t<list>>(config)));
+    return cpp11::as_sexp(dig_(cpp11::as_cpp<cpp11::decay_t<list>>(logicals_data), cpp11::as_cpp<cpp11::decay_t<list>>(doubles_data), cpp11::as_cpp<cpp11::decay_t<list>>(config)));
   END_CPP11
 }
 

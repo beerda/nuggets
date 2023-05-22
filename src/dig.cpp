@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Digger.hpp"
 
 
@@ -13,6 +14,11 @@ list dig_(list logicals_data,
     Task task(data.size()); // create task of length 0
     Digger digger(data, task);
 
+    try {
+        digger.run();
+    } catch (exception& e) {
+        cout << e.what() << endl;
+    }
 
     writable::list result;
 
