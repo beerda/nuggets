@@ -3,7 +3,7 @@
 #include "Task.hpp"
 
 
-class Extension {
+class Filter {
 public:
     virtual bool isRedundant(const Task& task) const
     { return false; }

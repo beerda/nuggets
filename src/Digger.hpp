@@ -3,7 +3,7 @@
 #include <iostream>
 #include "Data.hpp"
 #include "TaskQueue.hpp"
-#include "Extension.hpp"
+#include "Filter.hpp"
 
 
 class Digger {
@@ -12,8 +12,8 @@ public:
         : data(data), initialTask(task), queue()
     { }
 
-    void addExtension(Extension& extension)
-    { extensions.push_back(extension); }
+    void addFilter(Filter& filter)
+    { filters.push_back(filter); }
 
     void run()
     {
@@ -53,11 +53,11 @@ private:
     Data data;
     Task initialTask;
     TaskQueue queue;
-    vector<Extension> extensions;
+    vector<Filter> filters;
 
     bool isRedundant(const Task& task) const
     {
-        for (const Extension& e : extensions)
+        for (const Filter& e : filters)
             if (e.isRedundant(task))
                 return true;
 
@@ -66,7 +66,7 @@ private:
 
     bool isPrunable(const Task& task) const
     {
-        for (const Extension& e : extensions)
+        for (const Filter& e : filters)
             if (e.isPrunable(task))
                 return true;
 
@@ -75,7 +75,7 @@ private:
 
     bool isExtendable(const Task& task) const
     {
-        for (const Extension& e : extensions)
+        for (const Filter& e : filters)
             if (!e.isExtendable(task))
                 return false;
 
