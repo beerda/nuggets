@@ -10,8 +10,8 @@
 
 class Digger {
 public:
-    Digger(Data& data, Task& task)
-        : data(data), initialTask(task), queue()
+    Digger(Data& data, cpp11::function fun)
+        : data(data), initialTask(data.size()), queue(), func(fun)
     { }
 
     void addFilter(Filter& filter)
@@ -58,6 +58,7 @@ private:
     Data data;
     Task initialTask;
     TaskQueue queue;
+    cpp11::function func;
     vector<reference_wrapper<Filter>> filters;
     vector<reference_wrapper<Argumentator>> argumentators;
 
@@ -90,7 +91,8 @@ private:
 
     list prepareArguments(const Task& task) const
     {
-        list result;
+        writable::list result;
+
         for (const Argumentator& a : argumentators)
             a.prepare(result);
 
@@ -101,5 +103,6 @@ private:
     {
         cout << "storing: " << task.toString() << "\n";
         list args = prepareArguments(task);
+        func(args);
     }
 };
