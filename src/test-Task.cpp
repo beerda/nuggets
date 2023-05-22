@@ -25,6 +25,15 @@ context("Task.hpp") {
         expect_true(t.getLength() == 4);
     }
 
+    test_that("empty") {
+        expect_false(t.empty());
+        expect_false(t0.empty());
+        expect_false(t1.empty());
+
+        Task empty;
+        expect_true(empty.empty());
+    }
+
     test_that("predicate enumeration") {
         expect_true(t.hasPredicate());
         expect_true(t.getCurrentPredicate() == 10);

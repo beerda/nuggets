@@ -10,6 +10,9 @@
  */
 class Task {
 public:
+    Task()
+    { }
+
     /**
      * Create task representing an empty condition (condition of length 0) that may be extended
      * with 0..n-1 predicates stored in the soFar vector
@@ -87,6 +90,9 @@ public:
 
     bool hasSoFar() const
     { return !soFar.empty(); }
+
+    bool empty() const
+    { return prefix.empty() && available.empty() && soFar.empty(); }
 
     const set<int> getPrefix() const
     { return prefix; }
