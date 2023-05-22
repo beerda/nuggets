@@ -23,10 +23,14 @@ dig.matrix <- function(x, f, ...) {
     config <- list();
     cols <- lapply(seq_len(ncol(x)), function(i) x[, i])
 
+    fun <- function(l) {
+        do.call(f, l)
+    }
+
     if (is.logical(x)) {
-        dig_(cols, list(), config, f)
+        dig_(cols, list(), config, fun)
     } else if (is.double(x)) {
-        dig_(list(), cols, config, f)
+        dig_(list(), cols, config, fun)
     } else {
         stop(paste0("'dig' is not implemented for non-double and non-logical matrices"))
     }
