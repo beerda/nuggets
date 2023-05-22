@@ -12,6 +12,19 @@ public:
         : queue(TaskCompare())
     { }
 
+    void add(Task& task)
+    { queue.push(task); }
+
+    bool empty() const
+    { return queue.empty(); }
+
+    Task pop()
+    {
+        Task task = queue.top();
+        queue.pop();
+        return task;
+    }
+
     static bool hasPriority(Task& lhs, Task& rhs)
     {
         // TODO: add better heuristics (e.g. based on parent support)
