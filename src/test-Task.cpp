@@ -16,6 +16,7 @@ context("Task.hpp") {
 
     test_that("getSoFar") {
         expect_true(t.getSoFar() == vector<int>({5, 6}));
+        expect_true(t.hasSoFar());
     }
 
     test_that("getLength") {
@@ -39,9 +40,11 @@ context("Task.hpp") {
         expect_true(!t.hasPredicate());
 
         expect_true(t.getSoFar() == vector<int>({5, 6, 11, 12}));
+        expect_true(t.hasSoFar());
 
         t.reset();
         expect_true(t.getSoFar().size() == 0);
+        expect_false(t.hasSoFar());
 
         expect_true(t.hasPredicate());
         expect_true(t.getCurrentPredicate() == 10);
@@ -62,5 +65,18 @@ context("Task.hpp") {
         expect_true(tn.getSoFar() == vector<int>({0, 1, 2, 3, 4}));
         expect_true(tn.getLength() == 0);
         expect_false(tn.hasPredicate());
+    }
+
+    test_that("createChild") {
+        Task ch = t.createChild();
+        expect_true(ch.getPrefix() == set<int>({0, 1, 2, 10}));
+        expect_true(ch.getAvailable() == vector<int>({5, 6}));
+
+        t.next();
+        t.next();
+        t.next();
+        ch = t.createChild();
+        expect_true(ch.getPrefix() == set<int>({0, 1, 2}));
+        expect_true(ch.getAvailable() == vector<int>({5, 6}));
     }
 }

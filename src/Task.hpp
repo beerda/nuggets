@@ -85,6 +85,9 @@ public:
     bool hasPredicate() const
     { return current < available.size(); }
 
+    bool hasSoFar() const
+    { return !soFar.empty(); }
+
     const set<int> getPrefix() const
     { return prefix; }
 
@@ -96,6 +99,18 @@ public:
 
     void putCurrentToSoFar()
     { soFar.push_back(getCurrentPredicate()); }
+
+    Task createChild() const
+    {
+        if (hasPredicate()) {
+            set<int> newPrefix = getPrefix();
+            newPrefix.insert(getCurrentPredicate());
+            return Task(newPrefix, getSoFar());
+        }
+        else {
+            return Task(getPrefix(), getSoFar());
+        }
+    }
 
 private:
     /// Index of the currently processed predicate (index to the available vector)
