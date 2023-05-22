@@ -1,9 +1,11 @@
 #pragma once
 
 #include <iostream>
+#include <functional>
 #include "Data.hpp"
 #include "TaskQueue.hpp"
 #include "Filter.hpp"
+#include "Argumentator.hpp"
 
 
 class Digger {
@@ -14,6 +16,9 @@ public:
 
     void addFilter(Filter& filter)
     { filters.push_back(filter); }
+
+    void addArgumentator(Argumentator& argumentator)
+    { argumentators.push_back(argumentator); }
 
     void run()
     {
@@ -53,7 +58,8 @@ private:
     Data data;
     Task initialTask;
     TaskQueue queue;
-    vector<Filter> filters;
+    vector<reference_wrapper<Filter>> filters;
+    vector<reference_wrapper<Argumentator>> argumentators;
 
     bool isRedundant(const Task& task) const
     {
@@ -82,8 +88,18 @@ private:
         return true;
     }
 
+    list prepareArguments(const Task& task) const
+    {
+        list result;
+        for (const Argumentator& a : argumentators)
+            a.prepare(result);
+
+        return result;
+    }
+
     void store(const Task& task)
     {
         cout << "storing: " << task.toString() << "\n";
+        list args = prepareArguments(task);
     }
 };
