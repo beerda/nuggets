@@ -14,7 +14,7 @@ public:
         : config(config), data(data), initialTask(data.size()), queue(), func(fun)
     { }
 
-    ~Digger()
+    virtual ~Digger()
     {
         for (Filter* f : filters)
             delete f;

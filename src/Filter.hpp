@@ -8,6 +8,9 @@
  */
 class Filter {
 public:
+    virtual ~Filter()
+    { }
+
     virtual bool isRedundant(const Task& task) const
     { return false; }
 

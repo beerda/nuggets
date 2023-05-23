@@ -9,6 +9,9 @@
  */
 class Argumentator {
 public:
+    virtual ~Argumentator()
+    { }
+
     virtual void prepare(writable::list& arguments, const Task& task) const
     { }
 };
