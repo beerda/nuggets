@@ -11,7 +11,7 @@ public:
     { }
 
     Chain(doubles values)
-        : type(Type::NUMERIC), numData(0), bitData(0)
+        : numData(0), bitData(0)
     {
         numData.reserve(values.size());
         for (long int i = 0; i < values.size(); i++) {
@@ -20,7 +20,7 @@ public:
     }
 
     Chain(logicals values)
-        : type(Type::BITWISE), numData(0), bitData(0)
+        : numData(0), bitData(0)
     {
         bitData.reserve(values.size());
         for (long int i = 0; i < values.size(); i++) {
@@ -29,68 +29,53 @@ public:
     }
 
     size_t size() const
+    { return isBitwise() ? bitData.size() : numData.size(); }
+
+    bool isBitwise() const
+    { return !bitData.empty(); }
+
+    bool isNumeric() const
+    { return !numData.empty(); }
+
+    void toNumeric()
     {
-        switch (type) {
-        case Type::BITWISE:
-            return bitData.size();
-
-        case Type::NUMERIC:
-            return numData.size();
-
-        default:
-            return 0;
+        if (isBitwise()) {
+            numData.clear();
+            numData.reserve(size());
+            for (size_t i = 0; i < size(); i++) {
+                numData.push_back(1.0 * bitData[i]);
+            }
         }
     }
 
-    bool isBitwise() const
-    { return type == Type::BITWISE; }
-
     void combineWith(const Chain& chain)
     {
-        if (type != chain.type) {
-            throw new runtime_error("Incompatible chain types");
-        }
         if (size() != chain.size()) {
             throw new runtime_error("Incompatible chain lengths");
-        }
-
-        switch (type) {
-        case Type::BITWISE:
+        } else if (isBitwise() && chain.isBitwise()) {
             bitData &= chain.bitData;
-            break;
-
-        case Type::NUMERIC:
+            numData.clear();
+        } else if (isNumeric() && chain.isNumeric()) {
             for (size_t i = 0; i < numData.size(); i++) {
                 numData[i] *= chain.numData[i];
             }
+            bitData.clear();
+        } else {
+            throw new runtime_error("Incompatible chain types");
         }
     }
 
     double sum() const
     {
-        switch (type) {
-        case Type::BITWISE:
-            return 1.0 * bitData.count();
-
-        case Type::NUMERIC:
-            return accumulate(numData.begin(), numData.end(), 0.0);
-
-        default:
-            return 0.0;
-        }
-    }
-
-    void toNumeric()
-    {
         if (isBitwise()) {
-            numData.reserve(size());
-            for (size_t i = 0; i < size(); i++) {
-                numData.push_back(1.0 * bitData[i]);
-            }
-            bitData.clear();
-            type = Type::NUMERIC;
+            return 1.0 * bitData.count();
+        } else {
+            return accumulate(numData.begin(), numData.end(), 0.0);
         }
     }
+
+    bool empty() const
+    { return numData.empty() && bitData.empty(); }
 
     void print() const
     {
@@ -108,12 +93,7 @@ public:
     }
 
 private:
-    enum class Type {
-        BITWISE,
-        NUMERIC
-    };
-
-    Type type;
     vector<double> numData;
     boost::dynamic_bitset<> bitData;
+
 };
