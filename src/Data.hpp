@@ -12,7 +12,7 @@ public:
     void addChain(const T& values)
     {
         if (chains.size() > 0) {
-            if (values.size() != chains.front().size()) {
+            if (((size_t) values.size()) != chains.front().size()) {
                 throw new runtime_error("Chain sizes mismatch in Data::addChain");
             }
         }

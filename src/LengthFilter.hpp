@@ -10,7 +10,7 @@ public:
     { }
 
     bool isRedundant(const Task& task) const override
-    { return task.getLength() > maxLength; }
+    { return ((int) task.getLength()) > maxLength; }
 
 private:
     int maxLength;
