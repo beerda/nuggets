@@ -82,7 +82,22 @@ public:
     { return cachedSum; }
 
     double getSupport() const
-    { return getSum() / size(); }
+    {
+        if (empty())
+            return INFINITY;
+        else
+            return getSum() / size();
+    }
+
+    double getValue(size_t index) const
+    {
+        if (isBitwise())
+            return 1.0 * bitData.at(index);
+        else if (isNumeric())
+            return numData.at(index);
+        else
+            return NAN;
+    }
 
     bool empty() const
     { return numData.empty() && bitData.empty(); }

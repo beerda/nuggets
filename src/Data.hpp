@@ -35,6 +35,12 @@ public:
     size_t size() const
     { return chains.size(); }
 
+    size_t nrow() const
+    { return chains.front().size(); }
+
+    size_t ncol() const
+    { return size(); }
+
 private:
     vector<Chain> chains;
 };

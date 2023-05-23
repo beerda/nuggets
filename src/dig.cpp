@@ -2,6 +2,7 @@
 #include "Config.hpp"
 #include "Digger.hpp"
 #include "ConditionArgumentator.hpp"
+#include "IndicesArgumentator.hpp"
 #include "SupportArgumentator.hpp"
 #include "LengthFilter.hpp"
 #include "MinSupportFilter.hpp"
@@ -26,6 +27,10 @@ list dig_(list logicals_data,
     if (config.hasSupportArgument()) {
         digger.setChainsNeeded();
         digger.addArgumentator(new SupportArgumentator());
+    }
+    if (config.hasIndicesArgument()) {
+        digger.setChainsNeeded();
+        digger.addArgumentator(new IndicesArgumentator(data.nrow()));
     }
     if (config.getMaxLength() >= 0) {
         digger.addFilter(new LengthFilter(config.getMaxLength()));

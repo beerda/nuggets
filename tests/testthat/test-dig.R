@@ -38,6 +38,17 @@ test_that("support arg", {
                            list(sup = 2/6)))
 })
 
+test_that("indices arg", {
+    m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
+    res <- dig(m, function(indices) list(i = indices))
+
+    expect_equal(length(res), 4)
+    expect_equal(res, list(list(i = c(T,T,T,T,T,T)),
+                           list(i = c(T,T,T,T,F,F)),
+                           list(i = c(T,F,T,F,T,F)),
+                           list(i = c(T,F,T,F,F,F))))
+})
+
 test_that("max_length filter", {
     m <- matrix(1:12 / 12, ncol = 2)
 
