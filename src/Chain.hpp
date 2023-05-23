@@ -92,6 +92,12 @@ public:
         printf("\n");
     }
 
+    bool operator == (const Chain& other) const
+    { return numData == other.numData && bitData == other.bitData; }
+
+    bool operator != (const Chain& other) const
+    { return !(*this == other); }
+
 private:
     vector<double> numData;
     boost::dynamic_bitset<> bitData;

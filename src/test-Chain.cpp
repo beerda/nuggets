@@ -150,4 +150,29 @@ context("Chain.hpp") {
         expect_true(chain2.size() == 10);
         expect_true(chain2.sum() == 1.0);
     }
+
+    test_that("combine both & both") {
+        writable::logicals data1(10);
+        writable::logicals data2(10);
+        for (int i = 0; i < data1.size(); i++) {
+            data1[i] = (i == 2 || i == 5);
+            data2[i] = (i == 2 || i == 8);
+        }
+        Chain chain1(data1);
+        Chain chain2(data2);
+
+        chain1.toNumeric();
+        chain2.toNumeric();
+        expect_true(chain1.isBitwise());
+        expect_true(chain1.isNumeric());
+        expect_true(chain2.isBitwise());
+        expect_true(chain2.isNumeric());
+
+        chain2.combineWith(chain1);
+        expect_true(!chain2.empty());
+        expect_true(chain2.isBitwise());
+        expect_true(!chain2.isNumeric());
+        expect_true(chain2.size() == 10);
+        expect_true(chain2.sum() == 1.0);
+    }
 }

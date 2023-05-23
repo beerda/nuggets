@@ -3,6 +3,7 @@
 #include <vector>
 #include <set>
 #include "common.hpp"
+#include "Data.hpp"
 
 
 /**
@@ -122,13 +123,44 @@ public:
 
     Task createChild() const
     {
+        Task result;
+
         if (hasPredicate()) {
             set<int> newPrefix = getPrefix();
             newPrefix.insert(getCurrentPredicate());
-            return Task(newPrefix, getSoFar());
+            result = Task(newPrefix, getSoFar());
         }
         else {
-            return Task(getPrefix(), getSoFar());
+            result = Task(getPrefix(), getSoFar());
+        }
+
+        if (!chain.empty()) {
+            result.prefixChain = chain;
+        }
+
+        return result;
+    }
+
+    const Chain& getChain() const
+    { return chain; }
+
+    const Chain& getPrefixChain() const
+    { return prefixChain; }
+
+    void updateChain(const Data& data)
+    {
+        if (hasPredicate()) {
+            chain = data.getChain(getCurrentPredicate());
+            if (!prefixChain.empty()) {
+                if (chain.isBitwise() != prefixChain.isBitwise() && chain.isNumeric() != prefixChain.isNumeric()) {
+                    if (prefixChain.isBitwise()) {
+                        prefixChain.toNumeric();
+                    } else {
+                        chain.toNumeric();
+                    }
+                }
+                chain.combineWith(prefixChain);
+            }
         }
     }
 
@@ -169,5 +201,9 @@ private:
 
     /// A vector of predicates, which will be "available" in sub tasks
     vector<int> soFar;
+
+    Chain chain;
+
+    Chain prefixChain;
 
 };
