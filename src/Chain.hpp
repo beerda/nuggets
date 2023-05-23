@@ -1,5 +1,6 @@
 #pragma once
 
+#include <math.h>
 #include <numeric>
 #include <boost/dynamic_bitset.hpp>
 #include "common.hpp"
@@ -11,20 +12,23 @@ public:
     { }
 
     Chain(doubles values)
-        : numData(0), bitData(0)
     {
         numData.reserve(values.size());
+        cachedSum = 0;
         for (long int i = 0; i < values.size(); i++) {
             numData.push_back(values[i]);
+            cachedSum += values[i];
         }
     }
 
     Chain(logicals values)
-        : numData(0), bitData(0)
     {
         bitData.reserve(values.size());
+        cachedSum = 0;
         for (long int i = 0; i < values.size(); i++) {
             bitData.push_back(values[i]);
+            if (values[i])
+                cachedSum++;
         }
     }
 
@@ -52,27 +56,33 @@ public:
     {
         if (size() != chain.size()) {
             throw new runtime_error("Incompatible chain lengths");
+
         } else if (isBitwise() && chain.isBitwise()) {
             bitData &= chain.bitData;
             numData.clear();
+
         } else if (isNumeric() && chain.isNumeric()) {
             for (size_t i = 0; i < numData.size(); i++) {
                 numData[i] *= chain.numData[i];
             }
             bitData.clear();
+
         } else {
             throw new runtime_error("Incompatible chain types");
         }
-    }
 
-    double sum() const
-    {
         if (isBitwise()) {
-            return 1.0 * bitData.count();
+            cachedSum = 1.0 * bitData.count();
         } else {
-            return accumulate(numData.begin(), numData.end(), 0.0);
+            cachedSum = accumulate(numData.begin(), numData.end(), 0.0);
         }
     }
+
+    double getSum() const
+    { return cachedSum; }
+
+    double getSupport() const
+    { return getSum() / size(); }
 
     bool empty() const
     { return numData.empty() && bitData.empty(); }
@@ -101,5 +111,6 @@ public:
 private:
     vector<double> numData;
     boost::dynamic_bitset<> bitData;
+    double cachedSum;
 
 };
