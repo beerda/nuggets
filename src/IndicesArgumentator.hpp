@@ -22,12 +22,12 @@ public:
 
         indices.reserve(dataSize);
         if (task.getChain().empty()) {
-            for (int i = 0; i < dataSize; i++) {
+            for (size_t i = 0; i < dataSize; i++) {
                 indices.push_back(true);
             }
         }
         else {
-            for (int i = 0; i < task.getChain().size(); i++) {
+            for (size_t i = 0; i < task.getChain().size(); i++) {
                 indices.push_back(task.getChain().getValue(i) > 0);
             }
         }
