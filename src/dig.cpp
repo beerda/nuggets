@@ -17,7 +17,7 @@ list dig_(list logicals_data,
     data.addChains<doubles>(doubles_data);
 
     Config config(configuration_list);
-    Digger digger(config, data, fun);
+    Digger digger(data, fun);
 
     if (config.hasConditionArgument()) {
         digger.addArgumentator(new ConditionArgumentator(config.getPredicates()));
@@ -26,6 +26,7 @@ list dig_(list logicals_data,
         digger.addFilter(new LengthFilter(config.getMaxLength()));
     }
     if (config.getMinSupport() > 0) {
+        digger.setChainsNeeded();
         digger.addFilter(new MinSupportFilter(config.getMinSupport()));
     }
 

@@ -3,7 +3,6 @@
 #include <iostream>
 #include <functional>
 #include "Data.hpp"
-#include "Config.hpp"
 #include "TaskQueue.hpp"
 #include "Filter.hpp"
 #include "Argumentator.hpp"
@@ -11,8 +10,8 @@
 
 class Digger {
 public:
-    Digger(const Config& config, const Data& data, const cpp11::function fun)
-        : config(config), data(data), initialTask(data.size()), queue(), func(fun)
+    Digger(const Data& data, const cpp11::function fun)
+        : data(data), initialTask(data.size()), queue(), func(fun)
     { }
 
     virtual ~Digger()
@@ -39,7 +38,7 @@ public:
             //cout << "processing: " << task.toString() << "\n";
 
             if (!isRedundant(task)) {
-                task.updateChain(data);
+                updateChain(task);
                 if (!isPrunable(task)) {
                     store(task);
                     if (isExtendable(task)) {
@@ -63,11 +62,13 @@ public:
         }
     }
 
+    void setChainsNeeded()
+    { chainsNeeded = true; }
+
     writable::list getResult() const
     { return result; }
 
 private:
-    Config config;
     Data data;
     Task initialTask;
     TaskQueue queue;
@@ -75,6 +76,13 @@ private:
     vector<Filter*> filters;
     vector<Argumentator*> argumentators;
     writable::list result;
+    bool chainsNeeded = false;
+
+    void updateChain(Task& task) const
+    {
+        if (chainsNeeded)
+            task.updateChain(data);
+    }
 
     bool isRedundant(const Task& task) const
     {
