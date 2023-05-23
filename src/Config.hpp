@@ -25,6 +25,9 @@ public:
     bool hasSupportArgument() const
     { return supportArgument; }
 
+    bool hasWeightsArgument() const
+    { return weightsArgument; }
+
     const integers& getPredicates() const
     { return predicates; }
 
@@ -38,6 +41,7 @@ private:
     bool conditionArgument = false;
     bool indicesArgument = false;
     bool supportArgument = false;
+    bool weightsArgument = false;
 
     integers predicates;
     int maxLength;
@@ -52,6 +56,8 @@ private:
                 indicesArgument = true;
             if (s == "support")
                 supportArgument = true;
+            if (s == "weights")
+                weightsArgument = true;
         }
     }
 };

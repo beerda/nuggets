@@ -49,6 +49,19 @@ test_that("indices arg", {
                            list(i = c(T,F,T,F,F,F))))
 })
 
+test_that("weights arg", {
+    c1 <- c(0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
+    c2 <- c(0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
+    m <- matrix(c(c1, c2), ncol = 2)
+    res <- dig(m, function(weights) list(w = weights))
+
+    expect_equal(length(res), 4)
+    expect_equal(res, list(list(w = c(1,1,1,1,1,1)),
+                           list(w = c1),
+                           list(w = c2),
+                           list(w = c1 * c2)))
+})
+
 test_that("max_length filter", {
     m <- matrix(1:12 / 12, ncol = 2)
 
