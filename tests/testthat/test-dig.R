@@ -27,6 +27,17 @@ test_that("condition arg", {
                            list(cond = c(1L, 2L))))
 })
 
+test_that("support arg", {
+    m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
+    res <- dig(m, function(support) list(sup = support))
+
+    expect_equal(length(res), 4)
+    expect_equal(res, list(list(sup = Inf),
+                           list(sup = 4/6),
+                           list(sup = 3/6),
+                           list(sup = 2/6)))
+})
+
 test_that("max_length filter", {
     m <- matrix(1:12 / 12, ncol = 2)
 

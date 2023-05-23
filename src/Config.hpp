@@ -19,6 +19,9 @@ public:
     bool hasConditionArgument() const
     { return conditionArgument; }
 
+    bool hasSupportArgument() const
+    { return supportArgument; }
+
     const integers& getPredicates() const
     { return predicates; }
 
@@ -30,6 +33,7 @@ public:
 
 private:
     bool conditionArgument = false;
+    bool supportArgument = false;
     integers predicates;
     int maxLength;
     double minSupport;
@@ -39,6 +43,8 @@ private:
         for (string s : vec) {
             if (s == "condition")
                 conditionArgument = true;
+            if (s == "support")
+                supportArgument = true;
         }
     }
 };
