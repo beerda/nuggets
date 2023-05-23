@@ -3,6 +3,7 @@
 #include "Digger.hpp"
 #include "ConditionArgumentator.hpp"
 #include "LengthFilter.hpp"
+#include "MinSupportFilter.hpp"
 
 
 [[cpp11::register]]
@@ -23,6 +24,9 @@ list dig_(list logicals_data,
     }
     if (config.getMaxLength() >= 0) {
         digger.addFilter(new LengthFilter(config.getMaxLength()));
+    }
+    if (config.getMinSupport() > 0) {
+        digger.addFilter(new MinSupportFilter(config.getMinSupport()));
     }
 
     try {

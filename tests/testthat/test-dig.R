@@ -43,3 +43,23 @@ test_that("max_length filter", {
     expect_equal(length(res), 4)
 })
 
+
+test_that("min_support filter", {
+    m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
+
+    res <- dig(m, function() 1, min_support = 0)
+    expect_equal(length(res), 4)
+
+    res <- dig(m, function() 1, min_support = 0.001)
+    expect_equal(length(res), 4)
+
+    res <- dig(m, function() 1, min_support = 0.5)
+    expect_equal(length(res), 3)
+
+    res <- dig(m, function() 1, min_support = 0.6)
+    expect_equal(length(res), 2)
+
+    res <- dig(m, function() 1, min_support = 1)
+    expect_equal(length(res), 1)
+})
+

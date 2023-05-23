@@ -25,7 +25,8 @@ context("Chain.hpp") {
         expect_true(chain.isBitwise());
         expect_true(!chain.isNumeric());
         expect_true(chain.size() == 10);
-        expect_true(chain.sum() == 2.0);
+        expect_true(chain.getSum() == 2.0);
+        expect_true(chain.getSupport() == 0.2);
     }
 
     test_that("numeric chain") {
@@ -39,7 +40,8 @@ context("Chain.hpp") {
         expect_true(!chain.isBitwise());
         expect_true(chain.isNumeric());
         expect_true(chain.size() == 10);
-        expect_true(chain.sum() == 4.5);
+        expect_true(chain.getSum() == 4.5);
+        expect_true(chain.getSupport() == 0.45);
     }
 
     test_that("toNumeric") {
@@ -54,7 +56,7 @@ context("Chain.hpp") {
         expect_true(chain.isBitwise());
         expect_true(chain.isNumeric());
         expect_true(chain.size() == 10);
-        expect_true(chain.sum() == 2.0);
+        expect_true(chain.getSum() == 2.0);
     }
 
     test_that("combine bit & bit") {
@@ -72,14 +74,14 @@ context("Chain.hpp") {
         expect_true(chain1.isBitwise());
         expect_true(!chain1.isNumeric());
         expect_true(chain1.size() == 10);
-        expect_true(chain1.sum() == 2.0);
+        expect_true(chain1.getSum() == 2.0);
 
         chain2.combineWith(chain1);
         expect_true(!chain2.empty());
         expect_true(chain2.isBitwise());
         expect_true(!chain2.isNumeric());
         expect_true(chain2.size() == 10);
-        expect_true(chain2.sum() == 1.0);
+        expect_true(chain2.getSum() == 1.0);
     }
 
     test_that("combine num & num") {
@@ -95,7 +97,7 @@ context("Chain.hpp") {
         expect_true(!chain2.isBitwise());
         expect_true(chain2.isNumeric());
         expect_true(chain2.size() == 10);
-        expect_true(chain2.sum() == 2.85);
+        expect_true(chain2.getSum() == 2.85);
     }
 
     test_that("combine incompatible") {
@@ -126,7 +128,7 @@ context("Chain.hpp") {
         expect_true(!chain2.isBitwise());
         expect_true(chain2.isNumeric());
         expect_true(chain2.size() == 10);
-        expect_true(chain2.sum() == 0.7);
+        expect_true(chain2.getSum() == 0.7);
     }
 
     test_that("combine both & bit") {
@@ -148,7 +150,7 @@ context("Chain.hpp") {
         expect_true(chain2.isBitwise());
         expect_true(!chain2.isNumeric());
         expect_true(chain2.size() == 10);
-        expect_true(chain2.sum() == 1.0);
+        expect_true(chain2.getSum() == 1.0);
     }
 
     test_that("combine both & both") {
@@ -173,6 +175,6 @@ context("Chain.hpp") {
         expect_true(chain2.isBitwise());
         expect_true(!chain2.isNumeric());
         expect_true(chain2.size() == 10);
-        expect_true(chain2.sum() == 1.0);
+        expect_true(chain2.getSum() == 1.0);
     }
 }

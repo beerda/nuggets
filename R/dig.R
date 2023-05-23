@@ -2,7 +2,11 @@
 #' @return
 #' @author Michal Burda
 #' @export
-dig <- function(x, f, max_length = -1, ...) {
+dig <- function(x,
+                f,
+                max_length = -1L,
+                min_support = 0.0,
+                ...) {
     UseMethod("dig")
 }
 
@@ -24,14 +28,20 @@ if_null <- function(x, value) {
 
 #' @rdname dig
 #' @export
-dig.matrix <- function(x, f, max_length = -1L, ...) {
+dig.matrix <- function(x,
+                       f,
+                       max_length = -1L,
+                       min_support = 0.0,
+                       ...) {
     assert_that(is.matrix(x))
     assert_that(is.function(f))
     assert_that(is.number(max_length))
+    assert_that(is.number(min_support))
 
     config <- list(arguments = if_null(formalArgs(f), ""),
                    predicates = seq_len(ncol(x)),
-                   maxLength = as.integer(max_length));
+                   maxLength = as.integer(max_length),
+                   minSupport = as.double(min_support));
 
     cols <- lapply(seq_len(ncol(x)), function(i) x[, i])
 

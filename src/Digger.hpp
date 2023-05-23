@@ -3,6 +3,7 @@
 #include <iostream>
 #include <functional>
 #include "Data.hpp"
+#include "Config.hpp"
 #include "TaskQueue.hpp"
 #include "Filter.hpp"
 #include "Argumentator.hpp"
@@ -38,8 +39,7 @@ public:
             //cout << "processing: " << task.toString() << "\n";
 
             if (!isRedundant(task)) {
-                //updateChain(task);
-                //computeStatistics(task);
+                task.updateChain(data);
                 if (!isPrunable(task)) {
                     store(task);
                     if (isExtendable(task)) {

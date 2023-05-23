@@ -12,6 +12,8 @@ public:
         predicates = configuration["predicates"];
         integers maxLengthVec = configuration["maxLength"];
         maxLength = maxLengthVec[0];
+        doubles minSupportVec = configuration["minSupport"];
+        minSupport = minSupportVec[0];
     }
 
     bool hasConditionArgument() const
@@ -23,10 +25,14 @@ public:
     int getMaxLength() const
     { return maxLength; }
 
+    double getMinSupport() const
+    { return minSupport; }
+
 private:
     bool conditionArgument = false;
     integers predicates;
     int maxLength;
+    double minSupport;
 
     void parseArguments(strings vec)
     {
