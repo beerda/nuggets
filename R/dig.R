@@ -4,7 +4,7 @@
 #' @export
 dig <- function(x,
                 f,
-                max_length = -1L,
+                max_length = Inf,
                 min_support = 0.0,
                 ...) {
     UseMethod("dig")
@@ -18,11 +18,43 @@ dig.default <- function(x, ...) {
 }
 
 
-if_null <- function(x, value) {
-    if (is.null(x))
-        value
-    else
-        x
+.dig <- function(logicals,
+                 doubles,
+                 predicates,
+                 f,
+                 max_length,
+                 min_support,
+                 ...) {
+    assert_that(is.list(logicals))
+    assert_that(is.list(doubles))
+    assert_that(is.integer(predicates))
+
+    assert_that(is.function(f))
+    fun <- function(l) {
+        do.call(f, c(l, list(...)))
+    }
+    arguments <- formalArgs(f)
+    if (is.null(arguments)) {
+        arguments <- ""
+    }
+
+    assert_that(is.number(max_length))
+    assert_that(max_length >= 0)
+    if (!is.finite(max_length)) {
+        max_length <- -1;
+    }
+    max_length <- as.integer(max_length)
+
+    assert_that(is.number(min_support))
+    assert_that(0.0 <= min_support && min_support <= 1.0)
+    min_support <- as.double(min_support)
+
+    config <- list(arguments = arguments,
+                   predicates = predicates,
+                   maxLength = max_length,
+                   minSupport = as.double(min_support));
+
+    dig_(logicals, doubles, config, fun)
 }
 
 
@@ -30,30 +62,34 @@ if_null <- function(x, value) {
 #' @export
 dig.matrix <- function(x,
                        f,
-                       max_length = -1L,
+                       max_length = Inf,
                        min_support = 0.0,
                        ...) {
     assert_that(is.matrix(x))
-    assert_that(is.function(f))
-    assert_that(is.number(max_length))
-    assert_that(is.number(min_support))
 
-    config <- list(arguments = if_null(formalArgs(f), ""),
-                   predicates = seq_len(ncol(x)),
-                   maxLength = as.integer(max_length),
-                   minSupport = as.double(min_support));
-
+    predicates <- seq_len(ncol(x))
     cols <- lapply(seq_len(ncol(x)), function(i) x[, i])
 
-    fun <- function(l) {
-        do.call(f, c(l, list(...)))
-    }
-
     if (is.logical(x)) {
-        dig_(cols, list(), config, fun)
+        .dig(logicals = cols,
+             doubles = list(),
+             predicates = predicates,
+             f = f,
+             max_length = max_length,
+             min_support = min_support)
+
     } else if (is.double(x)) {
-        dig_(list(), cols, config, fun)
+        assert_that(all(x >= 0.0))
+        assert_that(all(x <= 1.0))
+
+        .dig(logicals = list(),
+             doubles = cols,
+             predicates = predicates,
+             f = f,
+             max_length = max_length,
+             min_support = min_support)
+
     } else {
-        stop(paste0("'dig' is not implemented for non-double and non-logical matrices"))
+        stop(paste0("'dig.matrix' is not implemented for non-double and non-logical matrices"))
     }
 }

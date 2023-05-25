@@ -74,7 +74,7 @@ test_that("max_length filter", {
     res <- dig(m, function() 1, max_length = 2L)
     expect_equal(length(res), 4)
 
-    res <- dig(m, function() 1, max_length = -1L)
+    res <- dig(m, function() 1, max_length = Inf)
     expect_equal(length(res), 4)
 })
 
