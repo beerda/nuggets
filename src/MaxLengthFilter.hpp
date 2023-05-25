@@ -3,9 +3,9 @@
 #include "Filter.hpp"
 
 
-class LengthFilter : public Filter {
+class MaxLengthFilter : public Filter {
 public:
-    LengthFilter(int maxLength)
+    MaxLengthFilter(int maxLength)
         : maxLength(maxLength)
     { }
 
