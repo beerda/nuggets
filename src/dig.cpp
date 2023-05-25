@@ -5,6 +5,7 @@
 #include "IndicesArgumentator.hpp"
 #include "SupportArgumentator.hpp"
 #include "WeightsArgumentator.hpp"
+#include "MinLengthFilter.hpp"
 #include "MaxLengthFilter.hpp"
 #include "MinSupportFilter.hpp"
 
@@ -36,6 +37,9 @@ list dig_(list logicals_data,
     if (config.hasWeightsArgument()) {
         digger.setChainsNeeded();
         digger.addArgumentator(new WeightsArgumentator(data.nrow()));
+    }
+    if (config.getMinLength() >= 0) {
+        digger.addFilter(new MinLengthFilter(config.getMinLength()));
     }
     if (config.getMaxLength() >= 0) {
         digger.addFilter(new MaxLengthFilter(config.getMaxLength()));

@@ -4,6 +4,7 @@
 #' @export
 dig <- function(x,
                 f,
+                min_length = 0,
                 max_length = Inf,
                 min_support = 0.0,
                 ...) {
@@ -22,12 +23,14 @@ dig.default <- function(x, ...) {
                  doubles,
                  predicates,
                  f,
+                 min_length,
                  max_length,
                  min_support,
                  ...) {
     assert_that(is.list(logicals))
     assert_that(is.list(doubles))
     assert_that(is.integer(predicates))
+    assert_that(all(is.finite(predicates)))
 
     assert_that(is.function(f))
     fun <- function(l) {
@@ -37,6 +40,11 @@ dig.default <- function(x, ...) {
     if (is.null(arguments)) {
         arguments <- ""
     }
+
+    assert_that(is.number(min_length))
+    assert_that(is.finite(min_length))
+    assert_that(min_length >= 0)
+    min_length <- as.integer(min_length)
 
     assert_that(is.number(max_length))
     assert_that(max_length >= 0)
@@ -51,6 +59,7 @@ dig.default <- function(x, ...) {
 
     config <- list(arguments = arguments,
                    predicates = predicates,
+                   minLength = min_length,
                    maxLength = max_length,
                    minSupport = as.double(min_support));
 
@@ -62,6 +71,7 @@ dig.default <- function(x, ...) {
 #' @export
 dig.matrix <- function(x,
                        f,
+                       min_length = 0,
                        max_length = Inf,
                        min_support = 0.0,
                        ...) {
@@ -75,6 +85,7 @@ dig.matrix <- function(x,
              doubles = list(),
              predicates = predicates,
              f = f,
+             min_length = min_length,
              max_length = max_length,
              min_support = min_support)
 
@@ -86,6 +97,7 @@ dig.matrix <- function(x,
              doubles = cols,
              predicates = predicates,
              f = f,
+             min_length = min_length,
              max_length = max_length,
              min_support = min_support)
 

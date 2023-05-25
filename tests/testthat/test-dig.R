@@ -62,6 +62,24 @@ test_that("weights arg", {
                            list(w = c1 * c2)))
 })
 
+
+test_that("min_length filter", {
+    m <- matrix(1:12 / 12, ncol = 2)
+
+    res <- dig(m, function() 1, min_length = 0L)
+    expect_equal(length(res), 4)
+
+    res <- dig(m, function() 1, min_length = 1L)
+    expect_equal(length(res), 3)
+
+    res <- dig(m, function() 1, min_length = 2L)
+    expect_equal(length(res), 1)
+
+    res <- dig(m, function() 1, min_length = 3L)
+    expect_equal(length(res), 0)
+})
+
+
 test_that("max_length filter", {
     m <- matrix(1:12 / 12, ncol = 2)
 

@@ -10,6 +10,8 @@ public:
     {
         parseArguments(configuration["arguments"]);
         predicates = configuration["predicates"];
+        integers minLengthVec = configuration["minLength"];
+        minLength = minLengthVec[0];
         integers maxLengthVec = configuration["maxLength"];
         maxLength = maxLengthVec[0];
         doubles minSupportVec = configuration["minSupport"];
@@ -31,6 +33,9 @@ public:
     const integers& getPredicates() const
     { return predicates; }
 
+    int getMinLength() const
+    { return minLength; }
+
     int getMaxLength() const
     { return maxLength; }
 
@@ -44,6 +49,7 @@ private:
     bool weightsArgument = false;
 
     integers predicates;
+    int minLength;
     int maxLength;
     double minSupport;
 

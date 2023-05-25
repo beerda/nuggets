@@ -17,6 +17,9 @@ public:
     virtual bool isPrunable(const Task& task) const
     { return false; }
 
+    virtual bool isStorable(const Task& task) const
+    { return true; }
+
     virtual bool isExtendable(const Task& task) const
     { return true; }
 };

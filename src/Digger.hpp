@@ -40,7 +40,9 @@ public:
             if (!isRedundant(task)) {
                 updateChain(task);
                 if (!isPrunable(task)) {
-                    store(task);
+                    if (isStorable(task)) {
+                        store(task);
+                    }
                     if (isExtendable(task)) {
                         if (task.hasSoFar()) {
                             child = task.createChild();
@@ -100,6 +102,15 @@ private:
                 return true;
 
         return false;
+    }
+
+    bool isStorable(const Task& task) const
+    {
+        for (const Filter* e : filters)
+            if (!e->isStorable(task))
+                return false;
+
+        return true;
     }
 
     bool isExtendable(const Task& task) const
