@@ -116,3 +116,46 @@ test_that("min_support filter", {
     expect_equal(length(res), 1)
 })
 
+
+test_that("disjoint filter", {
+    m <- matrix(T, ncol = 3)
+
+    res <- dig(m, function() 1)
+    expect_equal(length(res), 8)
+
+    res <- dig(m,
+               function(condition) list(cond = condition),
+               disjoint = c(1, 2, 3))
+
+    expect_equal(length(res), 8)
+    expect_equal(res, list(list(cond = integer(0)),
+                           list(cond = c(1L)),
+                           list(cond = c(2L)),
+                           list(cond = c(3L)),
+                           list(cond = c(1L, 3L)),
+                           list(cond = c(2L, 3L)),
+                           list(cond = c(1L, 2L)),
+                           list(cond = c(1L, 2L, 3L))))
+
+    res <- dig(m,
+               function(condition) list(cond = condition),
+               disjoint = c(1, 1, 2))
+
+    expect_equal(length(res), 6)
+    expect_equal(res, list(list(cond = integer(0)),
+                           list(cond = c(1L)),
+                           list(cond = c(2L)),
+                           list(cond = c(3L)),
+                           list(cond = c(1L, 3L)),
+                           list(cond = c(2L, 3L))))
+
+    res <- dig(m,
+               function(condition) list(cond = condition),
+               disjoint = c(1, 1, 1))
+
+    expect_equal(length(res), 4)
+    expect_equal(res, list(list(cond = integer(0)),
+                           list(cond = c(1L)),
+                           list(cond = c(2L)),
+                           list(cond = c(3L))))
+})

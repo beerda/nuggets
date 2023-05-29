@@ -8,6 +8,7 @@
 #include "MinLengthFilter.hpp"
 #include "MaxLengthFilter.hpp"
 #include "MinSupportFilter.hpp"
+#include "DisjointFilter.hpp"
 
 
 [[cpp11::register]]
@@ -47,6 +48,9 @@ list dig_(list logicals_data,
     if (config.getMinSupport() > 0) {
         digger.setChainsNeeded();
         digger.addFilter(new MinSupportFilter(config.getMinSupport()));
+    }
+    if (config.hasDisjoint()) {
+        digger.addFilter(new DisjointFilter(config.getDisjoint()));
     }
 
     try {

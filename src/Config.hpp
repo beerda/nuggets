@@ -9,11 +9,16 @@ public:
     Config(list configuration)
     {
         parseArguments(configuration["arguments"]);
+
         predicates = configuration["predicates"];
+        disjoint = configuration["disjoint"];
+
         integers minLengthVec = configuration["minLength"];
         minLength = minLengthVec[0];
+
         integers maxLengthVec = configuration["maxLength"];
         maxLength = maxLengthVec[0];
+
         doubles minSupportVec = configuration["minSupport"];
         minSupport = minSupportVec[0];
     }
@@ -30,8 +35,14 @@ public:
     bool hasWeightsArgument() const
     { return weightsArgument; }
 
+    bool hasDisjoint() const
+    { return !disjoint.empty(); }
+
     const integers& getPredicates() const
     { return predicates; }
+
+    const integers& getDisjoint() const
+    { return disjoint; }
 
     int getMinLength() const
     { return minLength; }
@@ -49,6 +60,7 @@ private:
     bool weightsArgument = false;
 
     integers predicates;
+    integers disjoint;
     int minLength;
     int maxLength;
     double minSupport;
