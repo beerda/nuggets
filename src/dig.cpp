@@ -14,6 +14,8 @@
 [[cpp11::register]]
 list dig_(list logicals_data,
           list doubles_data,
+          list logicals_foci,
+          list doubles_foci,
           list configuration_list,
           cpp11::function fun)
 {

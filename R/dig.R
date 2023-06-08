@@ -19,6 +19,8 @@ dig.default <- function(x, f, ...) {
 .dig <- function(logicals,
                  doubles,
                  predicates,
+                 logicals_foci,
+                 doubles_foci,
                  f,
                  disjoint,
                  min_length,
@@ -27,6 +29,8 @@ dig.default <- function(x, f, ...) {
                  ...) {
     assert_that(is.list(logicals))
     assert_that(is.list(doubles))
+    assert_that(is.list(logicals_foci))
+    assert_that(is.list(doubles_foci))
 
     assert_that(is.integer(predicates))
     assert_that(all(is.finite(predicates)))
@@ -74,7 +78,7 @@ dig.default <- function(x, f, ...) {
                    maxLength = max_length,
                    minSupport = as.double(min_support));
 
-    dig_(logicals, doubles, config, fun)
+    dig_(logicals, doubles, logicals_foci, doubles_foci, config, fun)
 }
 
 
@@ -83,6 +87,7 @@ dig.default <- function(x, f, ...) {
 dig.matrix <- function(x,
                        f,
                        condition = everything(),
+                       focus = NULL,
                        disjoint = NULL,
                        min_length = 0,
                        max_length = Inf,
@@ -95,14 +100,23 @@ dig.matrix <- function(x,
     if (is.null(names(cols))) {
         names(cols) <- seq_len(length(cols))
     }
-    condition <- rlang::enquo(condition)
+
+    condition <- enquo(condition)
+    focus <- enquo(focus)
+
     predicates <- eval_select(condition, cols)
+
+    foci <- eval_select(focus, cols)
+    foci <- cols[foci]
+
     cols <- cols[predicates]
 
     if (is.logical(x)) {
         .dig(logicals = cols,
              doubles = list(),
              predicates = predicates,
+             logicals_foci = foci,
+             doubles_foci = list(),
              f = f,
              disjoint = disjoint,
              min_length = min_length,
@@ -116,6 +130,8 @@ dig.matrix <- function(x,
         .dig(logicals = list(),
              doubles = cols,
              predicates = predicates,
+             logicals_foci = list(),
+             doubles_foci = foci,
              f = f,
              disjoint = disjoint,
              min_length = min_length,
