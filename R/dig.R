@@ -82,6 +82,7 @@ dig.default <- function(x, f, ...) {
 #' @export
 dig.matrix <- function(x,
                        f,
+                       condition = everything(),
                        disjoint = NULL,
                        min_length = 0,
                        max_length = Inf,
@@ -89,8 +90,14 @@ dig.matrix <- function(x,
                        ...) {
     assert_that(is.matrix(x))
 
-    predicates <- seq_len(ncol(x))
     cols <- lapply(seq_len(ncol(x)), function(i) x[, i])
+    names(cols) <- colnames(x)
+    if (is.null(names(cols))) {
+        names(cols) <- seq_len(length(cols))
+    }
+    condition <- rlang::enquo(condition)
+    predicates <- eval_select(condition, cols)
+    cols <- cols[predicates]
 
     if (is.logical(x)) {
         .dig(logicals = cols,

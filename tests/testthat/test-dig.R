@@ -16,6 +16,21 @@ test_that("logical matrix", {
 })
 
 
+test_that("select condition columns", {
+    m <- matrix(rep(c(T, F), 12), ncol = 3)
+
+    res <- dig(m,
+               f = function(condition) list(cond = condition),
+               condition = c("1", "3"))
+
+    expect_equal(length(res), 4)
+    expect_equal(res, list(list(cond = integer(0)),
+                           list(cond = c(1L)),
+                           list(cond = c(3L)),
+                           list(cond = c(1L, 3L))))
+})
+
+
 test_that("condition arg", {
     m <- matrix(1:12 / 12, ncol = 2)
     res <- dig(m, function(condition) list(cond = condition))
