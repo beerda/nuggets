@@ -2,6 +2,7 @@
 #include "Config.hpp"
 #include "Digger.hpp"
 #include "ConditionArgumentator.hpp"
+#include "FociSupportsArgumentator.hpp"
 #include "IndicesArgumentator.hpp"
 #include "SupportArgumentator.hpp"
 #include "WeightsArgumentator.hpp"
@@ -22,12 +23,18 @@ list dig_(list logicals_data,
     Data data;
     data.addChains<logicals>(logicals_data);
     data.addChains<doubles>(doubles_data);
+    data.addFoci<logicals>(logicals_foci);
+    data.addFoci<doubles>(doubles_foci);
 
     Config config(configuration_list);
     Digger digger(data, fun);
 
     if (config.hasConditionArgument()) {
         digger.addArgumentator(new ConditionArgumentator(config.getPredicates()));
+    }
+    if (config.hasFociSupportsArgument()) {
+        digger.setChainsNeeded();
+        digger.addArgumentator(new FociSupportsArgumentator(config.getFoci(), data));
     }
     if (config.hasSupportArgument()) {
         digger.setChainsNeeded();

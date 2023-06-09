@@ -21,6 +21,7 @@ dig.default <- function(x, f, ...) {
                  predicates,
                  logicals_foci,
                  doubles_foci,
+                 foci,
                  f,
                  disjoint,
                  min_length,
@@ -35,6 +36,10 @@ dig.default <- function(x, f, ...) {
     assert_that(is.integer(predicates))
     assert_that(all(is.finite(predicates)))
     assert_that(length(predicates) == length(logicals) + length(doubles))
+
+    assert_that(is.integer(foci))
+    assert_that(all(is.finite(foci)))
+    assert_that(length(foci) == length(logicals_foci) + length(doubles_foci))
 
     assert_that(is.function(f))
     fun <- function(l) {
@@ -73,6 +78,7 @@ dig.default <- function(x, f, ...) {
 
     config <- list(arguments = arguments,
                    predicates = predicates,
+                   foci = foci,
                    disjoint = disjoint,
                    minLength = min_length,
                    maxLength = max_length,
@@ -102,21 +108,20 @@ dig.matrix <- function(x,
     }
 
     condition <- enquo(condition)
-    focus <- enquo(focus)
-
     predicates <- eval_select(condition, cols)
+    data_cols <- cols[predicates]
 
+    focus <- enquo(focus)
     foci <- eval_select(focus, cols)
-    foci <- cols[foci]
-
-    cols <- cols[predicates]
+    foci_cols <- cols[foci]
 
     if (is.logical(x)) {
-        .dig(logicals = cols,
+        .dig(logicals = data_cols,
              doubles = list(),
              predicates = predicates,
-             logicals_foci = foci,
+             logicals_foci = foci_cols,
              doubles_foci = list(),
+             foci = foci,
              f = f,
              disjoint = disjoint,
              min_length = min_length,
@@ -128,10 +133,11 @@ dig.matrix <- function(x,
         assert_that(all(x <= 1.0))
 
         .dig(logicals = list(),
-             doubles = cols,
+             doubles = data_cols,
              predicates = predicates,
              logicals_foci = list(),
-             doubles_foci = foci,
+             doubles_foci = foci_cols,
+             foci = foci,
              f = f,
              disjoint = disjoint,
              min_length = min_length,

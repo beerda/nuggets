@@ -10,7 +10,7 @@
 
 class Digger {
 public:
-    Digger(const Data& data, const cpp11::function fun)
+    Digger(Data& data, const cpp11::function fun)
         : data(data), initialTask(data.size()), queue(), func(fun)
     { }
 
@@ -71,7 +71,7 @@ public:
     { return result; }
 
 private:
-    Data data;
+    Data& data;
     Task initialTask;
     TaskQueue queue;
     cpp11::function func;

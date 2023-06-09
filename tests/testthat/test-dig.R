@@ -42,6 +42,7 @@ test_that("condition arg", {
                            list(cond = c(1L, 2L))))
 })
 
+
 test_that("support arg", {
     m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
     res <- dig(m, function(support) list(sup = support))
@@ -52,6 +53,7 @@ test_that("support arg", {
                            list(sup = 3/6),
                            list(sup = 2/6)))
 })
+
 
 test_that("indices arg", {
     m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
@@ -64,6 +66,7 @@ test_that("indices arg", {
                            list(i = c(T,F,T,F,F,F))))
 })
 
+
 test_that("weights arg", {
     c1 <- c(0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
     c2 <- c(0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
@@ -75,6 +78,19 @@ test_that("weights arg", {
                            list(w = c1),
                            list(w = c2),
                            list(w = c1 * c2)))
+})
+
+
+test_that("foci_supports arg", {
+    m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
+    res <- dig(m,
+               f = function(foci_supports) list(fs = foci_supports),
+               condition = "1",
+               focus = "2")
+
+    expect_equal(length(res), 2)
+    expect_equal(res, list(list(fs = c("2" = 3/6)),
+                           list(fs = c("2" = 2/6))))
 })
 
 

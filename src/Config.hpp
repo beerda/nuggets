@@ -11,6 +11,7 @@ public:
         parseArguments(configuration["arguments"]);
 
         predicates = configuration["predicates"];
+        foci = configuration["foci"];
         disjoint = configuration["disjoint"];
 
         integers minLengthVec = configuration["minLength"];
@@ -25,6 +26,9 @@ public:
 
     bool hasConditionArgument() const
     { return conditionArgument; }
+
+    bool hasFociSupportsArgument() const
+    { return fociSupportsArgument; }
 
     bool hasIndicesArgument() const
     { return indicesArgument; }
@@ -41,6 +45,9 @@ public:
     const integers& getPredicates() const
     { return predicates; }
 
+    const integers& getFoci() const
+    { return foci; }
+
     const integers& getDisjoint() const
     { return disjoint; }
 
@@ -55,11 +62,13 @@ public:
 
 private:
     bool conditionArgument = false;
+    bool fociSupportsArgument = false;
     bool indicesArgument = false;
     bool supportArgument = false;
     bool weightsArgument = false;
 
     integers predicates;
+    integers foci;
     integers disjoint;
     int minLength;
     int maxLength;
@@ -70,6 +79,8 @@ private:
         for (string s : vec) {
             if (s == "condition")
                 conditionArgument = true;
+            if (s == "foci_supports")
+                fociSupportsArgument = true;
             if (s == "indices")
                 indicesArgument = true;
             if (s == "support")
