@@ -11,9 +11,14 @@ public:
     template <typename T>
     void addChain(const T& values)
     {
-        if (chains.size() > 0) {
+        if (!chains.empty()) {
             if (((size_t) values.size()) != chains.front().size()) {
                 throw new runtime_error("Condition chain sizes mismatch in Data::addChain");
+            }
+        }
+        if (!foci.empty()) {
+            if (((size_t) values.size()) != foci.front().size()) {
+                throw new runtime_error("Condition chain size differs from focus chain sizes in Data::addChain");
             }
         }
 
@@ -32,7 +37,12 @@ public:
     template <typename T>
     void addFocus(const T& values)
     {
-        if (foci.size() > 0) {
+        if (!chains.empty()) {
+            if (((size_t) values.size()) != chains.front().size()) {
+                throw new runtime_error("Focus chain size differs from condition chain sizes in Data::addChain");
+            }
+        }
+        if (!foci.empty()) {
             if (((size_t) values.size()) != foci.front().size()) {
                 throw new runtime_error("Focus chain sizes mismatch in Data::addChain");
             }
@@ -63,10 +73,15 @@ public:
     { return foci.size(); }
 
     size_t nrow() const
-    { return chains.front().size(); }
+    {
+        if (!chains.empty())
+            return chains.front().size();
 
-    size_t ncol() const
-    { return size(); }
+        if (!foci.empty())
+            return foci.front().size();
+
+        return 0;
+    }
 
 private:
     vector<Chain> chains;
