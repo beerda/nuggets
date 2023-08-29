@@ -2,6 +2,7 @@
 
 S3method(dig,default)
 S3method(dig,matrix)
+export(dichotomize)
 export(dig)
 importFrom(assertthat,assert_that)
 importFrom(assertthat,is.number)
