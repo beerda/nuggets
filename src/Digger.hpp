@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <functional>
 #include "Data.hpp"
 #include "TaskQueue.hpp"
@@ -35,7 +34,6 @@ public:
         while (!queue.empty()) {
             Task child;
             Task task = queue.pop();
-            //cout << "processing: " << task.toString() << "\n";
 
             if (!isRedundant(task)) {
                 updateChain(task);
