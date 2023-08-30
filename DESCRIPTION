@@ -18,6 +18,7 @@ Imports:
     cli,
     methods,
     rlang,
+    tibble,
     tidyselect
 LinkingTo: 
     BH,
