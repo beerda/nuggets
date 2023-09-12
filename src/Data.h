@@ -28,8 +28,8 @@ public:
     template <typename T>
     void addChains(list data)
     {
-        for (long int i = 0; i < data.size(); i++) {
-            T col = data[i];
+        for (R_xlen_t i = 0; i < data.size(); i++) {
+            T col = data.at(i);
             addChain(col);
         }
     }
@@ -54,8 +54,8 @@ public:
     template <typename T>
     void addFoci(list data)
     {
-        for (long int i = 0; i < data.size(); i++) {
-            T col = data[i];
+        for (R_xlen_t i = 0; i < data.size(); i++) {
+            T col = data.at(i);
             addFocus(col);
         }
     }

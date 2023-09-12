@@ -15,9 +15,9 @@ public:
     {
         numData.reserve(values.size());
         cachedSum = 0;
-        for (long int i = 0; i < values.size(); i++) {
-            numData.push_back(values[i]);
-            cachedSum += values[i];
+        for (R_xlen_t i = 0; i < values.size(); i++) {
+            numData.push_back(values.at(i));
+            cachedSum += values.at(i);
         }
     }
 
@@ -25,9 +25,9 @@ public:
     {
         bitData.reserve(values.size());
         cachedSum = 0;
-        for (long int i = 0; i < values.size(); i++) {
-            bitData.push_back(values[i]);
-            if (values[i])
+        for (R_xlen_t i = 0; i < values.size(); i++) {
+            bitData.push_back(values.at(i));
+            if (values.at(i))
                 cachedSum++;
         }
     }
