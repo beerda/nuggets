@@ -30,12 +30,101 @@ You can install the development version of nuggets from [GitHub](https://github.
 devtools::install_github("beerda/nuggets")
 ```
 
-## Example
+## Examples
 
-This is a basic example which shows you how to solve a common problem:
+### Search for implicative rules
 
-```{r example}
+We start with loading of the needed packages:
+
+```{r, message=FALSE}
+library(tidyverse)
 library(nuggets)
-## basic example code
 ```
 
+We are going to use the `CO2` dataset as an example:
+
+```{r}
+head(CO2)
+```
+
+First, the numeric columns need to be transformed to factors:
+
+```{r}
+d <- mutate(CO2,
+            conc = cut(conc, c(-Inf, 175, 350, 675, Inf)),
+            uptake = cut(uptake, c(-Inf, 17.9, 28.3, 37.12)))
+head(d)
+```
+
+Then every column can be dichotomized, i.e., dummy logical columns may be created for
+each factor level:
+
+```{r}
+d <- dichotomize(d)
+head(d)
+```
+
+As we want to search for implicative rules with some minimum support and confidence, we define
+the variables to hold that thresholds. We also need to define a callback function that will be
+called for each found frequent condition. Its purpose is to generate the rules with the
+obtained condition as an antecedent:
+
+```{r}
+min_support <- 0.02
+min_confidence <- 0.8
+
+f <- function(condition, support, foci_supports) {
+    ante <- paste(names(condition), collapse = " & ")
+    conf <- foci_supports / support
+    conf <- conf[conf > min_confidence]
+    
+    lapply(seq_along(conf), function(i) { 
+      list(antecedent = ante,
+           consequent = names(conf)[[i]],
+           support = support,
+           confidence = conf[[i]])
+    })
+}
+```
+
+The callback function `f()` defines three arguments: `condition`, `support` and `foci_supports`.
+The names of the arguments are not random. Based on the argument names of the callback function,
+the searching algorithm provides information to the function. Here `condition` is a vector of indices
+representing the conjunction of predicates in a condition. By the predicate we mean the column in the
+source dataset. The `support` argument gets the relative frequency of the condition in the dataset.
+`foci_supports` is a vector of supports of special predicates, which we call "foci" (plural of "focus"),
+within the rows satisfying the condition. For implicative rules, foci are potential rule consequents.
+
+Before starting to search for the rules, it is good idea to create the vector of disjoints.
+Columns with equal values in the disjoint vector will not be combined together. This will
+speed-up the search as it makes no sense, e.g., to combine `Plant=Qn1` and `Plant=Qn2` in
+a single condition.
+
+```{r}
+disj <- sub("=.*", "", colnames(d))
+disj <- disj[disj != "Treatment"]
+print(disj)
+```
+
+Now we can run the digging for rules:
+
+```{r}
+result <- dig(as.matrix(d),
+              f = f,
+              condition = !starts_with("Treatment"),
+              focus = starts_with("Treatment"),
+              disjoint = disj)
+```
+
+As we return a list of lists in the callback function, we have to flatten the first level 
+of lists in the result and binding it into a data frame:
+
+```{r}
+result <- result %>%
+  unlist(recursive = FALSE) %>%
+  map(as.data.frame) %>%
+  do.call(rbind, .) %>%
+  arrange(desc(support))
+
+head(result)
+```
