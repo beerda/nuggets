@@ -16,8 +16,10 @@ knitr::opts_chunk$set(
 # nuggets
 
 <!-- badges: start -->
+[![CRAN status](https://www.r-pkg.org/badges/version/nuggets)](https://CRAN.R-project.org/package=nuggets)
 [![R-CMD-check](https://github.com/beerda/nuggets/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/beerda/nuggets/actions/workflows/R-CMD-check.yaml)
 [![test-coverage](https://github.com/beerda/nuggets/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/beerda/nuggets/actions/workflows/test-coverage.yaml)
+[![Codecov test coverage](https://codecov.io/gh/beerda/nuggets/branch/main/graph/badge.svg)](https://app.codecov.io/gh/beerda/nuggets?branch=main)
 <!-- badges: end -->
 
 R package for searching the subspaces described with elementary conjunctions
