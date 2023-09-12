@@ -62,11 +62,7 @@ list dig_(list logicals_data,
         digger.addFilter(new DisjointFilter(config.getDisjoint()));
     }
 
-    try {
-        digger.run();
-    } catch (exception& e) {
-        cout << e.what() << endl;
-    }
+    digger.run();
 
     return digger.getResult();
 }
