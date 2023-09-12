@@ -15,6 +15,8 @@ public:
 
     void prepare(writable::list& arguments, const Task& task) const override
     {
+        Argumentator::prepare(arguments, task);
+
         using namespace cpp11::literals;
         writable::strings names;
         writable::integers indices;
