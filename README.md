@@ -4,6 +4,8 @@
 # nuggets
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/beerda/nuggets/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/beerda/nuggets/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 R package for searching the subspaces described with elementary
