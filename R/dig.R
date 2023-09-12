@@ -171,6 +171,8 @@ dig.matrix <- function(x,
     foci <- eval_select(focus, cols)
     foci_cols <- cols[foci]
 
+    disjoint <- disjoint[predicates]
+
     if (is.logical(x)) {
         .dig(logicals = data_cols,
              doubles = list(),

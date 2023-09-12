@@ -193,6 +193,7 @@ test_that("disjoint filter", {
     res <- dig(m, function() 1)
     expect_equal(length(res), 8)
 
+    # disjoint 1, 2, 3
     res <- dig(m,
                function(condition) list(cond = condition),
                disjoint = c(1, 2, 3))
@@ -207,6 +208,7 @@ test_that("disjoint filter", {
                            list(cond = c("1"=1L, "2"=2L)),
                            list(cond = c("1"=1L, "2"=2L, "3"=3L))))
 
+    # disjoint 1, 1, 2
     res <- dig(m,
                function(condition) list(cond = condition),
                disjoint = c(1, 1, 2))
@@ -219,6 +221,7 @@ test_that("disjoint filter", {
                            list(cond = c("1"=1L, "3"=3L)),
                            list(cond = c("2"=2L, "3"=3L))))
 
+    # disjoint 1, 1, 1
     res <- dig(m,
                function(condition) list(cond = condition),
                disjoint = c(1, 1, 1))
@@ -228,6 +231,23 @@ test_that("disjoint filter", {
                            list(cond = c("1"=1L)),
                            list(cond = c("2"=2L)),
                            list(cond = c("3"=3L))))
+
+
+    # disjoint 1, 1, 2 with condition and focus
+    m <- m[, c(1:3, 1:3), drop = FALSE]
+    res <- dig(m,
+               function(condition) list(cond = condition),
+               disjoint = c(1, 1, 2, 3, 4, 5),
+               condition = 1:3,
+               focus = 4:6)
+
+    expect_equal(length(res), 6)
+    expect_equal(res, list(list(cond = integer(0)),
+                           list(cond = c("1"=1L)),
+                           list(cond = c("2"=2L)),
+                           list(cond = c("3"=3L)),
+                           list(cond = c("1"=1L, "3"=3L)),
+                           list(cond = c("2"=2L, "3"=3L))))
 })
 
 
