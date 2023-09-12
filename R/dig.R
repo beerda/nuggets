@@ -198,7 +198,75 @@ dig.matrix <- function(x,
              min_support = min_support)
 
     } else {
-        cli_abort(c("{.var x} must be either logical or numeric matrix.",
+        cli_abort(c("{.var x} must be either logical or numeric (double) matrix.",
                     "x" = "You've supplied a matrix of type {.cls {typeof(x)}}."))
     }
+}
+
+
+.extract_cols <- function(cols, selection) {
+    indices <- eval_select(selection, cols)
+    cols <- cols[indices]
+    logicals <- vapply(cols, is.logical, logical(1))
+    doubles <- vapply(cols, is.double, logical(1))
+
+    if (!all(logicals | doubles)) {
+        errors <- c()
+        for (i in which(!(logicals | doubles))) {
+            errors <- c(errors,
+                        "x" = paste0("Column {.var ",
+                                     names(cols)[i],
+                                     "} is of type {.cls ",
+                                     typeof(cols[[i]]),
+                                     "}."))
+        }
+        len <- length(errors)
+        if (len > 5) {
+            length(errors) <- 4
+            len <- len - length(errors)
+            errors <- c(errors, paste0("... and ", len, " more problems."))
+        }
+        cli_abort(c("All columns in {.var x} must be either logical or double.",
+                    errors),
+                  call = caller_env())
+    }
+
+    list(logicals = cols[logicals],
+         doubles = cols[doubles],
+         indices = c(indices[logicals], indices[doubles]))
+}
+
+
+#' @rdname dig
+#' @export
+dig.data.frame <- function(x,
+                           f,
+                           condition = everything(),
+                           focus = NULL,
+                           disjoint = NULL,
+                           min_length = 0,
+                           max_length = Inf,
+                           min_support = 0.0,
+                           ...) {
+    .must_be_data_frame(x)
+
+    cols <- as.list(x)
+    if (is.null(names(cols))) {
+        names(cols) <- seq_len(length(cols))
+    }
+
+    condition_cols <- .extract_cols(cols, enquo(condition))
+    foci_cols <- .extract_cols(cols, enquo(focus))
+
+    .dig(logicals = condition_cols$logicals,
+         doubles = condition_cols$doubles,
+         predicates = condition_cols$indices,
+         logicals_foci = foci_cols$logicals,
+         doubles_foci = foci_cols$doubles,
+         foci = foci_cols$indices,
+         f = f,
+         disjoint = disjoint[condition_cols$indices],
+         min_length = min_length,
+         max_length = max_length,
+         min_support = min_support)
 }

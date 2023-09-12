@@ -106,14 +106,13 @@ a single condition.
 
 ```{r}
 disj <- sub("=.*", "", colnames(d))
-disj <- disj[disj != "Treatment"]
 print(disj)
 ```
 
 Now we can run the digging for rules:
 
 ```{r}
-result <- dig(as.matrix(d),
+result <- dig(d,
               f = f,
               condition = !starts_with("Treatment"),
               focus = starts_with("Treatment"),

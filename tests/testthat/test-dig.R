@@ -16,6 +16,16 @@ test_that("logical matrix", {
 })
 
 
+test_that("data frame", {
+    d <- data.frame(a = 1:6 / 10,
+                    b = c(T, T, T, F, F, F))
+    res <- dig(d, function() 1)
+
+    expect_equal(length(res), 4)
+    expect_equal(res, rep(list(1), 4))
+})
+
+
 test_that("select condition columns", {
     m <- matrix(rep(c(T, F), 12), ncol = 3)
 
@@ -218,4 +228,81 @@ test_that("disjoint filter", {
                            list(cond = c("1"=1L)),
                            list(cond = c("2"=2L)),
                            list(cond = c("3"=3L))))
+})
+
+
+test_that("data frame select & disjoint", {
+    set.seed(32344)
+
+    d <- data.frame(a = c(T,    T, T, F, F),
+                    b = c(T,    F, T, T, T),
+                    c = c(T,    T, F, F, F),
+                    d = c(T,    F, F, F, F),
+                    x = c(1.0,  0.1, 0.2, 0.3, 0.4),
+                    y = c(1.0,  0.9, 0.8, 0.7, 0.6),
+                    z = c(1.0,  0.8, 0.6, 0.4, 0.2),
+                    w = c(1.0,  0, 0, 0, 0))
+
+    f <- function(condition, support) {
+        paste(paste(names(condition), collapse = " & "),
+              "=",
+              support)
+    }
+
+    disjoint <- c(1, 1, 2, 3,  5, 5, 6, 7)
+
+    expected <- c("a = 0.6", "b = 0.8", "c = 0.4", "x = 0.4", "y = 0.8", "z = 0.6",
+                  "a & c = 0.4", "a & x = 0.26", "a & y = 0.54", "a & z = 0.48",
+                  "b & c = 0.2", "b & x = 0.38", "b & y = 0.62", "b & z = 0.44",
+                  "c & x = 0.22", "c & y = 0.38", "c & z = 0.36",
+                  "x & z = 0.28",
+                  "y & z = 0.52")
+
+    # permutation 1
+    perm <- seq_along(d)
+    res <- dig(d[, perm],
+               f,
+               condition = c(a, b, c, x, y, z),
+               disjoint = disjoint[perm],
+               min_length = 1,
+               max_length = 2)
+    expect_equal(sort(unlist(res)), sort(expected))
+
+    # permutation 2
+    perm <- sample(perm)
+    res <- dig(d[, perm],
+               f,
+               condition = c(a, b, c, x, y, z),
+               disjoint = disjoint[perm],
+               min_length = 1,
+               max_length = 2)
+    expect_equal(sort(unlist(res)), sort(expected))
+
+    # permutation 3
+    perm <- sample(perm)
+    res <- dig(d[, perm],
+               f,
+               condition = c(a, b, c, x, y, z),
+               disjoint = disjoint[perm],
+               min_length = 1,
+               max_length = 2)
+    expect_equal(sort(unlist(res)), sort(expected))
+
+    # permuted condition 1
+    res <- dig(d[, perm],
+               f,
+               condition = c(x, y, z, a, b, c),
+               disjoint = disjoint[perm],
+               min_length = 1,
+               max_length = 2)
+    expect_equal(sort(unlist(res)), sort(expected))
+
+    # permuted condition 2
+    res <- dig(d[, perm],
+               f,
+               condition = c(x, a, y, b, z, c),
+               disjoint = disjoint[perm],
+               min_length = 1,
+               max_length = 2)
+    expect_equal(sort(unlist(res)), sort(expected))
 })

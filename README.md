@@ -134,17 +134,17 @@ condition.
 
 ``` r
 disj <- sub("=.*", "", colnames(d))
-disj <- disj[disj != "Treatment"]
 print(disj)
-#>  [1] "Plant"  "Plant"  "Plant"  "Plant"  "Plant"  "Plant"  "Plant"  "Plant" 
-#>  [9] "Plant"  "Plant"  "Plant"  "Plant"  "Type"   "Type"   "conc"   "conc"  
-#> [17] "conc"   "conc"   "uptake" "uptake" "uptake"
+#>  [1] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    
+#>  [7] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    
+#> [13] "Type"      "Type"      "Treatment" "Treatment" "conc"      "conc"     
+#> [19] "conc"      "conc"      "uptake"    "uptake"    "uptake"
 ```
 
 Now we can run the digging for rules:
 
 ``` r
-result <- dig(as.matrix(d),
+result <- dig(d,
               f = f,
               condition = !starts_with("Treatment"),
               focus = starts_with("Treatment"),
