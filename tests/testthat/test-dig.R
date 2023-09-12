@@ -25,9 +25,25 @@ test_that("select condition columns", {
 
     expect_equal(length(res), 4)
     expect_equal(res, list(list(cond = integer(0)),
-                           list(cond = c(1L)),
-                           list(cond = c(3L)),
-                           list(cond = c(1L, 3L))))
+                           list(cond = c("1"=1L)),
+                           list(cond = c("3"=3L)),
+                           list(cond = c("1"=1L, "3"=3L))))
+})
+
+
+test_that("select condition columns with names", {
+    m <- matrix(rep(c(T, F), 12), ncol = 3)
+    colnames(m) <- c("aaah", "blee", "ciis")
+
+    res <- dig(m,
+               f = function(condition) list(cond = condition),
+               condition = c("aaah", "ciis"))
+
+    expect_equal(length(res), 4)
+    expect_equal(res, list(list(cond = integer(0)),
+                           list(cond = c("aaah"=1L)),
+                           list(cond = c("ciis"=3L)),
+                           list(cond = c("aaah"=1L, "ciis"=3L))))
 })
 
 
@@ -37,9 +53,22 @@ test_that("condition arg", {
 
     expect_equal(length(res), 4)
     expect_equal(res, list(list(cond = integer(0)),
-                           list(cond = c(1L)),
-                           list(cond = c(2L)),
-                           list(cond = c(1L, 2L))))
+                           list(cond = c("1"=1L)),
+                           list(cond = c("2"=2L)),
+                           list(cond = c("1"=1L, "2"=2L))))
+})
+
+
+test_that("condition arg with names", {
+    m <- matrix(1:12 / 12, ncol = 2)
+    colnames(m) <- c("aaah", "blee")
+    res <- dig(m, function(condition) list(cond = condition))
+
+    expect_equal(length(res), 4)
+    expect_equal(res, list(list(cond = integer(0)),
+                           list(cond = c("aaah"=1L)),
+                           list(cond = c("blee"=2L)),
+                           list(cond = c("aaah"=1L, "blee"=2L))))
 })
 
 
@@ -160,13 +189,13 @@ test_that("disjoint filter", {
 
     expect_equal(length(res), 8)
     expect_equal(res, list(list(cond = integer(0)),
-                           list(cond = c(1L)),
-                           list(cond = c(2L)),
-                           list(cond = c(3L)),
-                           list(cond = c(1L, 3L)),
-                           list(cond = c(2L, 3L)),
-                           list(cond = c(1L, 2L)),
-                           list(cond = c(1L, 2L, 3L))))
+                           list(cond = c("1"=1L)),
+                           list(cond = c("2"=2L)),
+                           list(cond = c("3"=3L)),
+                           list(cond = c("1"=1L, "3"=3L)),
+                           list(cond = c("2"=2L, "3"=3L)),
+                           list(cond = c("1"=1L, "2"=2L)),
+                           list(cond = c("1"=1L, "2"=2L, "3"=3L))))
 
     res <- dig(m,
                function(condition) list(cond = condition),
@@ -174,11 +203,11 @@ test_that("disjoint filter", {
 
     expect_equal(length(res), 6)
     expect_equal(res, list(list(cond = integer(0)),
-                           list(cond = c(1L)),
-                           list(cond = c(2L)),
-                           list(cond = c(3L)),
-                           list(cond = c(1L, 3L)),
-                           list(cond = c(2L, 3L))))
+                           list(cond = c("1"=1L)),
+                           list(cond = c("2"=2L)),
+                           list(cond = c("3"=3L)),
+                           list(cond = c("1"=1L, "3"=3L)),
+                           list(cond = c("2"=2L, "3"=3L))))
 
     res <- dig(m,
                function(condition) list(cond = condition),
@@ -186,7 +215,7 @@ test_that("disjoint filter", {
 
     expect_equal(length(res), 4)
     expect_equal(res, list(list(cond = integer(0)),
-                           list(cond = c(1L)),
-                           list(cond = c(2L)),
-                           list(cond = c(3L))))
+                           list(cond = c("1"=1L)),
+                           list(cond = c("2"=2L)),
+                           list(cond = c("3"=3L))))
 })
