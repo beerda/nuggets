@@ -1,5 +1,47 @@
+#' Search for rules
 #'
-#' @return
+#' This is a general function that enumerates all conditions created from
+#' data in `x` and calls the callback function `f` on each.
+#'
+#' @param x a matrix or data frame. The matrix must be numeric (double) or logical.
+#'      If `x` is a data frame then each column must be either numeric (double) or
+#'      logical.
+#' @param f the callback function executed for each generated condition. This
+#'      function may have some of the following arguments. Based on the present
+#'      arguments, the algorithm would provide information about the generated
+#'      condition:
+#'      - condition - a numeric vector of column indices that represent the predicates
+#'        of the condition. Names of the vector correspond to column names;
+#'      - foci_supports - a list of support of foci columns (see `focus` argument
+#'        to specify, which columns are foci);
+#'      - support - a numeric scalar value of the current condition's support;
+#'      - indices - a logical vector indicating the rows satisfying the condition;
+#'      - weights - (similar to indices) weights of rows to which they satisfy
+#'        the current condition.
+#' @param condition a tidyselect expression (see
+#'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
+#'      selecting  the columns for use as condition predicates
+#' @param focus a tidyselect expression (see
+#'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
+#'      selecting  the columns for use as focus predicates
+#' @param disjoint an atomic vector of size equal to the number of columns of `x`
+#'      that specifies the groups of predicates: if some elements of the `disjoint`
+#'      vector are equal, then the corresponding columns of `x` will NOT be
+#'      present together in a single condition.
+#' @param min_length the minimum size (the minimum number of predicates) of the
+#'      condition to be generated (must be greater or equal to 0). If 0, the empty
+#'      condition is generated in the first place.
+#' @param max_length The maximum size (the maximum number of predicates) of the
+#'      condition to be generated. If equal to Inf, the maximum length of conditions
+#'      is limited only by the number of available predicates.
+#' @param min_support the minimum support of a condition to trigger the callback
+#'      function for it. The support of the condition is the relative frequency
+#'      of the condition in the dataset `x`. For logical data, it equals to the
+#'      relative frequency of rows such that all condition predicates are TRUE on it.
+#'      For numerical (double) input, the support is computed as the mean (over all
+#'      rows) of multiplications of predicate values.
+#' @param ... Further arguments, currently unused.
+#' @returns A list of results provided by the callback function `f`.
 #' @author Michal Burda
 #' @export
 dig <- function(x,
