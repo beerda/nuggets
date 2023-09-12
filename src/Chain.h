@@ -3,7 +3,7 @@
 #include <math.h>
 #include <numeric>
 #include <boost/dynamic_bitset.hpp>
-#include "common.hpp"
+#include "common.h"
 
 
 class Chain {

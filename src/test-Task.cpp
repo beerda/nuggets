@@ -1,7 +1,7 @@
 #include <testthat.h>
-#include "Task.hpp"
+#include "Task.h"
 
-context("Task.hpp") {
+context("Task.h") {
     test_that("==") {
         Task tA({1, 2, 3}, {4, 5, 6}, {7, 8, 9});
         Task tB({1, 2, 3}, {4, 5, 6}, {7, 8, 9});

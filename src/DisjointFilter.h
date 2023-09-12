@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Filter.hpp"
+#include "Filter.h"
 
 
 class DisjointFilter : public Filter {

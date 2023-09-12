@@ -1,15 +1,15 @@
 #include <iostream>
-#include "Config.hpp"
-#include "Digger.hpp"
-#include "ConditionArgumentator.hpp"
-#include "FociSupportsArgumentator.hpp"
-#include "IndicesArgumentator.hpp"
-#include "SupportArgumentator.hpp"
-#include "WeightsArgumentator.hpp"
-#include "MinLengthFilter.hpp"
-#include "MaxLengthFilter.hpp"
-#include "MinSupportFilter.hpp"
-#include "DisjointFilter.hpp"
+#include "Config.h"
+#include "Digger.h"
+#include "ConditionArgumentator.h"
+#include "FociSupportsArgumentator.h"
+#include "IndicesArgumentator.h"
+#include "SupportArgumentator.h"
+#include "WeightsArgumentator.h"
+#include "MinLengthFilter.h"
+#include "MaxLengthFilter.h"
+#include "MinSupportFilter.h"
+#include "DisjointFilter.h"
 
 
 [[cpp11::register]]

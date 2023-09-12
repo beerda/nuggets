@@ -2,8 +2,8 @@
 
 #include <vector>
 #include <set>
-#include "common.hpp"
-#include "Data.hpp"
+#include "common.h"
+#include "Data.h"
 
 
 /**

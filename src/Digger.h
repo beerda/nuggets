@@ -1,10 +1,10 @@
 #pragma once
 
 #include <functional>
-#include "Data.hpp"
-#include "TaskQueue.hpp"
-#include "Filter.hpp"
-#include "Argumentator.hpp"
+#include "Data.h"
+#include "TaskQueue.h"
+#include "Filter.h"
+#include "Argumentator.h"
 
 
 class Digger {

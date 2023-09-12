@@ -1,13 +1,13 @@
 #include <testthat.h>
 #include <cpp11.hpp>
 #include <boost/dynamic_bitset.hpp>
-#include "Chain.hpp"
+#include "Chain.h"
 
 using namespace cpp11;
 using namespace std;
 
 
-context("Chain.hpp") {
+context("Chain.h") {
     test_that("empty chain") {
         Chain chain;
         expect_true(chain.empty());
