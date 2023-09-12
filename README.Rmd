@@ -113,7 +113,8 @@ result <- dig(as.matrix(d),
               f = f,
               condition = !starts_with("Treatment"),
               focus = starts_with("Treatment"),
-              disjoint = disj)
+              disjoint = disj,
+              min_support = min_support)
 ```
 
 As we return a list of lists in the callback function, we have to flatten the first level 
