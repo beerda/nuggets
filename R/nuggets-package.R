@@ -16,6 +16,7 @@
 #' @importFrom rlang is_scalar_integerish
 #' @importFrom rlang is_scalar_logical
 #' @importFrom tibble as_tibble
+#' @importFrom tibble is_tibble
 #' @importFrom tibble tibble
 #' @importFrom tidyselect eval_select
 #' @importFrom tidyselect everything

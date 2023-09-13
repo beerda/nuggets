@@ -103,7 +103,7 @@ min_confidence <- 0.8
 f <- function(condition, support, foci_supports) {
     ante <- paste(names(condition), collapse = " & ")
     conf <- foci_supports / support
-    conf <- conf[conf > min_confidence]
+    conf <- conf[!is.na(conf) & conf >= min_confidence]
     
     lapply(seq_along(conf), function(i) { 
       list(antecedent = ante,
@@ -165,7 +165,7 @@ result <- result %>%
   arrange(desc(support))
 
 print(result)
-#> # A tibble: 156 × 4
+#> # A tibble: 48 × 4
 #>    antecedent                            consequent           support confidence
 #>    <chr>                                 <chr>                  <dbl>      <dbl>
 #>  1 Type=Mississippi & uptake=(-Inf,17.9] Treatment=chilled     0.190       0.813
@@ -178,7 +178,7 @@ print(result)
 #>  8 Plant=Qc2                             Treatment=chilled     0.0833      1    
 #>  9 Plant=Mn3                             Treatment=nonchilled  0.0833      1    
 #> 10 Plant=Mn2                             Treatment=nonchilled  0.0833      1    
-#> # ℹ 146 more rows
+#> # ℹ 38 more rows
 ```
 
 Alternatively, one may use the pre-defined function for implicative
@@ -195,7 +195,7 @@ result <- dig_implications(d,
 
 result <- arrange(result, desc(support))
 print(result)
-#> # A tibble: 156 × 4
+#> # A tibble: 48 × 4
 #>    antecedent                            consequent           support confidence
 #>    <chr>                                 <chr>                  <dbl>      <dbl>
 #>  1 Type=Mississippi & uptake=(-Inf,17.9] Treatment=chilled     0.190       0.813
@@ -208,5 +208,5 @@ print(result)
 #>  8 Plant=Qc2                             Treatment=chilled     0.0833      1    
 #>  9 Plant=Mn3                             Treatment=nonchilled  0.0833      1    
 #> 10 Plant=Mn2                             Treatment=nonchilled  0.0833      1    
-#> # ℹ 146 more rows
+#> # ℹ 38 more rows
 ```
