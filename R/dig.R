@@ -20,10 +20,10 @@
 #'        the current condition.
 #' @param condition a tidyselect expression (see
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
-#'      selecting  the columns for use as condition predicates
+#'      specifying the columns to use as condition predicates
 #' @param focus a tidyselect expression (see
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
-#'      selecting  the columns for use as focus predicates
+#'      specifying the columns to use as focus predicates
 #' @param disjoint an atomic vector of size equal to the number of columns of `x`
 #'      that specifies the groups of predicates: if some elements of the `disjoint`
 #'      vector are equal, then the corresponding columns of `x` will NOT be
@@ -249,6 +249,7 @@ dig.matrix <- function(x,
 
 
 .extract_cols <- function(cols, selection) {
+    selection <- enquo(selection)
     indices <- eval_select(selection, cols)
     cols <- cols[indices]
     logicals <- vapply(cols, is.logical, logical(1))
@@ -299,8 +300,10 @@ dig.data.frame <- function(x,
         names(cols) <- seq_len(length(cols))
     }
 
-    condition_cols <- .extract_cols(cols, enquo(condition))
-    foci_cols <- .extract_cols(cols, enquo(focus))
+    condition <- enquo(condition)
+    focus <- enquo(focus)
+    condition_cols <- .extract_cols(cols, !!condition)
+    foci_cols <- .extract_cols(cols, !!focus)
 
     .dig(logicals = condition_cols$logicals,
          doubles = condition_cols$doubles,

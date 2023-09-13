@@ -57,11 +57,11 @@ the current condition.}
 
 \item{condition}{a tidyselect expression (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
-selecting  the columns for use as condition predicates}
+specifying the columns to use as condition predicates}
 
 \item{focus}{a tidyselect expression (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
-selecting  the columns for use as focus predicates}
+specifying the columns to use as focus predicates}
 
 \item{disjoint}{an atomic vector of size equal to the number of columns of \code{x}
 that specifies the groups of predicates: if some elements of the \code{disjoint}
