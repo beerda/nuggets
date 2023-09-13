@@ -251,6 +251,73 @@ test_that("disjoint filter", {
 })
 
 
+test_that("conditions and foci are disjoint", {
+    d <- data.frame(a = c(T,    T, T, F, F),
+                    b = c(T,    F, T, T, T),
+                    c = c(T,    T, F, F, F),
+                    d = c(T,    F, F, F, F))
+
+    f <- function(condition, foci_supports) {
+        paste(paste(names(condition), collapse = "&"),
+              "~",
+              paste(names(foci_supports), collapse = "|"))
+    }
+
+    expected <- c(" ~ a|b|c|d",
+                  "a ~ c|d",
+                  "b ~ c|d",
+                  "c ~ a|b|d",
+                  "d ~ a|b|c",
+                  "a&c ~ d",
+                  "a&d ~ c",
+                  "b&c ~ d",
+                  "b&d ~ c",
+                  "c&d ~ a|b",
+                  "a&c&d ~ ",
+                  "b&c&d ~ ")
+
+    res <- dig(d,
+               f,
+               condition = everything(),
+               focus = everything(),
+               disjoint = c(1, 1, 2, 3))
+    res <- unlist(res)
+
+    expect_equal(sort(res), sort(expected))
+})
+
+
+test_that("conditions and foci are disjoint even if disjoints are not defined", {
+    d <- data.frame(a = c(T,    T, T, F, F),
+                    b = c(T,    F, T, T, T),
+                    c = c(T,    T, F, F, F))
+
+    f <- function(condition, foci_supports) {
+        paste(paste(names(condition), collapse = "&"),
+              "~",
+              paste(names(foci_supports), collapse = "|"))
+    }
+
+    expected <- c(" ~ a|b|c",
+                  "a ~ b|c",
+                  "b ~ a|c",
+                  "c ~ a|b",
+                  "a&b ~ c",
+                  "a&c ~ b",
+                  "b&c ~ a",
+                  "a&b&c ~ ")
+
+    res <- dig(d,
+               f,
+               condition = everything(),
+               focus = everything(),
+               disjoint = NULL)
+    res <- unlist(res)
+
+    expect_equal(sort(res), sort(expected))
+})
+
+
 test_that("data frame select & disjoint", {
     set.seed(32344)
 

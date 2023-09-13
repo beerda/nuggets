@@ -65,7 +65,8 @@ dig.default <- function(x, f, ...) {
                  doubles_foci,
                  foci,
                  f,
-                 disjoint,
+                 disjoint_predicates,
+                 disjoint_foci,
                  min_length,
                  max_length,
                  min_support,
@@ -133,15 +134,23 @@ dig.default <- function(x, f, ...) {
                   call = caller_env(2))
     }
 
-    .must_be_atomic_vector(disjoint)
-    if (!isTRUE(length(disjoint) == 0 || length(disjoint) == length(logicals) + length(doubles))) {
-        cli_abort(c("The length of {.var disjoint} must be 0 or equal to the sum of lengths of {.var logicals} and {.var doubles}.",
-                    "x" = "The length of {.var disjoint} is {length(disjoint)}.",
-                    "x" = "The length of {.var logicals} is {length(logicals)}.",
-                    "x" = "The length of {.var doubles} is {length(doubles)}."),
+    .must_be_atomic_vector(disjoint_predicates)
+    if (!isTRUE(length(disjoint_predicates) == 0 || length(disjoint_predicates) == length(predicates))) {
+        cli_abort(c("The length of {.var disjoint_predicates} must be 0 or equal to the length of {.var predicates}.",
+                    "x" = "The length of {.var disjoint_predicates} is {length(disjoint_predicates)}.",
+                    "x" = "The length of {.var predicates} is {length(predicates)}."),
                   call = caller_env(2))
     }
-    disjoint <- as.integer(as.factor(disjoint))
+    disjoint_predicates <- as.integer(as.factor(disjoint_predicates))
+
+    .must_be_atomic_vector(disjoint_foci)
+    if (!isTRUE(length(disjoint_foci) == 0 || length(disjoint_foci) == length(foci))) {
+        cli_abort(c("The length of {.var disjoint_foci} must be 0 or equal to the length of {.var foci}.",
+                    "x" = "The length of {.var disjoint_foci} is {length(disjoint_foci)}.",
+                    "x" = "The length of {.var foci} is {length(foci)}."),
+                  call = caller_env(2))
+    }
+    disjoint_foci <- as.integer(as.factor(disjoint_foci))
 
     .must_be_integerish_scalar(min_length)
     .must_be_finite(min_length)
@@ -177,7 +186,8 @@ dig.default <- function(x, f, ...) {
     config <- list(arguments = arguments,
                    predicates = predicates,
                    foci = foci,
-                   disjoint = disjoint,
+                   disjoint_predicates = disjoint_predicates,
+                   disjoint_foci = disjoint_foci,
                    minLength = min_length,
                    maxLength = max_length,
                    minSupport = as.double(min_support));
@@ -213,8 +223,6 @@ dig.matrix <- function(x,
     foci <- eval_select(focus, cols)
     foci_cols <- cols[foci]
 
-    disjoint <- disjoint[predicates]
-
     if (is.logical(x)) {
         .dig(logicals = data_cols,
              doubles = list(),
@@ -223,7 +231,8 @@ dig.matrix <- function(x,
              doubles_foci = list(),
              foci = foci,
              f = f,
-             disjoint = disjoint,
+             disjoint_predicates = disjoint[predicates],
+             disjoint_foci = disjoint[foci],
              min_length = min_length,
              max_length = max_length,
              min_support = min_support)
@@ -236,7 +245,8 @@ dig.matrix <- function(x,
              doubles_foci = foci_cols,
              foci = foci,
              f = f,
-             disjoint = disjoint,
+             disjoint_predicates = disjoint[predicates],
+             disjoint_foci = disjoint[foci],
              min_length = min_length,
              max_length = max_length,
              min_support = min_support)
@@ -312,7 +322,8 @@ dig.data.frame <- function(x,
          doubles_foci = foci_cols$doubles,
          foci = foci_cols$indices,
          f = f,
-         disjoint = disjoint[condition_cols$indices],
+         disjoint_predicates = disjoint[condition_cols$indices],
+         disjoint_foci = disjoint[foci_cols$indices],
          min_length = min_length,
          max_length = max_length,
          min_support = min_support)

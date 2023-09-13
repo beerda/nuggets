@@ -34,7 +34,11 @@ list dig_(list logicals_data,
     }
     if (config.hasFociSupportsArgument()) {
         digger.setChainsNeeded();
-        digger.addArgumentator(new FociSupportsArgumentator(config.getFoci(), data));
+        digger.addArgumentator(new FociSupportsArgumentator(config.getPredicates(),
+                                                            config.getFoci(),
+                                                            config.getDisjointPredicates(),
+                                                            config.getDisjointFoci(),
+                                                            data));
     }
     if (config.hasSupportArgument()) {
         digger.setChainsNeeded();
@@ -58,8 +62,8 @@ list dig_(list logicals_data,
         digger.setChainsNeeded();
         digger.addFilter(new MinSupportFilter(config.getMinSupport()));
     }
-    if (config.hasDisjoint()) {
-        digger.addFilter(new DisjointFilter(config.getDisjoint()));
+    if (config.hasDisjointPredicates()) {
+        digger.addFilter(new DisjointFilter(config.getDisjointPredicates()));
     }
 
     digger.run();

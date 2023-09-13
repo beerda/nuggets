@@ -12,7 +12,8 @@ public:
 
         predicates = configuration["predicates"];
         foci = configuration["foci"];
-        disjoint = configuration["disjoint"];
+        disjointPredicates = configuration["disjoint_predicates"];
+        disjointFoci = configuration["disjoint_foci"];
 
         integers minLengthVec = configuration["minLength"];
         minLength = minLengthVec[0];
@@ -39,8 +40,11 @@ public:
     bool hasWeightsArgument() const
     { return weightsArgument; }
 
-    bool hasDisjoint() const
-    { return !disjoint.empty(); }
+    bool hasDisjointPredicates() const
+    { return !disjointPredicates.empty(); }
+
+    bool hasDisjointFoci() const
+    { return !disjointFoci.empty(); }
 
     const integers& getPredicates() const
     { return predicates; }
@@ -48,8 +52,11 @@ public:
     const integers& getFoci() const
     { return foci; }
 
-    const integers& getDisjoint() const
-    { return disjoint; }
+    const integers& getDisjointPredicates() const
+    { return disjointPredicates; }
+
+    const integers& getDisjointFoci() const
+    { return disjointFoci; }
 
     int getMinLength() const
     { return minLength; }
@@ -69,7 +76,8 @@ private:
 
     integers predicates;
     integers foci;
-    integers disjoint;
+    integers disjointPredicates;
+    integers disjointFoci;
     int minLength;
     int maxLength;
     double minSupport;
