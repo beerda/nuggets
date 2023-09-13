@@ -80,12 +80,14 @@ min_confidence <- 0.8
 f <- function(condition, support, foci_supports) {
     ante <- paste(names(condition), collapse = " & ")
     conf <- foci_supports / support
-    conf <- conf[!is.na(conf) & conf >= min_confidence]
+    sel <- !is.na(conf) & conf >= min_confidence
+    conf <- conf[sel]
+    supp <- foci_supports[sel]
     
     lapply(seq_along(conf), function(i) { 
       list(antecedent = ante,
            consequent = names(conf)[[i]],
-           support = support,
+           support = supp[[i]],
            confidence = conf[[i]])
     })
 }

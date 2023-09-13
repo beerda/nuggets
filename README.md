@@ -103,12 +103,14 @@ min_confidence <- 0.8
 f <- function(condition, support, foci_supports) {
     ante <- paste(names(condition), collapse = " & ")
     conf <- foci_supports / support
-    conf <- conf[!is.na(conf) & conf >= min_confidence]
+    sel <- !is.na(conf) & conf >= min_confidence
+    conf <- conf[sel]
+    supp <- foci_supports[sel]
     
     lapply(seq_along(conf), function(i) { 
       list(antecedent = ante,
            consequent = names(conf)[[i]],
-           support = support,
+           support = supp[[i]],
            confidence = conf[[i]])
     })
 }
@@ -168,7 +170,7 @@ print(result)
 #> # A tibble: 48 × 4
 #>    antecedent                            consequent           support confidence
 #>    <chr>                                 <chr>                  <dbl>      <dbl>
-#>  1 Type=Mississippi & uptake=(-Inf,17.9] Treatment=chilled     0.190       0.813
+#>  1 Type=Mississippi & uptake=(-Inf,17.9] Treatment=chilled     0.155       0.813
 #>  2 Type=Mississippi & uptake=(28.3,37.1] Treatment=nonchilled  0.119       1    
 #>  3 Plant=Qn1                             Treatment=nonchilled  0.0833      1    
 #>  4 Plant=Qn2                             Treatment=nonchilled  0.0833      1    
@@ -198,7 +200,7 @@ print(result)
 #> # A tibble: 48 × 4
 #>    antecedent                            consequent           support confidence
 #>    <chr>                                 <chr>                  <dbl>      <dbl>
-#>  1 Type=Mississippi & uptake=(-Inf,17.9] Treatment=chilled     0.190       0.813
+#>  1 Type=Mississippi & uptake=(-Inf,17.9] Treatment=chilled     0.155       0.813
 #>  2 Type=Mississippi & uptake=(28.3,37.1] Treatment=nonchilled  0.119       1    
 #>  3 Plant=Qn1                             Treatment=nonchilled  0.0833      1    
 #>  4 Plant=Qn2                             Treatment=nonchilled  0.0833      1    
