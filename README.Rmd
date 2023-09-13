@@ -117,6 +117,7 @@ result <- dig(d,
               condition = !starts_with("Treatment"),
               focus = starts_with("Treatment"),
               disjoint = disj,
+              min_length = 1,
               min_support = min_support)
 ```
 
@@ -126,9 +127,24 @@ of lists in the result and binding it into a data frame:
 ```{r}
 result <- result %>%
   unlist(recursive = FALSE) %>%
-  map(as.data.frame) %>%
+  map(as_tibble) %>%
   do.call(rbind, .) %>%
   arrange(desc(support))
 
-head(result)
+print(result)
+```
+
+
+Alternatively, one may use the pre-defined function for implicative rules without bothering with the definition of the callback function etc.:
+
+```{r}
+result <- dig_implications(d,
+                           antecedent = !starts_with("Treatment"),
+                           consequent = starts_with("Treatment"),
+                           disjoint = disj,
+                           min_support = 0.02,
+                           min_confidence = 0.8)
+
+result <- arrange(result, desc(support))
+print(result)
 ```

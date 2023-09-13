@@ -149,6 +149,7 @@ result <- dig(d,
               condition = !starts_with("Treatment"),
               focus = starts_with("Treatment"),
               disjoint = disj,
+              min_length = 1,
               min_support = min_support)
 ```
 
@@ -159,23 +160,53 @@ data frame:
 ``` r
 result <- result %>%
   unlist(recursive = FALSE) %>%
-  map(as.data.frame) %>%
+  map(as_tibble) %>%
   do.call(rbind, .) %>%
   arrange(desc(support))
 
-head(result)
-#>                              antecedent           consequent    support
-#> 1 Type=Mississippi & uptake=(-Inf,17.9]    Treatment=chilled 0.19047619
-#> 2 Type=Mississippi & uptake=(28.3,37.1] Treatment=nonchilled 0.11904762
-#> 3                             Plant=Qn1 Treatment=nonchilled 0.08333333
-#> 4                             Plant=Qn2 Treatment=nonchilled 0.08333333
-#> 5                             Plant=Qn3 Treatment=nonchilled 0.08333333
-#> 6                             Plant=Qc1    Treatment=chilled 0.08333333
-#>   confidence
-#> 1     0.8125
-#> 2     1.0000
-#> 3     1.0000
-#> 4     1.0000
-#> 5     1.0000
-#> 6     1.0000
+print(result)
+#> # A tibble: 156 × 4
+#>    antecedent                            consequent           support confidence
+#>    <chr>                                 <chr>                  <dbl>      <dbl>
+#>  1 Type=Mississippi & uptake=(-Inf,17.9] Treatment=chilled     0.190       0.813
+#>  2 Type=Mississippi & uptake=(28.3,37.1] Treatment=nonchilled  0.119       1    
+#>  3 Plant=Qn1                             Treatment=nonchilled  0.0833      1    
+#>  4 Plant=Qn2                             Treatment=nonchilled  0.0833      1    
+#>  5 Plant=Qn3                             Treatment=nonchilled  0.0833      1    
+#>  6 Plant=Qc1                             Treatment=chilled     0.0833      1    
+#>  7 Plant=Qc3                             Treatment=chilled     0.0833      1    
+#>  8 Plant=Qc2                             Treatment=chilled     0.0833      1    
+#>  9 Plant=Mn3                             Treatment=nonchilled  0.0833      1    
+#> 10 Plant=Mn2                             Treatment=nonchilled  0.0833      1    
+#> # ℹ 146 more rows
+```
+
+Alternatively, one may use the pre-defined function for implicative
+rules without bothering with the definition of the callback function
+etc.:
+
+``` r
+result <- dig_implications(d,
+                           antecedent = !starts_with("Treatment"),
+                           consequent = starts_with("Treatment"),
+                           disjoint = disj,
+                           min_support = 0.02,
+                           min_confidence = 0.8)
+
+result <- arrange(result, desc(support))
+print(result)
+#> # A tibble: 156 × 4
+#>    antecedent                            consequent           support confidence
+#>    <chr>                                 <chr>                  <dbl>      <dbl>
+#>  1 Type=Mississippi & uptake=(-Inf,17.9] Treatment=chilled     0.190       0.813
+#>  2 Type=Mississippi & uptake=(28.3,37.1] Treatment=nonchilled  0.119       1    
+#>  3 Plant=Qn1                             Treatment=nonchilled  0.0833      1    
+#>  4 Plant=Qn2                             Treatment=nonchilled  0.0833      1    
+#>  5 Plant=Qn3                             Treatment=nonchilled  0.0833      1    
+#>  6 Plant=Qc1                             Treatment=chilled     0.0833      1    
+#>  7 Plant=Qc3                             Treatment=chilled     0.0833      1    
+#>  8 Plant=Qc2                             Treatment=chilled     0.0833      1    
+#>  9 Plant=Mn3                             Treatment=nonchilled  0.0833      1    
+#> 10 Plant=Mn2                             Treatment=nonchilled  0.0833      1    
+#> # ℹ 146 more rows
 ```
