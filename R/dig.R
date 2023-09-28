@@ -134,23 +134,21 @@ dig.default <- function(x, f, ...) {
                   call = caller_env(2))
     }
 
-    .must_be_atomic_vector(disjoint_predicates)
+    .must_be_integer_vector(disjoint_predicates)
     if (!isTRUE(length(disjoint_predicates) == 0 || length(disjoint_predicates) == length(predicates))) {
         cli_abort(c("The length of {.var disjoint_predicates} must be 0 or equal to the length of {.var predicates}.",
                     "x" = "The length of {.var disjoint_predicates} is {length(disjoint_predicates)}.",
                     "x" = "The length of {.var predicates} is {length(predicates)}."),
                   call = caller_env(2))
     }
-    disjoint_predicates <- as.integer(as.factor(disjoint_predicates))
 
-    .must_be_atomic_vector(disjoint_foci)
+    .must_be_integer_vector(disjoint_foci)
     if (!isTRUE(length(disjoint_foci) == 0 || length(disjoint_foci) == length(foci))) {
         cli_abort(c("The length of {.var disjoint_foci} must be 0 or equal to the length of {.var foci}.",
                     "x" = "The length of {.var disjoint_foci} is {length(disjoint_foci)}.",
                     "x" = "The length of {.var foci} is {length(foci)}."),
                   call = caller_env(2))
     }
-    disjoint_foci <- as.integer(as.factor(disjoint_foci))
 
     .must_be_integerish_scalar(min_length)
     .must_be_finite(min_length)
@@ -222,6 +220,8 @@ dig.matrix <- function(x,
     focus <- enquo(focus)
     foci <- eval_select(focus, cols)
     foci_cols <- cols[foci]
+
+    disjoint <- as.integer(as.factor(disjoint))
 
     if (is.logical(x)) {
         .dig(logicals = data_cols,
@@ -314,6 +314,8 @@ dig.data.frame <- function(x,
     focus <- enquo(focus)
     condition_cols <- .extract_cols(cols, !!condition)
     foci_cols <- .extract_cols(cols, !!focus)
+
+    disjoint <- as.integer(as.factor(disjoint))
 
     .dig(logicals = condition_cols$logicals,
          doubles = condition_cols$doubles,
