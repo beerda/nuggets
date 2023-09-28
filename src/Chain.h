@@ -84,7 +84,7 @@ public:
     double getSupport() const
     {
         if (empty())
-            return INFINITY;
+            return 1.0;
         else
             return getSum() / size();
     }
