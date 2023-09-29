@@ -87,7 +87,7 @@ test_that("support arg", {
     res <- dig(m, function(support) list(sup = support))
 
     expect_equal(length(res), 4)
-    expect_equal(res, list(list(sup = Inf),
+    expect_equal(res, list(list(sup = 1),
                            list(sup = 4/6),
                            list(sup = 3/6),
                            list(sup = 2/6)))
