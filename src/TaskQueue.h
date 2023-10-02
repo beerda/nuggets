@@ -12,7 +12,7 @@ public:
         : queue(TaskCompare())
     { }
 
-    void add(Task& task)
+    void add(const Task& task)
     { queue.push(task); }
 
     bool empty() const
@@ -24,6 +24,9 @@ public:
         queue.pop();
         return task;
     }
+
+    void clear()
+    { queue = priority_queue<Task, vector<Task>, TaskCompare>(TaskCompare()); }
 
     static bool hasPriority(Task& lhs, Task& rhs)
     {

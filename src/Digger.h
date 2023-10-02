@@ -30,34 +30,13 @@ public:
 
     void run()
     {
-        queue.add(initialTask);
-        while (!queue.empty()) {
-            Task child;
-            Task task = queue.pop();
+        Task task;
 
-            if (!isRedundant(task)) {
-                updateChain(task);
-                if (!isPrunable(task)) {
-                    if (isStorable(task)) {
-                        store(task);
-                    }
-                    if (isExtendable(task)) {
-                        if (task.hasSoFar()) {
-                            child = task.createChild();
-                        }
-                        if (task.hasPredicate()) {
-                            task.putCurrentToSoFar();
-                        }
-                    }
-                }
-            }
-
-            task.next();
-            if (task.hasPredicate()) {
-                queue.add(task);
-            }
-            if (!child.empty()) {
-                queue.add(child);
+        initializeRun();
+        while (!workDone()) {
+            if (receiveTask(task)) {
+                processTask(task);
+                taskFinished();
             }
         }
     }
@@ -76,6 +55,7 @@ private:
     vector<Filter*> filters;
     vector<Argumentator*> argumentators;
     writable::list result;
+
     bool chainsNeeded = false;
 
     void updateChain(Task& task) const
@@ -134,5 +114,78 @@ private:
     {
         list args = prepareArguments(task);
         result.push_back(func(args));
+    }
+
+    void initializeRun()
+    {
+        queue.clear();
+        queue.add(initialTask);
+    }
+
+    bool workDone()
+    {
+        bool done;
+
+        done = queue.empty();
+
+        return done;
+    }
+
+    bool receiveTask(Task& task)
+    {
+        bool received = false;
+
+        {
+            if (!queue.empty()) {
+                task = queue.pop();
+                received = true;
+            }
+        }
+
+        return received;
+    }
+
+    void sendTask(const Task& task)
+    {
+        {
+            queue.add(task);
+        }
+    }
+
+    void processTask(Task& task)
+    {
+        Task child;
+
+        if (!isRedundant(task)) {
+            updateChain(task);
+            if (!isPrunable(task)) {
+                if (isStorable(task)) {
+                    store(task);
+                }
+                if (isExtendable(task)) {
+                    if (task.hasSoFar()) {
+                        child = task.createChild();
+                    }
+                    if (task.hasPredicate()) {
+                        task.putCurrentToSoFar();
+                    }
+                }
+            }
+        }
+
+        task.next();
+        if (task.hasPredicate()) {
+            sendTask(task);
+        }
+        if (!child.empty()) {
+            sendTask(child);
+        }
+    }
+
+    void taskFinished()
+    {
+        {
+
+        }
     }
 };
