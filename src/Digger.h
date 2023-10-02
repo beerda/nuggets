@@ -55,6 +55,7 @@ private:
     vector<Filter*> filters;
     vector<Argumentator*> argumentators;
     writable::list result;
+    int workingThreads;
 
     bool chainsNeeded = false;
 
@@ -120,13 +121,14 @@ private:
     {
         queue.clear();
         queue.add(initialTask);
+        workingThreads = 0;
     }
 
     bool workDone()
     {
         bool done;
 
-        done = queue.empty();
+        done = queue.empty() && workingThreads <= 0;
 
         return done;
     }
@@ -138,6 +140,7 @@ private:
         {
             if (!queue.empty()) {
                 task = queue.pop();
+                workingThreads++;
                 received = true;
             }
         }
@@ -184,8 +187,6 @@ private:
 
     void taskFinished()
     {
-        {
-
-        }
+        workingThreads--;
     }
 };
