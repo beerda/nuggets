@@ -19,7 +19,11 @@ system.time({
 
 
 system.time({
-    rules2 <- dig_implications(d, min_support = 0.02, min_confidence = 0.1, n_threads = 2)
+    rules2 <- dig_implications(d, min_support = 0.001, min_confidence = 0.1, n_threads = 2)
 })
+
+
+print(head(rules1))
+print(head(rules2))
 
 print(c(nrow(rules1), nrow(rules2)))
