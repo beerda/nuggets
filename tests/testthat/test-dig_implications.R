@@ -18,9 +18,9 @@ test_that("dig_implications", {
     expect_true(is.double(res$support))
     expect_true(is.double(res$confidence))
     expect_equal(res$antecedent,
-                 c("", "", "", "a", "b", "b", "c"))
+                 c("{}", "{}", "{}", "{a}", "{b}", "{b}", "{c}"))
     expect_equal(res$consequent,
-                 c("a", "b", "c", "b", "a", "c", "b"))
+                 c("{a}", "{b}", "{c}", "{b}", "{a}", "{c}", "{b}"))
     expect_equal(res$support,
                  c(0.4, 0.8, 0.4, 0.4, 0.4, 0.2, 0.2))
     expect_equal(res$confidence,
@@ -49,9 +49,9 @@ test_that("dig_implications with disjoint", {
     expect_true(is.double(res$support))
     expect_true(is.double(res$confidence))
     expect_equal(res$antecedent,
-                 c("", "", "", "a", "b"))
+                 c("{}", "{}", "{}", "{a}", "{b}"))
     expect_equal(res$consequent,
-                 c("a", "b", "c", "b", "a"))
+                 c("{a}", "{b}", "{c}", "{b}", "{a}"))
     expect_equal(res$support,
                  c(0.4, 0.8, 0.4, 0.4, 0.4))
     expect_equal(res$confidence,
