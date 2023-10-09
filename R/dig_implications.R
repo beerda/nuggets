@@ -68,14 +68,17 @@ dig_implications <- function(x,
         selnames <- names(foci_supports)[sel]
         conf <- conf[sel]
         supp <- foci_supports[sel]
+        lift <- supp / (support * conseq_supports[selnames])
+        ante <- format_condition(names(condition))
+        cons <- lapply(names(conf), format_condition)
 
         lapply(seq_along(conf), function(i) {
-          list(antecedent = format_condition(names(condition)),
-               consequent = format_condition(names(conf)[[i]]),
+          list(antecedent = ante,
+               consequent = cons[[i]],
                support = supp[[i]],
                confidence = conf[[i]],
                coverage = support,
-               lift = supp[[i]] / (support * conseq_supports[selnames[[i]]]),
+               lift = lift[[i]],
                count = sum)
         })
     }
