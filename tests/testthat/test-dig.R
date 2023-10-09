@@ -94,6 +94,18 @@ test_that("support arg", {
 })
 
 
+test_that("sum arg", {
+    m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
+    res <- dig(m, function(sum) list(sum = sum))
+
+    expect_equal(length(res), 4)
+    expect_equal(res, list(list(sum = 6),
+                           list(sum = 4),
+                           list(sum = 3),
+                           list(sum = 2)))
+})
+
+
 test_that("indices arg", {
     m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
     res <- dig(m, function(indices) list(i = indices))

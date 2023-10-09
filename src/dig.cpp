@@ -4,6 +4,7 @@
 #include "ConditionArgumentator.h"
 #include "FociSupportsArgumentator.h"
 #include "IndicesArgumentator.h"
+#include "SumArgumentator.h"
 #include "SupportArgumentator.h"
 #include "WeightsArgumentator.h"
 #include "MinLengthFilter.h"
@@ -39,6 +40,10 @@ list dig_(list logicals_data,
                                                             config.getDisjointPredicates(),
                                                             config.getDisjointFoci(),
                                                             data));
+    }
+    if (config.hasSumArgument()) {
+        digger.setChainsNeeded();
+        digger.addArgumentator(new SumArgumentator(data.nrow()));
     }
     if (config.hasSupportArgument()) {
         digger.setChainsNeeded();

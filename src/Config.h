@@ -34,6 +34,9 @@ public:
     bool hasIndicesArgument() const
     { return indicesArgument; }
 
+    bool hasSumArgument() const
+    { return sumArgument; }
+
     bool hasSupportArgument() const
     { return supportArgument; }
 
@@ -71,6 +74,7 @@ private:
     bool conditionArgument = false;
     bool fociSupportsArgument = false;
     bool indicesArgument = false;
+    bool sumArgument = false;
     bool supportArgument = false;
     bool weightsArgument = false;
 
@@ -91,6 +95,8 @@ private:
                 fociSupportsArgument = true;
             if (s == "indices")
                 indicesArgument = true;
+            if (s == "sum")
+                sumArgument = true;
             if (s == "support")
                 supportArgument = true;
             if (s == "weights")

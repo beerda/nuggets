@@ -126,6 +126,6 @@ public:
 private:
     vector<double> numData;
     boost::dynamic_bitset<> bitData;
-    double cachedSum;
+    double cachedSum = -1;
 
 };
