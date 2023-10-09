@@ -44,10 +44,29 @@ dig_implications <- function(x,
     .must_be_double_scalar(min_confidence)
     .must_be_in_range(min_confidence, c(0, 1))
 
-    f <- function(condition, support, foci_supports) {
+    antecedent <- enquo(antecedent)
+    consequent <- enquo(consequent)
+
+    f1 <- function(condition, support) {
+        res <- support
+        names(res) <- colnames(x)[condition]
+
+        res
+    }
+
+    conseq_supports <- dig(x = x,
+                           f = f1,
+                           condition = !!consequent,
+                           min_length = 1,
+                           max_length = 1,
+                           min_support = 0.0)
+    conseq_supports <- unlist(conseq_supports)
+
+    f2 <- function(condition, support, foci_supports) {
         ante <- paste(names(condition), collapse = " & ")
         conf <- foci_supports / support
         sel <- !is.na(conf) & conf >= min_confidence
+        selnames <- names(foci_supports)[sel]
         conf <- conf[sel]
         supp <- foci_supports[sel]
 
@@ -55,15 +74,14 @@ dig_implications <- function(x,
           list(antecedent = ante,
                consequent = names(conf)[[i]],
                support = supp[[i]],
-               confidence = conf[[i]])
+               confidence = conf[[i]],
+               coverage = support,
+               lift = supp[[i]] / (support * conseq_supports[selnames[[i]]]))
         })
     }
 
-    antecedent <- enquo(antecedent)
-    consequent <- enquo(consequent)
-
     res <- dig(x = x,
-               f = f,
+               f = f2,
                condition = !!antecedent,
                focus = !!consequent,
                disjoint = disjoint,

@@ -12,7 +12,7 @@ test_that("dig_implications", {
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 7)
     expect_equal(colnames(res),
-                 c("antecedent", "consequent", "support", "confidence"))
+                 c("antecedent", "consequent", "support", "confidence", "coverage", "lift"))
     expect_true(is.character(res$antecedent))
     expect_true(is.character(res$consequent))
     expect_true(is.double(res$support))
@@ -43,7 +43,7 @@ test_that("dig_implications with disjoint", {
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 5)
     expect_equal(colnames(res),
-                 c("antecedent", "consequent", "support", "confidence"))
+                 c("antecedent", "consequent", "support", "confidence", "coverage", "lift"))
     expect_true(is.character(res$antecedent))
     expect_true(is.character(res$consequent))
     expect_true(is.double(res$support))
