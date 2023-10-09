@@ -101,15 +101,14 @@ min_support <- 0.02
 min_confidence <- 0.8
 
 f <- function(condition, support, foci_supports) {
-    ante <- paste(names(condition), collapse = " & ")
     conf <- foci_supports / support
     sel <- !is.na(conf) & conf >= min_confidence
     conf <- conf[sel]
     supp <- foci_supports[sel]
     
     lapply(seq_along(conf), function(i) { 
-      list(antecedent = ante,
-           consequent = names(conf)[[i]],
+      list(antecedent = format_condition(names(condition)),
+           consequent = format_condition(names(conf)[[i]]),
            support = supp[[i]],
            confidence = conf[[i]])
     })
@@ -167,20 +166,20 @@ result <- result %>%
   arrange(desc(support))
 
 print(result)
-#> # A tibble: 48 × 4
+#> # A tibble: 156 × 4
 #>    antecedent                            consequent           support confidence
 #>    <chr>                                 <chr>                  <dbl>      <dbl>
-#>  1 Type=Mississippi & uptake=(-Inf,17.9] Treatment=chilled     0.155       0.813
-#>  2 Type=Mississippi & uptake=(28.3,37.1] Treatment=nonchilled  0.119       1    
-#>  3 Plant=Qn1                             Treatment=nonchilled  0.0833      1    
-#>  4 Plant=Qn2                             Treatment=nonchilled  0.0833      1    
-#>  5 Plant=Qn3                             Treatment=nonchilled  0.0833      1    
-#>  6 Plant=Qc1                             Treatment=chilled     0.0833      1    
-#>  7 Plant=Qc3                             Treatment=chilled     0.0833      1    
-#>  8 Plant=Qc2                             Treatment=chilled     0.0833      1    
-#>  9 Plant=Mn3                             Treatment=nonchilled  0.0833      1    
-#> 10 Plant=Mn2                             Treatment=nonchilled  0.0833      1    
-#> # ℹ 38 more rows
+#>  1 {Type=Mississippi,uptake=(-Inf,17.9]} {Treatment=chilled}   0.155       0.813
+#>  2 {Type=Mississippi,uptake=(28.3,37.1]} {Treatment=nonchill…  0.119       1    
+#>  3 {Plant=Qn1}                           {Treatment=nonchill…  0.0833      1    
+#>  4 {Plant=Qn2}                           {Treatment=nonchill…  0.0833      1    
+#>  5 {Plant=Qn3}                           {Treatment=nonchill…  0.0833      1    
+#>  6 {Plant=Qc1}                           {Treatment=chilled}   0.0833      1    
+#>  7 {Plant=Qc3}                           {Treatment=chilled}   0.0833      1    
+#>  8 {Plant=Qc2}                           {Treatment=chilled}   0.0833      1    
+#>  9 {Plant=Mn3}                           {Treatment=nonchill…  0.0833      1    
+#> 10 {Plant=Mn2}                           {Treatment=nonchill…  0.0833      1    
+#> # ℹ 146 more rows
 ```
 
 Alternatively, one may use the pre-defined function for implicative
@@ -197,18 +196,18 @@ result <- dig_implications(d,
 
 result <- arrange(result, desc(support))
 print(result)
-#> # A tibble: 48 × 4
-#>    antecedent                            consequent           support confidence
-#>    <chr>                                 <chr>                  <dbl>      <dbl>
-#>  1 Type=Mississippi & uptake=(-Inf,17.9] Treatment=chilled     0.155       0.813
-#>  2 Type=Mississippi & uptake=(28.3,37.1] Treatment=nonchilled  0.119       1    
-#>  3 Plant=Qn1                             Treatment=nonchilled  0.0833      1    
-#>  4 Plant=Qn2                             Treatment=nonchilled  0.0833      1    
-#>  5 Plant=Qn3                             Treatment=nonchilled  0.0833      1    
-#>  6 Plant=Qc1                             Treatment=chilled     0.0833      1    
-#>  7 Plant=Qc3                             Treatment=chilled     0.0833      1    
-#>  8 Plant=Qc2                             Treatment=chilled     0.0833      1    
-#>  9 Plant=Mn3                             Treatment=nonchilled  0.0833      1    
-#> 10 Plant=Mn2                             Treatment=nonchilled  0.0833      1    
-#> # ℹ 38 more rows
+#> # A tibble: 156 × 7
+#>    antecedent                 consequent support confidence coverage  lift count
+#>    <chr>                      <chr>        <dbl>      <dbl>    <dbl> <dbl> <dbl>
+#>  1 {Type=Mississippi,uptake=… {Treatmen…  0.155       0.813   0.190   1.63    16
+#>  2 {Type=Mississippi,uptake=… {Treatmen…  0.119       1       0.119   2       10
+#>  3 {Plant=Qn1}                {Treatmen…  0.0833      1       0.0833  2        7
+#>  4 {Plant=Qn2}                {Treatmen…  0.0833      1       0.0833  2        7
+#>  5 {Plant=Qn3}                {Treatmen…  0.0833      1       0.0833  2        7
+#>  6 {Plant=Qc1}                {Treatmen…  0.0833      1       0.0833  2        7
+#>  7 {Plant=Qc3}                {Treatmen…  0.0833      1       0.0833  2        7
+#>  8 {Plant=Qc2}                {Treatmen…  0.0833      1       0.0833  2        7
+#>  9 {Plant=Mn3}                {Treatmen…  0.0833      1       0.0833  2        7
+#> 10 {Plant=Mn2}                {Treatmen…  0.0833      1       0.0833  2        7
+#> # ℹ 146 more rows
 ```
