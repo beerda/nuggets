@@ -62,7 +62,7 @@ dig_implications <- function(x,
                            min_support = 0.0)
     conseq_supports <- unlist(conseq_supports)
 
-    f2 <- function(condition, support, foci_supports) {
+    f2 <- function(condition, sum, support, foci_supports) {
         ante <- paste(names(condition), collapse = " & ")
         conf <- foci_supports / support
         sel <- !is.na(conf) & conf >= min_confidence
@@ -76,7 +76,8 @@ dig_implications <- function(x,
                support = supp[[i]],
                confidence = conf[[i]],
                coverage = support,
-               lift = supp[[i]] / (support * conseq_supports[selnames[[i]]]))
+               lift = supp[[i]] / (support * conseq_supports[selnames[[i]]]),
+               count = sum)
         })
     }
 
