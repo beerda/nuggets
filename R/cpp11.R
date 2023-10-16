@@ -3,3 +3,7 @@
 dig_ <- function(logicals_data, doubles_data, logicals_foci, doubles_foci, configuration_list, fun) {
   .Call(`_nuggets_dig_`, logicals_data, doubles_data, logicals_foci, doubles_foci, configuration_list, fun)
 }
+
+prune_non_maxima_ <- function(data, compare) {
+  .Call(`_nuggets_prune_non_maxima_`, data, compare)
+}
