@@ -19,15 +19,23 @@ extern "C" SEXP _nuggets_prune_non_maxima_(SEXP data, SEXP compare) {
     return cpp11::as_sexp(prune_non_maxima_(cpp11::as_cpp<cpp11::decay_t<list>>(data), cpp11::as_cpp<cpp11::decay_t<function>>(compare)));
   END_CPP11
 }
+// which_incomparable.cpp
+integers which_incomparable_(int n, function comparable);
+extern "C" SEXP _nuggets_which_incomparable_(SEXP n, SEXP comparable) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(which_incomparable_(cpp11::as_cpp<cpp11::decay_t<int>>(n), cpp11::as_cpp<cpp11::decay_t<function>>(comparable)));
+  END_CPP11
+}
 
 extern "C" {
 /* .Call calls */
 extern SEXP run_testthat_tests(void *);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_nuggets_dig_",              (DL_FUNC) &_nuggets_dig_,              6},
-    {"_nuggets_prune_non_maxima_", (DL_FUNC) &_nuggets_prune_non_maxima_, 2},
-    {"run_testthat_tests",         (DL_FUNC) &run_testthat_tests,         1},
+    {"_nuggets_dig_",                (DL_FUNC) &_nuggets_dig_,                6},
+    {"_nuggets_prune_non_maxima_",   (DL_FUNC) &_nuggets_prune_non_maxima_,   2},
+    {"_nuggets_which_incomparable_", (DL_FUNC) &_nuggets_which_incomparable_, 2},
+    {"run_testthat_tests",           (DL_FUNC) &run_testthat_tests,           1},
     {NULL, NULL, 0}
 };
 }

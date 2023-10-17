@@ -7,3 +7,7 @@ dig_ <- function(logicals_data, doubles_data, logicals_foci, doubles_foci, confi
 prune_non_maxima_ <- function(data, compare) {
   .Call(`_nuggets_prune_non_maxima_`, data, compare)
 }
+
+which_incomparable_ <- function(n, comparable) {
+  .Call(`_nuggets_which_incomparable_`, n, comparable)
+}
