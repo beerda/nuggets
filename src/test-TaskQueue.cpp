@@ -1,4 +1,5 @@
 #include <testthat.h>
+#include "common.h"
 #include "TaskQueue.h"
 
 context("TaskQueue.h") {

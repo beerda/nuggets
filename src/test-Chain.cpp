@@ -1,10 +1,6 @@
 #include <testthat.h>
-#include <cpp11.hpp>
+#include "common.h"
 #include "Chain.h"
-
-using namespace cpp11;
-using namespace std;
-
 
 context("Chain.h") {
     test_that("empty chain") {
