@@ -1,6 +1,5 @@
 #include <testthat.h>
 #include <cpp11.hpp>
-#include <boost/dynamic_bitset.hpp>
 #include "Chain.h"
 
 using namespace cpp11;
