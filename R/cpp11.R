@@ -4,10 +4,6 @@ dig_ <- function(logicals_data, doubles_data, logicals_foci, doubles_foci, confi
   .Call(`_nuggets_dig_`, logicals_data, doubles_data, logicals_foci, doubles_foci, configuration_list, fun)
 }
 
-prune_non_maxima_ <- function(data, compare) {
-  .Call(`_nuggets_prune_non_maxima_`, data, compare)
-}
-
 which_incomparable_ <- function(n, comparable) {
   .Call(`_nuggets_which_incomparable_`, n, comparable)
 }
