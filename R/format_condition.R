@@ -7,8 +7,8 @@
 #' @author Michal Burda
 #' @export
 #' @examples
-#' format_condition(NULL)              # returns "{}"
-#' format_condition(c("a", "b", "c"))  # returns "{a,b,c}"
+#' format_condition(NULL)              # returns {}
+#' format_condition(c("a", "b", "c"))  # returns {a,b,c}
 format_condition <- function(condition) {
     .must_be_character_vector(condition, null = TRUE)
 

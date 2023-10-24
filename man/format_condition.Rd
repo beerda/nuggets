@@ -15,6 +15,10 @@ a character scalar
 \description{
 Function takes a character vector of predicates and returns a formatted condition.
 }
+\examples{
+format_condition(NULL)              # returns {}
+format_condition(c("a", "b", "c"))  # returns {a,b,c}
+}
 \author{
 Michal Burda
 }
