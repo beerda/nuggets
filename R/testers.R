@@ -88,6 +88,47 @@
 
 .must_be_flag <- ..must_be_type(function(x) is_scalar_logical(x) && !is.na(x), "flag (TRUE or FALSE)")
 
+.must_be_null <- function(x,
+                          when,
+                          name = deparse(substitute(x)),
+                          call = caller_env()) {
+    if (!is.null(x)) {
+        na <- if (all(is.na(x))) " NA" else ""
+        cli_abort(c("{.var {name}} can't be non-NULL when {when}.",
+                    "x" = "You've supplied a {.cls {class(x)}}{na}."),
+                  call = call)
+    }
+}
+
+.must_not_be_null <- function(x,
+                              when = "",
+                              name = deparse(substitute(x)),
+                              call = caller_env()) {
+    if (is.null(x)) {
+        msg <- ifelse(when == "",
+                      "{.var {name}} must not be NULL",
+                      "{.var {name}} can't be NULL when {when}")
+        cli_abort(c(msg,
+                    "x" = "{.var {name}} is NULL."),
+                  call = call)
+    }
+}
+
+..must_be_type <- function(f, msg) {
+    function(x,
+             null = FALSE,
+             name = deparse(substitute(x)),
+             call = caller_env()) {
+        if (!isTRUE(f(x) | (isTRUE(null) && is.null(x)))) {
+            na <- if (all(is.na(x))) " NA" else ""
+            msg <- if (null) paste(msg, "or NULL") else msg
+            cli_abort(c("{.var {name}} must be a {msg}.",
+                        "x" = "You've supplied a {.cls {class(x)}}{na}."),
+                      call = call)
+        }
+    }
+}
+
 .must_be_atomic_scalar <- ..must_be_type(is_scalar_atomic, "atomic scalar")
 .must_be_integerish_scalar <- ..must_be_type(is_scalar_integerish, "integerish scalar")
 .must_be_double_scalar <- ..must_be_type(is_scalar_double, "double scalar")
