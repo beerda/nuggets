@@ -1,8 +1,8 @@
 #include <testthat.h>
 #include "common.h"
-#include "Chain.h"
+#include "dig/Chain.h"
 
-context("Chain.h") {
+context("dig/Chain.h") {
     test_that("empty chain") {
         Chain chain;
         expect_true(chain.empty());

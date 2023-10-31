@@ -1,16 +1,16 @@
 #include <iostream>
-#include "Config.h"
-#include "Digger.h"
-#include "ConditionArgumentator.h"
-#include "FociSupportsArgumentator.h"
-#include "IndicesArgumentator.h"
-#include "SumArgumentator.h"
-#include "SupportArgumentator.h"
-#include "WeightsArgumentator.h"
-#include "MinLengthFilter.h"
-#include "MaxLengthFilter.h"
-#include "MinSupportFilter.h"
-#include "DisjointFilter.h"
+#include "dig/Config.h"
+#include "dig/Digger.h"
+#include "dig/ConditionArgumentator.h"
+#include "dig/FociSupportsArgumentator.h"
+#include "dig/IndicesArgumentator.h"
+#include "dig/SumArgumentator.h"
+#include "dig/SupportArgumentator.h"
+#include "dig/WeightsArgumentator.h"
+#include "dig/MinLengthFilter.h"
+#include "dig/MaxLengthFilter.h"
+#include "dig/MinSupportFilter.h"
+#include "dig/DisjointFilter.h"
 
 
 [[cpp11::register]]

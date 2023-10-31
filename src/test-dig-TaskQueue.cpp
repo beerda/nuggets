@@ -1,8 +1,8 @@
 #include <testthat.h>
 #include "common.h"
-#include "TaskQueue.h"
+#include "dig/TaskQueue.h"
 
-context("TaskQueue.h") {
+context("dig/TaskQueue.h") {
     test_that("shorter has priority over longer") {
         Task t0({}, {10, 11, 12});
         Task t1({2, 3}, {10, 11, 12});

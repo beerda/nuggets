@@ -1,8 +1,8 @@
 #include <testthat.h>
 #include "common.h"
-#include "Task.h"
+#include "dig/Task.h"
 
-context("Task.h") {
+context("dig/Task.h") {
     test_that("==") {
         Task tA({1, 2, 3}, {4, 5, 6}, {7, 8, 9});
         Task tB({1, 2, 3}, {4, 5, 6}, {7, 8, 9});
