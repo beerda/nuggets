@@ -9,7 +9,7 @@ dig_implications(
   antecedent = everything(),
   consequent = everything(),
   disjoint = NULL,
-  min_length = 0,
+  min_length = 0L,
   max_length = Inf,
   min_support = 0.02,
   min_confidence = 0.7,
