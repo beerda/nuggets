@@ -11,7 +11,7 @@ public:
     Chain()
     { }
 
-    Chain(doubles values)
+    Chain(const doubles& values)
     {
         numData.reserve(values.size());
         cachedSum = 0;
@@ -21,7 +21,7 @@ public:
         }
     }
 
-    Chain(logicals values)
+    Chain(const logicals& values)
     {
         bitData.reserve(values.size());
         cachedSum = 0;
