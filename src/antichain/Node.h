@@ -56,7 +56,9 @@ public:
 
     void insertAsChildren(const Condition& condition) {
         unordered_set<int> toAdd = condition.getPredicates();
-        toAdd.erase(predicate);
+        if (!isRoot()) {
+            toAdd.erase(predicate);
+        }
         for (int p : prefix) {
             toAdd.erase(p);
         }

@@ -1,5 +1,5 @@
 #include <testthat.h>
-#include <iostream>
+//#include <iostream>
 #include "common.h"
 #include "antichain/Tree.h"
 
@@ -14,9 +14,17 @@ context("antichain/Tree.h") {
         expect_true(t.getNumNodes() == 1);
     }
 
+    test_that("special -1") {
+        Tree t;
+
+        expect_true(t.getNumNodes() == 1);
+        expect_true(t.insertIfIncomparable(Condition({-1})));
+        expect_false(t.insertIfIncomparable(Condition({-1})));
+        expect_true(t.getNumNodes() == 2);
+    }
+
     test_that("incremental complex test A") {
         Tree t;
-        bool res;
 
         expect_true(t.getNumNodes() == 1);
 
@@ -69,7 +77,6 @@ context("antichain/Tree.h") {
 
     test_that("bulk 1 complex test A") {
         Tree t;
-        bool res;
 
         expect_true(t.insertIfIncomparable(Condition({1, 2, 5})));
         expect_true(t.insertIfIncomparable(Condition({3, 5, 2})));
@@ -101,7 +108,6 @@ context("antichain/Tree.h") {
 
     test_that("bulk 2 complex test A") {
         Tree t;
-        bool res;
 
         expect_true(t.insertIfIncomparable(Condition({9})));
         expect_true(t.insertIfIncomparable(Condition({2, 4, 6})));
@@ -133,7 +139,6 @@ context("antichain/Tree.h") {
 
     test_that("bulk 3 complex test A") {
         Tree t;
-        bool res;
 
         expect_true(t.insertIfIncomparable(Condition({6, 4, 2})));
         expect_true(t.insertIfIncomparable(Condition({5, 1, 2})));
