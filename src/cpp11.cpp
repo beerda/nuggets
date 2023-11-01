@@ -5,18 +5,18 @@
 #include "cpp11/declarations.hpp"
 #include <R_ext/Visibility.h>
 
-// antichain.cpp
-integers antichain_(list x);
-extern "C" SEXP _nuggets_antichain_(SEXP x) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(antichain_(cpp11::as_cpp<cpp11::decay_t<list>>(x)));
-  END_CPP11
-}
 // dig.cpp
 list dig_(list logicals_data, list doubles_data, list logicals_foci, list doubles_foci, list configuration_list, cpp11::function fun);
 extern "C" SEXP _nuggets_dig_(SEXP logicals_data, SEXP doubles_data, SEXP logicals_foci, SEXP doubles_foci, SEXP configuration_list, SEXP fun) {
   BEGIN_CPP11
     return cpp11::as_sexp(dig_(cpp11::as_cpp<cpp11::decay_t<list>>(logicals_data), cpp11::as_cpp<cpp11::decay_t<list>>(doubles_data), cpp11::as_cpp<cpp11::decay_t<list>>(logicals_foci), cpp11::as_cpp<cpp11::decay_t<list>>(doubles_foci), cpp11::as_cpp<cpp11::decay_t<list>>(configuration_list), cpp11::as_cpp<cpp11::decay_t<cpp11::function>>(fun)));
+  END_CPP11
+}
+// which_antichain.cpp
+integers which_antichain_(list x);
+extern "C" SEXP _nuggets_which_antichain_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(which_antichain_(cpp11::as_cpp<cpp11::decay_t<list>>(x)));
   END_CPP11
 }
 
@@ -25,9 +25,9 @@ extern "C" {
 extern SEXP run_testthat_tests(void *);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_nuggets_antichain_", (DL_FUNC) &_nuggets_antichain_, 1},
-    {"_nuggets_dig_",       (DL_FUNC) &_nuggets_dig_,       6},
-    {"run_testthat_tests",  (DL_FUNC) &run_testthat_tests,  1},
+    {"_nuggets_dig_",             (DL_FUNC) &_nuggets_dig_,             6},
+    {"_nuggets_which_antichain_", (DL_FUNC) &_nuggets_which_antichain_, 1},
+    {"run_testthat_tests",        (DL_FUNC) &run_testthat_tests,        1},
     {NULL, NULL, 0}
 };
 }

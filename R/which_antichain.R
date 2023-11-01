@@ -15,5 +15,5 @@ which_antichain <- function(x) {
 
     x <- lapply(x, as.integer)
 
-    antichain_(x)
+    which_antichain_(x)
 }

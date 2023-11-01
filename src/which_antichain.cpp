@@ -4,13 +4,13 @@
 
 
 [[cpp11::register]]
-integers antichain_(list x)
+integers which_antichain_(list x)
 {
     writable::integers result;
     Data data(x);
     Tree tree;
 
-    for (int i = 0; i < data.size(); ++i) {
+    for (size_t i = 0; i < data.size(); ++i) {
         if (tree.insertIfIncomparable(data.getCondition(i))) {
             result.push_back(i + 1);
         }
