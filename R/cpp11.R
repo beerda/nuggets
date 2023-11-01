@@ -7,7 +7,3 @@ antichain_ <- function(x) {
 dig_ <- function(logicals_data, doubles_data, logicals_foci, doubles_foci, configuration_list, fun) {
   .Call(`_nuggets_dig_`, logicals_data, doubles_data, logicals_foci, doubles_foci, configuration_list, fun)
 }
-
-which_incomparable_ <- function(n, comparable) {
-  .Call(`_nuggets_which_incomparable_`, n, comparable)
-}
