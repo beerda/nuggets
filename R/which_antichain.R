@@ -13,10 +13,6 @@
 which_antichain <- function(x) {
     .must_be_list_of_integerishes(x)
 
-    if (length(x) == 0L) {
-        return(integer(0))
-    }
-
     x <- lapply(x, as.integer)
 
     which_antichain_(x)

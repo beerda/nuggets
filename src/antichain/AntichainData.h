@@ -1,15 +1,16 @@
 #pragma once
 
 #include <vector>
+#include "../common.h"
 #include "Condition.h"
 
 
-class Data {
+class AntichainData {
 public:
-    Data()
+    AntichainData()
     { }
 
-    Data(const list& data)
+    AntichainData(list data)
     {
         for (const integers& values : data)
             addCondition(values);

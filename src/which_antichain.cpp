@@ -1,5 +1,5 @@
 #include "common.h"
-#include "antichain/Data.h"
+#include "antichain/AntichainData.h"
 #include "antichain/Tree.h"
 
 
@@ -7,7 +7,7 @@
 integers which_antichain_(list x)
 {
     writable::integers result;
-    Data data(x);
+    AntichainData data(x);
     Tree tree;
 
     for (size_t i = 0; i < data.size(); ++i) {
