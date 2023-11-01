@@ -5,6 +5,13 @@
 #include "cpp11/declarations.hpp"
 #include <R_ext/Visibility.h>
 
+// antichain.cpp
+integers antichain_(list x);
+extern "C" SEXP _nuggets_antichain_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(antichain_(cpp11::as_cpp<cpp11::decay_t<list>>(x)));
+  END_CPP11
+}
 // dig.cpp
 list dig_(list logicals_data, list doubles_data, list logicals_foci, list doubles_foci, list configuration_list, cpp11::function fun);
 extern "C" SEXP _nuggets_dig_(SEXP logicals_data, SEXP doubles_data, SEXP logicals_foci, SEXP doubles_foci, SEXP configuration_list, SEXP fun) {
@@ -25,6 +32,7 @@ extern "C" {
 extern SEXP run_testthat_tests(void *);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_nuggets_antichain_",          (DL_FUNC) &_nuggets_antichain_,          1},
     {"_nuggets_dig_",                (DL_FUNC) &_nuggets_dig_,                6},
     {"_nuggets_which_incomparable_", (DL_FUNC) &_nuggets_which_incomparable_, 2},
     {"run_testthat_tests",           (DL_FUNC) &run_testthat_tests,           1},
