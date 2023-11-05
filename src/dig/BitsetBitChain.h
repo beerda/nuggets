@@ -1,11 +1,12 @@
 #pragma once
 
-#include <boost/dynamic_bitset.hpp>
 #include "../common.h"
+#include "Bitset.h"
 
 
 /**
- * Implementation of chain of bits based on a Boost dynamic_bitset.
+ * Implementation of chain of bits based on the Bitset class, which realizes
+ * a growable array of bits.
  */
 class BitsetBitChain {
 public:
@@ -62,6 +63,6 @@ public:
     { return !(*this == other); }
 
 private:
-    boost::dynamic_bitset<> values;
+    Bitset values;
     double cachedSum;
 };
