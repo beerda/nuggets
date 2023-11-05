@@ -4,3 +4,10 @@
 
 using namespace cpp11;
 using namespace std;
+
+
+enum TNorm {
+    GODEL,
+    GOGUEN,
+    LUKASIEWICZ
+};

@@ -102,6 +102,6 @@ public:
     { return !(*this == other); }
 
 private:
-    VectorNumChain numData;
+    VectorNumChain<TNorm::GOGUEN> numData;
     BitsetBitChain bitData;
 };

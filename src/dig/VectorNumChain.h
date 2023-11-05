@@ -7,6 +7,7 @@
 /**
  * Implementation of chain of numbers based on a vector.
  */
+template <TNorm TNORM>
 class VectorNumChain {
 public:
     VectorNumChain()
@@ -36,14 +37,7 @@ public:
         cachedSum += value;
     }
 
-    void conjunctWith(const VectorNumChain& other)
-    {
-        cachedSum = 0;
-        for (size_t i = 0; i < values.size(); i++) {
-            values[i] *= other.values[i];
-            cachedSum += values[i];
-        }
-    }
+    void conjunctWith(const VectorNumChain<TNORM>& other);
 
     size_t size() const
     { return values.size(); }
