@@ -24,7 +24,7 @@ LinkingTo:
     BH,
     cpp11,
     testthat
-SystemRequirements: C++11
+SystemRequirements: C++20
 Suggests: 
     testthat (>= 3.0.0),
     xml2

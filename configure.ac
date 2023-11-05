@@ -15,8 +15,8 @@ if test -z "${R_HOME}"; then
 fi
 
 RBIN="${R_HOME}/bin/R"
-CXX="`"${RBIN}" CMD config CXX11` `"${RBIN}" CMD config CXX11STD`"
-CXXFLAGS=`"${RBIN}" CMD config CXX11FLAGS`
+CXX="`"${RBIN}" CMD config CXX20` `"${RBIN}" CMD config CXX20STD`"
+CXXFLAGS=`"${RBIN}" CMD config CXX20FLAGS`
 PKG_LIBS="${PKG_LIBS}"
 
 AC_LANG(C++)

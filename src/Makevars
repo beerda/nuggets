@@ -1,5 +1,5 @@
-# Enable C++11
-CXX_STD = CXX11
+# Enable C++20
+CXX_STD = CXX20
 
 PKG_CPPFLAGS=-I.
 PKG_LIBS=
