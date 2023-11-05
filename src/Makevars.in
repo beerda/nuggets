@@ -1,0 +1,17 @@
+# Enable C++11
+CXX_STD = CXX11
+
+PKG_CPPFLAGS=-I.
+PKG_LIBS=@PKG_LIBS@
+
+SOURCES=@ROOTDIR_SOURCES@ @SUBDIR_SOURCES@
+
+# Obtain the object files
+OBJECTS=$(SOURCES:.cpp=.o)
+
+# Make the shared object
+all: $(SHLIB)
+
+# Provide recipe to remove all objects
+clean:
+	@rm -f $(OBJECTS)

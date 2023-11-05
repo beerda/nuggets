@@ -48,3 +48,8 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 .Rproj.user
+
+# Autoconf-related
+autom4te.cache
+config.log
+config.status
