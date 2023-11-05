@@ -1,9 +1,8 @@
 #pragma once
 
-#include <math.h>
-#include <numeric>
-#include <boost/dynamic_bitset.hpp>
 #include "../common.h"
+#include "VectorNumChain.h"
+#include "BitsetBitChain.h"
 
 
 class DualChain {
@@ -12,25 +11,12 @@ public:
     { }
 
     DualChain(const doubles& values)
-    {
-        numData.reserve(values.size());
-        cachedSum = 0;
-        for (R_xlen_t i = 0; i < values.size(); i++) {
-            numData.push_back(values.at(i));
-            cachedSum += values.at(i);
-        }
-    }
+        : numData(values)
+    { }
 
     DualChain(const logicals& values)
-    {
-        bitData.reserve(values.size());
-        cachedSum = 0;
-        for (R_xlen_t i = 0; i < values.size(); i++) {
-            bitData.push_back(values.at(i));
-            if (values.at(i))
-                cachedSum++;
-        }
-    }
+        : bitData(values)
+    { }
 
     size_t size() const
     { return isBitwise() ? bitData.size() : numData.size(); }
@@ -47,7 +33,7 @@ public:
             numData.clear();
             numData.reserve(size());
             for (size_t i = 0; i < size(); i++) {
-                numData.push_back(1.0 * bitData[i]);
+                numData.push_back(1.0 * bitData.at(i));
             }
         }
     }
@@ -58,28 +44,20 @@ public:
             throw new runtime_error("Incompatible chain lengths");
 
         } else if (isBitwise() && chain.isBitwise()) {
-            bitData &= chain.bitData;
+            bitData.conjunctWith(chain.bitData);
             numData.clear();
 
         } else if (isNumeric() && chain.isNumeric()) {
-            for (size_t i = 0; i < numData.size(); i++) {
-                numData[i] *= chain.numData[i];
-            }
+            numData.conjunctWith(chain.numData);
             bitData.clear();
 
         } else {
             throw new runtime_error("Incompatible chain types");
         }
-
-        if (isBitwise()) {
-            cachedSum = 1.0 * bitData.count();
-        } else {
-            cachedSum = accumulate(numData.begin(), numData.end(), 0.0);
-        }
     }
 
     double getSum() const
-    { return cachedSum; }
+    { return isBitwise() ? bitData.getSum() : numData.getSum(); }
 
     double getSupport() const
     {
@@ -107,12 +85,12 @@ public:
         printf("\n");
         printf("numData:");
         for (size_t i = 0; i < numData.size(); i++) {
-            printf(" %f", numData[i]);
+            printf(" %f", numData.at(i));
         }
         printf("\n");
         printf("bitData:");
         for (size_t i = 0; i < bitData.size(); i++) {
-            printf(" %d", bitData[i]);
+            printf(" %d", bitData.at(i));
         }
         printf("\n");
     }
@@ -124,8 +102,6 @@ public:
     { return !(*this == other); }
 
 private:
-    vector<double> numData;
-    boost::dynamic_bitset<> bitData;
-    double cachedSum = -1;
-
+    VectorNumChain numData;
+    BitsetBitChain bitData;
 };
