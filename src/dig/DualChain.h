@@ -6,12 +6,12 @@
 #include "../common.h"
 
 
-class Chain {
+class DualChain {
 public:
-    Chain()
+    DualChain()
     { }
 
-    Chain(const doubles& values)
+    DualChain(const doubles& values)
     {
         numData.reserve(values.size());
         cachedSum = 0;
@@ -21,7 +21,7 @@ public:
         }
     }
 
-    Chain(const logicals& values)
+    DualChain(const logicals& values)
     {
         bitData.reserve(values.size());
         cachedSum = 0;
@@ -52,7 +52,7 @@ public:
         }
     }
 
-    void combineWith(const Chain& chain)
+    void combineWith(const DualChain& chain)
     {
         if (size() != chain.size()) {
             throw new runtime_error("Incompatible chain lengths");
@@ -117,10 +117,10 @@ public:
         printf("\n");
     }
 
-    bool operator == (const Chain& other) const
+    bool operator == (const DualChain& other) const
     { return numData == other.numData && bitData == other.bitData; }
 
-    bool operator != (const Chain& other) const
+    bool operator != (const DualChain& other) const
     { return !(*this == other); }
 
 private:

@@ -35,7 +35,7 @@ public:
                 continue;
 
             names.push_back(foci.names()[i]);
-            Chain chain = data.getFocus(i);
+            DualChain chain = data.getFocus(i);
             if (!task.getChain().empty()) {
                 // chain is not empty when the condition is of length > 0
                 chain.combineWith(task.getChain());

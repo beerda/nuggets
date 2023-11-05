@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Chain.h"
+#include "DualChain.h"
 
 
 class Data {
@@ -22,7 +22,7 @@ public:
             }
         }
 
-        chains.push_back(Chain(values));
+        chains.push_back(DualChain(values));
     }
 
     template <typename T>
@@ -48,7 +48,7 @@ public:
             }
         }
 
-        foci.push_back(Chain(values));
+        foci.push_back(DualChain(values));
     }
 
     template <typename T>
@@ -60,10 +60,10 @@ public:
         }
     }
 
-    const Chain& getChain(size_t i) const
+    const DualChain& getChain(size_t i) const
     { return chains.at(i); }
 
-    const Chain& getFocus(size_t i) const
+    const DualChain& getFocus(size_t i) const
     { return foci.at(i); }
 
     size_t size() const
@@ -84,6 +84,6 @@ public:
     }
 
 private:
-    vector<Chain> chains;
-    vector<Chain> foci;
+    vector<DualChain> chains;
+    vector<DualChain> foci;
 };
