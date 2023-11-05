@@ -27,7 +27,7 @@ R package for searching the subspaces described with elementary conjunctions
 
 ## Installation
 
-You can install the development version of nuggets from [GitHub](https://github.com/) with:
+You can install the development version of `nuggets` from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")

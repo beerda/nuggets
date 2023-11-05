@@ -18,7 +18,7 @@ conjunctions
 
 ## Installation
 
-You can install the development version of nuggets from
+You can install the development version of `nuggets` from
 [GitHub](https://github.com/) with:
 
 ``` r
