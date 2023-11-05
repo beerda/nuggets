@@ -21,7 +21,6 @@ Imports:
     tibble,
     tidyselect
 LinkingTo: 
-    BH,
     cpp11,
     testthat
 SystemRequirements: C++20
