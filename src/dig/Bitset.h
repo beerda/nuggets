@@ -65,7 +65,7 @@ public:
     void operator &= (const Bitset& other)
     {
         if (n != other.n) {
-            throw std::invalid_argument("Bitset::operator&=: size mismatch");
+            throw std::invalid_argument("Bitset::operator&=: incompatible sizes");
         }
         for (size_t i = 0; i < data.size(); i++) {
             data[i] &= other.data[i];
@@ -74,9 +74,9 @@ public:
 
     bool operator == (const Bitset& other) const
     {
-        if (n != other.n) {
+        if (n != other.n)
             return false;
-        }
+
         return data == other.data;
     }
 
