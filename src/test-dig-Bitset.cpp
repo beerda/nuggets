@@ -54,12 +54,15 @@ context("dig/Bitset.h") {
         Bitset b;
 
         b.reserve(Bitset::CHUNK_SIZE * 2);
+        expect_true(b.size() == 0);
         expect_true(b.getMutableData().capacity() == 2);
 
         b.reserve(Bitset::CHUNK_SIZE * 5);
+        expect_true(b.size() == 0);
         expect_true(b.getMutableData().capacity() == 5);
 
         b.reserve(Bitset::CHUNK_SIZE * 5 + 1);
+        expect_true(b.size() == 0);
         expect_true(b.getMutableData().capacity() == 6);
     }
 }
