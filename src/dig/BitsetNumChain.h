@@ -30,6 +30,14 @@ public:
         data.push_back(0); // +1 to make room for shifts in sum()
     }
 
+    BitsetNumChain(const doubles& vals)
+        : BitsetNumChain()
+    {
+        reserve(vals.size());
+        for (R_xlen_t i = 0; i < vals.size(); i++)
+            push_back(vals.at(i));
+    }
+
     void clear()
     {
         data.clear();
