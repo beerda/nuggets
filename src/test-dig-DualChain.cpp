@@ -64,14 +64,14 @@ context("dig/DualChain.h") {
         DualChain chain1(data1);
         DualChain chain2(data2);
 
-        chain1.combineWith(chain1);
+        chain1.conjunctWith(chain1);
         expect_true(!chain1.empty());
         expect_true(chain1.isBitwise());
         expect_true(!chain1.isNumeric());
         expect_true(chain1.size() == 10);
         expect_true(chain1.getSum() == 2.0);
 
-        chain2.combineWith(chain1);
+        chain2.conjunctWith(chain1);
         expect_true(!chain2.empty());
         expect_true(chain2.isBitwise());
         expect_true(!chain2.isNumeric());
@@ -87,7 +87,7 @@ context("dig/DualChain.h") {
         DualChain chain1(data);
         DualChain chain2(data);
 
-        chain2.combineWith(chain1);
+        chain2.conjunctWith(chain1);
         expect_true(!chain2.empty());
         expect_true(!chain2.isBitwise());
         expect_true(chain2.isNumeric());
@@ -101,7 +101,7 @@ context("dig/DualChain.h") {
         DualChain chain1(data1);
         DualChain chain2(data2);
 
-        expect_error(chain2.combineWith(chain1));
+        expect_error(chain2.conjunctWith(chain1));
     }
 
     test_that("combine both & num") {
@@ -118,7 +118,7 @@ context("dig/DualChain.h") {
         expect_true(chain2.isBitwise());
         expect_true(chain2.isNumeric());
 
-        chain2.combineWith(chain1);
+        chain2.conjunctWith(chain1);
         expect_true(!chain2.empty());
         expect_true(!chain2.isBitwise());
         expect_true(chain2.isNumeric());
@@ -140,7 +140,7 @@ context("dig/DualChain.h") {
         expect_true(chain2.isBitwise());
         expect_true(chain2.isNumeric());
 
-        chain2.combineWith(chain1);
+        chain2.conjunctWith(chain1);
         expect_true(!chain2.empty());
         expect_true(chain2.isBitwise());
         expect_true(!chain2.isNumeric());
@@ -165,7 +165,7 @@ context("dig/DualChain.h") {
         expect_true(chain2.isBitwise());
         expect_true(chain2.isNumeric());
 
-        chain2.combineWith(chain1);
+        chain2.conjunctWith(chain1);
         expect_true(!chain2.empty());
         expect_true(chain2.isBitwise());
         expect_true(!chain2.isNumeric());

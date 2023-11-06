@@ -159,7 +159,7 @@ public:
                         chain.toNumeric();
                     }
                 }
-                chain.combineWith(prefixChain);
+                chain.conjunctWith(prefixChain);
             }
         }
     }

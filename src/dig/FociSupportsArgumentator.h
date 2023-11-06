@@ -38,7 +38,7 @@ public:
             DualChain chain = data.getFocus(i);
             if (!task.getChain().empty()) {
                 // chain is not empty when the condition is of length > 0
-                chain.combineWith(task.getChain());
+                chain.conjunctWith(task.getChain());
             }
             supports.push_back(chain.getSupport());
         }

@@ -38,7 +38,7 @@ public:
         }
     }
 
-    void combineWith(const DualChain& chain)
+    void conjunctWith(const DualChain& chain)
     {
         if (size() != chain.size()) {
             throw new runtime_error("Incompatible chain lengths");
