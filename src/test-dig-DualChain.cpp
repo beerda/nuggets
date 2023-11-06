@@ -2,9 +2,12 @@
 #include "common.h"
 #include "dig/DualChain.h"
 
+using DualChainTestType = DualChain<BitsetBitChain, VectorNumChain<GOGUEN>>;
+
+
 context("dig/DualChain.h") {
     test_that("empty chain") {
-        DualChain chain;
+        DualChainTestType chain;
         expect_true(chain.empty());
         expect_true(chain.size() == 0);
     }
@@ -14,7 +17,7 @@ context("dig/DualChain.h") {
         for (int i = 0; i < data.size(); i++) {
             data[i] = (i == 2 || i == 5);
         }
-        DualChain chain(data);
+        DualChainTestType chain(data);
 
         expect_true(!chain.empty());
         expect_true(chain.isBitwise());
@@ -29,7 +32,7 @@ context("dig/DualChain.h") {
         for(size_t i = 0; i < 10; i++) {
             data[i] = i / 10.0;
         }
-        DualChain chain(data);
+        DualChainTestType chain(data);
 
         expect_true(!chain.empty());
         expect_true(!chain.isBitwise());
@@ -44,7 +47,7 @@ context("dig/DualChain.h") {
         for (int i = 0; i < data.size(); i++) {
             data[i] = (i == 2 || i == 5);
         }
-        DualChain chain(data);
+        DualChainTestType chain(data);
 
         chain.toNumeric();
         expect_true(!chain.empty());
@@ -61,8 +64,8 @@ context("dig/DualChain.h") {
             data1[i] = (i == 2 || i == 5);
             data2[i] = (i == 2 || i == 8);
         }
-        DualChain chain1(data1);
-        DualChain chain2(data2);
+        DualChainTestType chain1(data1);
+        DualChainTestType chain2(data2);
 
         chain1.conjunctWith(chain1);
         expect_true(!chain1.empty());
@@ -84,8 +87,8 @@ context("dig/DualChain.h") {
         for(size_t i = 0; i < 10; i++) {
             data[i] = i / 10.0;
         }
-        DualChain chain1(data);
-        DualChain chain2(data);
+        DualChainTestType chain1(data);
+        DualChainTestType chain2(data);
 
         chain2.conjunctWith(chain1);
         expect_true(!chain2.empty());
@@ -98,8 +101,8 @@ context("dig/DualChain.h") {
     test_that("combine incompatible") {
         writable::logicals data1(10);
         writable::doubles data2(10);
-        DualChain chain1(data1);
-        DualChain chain2(data2);
+        DualChainTestType chain1(data1);
+        DualChainTestType chain2(data2);
 
         expect_error(chain2.conjunctWith(chain1));
     }
@@ -111,8 +114,8 @@ context("dig/DualChain.h") {
             data1[i] = i / 10.0;
             data2[i] = (i == 2 || i == 5);
         }
-        DualChain chain1(data1);
-        DualChain chain2(data2);
+        DualChainTestType chain1(data1);
+        DualChainTestType chain2(data2);
 
         chain2.toNumeric();
         expect_true(chain2.isBitwise());
@@ -133,8 +136,8 @@ context("dig/DualChain.h") {
             data1[i] = (i == 2 || i == 5);
             data2[i] = (i == 2 || i == 8);
         }
-        DualChain chain1(data1);
-        DualChain chain2(data2);
+        DualChainTestType chain1(data1);
+        DualChainTestType chain2(data2);
 
         chain2.toNumeric();
         expect_true(chain2.isBitwise());
@@ -155,8 +158,8 @@ context("dig/DualChain.h") {
             data1[i] = (i == 2 || i == 5);
             data2[i] = (i == 2 || i == 8);
         }
-        DualChain chain1(data1);
-        DualChain chain2(data2);
+        DualChainTestType chain1(data1);
+        DualChainTestType chain2(data2);
 
         chain1.toNumeric();
         chain2.toNumeric();

@@ -22,7 +22,7 @@ public:
             }
         }
 
-        chains.push_back(DualChain(values));
+        chains.push_back(DualChainType(values));
     }
 
     template <typename T>
@@ -48,7 +48,7 @@ public:
             }
         }
 
-        foci.push_back(DualChain(values));
+        foci.push_back(DualChainType(values));
     }
 
     template <typename T>
@@ -60,10 +60,10 @@ public:
         }
     }
 
-    const DualChain& getChain(size_t i) const
+    const DualChainType& getChain(size_t i) const
     { return chains.at(i); }
 
-    const DualChain& getFocus(size_t i) const
+    const DualChainType& getFocus(size_t i) const
     { return foci.at(i); }
 
     size_t size() const
@@ -84,6 +84,6 @@ public:
     }
 
 private:
-    vector<DualChain> chains;
-    vector<DualChain> foci;
+    vector<DualChainType> chains;
+    vector<DualChainType> foci;
 };

@@ -141,10 +141,10 @@ public:
         return result;
     }
 
-    const DualChain& getChain() const
+    const DualChainType& getChain() const
     { return chain; }
 
-    const DualChain& getPrefixChain() const
+    const DualChainType& getPrefixChain() const
     { return prefixChain; }
 
     void updateChain(const Data& data)
@@ -202,8 +202,8 @@ private:
     /// A vector of predicates, which will be "available" in sub tasks
     vector<int> soFar;
 
-    DualChain chain;
+    DualChainType chain;
 
-    DualChain prefixChain;
+    DualChainType prefixChain;
 
 };

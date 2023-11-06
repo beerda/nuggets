@@ -2,9 +2,11 @@
 
 #include "../common.h"
 #include "VectorNumChain.h"
+#include "BitsetNumChain.h"
 #include "BitsetBitChain.h"
 
 
+template <typename BITCHAIN, typename NUMCHAIN>
 class DualChain {
 public:
     DualChain()
@@ -102,6 +104,9 @@ public:
     { return !(*this == other); }
 
 private:
-    VectorNumChain<TNorm::GOGUEN> numData;
-    BitsetBitChain bitData;
+    BITCHAIN bitData;
+    NUMCHAIN numData;
 };
+
+
+using DualChainType = DualChain<BitsetBitChain, VectorNumChain<GOGUEN>>;
