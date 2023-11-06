@@ -41,7 +41,7 @@ public:
     void conjunctWith(const BitsetBitChain& other)
     {
         values &= other.values;
-        cachedSum = 1.0 * values.count();
+        cachedSum = 1.0 * values.getSum();
     }
 
     size_t size() const

@@ -12,7 +12,7 @@ context("dig/BitsetNumChain.h") {
 
         expect_true(b.empty());
         expect_true(b.size() == 0);
-        expect_true(b.sum() == 0);
+        expect_true(b.getSum() == 0);
         expect_true(b.getMutableData().size() == 1);
         expect_true(b.getMutableData().back() == 0UL);
 
@@ -20,7 +20,7 @@ context("dig/BitsetNumChain.h") {
         expect_true(!b.empty());
         expect_true(b.size() == 1);
         expect_true(abs(b.at(0) - 0.496063) < 1e-6);
-        expect_true(abs(b.sum() - 0.496063) < 1e-6);
+        expect_true(abs(b.getSum() - 0.496063) < 1e-6);
         expect_true(b.getMutableData().size() == 2);
 
         b.push_back(0.1);
@@ -28,7 +28,7 @@ context("dig/BitsetNumChain.h") {
         expect_true(b.size() == 2);
         expect_true(abs(b.at(0) - 0.496063) < 1e-6);
         expect_true(abs(b.at(1) - 0.094488) < 1e-6);
-        expect_true(abs(b.sum() - 0.5905512) < 1e-6);
+        expect_true(abs(b.getSum() - 0.5905512) < 1e-6);
         expect_true(b.getMutableData().size() == EXPECTED_DATA_SIZE(b.size()));
 
         b.push_back(0.0);
@@ -37,7 +37,7 @@ context("dig/BitsetNumChain.h") {
         expect_true(abs(b.at(0) - 0.496063) < 1e-6);
         expect_true(abs(b.at(1) - 0.094488) < 1e-6);
         expect_true(abs(b.at(2) - 0.000000) < 1e-6);
-        expect_true(abs(b.sum() - 0.5905512) < 1e-6);
+        expect_true(abs(b.getSum() - 0.5905512) < 1e-6);
         expect_true(b.getMutableData().size() == EXPECTED_DATA_SIZE(b.size()));
 
         b.push_back(1.0);
@@ -47,7 +47,7 @@ context("dig/BitsetNumChain.h") {
         expect_true(abs(b.at(1) - 0.094488) < 1e-6);
         expect_true(abs(b.at(2) - 0.000000) < 1e-6);
         expect_true(abs(b.at(3) - 1.000000) < 1e-6);
-        expect_true(abs(b.sum() - 1.5905512) < 1e-6);
+        expect_true(abs(b.getSum() - 1.5905512) < 1e-6);
         expect_true(b.getMutableData().size() == EXPECTED_DATA_SIZE(b.size()));
 
         b.push_back(1.0);
@@ -58,7 +58,7 @@ context("dig/BitsetNumChain.h") {
         expect_true(abs(b.at(2) - 0.000000) < 1e-6);
         expect_true(abs(b.at(3) - 1.000000) < 1e-6);
         expect_true(abs(b.at(4) - 1.000000) < 1e-6);
-        expect_true(abs(b.sum() - 2.5905512) < 1e-6);
+        expect_true(abs(b.getSum() - 2.5905512) < 1e-6);
         expect_true(b.getMutableData().size() == EXPECTED_DATA_SIZE(b.size()));
 
         b.push_back(1.0);
@@ -70,7 +70,7 @@ context("dig/BitsetNumChain.h") {
         expect_true(abs(b.at(3) - 1.000000) < 1e-6);
         expect_true(abs(b.at(4) - 1.000000) < 1e-6);
         expect_true(abs(b.at(5) - 1.000000) < 1e-6);
-        expect_true(abs(b.sum() - 3.5905512) < 1e-6);
+        expect_true(abs(b.getSum() - 3.5905512) < 1e-6);
         expect_true(b.getMutableData().size() == EXPECTED_DATA_SIZE(b.size()));
 
         b.push_back(0.0);
@@ -83,7 +83,7 @@ context("dig/BitsetNumChain.h") {
         expect_true(abs(b.at(4) - 1.000000) < 1e-6);
         expect_true(abs(b.at(5) - 1.000000) < 1e-6);
         expect_true(abs(b.at(6) - 0.000000) < 1e-6);
-        expect_true(abs(b.sum() - 3.5905512) < 1e-6);
+        expect_true(abs(b.getSum() - 3.5905512) < 1e-6);
         expect_true(b.getMutableData().size() == EXPECTED_DATA_SIZE(b.size()));
 
         b.push_back(1.0);
@@ -97,7 +97,7 @@ context("dig/BitsetNumChain.h") {
         expect_true(abs(b.at(5) - 1.000000) < 1e-6);
         expect_true(abs(b.at(6) - 0.000000) < 1e-6);
         expect_true(abs(b.at(7) - 1.000000) < 1e-6);
-        expect_true(abs(b.sum() - 4.5905512) < 1e-6);
+        expect_true(abs(b.getSum() - 4.5905512) < 1e-6);
         expect_true(b.getMutableData().size() == EXPECTED_DATA_SIZE(b.size()));
 
         b.push_back(1.0);
@@ -112,7 +112,7 @@ context("dig/BitsetNumChain.h") {
         expect_true(abs(b.at(6) - 0.000000) < 1e-6);
         expect_true(abs(b.at(7) - 1.000000) < 1e-6);
         expect_true(abs(b.at(7) - 1.000000) < 1e-6);
-        expect_true(abs(b.sum() - 5.5905512) < 1e-6);
+        expect_true(abs(b.getSum() - 5.5905512) < 1e-6);
         expect_true(b.getMutableData().size() == EXPECTED_DATA_SIZE(b.size()));
     }
 

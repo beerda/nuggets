@@ -50,7 +50,7 @@ public:
         return (data[index / CHUNK_SIZE] >> (index % CHUNK_SIZE)) & 1;
     }
 
-    size_t count() const
+    size_t getSum() const
     {
         size_t result = 0;
         for (size_t i = 0; i < data.size(); i++) {

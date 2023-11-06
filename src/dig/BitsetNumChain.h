@@ -84,7 +84,7 @@ public:
 
     void conjunctWith(const BitsetNumChain& other);
 
-    double sum() const
+    double getSum() const
     {
         // TODO: as constant
         uintmax_t mask = CHUNK_MASK;

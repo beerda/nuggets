@@ -8,27 +8,27 @@ context("dig/Bitset.h") {
 
         expect_true(b.empty());
         expect_true(b.size() == 0);
-        expect_true(b.count() == 0);
+        expect_true(b.getSum() == 0);
 
         b.push_back(true);
         expect_true(!b.empty());
         expect_true(b.size() == 1);
-        expect_true(b.count() == 1);
+        expect_true(b.getSum() == 1);
 
         b.push_back(false);
         expect_true(!b.empty());
         expect_true(b.size() == 2);
-        expect_true(b.count() == 1);
+        expect_true(b.getSum() == 1);
 
         b.push_back(true);
         expect_true(!b.empty());
         expect_true(b.size() == 3);
-        expect_true(b.count() == 2);
+        expect_true(b.getSum() == 2);
 
         b.push_back(true);
         expect_true(!b.empty());
         expect_true(b.size() == 4);
-        expect_true(b.count() == 3);
+        expect_true(b.getSum() == 3);
 
         for (int i = 0; i < 100; ++i)
             b.push_back(false);
@@ -37,7 +37,7 @@ context("dig/Bitset.h") {
 
         expect_true(!b.empty());
         expect_true(b.size() == 105);
-        expect_true(b.count() == 4);
+        expect_true(b.getSum() == 4);
 
         expect_true(b.at(0));
         expect_true(!b.at(1));
