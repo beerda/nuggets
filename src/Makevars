@@ -4,7 +4,7 @@ CXX_STD = CXX20
 PKG_CPPFLAGS=-I.
 PKG_LIBS=
 
-SOURCES=cpp11.cpp dig.cpp test-antichain-Condition.cpp test-antichain-Node.cpp test-antichain-Tree.cpp test-dig-Bitset.cpp test-dig-DualChain.cpp test-dig-Task.cpp test-dig-TaskQueue.cpp test-dig-VectorNumChain.cpp test-runner.cpp which_antichain.cpp  dig/VectorNumChain.cpp 
+SOURCES=cpp11.cpp dig.cpp test-antichain-Condition.cpp test-antichain-Node.cpp test-antichain-Tree.cpp test-dig-Bitset.cpp test-dig-BitsetNumChain.cpp test-dig-DualChain.cpp test-dig-Task.cpp test-dig-TaskQueue.cpp test-dig-VectorNumChain.cpp test-runner.cpp which_antichain.cpp  dig/BitsetNumChain.cpp dig/VectorNumChain.cpp 
 
 # Obtain the object files
 OBJECTS=$(SOURCES:.cpp=.o)
