@@ -3,7 +3,7 @@
 
 
 template <>
-void VectorNumChain<TNorm::GODEL>::conjunctWith(const VectorNumChain<TNorm::GODEL>& other)
+void VectorNumChain<TNorm::GOEDEL>::conjunctWith(const VectorNumChain<TNorm::GOEDEL>& other)
 {
     if (values.size() != other.values.size()) {
         throw std::invalid_argument("VectorNumChain::conjunctWith: incompatible sizes");

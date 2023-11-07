@@ -32,13 +32,13 @@ context("dig/VectorNumChain.h") {
 
     }
 
-    test_that("GODEL") {
-        VectorNumChain<GODEL> chain;
+    test_that("GOEDEL") {
+        VectorNumChain<GOEDEL> chain;
         chain.push_back(0.0);
         chain.push_back(0.5);
         chain.push_back(1.0);
 
-        VectorNumChain<GODEL> other;
+        VectorNumChain<GOEDEL> other;
         other.push_back(0.8);
         other.push_back(0.6);
         other.push_back(0.4);

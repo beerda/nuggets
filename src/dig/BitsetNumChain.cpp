@@ -2,13 +2,13 @@
 
 
 template <>
-void BitsetNumChain<TNorm::GODEL>::conjunctWith(const BitsetNumChain<TNorm::GODEL>& other)
+void BitsetNumChain<TNorm::GOEDEL>::conjunctWith(const BitsetNumChain<TNorm::GOEDEL>& other)
 {
     if (n != other.n)
-        throw std::invalid_argument("BitsetNumChain<GODEL>::conjunctWith: incompatible sizes");
+        throw std::invalid_argument("BitsetNumChain<GOEDEL>::conjunctWith: incompatible sizes");
 
-    if (BitsetNumChain<GODEL>::ACCURACY != 8)
-        throw std::runtime_error("BitsetNumChain<GODEL>::conjunctWith not implemented for ACCURACY != 8");
+    if (BitsetNumChain<GOEDEL>::ACCURACY != 8)
+        throw std::runtime_error("BitsetNumChain<GOEDEL>::conjunctWith not implemented for ACCURACY != 8");
 
     const uintmax_t* a = data.data();
     const uintmax_t* b = other.data.data();
@@ -31,7 +31,7 @@ void BitsetNumChain<TNorm::LUKASIEWICZ>::conjunctWith(const BitsetNumChain<TNorm
     if (n != other.n)
         throw std::invalid_argument("BitsetNumChain<LUKASIEWICZ>::conjunctWith: incompatible sizes");
 
-    if (BitsetNumChain<GODEL>::ACCURACY != 8)
+    if (BitsetNumChain<GOEDEL>::ACCURACY != 8)
         throw std::runtime_error("BitsetNumChain<LUKASIEWICZ>::conjunctWith not implemented for ACCURACY != 8");
 
     const uintmax_t* a = data.data();

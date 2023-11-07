@@ -3,12 +3,12 @@
 #include "common.h"
 #include "dig/BitsetNumChain.h"
 
-#define EXPECTED_DATA_SIZE(x) ((x-1) * BitsetNumChain<GODEL>::ACCURACY / BitsetNumChain<GODEL>::CHUNK_SIZE + 2)
+#define EXPECTED_DATA_SIZE(x) ((x-1) * BitsetNumChain<GOEDEL>::ACCURACY / BitsetNumChain<GOEDEL>::CHUNK_SIZE + 2)
 
 
 context("dig/BitsetNumChain.h") {
     test_that("push_back & sum") {
-        BitsetNumChain<GODEL> b;
+        BitsetNumChain<GOEDEL> b;
 
         expect_true(b.empty());
         expect_true(b.size() == 0);
@@ -117,8 +117,8 @@ context("dig/BitsetNumChain.h") {
     }
 
     test_that("reserve") {
-        size_t inChunk = BitsetNumChain<GODEL>::CHUNK_SIZE / BitsetNumChain<GODEL>::ACCURACY;
-        BitsetNumChain<GODEL> b;
+        size_t inChunk = BitsetNumChain<GOEDEL>::CHUNK_SIZE / BitsetNumChain<GOEDEL>::ACCURACY;
+        BitsetNumChain<GOEDEL> b;
 
         expect_true(b.size() == 0);
         expect_true(b.getMutableData().size() == 1);
@@ -140,9 +140,9 @@ context("dig/BitsetNumChain.h") {
         expect_true(b.getMutableData().capacity() == 7);
     }
 
-    test_that("conjunctWith<GODEL>") {
-        BitsetNumChain<GODEL> a;
-        BitsetNumChain<GODEL> b;
+    test_that("conjunctWith<GOEDEL>") {
+        BitsetNumChain<GOEDEL> a;
+        BitsetNumChain<GOEDEL> b;
 
         for (int j = 0; j < 100; j++) {
             for (double i = 0.0; i <= 1.0; i += 0.1)

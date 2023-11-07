@@ -7,7 +7,7 @@ using namespace std;
 
 
 enum TNorm {
-    GODEL,
+    GOEDEL,
     GOGUEN,
     LUKASIEWICZ
 };
