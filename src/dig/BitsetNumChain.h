@@ -27,6 +27,7 @@ public:
             j <<= 1;
         }
 
+        oneMask = iMask >> (ACCURACY - 1);
         data.push_back(0); // +1 to make room for shifts in sum()
     }
 
@@ -150,4 +151,5 @@ private:
     vector<uintmax_t> data;
     size_t n;
     uintmax_t iMask;
+    uintmax_t oneMask;
 };

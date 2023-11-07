@@ -140,7 +140,7 @@ context("dig/BitsetNumChain.h") {
         expect_true(b.getMutableData().capacity() == 7);
     }
 
-    test_that("conjunctWith") {
+    test_that("conjunctWith<GODEL>") {
         BitsetNumChain<GODEL> a;
         BitsetNumChain<GODEL> b;
 
@@ -166,6 +166,38 @@ context("dig/BitsetNumChain.h") {
             expect_true(abs(a.at(11*j + 8) - 0.1968504) < 1e-6);
             expect_true(abs(a.at(11*j + 9) - 0.094488) < 1e-6);
             expect_true(abs(a.at(11*j + 10) - 0.000000) < 1e-6);
+        }
+    }
+
+    test_that("conjunctWith<LUKASIEWICZ>") {
+        BitsetNumChain<LUKASIEWICZ> a;
+        BitsetNumChain<LUKASIEWICZ> b;
+
+        for (int j = 0; j < 1; j++) {
+            for (double i = 0.0; i <= 1.0; i += 0.2)
+                a.push_back(i);
+
+            for (double i = 0.0; i < 1.0; i += 0.2)
+                a.push_back(0.9);
+
+            for (double i = 1.0; i >= 0.0; i -= 0.1)
+                b.push_back(i);
+        }
+
+        a.conjunctWith(b);
+
+        for (int j = 0; j < 1; j++) {
+            expect_true(abs(a.at(11*j + 0) - 0.000000) < 1e-6); // 0.0 and 1.0
+            expect_true(abs(a.at(11*j + 1) - 0.094488) < 1e-6); // 0.2 and 0.9
+            expect_true(abs(a.at(11*j + 2) - 0.188976) < 1e-6); // 0.4 and 0.8
+            expect_true(abs(a.at(11*j + 3) - 0.291339) < 1e-6); // 0.6 and 0.7
+            expect_true(abs(a.at(11*j + 4) - 0.393701) < 1e-6); // 0.8 and 0.6
+            expect_true(abs(a.at(11*j + 5) - 0.496063) < 1e-6); // 1.0 and 0.5
+            expect_true(abs(a.at(11*j + 6) - 0.291339) < 1e-6); // 0.9 and 0.4
+            expect_true(abs(a.at(11*j + 7) - 0.196850) < 1e-6); // 0.9 and 0.3
+            expect_true(abs(a.at(11*j + 8) - 0.094488) < 1e-6); // 0.9 and 0.2
+            expect_true(abs(a.at(11*j + 9) - 0.000000) < 1e-6); // 0.9 and 0.1
+            expect_true(abs(a.at(11*j + 10) - 0.00000) < 1e-6); // 0.9 and 0.0
         }
     }
 }
