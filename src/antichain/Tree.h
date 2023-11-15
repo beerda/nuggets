@@ -53,22 +53,25 @@ private:
      * Returns TRUE if the condition is comparable with some condition in the tree.
      * Note that this is the opposite return value of insertIfIncomparable().
      */
-    bool traverse(Node& node, const Condition& condition, int wildcards, Node** lastNode)
+    bool traverse(Node& node, const Condition& condition, int agreed, Node** lastNode)
     {
         if (!node.isRoot()) {
-            if (!condition.hasPredicate(node.getPredicate())) {
-                wildcards++;
+            if (condition.hasPredicate(node.getPredicate())) {
+                agreed++;
             }
-            if (wildcards == 0 && (*lastNode)->getDepth() < node.getDepth()) {
+            if (agreed == node.getDepth() && (*lastNode)->getDepth() < node.getDepth()) {
                 *lastNode = &node;
             }
             if (node.isLeaf()) {
-                return (wildcards == 0 || condition.length() == node.getDepth() - wildcards);
+                if (node.getDepth() <= condition.length())
+                    return agreed == node.getDepth();
+                else
+                    return agreed == condition.length();
             }
         }
 
         for (auto& child : node.getMutableChildren()) {
-            if (traverse(child, condition, wildcards, lastNode)) {
+            if (traverse(child, condition, agreed, lastNode)) {
                 return true;
             }
         }
