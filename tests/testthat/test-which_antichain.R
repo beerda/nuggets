@@ -9,4 +9,8 @@ test_that("which_antichain", {
                  c(1, 6))
     expect_equal(which_antichain(list(c(1, 2), c(1, 3), c(4, 2), 1, 2, 3, 4)),
                  c(1, 2, 3))
+
+    expect_equal(which_antichain(list(c(1, 2, 3), c(1, 4), c(1, 2, 5, 6), c(1, 5, 6)),
+                                 1),
+                 c(1, 4))
 })

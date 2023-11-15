@@ -5,10 +5,12 @@
 \title{Return indices of first elements of the list, which are incomparable with preceding
 elements.}
 \usage{
-which_antichain(x)
+which_antichain(x, distance = 0)
 }
 \arguments{
 \item{x}{a list of integerish vectors}
+
+\item{distance}{a non-negative integer, which specifies the allowed discrepancy between compared sets}
 }
 \value{
 an integer vector of indices of selected (incomparable) elements.

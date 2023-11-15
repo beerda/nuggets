@@ -10,6 +10,11 @@
 class Tree {
 public:
     Tree()
+        : distance(0)
+    { }
+
+    Tree(int distance)
+        : distance(distance)
     { }
 
     /**
@@ -49,6 +54,8 @@ public:
 
 private:
     Node root;
+    int distance;
+
     /**
      * Returns TRUE if the condition is comparable with some condition in the tree.
      * Note that this is the opposite return value of insertIfIncomparable().
@@ -64,9 +71,9 @@ private:
             }
             if (node.isLeaf()) {
                 if (node.getDepth() <= condition.length())
-                    return agreed == node.getDepth();
+                    return agreed >= node.getDepth() - distance;
                 else
-                    return agreed == condition.length();
+                    return agreed >= condition.length() - distance;
             }
         }
 

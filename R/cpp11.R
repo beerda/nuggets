@@ -4,6 +4,6 @@ dig_ <- function(logicals_data, doubles_data, logicals_foci, doubles_foci, confi
   .Call(`_nuggets_dig_`, logicals_data, doubles_data, logicals_foci, doubles_foci, configuration_list, fun)
 }
 
-which_antichain_ <- function(x) {
-  .Call(`_nuggets_which_antichain_`, x)
+which_antichain_ <- function(x, dist) {
+  .Call(`_nuggets_which_antichain_`, x, dist)
 }

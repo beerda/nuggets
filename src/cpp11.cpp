@@ -13,10 +13,10 @@ extern "C" SEXP _nuggets_dig_(SEXP logicals_data, SEXP doubles_data, SEXP logica
   END_CPP11
 }
 // which_antichain.cpp
-integers which_antichain_(list x);
-extern "C" SEXP _nuggets_which_antichain_(SEXP x) {
+integers which_antichain_(list x, integers dist);
+extern "C" SEXP _nuggets_which_antichain_(SEXP x, SEXP dist) {
   BEGIN_CPP11
-    return cpp11::as_sexp(which_antichain_(cpp11::as_cpp<cpp11::decay_t<list>>(x)));
+    return cpp11::as_sexp(which_antichain_(cpp11::as_cpp<cpp11::decay_t<list>>(x), cpp11::as_cpp<cpp11::decay_t<integers>>(dist)));
   END_CPP11
 }
 
@@ -26,7 +26,7 @@ extern SEXP run_testthat_tests(void *);
 
 static const R_CallMethodDef CallEntries[] = {
     {"_nuggets_dig_",             (DL_FUNC) &_nuggets_dig_,             6},
-    {"_nuggets_which_antichain_", (DL_FUNC) &_nuggets_which_antichain_, 1},
+    {"_nuggets_which_antichain_", (DL_FUNC) &_nuggets_which_antichain_, 2},
     {"run_testthat_tests",        (DL_FUNC) &run_testthat_tests,        1},
     {NULL, NULL, 0}
 };
