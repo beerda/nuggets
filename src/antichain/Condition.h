@@ -6,7 +6,7 @@
 
 class Condition {
 public:
-    Condition(const integers& _predicates)
+    Condition(const IntegerVector& _predicates)
         : predicates(_predicates.begin(), _predicates.end())
     { }
 

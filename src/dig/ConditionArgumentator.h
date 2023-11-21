@@ -9,29 +9,24 @@
  */
 class ConditionArgumentator : public Argumentator {
 public:
-    ConditionArgumentator(const integers& predicates)
+    ConditionArgumentator(const IntegerVector& predicates)
         : predicates(predicates)
     { }
 
-    void prepare(writable::list& arguments, const Task& task) const override
+    void prepare(List& arguments, const Task& task) const override
     {
         Argumentator::prepare(arguments, task);
 
-        using namespace cpp11::literals;
-        writable::strings names;
-        writable::integers indices;
+        CharacterVector names = predicates.names();
+        IntegerVector indices;
 
         for (int p : task.getCurrentCondition()) {
-            names.push_back(predicates.names()[p]);
-            indices.push_back(predicates[p]);
-        }
-        if (!indices.empty()) {
-            indices.attr("names") = names;
+            indices.push_back(predicates[p], as<string>(names[p]));
         }
 
-        arguments.push_back("condition"_nm = indices);
+        arguments.push_back(indices, "condition");
     }
 
 private:
-    integers predicates;
+    IntegerVector predicates;
 };

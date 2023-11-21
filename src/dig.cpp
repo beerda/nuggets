@@ -13,19 +13,19 @@
 #include "dig/DisjointFilter.h"
 
 
-[[cpp11::register]]
-list dig_(list logicals_data,
-          list doubles_data,
-          list logicals_foci,
-          list doubles_foci,
-          list configuration_list,
-          cpp11::function fun)
+// [[Rcpp::export(name="dig_")]]
+List dig_(List logicals_data,
+          List doubles_data,
+          List logicals_foci,
+          List doubles_foci,
+          List configuration_list,
+          Function fun)
 {
     Data data;
-    data.addChains<logicals>(logicals_data);
-    data.addChains<doubles>(doubles_data);
-    data.addFoci<logicals>(logicals_foci);
-    data.addFoci<doubles>(doubles_foci);
+    data.addChains<LogicalVector>(logicals_data);
+    data.addChains<NumericVector>(doubles_data);
+    data.addFoci<LogicalVector>(logicals_foci);
+    data.addFoci<NumericVector>(doubles_foci);
 
     Config config(configuration_list);
     Digger digger(data, fun);

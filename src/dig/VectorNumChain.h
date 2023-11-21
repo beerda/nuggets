@@ -14,7 +14,7 @@ public:
         : cachedSum(0)
     { }
 
-    VectorNumChain(const doubles& vals)
+    VectorNumChain(const NumericVector& vals)
         : cachedSum(0)
     {
         reserve(vals.size());

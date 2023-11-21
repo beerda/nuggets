@@ -31,7 +31,7 @@ public:
         data.push_back(0); // +1 to make room for shifts in sum()
     }
 
-    BitsetNumChain(const doubles& vals)
+    BitsetNumChain(const NumericVector& vals)
         : BitsetNumChain()
     {
         reserve(vals.size());

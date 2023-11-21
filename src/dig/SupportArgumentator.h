@@ -12,14 +12,12 @@ public:
     SupportArgumentator()
     { }
 
-    void prepare(writable::list& arguments, const Task& task) const override
+    void prepare(List& arguments, const Task& task) const override
     {
         Argumentator::prepare(arguments, task);
 
-        using namespace cpp11::literals;
-
-        writable::doubles support;
+        NumericVector support;
         support.push_back(task.getChain().getSupport());
-        arguments.push_back("support"_nm = support);
+        arguments.push_back(support, "support");
     }
 };

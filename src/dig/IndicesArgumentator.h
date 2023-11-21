@@ -15,14 +15,12 @@ public:
         : dataSize(dataSize)
     { }
 
-    void prepare(writable::list& arguments, const Task& task) const override
+    void prepare(List& arguments, const Task& task) const override
     {
         Argumentator::prepare(arguments, task);
 
-        using namespace cpp11::literals;
-        writable::logicals indices;
+        LogicalVector indices;
 
-        indices.reserve(dataSize);
         if (task.getChain().empty()) {
             for (size_t i = 0; i < dataSize; i++) {
                 indices.push_back(true);
@@ -33,7 +31,7 @@ public:
                 indices.push_back(task.getChain().getValue(i) > 0);
             }
         }
-        arguments.push_back("indices"_nm = indices);
+        arguments.push_back(indices, "indices");
     }
 
 private:

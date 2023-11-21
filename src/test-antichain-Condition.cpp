@@ -4,7 +4,7 @@
 
 context("antichain/Condition.h") {
     test_that("condition") {
-        Condition c({1, 2, 5});
+        Condition c(unordered_set<int>({1, 2, 5}));
 
         expect_true(c.length() == 3);
         expect_true(c.hasPredicate(1));

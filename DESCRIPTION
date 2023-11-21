@@ -17,11 +17,12 @@ Language: en-US
 Imports: 
     cli,
     methods,
+    Rcpp,
     rlang,
     tibble,
     tidyselect
 LinkingTo: 
-    cpp11,
+    Rcpp,
     testthat
 SystemRequirements: C++20
 Suggests: 

@@ -16,20 +16,18 @@ public:
         : dataLength(1.0 * dataLength)
     { }
 
-    void prepare(writable::list& arguments, const Task& task) const override
+    void prepare(List& arguments, const Task& task) const override
     {
         Argumentator::prepare(arguments, task);
 
-        using namespace cpp11::literals;
-
-        writable::doubles result;
+        NumericVector result;
 
         if (task.getChain().empty())
             result.push_back(dataLength);
         else
             result.push_back(task.getChain().getSum());
 
-        arguments.push_back("sum"_nm = result);
+        arguments.push_back(result, "sum");
     }
 
 private:

@@ -114,9 +114,9 @@ context("dig/Task.h") {
     }
 
     test_that("updateChain") {
-        writable::logicals data1(10);
-        writable::logicals data2(10);
-        writable::doubles data3(10);
+        LogicalVector data1(10);
+        LogicalVector data2(10);
+        NumericVector data3(10);
         for (int i = 0; i < data1.size(); i++) {
             data1[i] = (i == 2 || i == 5);
             data2[i] = (i == 2 || i == 6);

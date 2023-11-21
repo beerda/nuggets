@@ -10,13 +10,13 @@ public:
     AntichainData()
     { }
 
-    AntichainData(list data)
+    AntichainData(List data)
     {
-        for (const integers& values : data)
+        for (const IntegerVector& values : data)
             addCondition(values);
     }
 
-    void addCondition(const integers& values)
+    void addCondition(const IntegerVector& values)
     { conditions.push_back(Condition(values)); }
 
     const Condition& getCondition(size_t i) const

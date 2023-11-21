@@ -26,7 +26,7 @@ public:
     }
 
     template <typename T>
-    void addChains(const list& data)
+    void addChains(const List& data)
     {
         for (R_xlen_t i = 0; i < data.size(); i++) {
             T col = data.at(i);
@@ -52,7 +52,7 @@ public:
     }
 
     template <typename T>
-    void addFoci(const list& data)
+    void addFoci(const List& data)
     {
         for (R_xlen_t i = 0; i < data.size(); i++) {
             T col = data.at(i);

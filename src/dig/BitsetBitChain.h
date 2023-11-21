@@ -14,7 +14,7 @@ public:
         : cachedSum(0)
     { }
 
-    BitsetBitChain(const logicals& vals)
+    BitsetBitChain(const LogicalVector& vals)
         : cachedSum(0)
     {
         reserve(vals.size());

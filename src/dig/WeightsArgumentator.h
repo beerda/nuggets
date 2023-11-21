@@ -14,14 +14,12 @@ public:
         : dataSize(dataSize)
     { }
 
-    void prepare(writable::list& arguments, const Task& task) const override
+    void prepare(List& arguments, const Task& task) const override
     {
         Argumentator::prepare(arguments, task);
 
-        using namespace cpp11::literals;
-        writable::doubles weights;
+        NumericVector weights;
 
-        weights.reserve(dataSize);
         if (task.getChain().empty()) {
             for (size_t i = 0; i < dataSize; i++) {
                 weights.push_back(1.0);
@@ -32,7 +30,7 @@ public:
                 weights.push_back(task.getChain().getValue(i));
             }
         }
-        arguments.push_back("weights"_nm = weights);
+        arguments.push_back(weights, "weights");
     }
 
 private:

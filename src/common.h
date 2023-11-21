@@ -1,8 +1,8 @@
 #pragma once
 
-#include <cpp11.hpp>
+#include <Rcpp.h>
 
-using namespace cpp11;
+using namespace Rcpp;
 using namespace std;
 
 

@@ -3,10 +3,10 @@
 #include "antichain/Tree.h"
 
 
-[[cpp11::register]]
-integers which_antichain_(list x, integers dist)
+// [[Rcpp::export(name="which_antichain_")]]
+IntegerVector which_antichain_(List x, IntegerVector dist)
 {
-    writable::integers result;
+    IntegerVector result;
     AntichainData data(x);
     Tree tree(dist.at(0));
 

@@ -12,11 +12,11 @@ public:
     DualChain()
     { }
 
-    DualChain(const doubles& values)
+    DualChain(const NumericVector& values)
         : numData(values)
     { }
 
-    DualChain(const logicals& values)
+    DualChain(const LogicalVector& values)
         : bitData(values)
     { }
 

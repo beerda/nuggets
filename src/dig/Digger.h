@@ -9,7 +9,7 @@
 
 class Digger {
 public:
-    Digger(Data& data, const cpp11::function fun)
+    Digger(Data& data, const Function fun)
         : data(data), initialTask(data.size()), queue(), func(fun)
     { }
 
@@ -44,17 +44,17 @@ public:
     void setChainsNeeded()
     { chainsNeeded = true; }
 
-    writable::list getResult() const
+    List getResult() const
     { return result; }
 
 private:
     Data& data;
     Task initialTask;
     TaskQueue queue;
-    cpp11::function func;
+    Function func;
     vector<Filter*> filters;
     vector<Argumentator*> argumentators;
-    writable::list result;
+    List result;
     int workingThreads;
 
     bool chainsNeeded = false;
@@ -101,9 +101,9 @@ private:
         return true;
     }
 
-    list prepareArguments(const Task& task) const
+    List prepareArguments(const Task& task) const
     {
-        writable::list result;
+        List result;
 
         for (const Argumentator* a : argumentators)
             a->prepare(result, task);
@@ -113,7 +113,7 @@ private:
 
     void store(const Task& task)
     {
-        list args = prepareArguments(task);
+        List args = prepareArguments(task);
         result.push_back(func(args));
     }
 

@@ -4,6 +4,7 @@
 ## usethis namespace: start
 #' @importFrom cli cli_abort
 #' @importFrom methods formalArgs
+#' @importFrom Rcpp sourceCpp
 #' @importFrom rlang caller_env
 #' @importFrom rlang current_env
 #' @importFrom rlang enquo

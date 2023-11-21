@@ -13,7 +13,7 @@ context("dig/DualChain.h") {
     }
 
     test_that("bit chain") {
-        writable::logicals data(10);
+        LogicalVector data(10);
         for (int i = 0; i < data.size(); i++) {
             data[i] = (i == 2 || i == 5);
         }
@@ -28,7 +28,7 @@ context("dig/DualChain.h") {
     }
 
     test_that("numeric chain") {
-        writable::doubles data(10);
+        NumericVector data(10);
         for(size_t i = 0; i < 10; i++) {
             data[i] = i / 10.0;
         }
@@ -43,7 +43,7 @@ context("dig/DualChain.h") {
     }
 
     test_that("toNumeric") {
-        writable::logicals data(10);
+        LogicalVector data(10);
         for (int i = 0; i < data.size(); i++) {
             data[i] = (i == 2 || i == 5);
         }
@@ -58,8 +58,8 @@ context("dig/DualChain.h") {
     }
 
     test_that("combine bit & bit") {
-        writable::logicals data1(10);
-        writable::logicals data2(10);
+        LogicalVector data1(10);
+        LogicalVector data2(10);
         for (int i = 0; i < data1.size(); i++) {
             data1[i] = (i == 2 || i == 5);
             data2[i] = (i == 2 || i == 8);
@@ -83,7 +83,7 @@ context("dig/DualChain.h") {
     }
 
     test_that("combine num & num") {
-        writable::doubles data(10);
+        NumericVector data(10);
         for(size_t i = 0; i < 10; i++) {
             data[i] = i / 10.0;
         }
@@ -99,8 +99,8 @@ context("dig/DualChain.h") {
     }
 
     test_that("combine incompatible") {
-        writable::logicals data1(10);
-        writable::doubles data2(10);
+        LogicalVector data1(10);
+        NumericVector data2(10);
         DualChainTestType chain1(data1);
         DualChainTestType chain2(data2);
 
@@ -108,8 +108,8 @@ context("dig/DualChain.h") {
     }
 
     test_that("combine both & num") {
-        writable::doubles data1(10);
-        writable::logicals data2(10);
+        NumericVector data1(10);
+        LogicalVector data2(10);
         for (int i = 0; i < data1.size(); i++) {
             data1[i] = i / 10.0;
             data2[i] = (i == 2 || i == 5);
@@ -130,8 +130,8 @@ context("dig/DualChain.h") {
     }
 
     test_that("combine both & bit") {
-        writable::logicals data1(10);
-        writable::logicals data2(10);
+        LogicalVector data1(10);
+        LogicalVector data2(10);
         for (int i = 0; i < data1.size(); i++) {
             data1[i] = (i == 2 || i == 5);
             data2[i] = (i == 2 || i == 8);
@@ -152,8 +152,8 @@ context("dig/DualChain.h") {
     }
 
     test_that("combine both & both") {
-        writable::logicals data1(10);
-        writable::logicals data2(10);
+        LogicalVector data1(10);
+        LogicalVector data2(10);
         for (int i = 0; i < data1.size(); i++) {
             data1[i] = (i == 2 || i == 5);
             data2[i] = (i == 2 || i == 8);

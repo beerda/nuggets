@@ -6,7 +6,7 @@
 
 class Config {
 public:
-    Config(list configuration)
+    Config(List configuration)
     {
         parseArguments(configuration["arguments"]);
 
@@ -15,13 +15,13 @@ public:
         disjointPredicates = configuration["disjoint_predicates"];
         disjointFoci = configuration["disjoint_foci"];
 
-        integers minLengthVec = configuration["minLength"];
+        IntegerVector minLengthVec = configuration["minLength"];
         minLength = minLengthVec[0];
 
-        integers maxLengthVec = configuration["maxLength"];
+        IntegerVector maxLengthVec = configuration["maxLength"];
         maxLength = maxLengthVec[0];
 
-        doubles minSupportVec = configuration["minSupport"];
+        NumericVector minSupportVec = configuration["minSupport"];
         minSupport = minSupportVec[0];
     }
 
@@ -44,21 +44,21 @@ public:
     { return weightsArgument; }
 
     bool hasDisjointPredicates() const
-    { return !disjointPredicates.empty(); }
+    { return disjointPredicates.size() > 0; }
 
     bool hasDisjointFoci() const
-    { return !disjointFoci.empty(); }
+    { return disjointFoci.size() > 0; }
 
-    const integers& getPredicates() const
+    const IntegerVector& getPredicates() const
     { return predicates; }
 
-    const integers& getFoci() const
+    const IntegerVector& getFoci() const
     { return foci; }
 
-    const integers& getDisjointPredicates() const
+    const IntegerVector& getDisjointPredicates() const
     { return disjointPredicates; }
 
-    const integers& getDisjointFoci() const
+    const IntegerVector& getDisjointFoci() const
     { return disjointFoci; }
 
     int getMinLength() const
@@ -78,28 +78,28 @@ private:
     bool supportArgument = false;
     bool weightsArgument = false;
 
-    integers predicates;
-    integers foci;
-    integers disjointPredicates;
-    integers disjointFoci;
+    IntegerVector predicates;
+    IntegerVector foci;
+    IntegerVector disjointPredicates;
+    IntegerVector disjointFoci;
     int minLength;
     int maxLength;
     double minSupport;
 
-    void parseArguments(strings vec)
+    void parseArguments(const CharacterVector& vec)
     {
-        for (string s : vec) {
-            if (s == "condition")
+        for (size_t i = 0; i < vec.size(); ++i) {
+            if (vec[i] == "condition")
                 conditionArgument = true;
-            if (s == "foci_supports")
+            if (vec[i] == "foci_supports")
                 fociSupportsArgument = true;
-            if (s == "indices")
+            if (vec[i] == "indices")
                 indicesArgument = true;
-            if (s == "sum")
+            if (vec[i] == "sum")
                 sumArgument = true;
-            if (s == "support")
+            if (vec[i] == "support")
                 supportArgument = true;
-            if (s == "weights")
+            if (vec[i] == "weights")
                 weightsArgument = true;
         }
     }

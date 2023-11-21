@@ -29,7 +29,7 @@ context("antichain/Node.h") {
     test_that("insert nodes to root") {
         Node n;
         Node child;
-        Condition c({1, 2, 5});
+        Condition c(unordered_set<int>({1, 2, 5}));
         n.insertAsChildren(c);
 
         expect_true(n.getChildren().size() == 1);

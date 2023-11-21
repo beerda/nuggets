@@ -9,23 +9,22 @@
  */
 class FociSupportsArgumentator : public Argumentator {
 public:
-    FociSupportsArgumentator(const integers& predicates,
-                             const integers& foci,
-                             const integers& disjointPredicates,
-                             const integers& disjointFoci,
+    FociSupportsArgumentator(const IntegerVector& predicates,
+                             const IntegerVector& foci,
+                             const IntegerVector& disjointPredicates,
+                             const IntegerVector& disjointFoci,
                              const Data& data)
         : predicates(predicates), foci(foci),
           disjointPredicates(disjointPredicates), disjointFoci(disjointFoci),
           data(data)
     { }
 
-    void prepare(writable::list& arguments, const Task& task) const override
+    void prepare(List& arguments, const Task& task) const override
     {
         Argumentator::prepare(arguments, task);
 
-        using namespace cpp11::literals;
-        writable::strings names;
-        writable::doubles supports;
+        CharacterVector names = foci.names();
+        NumericVector supports;
 
         for (size_t i = 0; i < data.fociSize(); i++) {
             if (isFocusInCondition(i, task))
@@ -34,26 +33,22 @@ public:
             if (isFocusDisjointWith(i, task))
                 continue;
 
-            names.push_back(foci.names()[i]);
             DualChain chain = data.getFocus(i);
             if (!task.getChain().empty()) {
                 // chain is not empty when the condition is of length > 0
                 chain.conjunctWith(task.getChain());
             }
-            supports.push_back(chain.getSupport());
-        }
-        if (!supports.empty()) {
-            supports.attr("names") = names;
+            supports.push_back(chain.getSupport(), as<string>(names[i]));
         }
 
-        arguments.push_back("foci_supports"_nm = supports);
+        arguments.push_back(supports, "foci_supports");
     }
 
 private:
-    integers predicates;
-    integers foci;
-    integers disjointPredicates;
-    integers disjointFoci;
+    IntegerVector predicates;
+    IntegerVector foci;
+    IntegerVector disjointPredicates;
+    IntegerVector disjointFoci;
     const Data& data;
 
     bool isFocusInCondition(const int id, const Task& task) const
@@ -72,10 +67,10 @@ private:
 
     bool isFocusDisjointWith(const int id, const Task& task) const
     {
-        if (disjointPredicates.empty())
+        if (disjointPredicates.size() <= 0)
             return false;
 
-        if (disjointFoci.empty())
+        if (disjointFoci.size() <= 0)
             return false;
 
         int currDisj = disjointFoci[id];

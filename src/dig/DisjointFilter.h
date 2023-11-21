@@ -5,7 +5,7 @@
 
 class DisjointFilter : public Filter {
 public:
-    DisjointFilter(const integers& disjoint)
+    DisjointFilter(const IntegerVector& disjoint)
         : disjoint(disjoint)
     { }
 
@@ -25,5 +25,5 @@ public:
     }
 
 private:
-    integers disjoint;
+    IntegerVector disjoint;
 };
