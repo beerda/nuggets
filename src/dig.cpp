@@ -13,7 +13,7 @@
 #include "dig/DisjointFilter.h"
 
 
-// [[Rcpp::export(name="dig_")]]
+// [[Rcpp::export]]
 List dig_(List logicals_data,
           List doubles_data,
           List logicals_foci,

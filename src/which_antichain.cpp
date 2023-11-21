@@ -3,7 +3,7 @@
 #include "antichain/Tree.h"
 
 
-// [[Rcpp::export(name="which_antichain_")]]
+// [[Rcpp::export]]
 IntegerVector which_antichain_(List x, IntegerVector dist)
 {
     IntegerVector result;
