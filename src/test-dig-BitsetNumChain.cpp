@@ -111,7 +111,7 @@ context("dig/BitsetNumChain.h") {
         expect_true(abs(b.at(5) - 1.000000) < 1e-6);
         expect_true(abs(b.at(6) - 0.000000) < 1e-6);
         expect_true(abs(b.at(7) - 1.000000) < 1e-6);
-        expect_true(abs(b.at(7) - 1.000000) < 1e-6);
+        expect_true(abs(b.at(8) - 1.000000) < 1e-6);
         expect_true(abs(b.getSum() - 5.5905512) < 1e-6);
         expect_true(b.getMutableData().size() == EXPECTED_DATA_SIZE(b.size()));
     }
