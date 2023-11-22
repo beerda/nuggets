@@ -88,7 +88,7 @@ private:
 
     void parseArguments(const CharacterVector& vec)
     {
-        for (size_t i = 0; i < vec.size(); ++i) {
+        for (R_xlen_t i = 0; i < vec.size(); ++i) {
             if (vec[i] == "condition")
                 conditionArgument = true;
             if (vec[i] == "foci_supports")
