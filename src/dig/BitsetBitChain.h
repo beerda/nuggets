@@ -50,7 +50,7 @@ public:
     bool empty() const
     { return values.empty(); }
 
-    double getSum() const
+    float getSum() const
     { return cachedSum; }
 
     bool at(size_t i) const
@@ -64,5 +64,5 @@ public:
 
 private:
     Bitset values;
-    double cachedSum;
+    float cachedSum;
 };

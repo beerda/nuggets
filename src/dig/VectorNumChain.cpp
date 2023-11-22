@@ -1,4 +1,3 @@
-#include <algorithm>
 #include "dig/VectorNumChain.h"
 
 
@@ -39,7 +38,7 @@ void VectorNumChain<TNorm::LUKASIEWICZ>::conjunctWith(const VectorNumChain<TNorm
 
     cachedSum = 0;
     for (size_t i = 0; i < values.size(); i++) {
-        values[i] = max(0.0, values[i] + other.values[i] - 1);
+        values[i] = max(0.0f, values[i] + other.values[i] - 1);
         cachedSum += values[i];
     }
 }

@@ -77,7 +77,7 @@ public:
         n++;
     }
 
-    double at(size_t pos) const
+    float at(size_t pos) const
     {
         if (pos >= n) {
             throw std::out_of_range("BitsetNumChain::at");
@@ -93,7 +93,7 @@ public:
 
     void conjunctWith(const BitsetNumChain& other);
 
-    double getSum() const
+    float getSum() const
     {
         // TODO: as constant
         uintmax_t mask = CHUNK_MASK;
@@ -130,7 +130,7 @@ public:
             }
         }
 
-        return ((double) result) / ((double) MAX_VALUE);
+        return ((float) result) / ((float) MAX_VALUE);
     }
 
     vector<uintmax_t>& getMutableData()

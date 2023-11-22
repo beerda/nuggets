@@ -58,10 +58,10 @@ public:
         }
     }
 
-    double getSum() const
+    float getSum() const
     { return isBitwise() ? bitData.getSum() : numData.getSum(); }
 
-    double getSupport() const
+    float getSupport() const
     {
         if (empty())
             return 1.0;
@@ -69,7 +69,7 @@ public:
             return getSum() / size();
     }
 
-    double getValue(size_t index) const
+    float getValue(size_t index) const
     {
         if (isBitwise())
             return 1.0 * bitData.at(index);

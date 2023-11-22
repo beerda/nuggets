@@ -30,7 +30,7 @@ public:
     void reserve(size_t size)
     { values.reserve(size); }
 
-    void push_back(double value)
+    void push_back(float value)
     {
         values.push_back(value);
         cachedSum += value;
@@ -42,13 +42,13 @@ public:
     bool empty() const
     { return values.empty(); }
 
-    double getSum() const
+    float getSum() const
     { return cachedSum; }
 
-    double at(size_t i) const
+    float at(size_t i) const
     { return values[i]; }
 
 protected:
-    vector<double> values;
-    double cachedSum;
+    vector<float> values;
+    float cachedSum;
 };
