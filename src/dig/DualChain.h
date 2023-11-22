@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../common.h"
+#include "SimdNumChain.h"
 #include "VectorNumChain.h"
 #include "BitsetNumChain.h"
 #include "BitsetBitChain.h"
@@ -109,4 +110,8 @@ private:
 };
 
 
+//using DualChainType = DualChain<BitsetBitChain, VectorNumChain<GOEDEL>>;
+//using DualChainType = DualChain<BitsetBitChain, BitsetNumChain<GOEDEL>>;
+
 using DualChainType = DualChain<BitsetBitChain, VectorNumChain<GOGUEN>>;
+//using DualChainType = DualChain<BitsetBitChain, SimdNumChain<GOGUEN>>;

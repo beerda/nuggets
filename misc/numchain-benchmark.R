@@ -18,10 +18,16 @@ print(nrow(rules))
 
 # Results:
 #
-# - VectorNumChain<GODEL>:
+# - VectorNumChain<GOEDEL>:
 #         user  system elapsed
-#       21.451  19.662  41.100
+#       18.226  10.253  28.474
+# - BitsetNumChain<GOEDEL>:
+#         user  system elapsed
+#        4.296   0.551   4.846
 #
-# - BitsetNumChain<GODEL>:
+# - VectorNumChain<GOGUEN>:
 #         user  system elapsed
-#        3.828   0.486   4.312
+#       18.573  10.475  28.873
+# - SimdNumChain<GOGUEN>:
+#         user  system elapsed
+#        6.593  10.501  17.005
