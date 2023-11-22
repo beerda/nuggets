@@ -617,6 +617,7 @@ PACKAGE_URL=''
 ac_unique_file="src"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+PKG_CXXFLAGS
 PKG_LIBS
 SUBDIR_SOURCES
 ROOTDIR_SOURCES
@@ -2016,7 +2017,9 @@ fi
 
 RBIN="${R_HOME}/bin/R"
 CXX="`"${RBIN}" CMD config CXX20` `"${RBIN}" CMD config CXX20STD`"
-CXXFLAGS=`"${RBIN}" CMD config CXX20FLAGS`
+CXXFLAGS="`"${RBIN}" CMD config CXX20FLAGS`"
+
+PKG_CXXFLAGS="${CXXFLAGS}"
 PKG_LIBS="${PKG_LIBS}"
 
 ac_ext=cpp
@@ -2664,6 +2667,7 @@ ROOTDIR_SOURCES="$(cd src/ && ls *.cpp | tr '\n' ' ')"
 SUBDIR_SOURCES="$(cd src/ && ls */*.cpp | tr '\n' ' ')"
 
 # Substitute the variables into the Makevars file
+
 
 
 
