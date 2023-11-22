@@ -18,7 +18,7 @@ RBIN="${R_HOME}/bin/R"
 CXX="`"${RBIN}" CMD config CXX20` `"${RBIN}" CMD config CXX20STD`"
 CXXFLAGS="`"${RBIN}" CMD config CXX20FLAGS`"
 
-PKG_CXXFLAGS="${CXXFLAGS}"
+PKG_CXXFLAGS="${CXXFLAGS} -march=native -mtune=native -O3"
 PKG_LIBS="${PKG_LIBS}"
 
 AC_LANG(C++)
