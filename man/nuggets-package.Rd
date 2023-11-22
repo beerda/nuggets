@@ -6,7 +6,7 @@
 \alias{nuggets-package}
 \title{nuggets: Nuggets}
 \description{
-A package for searching the subspaces described with elementary conjunctions.
+A package for searching interesting subspaces described with elementary conjunctions.
 }
 \author{
 \strong{Maintainer}: Michal Burda \email{michal.burda@osu.cz} (\href{https://orcid.org/0000-0002-4182-4407}{ORCID})

@@ -1,6 +1,6 @@
 Package: nuggets
 Title: Nuggets
-Version: 0.0.1
+Version: 1.0.0
 Authors@R: 
     person(given = "Michal",
            family = "Burda",
@@ -8,7 +8,7 @@ Authors@R:
            email = "michal.burda@osu.cz",
            comment = c(ORCID = "0000-0002-4182-4407"))
 Maintainer: Michal Burda <michal.burda@osu.cz>
-Description: A package for searching the subspaces described with elementary conjunctions.
+Description: A package for searching interesting subspaces described with elementary conjunctions.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
