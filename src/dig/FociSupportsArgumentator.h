@@ -33,7 +33,7 @@ public:
             if (isFocusDisjointWith(i, task))
                 continue;
 
-            DualChain chain = data.getFocus(i);
+            DualChainType chain = data.getFocus(i);
             if (!task.getChain().empty()) {
                 // chain is not empty when the condition is of length > 0
                 chain.conjunctWith(task.getChain());

@@ -161,7 +161,7 @@ context("dig/Task.h") {
         expect_true(t.getPrefixChain() == data.getChain(2));
 
         t.updateChain(data);
-        DualChain newChain = data.getChain(0);
+        DualChainType newChain = data.getChain(0);
         newChain.toNumeric();
         newChain.conjunctWith(data.getChain(2));
         expect_true(t.getChain() == newChain);
