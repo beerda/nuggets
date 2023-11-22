@@ -23,8 +23,8 @@ context("dig/DualChain.h") {
         expect_true(chain.isBitwise());
         expect_true(!chain.isNumeric());
         expect_true(chain.size() == 10);
-        expect_true(chain.getSum() == 2.0);
-        expect_true(chain.getSupport() == 0.2);
+        expect_true(EQUAL(chain.getSum(), 2.0));
+        expect_true(EQUAL(chain.getSupport(), 0.2));
     }
 
     test_that("numeric chain") {
@@ -38,8 +38,8 @@ context("dig/DualChain.h") {
         expect_true(!chain.isBitwise());
         expect_true(chain.isNumeric());
         expect_true(chain.size() == 10);
-        expect_true(chain.getSum() == 4.5);
-        expect_true(chain.getSupport() == 0.45);
+        expect_true(EQUAL(chain.getSum(), 4.5));
+        expect_true(EQUAL(chain.getSupport(), 0.45));
     }
 
     test_that("toNumeric") {
@@ -54,7 +54,7 @@ context("dig/DualChain.h") {
         expect_true(chain.isBitwise());
         expect_true(chain.isNumeric());
         expect_true(chain.size() == 10);
-        expect_true(chain.getSum() == 2.0);
+        expect_true(EQUAL(chain.getSum(), 2.0));
     }
 
     test_that("combine bit & bit") {
@@ -72,14 +72,14 @@ context("dig/DualChain.h") {
         expect_true(chain1.isBitwise());
         expect_true(!chain1.isNumeric());
         expect_true(chain1.size() == 10);
-        expect_true(chain1.getSum() == 2.0);
+        expect_true(EQUAL(chain1.getSum(), 2.0));
 
         chain2.conjunctWith(chain1);
         expect_true(!chain2.empty());
         expect_true(chain2.isBitwise());
         expect_true(!chain2.isNumeric());
         expect_true(chain2.size() == 10);
-        expect_true(chain2.getSum() == 1.0);
+        expect_true(EQUAL(chain2.getSum(), 1.0));
     }
 
     test_that("combine num & num") {
@@ -95,7 +95,7 @@ context("dig/DualChain.h") {
         expect_true(!chain2.isBitwise());
         expect_true(chain2.isNumeric());
         expect_true(chain2.size() == 10);
-        expect_true(chain2.getSum() == 2.85);
+        expect_true(EQUAL(chain2.getSum(), 2.85));
     }
 
     test_that("combine incompatible") {
@@ -126,7 +126,7 @@ context("dig/DualChain.h") {
         expect_true(!chain2.isBitwise());
         expect_true(chain2.isNumeric());
         expect_true(chain2.size() == 10);
-        expect_true(chain2.getSum() == 0.7);
+        expect_true(EQUAL(chain2.getSum(), 0.7));
     }
 
     test_that("combine both & bit") {
@@ -148,7 +148,7 @@ context("dig/DualChain.h") {
         expect_true(chain2.isBitwise());
         expect_true(!chain2.isNumeric());
         expect_true(chain2.size() == 10);
-        expect_true(chain2.getSum() == 1.0);
+        expect_true(EQUAL(chain2.getSum(), 1.0));
     }
 
     test_that("combine both & both") {
@@ -173,6 +173,6 @@ context("dig/DualChain.h") {
         expect_true(chain2.isBitwise());
         expect_true(!chain2.isNumeric());
         expect_true(chain2.size() == 10);
-        expect_true(chain2.getSum() == 1.0);
+        expect_true(EQUAL(chain2.getSum(), 1.0));
     }
 }

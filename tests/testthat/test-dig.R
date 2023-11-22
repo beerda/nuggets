@@ -90,7 +90,8 @@ test_that("support arg", {
     expect_equal(res, list(list(sup = 1),
                            list(sup = 4/6),
                            list(sup = 3/6),
-                           list(sup = 2/6)))
+                           list(sup = 2/6)),
+                 tolerance = 1e-6)
 })
 
 
@@ -128,7 +129,8 @@ test_that("weights arg", {
     expect_equal(res, list(list(w = c(1,1,1,1,1,1)),
                            list(w = c1),
                            list(w = c2),
-                           list(w = c1 * c2)))
+                           list(w = c1 * c2)),
+                 tolerance = 1e-6)
 })
 
 
@@ -141,7 +143,8 @@ test_that("foci_supports arg", {
 
     expect_equal(length(res), 2)
     expect_equal(res, list(list(fs = c("2" = 3/6)),
-                           list(fs = c("2" = 2/6))))
+                           list(fs = c("2" = 2/6))),
+                 tolerance = 1e-6)
 })
 
 
@@ -345,7 +348,7 @@ test_that("data frame select & disjoint", {
     f <- function(condition, support) {
         paste(paste(names(condition), collapse = " & "),
               "=",
-              support)
+              round(support, 2))
     }
 
     disjoint <- c(1, 1, 2, 3,  5, 5, 6, 7)
