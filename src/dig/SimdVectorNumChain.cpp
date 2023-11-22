@@ -1,9 +1,9 @@
 #include <cmath>
-#include "dig/SimdNumChain.h"
+#include "dig/SimdVectorNumChain.h"
 
 
 template <>
-void SimdNumChain<TNorm::GOEDEL>::conjunctWith(const SimdNumChain<TNorm::GOEDEL>& other)
+void SimdVectorNumChain<TNorm::GOEDEL>::conjunctWith(const SimdVectorNumChain<TNorm::GOEDEL>& other)
 {
     const auto batchOp = [] (const batchType& a, const batchType& b, batchType& res) {
         res = fmin(a, b);
@@ -16,7 +16,7 @@ void SimdNumChain<TNorm::GOEDEL>::conjunctWith(const SimdNumChain<TNorm::GOEDEL>
 }
 
 template <>
-void SimdNumChain<TNorm::GOGUEN>::conjunctWith(const SimdNumChain<TNorm::GOGUEN>& other)
+void SimdVectorNumChain<TNorm::GOGUEN>::conjunctWith(const SimdVectorNumChain<TNorm::GOGUEN>& other)
 {
     const auto batchOp = [] (const batchType& a, const batchType& b, batchType& res) {
         res = a * b;
@@ -29,7 +29,7 @@ void SimdNumChain<TNorm::GOGUEN>::conjunctWith(const SimdNumChain<TNorm::GOGUEN>
 }
 
 template <>
-void SimdNumChain<TNorm::LUKASIEWICZ>::conjunctWith(const SimdNumChain<TNorm::LUKASIEWICZ>& other)
+void SimdVectorNumChain<TNorm::LUKASIEWICZ>::conjunctWith(const SimdVectorNumChain<TNorm::LUKASIEWICZ>& other)
 {
     const batchType zero(0.0f);
     const batchType one(1.0f);

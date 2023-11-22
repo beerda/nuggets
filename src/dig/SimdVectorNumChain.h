@@ -9,24 +9,24 @@
 * implemented using SIMD instructions.
 */
 template <TNorm TNORM>
-class SimdNumChain : public AbstractVectorNumChain {
+class SimdVectorNumChain : public AbstractVectorNumChain {
 public:
     using batchType = xs::batch<float>;
 
-    SimdNumChain()
+    SimdVectorNumChain()
         : AbstractVectorNumChain()
     { }
 
-    SimdNumChain(const NumericVector& vals)
+    SimdVectorNumChain(const NumericVector& vals)
         : AbstractVectorNumChain(vals)
     { }
 
-    void conjunctWith(const SimdNumChain<TNORM>& other);
+    void conjunctWith(const SimdVectorNumChain<TNORM>& other);
 
-    bool operator == (const SimdNumChain& other) const
+    bool operator == (const SimdVectorNumChain& other) const
     { return values == other.values; }
 
-    bool operator != (const SimdNumChain& other) const
+    bool operator != (const SimdVectorNumChain& other) const
     { return !(*this == other); }
 
 private:
@@ -37,7 +37,7 @@ private:
                        const std::function<float (float, float)>& seqOp)
     {
         if (values.size() != otherValues.size()) {
-            throw std::invalid_argument("SimdNumChain::conjunctWith: incompatible sizes");
+            throw std::invalid_argument("SimdVectorNumChain::conjunctWith: incompatible sizes");
         }
 
         cachedSum = 0;
