@@ -23,6 +23,16 @@ public:
 
         NumericVector minSupportVec = configuration["minSupport"];
         minSupport = minSupportVec[0];
+
+        CharacterVector tnormVec = configuration["tNorm"];
+        if (tnormVec[0] == "goedel")
+            tNorm = TNorm::GOEDEL;
+        else if (tnormVec[0] == "goguen")
+            tNorm = TNorm::GOGUEN;
+        else if (tnormVec[0] == "lukas")
+            tNorm = TNorm::LUKASIEWICZ;
+        else
+            throw new runtime_error("Unknown t-norm in Config");
     }
 
     bool hasConditionArgument() const
@@ -70,6 +80,9 @@ public:
     double getMinSupport() const
     { return minSupport; }
 
+    TNorm getTNorm() const
+    { return tNorm; }
+
 private:
     bool conditionArgument = false;
     bool fociSupportsArgument = false;
@@ -85,6 +98,7 @@ private:
     int minLength;
     int maxLength;
     double minSupport;
+    TNorm tNorm;
 
     void parseArguments(const CharacterVector& vec)
     {

@@ -408,3 +408,49 @@ test_that("data frame select & disjoint", {
                max_length = 2)
     expect_equal(sort(unlist(res)), sort(expected))
 })
+
+
+test_that("t-norm goedel", {
+    c1 <- c(0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
+    c2 <- c(0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
+    m <- matrix(c(c1, c2), ncol = 2)
+
+    res <- dig(m,
+               function(weights) list(w = weights),
+               min_length = 2,
+               t_norm = "goedel")
+    expect_equal(length(res), 1)
+    expect_equal(res, list(list(w = pmin(c1, c2))),
+                 tolerance = 1e-6)
+})
+
+
+test_that("t-norm goguen", {
+    c1 <- c(0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
+    c2 <- c(0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
+    m <- matrix(c(c1, c2), ncol = 2)
+
+    res <- dig(m,
+               function(weights) list(w = weights),
+               min_length = 2,
+               t_norm = "goguen")
+    expect_equal(length(res), 1)
+    expect_equal(res, list(list(w = c1 * c2)),
+                 tolerance = 1e-6)
+})
+
+
+test_that("t-norm lukas", {
+    c1 <- c(0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
+    c2 <- c(0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
+    m <- matrix(c(c1, c2), ncol = 2)
+
+    res <- dig(m,
+               function(weights) list(w = weights),
+               min_length = 2,
+               t_norm = "lukas")
+    expect_equal(length(res), 1)
+    expect_equal(res, list(list(w = pmax(0, c1 + c2 - 1))),
+                 tolerance = 1e-6)
+})
+

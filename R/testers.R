@@ -166,7 +166,7 @@
                           call = caller_env()) {
     test <- x %in% values
     if (!isTRUE(test)) {
-        vals <- paste('"', values, '"', sep = ", ")
+        vals <- paste0('"', values, '"', collapse = ", ")
         cli_abort(c("{.var {name}} must be equal to any value from: {vals}.",
                     "x" = "You've supplied {x}."),
                   call = call)

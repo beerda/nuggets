@@ -7,11 +7,26 @@ List dig_(List logData,
           List numData,
           List logFoci,
           List numFoci,
-          List configuration_list,
+          List confList,
           Function fun)
 {
-    Config config(configuration_list);
-    Executor<BitsetBitChain, VectorNumChain<GOGUEN>> exec(config);
+    List result;
+    Config config(confList);
 
-    return exec.execute(logData, numData, logFoci, numFoci, fun);
+    if (config.getTNorm() == TNorm::GOEDEL) {
+        Executor<BitsetBitChain, VectorNumChain<GOEDEL>> exec(config);
+        result = exec.execute(logData, numData, logFoci, numFoci, fun);
+    }
+    else if (config.getTNorm() == TNorm::GOGUEN) {
+        Executor<BitsetBitChain, VectorNumChain<GOGUEN>> exec(config);
+        result = exec.execute(logData, numData, logFoci, numFoci, fun);
+    }
+    else if (config.getTNorm() == TNorm::LUKASIEWICZ) {
+        Executor<BitsetBitChain, VectorNumChain<LUKASIEWICZ>> exec(config);
+        result = exec.execute(logData, numData, logFoci, numFoci, fun);
+    }
+    else
+        throw new runtime_error("Unknown t-norm in C++ dig_()");
+
+    return result;
 }

@@ -70,6 +70,7 @@ dig.default <- function(x, f, ...) {
                  min_length,
                  max_length,
                  min_support,
+                 t_norm,
                  ...) {
     .must_be_list_of_logicals(logicals)
     .must_be_list_of_doubles(doubles)
@@ -156,13 +157,13 @@ dig.default <- function(x, f, ...) {
                   call = caller_env(2))
     }
 
-    .must_be_integerish_scalar(min_length)
-    .must_be_finite(min_length)
-    .must_be_greater_eq(min_length, 0)
+    .must_be_integerish_scalar(min_length, call = caller_env(2))
+    .must_be_finite(min_length, call = caller_env(2))
+    .must_be_greater_eq(min_length, 0, call = caller_env(2))
     min_length <- as.integer(min_length)
 
-    .must_be_integerish_scalar(max_length)
-    .must_be_greater_eq(max_length, 0)
+    .must_be_integerish_scalar(max_length, call = caller_env(2))
+    .must_be_greater_eq(max_length, 0, call = caller_env(2))
     if (max_length < min_length) {
         cli_abort(c("{.var max_length} must be greater or equal to {.var min_length}.",
                     "x" = "{.var min_length} equals {min_length}.",
@@ -174,9 +175,11 @@ dig.default <- function(x, f, ...) {
     }
     max_length <- as.integer(max_length)
 
-    .must_be_double_scalar(min_support)
-    .must_be_in_range(min_support, c(0, 1))
+    .must_be_double_scalar(min_support, call = caller_env(2))
+    .must_be_in_range(min_support, c(0, 1), call = caller_env(2))
     min_support <- as.double(min_support)
+
+    .must_be_enum(t_norm, c("goguen", "goedel", "lukas"), call = caller_env(2))
 
     arguments <- formalArgs(f)
     if (is.null(arguments)) {
@@ -194,7 +197,8 @@ dig.default <- function(x, f, ...) {
                    disjoint_foci = disjoint_foci,
                    minLength = min_length,
                    maxLength = max_length,
-                   minSupport = as.double(min_support));
+                   minSupport = as.double(min_support),
+                   tNorm = t_norm);
 
     dig_(logicals, doubles, logicals_foci, doubles_foci, config, fun)
 }
@@ -210,6 +214,7 @@ dig.matrix <- function(x,
                        min_length = 0,
                        max_length = Inf,
                        min_support = 0.0,
+                       t_norm = "goguen",
                        ...) {
     .must_be_matrix(x)
 
@@ -243,7 +248,8 @@ dig.matrix <- function(x,
              disjoint_foci = disjoint[foci],
              min_length = min_length,
              max_length = max_length,
-             min_support = min_support)
+             min_support = min_support,
+             t_norm = t_norm)
 
     } else if (is.double(x)) {
         .dig(logicals = list(),
@@ -257,7 +263,8 @@ dig.matrix <- function(x,
              disjoint_foci = disjoint[foci],
              min_length = min_length,
              max_length = max_length,
-             min_support = min_support)
+             min_support = min_support,
+             t_norm = t_norm)
 
     } else {
         cli_abort(c("{.var x} must be either logical or numeric (double) matrix.",
@@ -310,6 +317,7 @@ dig.data.frame <- function(x,
                            min_length = 0,
                            max_length = Inf,
                            min_support = 0.0,
+                           t_norm = "goguen",
                            ...) {
     .must_be_data_frame(x)
 
@@ -338,5 +346,6 @@ dig.data.frame <- function(x,
          disjoint_foci = disjoint[foci_cols$indices],
          min_length = min_length,
          max_length = max_length,
-         min_support = min_support)
+         min_support = min_support,
+         t_norm = t_norm)
 }
