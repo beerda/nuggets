@@ -40,6 +40,7 @@ dig_implications <- function(x,
                              max_length = Inf,
                              min_support = 0.02,
                              min_confidence = 0.7,
+                             t_norm = "goguen",
                              ...) {
     .must_be_double_scalar(min_confidence)
     .must_be_in_range(min_confidence, c(0, 1))
@@ -90,7 +91,9 @@ dig_implications <- function(x,
                disjoint = disjoint,
                min_length = min_length,
                max_length = max_length,
-               min_support = min_support)
+               min_support = min_support,
+               t_norm = t_norm,
+               ...)
 
     res <- unlist(res, recursive = FALSE)
     res <- lapply(res, as.data.frame)
