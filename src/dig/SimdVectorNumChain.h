@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include "xsimd/xsimd.hpp"
 #include "AbstractVectorNumChain.h"
 
 
@@ -11,7 +12,7 @@
 template <TNorm TNORM>
 class SimdVectorNumChain : public AbstractVectorNumChain {
 public:
-    using batchType = xs::batch<float>;
+    using batchType = xsimd::batch<float>;
 
     SimdVectorNumChain()
         : AbstractVectorNumChain()
@@ -49,7 +50,7 @@ private:
             batchType res;
             batchOp(a, b, res);
             res.store_unaligned(&values[i]);
-            cachedSum += xs::reduce_add(res);
+            cachedSum += xsimd::reduce_add(res);
         }
 
         for (size_t i = simdSize; i < values.size(); ++i) {
