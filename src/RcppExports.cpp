@@ -11,18 +11,18 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // dig_
-List dig_(List logicals_data, List doubles_data, List logicals_foci, List doubles_foci, List configuration_list, Function fun);
-RcppExport SEXP _nuggets_dig_(SEXP logicals_dataSEXP, SEXP doubles_dataSEXP, SEXP logicals_fociSEXP, SEXP doubles_fociSEXP, SEXP configuration_listSEXP, SEXP funSEXP) {
+List dig_(List logData, List numData, List logFoci, List numFoci, List configuration_list, Function fun);
+RcppExport SEXP _nuggets_dig_(SEXP logDataSEXP, SEXP numDataSEXP, SEXP logFociSEXP, SEXP numFociSEXP, SEXP configuration_listSEXP, SEXP funSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type logicals_data(logicals_dataSEXP);
-    Rcpp::traits::input_parameter< List >::type doubles_data(doubles_dataSEXP);
-    Rcpp::traits::input_parameter< List >::type logicals_foci(logicals_fociSEXP);
-    Rcpp::traits::input_parameter< List >::type doubles_foci(doubles_fociSEXP);
+    Rcpp::traits::input_parameter< List >::type logData(logDataSEXP);
+    Rcpp::traits::input_parameter< List >::type numData(numDataSEXP);
+    Rcpp::traits::input_parameter< List >::type logFoci(logFociSEXP);
+    Rcpp::traits::input_parameter< List >::type numFoci(numFociSEXP);
     Rcpp::traits::input_parameter< List >::type configuration_list(configuration_listSEXP);
     Rcpp::traits::input_parameter< Function >::type fun(funSEXP);
-    rcpp_result_gen = Rcpp::wrap(dig_(logicals_data, doubles_data, logicals_foci, doubles_foci, configuration_list, fun));
+    rcpp_result_gen = Rcpp::wrap(dig_(logData, numData, logFoci, numFoci, configuration_list, fun));
     return rcpp_result_gen;
 END_RCPP
 }

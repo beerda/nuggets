@@ -28,11 +28,18 @@ public:
         chains.push_back(DualChainType(values));
     }
 
-    template <typename T>
-    void addChains(const List& data)
+    void addLogicalChains(const List& data)
     {
         for (R_xlen_t i = 0; i < data.size(); i++) {
-            T col = data.at(i);
+            LogicalVector col = data.at(i);
+            addChain(col);
+        }
+    }
+
+    void addNumericChains(const List& data)
+    {
+        for (R_xlen_t i = 0; i < data.size(); i++) {
+            NumericVector col = data.at(i);
             addChain(col);
         }
     }
@@ -54,11 +61,18 @@ public:
         foci.push_back(DualChainType(values));
     }
 
-    template <typename T>
-    void addFoci(const List& data)
+    void addLogicalFoci(const List& data)
     {
         for (R_xlen_t i = 0; i < data.size(); i++) {
-            T col = data.at(i);
+            LogicalVector col = data.at(i);
+            addFocus(col);
+        }
+    }
+
+    void addNumericFoci(const List& data)
+    {
+        for (R_xlen_t i = 0; i < data.size(); i++) {
+            NumericVector col = data.at(i);
             addFocus(col);
         }
     }
