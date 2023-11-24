@@ -160,6 +160,21 @@
 .must_be_in_range <- ..must_be_comparable(function(x, range) x >= range[1] & x <= range[2],
                                           "between")
 
+.must_be_enum <- function(x,
+                          values,
+                          name = deparse(substitute(x)),
+                          call = caller_env()) {
+    test <- x %in% values
+    if (!isTRUE(test)) {
+        vals <- paste('"', values, '"', sep = ", ")
+        cli_abort(c("{.var {name}} must be equal to any value from: {vals}.",
+                    "x" = "You've supplied {x}."),
+                  call = call)
+    }
+}
+
+
+
 .must_have_length <- function(x,
                               value,
                               name = deparse(substitute(x)),
