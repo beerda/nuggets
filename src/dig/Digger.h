@@ -7,30 +7,36 @@
 #include "Argumentator.h"
 
 
+template <typename DATA>
 class Digger {
 public:
-    Digger(Data& data, const Function fun)
+    using DataType = DATA;
+    using TaskType = Task<DATA>;
+    using FilterType = Filter<TaskType>;
+    using ArgumentatorType = Argumentator<TaskType>;
+
+    Digger(DataType& data, const Function fun)
         : data(data), initialTask(data.size()), queue(), func(fun)
     { }
 
     virtual ~Digger()
     {
-        for (Filter* f : filters)
+        for (FilterType* f : filters)
             delete f;
 
-        for (Argumentator* a : argumentators)
+        for (ArgumentatorType* a : argumentators)
             delete a;
     }
 
-    void addFilter(Filter* filter)
+    void addFilter(FilterType* filter)
     { filters.push_back(filter); }
 
-    void addArgumentator(Argumentator* argumentator)
+    void addArgumentator(ArgumentatorType* argumentator)
     { argumentators.push_back(argumentator); }
 
     void run()
     {
-        Task task;
+        TaskType task;
 
         initializeRun();
         while (!workDone()) {
@@ -48,70 +54,70 @@ public:
     { return result; }
 
 private:
-    Data& data;
-    Task initialTask;
-    TaskQueue queue;
+    DataType& data;
+    TaskType initialTask;
+    TaskQueue<TaskType> queue;
     Function func;
-    vector<Filter*> filters;
-    vector<Argumentator*> argumentators;
+    vector<FilterType*> filters;
+    vector<ArgumentatorType*> argumentators;
     List result;
     int workingThreads;
 
     bool chainsNeeded = false;
 
-    void updateChain(Task& task) const
+    void updateChain(TaskType& task) const
     {
         if (chainsNeeded)
             task.updateChain(data);
     }
 
-    bool isRedundant(const Task& task) const
+    bool isRedundant(const TaskType& task) const
     {
-        for (const Filter* e : filters)
+        for (const FilterType* e : filters)
             if (e->isRedundant(task))
                 return true;
 
         return false;
     }
 
-    bool isPrunable(const Task& task) const
+    bool isPrunable(const TaskType& task) const
     {
-        for (const Filter* e : filters)
+        for (const FilterType* e : filters)
             if (e->isPrunable(task))
                 return true;
 
         return false;
     }
 
-    bool isStorable(const Task& task) const
+    bool isStorable(const TaskType& task) const
     {
-        for (const Filter* e : filters)
+        for (const FilterType* e : filters)
             if (!e->isStorable(task))
                 return false;
 
         return true;
     }
 
-    bool isExtendable(const Task& task) const
+    bool isExtendable(const TaskType& task) const
     {
-        for (const Filter* e : filters)
+        for (const FilterType* e : filters)
             if (!e->isExtendable(task))
                 return false;
 
         return true;
     }
 
-    List prepareArguments(const Task& task) const
+    List prepareArguments(const TaskType& task) const
     {
         List result;
 
-        for (const Argumentator* a : argumentators)
+        for (const ArgumentatorType* a : argumentators)
             a->prepare(result, task);
 
         return result;
     }
 
-    void store(const Task& task)
+    void store(const TaskType& task)
     {
         List args = prepareArguments(task);
         result.push_back(func(args));
@@ -133,7 +139,7 @@ private:
         return done;
     }
 
-    bool receiveTask(Task& task)
+    bool receiveTask(TaskType& task)
     {
         bool received = false;
 
@@ -148,16 +154,16 @@ private:
         return received;
     }
 
-    void sendTask(const Task& task)
+    void sendTask(const TaskType& task)
     {
         {
             queue.add(task);
         }
     }
 
-    void processTask(Task& task)
+    void processTask(TaskType& task)
     {
-        Task child;
+        TaskType child;
 
         if (!isRedundant(task)) {
             updateChain(task);

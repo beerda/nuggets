@@ -41,7 +41,7 @@ public:
         }
     }
 
-    void conjunctWith(const DualChain& chain)
+    void conjunctWith(const DualChain<BITCHAIN, NUMCHAIN>& chain)
     {
         if (size() != chain.size()) {
             throw new runtime_error("Incompatible chain lengths");
@@ -108,10 +108,3 @@ private:
     BITCHAIN bitData;
     NUMCHAIN numData;
 };
-
-
-//using DualChainType = DualChain<BitsetBitChain, VectorNumChain<GOEDEL>>;
-//using DualChainType = DualChain<BitsetBitChain, BitsetNumChain<GOEDEL>>;
-
-using DualChainType = DualChain<BitsetBitChain, VectorNumChain<GOGUEN>>;
-//using DualChainType = DualChain<BitsetBitChain, SimdVectorNumChain<GOGUEN>>;

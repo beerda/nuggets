@@ -21,21 +21,24 @@ List dig_(List logicals_data,
           List configuration_list,
           Function fun)
 {
-    Data data;
+    using DataType = Data<BitsetBitChain, VectorNumChain<GOGUEN>>;
+    using TaskType = Task<DataType>;
+
+    DataType data;
     data.addChains<LogicalVector>(logicals_data);
     data.addChains<NumericVector>(doubles_data);
     data.addFoci<LogicalVector>(logicals_foci);
     data.addFoci<NumericVector>(doubles_foci);
 
     Config config(configuration_list);
-    Digger digger(data, fun);
+    Digger<DataType> digger(data, fun);
 
     if (config.hasConditionArgument()) {
-        digger.addArgumentator(new ConditionArgumentator(config.getPredicates()));
+        digger.addArgumentator(new ConditionArgumentator<TaskType>(config.getPredicates()));
     }
     if (config.hasFociSupportsArgument()) {
         digger.setChainsNeeded();
-        digger.addArgumentator(new FociSupportsArgumentator(config.getPredicates(),
+        digger.addArgumentator(new FociSupportsArgumentator<TaskType>(config.getPredicates(),
                                                             config.getFoci(),
                                                             config.getDisjointPredicates(),
                                                             config.getDisjointFoci(),
@@ -43,32 +46,32 @@ List dig_(List logicals_data,
     }
     if (config.hasSumArgument()) {
         digger.setChainsNeeded();
-        digger.addArgumentator(new SumArgumentator(data.nrow()));
+        digger.addArgumentator(new SumArgumentator<TaskType>(data.nrow()));
     }
     if (config.hasSupportArgument()) {
         digger.setChainsNeeded();
-        digger.addArgumentator(new SupportArgumentator());
+        digger.addArgumentator(new SupportArgumentator<TaskType>());
     }
     if (config.hasIndicesArgument()) {
         digger.setChainsNeeded();
-        digger.addArgumentator(new IndicesArgumentator(data.nrow()));
+        digger.addArgumentator(new IndicesArgumentator<TaskType>(data.nrow()));
     }
     if (config.hasWeightsArgument()) {
         digger.setChainsNeeded();
-        digger.addArgumentator(new WeightsArgumentator(data.nrow()));
+        digger.addArgumentator(new WeightsArgumentator<TaskType>(data.nrow()));
     }
     if (config.getMinLength() >= 0) {
-        digger.addFilter(new MinLengthFilter(config.getMinLength()));
+        digger.addFilter(new MinLengthFilter<TaskType>(config.getMinLength()));
     }
     if (config.getMaxLength() >= 0) {
-        digger.addFilter(new MaxLengthFilter(config.getMaxLength()));
+        digger.addFilter(new MaxLengthFilter<TaskType>(config.getMaxLength()));
     }
     if (config.getMinSupport() > 0) {
         digger.setChainsNeeded();
-        digger.addFilter(new MinSupportFilter(config.getMinSupport()));
+        digger.addFilter(new MinSupportFilter<TaskType>(config.getMinSupport()));
     }
     if (config.hasDisjointPredicates()) {
-        digger.addFilter(new DisjointFilter(config.getDisjointPredicates()));
+        digger.addFilter(new DisjointFilter<TaskType>(config.getDisjointPredicates()));
     }
 
     digger.run();

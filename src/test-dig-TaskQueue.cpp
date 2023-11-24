@@ -2,20 +2,23 @@
 #include "common.h"
 #include "dig/TaskQueue.h"
 
+using DataType = Data<BitsetBitChain, VectorNumChain<GOGUEN>>;
+using TaskType = Task<DataType>;
+
 context("dig/TaskQueue.h") {
     test_that("shorter has priority over longer") {
-        Task t0({}, {10, 11, 12});
-        Task t1({2, 3}, {10, 11, 12});
+        TaskType t0({}, {10, 11, 12});
+        TaskType t1({2, 3}, {10, 11, 12});
 
-        expect_true(TaskQueue::hasPriority(t0, t1));
-        expect_false(TaskQueue::hasPriority(t1, t0));
+        expect_true(TaskQueue<TaskType>::hasPriority(t0, t1));
+        expect_false(TaskQueue<TaskType>::hasPriority(t1, t0));
     }
 
     test_that("push & pop") {
-        TaskQueue queue;
-        Task t0({}, {1, 2, 3});
-        Task t1({5}, {1, 2, 3});
-        Task t2({5, 6}, {1, 2, 3});
+        TaskQueue<TaskType> queue;
+        TaskType t0({}, {1, 2, 3});
+        TaskType t1({5}, {1, 2, 3});
+        TaskType t2({5, 6}, {1, 2, 3});
 
         expect_true(queue.empty());
 
@@ -28,7 +31,7 @@ context("dig/TaskQueue.h") {
         queue.add(t1);
         expect_false(queue.empty());
 
-        Task t = queue.pop();
+        TaskType t = queue.pop();
         expect_false(queue.empty());
         expect_true(t == t0);
         expect_true(t != t1);

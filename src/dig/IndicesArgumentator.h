@@ -9,15 +9,16 @@
  * rows by the current condition. For numeric inputs, 'TRUE' appears wherever the row's
  * weight is greater than 0.
  */
-class IndicesArgumentator : public Argumentator {
+template <typename TASK>
+class IndicesArgumentator : public Argumentator<TASK> {
 public:
     IndicesArgumentator(size_t dataSize)
         : dataSize(dataSize)
     { }
 
-    void prepare(List& arguments, const Task& task) const override
+    void prepare(List& arguments, const TASK& task) const override
     {
-        Argumentator::prepare(arguments, task);
+        Argumentator<TASK>::prepare(arguments, task);
 
         LogicalVector indices;
 

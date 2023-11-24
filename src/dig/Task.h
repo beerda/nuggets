@@ -9,8 +9,12 @@
 /**
  * Task represents a single level of traversal through the search space of conditions.
  */
+template <typename DATA>
 class Task {
 public:
+    using DataType = DATA;
+    using DualChainType = DataType::DualChainType;
+
     Task()
     { }
 
@@ -147,7 +151,7 @@ public:
     const DualChainType& getPrefixChain() const
     { return prefixChain; }
 
-    void updateChain(const Data& data)
+    void updateChain(const DataType& data)
     {
         if (hasPredicate()) {
             chain = data.getChain(getCurrentPredicate());

@@ -3,13 +3,14 @@
 #include "Filter.h"
 
 
-class MaxLengthFilter : public Filter {
+template <typename TASK>
+class MaxLengthFilter : public Filter<TASK> {
 public:
     MaxLengthFilter(int maxLength)
         : maxLength(maxLength)
     { }
 
-    bool isRedundant(const Task& task) const override
+    bool isRedundant(const TASK& task) const override
     { return ((int) task.getLength()) > maxLength; }
 
 private:

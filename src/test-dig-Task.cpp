@@ -2,40 +2,45 @@
 #include "common.h"
 #include "dig/Task.h"
 
+
+using DataType = Data<BitsetBitChain, VectorNumChain<GOGUEN>>;
+using TaskType = Task<DataType>;
+using DualChainType = DataType::DualChainType;
+
 context("dig/Task.h") {
     test_that("==") {
-        Task tA({1, 2, 3}, {4, 5, 6}, {7, 8, 9});
-        Task tB({1, 2, 3}, {4, 5, 6}, {7, 8, 9});
+        TaskType tA({1, 2, 3}, {4, 5, 6}, {7, 8, 9});
+        TaskType tB({1, 2, 3}, {4, 5, 6}, {7, 8, 9});
         tB.next();
 
-        expect_true(tA == Task({1, 2, 3}, {4, 5, 6}, {7, 8, 9}));
-        expect_true(tA != Task({2, 3}, {4, 5, 6}, {7, 8, 9}));
-        expect_true(tA != Task({1, 2, 3}, {4, 6}, {7, 8, 9}));
-        expect_true(tA != Task({1, 2, 3}, {4, 5, 6}, {7, 8}));
+        expect_true(tA == TaskType({1, 2, 3}, {4, 5, 6}, {7, 8, 9}));
+        expect_true(tA != TaskType({2, 3}, {4, 5, 6}, {7, 8, 9}));
+        expect_true(tA != TaskType({1, 2, 3}, {4, 6}, {7, 8, 9}));
+        expect_true(tA != TaskType({1, 2, 3}, {4, 5, 6}, {7, 8}));
         expect_true(tA != tB);
     }
 
     test_that("getPrefix") {
-        Task t({0, 1, 2}, {10, 11, 12}, {5, 6});
+        TaskType t({0, 1, 2}, {10, 11, 12}, {5, 6});
         expect_true(t.getPrefix() == set<int>({0, 1, 2}));
     }
 
     test_that("getAvailable") {
-        Task t({0, 1, 2}, {10, 11, 12}, {5, 6});
+        TaskType t({0, 1, 2}, {10, 11, 12}, {5, 6});
         expect_true(t.getAvailable() == vector<int>({10, 11, 12}));
     }
 
     test_that("getSoFar") {
-        Task t({0, 1, 2}, {10, 11, 12}, {5, 6});
+        TaskType t({0, 1, 2}, {10, 11, 12}, {5, 6});
         expect_true(t.getSoFar() == vector<int>({5, 6}));
         expect_true(t.hasSoFar());
     }
 
     test_that("getLength & empty") {
-        Task empty;
-        Task t({0, 1, 2}, {10, 11, 12}, {5, 6});
-        Task t0({1, 3, 5});
-        Task t1({}, {10, 11, 12}, {5, 6});
+        TaskType empty;
+        TaskType t({0, 1, 2}, {10, 11, 12}, {5, 6});
+        TaskType t0({1, 3, 5});
+        TaskType t1({}, {10, 11, 12}, {5, 6});
 
         expect_true(t.getLength() == 4);
         expect_true(t0.getLength() == 0);
@@ -49,7 +54,7 @@ context("dig/Task.h") {
     }
 
     test_that("predicate enumeration") {
-        Task t({0, 1, 2}, {10, 11, 12}, {5, 6});
+        TaskType t({0, 1, 2}, {10, 11, 12}, {5, 6});
 
         expect_true(t.hasPredicate());
         expect_true(t.getCurrentPredicate() == 10);
@@ -90,7 +95,7 @@ context("dig/Task.h") {
     }
 
     test_that("constructor n") {
-        Task tn(5);
+        TaskType tn(5);
         expect_true(tn.getPrefix().size() == 0);
         expect_true(tn.getAvailable().size() == 0);
         expect_true(tn.getSoFar() == vector<int>({0, 1, 2, 3, 4}));
@@ -99,9 +104,9 @@ context("dig/Task.h") {
     }
 
     test_that("createChild") {
-        Task t({0, 1, 2}, {10, 11, 12}, {5, 6});
+        TaskType t({0, 1, 2}, {10, 11, 12}, {5, 6});
 
-        Task ch = t.createChild();
+        TaskType ch = t.createChild();
         expect_true(ch.getPrefix() == set<int>({0, 1, 2, 10}));
         expect_true(ch.getAvailable() == vector<int>({5, 6}));
 
@@ -123,12 +128,12 @@ context("dig/Task.h") {
             data3[i] = i / 10.0;
         }
 
-        Data data;
+        DataType data;
         data.addChain(data1);
         data.addChain(data2);
         data.addChain(data3);
 
-        Task t({0, 1, 2}); // empty task with soFar: 0,1,2
+        TaskType t({0, 1, 2}); // empty task with soFar: 0,1,2
         expect_true(t.getChain().empty());
         expect_true(t.getPrefixChain().empty());
 

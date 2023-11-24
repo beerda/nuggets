@@ -10,15 +10,16 @@
  * data, it equals to the sum of weights (membership degrees) of the rows
  * satisfying the condition.
  */
-class SumArgumentator : public Argumentator {
+template <typename TASK>
+class SumArgumentator : public Argumentator<TASK> {
 public:
     SumArgumentator(size_t dataLength)
         : dataLength(1.0 * dataLength)
     { }
 
-    void prepare(List& arguments, const Task& task) const override
+    void prepare(List& arguments, const TASK& task) const override
     {
-        Argumentator::prepare(arguments, task);
+        Argumentator<TASK>::prepare(arguments, task);
 
         NumericVector result;
 

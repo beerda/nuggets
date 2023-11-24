@@ -3,13 +3,14 @@
 #include "Filter.h"
 
 
-class DisjointFilter : public Filter {
+template <typename TASK>
+class DisjointFilter : public Filter<TASK> {
 public:
     DisjointFilter(const IntegerVector& disjoint)
         : disjoint(disjoint)
     { }
 
-    bool isRedundant(const Task& task) const override
+    bool isRedundant(const TASK& task) const override
     {
         if (task.hasPredicate()) {
             int curr = task.getCurrentPredicate();

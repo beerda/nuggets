@@ -3,13 +3,14 @@
 #include "Filter.h"
 
 
-class MinSupportFilter : public Filter {
+template <typename TASK>
+class MinSupportFilter : public Filter<TASK> {
 public:
     MinSupportFilter(double minSupport)
         : minSupport(minSupport)
     { }
 
-    bool isPrunable(const Task& task) const override
+    bool isPrunable(const TASK& task) const override
     {
         return task.getChain().getSupport() < minSupport;
         }

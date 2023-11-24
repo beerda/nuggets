@@ -8,15 +8,16 @@
  * is a double vector of size equal to the number of data rows, which represents the weights
  * of the rows accordingly to the current condition.
  */
-class WeightsArgumentator : public Argumentator {
+template <typename TASK>
+class WeightsArgumentator : public Argumentator<TASK> {
 public:
     WeightsArgumentator(size_t dataSize)
         : dataSize(dataSize)
     { }
 
-    void prepare(List& arguments, const Task& task) const override
+    void prepare(List& arguments, const TASK& task) const override
     {
-        Argumentator::prepare(arguments, task);
+        Argumentator<TASK>::prepare(arguments, task);
 
         NumericVector weights;
 

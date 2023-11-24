@@ -3,13 +3,14 @@
 #include "Filter.h"
 
 
-class MinLengthFilter : public Filter {
+template <typename TASK>
+class MinLengthFilter : public Filter<TASK> {
 public:
     MinLengthFilter(int minLength)
         : minLength(minLength)
     { }
 
-    bool isStorable(const Task& task) const override
+    bool isStorable(const TASK& task) const override
     { return ((int) task.getLength()) >= minLength; }
 
 private:

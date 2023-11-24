@@ -7,21 +7,25 @@
  * The 'fociSupports' argument is a double value with supports of
  * foci combined with the condition.
  */
-class FociSupportsArgumentator : public Argumentator {
+template <typename TASK>
+class FociSupportsArgumentator : public Argumentator<TASK> {
 public:
+    using DataType = TASK::DataType;
+    using DualChainType = TASK::DualChainType;
+
     FociSupportsArgumentator(const IntegerVector& predicates,
                              const IntegerVector& foci,
                              const IntegerVector& disjointPredicates,
                              const IntegerVector& disjointFoci,
-                             const Data& data)
+                             const DataType& data)
         : predicates(predicates), foci(foci),
           disjointPredicates(disjointPredicates), disjointFoci(disjointFoci),
           data(data)
     { }
 
-    void prepare(List& arguments, const Task& task) const override
+    void prepare(List& arguments, const TASK& task) const override
     {
-        Argumentator::prepare(arguments, task);
+        Argumentator<TASK>::prepare(arguments, task);
 
         CharacterVector names = foci.names();
         NumericVector supports;
@@ -49,9 +53,9 @@ private:
     IntegerVector foci;
     IntegerVector disjointPredicates;
     IntegerVector disjointFoci;
-    const Data& data;
+    const DataType& data;
 
-    bool isFocusInCondition(const int id, const Task& task) const
+    bool isFocusInCondition(const int id, const TASK& task) const
     {
         if (task.hasPredicate()) {
             if (foci[id] == predicates[task.getCurrentPredicate()])
@@ -65,7 +69,7 @@ private:
         return false;
     }
 
-    bool isFocusDisjointWith(const int id, const Task& task) const
+    bool isFocusDisjointWith(const int id, const TASK& task) const
     {
         if (disjointPredicates.size() <= 0)
             return false;

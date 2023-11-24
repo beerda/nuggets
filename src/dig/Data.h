@@ -3,8 +3,11 @@
 #include "DualChain.h"
 
 
+template <typename BITCHAIN, typename NUMCHAIN>
 class Data {
 public:
+    using DualChainType = DualChain<BITCHAIN, NUMCHAIN>;
+
     Data()
     { }
 
