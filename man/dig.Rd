@@ -84,6 +84,10 @@ of the condition in the dataset \code{x}. For logical data, it equals to the
 relative frequency of rows such that all condition predicates are TRUE on it.
 For numerical (double) input, the support is computed as the mean (over all
 rows) of multiplications of predicate values.}
+
+\item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
+\code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}
+(Lukasiewicz t-norm).}
 }
 \value{
 A list of results provided by the callback function \code{f}.

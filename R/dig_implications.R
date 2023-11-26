@@ -27,6 +27,9 @@
 #'      rows) of multiplications of predicate values.
 #' @param min_confidence the minimum confidence of rules to return. The confidence
 #'      of a rule is computed as: supp(antecedent) / supp(antecedent AND consequent).
+#' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
+#'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
+#'      (Lukasiewicz t-norm).
 #' @param ... Further arguments, currently unused.
 #' @returns A tibble with found rules.
 #' @author Michal Burda

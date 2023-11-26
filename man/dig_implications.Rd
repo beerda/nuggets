@@ -53,6 +53,10 @@ rows) of multiplications of predicate values.}
 \item{min_confidence}{the minimum confidence of rules to return. The confidence
 of a rule is computed as: supp(antecedent) / supp(antecedent AND consequent).}
 
+\item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
+\code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}
+(Lukasiewicz t-norm).}
+
 \item{...}{Further arguments, currently unused.}
 }
 \value{

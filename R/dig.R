@@ -40,6 +40,9 @@
 #'      relative frequency of rows such that all condition predicates are TRUE on it.
 #'      For numerical (double) input, the support is computed as the mean (over all
 #'      rows) of multiplications of predicate values.
+#' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
+#'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
+#'      (Lukasiewicz t-norm).
 #' @param ... Further arguments, currently unused.
 #' @returns A list of results provided by the callback function `f`.
 #' @author Michal Burda
