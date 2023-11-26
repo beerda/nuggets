@@ -1,3 +1,4 @@
+library(rbenchmark)
 library(nuggets)
 
 set.seed(1234)
@@ -8,13 +9,27 @@ n <- 7      # cols
 d <- matrix(runif(m * n), nrow = m, ncol = n)
 colnames(d) <- letters[seq_len(n)]
 
-system.time({
-    rules <- dig_implications(d, min_support = 0.001, min_confidence = 0.1, n_threads = 2)
-})
+fun <- function(t_norm) {
+    rules <- dig_implications(d,
+                              min_support = 0.001,
+                              min_confidence = 0.1,
+                              t_norm = t_norm)
+    return(rules)
+}
 
+print(nrow(fun("goedel")))
+#print(nrow(fun("goguen")))
+print(nrow(fun("lukas")))
 
-print(head(rules))
-print(nrow(rules))
+res <- benchmark(goedel = expression(fun("goedel")),
+                 #goguen = expression(fun("goguen")),
+                 lukas = expression(fun("lukas")),
+                 replications = (rep(1, 5)))
+
+print(res)
+saveRDS(res, "misc/VectorNumChain.rds")
+#saveRDS(res, "misc/BitsetNumChain.rds")
+#saveRDS(res, "misc/SimdVectorNumChain.rds")
 
 # Results:
 #
