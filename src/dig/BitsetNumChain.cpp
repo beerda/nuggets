@@ -26,12 +26,23 @@ void BitsetNumChain<TNorm::GOEDEL>::conjunctWith(const BitsetNumChain<TNorm::GOE
 }
 
 template <>
+void BitsetNumChain<TNorm::GOGUEN>::conjunctWith(const BitsetNumChain<TNorm::GOGUEN>& other)
+{
+    throw std::invalid_argument("unimplemented");
+    if (n != other.n)
+        throw std::invalid_argument("BitsetNumChain<GOGUEN>::conjunctWith: incompatible sizes");
+
+    if (BitsetNumChain<GOGUEN>::ACCURACY != 8)
+        throw std::runtime_error("BitsetNumChain<GOGUEN>::conjunctWith not implemented for ACCURACY != 8");
+}
+
+template <>
 void BitsetNumChain<TNorm::LUKASIEWICZ>::conjunctWith(const BitsetNumChain<TNorm::LUKASIEWICZ>& other)
 {
     if (n != other.n)
         throw std::invalid_argument("BitsetNumChain<LUKASIEWICZ>::conjunctWith: incompatible sizes");
 
-    if (BitsetNumChain<GOEDEL>::ACCURACY != 8)
+    if (BitsetNumChain<LUKASIEWICZ>::ACCURACY != 8)
         throw std::runtime_error("BitsetNumChain<LUKASIEWICZ>::conjunctWith not implemented for ACCURACY != 8");
 
     const uintmax_t* a = data.data();
