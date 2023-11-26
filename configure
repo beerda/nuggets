@@ -617,8 +617,8 @@ PACKAGE_URL=''
 ac_unique_file="src"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
-PKG_CXXFLAGS
 PKG_LIBS
+PKG_CXXFLAGS
 SUBDIR_SOURCES
 ROOTDIR_SOURCES
 OBJEXT
@@ -2008,20 +2008,6 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 # Supply copyright information
 
 
-# Find the compiler and compiler flags used by R.
-: ${R_HOME=`R RHOME`}
-if test -z "${R_HOME}"; then
-  echo "could not determine R_HOME"
-  exit 1
-fi
-
-RBIN="${R_HOME}/bin/R"
-CXX="`"${RBIN}" CMD config CXX20` `"${RBIN}" CMD config CXX20STD`"
-CXXFLAGS="`"${RBIN}" CMD config CXX20FLAGS`"
-
-PKG_CXXFLAGS="${CXXFLAGS} -march=native -mtune=native -O3"
-PKG_LIBS="${PKG_LIBS}"
-
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -2661,6 +2647,10 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 # Verify the correct src directory exists from where the file is being run.
 
+
+# Set package flags
+PKG_CXXFLAGS="-march=native -O3 -mtune=native"
+PKG_LIBS="${PKG_LIBS}"
 
 # Dynamically generate list of sources from subdirectories via shell
 ROOTDIR_SOURCES="$(cd src/ && ls *.cpp | tr '\n' ' ')"
