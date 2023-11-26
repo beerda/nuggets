@@ -19,7 +19,9 @@ Imports:
     methods,
     Rcpp,
     rlang,
+    stats,
     tibble,
+    tidyr,
     tidyselect
 LinkingTo: 
     Rcpp,
