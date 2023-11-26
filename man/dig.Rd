@@ -20,6 +20,7 @@ dig(x, f, ...)
   min_length = 0,
   max_length = Inf,
   min_support = 0,
+  t_norm = "goguen",
   ...
 )
 
@@ -32,6 +33,7 @@ dig(x, f, ...)
   min_length = 0,
   max_length = Inf,
   min_support = 0,
+  t_norm = "goguen",
   ...
 )
 }

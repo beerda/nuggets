@@ -13,6 +13,7 @@ dig_implications(
   max_length = Inf,
   min_support = 0.02,
   min_confidence = 0.7,
+  t_norm = "goguen",
   ...
 )
 }
