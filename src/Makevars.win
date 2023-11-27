@@ -1,0 +1,4 @@
+# Enable C++20
+CXX_STD = CXX20
+
+PKG_CPPFLAGS=-I.
