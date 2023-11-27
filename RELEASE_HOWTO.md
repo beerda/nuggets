@@ -2,7 +2,7 @@
 - Update NEWS.md
 - Test:
     devtools::spell_check()
-    rhub::check_for_cran(env_vars=c(`_R_CHECK_FORCE_SUGGESTS_`="false"))
+    rhub::check_for_cran()
     devtools::check_win_devel()
 - Release:
     devtools::release()
