@@ -4,3 +4,6 @@
 ^README\.Rmd$
 ^\.github$
 ^misc$
+^RELEASE-HOWTO.txt$
+^cran-comments\.md$
+^CRAN-SUBMISSION$
