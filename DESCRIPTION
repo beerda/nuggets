@@ -1,5 +1,5 @@
 Package: nuggets
-Title: Nuggets
+Title: Extensible data pattern searching framework
 Version: 1.0.0
 Authors@R: 
     person(given = "Michal",
@@ -8,7 +8,11 @@ Authors@R:
            email = "michal.burda@osu.cz",
            comment = c(ORCID = "0000-0002-4182-4407"))
 Maintainer: Michal Burda <michal.burda@osu.cz>
-Description: A package for searching interesting subspaces described with elementary conjunctions.
+Description: The package generates conditions in the form of elementary conjunctions, evaluates
+    them on a dataset and checks the induced sub-data for interesting statistical properties.
+    Currently, the package searches for implicative association rules and conditional correlations.
+    A user-defined function may be defined to evaluate on each generated condition to search for
+    custom patterns.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
