@@ -1,8 +1,8 @@
 #include <iostream>
 #include "dig/Executor.h"
 
-#define NCH VectorNumChain
-//define NCH SimdVectorNumChain
+//define NCH VectorNumChain
+#define NCH SimdVectorNumChain
 //define NCH BitsetNumChain
 
 // [[Rcpp::export]]
