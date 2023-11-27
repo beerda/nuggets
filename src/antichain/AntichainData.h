@@ -12,11 +12,9 @@ public:
 
     AntichainData(List data)
     {
-        for (size_t i = 0; i < data.size(); ++i) {
+        for (R_xlen_t i = 0; i < data.size(); ++i) {
             addCondition(data[i]);
         }
-        for (const IntegerVector& values : data)
-            addCondition(values);
     }
 
     void addCondition(const IntegerVector& values)
