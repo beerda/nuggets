@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include <bit>
+#include <bitset>
 #include "../common.h"
 
 
@@ -54,7 +54,8 @@ public:
     {
         size_t result = 0;
         for (size_t i = 0; i < data.size(); i++) {
-            result += popcount(data[i]);
+            //result += popcount(data[i]);                               // C++20 version
+            result += static_cast<uint8_t>(bitset<64>(data[i]).count()); // C++98 version
         }
         return result;
     }
