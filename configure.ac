@@ -14,7 +14,7 @@ AC_PROG_CXX
 AC_CONFIG_SRCDIR([src])
 
 # Set package flags
-PKG_CXXFLAGS="-march=native -O3 -mtune=native"
+PKG_CXXFLAGS="" #-march=native -O3 -mtune=native"
 PKG_LIBS="${PKG_LIBS}"
 
 # Dynamically generate list of sources from subdirectories via shell
