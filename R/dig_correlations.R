@@ -22,7 +22,7 @@
 #'      `"two.sided"`, `"greater"` or `"less"`. `"greater"` corresponds to
 #'      positive association, `"less"` to negative association.
 #' @param exact a logical indicating whether an exact p-value should be computed.
-#'      Used for Kendall's $\tau$ and Spearman's $\rho$. See [stats::cor.test()] for
+#'      Used for Kendall's *tau* and Spearman's *rho*. See [stats::cor.test()] for
 #'      more information.
 #' @param min_length the minimum size (the minimum number of predicates) of the
 #'      condition to be generated (must be greater or equal to 0). If 0, the empty
