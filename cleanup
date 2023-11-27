@@ -1,3 +1,0 @@
-#! /bin/sh
-rm -f config.status config.log  src/Makevars
-

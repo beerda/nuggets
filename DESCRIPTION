@@ -30,7 +30,7 @@ Imports:
 LinkingTo: 
     Rcpp,
     testthat
-SystemRequirements: C++20
+SystemRequirements: C++14
 Suggests: 
     testthat (>= 3.0.0),
     xml2
