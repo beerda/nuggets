@@ -43,7 +43,7 @@ to be used for the test. One of \code{"pearson"}, \code{"kendall"}, or \code{"sp
 positive association, \code{"less"} to negative association.}
 
 \item{exact}{a logical indicating whether an exact p-value should be computed.
-Used for Kendall's τ and Spearman's ρ. See \code{\link[stats:cor.test]{stats::cor.test()}} for
+Used for Kendall's $\tau$ and Spearman's $\rho$. See \code{\link[stats:cor.test]{stats::cor.test()}} for
 more information.}
 
 \item{min_length}{the minimum size (the minimum number of predicates) of the

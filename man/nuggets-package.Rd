@@ -4,9 +4,9 @@
 \name{nuggets-package}
 \alias{nuggets}
 \alias{nuggets-package}
-\title{nuggets: Nuggets}
+\title{nuggets: Extensible data pattern searching framework}
 \description{
-A package for searching interesting subspaces described with elementary conjunctions.
+The package generates conditions in the form of elementary conjunctions, evaluates them on a dataset and checks the induced sub-data for interesting statistical properties. Currently, the package searches for implicative association rules and conditional correlations. A user-defined function may be defined to evaluate on each generated condition to search for custom patterns.
 }
 \author{
 \strong{Maintainer}: Michal Burda \email{michal.burda@osu.cz} (\href{https://orcid.org/0000-0002-4182-4407}{ORCID})
