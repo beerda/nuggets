@@ -13,7 +13,7 @@ template <typename DATA>
 class Task {
 public:
     using DataType = DATA;
-    using DualChainType = DataType::DualChainType;
+    using DualChainType = typename DataType::DualChainType;
 
     Task()
     { }

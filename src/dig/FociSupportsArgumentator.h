@@ -10,8 +10,8 @@
 template <typename TASK>
 class FociSupportsArgumentator : public Argumentator<TASK> {
 public:
-    using DataType = TASK::DataType;
-    using DualChainType = TASK::DualChainType;
+    using DataType = typename TASK::DataType;
+    using DualChainType = typename TASK::DualChainType;
 
     FociSupportsArgumentator(const IntegerVector& predicates,
                              const IntegerVector& foci,

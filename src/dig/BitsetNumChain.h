@@ -21,7 +21,7 @@ public:
           iMask(1)
     {
         iMask <<= (ACCURACY - 1);
-        int j = 1;
+        size_t j = 1;
         while (j * ACCURACY < CHUNK_SIZE) {
             iMask = iMask + (iMask << (j * ACCURACY));
             j <<= 1;
@@ -97,7 +97,7 @@ public:
     {
         // TODO: as constant
         uintmax_t mask = CHUNK_MASK;
-        for (int shift = 1; shift < CHUNK_SIZE / 2; shift += ACCURACY) {
+        for (size_t shift = 1; shift < CHUNK_SIZE / 2; shift += ACCURACY) {
             mask = (mask << (2 * ACCURACY)) + CHUNK_MASK;
         }
 
@@ -107,12 +107,12 @@ public:
         const uintmax_t* oddChain = data.data();
         const uintmax_t* evenChain = (uintmax_t*) (((uint8_t*) data.data()) + (ACCURACY / 8));
 
-        int index = 0;
+        size_t index = 0;
         while (index < data.size() - 1) {
             tempOdd = 0;
             tempEven = 0;
 
-            int border;
+            size_t border;
             if (data.size() - 1 > index + STEP) {
                 border = index + STEP;
             } else {
@@ -124,7 +124,7 @@ public:
                 tempOdd += oddChain[index] & mask;
                 tempEven += evenChain[index] & mask;
             }
-            for (int shift = 0; shift < CHUNK_SIZE; shift += 2 * ACCURACY) {
+            for (size_t shift = 0; shift < CHUNK_SIZE; shift += 2 * ACCURACY) {
                 result += (tempOdd >> shift) & DBL_CHUNK_MASK;
                 result += (tempEven >> shift) & DBL_CHUNK_MASK;
             }
