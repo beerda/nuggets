@@ -5,4 +5,5 @@
 # nuggets 1.0.0
 - released: 2023-11-28
 - first version of the package
-- implements: dig(), dig_implications(), dig_correlations()
+- implemented: dichotomize(), dig(), dig_implications(), dig_correlations(),
+  which_antichain(), format_condition(), is_subset()
