@@ -13,22 +13,41 @@ status](https://www.r-pkg.org/badges/version/nuggets)](https://CRAN.R-project.or
 coverage](https://codecov.io/gh/beerda/nuggets/branch/main/graph/badge.svg)](https://app.codecov.io/gh/beerda/nuggets?branch=main)
 <!-- badges: end -->
 
-R package for searching the subspaces described with elementary
-conjunctions
+Extensible R framework for subgroup discovery ([Atzmueller
+(2015)](https://doi.org/10.1002/widm.1144)), contrast patterns ([Chen
+(2022)](https://doi.org/10.48550/arXiv.2209.13556)), emerging patterns
+([Dong (1999)](https://doi.org/10.1145/312129.312191%3E)) and
+association rules ([Agrawal
+(1994)](https://www.vldb.org/conf/1994/P487.PDF)). Both crisp (binary)
+and fuzzy data are supported. It generates conditions in the form of
+elementary conjunctions, evaluates them on a dataset and checks the
+induced sub-data for interesting statistical properties. Currently, the
+package searches for implicative association rules and conditional
+correlations ([Hájek
+(1978)](https://doi.org/10.1007/978-3-642-66943-9%3E)). A user-defined
+function may be defined to evaluate on each generated condition to
+search for custom patterns.
 
 ## Installation
 
-You can install the development version of `nuggets` from
+To install the stable version of `nuggets` from CRAN, type the following
+command within the R session:
+
+``` r
+install.packages("nuggets")
+```
+
+You can also install the development version of `nuggets` from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
+install.packages("devtools")
 devtools::install_github("beerda/nuggets")
 ```
 
 ## Examples
 
-### Search for implicative rules
+### Search for Implicative Rules
 
 We start with loading of the needed packages:
 
@@ -90,6 +109,86 @@ head(d)
 #> #   `uptake=(17.9,28.3]` <lgl>, `uptake=(28.3,37.1]` <lgl>
 ```
 
+Before starting to search for the rules, it is good idea to create the
+vector of disjoints. Columns with equal values in the disjoint vector
+will not be combined together. This will speed-up the search as it makes
+no sense, e.g., to combine `Plant=Qn1` and `Plant=Qn2` in a single
+condition.
+
+``` r
+disj <- sub("=.*", "", colnames(d))
+print(disj)
+#>  [1] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    
+#>  [7] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    
+#> [13] "Type"      "Type"      "Treatment" "Treatment" "conc"      "conc"     
+#> [19] "conc"      "conc"      "uptake"    "uptake"    "uptake"
+```
+
+Once the data are prepared, the `dig_implications` function may be
+invoked. It takes the dataset as its first parameter and a pair of
+“tidyselect” expressions to select the column names to appear in the
+left- and right-hand side of the rule (antecedent and consequent).
+
+``` r
+result <- dig_implications(d,
+                           antecedent = !starts_with("Treatment"),
+                           consequent = starts_with("Treatment"),
+                           disjoint = disj,
+                           min_support = 0.02,
+                           min_confidence = 0.8)
+
+result <- arrange(result, desc(support))
+print(result)
+#> # A tibble: 225 × 7
+#>    antecedent                 consequent support confidence coverage  lift count
+#>    <chr>                      <chr>        <dbl>      <dbl>    <dbl> <dbl> <dbl>
+#>  1 {Type=Mississippi,uptake=… {Treatmen…  0.155       0.813   0.190   1.63    16
+#>  2 {Type=Mississippi,uptake=… {Treatmen…  0.119       1       0.119   2       10
+#>  3 {Plant=Qn1}                {Treatmen…  0.0833      1       0.0833  2        7
+#>  4 {Plant=Qn2}                {Treatmen…  0.0833      1       0.0833  2        7
+#>  5 {Plant=Qn3}                {Treatmen…  0.0833      1       0.0833  2        7
+#>  6 {Plant=Qc1}                {Treatmen…  0.0833      1       0.0833  2        7
+#>  7 {Plant=Qc3}                {Treatmen…  0.0833      1       0.0833  2        7
+#>  8 {Plant=Qc2}                {Treatmen…  0.0833      1       0.0833  2        7
+#>  9 {Plant=Mn3}                {Treatmen…  0.0833      1       0.0833  2        7
+#> 10 {Plant=Mn2}                {Treatmen…  0.0833      1       0.0833  2        7
+#> # ℹ 215 more rows
+```
+
+### Custom Pattern Search
+
+The `nuggets` package allows to execute a user-defined callback function
+on each generated frequent condition. That way a custom type of patterns
+may be searched. The following example replicates the search for
+implicative rules with the custom callback function. For that, a dataset
+has to be dichotomized and the disjoint vector created as in the
+previous example:
+
+``` r
+head(d)
+#> # A tibble: 6 × 23
+#>   `Plant=Qn1` `Plant=Qn2` `Plant=Qn3` `Plant=Qc1` `Plant=Qc3` `Plant=Qc2`
+#>   <lgl>       <lgl>       <lgl>       <lgl>       <lgl>       <lgl>      
+#> 1 TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      
+#> 2 TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      
+#> 3 TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      
+#> 4 TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      
+#> 5 TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      
+#> 6 TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      
+#> # ℹ 17 more variables: `Plant=Mn3` <lgl>, `Plant=Mn2` <lgl>, `Plant=Mn1` <lgl>,
+#> #   `Plant=Mc2` <lgl>, `Plant=Mc3` <lgl>, `Plant=Mc1` <lgl>,
+#> #   `Type=Quebec` <lgl>, `Type=Mississippi` <lgl>,
+#> #   `Treatment=nonchilled` <lgl>, `Treatment=chilled` <lgl>,
+#> #   `conc=(-Inf,175]` <lgl>, `conc=(175,350]` <lgl>, `conc=(350,675]` <lgl>,
+#> #   `conc=(675, Inf]` <lgl>, `uptake=(-Inf,17.9]` <lgl>,
+#> #   `uptake=(17.9,28.3]` <lgl>, `uptake=(28.3,37.1]` <lgl>
+print(disj)
+#>  [1] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    
+#>  [7] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    
+#> [13] "Type"      "Type"      "Treatment" "Treatment" "conc"      "conc"     
+#> [19] "conc"      "conc"      "uptake"    "uptake"    "uptake"
+```
+
 As we want to search for implicative rules with some minimum support and
 confidence, we define the variables to hold that thresholds. We also
 need to define a callback function that will be called for each found
@@ -127,21 +226,6 @@ special predicates, which we call “foci” (plural of “focus”), within the
 rows satisfying the condition. For implicative rules, foci are potential
 rule consequents.
 
-Before starting to search for the rules, it is good idea to create the
-vector of disjoints. Columns with equal values in the disjoint vector
-will not be combined together. This will speed-up the search as it makes
-no sense, e.g., to combine `Plant=Qn1` and `Plant=Qn2` in a single
-condition.
-
-``` r
-disj <- sub("=.*", "", colnames(d))
-print(disj)
-#>  [1] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    
-#>  [7] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    
-#> [13] "Type"      "Type"      "Treatment" "Treatment" "conc"      "conc"     
-#> [19] "conc"      "conc"      "uptake"    "uptake"    "uptake"
-```
-
 Now we can run the digging for rules:
 
 ``` r
@@ -166,7 +250,7 @@ result <- result %>%
   arrange(desc(support))
 
 print(result)
-#> # A tibble: 156 × 4
+#> # A tibble: 225 × 4
 #>    antecedent                            consequent           support confidence
 #>    <chr>                                 <chr>                  <dbl>      <dbl>
 #>  1 {Type=Mississippi,uptake=(-Inf,17.9]} {Treatment=chilled}   0.155       0.813
@@ -179,35 +263,5 @@ print(result)
 #>  8 {Plant=Qc2}                           {Treatment=chilled}   0.0833      1    
 #>  9 {Plant=Mn3}                           {Treatment=nonchill…  0.0833      1    
 #> 10 {Plant=Mn2}                           {Treatment=nonchill…  0.0833      1    
-#> # ℹ 146 more rows
-```
-
-Alternatively, one may use the pre-defined function for implicative
-rules without bothering with the definition of the callback function
-etc.:
-
-``` r
-result <- dig_implications(d,
-                           antecedent = !starts_with("Treatment"),
-                           consequent = starts_with("Treatment"),
-                           disjoint = disj,
-                           min_support = 0.02,
-                           min_confidence = 0.8)
-
-result <- arrange(result, desc(support))
-print(result)
-#> # A tibble: 156 × 7
-#>    antecedent                 consequent support confidence coverage  lift count
-#>    <chr>                      <chr>        <dbl>      <dbl>    <dbl> <dbl> <dbl>
-#>  1 {Type=Mississippi,uptake=… {Treatmen…  0.155       0.813   0.190   1.63    16
-#>  2 {Type=Mississippi,uptake=… {Treatmen…  0.119       1       0.119   2       10
-#>  3 {Plant=Qn1}                {Treatmen…  0.0833      1       0.0833  2        7
-#>  4 {Plant=Qn2}                {Treatmen…  0.0833      1       0.0833  2        7
-#>  5 {Plant=Qn3}                {Treatmen…  0.0833      1       0.0833  2        7
-#>  6 {Plant=Qc1}                {Treatmen…  0.0833      1       0.0833  2        7
-#>  7 {Plant=Qc3}                {Treatmen…  0.0833      1       0.0833  2        7
-#>  8 {Plant=Qc2}                {Treatmen…  0.0833      1       0.0833  2        7
-#>  9 {Plant=Mn3}                {Treatmen…  0.0833      1       0.0833  2        7
-#> 10 {Plant=Mn2}                {Treatmen…  0.0833      1       0.0833  2        7
-#> # ℹ 146 more rows
+#> # ℹ 215 more rows
 ```
