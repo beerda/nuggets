@@ -25,6 +25,7 @@ context("antichain/Tree.h") {
 
     test_that("incremental complex test A") {
         Tree t;
+        int numNodes;
 
         expect_true(t.getNumNodes() == 1);
 
@@ -42,37 +43,50 @@ context("antichain/Tree.h") {
         expect_true(t.getNumNodes() == 4);
 
         // add {5, 2, 3}
-        expect_true(t.insertIfIncomparable(Condition(unordered_set<int>({3, 5, 2}))));
+        numNodes = t.getNumNodes();
+        expect_true(t.insertIfIncomparable(Condition(unordered_set<int>({2, 3, 5}))));
         //cout << endl << t.visualize();
-        expect_true(t.getNumNodes() == 5);
+        expect_true(t.getNumNodes() > numNodes); // cannot tell exactly the number of nodes as we are working with unordered set
+
+        numNodes = t.getNumNodes();
         expect_false(t.insertIfIncomparable(Condition(unordered_set<int>({3}))));
         expect_false(t.insertIfIncomparable(Condition(unordered_set<int>({2, 3}))));
         expect_false(t.insertIfIncomparable(Condition(unordered_set<int>({5, 3}))));
         expect_false(t.insertIfIncomparable(Condition(unordered_set<int>({2, 5, 3}))));
+        expect_true(t.getNumNodes() == numNodes);
 
         // add {5, 6, 7}
         expect_true(t.insertIfIncomparable(Condition(unordered_set<int>({5, 6, 7}))));
         //cout << endl << t.visualize();
-        expect_true(t.getNumNodes() == 7);
+        expect_true(t.getNumNodes() > numNodes); // cannot tell exactly the number of nodes as we are working with unordered set
+
+        numNodes = t.getNumNodes();
         expect_false(t.insertIfIncomparable(Condition(unordered_set<int>({5, 7}))));
         expect_false(t.insertIfIncomparable(Condition(unordered_set<int>({6, 7}))));
         expect_false(t.insertIfIncomparable(Condition(unordered_set<int>({5, 6, 7}))));
+        expect_true(t.getNumNodes() == numNodes);
 
         // add {2, 4, 6}
         expect_true(t.insertIfIncomparable(Condition(unordered_set<int>({2, 4, 6}))));
         //cout << endl << t.visualize();
-        expect_true(t.getNumNodes() == 10);
+        expect_true(t.getNumNodes() > numNodes); // cannot tell exactly the number of nodes as we are working with unordered set
+
+        numNodes = t.getNumNodes();
         expect_false(t.insertIfIncomparable(Condition(unordered_set<int>({4}))));
         expect_false(t.insertIfIncomparable(Condition(unordered_set<int>({2, 4}))));
         expect_false(t.insertIfIncomparable(Condition(unordered_set<int>({2, 6}))));
         expect_false(t.insertIfIncomparable(Condition(unordered_set<int>({4, 6}))));
         expect_false(t.insertIfIncomparable(Condition(unordered_set<int>({2, 4, 6}))));
+        expect_true(t.getNumNodes() == numNodes);
 
         // add {9}
         expect_true(t.insertIfIncomparable(Condition(unordered_set<int>({9}))));
         //cout << endl << t.visualize();
-        expect_true(t.getNumNodes() == 11);
+        expect_true(t.getNumNodes() > numNodes); // cannot tell exactly the number of nodes as we are working with unordered set
+
+        numNodes = t.getNumNodes();
         expect_false(t.insertIfIncomparable(Condition(unordered_set<int>({9}))));
+        expect_true(t.getNumNodes() == numNodes);
     }
 
     test_that("bulk 1 complex test A") {
