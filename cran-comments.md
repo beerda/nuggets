@@ -1,21 +1,19 @@
 ## Test environments
 
 - local R installation on ubuntu 22.04, R 4.3.2
-- win-builder (devel)
-- r-hub
+- win-builder (release, oldrelease, devel)
+- mac-builder (release)
+- r-hub (check_for_cran)
 
 
 ## R CMD check results
 
-❯ checking C++ specification ... NOTE
-    Specified C++14: please drop specification unless essential
-
 ❯ checking installed package size ... NOTE
-    installed size is 14.5Mb
+    installed size is 14.7Mb
     sub-directories of 1Mb or more:
-      libs  14.3Mb
+      libs  14.6Mb
 
-0 errors | 0 warnings | 2 notes
+0 errors | 0 warnings | 1 note
 
 
 - This is a new release.
