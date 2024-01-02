@@ -9,3 +9,7 @@
     devtools::check_mac_release()
 - Release:
     devtools::release()
+
+- To install the release candidate of Rcpp (to fix LTO errors):
+    install.packages("Rcpp", repos = "https://RcppCore.github.io/drat")
+    

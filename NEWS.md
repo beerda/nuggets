@@ -1,3 +1,8 @@
+# nuggets 1.0.2
+- released: 2023-01-02
+- attempt to fix LTO error related to run_testhat_tests() - fixed by using
+  an RC version of Rcpp (1.0.11.6)
+
 # nuggets 1.0.1
 - released: 2023-11-29
 - attempt to fix tests failing on R-devel

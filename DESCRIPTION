@@ -1,6 +1,6 @@
 Package: nuggets
 Title: Extensible Data Pattern Searching Framework
-Version: 1.0.1
+Version: 1.0.2
 Authors@R: 
     person(given = "Michal",
            family = "Burda",
