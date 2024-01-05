@@ -200,7 +200,7 @@ min_confidence <- 0.8
 
 f <- function(condition, support, foci_supports) {
     conf <- foci_supports / support
-    sel <- !is.na(conf) & conf >= min_confidence
+    sel <- !is.na(conf) & conf >= min_confidence & !is.na(foci_supports) & foci_supports >= min_support
     conf <- conf[sel]
     supp <- foci_supports[sel]
     

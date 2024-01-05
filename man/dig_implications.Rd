@@ -11,8 +11,9 @@ dig_implications(
   disjoint = NULL,
   min_length = 0L,
   max_length = Inf,
-  min_support = 0.02,
-  min_confidence = 0.7,
+  min_coverage = 0,
+  min_support = 0,
+  min_confidence = 0,
   t_norm = "goguen",
   ...
 )
@@ -35,23 +36,22 @@ that specifies the groups of predicates: if some elements of the \code{disjoint}
 vector are equal, then the corresponding columns of \code{x} will NOT be
 present together in a single condition.}
 
-\item{min_length}{the minimum size (the minimum number of predicates) of the
-condition to be generated (must be greater or equal to 0). If 0, the empty
-condition is generated in the first place.}
+\item{min_length}{the minimum length, i.e., the minimum number of predicates in the
+antecedent, of a rule to be generated. Value must be greater or equal to 0.
+If 0, rules with empty antecedent are generated in the first place.}
 
-\item{max_length}{The maximum size (the maximum number of predicates) of the
-condition to be generated. If equal to Inf, the maximum length of conditions
+\item{max_length}{The maximum length, i.e., the maximum number of predicates in the
+antecedent, of a rule to be generated. If equal to Inf, the maximum length
 is limited only by the number of available predicates.}
 
-\item{min_support}{the minimum support of a condition to trigger the callback
-function for it. The support of the condition is the relative frequency
-of the condition in the dataset \code{x}. For logical data, it equals to the
-relative frequency of rows such that all condition predicates are TRUE on it.
-For numerical (double) input, the support is computed as the mean (over all
-rows) of multiplications of predicate values.}
+\item{min_coverage}{the minimum coverage of a rule in the dataset \code{x}.
+(See Description for the definition of \emph{coverage}.)}
 
-\item{min_confidence}{the minimum confidence of rules to return. The confidence
-of a rule is computed as: supp(antecedent) / supp(antecedent AND consequent).}
+\item{min_support}{the minimum support of a rule in the dataset \code{x}.
+(See Description for the definition of \emph{support}.)}
+
+\item{min_confidence}{the minimum confidence of a rule in the dataset \code{x}.
+(See Description for the definition of \emph{confidence}.)}
 
 \item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
 \code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}
@@ -60,10 +60,30 @@ of a rule is computed as: supp(antecedent) / supp(antecedent AND consequent).}
 \item{...}{Further arguments, currently unused.}
 }
 \value{
-A tibble with found rules.
+A tibble with found rules and computed quality measures.
 }
 \description{
-Search for implicative rules
+Implicative rule is a rule of the form $A \Rightarrow c$, where $A$
+(\emph{antecedent}) is a set of predicates and $c$ (\emph{consequent}) is a predicate.
+}
+\details{
+For the following explanations we need a mathematical function $supp(I)$, which
+is defined for a set $I$ of predicates as a relative frequency of rows satisfying
+all predicates from $I$. For logical data, $supp(I)$ equals to the relative
+frequency of rows, for which all predicates $i_1$, $i_2$, ..., $i_n$ from $I$ are TRUE.
+For numerical (double) input, $supp(I)$ is computed as the mean (over all rows)
+of truth degrees of the formula \verb{i_1 AND i_2 AND ... AND i_n}, where
+$AND$ is a triangular norm selected by the \code{t_norm} argument.
+
+Implicative rules are characterized with the following quality measures.
+
+\emph{Length} of a rule is the number of elements in the antecedent.
+
+\emph{Coverage} of a rule is equal to $supp(A)$.
+
+\emph{Support} of a rule is equal to $supp(A \cup \{c\})$.
+
+\emph{Confidence} of a rule is the fraction $supp(A) / supp(A \cup \{c\})$.
 }
 \seealso{
 \code{\link[=dig]{dig()}}

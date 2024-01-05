@@ -56,5 +56,92 @@ test_that("dig_implications with disjoint", {
                  c(0.4, 0.8, 0.4, 0.4, 0.4))
     expect_equal(res$confidence,
                  c(0.4, 0.8, 0.4, 1, 0.5))
+})
 
+
+test_that("dig_implications min_support", {
+    # min_support is the support of the whole rule
+    d <- data.frame(a = c(T, T, F, F, F),
+                    b = c(T, T, T, T, F),
+                    c = c(T, F, F, T, T))
+
+    res <- dig_implications(d,
+                            antecedent = everything(),
+                            consequent = everything(),
+                            disjoint = c(1, 2, 3),
+                            min_support = 0.2,
+                            min_confidence = 0.0001)
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 12)
+
+    res <- dig_implications(d,
+                            antecedent = everything(),
+                            consequent = everything(),
+                            disjoint = c(1, 2, 3),
+                            min_support = 0.3,
+                            min_confidence = 0.0001)
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 7)
+
+    res <- dig_implications(d,
+                            antecedent = everything(),
+                            consequent = everything(),
+                            disjoint = c(1, 2, 3),
+                            min_support = 0.8,
+                            min_confidence = 0.0001)
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 1)
+
+    res <- dig_implications(d,
+                            antecedent = everything(),
+                            consequent = everything(),
+                            disjoint = c(1, 2, 3),
+                            min_support = 0.81,
+                            min_confidence = 0.0001)
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 0)
+})
+
+
+test_that("dig_implications min_coverage", {
+    # min_coverage is the support of the antecedent
+    d <- data.frame(a = c(T, T, F, F, F),
+                    b = c(T, T, T, T, F),
+                    c = c(T, F, F, T, T))
+
+    res <- dig_implications(d,
+                            antecedent = everything(),
+                            consequent = everything(),
+                            disjoint = c(1, 2, 3),
+                            min_coverage = 0.2,
+                            min_confidence = 0.0001)
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 12)
+
+    res <- dig_implications(d,
+                            antecedent = everything(),
+                            consequent = everything(),
+                            disjoint = c(1, 2, 3),
+                            min_coverage = 0.3,
+                            min_confidence = 0.0001)
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 11)
+
+    res <- dig_implications(d,
+                            antecedent = everything(),
+                            consequent = everything(),
+                            disjoint = c(1, 2, 3),
+                            min_coverage = 0.8,
+                            min_confidence = 0.0001)
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 5)
+
+    res <- dig_implications(d,
+                            antecedent = everything(),
+                            consequent = everything(),
+                            disjoint = c(1, 2, 3),
+                            min_coverage = 1,
+                            min_confidence = 0.0001)
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 3)
 })
