@@ -63,27 +63,27 @@ is limited only by the number of available predicates.}
 A tibble with found rules and computed quality measures.
 }
 \description{
-Implicative rule is a rule of the form $A \Rightarrow c$, where $A$
-(\emph{antecedent}) is a set of predicates and $c$ (\emph{consequent}) is a predicate.
+Implicative rule is a rule of the form \eqn{A \Rightarrow c}{A => c},
+where \eqn{A} (\emph{antecedent}) is a set of predicates and \eqn{c} (\emph{consequent}) is a predicate.
 }
 \details{
-For the following explanations we need a mathematical function $supp(I)$, which
-is defined for a set $I$ of predicates as a relative frequency of rows satisfying
-all predicates from $I$. For logical data, $supp(I)$ equals to the relative
-frequency of rows, for which all predicates $i_1$, $i_2$, ..., $i_n$ from $I$ are TRUE.
-For numerical (double) input, $supp(I)$ is computed as the mean (over all rows)
+For the following explanations we need a mathematical function \eqn{supp(I)}, which
+is defined for a set \eqn{I} of predicates as a relative frequency of rows satisfying
+all predicates from \eqn{I}. For logical data, \eqn{supp(I)} equals to the relative
+frequency of rows, for which all predicates \eqn{i_1, i_2, \ldots, i_n} from \eqn{I} are TRUE.
+For numerical (double) input, \eqn{supp(I)} is computed as the mean (over all rows)
 of truth degrees of the formula \verb{i_1 AND i_2 AND ... AND i_n}, where
-$AND$ is a triangular norm selected by the \code{t_norm} argument.
+\code{AND} is a triangular norm selected by the \code{t_norm} argument.
 
 Implicative rules are characterized with the following quality measures.
 
 \emph{Length} of a rule is the number of elements in the antecedent.
 
-\emph{Coverage} of a rule is equal to $supp(A)$.
+\emph{Coverage} of a rule is equal to \eqn{supp(A)}.
 
-\emph{Support} of a rule is equal to $supp(A \cup \{c\})$.
+\emph{Support} of a rule is equal to \eqn{supp(A \cup \{c\}}.
 
-\emph{Confidence} of a rule is the fraction $supp(A) / supp(A \cup \{c\})$.
+\emph{Confidence} of a rule is the fraction \eqn{supp(A) / supp(A \cup \{c\})}.
 }
 \seealso{
 \code{\link[=dig]{dig()}}
