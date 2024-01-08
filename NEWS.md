@@ -1,5 +1,5 @@
 # nuggets 1.0.2
-- released: ?
+- released: 2024-01-08
 - fixed handling of arguments min_coverage and min_support in dig_implications()
 - attempt to fix LTO error related to run_testhat_tests() - fixed by using
   an RC version of Rcpp (1.0.11.6)

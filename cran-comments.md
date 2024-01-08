@@ -16,4 +16,4 @@
 0 errors | 0 warnings | 1 note
 
 
-- Fixed problems reported by CRAN checks
+- Fixed problems reported by CRAN checks (LTO)
