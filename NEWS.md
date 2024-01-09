@@ -1,3 +1,7 @@
+# nuggets ???
+- released: ???
+- added .other argument to dichotomize()
+
 # nuggets 1.0.2
 - released: 2024-01-08
 - fixed handling of arguments min_coverage and min_support in dig_implications()

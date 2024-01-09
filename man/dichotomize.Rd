@@ -4,7 +4,7 @@
 \alias{dichotomize}
 \title{Create dummy columns from logicals or factors in a data frame}
 \usage{
-dichotomize(.data, what = everything(), ..., .keep = FALSE)
+dichotomize(.data, what = everything(), ..., .keep = FALSE, .other = FALSE)
 }
 \arguments{
 \item{.data}{a data frame to be processed}
@@ -18,6 +18,9 @@ be processed}
 
 \item{.keep}{whether to keep the original columns. If FALSE, the original
 columns are removed from the result.}
+
+\item{.other}{whether to put into result the rest of columns that were not
+specified for dichotomization in \code{what} argument.}
 }
 \value{
 A tibble with selected columns replaced with dummy columns.

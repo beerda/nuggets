@@ -18,12 +18,19 @@
 #'      be processed
 #' @param .keep whether to keep the original columns. If FALSE, the original
 #'      columns are removed from the result.
+#' @param .other whether to put into result the rest of columns that were not
+#'      specified for dichotomization in `what` argument.
 #' @returns A tibble with selected columns replaced with dummy columns.
 #' @export
 #' @author Michal Burda
-dichotomize <- function(.data, what = everything(), ..., .keep = FALSE) {
+dichotomize <- function(.data,
+                        what = everything(),
+                        ...,
+                        .keep = FALSE,
+                        .other = FALSE) {
     .must_be_data_frame(.data)
     .must_be_flag(.keep)
+    .must_be_flag(.other)
 
     sel <- enquos(what, ...)
     sel <- lapply(sel, eval_select, .data)
@@ -58,5 +65,11 @@ dichotomize <- function(.data, what = everything(), ..., .keep = FALSE) {
         res
     })
 
-    as_tibble(do.call(cbind, res))
+    res <- do.call(cbind, res)
+
+    if (.other) {
+        res <- cbind(.data[, -sel, drop = FALSE], res)
+    }
+
+    as_tibble(res)
 }

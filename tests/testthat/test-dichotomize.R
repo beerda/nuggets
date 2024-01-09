@@ -48,3 +48,30 @@ test_that("dichotomize", {
                         "c=T" = c(T, T, T, T),
                         "c=F" = c(F, F, F, F)))
 })
+
+
+test_that("dichotomize selected", {
+    d <- tibble(a = 1:6,
+                b = c(T, T, T, F, F, F),
+                c = c(T, F, T, F, T, F),
+                d = letters[1:6])
+
+    expect_equal(dichotomize(d, what = b, .keep = FALSE, .other = FALSE),
+                 tibble("b=T" = c(T, T, T, F, F, F),
+                        "b=F" = c(F, F, F, T, T, T)))
+
+    expect_equal(dichotomize(d, what = b, .keep = FALSE, .other = TRUE),
+                 tibble(a = 1:6,
+                        c = c(T, F, T, F, T, F),
+                        d = letters[1:6],
+                        "b=T" = c(T, T, T, F, F, F),
+                        "b=F" = c(F, F, F, T, T, T)))
+
+    expect_equal(dichotomize(d, what = b, .keep = TRUE, .other = TRUE),
+                 tibble(a = 1:6,
+                        c = c(T, F, T, F, T, F),
+                        d = letters[1:6],
+                        b = c(T, T, T, F, F, F),
+                        "b=T" = c(T, T, T, F, F, F),
+                        "b=F" = c(F, F, F, T, T, T)))
+})
