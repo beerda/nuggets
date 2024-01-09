@@ -21,3 +21,17 @@ test_that("dig_correlations", {
     expect_equal(res$yvar,
                  rep(c("y", "z", "z"), 4))
 })
+
+
+test_that("dig_correlations iris", {
+    dcor <- dichotomize(iris, what = Species, .other = TRUE)
+    res <- dig_correlations(dcor, max_length = 0)
+
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 6)
+
+    res <- dig_correlations(dcor,
+                            xvars = Sepal.Length:Petal.Width,
+                            yvars = Sepal.Length:Petal.Width,
+                            max_length = 0)
+})

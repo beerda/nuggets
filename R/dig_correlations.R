@@ -50,21 +50,42 @@ dig_correlations <- function(x,
                              exact = NULL,
                              min_length = 0L,
                              max_length = Inf,
-                             min_support = 0.02,
+                             min_support = 0.0,
                              ...) {
     .must_be_enum(method, c("pearson", "kendall", "spearman"))
     .must_be_enum(alternative, c("two.sided", "less", "greater"))
 
     condition <- enquo(condition)
+    xvars <- enquo(xvars)
+    yvars <- enquo(yvars)
 
-    cols <- lapply(seq_len(ncol(x)), function(i) x[, i])
-    names(cols) <- colnames(x)
-    if (is.null(names(cols))) {
-        names(cols) <- seq_len(length(cols))
+    if (is.matrix(x)) {
+        cols <- lapply(seq_len(ncol(x)), function(i) x[, i])
+        names(cols) <- colnames(x)
+        if (is.null(names(cols))) {
+            names(cols) <- seq_len(length(cols))
+        }
+    } else if (is.data.frame(x)) {
+        cols <- as.list(x)
+        if (is.null(names(cols))) {
+            names(cols) <- seq_len(length(cols))
+        }
+    } else {
+        cli_abort(c("{.var x} must be a matrix or a data frame.",
+                    "x" = "You've supplied a {.cls {class(x)}}."))
     }
 
     xvars <- eval_select(xvars, cols)
     yvars <- eval_select(yvars, cols)
+
+    if (length(xvars) <= 0) {
+        cli_abort(c("{.var xvars} must specify the list of numeric columns.",
+                    "x" = "{.var xvars} resulted in an empty list."))
+    }
+    if (length(yvars) <= 0) {
+        cli_abort(c("{.var yvars} must specify the list of numeric columns.",
+                    "x" = "{.var yvars} resulted in an empty list."))
+    }
 
     grid <- expand_grid(xvar = xvars, yvar = yvars)
     grid <- grid[grid$xvar != grid$yvar, ]
@@ -73,12 +94,12 @@ dig_correlations <- function(x,
 
     f <- function(condition, sum, indices) {
         cond <- format_condition(names(condition))
-        d <- x[indices, ]
+        d <- x[indices, , drop = FALSE]
 
         result <- apply(grid, 1, function(row) {
             dd <- na.omit(d[, row])
-            fit <- cor.test(dd[, 1],
-                            dd[, 2],
+            fit <- cor.test(dd[[1]],
+                            dd[[2]],
                             alternative = alternative,
                             method = method,
                             exact = exact)

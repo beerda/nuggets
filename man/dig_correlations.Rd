@@ -14,7 +14,7 @@ dig_correlations(
   exact = NULL,
   min_length = 0L,
   max_length = Inf,
-  min_support = 0.02,
+  min_support = 0,
   ...
 )
 }
