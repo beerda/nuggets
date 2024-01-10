@@ -46,10 +46,12 @@ logical.}
 function may have some of the following arguments. Based on the present
 arguments, the algorithm would provide information about the generated
 condition:
-- condition - a numeric vector of column indices that represent the predicates
-of the condition. Names of the vector correspond to column names;
-- foci_supports - a list of support of foci columns (see \code{focus} argument
-to specify, which columns are foci);
+- condition - a named integer vector of column indices that represent
+the predicates of the condition. Names of the vector correspond to
+column names;
+- foci_supports - a named numeric vector of supports of foci columns
+(see \code{focus} argument to specify, which columns are foci) - names of the
+vector are foci column names;
 - support - a numeric scalar value of the current condition's support;
 - indices - a logical vector indicating the rows satisfying the condition;
 - weights - (similar to indices) weights of rows to which they satisfy
