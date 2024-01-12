@@ -5,6 +5,9 @@
 #include "../common.h"
 
 
+/**
+ * A growable array of bits.
+ */
 class Bitset {
 public:
     constexpr static size_t CHUNK_SIZE = 8 * sizeof(uintmax_t);
@@ -22,7 +25,7 @@ public:
     void reserve(size_t capacity)
     {
         // see: http://stackoverflow.com/questions/2745074/fast-ceiling-of-an-integer-division-in-c-c
-        capacity = (capacity + CHUNK_SIZE - 1) / CHUNK_SIZE;
+        capacity = (capacity + CHUNK_SIZE - 1) / CHUNK_SIZE; // ceiling
         data.reserve(capacity);
     }
 
@@ -39,6 +42,19 @@ public:
         }
         data.back() |= (uintmax_t(value) << (n % CHUNK_SIZE));
         n++;
+    }
+
+    void pushFalse(size_t count)
+    {
+        // see: http://stackoverflow.com/questions/2745074/fast-ceiling-of-an-integer-division-in-c-c
+        size_t oldCapacity = (n + CHUNK_SIZE - 1) / CHUNK_SIZE;         // ceiling
+        size_t newCapacity = (n + count + CHUNK_SIZE - 1) / CHUNK_SIZE; // ceiling
+
+        for (size_t i = 0; i < newCapacity - oldCapacity; i++) {
+            data.push_back(0);
+        }
+
+        n += count;
     }
 
     bool at(size_t index) const
@@ -74,12 +90,7 @@ public:
     }
 
     bool operator == (const Bitset& other) const
-    {
-        if (n != other.n)
-            return false;
-
-        return data == other.data;
-    }
+    { return (n == other.n) && (data == other.data); }
 
     bool operator != (const Bitset& other) const
     { return !(*this == other); }

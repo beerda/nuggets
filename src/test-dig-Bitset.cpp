@@ -50,6 +50,38 @@ context("dig/Bitset.h") {
         expect_true(b.at(104));
     }
 
+    test_that("pushFalse") {
+        for (int i = 0; i < 65; ++i) {
+            Bitset b;
+            b.pushFalse(i);
+            b.push_back(true);
+
+            expect_true(!b.empty());
+            expect_true(b.size() == i + 1);
+            expect_true(b.getSum() == 1);
+
+            expect_true(b.at(i));
+            for (int j = 0; j < i; ++j)
+                expect_true(!b.at(j));
+        }
+
+        for (int i = 0; i < 65; ++i) {
+            Bitset b;
+            b.push_back(true);
+            b.pushFalse(i);
+            b.push_back(true);
+
+            expect_true(!b.empty());
+            expect_true(b.size() == i + 2);
+            expect_true(b.getSum() == 2);
+
+            expect_true(b.at(0));
+            expect_true(b.at(i + 1));
+            for (int j = 1; j < i + 1; ++j)
+                expect_true(!b.at(j));
+        }
+    }
+
     test_that("reserve") {
         Bitset b;
 
