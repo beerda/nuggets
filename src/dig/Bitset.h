@@ -16,6 +16,10 @@ public:
         : data(), n(0)
     { }
 
+    Bitset(size_t n)
+        : data((n + CHUNK_SIZE - 1) / CHUNK_SIZE), n(n)
+    { }
+
     void clear()
     {
         data.clear();
@@ -31,6 +35,9 @@ public:
 
     size_t size() const
     { return n; }
+
+    size_t nChunks() const
+    { return data.size(); }
 
     bool empty() const
     { return n == 0; }
@@ -75,6 +82,9 @@ public:
         }
         return result;
     }
+
+    const vector<uintmax_t>& getData() const
+    { return data; }
 
     vector<uintmax_t>& getMutableData()
     { return data; }

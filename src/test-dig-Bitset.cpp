@@ -8,26 +8,31 @@ context("dig/Bitset.h") {
 
         expect_true(b.empty());
         expect_true(b.size() == 0);
+        expect_true(b.nChunks() == 0);
         expect_true(b.getSum() == 0);
 
         b.push_back(true);
         expect_true(!b.empty());
         expect_true(b.size() == 1);
+        expect_true(b.nChunks() == 1);
         expect_true(b.getSum() == 1);
 
         b.push_back(false);
         expect_true(!b.empty());
         expect_true(b.size() == 2);
+        expect_true(b.nChunks() == 1);
         expect_true(b.getSum() == 1);
 
         b.push_back(true);
         expect_true(!b.empty());
         expect_true(b.size() == 3);
+        expect_true(b.nChunks() == 1);
         expect_true(b.getSum() == 2);
 
         b.push_back(true);
         expect_true(!b.empty());
         expect_true(b.size() == 4);
+        expect_true(b.nChunks() == 1);
         expect_true(b.getSum() == 3);
 
         for (int i = 0; i < 100; ++i)
@@ -37,6 +42,7 @@ context("dig/Bitset.h") {
 
         expect_true(!b.empty());
         expect_true(b.size() == 105);
+        expect_true(b.nChunks() == (b.size() + Bitset::CHUNK_SIZE - 1) / Bitset::CHUNK_SIZE);
         expect_true(b.getSum() == 4);
 
         expect_true(b.at(0));
@@ -48,6 +54,14 @@ context("dig/Bitset.h") {
             expect_true(!b.at(4 + i));
 
         expect_true(b.at(104));
+    }
+
+    test_that("create nonempty") {
+        Bitset b(200);
+
+        expect_true(b.size() == 200);
+        for (int i = 0; i < 200; ++i)
+            expect_true(!b.at(i));
     }
 
     test_that("pushFalse") {
