@@ -2,6 +2,7 @@
 #include "common.h"
 #include "dig/SparseBitChain.h"
 
+
 context("dig/SparseBitChain.h") {
     test_that("push_back - lot of FALSE at start") {
         SparseBitChain b;
@@ -166,5 +167,43 @@ context("dig/SparseBitChain.h") {
             expect_true(!b.at(320));
             expect_true(b.at(321));
         }
+    }
+
+    test_that("conjunctWith - empty chains") {
+        SparseBitChain b1, b2;
+
+        expect_true(b1.size() == 0);
+        expect_true(b2.size() == 0);
+        b1.conjunctWith(b2);
+        expect_true(b1.size() == 0);
+        expect_true(b2.size() == 0);
+    }
+
+    test_that("conjunctWith - 1 chain empty") {
+        SparseBitChain b1, b2;
+
+        expect_true(b1.size() == 0);
+        expect_true(b2.size() == 0);
+        b1.conjunctWith(b2);
+        expect_true(b1.size() == 0);
+        expect_true(b2.size() == 0);
+    }
+
+    test_that("conjunctWith - ") {
+        SparseBitChain b1, b2;
+
+        b1.push_back(false, 64);
+        b1.push_back(true, 4); b1.push_back(false, 60);
+        b1.push_back(false, 64);
+
+        b2.push_back(false, 64);
+        b2.push_back(false, 64);
+        b2.push_back(false, 60); b2.push_back(true, 2); b2.push_back(false, 2);
+
+        expect_true(b1.size() == 3*64);
+        expect_true(b2.size() == 3*64);
+
+        b1.conjunctWith(b2);
+        expect_true(b1.size() == 3*64);
     }
 }
