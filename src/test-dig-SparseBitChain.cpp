@@ -169,6 +169,24 @@ context("dig/SparseBitChain.h") {
         }
     }
 
+    test_that("push_back - trailings less than CHUNK_SIZE") {
+        SparseBitChain b;
+
+        b.push_back(false, 32); b.push_back(true, 32);
+        b.push_back(false, 32); b.push_back(true, 32);
+        b.push_back(false, 32); b.push_back(true, 32);
+
+        expect_true(!b.empty());
+        expect_true(b.size() == 64 * 3);
+        expect_true(b.getSum() == 32 * 3);
+        expect_true(b.getGaps().size() == 1);
+        expect_true(b.getGaps()[0] == 0);
+        expect_true(b.getBitsets().size() == 1);
+        expect_true(b.getBitsets()[0].size() == 64 * 3);
+        expect_true(b.getBitsets()[0].getSum() == 32 * 3);
+        expect_true(b.getTrailing() == 0);
+    }
+
     test_that("conjunctWith - empty both chains") {
         SparseBitChain b1, b2;
 

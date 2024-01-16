@@ -39,11 +39,15 @@ public:
     void push_back(bool value)
     {
         if (value) {
-            if (nTrailing > 0 || gaps.size() == 0) {
+            if (nTrailing > Bitset::CHUNK_SIZE || gaps.size() == 0) {
                 // process trailing by adding a new gap OR initialize empty vectors of gaps and bitsets
                 gaps.push_back(nTrailing / Bitset::CHUNK_SIZE);
                 bitsets.push_back(Bitset());
-                bitsets.back().pushFalse(nTrailing % Bitset::CHUNK_SIZE);
+                nTrailing = nTrailing % Bitset::CHUNK_SIZE;
+            }
+            if (nTrailing > 0) {
+                // push remaining trailing FALSE bits
+                bitsets.back().pushFalse(nTrailing);
                 nTrailing = 0;
             }
             bitsets.back().push_back(value);
