@@ -2,6 +2,7 @@
 
 #include <utility>
 #include <algorithm>
+#include<unistd.h>
 
 #include "../common.h"
 #include "Bitset.h"
@@ -134,6 +135,10 @@ public:
         size_t newSum = 0;
 
         while (iter1.hasGapsOrBits() && iter2.hasGapsOrBits()) {
+            //cout << "jetu1\n";
+            //cout << "iter1 index=" << iter1.index << " offset=" << iter1.offset << " remGap=" << iter1.remainingGap() << endl;
+            //cout << "iter2 index=" << iter2.index << " offset=" << iter2.offset << " remGap=" << iter2.remainingGap() << endl;
+
             // iter1 would be always the one with greater gap
             if (iter1.remainingGap() < iter2.remainingGap()) {
                 swap(iter1, iter2);
@@ -148,12 +153,19 @@ public:
                 continue;
             }
 
+            //cout << "jetu3\n";
             if (iter1.remainingGap() != 0 || iter2.remainingGap() != 0)
                 throw new runtime_error("assertion failed: gaps must be 0");
 
             size_t newChunks = min(iter1.remainingChunks(), iter2.remainingChunks());
             Bitset newBitset(min(iter1.remainingBits(), iter2.remainingBits()));
             for (size_t i = 0; i < newChunks; ++i) {
+                //cout << "i=" << i << ", iter1.offset=" << iter1.offset <<
+                    //", iter1.index=" << iter1.index <<
+                    //", iter1.bitsetOffset=" << iter1.bitsetOffset() <<
+                    //", iter2.offset=" << iter2.offset <<
+                    //", iter2.index=" << iter2.index <<
+                    //", iter2.bitsetOffset=" << iter2.bitsetOffset() << endl;
                 newBitset.getMutableData()[i] = iter1.chunk(i) & iter2.chunk(i);
             }
 
@@ -190,41 +202,69 @@ private:
         { return index < chain->gaps.size(); }
 
         size_t remainingGap() const
-        { return max((size_t) 0, chain->gaps[index] - offset); }
+        { return chain->gaps[index] < offset ? 0 : chain->gaps[index] - offset; }
+
+        size_t bitsetOffset() const
+        {
+            if (offset < chain->gaps[index])
+                throw new runtime_error("assertion failed in bitsetOffset()");
+
+            return offset - chain->gaps[index];
+        }
 
         size_t remainingChunks() const
-        { return max((size_t) 0, chain->bitsets[index].nChunks() - offset); }
+        {
+            //return chain->bitsets[index].nChunks() < bitsetOffset() ? 0 :
+                //chain->bitsets[index].nChunks() - bitsetOffset();
+            if (chain->bitsets[index].nChunks() < bitsetOffset())
+                throw new runtime_error("assertion failed in remainingChunks()");
+
+            return chain->bitsets[index].nChunks() - bitsetOffset();
+        }
 
         size_t remainingBits() const
-        { return max((size_t) 0, chain->bitsets.size() - offset * Bitset::CHUNK_SIZE); }
+        {
+            //return chain->bitsets[index].size() < bitsetOffset() * Bitset::CHUNK_SIZE ? 0 :
+                //chain->bitsets[index].size() - bitsetOffset() * Bitset::CHUNK_SIZE;
+            if (chain->bitsets[index].size() < bitsetOffset() * Bitset::CHUNK_SIZE)
+                throw new runtime_error("assertion failed in remainingBits()");
+
+            return chain->bitsets[index].size() - bitsetOffset() * Bitset::CHUNK_SIZE;
+        }
 
         size_t remainingTrailing() const
         {
+            if (chain->getTrailing() < offset * Bitset::CHUNK_SIZE)
+                throw new runtime_error("assertion failed in remainingTrailing()");
+
             size_t res = chain->getTrailing() - offset * Bitset::CHUNK_SIZE;
             if (!chain->bitsets.empty()) {
                 // last bitset's number of bits may not be divisible by CHUNK_SIZE, hence
                 // the offset may be smaller. We must return to the offset what was taken.
-                res += chain->bitsets.back().nChunks() * Bitset::CHUNK_SIZE -
-                    chain->bitsets.back().size();
+                res += chain->bitsets.back().nChunks() * Bitset::CHUNK_SIZE;
+                res -= chain->bitsets.back().size();
             }
             return res;
         }
 
         size_t chunk(size_t i) const
-        { return chain->bitsets[index].getData()[i + offset]; }
+        { return chain->bitsets[index].getData()[i + bitsetOffset()]; }
 
         void increment(size_t i)
         {
+            //cout << "incrementing " << offset << "+" << i << "(index=" << index << ")" << endl;
             offset += i;
             while (hasGapsOrBits()) {
-                size_t newOffset = offset - chain->gaps[index] - chain->bitsets[index].nChunks();
-                if (newOffset >= 0) {
-                    offset = newOffset;
+                size_t skip = chain->gaps[index] + chain->bitsets[index].nChunks();
+                if (offset >= skip) {
+                    offset -= skip;
                     index++;
+                    //cout << "offset=" << offset << "(index=" << index << ")" << endl;
                 } else {
                     break;
                 }
             }
+            //cout << "exiting offset=" << offset << "(index=" << index << ")" << endl;
         }
     };
 
