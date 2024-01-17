@@ -51,6 +51,15 @@ public:
         n++;
     }
 
+    void push_back(size_t chunk, size_t count)
+    {
+        if (n % CHUNK_SIZE != 0)
+            throw new runtime_error("push_back chunk not implemented if bits not aligned");
+
+        data.push_back(chunk);
+        n += count;
+    }
+
     void pushFalse(size_t count)
     {
         // see: http://stackoverflow.com/questions/2745074/fast-ceiling-of-an-integer-division-in-c-c
@@ -104,6 +113,17 @@ public:
 
     bool operator != (const Bitset& other) const
     { return !(*this == other); }
+
+    string toString() const
+    {
+        stringstream res;
+        res << "[n=" << n << "]";
+        for (size_t i = 0; i < n; ++i) {
+            res << (at(i) + 0);
+        }
+
+        return res.str();
+    }
 
 private:
     vector<uintmax_t> data;
