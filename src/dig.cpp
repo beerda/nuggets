@@ -1,5 +1,8 @@
-#include <iostream>
 #include "dig/Executor.h"
+#include "dig/SparseBitChain.h"
+
+#define BCH BitsetBitChain
+//#define BCH SparseBitChain
 
 //define NCH VectorNumChain
 #define NCH SimdVectorNumChain
@@ -17,15 +20,15 @@ List dig_(List logData,
     Config config(confList);
 
     if (config.getTNorm() == TNorm::GOEDEL) {
-        Executor<BitsetBitChain, NCH<GOEDEL>> exec(config);
+        Executor<BCH, NCH<GOEDEL>> exec(config);
         result = exec.execute(logData, numData, logFoci, numFoci, fun);
     }
     else if (config.getTNorm() == TNorm::GOGUEN) {
-        Executor<BitsetBitChain, NCH<GOGUEN>> exec(config);
+        Executor<BCH, NCH<GOGUEN>> exec(config);
         result = exec.execute(logData, numData, logFoci, numFoci, fun);
     }
     else if (config.getTNorm() == TNorm::LUKASIEWICZ) {
-        Executor<BitsetBitChain, NCH<LUKASIEWICZ>> exec(config);
+        Executor<BCH, NCH<LUKASIEWICZ>> exec(config);
         result = exec.execute(logData, numData, logFoci, numFoci, fun);
     }
     else
