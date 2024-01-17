@@ -192,7 +192,9 @@ context("dig/SparseBitChain.h") {
 
         expect_true(b1.size() == 0);
         expect_true(b2.size() == 0);
+
         b1.conjunctWith(b2);
+
         expect_true(b1.size() == 0);
         expect_true(b2.size() == 0);
     }
@@ -322,8 +324,113 @@ context("dig/SparseBitChain.h") {
 
         // packing of gaps
         if (Bitset::CHUNK_SIZE == 64) {
-            //expect_true(b1.getGaps().size() == 1);
-            //expect_true(b1.getGaps()[0] == 12);
+            expect_true(b1.getGaps().size() == 2);
+            expect_true(b1.getGaps()[0] == 12);
+            expect_true(b1.getBitsets()[0].size() == 128);
+            expect_true(b1.getBitsets()[0].getSum() == 128);
+            expect_true(b1.getGaps()[1] == 2);
+            expect_true(b1.getBitsets()[1].size() == 128);
+            expect_true(b1.getBitsets()[1].getSum() == 128);
+            expect_true(b1.getTrailing() == 128);
+        }
+    }
+
+    test_that("conjunctWith - complex 3") {
+        SparseBitChain b1, b2;
+
+        b1.push_back(true, 128); b1.push_back(false, 128);
+        b1.push_back(true, 128); b1.push_back(false, 128);
+        b1.push_back(false, 128); b1.push_back(false, 128);
+        b1.push_back(true, 128); b1.push_back(false, 128);
+        b1.push_back(true, 128); b1.push_back(false, 128 - 1);
+
+        b2.push_back(false, 128 * 5);
+        b2.push_back(true, 128 * 5 - 1);
+
+        expect_true(b1.size() == 1279);
+        expect_true(b1.getSum() == 4 * 128);
+        expect_true(b2.size() == 1279);
+        expect_true(b2.getSum() == 5 * 128 - 1);
+
+        if (Bitset::CHUNK_SIZE == 64) {
+            expect_true(b1.getGaps().size() == 4);
+            expect_true(b1.getGaps()[0] == 0);
+            expect_true(b1.getGaps()[1] == 2);
+            expect_true(b1.getGaps()[2] == 6);
+            expect_true(b1.getGaps()[3] == 2);
+            expect_true(b1.getTrailing() == 127);
+
+            expect_true(b2.getGaps().size() == 1);
+            expect_true(b2.getGaps()[0] == 10);
+            expect_true(b2.getTrailing() == 0);
+        }
+
+        b1.conjunctWith(b2);
+
+        expect_true(b1.size() == 1279);
+        expect_true(b1.getSum() == 2 * 128);
+
+        for (size_t i = 0; i < 128 * 6; i++) {
+            expect_true(!b1.at(i));
+        }
+        for (size_t i = 128 * 6; i < 128 * 7; i++) {
+            expect_true(b1.at(i));
+        }
+        for (size_t i = 128 * 7; i < 128 * 8; i++) {
+            expect_true(!b1.at(i));
+        }
+        for (size_t i = 128 * 8; i < 128 * 9; i++) {
+            expect_true(b1.at(i));
+        }
+        for (size_t i = 128 * 9; i < b1.size(); i++) {
+            expect_true(!b1.at(i));
+        }
+
+        // packing of gaps
+        if (Bitset::CHUNK_SIZE == 64) {
+            expect_true(b1.getGaps().size() == 2);
+            expect_true(b1.getGaps()[0] == 12);
+            expect_true(b1.getBitsets()[0].size() == 128);
+            expect_true(b1.getBitsets()[0].getSum() == 128);
+            expect_true(b1.getGaps()[1] == 2);
+            expect_true(b1.getBitsets()[1].size() == 128);
+            expect_true(b1.getBitsets()[1].getSum() == 128);
+            expect_true(b1.getTrailing() == 127);
+        }
+    }
+
+    test_that("conjunctWith - packing 1") {
+        SparseBitChain b1, b2;
+
+        b1.push_back(true, 32); b1.push_back(false, 32);
+        b2.push_back(false, 32); b2.push_back(true, 32);
+
+        b1.conjunctWith(b2);
+
+        if (Bitset::CHUNK_SIZE == 64) {
+            expect_true(b1.getGaps().size() == 0);
+            expect_true(b1.getTrailing() == 64);
+        }
+    }
+
+    test_that("conjunctWith - packing 2") {
+        SparseBitChain b1, b2;
+
+        b1.push_back(true, 32); b1.push_back(false, 32);
+        b1.push_back(true, 32); b1.push_back(false, 32);
+        b1.push_back(true, 32); b1.push_back(false, 32);
+        b1.push_back(true, 32); b1.push_back(false, 32);
+
+        b2.push_back(false, 32); b2.push_back(true, 32);
+        b2.push_back(false, 32); b2.push_back(true, 32);
+        b2.push_back(false, 32); b2.push_back(true, 32);
+        b2.push_back(false, 32); b2.push_back(true, 32);
+
+        b1.conjunctWith(b2);
+
+        if (Bitset::CHUNK_SIZE == 64) {
+            expect_true(b1.getGaps().size() == 0);
+            expect_true(b1.getTrailing() == 64 * 4);
         }
     }
 }

@@ -127,6 +127,17 @@ public:
     bool operator != (const SparseBitChain& other) const
     { return !(*this == other); }
 
+    string toString() const
+    {
+        stringstream res;
+        for (size_t i = 0; i < gaps.size(); ++i) {
+            res << "[" << i << "]: gap=" << gaps[i] << " bitset=" << bitsets[i].toString() + "\n";
+        }
+        res << "[*]: trailing=" << nTrailing;
+
+        return res.str();
+    }
+
     void conjunctWith(const SparseBitChain& other)
     {
         Iter iter1(this);
@@ -136,6 +147,7 @@ public:
         vector<Bitset> newBitsets;
 
         size_t newGap = 0;
+        size_t hold = 0;
         size_t newSum = 0;
 
         while (iter1.hasGapsOrBits() && iter2.hasGapsOrBits()) {
@@ -158,37 +170,59 @@ public:
             }
 
             //cout << "jetu3\n";
-            if (iter1.remainingGap() != 0 || iter2.remainingGap() != 0)
+            if (iter1.remainingGap() != 0 || iter2.remainingGap() != 0) {
+                cout << "assertion failed: gaps must be 0" << endl;
                 throw new runtime_error("assertion failed: gaps must be 0");
+            }
 
             size_t newChunks = min(iter1.remainingChunks(), iter2.remainingChunks());
-            Bitset newBitset(min(iter1.remainingBits(), iter2.remainingBits()));
+            Bitset newBitset;
+            newBitset.reserve(newChunks * Bitset::CHUNK_SIZE);
+
+            size_t remainingBits = min(iter1.remainingBits(), iter2.remainingBits()) % Bitset::CHUNK_SIZE;
+            if (remainingBits == 0)
+                remainingBits = Bitset::CHUNK_SIZE;
+
+            size_t hold = 0;
+            bool beginning = true;
             for (size_t i = 0; i < newChunks; ++i) {
-                //cout << "i=" << i << ", iter1.offset=" << iter1.offset <<
-                    //", iter1.index=" << iter1.index <<
-                    //", iter1.bitsetOffset=" << iter1.bitsetOffset() <<
-                    //", iter2.offset=" << iter2.offset <<
-                    //", iter2.index=" << iter2.index <<
-                    //", iter2.bitsetOffset=" << iter2.bitsetOffset() << endl;
-                newBitset.getMutableData()[i] = iter1.chunk(i) & iter2.chunk(i);
+                size_t conj = iter1.chunk(i) & iter2.chunk(i);
+                if (conj == 0) {
+                    if (beginning) {
+                        newGap++;
+                    } else {
+                        hold += (i == newChunks - 1) ? remainingBits : Bitset::CHUNK_SIZE;
+                    }
+                } else {
+                    beginning = false;
+                    newBitset.pushFalse(hold);
+                    newBitset.push_back(conj, (i == newChunks - 1) ? remainingBits : Bitset::CHUNK_SIZE);
+                    hold = 0;
+                }
             }
 
             // For the very last bitset, it may happen that newChunks * CHUNK_SIZE
             // would be greater than newBitset.size(), but that is ok, since we are in the end.
             // This discrepancy gets fixed in Iter::remainingTrailing().
-            newGaps.push_back(newGap);
-            newBitsets.push_back(newBitset);
-            newSum += newBitset.getSum();
+
+            if (!newBitset.empty()) {
+                newGaps.push_back(newGap);
+                newBitsets.push_back(newBitset);
+                newSum += newBitset.getSum();
+                newGap = 0;
+            }
 
             iter1.increment(newChunks);
             iter2.increment(newChunks);
-            newGap = 0;
+            newGap += hold / Bitset::CHUNK_SIZE;
+            hold = hold % Bitset::CHUNK_SIZE; // passed out of the loop. if loop continues, hold is always 0
         }
 
+        hold += newGap * Bitset::CHUNK_SIZE;
         gaps = newGaps;
         bitsets = newBitsets;
         cachedSum = 1.0 * newSum;
-        nTrailing = iter1.hasGapsOrBits() ? iter2.remainingTrailing() : iter1.remainingTrailing();
+        nTrailing = iter1.hasGapsOrBits() ? iter2.remainingTrailing(hold) : iter1.remainingTrailing(hold);
     }
 
 private:
@@ -210,8 +244,10 @@ private:
 
         size_t bitsetOffset() const
         {
-            if (offset < chain->gaps[index])
+            if (offset < chain->gaps[index]) {
+                cout << "assertion failed in bitsetOffset()" << endl;
                 throw new runtime_error("assertion failed in bitsetOffset()");
+            }
 
             return offset - chain->gaps[index];
         }
@@ -220,8 +256,11 @@ private:
         {
             //return chain->bitsets[index].nChunks() < bitsetOffset() ? 0 :
                 //chain->bitsets[index].nChunks() - bitsetOffset();
-            if (chain->bitsets[index].nChunks() < bitsetOffset())
+            if (chain->bitsets[index].nChunks() < bitsetOffset()) {
+                cout << "assertion failed in remainingChunks()" << endl;
                 throw new runtime_error("assertion failed in remainingChunks()");
+            }
+
 
             return chain->bitsets[index].nChunks() - bitsetOffset();
         }
@@ -230,18 +269,22 @@ private:
         {
             //return chain->bitsets[index].size() < bitsetOffset() * Bitset::CHUNK_SIZE ? 0 :
                 //chain->bitsets[index].size() - bitsetOffset() * Bitset::CHUNK_SIZE;
-            if (chain->bitsets[index].size() < bitsetOffset() * Bitset::CHUNK_SIZE)
+            if (chain->bitsets[index].size() < bitsetOffset() * Bitset::CHUNK_SIZE) {
+                cout << "assertion failed in remainingBits()" << endl;
                 throw new runtime_error("assertion failed in remainingBits()");
+            }
 
             return chain->bitsets[index].size() - bitsetOffset() * Bitset::CHUNK_SIZE;
         }
 
-        size_t remainingTrailing() const
+        size_t remainingTrailing(size_t hold) const
         {
-            if (chain->getTrailing() < offset * Bitset::CHUNK_SIZE)
+            if (hold + chain->getTrailing() < offset * Bitset::CHUNK_SIZE) {
+                cout << "assertion failed in remainingTrailing()" << endl;
                 throw new runtime_error("assertion failed in remainingTrailing()");
+            }
 
-            size_t res = chain->getTrailing() - offset * Bitset::CHUNK_SIZE;
+            size_t res = hold + chain->getTrailing() - offset * Bitset::CHUNK_SIZE;
             if (!chain->bitsets.empty()) {
                 // last bitset's number of bits may not be divisible by CHUNK_SIZE, hence
                 // the offset may be smaller. We must return to the offset what was taken.
