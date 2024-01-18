@@ -15,8 +15,8 @@ public:
     using FilterType = Filter<TaskType>;
     using ArgumentatorType = Argumentator<TaskType>;
 
-    Digger(DataType& data, const Function fun)
-        : data(data), initialTask(data.size()), queue(), func(fun)
+    Digger(DataType& data)
+        : data(data), initialTask(data.size()), queue()
     { }
 
     virtual ~Digger()
@@ -57,7 +57,6 @@ private:
     DataType& data;
     TaskType initialTask;
     TaskQueue<TaskType> queue;
-    Function func;
     vector<FilterType*> filters;
     vector<ArgumentatorType*> argumentators;
     List result;
@@ -118,10 +117,7 @@ private:
     }
 
     void store(const TaskType& task)
-    {
-        List args = prepareArguments(task);
-        result.push_back(func(args));
-    }
+    { result.push_back(prepareArguments(task)); }
 
     void initializeRun()
     {

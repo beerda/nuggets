@@ -11,8 +11,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // dig_
-List dig_(List logData, List numData, List logFoci, List numFoci, List confList, Function fun);
-RcppExport SEXP _nuggets_dig_(SEXP logDataSEXP, SEXP numDataSEXP, SEXP logFociSEXP, SEXP numFociSEXP, SEXP confListSEXP, SEXP funSEXP) {
+List dig_(List logData, List numData, List logFoci, List numFoci, List confList);
+RcppExport SEXP _nuggets_dig_(SEXP logDataSEXP, SEXP numDataSEXP, SEXP logFociSEXP, SEXP numFociSEXP, SEXP confListSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -21,8 +21,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< List >::type logFoci(logFociSEXP);
     Rcpp::traits::input_parameter< List >::type numFoci(numFociSEXP);
     Rcpp::traits::input_parameter< List >::type confList(confListSEXP);
-    Rcpp::traits::input_parameter< Function >::type fun(funSEXP);
-    rcpp_result_gen = Rcpp::wrap(dig_(logData, numData, logFoci, numFoci, confList, fun));
+    rcpp_result_gen = Rcpp::wrap(dig_(logData, numData, logFoci, numFoci, confList));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -42,7 +41,7 @@ END_RCPP
 RcppExport SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_nuggets_dig_", (DL_FUNC) &_nuggets_dig_, 6},
+    {"_nuggets_dig_", (DL_FUNC) &_nuggets_dig_, 5},
     {"_nuggets_which_antichain_", (DL_FUNC) &_nuggets_which_antichain_, 2},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}

@@ -25,7 +25,7 @@ public:
         : config(config)
     { }
 
-    List execute(List logData, List numData, List logFoci, List numFoci, Function fun)
+    List execute(List logData, List numData, List logFoci, List numFoci)
     {
         DataType data;
         data.addLogicalChains(logData);
@@ -33,7 +33,7 @@ public:
         data.addLogicalFoci(logFoci);
         data.addNumericFoci(numFoci);
 
-        Digger<DataType> digger(data, fun);
+        Digger<DataType> digger(data);
 
         if (config.hasConditionArgument()) {
             digger.addArgumentator(new ConditionArgumentator<TaskType>(config.getPredicates()));

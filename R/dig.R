@@ -191,10 +191,6 @@ dig.default <- function(x, f, ...) {
         arguments <- ""
     }
 
-    fun <- function(l) {
-        do.call(f, c(l, list(...)))
-    }
-
     config <- list(arguments = arguments,
                    predicates = predicates,
                    foci = foci,
@@ -205,7 +201,16 @@ dig.default <- function(x, f, ...) {
                    minSupport = as.double(min_support),
                    tNorm = t_norm);
 
-    dig_(logicals, doubles, logicals_foci, doubles_foci, config, fun)
+    res <- dig_(logicals, doubles, logicals_foci, doubles_foci, config)
+
+    dots <- list(...)
+    if (length(dots) > 0) {
+        res <- lapply(res, function(l) { do.call(f, c(l, dots)) })
+    } else {
+        res <- lapply(res, do.call, what = f)
+    }
+
+    res
 }
 
 
