@@ -171,7 +171,7 @@ public:
 
             //cout << "jetu3\n";
             if (iter1.remainingGap() != 0 || iter2.remainingGap() != 0) {
-                cout << "assertion failed: gaps must be 0" << endl;
+                //cout << "assertion failed: gaps must be 0" << endl;
                 throw new runtime_error("assertion failed: gaps must be 0");
             }
 
@@ -245,7 +245,7 @@ private:
         size_t bitsetOffset() const
         {
             if (offset < chain->gaps[index]) {
-                cout << "assertion failed in bitsetOffset()" << endl;
+                //cout << "assertion failed in bitsetOffset()" << endl;
                 throw new runtime_error("assertion failed in bitsetOffset()");
             }
 
@@ -257,7 +257,7 @@ private:
             //return chain->bitsets[index].nChunks() < bitsetOffset() ? 0 :
                 //chain->bitsets[index].nChunks() - bitsetOffset();
             if (chain->bitsets[index].nChunks() < bitsetOffset()) {
-                cout << "assertion failed in remainingChunks()" << endl;
+                //cout << "assertion failed in remainingChunks()" << endl;
                 throw new runtime_error("assertion failed in remainingChunks()");
             }
 
@@ -270,7 +270,7 @@ private:
             //return chain->bitsets[index].size() < bitsetOffset() * Bitset::CHUNK_SIZE ? 0 :
                 //chain->bitsets[index].size() - bitsetOffset() * Bitset::CHUNK_SIZE;
             if (chain->bitsets[index].size() < bitsetOffset() * Bitset::CHUNK_SIZE) {
-                cout << "assertion failed in remainingBits()" << endl;
+                //cout << "assertion failed in remainingBits()" << endl;
                 throw new runtime_error("assertion failed in remainingBits()");
             }
 
@@ -280,7 +280,7 @@ private:
         size_t remainingTrailing(size_t hold) const
         {
             if (hold + chain->getTrailing() < offset * Bitset::CHUNK_SIZE) {
-                cout << "assertion failed in remainingTrailing()" << endl;
+                //cout << "assertion failed in remainingTrailing()" << endl;
                 throw new runtime_error("assertion failed in remainingTrailing()");
             }
 
