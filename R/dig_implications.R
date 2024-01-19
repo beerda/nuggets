@@ -49,6 +49,7 @@
 #' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
 #'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
 #'      (Lukasiewicz t-norm).
+#' @param threads the number of threads to use for parallel computation.
 #' @param ... Further arguments, currently unused.
 #' @returns A tibble with found rules and computed quality measures.
 #' @author Michal Burda
@@ -64,6 +65,7 @@ dig_implications <- function(x,
                              min_support = 0,
                              min_confidence = 0,
                              t_norm = "goguen",
+                             threads = 1,
                              ...) {
     .must_be_double_scalar(min_coverage)
     .must_be_in_range(min_coverage, c(0, 1))
@@ -91,7 +93,8 @@ dig_implications <- function(x,
                            condition = !!consequent,
                            min_length = 1,
                            max_length = 1,
-                           min_support = 0.0)
+                           min_support = 0.0,
+                           threads = threads)
     conseq_supports <- unlist(conseq_supports)
 
     f2 <- function(condition, sum, support, foci_supports) {
@@ -128,6 +131,7 @@ dig_implications <- function(x,
                max_length = max_length,
                min_support = min_coverage,
                t_norm = t_norm,
+               threads = threads,
                ...)
 
     res <- unlist(res, recursive = FALSE)

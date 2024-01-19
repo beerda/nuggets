@@ -36,6 +36,7 @@
 #'      relative frequency of rows such that all condition predicates are TRUE on it.
 #'      For numerical (double) input, the support is computed as the mean (over all
 #'      rows) of multiplications of predicate values.
+#' @param threads the number of threads to use for parallel computation.
 #' @param ... Further arguments, currently unused.
 #' @return A tibble with found rules.
 #' @author Michal Burda
@@ -51,6 +52,7 @@ dig_correlations <- function(x,
                              min_length = 0L,
                              max_length = Inf,
                              min_support = 0.0,
+                             threads = 1,
                              ...) {
     .must_be_enum(method, c("pearson", "kendall", "spearman"))
     .must_be_enum(alternative, c("two.sided", "less", "greater"))
@@ -121,6 +123,7 @@ dig_correlations <- function(x,
                min_length = min_length,
                max_length = max_length,
                min_support = min_support,
+               threads = threads,
                ...)
 
     res <- do.call(rbind, res)

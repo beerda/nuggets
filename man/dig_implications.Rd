@@ -15,6 +15,7 @@ dig_implications(
   min_support = 0,
   min_confidence = 0,
   t_norm = "goguen",
+  threads = 1,
   ...
 )
 }
@@ -56,6 +57,8 @@ is limited only by the number of available predicates.}
 \item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
 \code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}
 (Lukasiewicz t-norm).}
+
+\item{threads}{the number of threads to use for parallel computation.}
 
 \item{...}{Further arguments, currently unused.}
 }

@@ -45,6 +45,7 @@
 #' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
 #'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
 #'      (Lukasiewicz t-norm).
+#' @param threads the number of threads to use for parallel computation.
 #' @param ... Further arguments, currently unused.
 #' @returns A list of results provided by the callback function `f`.
 #' @author Michal Burda
@@ -76,6 +77,7 @@ dig.default <- function(x, f, ...) {
                  max_length,
                  min_support,
                  t_norm,
+                 threads,
                  ...) {
     .must_be_list_of_logicals(logicals)
     .must_be_list_of_doubles(doubles)
@@ -186,6 +188,10 @@ dig.default <- function(x, f, ...) {
 
     .must_be_enum(t_norm, c("goguen", "goedel", "lukas"), call = caller_env(2))
 
+    .must_be_integerish_scalar(threads, call = caller_env(2))
+    .must_be_greater_eq(threads, 1, call = caller_env(2))
+    threads <- as.integer(threads)
+
     arguments <- formalArgs(f)
     if (is.null(arguments)) {
         arguments <- ""
@@ -199,7 +205,8 @@ dig.default <- function(x, f, ...) {
                    minLength = min_length,
                    maxLength = max_length,
                    minSupport = as.double(min_support),
-                   tNorm = t_norm);
+                   tNorm = t_norm,
+                   threads = threads);
 
     res <- dig_(logicals, doubles, logicals_foci, doubles_foci, config)
 
@@ -225,6 +232,7 @@ dig.matrix <- function(x,
                        max_length = Inf,
                        min_support = 0.0,
                        t_norm = "goguen",
+                       threads = 1,
                        ...) {
     .must_be_matrix(x)
 
@@ -259,7 +267,8 @@ dig.matrix <- function(x,
              min_length = min_length,
              max_length = max_length,
              min_support = min_support,
-             t_norm = t_norm)
+             t_norm = t_norm,
+             threads = threads)
 
     } else if (is.double(x)) {
         .dig(logicals = list(),
@@ -274,7 +283,8 @@ dig.matrix <- function(x,
              min_length = min_length,
              max_length = max_length,
              min_support = min_support,
-             t_norm = t_norm)
+             t_norm = t_norm,
+             threads = threads)
 
     } else {
         cli_abort(c("{.var x} must be either logical or numeric (double) matrix.",
@@ -328,6 +338,7 @@ dig.data.frame <- function(x,
                            max_length = Inf,
                            min_support = 0.0,
                            t_norm = "goguen",
+                           threads = 1,
                            ...) {
     .must_be_data_frame(x)
 
@@ -357,5 +368,6 @@ dig.data.frame <- function(x,
          min_length = min_length,
          max_length = max_length,
          min_support = min_support,
-         t_norm = t_norm)
+         t_norm = t_norm,
+         threads = threads)
 }

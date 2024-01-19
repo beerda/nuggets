@@ -21,6 +21,7 @@ dig(x, f, ...)
   max_length = Inf,
   min_support = 0,
   t_norm = "goguen",
+  threads = 1,
   ...
 )
 
@@ -34,6 +35,7 @@ dig(x, f, ...)
   max_length = Inf,
   min_support = 0,
   t_norm = "goguen",
+  threads = 1,
   ...
 )
 }
@@ -90,6 +92,8 @@ rows) of multiplications of predicate values.}
 \item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
 \code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}
 (Lukasiewicz t-norm).}
+
+\item{threads}{the number of threads to use for parallel computation.}
 }
 \value{
 A list of results provided by the callback function \code{f}.
