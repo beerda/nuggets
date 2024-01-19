@@ -15,8 +15,8 @@ public:
     using FilterType = Filter<TaskType>;
     using ArgumentatorType = Argumentator<TaskType>;
 
-    Digger(DataType& data)
-        : data(data), initialTask(data.size()), queue()
+    Digger(DataType& data, int threads)
+        : data(data), initialTask(data.size()), queue(), allThreads(threads)
     { }
 
     virtual ~Digger()
@@ -36,13 +36,16 @@ public:
 
     void run()
     {
-        TaskType task;
-
         initializeRun();
+
+        #if defined(_OPENMP)
+            #pragma omp parallel num_threads(allThreads) default(shared)
+        #endif
         while (!workDone()) {
+            TaskType task;
             if (receiveTask(task)) {
                 processTask(task);
-                taskFinished();
+                taskFinished(task);
             }
         }
     }
@@ -50,7 +53,7 @@ public:
     void setChainsNeeded()
     { chainsNeeded = true; }
 
-    List getResult() const
+    vector<ArgumentValues> getResult() const
     { return result; }
 
 private:
@@ -59,8 +62,9 @@ private:
     TaskQueue<TaskType> queue;
     vector<FilterType*> filters;
     vector<ArgumentatorType*> argumentators;
-    List result;
+    vector<ArgumentValues> result;
     int workingThreads;
+    int allThreads;
 
     bool chainsNeeded = false;
 
@@ -106,18 +110,20 @@ private:
         return true;
     }
 
-    List prepareArguments(const TaskType& task) const
-    {
-        List result;
-
-        for (const ArgumentatorType* a : argumentators)
-            a->prepare(result, task);
-
-        return result;
-    }
-
     void store(const TaskType& task)
-    { result.push_back(prepareArguments(task)); }
+    {
+        #if defined(_OPENMP)
+            #pragma omp critical(TASK_QUEUE)
+        #endif
+        {
+            //cout << "storing: " + task.toString() << endl;
+            ArgumentValues args;
+            for (const ArgumentatorType* a : argumentators) {
+                a->prepare(args, task);
+            }
+            result.push_back(args);
+        }
+    }
 
     void initializeRun()
     {
@@ -130,7 +136,12 @@ private:
     {
         bool done;
 
-        done = queue.empty() && workingThreads <= 0;
+        #if defined(_OPENMP)
+            #pragma omp critical(TASK_QUEUE)
+        #endif
+        {
+            done = queue.empty() && workingThreads <= 0;
+        }
 
         return done;
     }
@@ -139,9 +150,13 @@ private:
     {
         bool received = false;
 
+        #if defined(_OPENMP)
+            #pragma omp critical(TASK_QUEUE)
+        #endif
         {
             if (!queue.empty()) {
                 task = queue.pop();
+                //cout << "receiving: " + task.toString() << endl;
                 workingThreads++;
                 received = true;
             }
@@ -152,13 +167,18 @@ private:
 
     void sendTask(const TaskType& task)
     {
+        #if defined(_OPENMP)
+            #pragma omp critical(TASK_QUEUE)
+        #endif
         {
+            //cout << "sending: " + task.toString() << endl;
             queue.add(task);
         }
     }
 
     void processTask(TaskType& task)
     {
+        //cout << "processing: " + task.toString() << endl;
         TaskType child;
 
         if (!isRedundant(task)) {
@@ -187,8 +207,14 @@ private:
         }
     }
 
-    void taskFinished()
+    void taskFinished(TaskType& task)
     {
-        workingThreads--;
+        #if defined(_OPENMP)
+            #pragma omp critical(TASK_QUEUE)
+        #endif
+        {
+            //cout << "finished: " + task.toString() << endl;
+            workingThreads--;
+        }
     }
 };

@@ -17,18 +17,18 @@ public:
         : dataLength(1.0 * dataLength)
     { }
 
-    void prepare(List& arguments, const TASK& task) const override
+    void prepare(ArgumentValues& arguments, const TASK& task) const override
     {
         Argumentator<TASK>::prepare(arguments, task);
 
-        NumericVector result;
+        ArgumentValue arg("sum", ArgumentType::ARG_NUMERIC);
 
         if (task.getChain().empty())
-            result.push_back(dataLength);
+            arg.push_back(dataLength);
         else
-            result.push_back(task.getChain().getSum());
+            arg.push_back(task.getChain().getSum());
 
-        arguments.push_back(result, "sum");
+        arguments.push_back(arg);
     }
 
 private:

@@ -16,23 +16,23 @@ public:
         : dataSize(dataSize)
     { }
 
-    void prepare(List& arguments, const TASK& task) const override
+    void prepare(ArgumentValues& arguments, const TASK& task) const override
     {
         Argumentator<TASK>::prepare(arguments, task);
 
-        LogicalVector indices;
-
+        ArgumentValue arg("indices", ArgumentType::ARG_LOGICAL);
         if (task.getChain().empty()) {
             for (size_t i = 0; i < dataSize; i++) {
-                indices.push_back(true);
+                arg.push_back(true);
             }
         }
         else {
             for (size_t i = 0; i < task.getChain().size(); i++) {
-                indices.push_back(task.getChain().getValue(i) > 0);
+                arg.push_back(task.getChain().getValue(i) > 0);
             }
         }
-        arguments.push_back(indices, "indices");
+
+        arguments.push_back(arg);
     }
 
 private:

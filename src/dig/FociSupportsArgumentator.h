@@ -13,22 +13,23 @@ public:
     using DataType = typename TASK::DataType;
     using DualChainType = typename TASK::DualChainType;
 
-    FociSupportsArgumentator(const IntegerVector& predicates,
-                             const IntegerVector& foci,
-                             const IntegerVector& disjointPredicates,
-                             const IntegerVector& disjointFoci,
+    FociSupportsArgumentator(const vector<int>& predicateIndices,
+                             const vector<int>& fociIndices,
+                             const vector<string>& fociNames,
+                             const vector<int>& disjointPredicates,
+                             const vector<int>& disjointFoci,
                              const DataType& data)
-        : predicates(predicates), foci(foci),
+        : predicateIndices(predicateIndices),
+          fociIndices(fociIndices), fociNames(fociNames),
           disjointPredicates(disjointPredicates), disjointFoci(disjointFoci),
           data(data)
     { }
 
-    void prepare(List& arguments, const TASK& task) const override
+    void prepare(ArgumentValues& arguments, const TASK& task) const override
     {
         Argumentator<TASK>::prepare(arguments, task);
 
-        CharacterVector names = foci.names();
-        NumericVector supports;
+        ArgumentValue arg("foci_supports", ArgumentType::ARG_NUMERIC);
 
         for (size_t i = 0; i < data.fociSize(); i++) {
             if (isFocusInCondition(i, task))
@@ -42,27 +43,28 @@ public:
                 // chain is not empty when the condition is of length > 0
                 chain.conjunctWith(task.getChain());
             }
-            supports.push_back(chain.getSupport(), as<string>(names[i]));
+            arg.push_back(chain.getSupport(), fociNames[i]);
         }
 
-        arguments.push_back(supports, "foci_supports");
+        arguments.push_back(arg);
     }
 
 private:
-    IntegerVector predicates;
-    IntegerVector foci;
-    IntegerVector disjointPredicates;
-    IntegerVector disjointFoci;
+    vector<int> predicateIndices;
+    vector<int> fociIndices;
+    vector<string> fociNames;
+    vector<int> disjointPredicates;
+    vector<int> disjointFoci;
     const DataType& data;
 
     bool isFocusInCondition(const int id, const TASK& task) const
     {
         if (task.hasPredicate()) {
-            if (foci[id] == predicates[task.getCurrentPredicate()])
+            if (fociIndices[id] == predicateIndices[task.getCurrentPredicate()])
                 return true;
         }
         for (int pref : task.getPrefix()) {
-            if (foci[id] == predicates[pref])
+            if (fociIndices[id] == predicateIndices[pref])
                 return true;
         }
 

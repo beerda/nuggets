@@ -10,24 +10,24 @@
 template <typename TASK>
 class ConditionArgumentator : public Argumentator<TASK> {
 public:
-    ConditionArgumentator(const IntegerVector& predicates)
-        : predicates(predicates)
+    ConditionArgumentator(const vector<int>& predicateIndices, const vector<string>& predicateNames)
+        : predicateIndices(predicateIndices), predicateNames(predicateNames)
     { }
 
-    void prepare(List& arguments, const TASK& task) const override
+    void prepare(ArgumentValues& arguments, const TASK& task) const override
     {
         Argumentator<TASK>::prepare(arguments, task);
 
-        CharacterVector names = predicates.names();
-        IntegerVector indices;
+        ArgumentValue arg("condition", ArgumentType::ARG_INTEGER);
 
         for (int p : task.getCurrentCondition()) {
-            indices.push_back(predicates[p], as<string>(names[p]));
+            arg.push_back(predicateIndices[p], predicateNames[p]);
         }
 
-        arguments.push_back(indices, "condition");
+        arguments.push_back(arg);
     }
 
 private:
-    IntegerVector predicates;
+    vector<int> predicateIndices;
+    vector<string> predicateNames;
 };

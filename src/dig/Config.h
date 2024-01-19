@@ -10,10 +10,20 @@ public:
     {
         parseArguments(configuration["arguments"]);
 
-        predicates = configuration["predicates"];
-        foci = configuration["foci"];
-        disjointPredicates = configuration["disjoint_predicates"];
-        disjointFoci = configuration["disjoint_foci"];
+        IntegerVector predicates = configuration["predicates"];
+        copy(predicates, predicateIndices, predicateNames);
+
+        IntegerVector foci = configuration["foci"];
+        copy(foci, fociIndices, fociNames);
+
+        IntegerVector disjPred = configuration["disjoint_predicates"];
+        copy(disjPred, disjointPredicates);
+
+        IntegerVector disjFoci = configuration["disjoint_foci"];
+        copy(disjFoci, disjointFoci);
+
+        IntegerVector threadsVec = configuration["threads"];
+        threads = threadsVec[0];
 
         IntegerVector minLengthVec = configuration["minLength"];
         minLength = minLengthVec[0];
@@ -59,17 +69,26 @@ public:
     bool hasDisjointFoci() const
     { return disjointFoci.size() > 0; }
 
-    const IntegerVector& getPredicates() const
-    { return predicates; }
+    const vector<int>& getPredicateIndices() const
+    { return predicateIndices; }
 
-    const IntegerVector& getFoci() const
-    { return foci; }
+    const vector<string>& getPredicateNames() const
+    { return predicateNames; }
 
-    const IntegerVector& getDisjointPredicates() const
+    const vector<int>& getFociIndices() const
+    { return fociIndices; }
+
+    const vector<string>& getFociNames() const
+    { return fociNames; }
+
+    const vector<int>& getDisjointPredicates() const
     { return disjointPredicates; }
 
-    const IntegerVector& getDisjointFoci() const
+    const vector<int>& getDisjointFoci() const
     { return disjointFoci; }
+
+    int getThreads() const
+    { return threads; }
 
     int getMinLength() const
     { return minLength; }
@@ -91,10 +110,16 @@ private:
     bool supportArgument = false;
     bool weightsArgument = false;
 
-    IntegerVector predicates;
-    IntegerVector foci;
-    IntegerVector disjointPredicates;
-    IntegerVector disjointFoci;
+    vector<int> predicateIndices;
+    vector<string> predicateNames;
+
+    vector<int> fociIndices;
+    vector<string> fociNames;
+
+    vector<int> disjointPredicates;
+    vector<int> disjointFoci;
+
+    int threads;
     int minLength;
     int maxLength;
     double minSupport;
@@ -115,6 +140,26 @@ private:
                 supportArgument = true;
             if (vec[i] == "weights")
                 weightsArgument = true;
+        }
+    }
+
+    void copy(const IntegerVector& source, vector<int>& values)
+    {
+        for (R_xlen_t i = 0; i < source.size(); ++i) {
+            values.push_back(source[i]);
+        }
+    }
+
+    void copy(const IntegerVector& source, vector<int>& values, vector<string>& names)
+    {
+        if (!source.hasAttribute("names")) {
+            copy(source, values);
+        } else {
+            CharacterVector sourceNames = source.names();
+            for (R_xlen_t i = 0; i < source.size(); ++i) {
+                names.push_back(as<string>(sourceNames[i]));
+                values.push_back(source[i]);
+            }
         }
     }
 };

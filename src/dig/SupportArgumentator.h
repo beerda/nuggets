@@ -13,12 +13,13 @@ public:
     SupportArgumentator()
     { }
 
-    void prepare(List& arguments, const TASK& task) const override
+    void prepare(ArgumentValues& arguments, const TASK& task) const override
     {
         Argumentator<TASK>::prepare(arguments, task);
 
-        NumericVector support;
-        support.push_back(task.getChain().getSupport());
-        arguments.push_back(support, "support");
+        ArgumentValue arg("support", ArgumentType::ARG_NUMERIC);
+        arg.push_back(task.getChain().getSupport());
+
+        arguments.push_back(arg);
     }
 };

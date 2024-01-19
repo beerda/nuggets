@@ -6,7 +6,7 @@
 template <typename TASK>
 class DisjointFilter : public Filter<TASK> {
 public:
-    DisjointFilter(const IntegerVector& disjoint)
+    DisjointFilter(const vector<int>& disjoint)
         : disjoint(disjoint)
     { }
 
@@ -26,5 +26,5 @@ public:
     }
 
 private:
-    IntegerVector disjoint;
+    vector<int> disjoint;
 };

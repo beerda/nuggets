@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ArgumentValue.h"
 #include "Task.h"
 
 
@@ -13,6 +14,6 @@ public:
     virtual ~Argumentator()
     { }
 
-    virtual void prepare(List& arguments, const TASK& task) const
+    virtual void prepare(ArgumentValues& arguments, const TASK& task) const
     { }
 };
