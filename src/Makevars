@@ -1,7 +1,7 @@
 CXX_STD = CXX17
 PKG_CPPFLAGS=-I.
 PKG_CXXFLAGS=$(SHLIB_OPENMP_CXXFLAGS)
-PKG_LIBS=$(SHLIB_OPENMP_CFLAGS)
+PKG_LIBS=$(SHLIB_OPENMP_CXXFLAGS)
 
 SOURCES=RcppExports.cpp dig.cpp test-antichain-Condition.cpp test-antichain-Node.cpp test-antichain-Tree.cpp test-dig-Bitset.cpp test-dig-BitsetBitChain.cpp test-dig-BitsetNumChain.cpp test-dig-DualChain.cpp test-dig-SparseBitChain.cpp test-dig-Task.cpp test-dig-TaskQueue.cpp test-dig-VectorNumChain.cpp test-runner.cpp which_antichain.cpp  dig/BitsetNumChain.cpp dig/SimdVectorNumChain.cpp dig/VectorNumChain.cpp
 
