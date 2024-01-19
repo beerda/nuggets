@@ -201,7 +201,6 @@ test_that("min_support filter", {
     expect_equal(length(res), 1)
 })
 
-
 test_that("disjoint filter", {
     m <- matrix(T, ncol = 3)
 
@@ -454,3 +453,10 @@ test_that("t-norm lukas", {
                  tolerance = 1e-6)
 })
 
+
+test_that("multithread", {
+    m <- matrix(T, ncol = 10, nrow=100)
+
+    res <- dig(m, function() 1, threads = 24)
+    expect_equal(length(res), 1024)
+})
