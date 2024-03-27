@@ -1,8 +1,10 @@
 #include <testthat.h>
 #include "common.h"
 #include "dig/DualChain.h"
+#include "dig/BitChain.h"
+#include "dig/VectorNumChain.h"
 
-using DualChainTestType = DualChain<BitsetBitChain, VectorNumChain<GOGUEN>>;
+using DualChainTestType = DualChain<BitChain, VectorNumChain<GOGUEN>>;
 
 
 context("dig/DualChain.h") {

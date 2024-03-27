@@ -8,13 +8,13 @@
  * Implementation of chain of bits based on the Bitset class, which realizes
  * a growable array of bits.
  */
-class BitsetBitChain {
+class BitChain {
 public:
-    BitsetBitChain()
+    BitChain()
         : cachedSum(0)
     { }
 
-    BitsetBitChain(const LogicalVector& vals)
+    BitChain(const LogicalVector& vals)
         : cachedSum(0)
     {
         reserve(vals.size());
@@ -38,7 +38,7 @@ public:
             cachedSum++;
     }
 
-    void conjunctWith(const BitsetBitChain& other)
+    void conjunctWith(const BitChain& other)
     {
         values &= other.values;
         cachedSum = 1.0 * values.getSum();
@@ -56,10 +56,10 @@ public:
     bool at(size_t i) const
     { return values.at(i); }
 
-    bool operator == (const BitsetBitChain& other) const
+    bool operator == (const BitChain& other) const
     { return values == other.values; }
 
-    bool operator != (const BitsetBitChain& other) const
+    bool operator != (const BitChain& other) const
     { return !(*this == other); }
 
 private:

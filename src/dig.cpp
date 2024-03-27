@@ -1,7 +1,8 @@
 #include "dig/Executor.h"
-#include "dig/SparseBitChain.h"
+#include "dig/BitChain.h"
+#include "dig/SimdVectorNumChain.h"
 
-#define BCH BitsetBitChain
+#define BCH BitChain
 //#define BCH SparseBitChain
 
 //define NCH VectorNumChain

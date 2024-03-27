@@ -1,10 +1,10 @@
 #include <testthat.h>
 #include "common.h"
-#include "dig/BitsetBitChain.h"
+#include "dig/BitChain.h"
 
-context("dig/BitsetBitChain.h") {
+context("dig/BitChain.h") {
     test_that("push_back") {
-        BitsetBitChain b;
+        BitChain b;
 
         expect_true(b.empty());
         expect_true(b.size() == 0);

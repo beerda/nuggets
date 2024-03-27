@@ -1,10 +1,6 @@
 #pragma once
 
 #include "../common.h"
-#include "SimdVectorNumChain.h"
-#include "VectorNumChain.h"
-#include "BitsetNumChain.h"
-#include "BitsetBitChain.h"
 
 
 template <typename BITCHAIN, typename NUMCHAIN>

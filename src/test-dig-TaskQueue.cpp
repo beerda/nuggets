@@ -1,8 +1,10 @@
 #include <testthat.h>
 #include "common.h"
 #include "dig/TaskQueue.h"
+#include "dig/BitChain.h"
+#include "dig/VectorNumChain.h"
 
-using DataType = Data<BitsetBitChain, VectorNumChain<GOGUEN>>;
+using DataType = Data<BitChain, VectorNumChain<GOGUEN>>;
 using TaskType = Task<DataType>;
 
 context("dig/TaskQueue.h") {

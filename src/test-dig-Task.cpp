@@ -1,9 +1,11 @@
 #include <testthat.h>
 #include "common.h"
 #include "dig/Task.h"
+#include "dig/BitChain.h"
+#include "dig/VectorNumChain.h"
 
 
-using DataType = Data<BitsetBitChain, VectorNumChain<GOGUEN>>;
+using DataType = Data<BitChain, VectorNumChain<GOGUEN>>;
 using TaskType = Task<DataType>;
 using DualChainType = DataType::DualChainType;
 
