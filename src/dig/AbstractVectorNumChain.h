@@ -18,7 +18,7 @@ public:
     {
         reserve(vals.size());
         for (R_xlen_t i = 0; i < vals.size(); i++)
-            push_back(vals.at(i));
+            pushBack(vals.at(i));
     }
 
     void clear()
@@ -30,7 +30,7 @@ public:
     void reserve(size_t size)
     { values.reserve(size); }
 
-    void push_back(float value)
+    void pushBack(float value)
     {
         values.push_back(value);
         cachedSum += value;

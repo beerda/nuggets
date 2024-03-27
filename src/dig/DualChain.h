@@ -32,7 +32,7 @@ public:
             numData.clear();
             numData.reserve(size());
             for (size_t i = 0; i < size(); i++) {
-                numData.push_back(1.0 * bitData.at(i));
+                numData.pushBack(1.0 * bitData.at(i));
             }
         }
     }
