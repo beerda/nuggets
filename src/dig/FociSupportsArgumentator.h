@@ -59,11 +59,11 @@ private:
 
     bool isFocusInCondition(const int id, const TASK& task) const
     {
-        if (task.hasPredicate()) {
-            if (fociIndices[id] == predicateIndices[task.getCurrentPredicate()])
+        if (task.getConditionIterator().hasPredicate()) {
+            if (fociIndices[id] == predicateIndices[task.getConditionIterator().getCurrentPredicate()])
                 return true;
         }
-        for (int pref : task.getPrefix()) {
+        for (int pref : task.getConditionIterator().getPrefix()) {
             if (fociIndices[id] == predicateIndices[pref])
                 return true;
         }
@@ -80,11 +80,11 @@ private:
             return false;
 
         int currDisj = disjointFoci[id];
-        if (task.hasPredicate()) {
-            if (currDisj == disjointPredicates[task.getCurrentPredicate()])
+        if (task.getConditionIterator().hasPredicate()) {
+            if (currDisj == disjointPredicates[task.getConditionIterator().getCurrentPredicate()])
                 return true;
         }
-        for (int pref : task.getPrefix()) {
+        for (int pref : task.getConditionIterator().getPrefix()) {
             if (currDisj == disjointPredicates[pref])
                 return true;
         }

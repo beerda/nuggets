@@ -11,7 +11,7 @@ public:
     { }
 
     bool isStorable(const TASK& task) const override
-    { return ((int) task.getLength()) >= minLength; }
+    { return ((int) task.getConditionIterator().getLength()) >= minLength; }
 
 private:
     int minLength;

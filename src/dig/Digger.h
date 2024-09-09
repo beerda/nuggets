@@ -136,21 +136,21 @@ private:
                     store(task);
                 }
                 if (isExtendable(task)) {
-                    if (task.hasSoFar()) {
+                    if (task.getConditionIterator().hasSoFar()) {
                         child = task.createChild();
                     }
-                    if (task.hasPredicate()) {
-                        task.putCurrentToSoFar();
+                    if (task.getConditionIterator().hasPredicate()) {
+                        task.getMutableConditionIterator().putCurrentToSoFar();
                     }
                 }
             }
         }
 
-        task.next();
-        if (task.hasPredicate()) {
+        task.getMutableConditionIterator().next();
+        if (task.getConditionIterator().hasPredicate()) {
             sendTask(task);
         }
-        if (!child.empty()) {
+        if (!child.getConditionIterator().empty()) {
             sendTask(child);
         }
     }

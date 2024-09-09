@@ -32,7 +32,7 @@ public:
     static bool hasPriority(TASK& lhs, TASK& rhs)
     {
         // TODO: add better heuristics (e.g. based on parent support)
-        return (lhs.getLength() < rhs.getLength());
+        return (lhs.getConditionIterator().getLength() < rhs.getConditionIterator().getLength());
     }
 
 private:

@@ -12,10 +12,10 @@ public:
 
     bool isRedundant(const TASK& task) const override
     {
-        if (task.hasPredicate()) {
-            int curr = task.getCurrentPredicate();
+        if (task.getConditionIterator().hasPredicate()) {
+            int curr = task.getConditionIterator().getCurrentPredicate();
             int currDisj = disjoint[curr];
-            for (int pref : task.getPrefix()) {
+            for (int pref : task.getConditionIterator().getPrefix()) {
                 if (disjoint[pref] == currDisj) {
                     return true;
                 }

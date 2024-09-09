@@ -20,7 +20,7 @@ public:
 
         ArgumentValue arg("condition", ArgumentType::ARG_INTEGER);
 
-        for (int p : task.getCurrentCondition()) {
+        for (int p : task.getConditionIterator().getCurrentCondition()) {
             arg.push_back(predicateIndices[p], predicateNames[p]);
         }
 

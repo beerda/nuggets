@@ -11,7 +11,7 @@ public:
     { }
 
     bool isRedundant(const TASK& task) const override
-    { return ((int) task.getLength()) > maxLength; }
+    { return ((int) task.getConditionIterator().getLength()) > maxLength; }
 
 private:
     int maxLength;
