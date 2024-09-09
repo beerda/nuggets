@@ -63,10 +63,12 @@ testIt <- function(m, n) {
 #print(c(nrow(rules1), nrow(rules2)))
 
 result <- data.frame()
-for (i in 5:8) {
-    for (j in 6:15) {
+for (i in 5:7) {
+    for (j in c(5, 10, 15)) {
         result <- rbind(result, testIt(10^i, j))
         saveRDS(result, "comparison_result.rds")
+        cat("\n---------------------------------------------------------------------\n")
+        print(result)
     }
 }
 print(result)
