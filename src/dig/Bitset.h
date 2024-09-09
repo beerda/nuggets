@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vector>
 #include <bitset>
 #include "../common.h"
+#include "../AlignedVector.h"
 
 
 /**
@@ -92,10 +92,10 @@ public:
         return result;
     }
 
-    const vector<uintmax_t>& getData() const
+    const AlignedVector<uintmax_t>& getData() const
     { return data; }
 
-    vector<uintmax_t>& getMutableData()
+    AlignedVector<uintmax_t>& getMutableData()
     { return data; }
 
     void operator &= (const Bitset& other)
@@ -126,6 +126,6 @@ public:
     }
 
 private:
-    vector<uintmax_t> data;
+    AlignedVector<uintmax_t> data;
     size_t n;
 };
