@@ -19,8 +19,8 @@ public:
     Task()
     { }
 
-    Task(Iterator conditionIterator)
-        : conditionIterator(conditionIterator)
+    Task(Iterator conditionIterator, Iterator focusIterator)
+        : conditionIterator(conditionIterator), focusIterator(focusIterator)
     { }
 
     const Iterator& getConditionIterator() const
@@ -28,6 +28,12 @@ public:
 
      Iterator& getMutableConditionIterator()
     { return conditionIterator; }
+
+    const Iterator& getFocusIterator() const
+    { return focusIterator; }
+
+    Iterator& getMutableFocusIterator()
+    { return focusIterator; }
 
     Task createChild() const
     {
@@ -42,7 +48,8 @@ public:
             newConditionIterator = Iterator(conditionIterator.getPrefix(), conditionIterator.getSoFar());
         }
 
-        Task result = Task(newConditionIterator);
+        Iterator newFocusIterator = Iterator({}, focusIterator.getSoFar()); // prefix is always empty
+        Task result = Task(newConditionIterator, newFocusIterator);
 
         if (!chain.empty()) {
             result.prefixChain = chain;
@@ -85,6 +92,8 @@ public:
 
 private:
     Iterator conditionIterator;
+
+    Iterator focusIterator;
 
     DualChainType chain;
 

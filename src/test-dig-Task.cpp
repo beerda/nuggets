@@ -11,7 +11,7 @@ using DualChainType = DataType::DualChainType;
 
 context("dig/Task.h") {
     test_that("createChild") {
-        TaskType t(Iterator({0, 1, 2}, {10, 11, 12}, {5, 6}));
+        TaskType t(Iterator({0, 1, 2}, {10, 11, 12}, {5, 6}), Iterator());
 
         TaskType ch = t.createChild();
         expect_true(ch.getConditionIterator().getPrefix() == set<int>({0, 1, 2, 10}));
@@ -40,7 +40,7 @@ context("dig/Task.h") {
         data.addChain(data2);
         data.addChain(data3);
 
-        TaskType t(Iterator({0, 1, 2})); // empty task with soFar: 0,1,2
+        TaskType t(Iterator({0, 1, 2}), Iterator()); // empty task with soFar: 0,1,2
         expect_true(t.getChain().empty());
         expect_true(t.getPrefixChain().empty());
 

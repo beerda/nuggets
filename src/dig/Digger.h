@@ -19,7 +19,10 @@ public:
     using ArgumentatorType = Argumentator<TaskType>;
 
     Digger(DataType& data, int threads)
-        : data(data), initialTask(data.size()), queue(), allThreads(threads)
+        : data(data),
+          initialTask(Iterator(data.size()), Iterator()),
+          queue(),
+          allThreads(threads)
     { }
 
     virtual ~Digger()
