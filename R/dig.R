@@ -230,14 +230,7 @@ dig.default <- function(x, f, ...) {
 
     res <- dig_(logicals, doubles, logicals_foci, doubles_foci, config)
 
-    dots <- list(...)
-    if (length(dots) > 0) {
-        res <- lapply(res, function(l) { do.call(f, c(l, dots)) })
-    } else {
-        res <- lapply(res, do.call, what = f)
-    }
-
-    res
+    lapply(res, do.call, what = f)
 }
 
 
