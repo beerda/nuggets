@@ -62,8 +62,8 @@ public:
         }
     }
 
-    void setChainsNeeded()
-    { chainsNeeded = true; }
+    void setConditionChainsNeeded()
+    { conditionChainsNeeded = true; }
 
     vector<ArgumentValues> getResult() const
     { return result; }
@@ -75,7 +75,7 @@ private:
     vector<FilterType*> filters;
     vector<ArgumentatorType*> argumentators;
     vector<ArgumentValues> result;
-    bool chainsNeeded = false;
+    bool conditionChainsNeeded = false;
 
     int workingThreads;
     int allThreads;
@@ -134,9 +134,9 @@ private:
         //cout << "processing: " + task.toString() << endl;
         TaskType child;
 
-        if (!isRedundant(task)) {
-            updateChain(task);
-            if (!isPrunable(task)) {
+        if (!isConditionRedundant(task)) {
+            updateConditionChain(task);
+            if (!isConditionPrunable(task)) {
 
                 Iterator& iter = task.getMutableFocusIterator();
                 iter.reset();
@@ -193,9 +193,9 @@ private:
         result.push_back(args);
     }
 
-    void updateChain(TaskType& task) const
+    void updateConditionChain(TaskType& task) const
     {
-        if (chainsNeeded)
+        if (conditionChainsNeeded)
             task.updateChain(data);
     }
 
@@ -204,19 +204,37 @@ private:
         // TODO
     }
 
-    bool isRedundant(const TaskType& task) const
+    bool isConditionRedundant(const TaskType& task) const
     {
         for (const FilterType* e : filters)
-            if (e->isRedundant(task))
+            if (e->isConditionRedundant(task))
                 return true;
 
         return false;
     }
 
-    bool isPrunable(const TaskType& task) const
+    bool isFocusRedundant(const TaskType& task) const
     {
         for (const FilterType* e : filters)
-            if (e->isPrunable(task))
+            if (e->isFocusRedundant(task))
+                return true;
+
+        return false;
+    }
+
+    bool isConditionPrunable(const TaskType& task) const
+    {
+        for (const FilterType* e : filters)
+            if (e->isConditionPrunable(task))
+                return true;
+
+        return false;
+    }
+
+    bool isFocusPrunable(const TaskType& task) const
+    {
+        for (const FilterType* e : filters)
+            if (e->isFocusPrunable(task))
                 return true;
 
         return false;
@@ -239,24 +257,4 @@ private:
 
         return true;
     }
-
-    bool isFocusRedundant(const TaskType& task) const
-    {
-        for (const FilterType* e : filters)
-            if (e->isFocusRedundant(task))
-                return true;
-
-        return false;
-    }
-
-    bool isFocusPrunable(const TaskType& task) const
-    {
-        for (const FilterType* e : filters)
-            if (e->isFocusPrunable(task))
-                return true;
-
-        return false;
-    }
-
-
 };

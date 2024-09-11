@@ -10,7 +10,7 @@ public:
         : disjoint(disjoint)
     { }
 
-    bool isRedundant(const TASK& task) const override
+    bool isConditionRedundant(const TASK& task) const override
     {
         if (task.getConditionIterator().hasPredicate()) {
             int curr = task.getConditionIterator().getCurrentPredicate();

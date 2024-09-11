@@ -12,10 +12,16 @@ public:
     virtual ~Filter()
     { }
 
-    virtual bool isRedundant(const TASK& task) const
+    virtual bool isConditionRedundant(const TASK& task) const
     { return false; }
 
-    virtual bool isPrunable(const TASK& task) const
+    virtual bool isFocusRedundant(const TASK& task) const
+    { return false; }
+
+    virtual bool isConditionPrunable(const TASK& task) const
+    { return false; }
+
+    virtual bool isFocusPrunable(const TASK& task) const
     { return false; }
 
     virtual bool isStorable(const TASK& task) const
@@ -23,11 +29,5 @@ public:
 
     virtual bool isExtendable(const TASK& task) const
     { return true; }
-
-    virtual bool isFocusRedundant(const TASK& task) const
-    { return false; }
-
-    virtual bool isFocusPrunable(const TASK& task) const
-    { return false; }
 
 };
