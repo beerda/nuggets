@@ -34,7 +34,7 @@ public:
         data.addLogicalFoci(logFoci);
         data.addNumericFoci(numFoci);
 
-        Digger<DataType> digger(data, config.getThreads());
+        Digger<DataType> digger(data, config);
 
         if (config.hasConditionArgument()) {
             digger.addArgumentator(new ConditionArgumentator<TaskType>(config.getPredicateIndices(),

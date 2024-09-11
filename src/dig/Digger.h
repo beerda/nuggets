@@ -5,6 +5,7 @@
 #include <condition_variable>
 
 #include "Data.h"
+#include "Config.h"
 #include "TaskQueue.h"
 #include "Filter.h"
 #include "Argumentator.h"
@@ -18,11 +19,12 @@ public:
     using FilterType = Filter<TaskType>;
     using ArgumentatorType = Argumentator<TaskType>;
 
-    Digger(DataType& data, int threads)
+    Digger(DataType& data, const Config& config)
         : data(data),
-          initialTask(Iterator(data.size()), Iterator()),
+          initialTask(Iterator(data.size()),
+                      Iterator(data.fociSize())),
           queue(),
-          allThreads(threads)
+          allThreads(config.getThreads())
     { }
 
     virtual ~Digger()
