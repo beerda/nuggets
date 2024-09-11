@@ -4,7 +4,7 @@ library(nuggets)
 set.seed(42344)
 
 m <- 10^6
-n <- 10
+n <- 15
 conf <- 0.5
 
 testIt <- function(m, n) {
@@ -22,14 +22,16 @@ testIt <- function(m, n) {
             fit <- apriori(d, parameter = list(minlen = 1,
                                                maxlen = 6,
                                                supp=0.001,
-                                               conf = conf))
+                                               conf = conf),
+                           control = list(verbose = FALSE))
             rules1 <- DATAFRAME(fit)
         })
 
         t3 <- system.time({
             freq <- eclat(d, parameter = list(minlen = 1,
                                               maxlen = 6,
-                                              supp=0.001))
+                                              supp=0.001),
+                          control = list(verbose = FALSE))
             fit <- ruleInduction(freq, conf = conf)
             rules3 <- DATAFRAME(fit)
         })
