@@ -107,17 +107,19 @@ dig_implications <- function(x,
         supp <- foci_supports[sel]
         lift <- supp / (support * conseq_supports[selnames])
         ante <- format_condition(names(condition))
-        cons <- lapply(names(conf), format_condition)
+        cons <- unlist(lapply(names(conf), format_condition))
 
-        lapply(seq_along(conf), function(i) {
-          list(antecedent = ante,
-               consequent = cons[[i]],
-               support = supp[[i]],
-               confidence = conf[[i]],
-               coverage = support,
-               lift = lift[[i]],
-               count = sum)
-        })
+        if (length(conf) <= 0) {
+            return(NULL)
+        }
+
+        data.frame(antecedent = ante,
+                   consequent = cons,
+                   support = supp,
+                   confidence = conf,
+                   coverage = support,
+                   lift = lift,
+                   count = sum)
     }
 
     res <- dig(x = x,
@@ -134,9 +136,12 @@ dig_implications <- function(x,
                threads = threads,
                ...)
 
-    res <- unlist(res, recursive = FALSE)
-    res <- lapply(res, as.data.frame)
+    #res
+    #res <- unlist(res, recursive = FALSE)
     res <- do.call(rbind, res)
+    #res <- as.data.frame(res)
+    #res <- lapply(res, as.data.frame)
+    #res <- do.call(rbind, res)
 
     as_tibble(res)
 }
