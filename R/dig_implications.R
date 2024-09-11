@@ -136,12 +136,7 @@ dig_implications <- function(x,
                threads = threads,
                ...)
 
-    #res
-    #res <- unlist(res, recursive = FALSE)
     res <- do.call(rbind, res)
-    #res <- as.data.frame(res)
-    #res <- lapply(res, as.data.frame)
-    #res <- do.call(rbind, res)
 
     as_tibble(res)
 }
