@@ -42,6 +42,7 @@ public:
         }
         if (config.hasFociSupportsArgument()) {
             digger.setConditionChainsNeeded();
+            digger.setFocusChainsNeeded();
             digger.addArgumentator(new FociSupportsArgumentator<TaskType>(config.getPredicateIndices(),
                                                                           config.getFociIndices(),
                                                                           config.getFociNames(),

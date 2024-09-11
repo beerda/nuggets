@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <set>
+#include <unordered_map>
+
 #include "../common.h"
 #include "Data.h"
 #include "Iterator.h"
@@ -64,10 +66,14 @@ public:
     const DualChainType& getPrefixChain() const
     { return prefixChain; }
 
+    const DualChainType& getFocusChain(int focus) const
+    { return focusChains.at(focus); }
+
     void updateChain(const DataType& data)
     {
         if (conditionIterator.hasPredicate()) {
-            chain = data.getChain(conditionIterator.getCurrentPredicate());
+            int predicate = conditionIterator.getCurrentPredicate();
+            chain = data.getChain(predicate);
             if (!prefixChain.empty()) {
                 if (chain.isBitwise() != prefixChain.isBitwise() && chain.isNumeric() != prefixChain.isNumeric()) {
                     if (prefixChain.isBitwise()) {
@@ -81,6 +87,24 @@ public:
         }
     }
 
+    void computeFocusChain(const DataType& data)
+    {
+        if (focusIterator.hasPredicate()) {
+            int focus = focusIterator.getCurrentPredicate();
+            focusChains[focus] = data.getFocus(focus);
+            if (!getChain().empty()) {
+                // chain is not empty when the condition is of length > 0
+                focusChains[focus].conjunctWith(chain);
+            }
+        }
+    }
+
+    void resetFoci()
+    {
+        focusIterator.reset();
+        focusChains.clear();
+    }
+
     bool operator == (const Task& other) const
     { return conditionIterator == other.conditionIterator; }
 
@@ -92,11 +116,9 @@ public:
 
 private:
     Iterator conditionIterator;
-
     Iterator focusIterator;
 
     DualChainType chain;
-
     DualChainType prefixChain;
-
+    unordered_map<int, DualChainType> focusChains;
 };

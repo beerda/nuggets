@@ -65,6 +65,9 @@ public:
     void setConditionChainsNeeded()
     { conditionChainsNeeded = true; }
 
+    void setFocusChainsNeeded()
+    { focusChainsNeeded = true; }
+
     vector<ArgumentValues> getResult() const
     { return result; }
 
@@ -76,6 +79,7 @@ private:
     vector<ArgumentatorType*> argumentators;
     vector<ArgumentValues> result;
     bool conditionChainsNeeded = false;
+    bool focusChainsNeeded = false;
 
     int workingThreads;
     int allThreads;
@@ -138,8 +142,8 @@ private:
             updateConditionChain(task);
             if (!isConditionPrunable(task)) {
 
+                task.resetFoci();
                 Iterator& iter = task.getMutableFocusIterator();
-                iter.reset();
                 while (iter.hasPredicate()) {
                     if (!isFocusRedundant(task)) {
                         computeFocusChain(task);
@@ -201,7 +205,8 @@ private:
 
     void computeFocusChain(TaskType& task) const
     {
-        // TODO
+        if (focusChainsNeeded)
+            task.computeFocusChain(data);
     }
 
     bool isConditionRedundant(const TaskType& task) const
