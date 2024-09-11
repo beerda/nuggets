@@ -31,19 +31,14 @@ public:
 
         ArgumentValue arg("foci_supports", ArgumentType::ARG_NUMERIC);
 
-        for (size_t i = 0; i < data.fociSize(); i++) {
+        for (int i : task.getFocusIterator().getSoFar()) {
             if (isFocusInCondition(i, task))
                 continue;
 
             if (isFocusDisjointWith(i, task))
                 continue;
 
-            DualChainType chain = data.getFocus(i);
-            if (!task.getChain().empty()) {
-                // chain is not empty when the condition is of length > 0
-                chain.conjunctWith(task.getChain());
-            }
-            arg.push_back(chain.getSupport(), fociNames[i]);
+            arg.push_back(task.getFocusChain(i).getSupport(), fociNames[i]);
         }
 
         arguments.push_back(arg);
