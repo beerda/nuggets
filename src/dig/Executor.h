@@ -12,7 +12,9 @@
 #include "dig/MinLengthFilter.h"
 #include "dig/MaxLengthFilter.h"
 #include "dig/MinSupportFilter.h"
+#include "dig/MinFocusSupportFilter.h"
 #include "dig/DisjointFilter.h"
+#include "dig/EmptyFociFilter.h"
 
 
 template <typename BITCHAIN, typename NUMCHAIN>
@@ -41,14 +43,8 @@ public:
                                                                        config.getPredicateNames()));
         }
         if (config.hasFociSupportsArgument()) {
-            digger.setConditionChainsNeeded();
             digger.setFocusChainsNeeded();
-            digger.addArgumentator(new FociSupportsArgumentator<TaskType>(config.getPredicateIndices(),
-                                                                          config.getFociIndices(),
-                                                                          config.getFociNames(),
-                                                                          config.getDisjointPredicates(),
-                                                                          config.getDisjointFoci(),
-                                                                          data));
+            digger.addArgumentator(new FociSupportsArgumentator<TaskType>(config.getFociNames()));
         }
         if (config.hasSumArgument()) {
             digger.setConditionChainsNeeded();
@@ -76,9 +72,20 @@ public:
             digger.setConditionChainsNeeded();
             digger.addFilter(new MinSupportFilter<TaskType>(config.getMinSupport()));
         }
-        if (config.hasDisjointPredicates()) {
-            digger.addFilter(new DisjointFilter<TaskType>(config.getDisjointPredicates()));
+
+        if (config.getMinFocusSupport() > 0) {
+            digger.setFocusChainsNeeded();
+            digger.addFilter(new MinFocusSupportFilter<TaskType>(config.getMinFocusSupport()));
         }
+
+        if (config.hasFilterEmptyFoci()) {
+            digger.addFilter(new EmptyFociFilter<TaskType>());
+        }
+
+        digger.addFilter(new DisjointFilter<TaskType>(config.getPredicateIndices(),
+                                                      config.getFociIndices(),
+                                                      config.getDisjointPredicates(),
+                                                      config.getDisjointFoci()));
 
         digger.run();
 

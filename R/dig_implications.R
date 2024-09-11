@@ -100,9 +100,7 @@ dig_implications <- function(x,
     f2 <- function(condition, sum, support, foci_supports) {
         conf <- foci_supports / support
 
-        selSupp <-!is.na(foci_supports) & foci_supports >= min_support
-        selConf <- !is.na(conf) & conf >= min_confidence
-        sel <- selSupp & selConf
+        sel <-!is.na(foci_supports) & !is.na(conf) & conf >= min_confidence
 
         selnames <- names(foci_supports)[sel]
         conf <- conf[sel]
@@ -130,6 +128,8 @@ dig_implications <- function(x,
                min_length = min_length,
                max_length = max_length,
                min_support = min_coverage,
+               min_focus_support = min_support,
+               filter_empty_foci = TRUE,
                t_norm = t_norm,
                threads = threads,
                ...)

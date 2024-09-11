@@ -20,6 +20,8 @@ dig(x, f, ...)
   min_length = 0,
   max_length = Inf,
   min_support = 0,
+  min_focus_support = min_support,
+  filter_empty_foci = FALSE,
   t_norm = "goguen",
   threads = 1,
   ...
@@ -34,6 +36,8 @@ dig(x, f, ...)
   min_length = 0,
   max_length = Inf,
   min_support = 0,
+  min_focus_support = min_support,
+  filter_empty_foci = FALSE,
   t_norm = "goguen",
   threads = 1,
   ...
@@ -88,6 +92,18 @@ of the condition in the dataset \code{x}. For logical data, it equals to the
 relative frequency of rows such that all condition predicates are TRUE on it.
 For numerical (double) input, the support is computed as the mean (over all
 rows) of multiplications of predicate values.}
+
+\item{min_focus_support}{the minimum support of a focus, for the focus to be passed
+to the callback function. The support of the focus is the relative frequency
+of rows such that all condition predicates AND the focus are TRUE on it.
+For numerical (double) input, the support is computed as the mean (over all
+rows) of multiplications of predicate values.}
+
+\item{filter_empty_foci}{a logical scalar indicating whether to skip conditions,
+for which no focus remains available after filtering by \code{min_focus_support}.
+If \code{TRUE}, the condition is passed to the callback function only if at least
+one focus remains after filtering. If \code{FALSE}, the condition is passed to the
+callback function regardless of the number of remaining foci.}
 
 \item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
 \code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}

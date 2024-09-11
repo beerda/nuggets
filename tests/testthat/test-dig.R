@@ -460,3 +460,37 @@ test_that("multithread", {
     res <- dig(m, function() 1, threads = 24)
     expect_equal(length(res), 1024)
 })
+
+
+test_that("min_focus_support & filter_empty_foci", {
+    m <- matrix(c(c(1,1,1,1,1,1,1,1,0,0),
+                  c(1,1,1,1,1,1,0,0,1,1),
+                  c(0,0,0,1,1,1,1,1,1,1),
+                  c(0,0,0,0,1,1,1,1,1,1)), ncol = 4)
+
+    f <- function(condition, foci_supports) {
+       paste(paste(condition, collapse = " & "),
+             "=",
+             paste(round(foci_supports, 1), collapse = ", "))
+    }
+
+    res <- dig(m,
+               f,
+               condition = 1:2,
+               focus = 3:4,
+               min_support = 0.1,
+               min_focus_support = 0.5,
+               filter_empty_foci = FALSE)
+
+    expect_equal(unlist(res), c(" = 0.7, 0.6", "1 = 0.5", "2 = 0.5", "1 & 2 = "))
+
+    res <- dig(m,
+               f,
+               condition = 1:2,
+               focus = 3:4,
+               min_support = 0.1,
+               min_focus_support = 0.5,
+               filter_empty_foci = TRUE)
+
+    expect_equal(unlist(res), c(" = 0.7, 0.6", "1 = 0.5", "2 = 0.5"))
+})

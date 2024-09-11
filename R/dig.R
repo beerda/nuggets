@@ -42,6 +42,16 @@
 #'      relative frequency of rows such that all condition predicates are TRUE on it.
 #'      For numerical (double) input, the support is computed as the mean (over all
 #'      rows) of multiplications of predicate values.
+#' @param min_focus_support the minimum support of a focus, for the focus to be passed
+#'      to the callback function. The support of the focus is the relative frequency
+#'      of rows such that all condition predicates AND the focus are TRUE on it.
+#'      For numerical (double) input, the support is computed as the mean (over all
+#'      rows) of multiplications of predicate values.
+#' @param filter_empty_foci a logical scalar indicating whether to skip conditions,
+#'      for which no focus remains available after filtering by `min_focus_support`.
+#'      If `TRUE`, the condition is passed to the callback function only if at least
+#'      one focus remains after filtering. If `FALSE`, the condition is passed to the
+#'      callback function regardless of the number of remaining foci.
 #' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
 #'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
 #'      (Lukasiewicz t-norm).
@@ -76,6 +86,8 @@ dig.default <- function(x, f, ...) {
                  min_length,
                  max_length,
                  min_support,
+                 min_focus_support,
+                 filter_empty_foci,
                  t_norm,
                  threads,
                  ...) {
@@ -186,6 +198,12 @@ dig.default <- function(x, f, ...) {
     .must_be_in_range(min_support, c(0, 1), call = caller_env(2))
     min_support <- as.double(min_support)
 
+    .must_be_double_scalar(min_focus_support, call = caller_env(2))
+    .must_be_in_range(min_focus_support, c(0, 1), call = caller_env(2))
+    min_focus_support <- as.double(min_focus_support)
+
+    .must_be_flag(filter_empty_foci, call = caller_env(2))
+
     .must_be_enum(t_norm, c("goguen", "goedel", "lukas"), call = caller_env(2))
 
     .must_be_integerish_scalar(threads, call = caller_env(2))
@@ -204,7 +222,9 @@ dig.default <- function(x, f, ...) {
                    disjoint_foci = disjoint_foci,
                    minLength = min_length,
                    maxLength = max_length,
-                   minSupport = as.double(min_support),
+                   minSupport = min_support,
+                   minFocusSupport = min_focus_support,
+                   filterEmptyFoci = filter_empty_foci,
                    tNorm = t_norm,
                    threads = threads);
 
@@ -231,6 +251,8 @@ dig.matrix <- function(x,
                        min_length = 0,
                        max_length = Inf,
                        min_support = 0.0,
+                       min_focus_support = min_support,
+                       filter_empty_foci = FALSE,
                        t_norm = "goguen",
                        threads = 1,
                        ...) {
@@ -267,6 +289,8 @@ dig.matrix <- function(x,
              min_length = min_length,
              max_length = max_length,
              min_support = min_support,
+             min_focus_support = min_focus_support,
+             filter_empty_foci = filter_empty_foci,
              t_norm = t_norm,
              threads = threads)
 
@@ -283,6 +307,8 @@ dig.matrix <- function(x,
              min_length = min_length,
              max_length = max_length,
              min_support = min_support,
+             min_focus_support = min_focus_support,
+             filter_empty_foci = filter_empty_foci,
              t_norm = t_norm,
              threads = threads)
 
@@ -337,6 +363,8 @@ dig.data.frame <- function(x,
                            min_length = 0,
                            max_length = Inf,
                            min_support = 0.0,
+                           min_focus_support = min_support,
+                           filter_empty_foci = FALSE,
                            t_norm = "goguen",
                            threads = 1,
                            ...) {
@@ -368,6 +396,8 @@ dig.data.frame <- function(x,
          min_length = min_length,
          max_length = max_length,
          min_support = min_support,
+         min_focus_support = min_focus_support,
+         filter_empty_foci = filter_empty_foci,
          t_norm = t_norm,
          threads = threads)
 }

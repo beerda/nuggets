@@ -66,7 +66,10 @@ public:
     { conditionChainsNeeded = true; }
 
     void setFocusChainsNeeded()
-    { focusChainsNeeded = true; }
+    {
+        setConditionChainsNeeded(); // cannot compute focus chains without condition chains
+        focusChainsNeeded = true;
+    }
 
     vector<ArgumentValues> getResult() const
     { return result; }

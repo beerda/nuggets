@@ -34,6 +34,12 @@ public:
         NumericVector minSupportVec = configuration["minSupport"];
         minSupport = minSupportVec[0];
 
+        NumericVector minFocusSupportVec = configuration["minFocusSupport"];
+        minFocusSupport = minFocusSupportVec[0];
+
+        LogicalVector filterEmptyFociVec = configuration["filterEmptyFoci"];
+        filterEmptyFoci = filterEmptyFociVec[0];
+
         CharacterVector tnormVec = configuration["tNorm"];
         if (tnormVec[0] == "goedel")
             tNorm = TNorm::GOEDEL;
@@ -99,6 +105,12 @@ public:
     double getMinSupport() const
     { return minSupport; }
 
+    double getMinFocusSupport() const
+    { return minFocusSupport; }
+
+    bool hasFilterEmptyFoci() const
+    { return filterEmptyFoci; }
+
     TNorm getTNorm() const
     { return tNorm; }
 
@@ -123,6 +135,8 @@ private:
     int minLength;
     int maxLength;
     double minSupport;
+    double minFocusSupport;
+    bool filterEmptyFoci;
     TNorm tNorm;
 
     void parseArguments(const CharacterVector& vec)
