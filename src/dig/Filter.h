@@ -23,4 +23,11 @@ public:
 
     virtual bool isExtendable(const TASK& task) const
     { return true; }
+
+    virtual bool isFocusRedundant(const TASK& task) const
+    { return false; }
+
+    virtual bool isFocusPrunable(const TASK& task) const
+    { return false; }
+
 };

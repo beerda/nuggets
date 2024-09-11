@@ -35,6 +35,20 @@ public:
     /**
      * Create an iterator
      * @param prefix the prefix of the condition (constant predicates)
+     * @param n The number of predicates to store into soFar
+     */
+    Iterator(set<int> prefix, size_t n)
+        : current(0), prefix(prefix)
+    {
+        available.reserve(n);
+        for (size_t i = 0; i < n; i++) {
+            available.push_back(i);
+        }
+    }
+
+    /**
+     * Create an iterator
+     * @param prefix the prefix of the condition (constant predicates)
      * @param available a vector of available predicates to be examined in this iterator
      */
     Iterator(set<int> prefix, vector<int> available)

@@ -21,8 +21,8 @@ public:
 
     Digger(DataType& data, const Config& config)
         : data(data),
-          initialTask(Iterator(data.size()),
-                      Iterator(data.fociSize())),
+          initialTask(Iterator(data.size()),          // condition predicates to "soFar"
+                      Iterator({}, data.fociSize())), // focus predicates to "available"
           queue(),
           allThreads(config.getThreads())
     { }
@@ -137,6 +137,19 @@ private:
         if (!isRedundant(task)) {
             updateChain(task);
             if (!isPrunable(task)) {
+
+                Iterator& iter = task.getMutableFocusIterator();
+                iter.reset();
+                while (iter.hasPredicate()) {
+                    if (!isFocusRedundant(task)) {
+                        computeFocusChain(task);
+                        if (!isFocusPrunable(task)) {
+                            iter.putCurrentToSoFar();
+                        }
+                    }
+                    iter.next();
+                }
+
                 if (isStorable(task)) {
                     store(task);
                 }
@@ -186,6 +199,11 @@ private:
             task.updateChain(data);
     }
 
+    void computeFocusChain(TaskType& task) const
+    {
+        // TODO
+    }
+
     bool isRedundant(const TaskType& task) const
     {
         for (const FilterType* e : filters)
@@ -221,5 +239,24 @@ private:
 
         return true;
     }
+
+    bool isFocusRedundant(const TaskType& task) const
+    {
+        for (const FilterType* e : filters)
+            if (e->isFocusRedundant(task))
+                return true;
+
+        return false;
+    }
+
+    bool isFocusPrunable(const TaskType& task) const
+    {
+        for (const FilterType* e : filters)
+            if (e->isFocusPrunable(task))
+                return true;
+
+        return false;
+    }
+
 
 };
