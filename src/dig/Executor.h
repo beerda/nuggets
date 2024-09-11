@@ -31,10 +31,20 @@ public:
     {
         List result;
         DataType data;
-        data.addLogicalChains(logData);
-        data.addNumericChains(numData);
-        data.addLogicalFoci(logFoci);
-        data.addNumericFoci(numFoci);
+
+        {
+            LogStartEnd l("data init");
+            data.addLogicalChains(logData);
+            data.addNumericChains(numData);
+            data.addLogicalFoci(logFoci);
+            data.addNumericFoci(numFoci);
+        }
+
+        {
+            LogStartEnd l("data sort");
+            data.sortChains();
+            config.permuteConditions(data.getChainsPermutation());
+        }
 
         Digger<DataType> digger(data, config);
 
@@ -86,28 +96,33 @@ public:
                                                       config.getFociIndices(),
                                                       config.getDisjointPredicates(),
                                                       config.getDisjointFoci()));
+        {
+            LogStartEnd l("digger.run");
+            digger.run();
+        }
 
-        digger.run();
+        {
+            LogStartEnd l("collecting arguments");
+            vector<ArgumentValues> diggerResult = digger.getResult();
+            for (size_t i = 0; i < diggerResult.size(); ++i) {
+                List item;
+                for (size_t j = 0; j < diggerResult[i].size(); ++j) {
+                    ArgumentValue a = diggerResult[i][j];
 
-        vector<ArgumentValues> diggerResult = digger.getResult();
-        for (size_t i = 0; i < diggerResult.size(); ++i) {
-            List item;
-            for (size_t j = 0; j < diggerResult[i].size(); ++j) {
-                ArgumentValue a = diggerResult[i][j];
-
-                if (a.getType() == ArgumentType::ARG_LOGICAL) {
-                    item.push_back(a.asLogicalVector(), a.getArgumentName());
+                    if (a.getType() == ArgumentType::ARG_LOGICAL) {
+                        item.push_back(a.asLogicalVector(), a.getArgumentName());
+                    }
+                    else if (a.getType() == ArgumentType::ARG_INTEGER) {
+                        item.push_back(a.asIntegerVector(), a.getArgumentName());
+                    }
+                    else if (a.getType() == ArgumentType::ARG_NUMERIC) {
+                        item.push_back(a.asNumericVector(), a.getArgumentName());
+                    } else {
+                        throw new runtime_error("Unhandled ArgumentType");
+                    }
                 }
-                else if (a.getType() == ArgumentType::ARG_INTEGER) {
-                    item.push_back(a.asIntegerVector(), a.getArgumentName());
-                }
-                else if (a.getType() == ArgumentType::ARG_NUMERIC) {
-                    item.push_back(a.asNumericVector(), a.getArgumentName());
-                } else {
-                    throw new runtime_error("Unhandled ArgumentType");
-                }
+                result.push_back(item);
             }
-            result.push_back(item);
         }
 
         return result;

@@ -114,6 +114,21 @@ public:
     TNorm getTNorm() const
     { return tNorm; }
 
+    void permuteConditions(const vector<size_t> permutation)
+    {
+        vector<int> newPredicateIndices;
+        permute(predicateIndices, newPredicateIndices, permutation);
+        predicateIndices = newPredicateIndices;
+
+        vector<string> newPredicateNames;
+        permute(predicateNames, newPredicateNames, permutation);
+        predicateNames = newPredicateNames;
+
+        vector<int> newDisjointPredicates;
+        permute(disjointPredicates, newDisjointPredicates, permutation);
+        disjointPredicates = newDisjointPredicates;
+    }
+
 private:
     bool conditionArgument = false;
     bool fociSupportsArgument = false;
@@ -174,6 +189,15 @@ private:
                 names.push_back(as<string>(sourceNames[i]));
                 values.push_back(source[i]);
             }
+        }
+    }
+
+    template <typename T>
+    void permute(const vector<T>& source, vector<T>& target, const vector<size_t>& permutation)
+    {
+        target.resize(source.size());
+        for (size_t i = 0; i < source.size(); ++i) {
+            target[i] = source[permutation[i]];
         }
     }
 };

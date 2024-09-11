@@ -18,13 +18,13 @@ test_that("dig_implications", {
     expect_true(is.double(res$support))
     expect_true(is.double(res$confidence))
     expect_equal(res$antecedent,
-                 c("{}", "{}", "{}", "{a}", "{b}", "{b}", "{c}"))
+                 c("{}", "{}", "{}", "{b}", "{b}", "{a}", "{c}"))
     expect_equal(res$consequent,
-                 c("{a}", "{b}", "{c}", "{b}", "{a}", "{c}", "{b}"))
-    expect_equal(res$support,
-                 c(0.4, 0.8, 0.4, 0.4, 0.4, 0.2, 0.2))
-    expect_equal(res$confidence,
-                 c(0.4, 0.8, 0.4, 1, 0.5, 0.25, 0.5))
+                 c("{a}", "{b}", "{c}", "{a}", "{c}", "{b}", "{b}"))
+    expect_equal(round(res$support, 6),
+                 c(0.4, 0.8, 0.4, 0.4, 0.2, 0.4, 0.2))
+    expect_equal(round(res$confidence, 6),
+                 c(0.4, 0.8, 0.4, 0.5, 0.25, 1.0, 0.5))
 })
 
 
@@ -49,13 +49,13 @@ test_that("dig_implications with disjoint", {
     expect_true(is.double(res$support))
     expect_true(is.double(res$confidence))
     expect_equal(res$antecedent,
-                 c("{}", "{}", "{}", "{a}", "{b}"))
+                 c("{}", "{}", "{}", "{b}", "{a}"))
     expect_equal(res$consequent,
-                 c("{a}", "{b}", "{c}", "{b}", "{a}"))
+                 c("{a}", "{b}", "{c}", "{a}", "{b}"))
     expect_equal(res$support,
                  c(0.4, 0.8, 0.4, 0.4, 0.4))
     expect_equal(res$confidence,
-                 c(0.4, 0.8, 0.4, 1, 0.5))
+                 c(0.4, 0.8, 0.4, 0.5, 1.0))
 })
 
 

@@ -25,6 +25,7 @@ public:
             }
         }
 
+        chainsPermutation.push_back(chains.size());
         chains.push_back(DualChainType(values));
     }
 
@@ -78,7 +79,7 @@ public:
     }
 
     const DualChainType& getChain(size_t i) const
-    { return chains.at(i); }
+    { return chains.at(chainsPermutation[i]); }
 
     const DualChainType& getFocus(size_t i) const
     { return foci.at(i); }
@@ -100,7 +101,21 @@ public:
         return 0;
     }
 
+    void sortChains()
+    {
+        sort(chainsPermutation.begin(), chainsPermutation.end(), [&](size_t i, size_t j) {
+            if (chains[i].isNumeric() < chains[j].isNumeric()) {
+                return true;
+            }
+            return chains[i].getSum() > chains[j].getSum();
+        });
+    }
+
+    const vector<size_t> getChainsPermutation() const
+    { return chainsPermutation; }
+
 private:
     vector<DualChainType> chains;
     vector<DualChainType> foci;
+    vector<size_t> chainsPermutation;
 };

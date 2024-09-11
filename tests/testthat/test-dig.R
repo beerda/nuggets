@@ -63,9 +63,9 @@ test_that("condition arg", {
 
     expect_equal(length(res), 4)
     expect_equal(res, list(list(cond = integer(0)),
-                           list(cond = c("1"=1L)),
                            list(cond = c("2"=2L)),
-                           list(cond = c("1"=1L, "2"=2L))))
+                           list(cond = c("1"=1L)),
+                           list(cond = c("2"=2L, "1"=1L))))
 })
 
 
@@ -76,9 +76,9 @@ test_that("condition arg with names", {
 
     expect_equal(length(res), 4)
     expect_equal(res, list(list(cond = integer(0)),
-                           list(cond = c("aaah"=1L)),
                            list(cond = c("blee"=2L)),
-                           list(cond = c("aaah"=1L, "blee"=2L))))
+                           list(cond = c("aaah"=1L)),
+                           list(cond = c("blee"=2L, "aaah"=1L))))
 })
 
 
@@ -127,8 +127,8 @@ test_that("weights arg", {
 
     expect_equal(length(res), 4)
     expect_equal(res, list(list(w = c(1,1,1,1,1,1)),
-                           list(w = c1),
                            list(w = c2),
+                           list(w = c1),
                            list(w = c1 * c2)),
                  tolerance = 1e-6)
 })
@@ -272,7 +272,7 @@ test_that("conditions and foci are disjoint", {
                     d = c(T,    F, F, F, F))
 
     f <- function(condition, foci_supports) {
-        paste(paste(names(condition), collapse = "&"),
+        paste(paste(sort(names(condition)), collapse = "&"),
               "~",
               paste(names(foci_supports), collapse = "|"))
     }
@@ -307,7 +307,7 @@ test_that("conditions and foci are disjoint even if disjoints are not defined", 
                     c = c(T,    T, F, F, F))
 
     f <- function(condition, foci_supports) {
-        paste(paste(names(condition), collapse = "&"),
+        paste(paste(sort(names(condition)), collapse = "&"),
               "~",
               paste(names(foci_supports), collapse = "|"))
     }
@@ -345,7 +345,7 @@ test_that("data frame select & disjoint", {
                     w = c(1.0,  0, 0, 0, 0))
 
     f <- function(condition, support) {
-        paste(paste(names(condition), collapse = " & "),
+        paste(paste(sort(names(condition)), collapse = " & "),
               "=",
               round(support, 2))
     }

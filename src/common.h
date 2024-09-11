@@ -3,6 +3,7 @@
 // [[Rcpp::plugins(cpp20)]]
 
 #include <cmath>
+#include <chrono>
 #include <Rcpp.h>
 
 using namespace Rcpp;
@@ -21,3 +22,30 @@ enum TNorm {
     GOGUEN,
     LUKASIEWICZ
 };
+
+
+// /*
+class LogStartEnd {
+public:
+    LogStartEnd(const std::string &what)
+    { }
+};
+/*/
+class LogStartEnd {
+    std::string what;
+    std::chrono::steady_clock::time_point start;
+
+public:
+    LogStartEnd(const std::string &what)
+        : what(what)
+    { start = std::chrono::steady_clock::now(); }
+
+    ~LogStartEnd()
+    {
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        Rcout << what << ": "  <<
+            (std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0) <<
+            "[ms]" << std::endl;
+    }
+};
+// */

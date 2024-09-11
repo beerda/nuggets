@@ -41,7 +41,7 @@ public:
     void conjunctWith(const BitChain& other)
     {
         values &= other.values;
-        cachedSum = 1.0 * values.getSum();
+        cachedSum = values.getSum();
     }
 
     size_t size() const
@@ -51,7 +51,7 @@ public:
     { return values.empty(); }
 
     float getSum() const
-    { return cachedSum; }
+    { return 1.0 * cachedSum; }
 
     bool at(size_t i) const
     { return values.at(i); }
@@ -64,5 +64,5 @@ public:
 
 private:
     Bitset values;
-    float cachedSum;
+    size_t cachedSum;
 };

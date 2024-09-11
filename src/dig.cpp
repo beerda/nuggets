@@ -18,6 +18,7 @@ List dig_(List logData,
           List numFoci,
           List confList)
 {
+    LogStartEnd l("dig_");
     List result;
     Config config(confList);
 

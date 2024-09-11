@@ -54,7 +54,7 @@ public:
     void push_back(size_t chunk, size_t count)
     {
         if (n % CHUNK_SIZE != 0)
-            throw new runtime_error("push_back chunk not implemented if bits not aligned");
+            throw new runtime_error("push_back chunk not implemented if bits are not aligned");
 
         data.push_back(chunk);
         n += count;
