@@ -62,19 +62,19 @@ public:
             digger.addArgumentator(new ContiAArgumentator<TaskType>(config.getFociNames()));
         }
         if (config.hasSumArgument()) {
-            digger.setConditionChainsNeeded();
+            digger.setPositiveConditionChainsNeeded();
             digger.addArgumentator(new SumArgumentator<TaskType>(data.nrow()));
         }
         if (config.hasSupportArgument()) {
-            digger.setConditionChainsNeeded();
+            digger.setPositiveConditionChainsNeeded();
             digger.addArgumentator(new SupportArgumentator<TaskType>());
         }
         if (config.hasIndicesArgument()) {
-            digger.setConditionChainsNeeded();
+            digger.setPositiveConditionChainsNeeded();
             digger.addArgumentator(new IndicesArgumentator<TaskType>(data.nrow()));
         }
         if (config.hasWeightsArgument()) {
-            digger.setConditionChainsNeeded();
+            digger.setPositiveConditionChainsNeeded();
             digger.addArgumentator(new WeightsArgumentator<TaskType>(data.nrow()));
         }
         if (config.getMinLength() >= 0) {
@@ -84,7 +84,7 @@ public:
             digger.addFilter(new MaxLengthFilter<TaskType>(config.getMaxLength()));
         }
         if (config.getMinSupport() > 0) {
-            digger.setConditionChainsNeeded();
+            digger.setPositiveConditionChainsNeeded();
             digger.addFilter(new MinSupportFilter<TaskType>(config.getMinSupport()));
         }
 

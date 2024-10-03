@@ -69,7 +69,7 @@ public:
     const DualChainType& getFocusChain(int focus) const
     { return focusChains.at(focus); }
 
-    void updateChain(const DataType& data)
+    void updatePositiveChain(const DataType& data)
     {
         if (conditionIterator.hasPredicate()) {
             int predicate = conditionIterator.getCurrentPredicate();

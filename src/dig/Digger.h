@@ -62,12 +62,12 @@ public:
         }
     }
 
-    void setConditionChainsNeeded()
-    { conditionChainsNeeded = true; }
+    void setPositiveConditionChainsNeeded()
+    { positiveConditionChainsNeeded = true; }
 
     void setFocusChainsNeeded()
     {
-        setConditionChainsNeeded(); // cannot compute focus chains without condition chains
+        setPositiveConditionChainsNeeded(); // cannot compute focus chains without condition chains
         focusChainsNeeded = true;
     }
 
@@ -81,7 +81,7 @@ private:
     vector<FilterType*> filters;
     vector<ArgumentatorType*> argumentators;
     vector<ArgumentValues> result;
-    bool conditionChainsNeeded = false;
+    bool positiveConditionChainsNeeded = false;
     bool focusChainsNeeded = false;
 
     int workingThreads;
@@ -202,8 +202,8 @@ private:
 
     void updateConditionChain(TaskType& task) const
     {
-        if (conditionChainsNeeded)
-            task.updateChain(data);
+        if (positiveConditionChainsNeeded)
+            task.updatePositiveChain(data);
     }
 
     void computeFocusChain(TaskType& task) const

@@ -25,7 +25,7 @@ context("dig/Task.h") {
         expect_true(ch.getConditionIterator().getAvailable() == vector<int>({5, 6}));
     }
 
-    test_that("updateChain") {
+    test_that("updatePositiveChain") {
         LogicalVector data1(10);
         LogicalVector data2(10);
         NumericVector data3(10);
@@ -44,7 +44,7 @@ context("dig/Task.h") {
         expect_true(t.getPositiveChain().empty());
         expect_true(t.getPrefixChain().empty());
 
-        t.updateChain(data); // chain not changed
+        t.updatePositiveChain(data); // chain not changed
         expect_true(t.getPositiveChain().empty());
         expect_true(t.getPrefixChain().empty());
 
@@ -52,19 +52,19 @@ context("dig/Task.h") {
         expect_true(t.getPositiveChain().empty());
         expect_true(t.getPrefixChain().empty());
 
-        t.updateChain(data);
+        t.updatePositiveChain(data);
         expect_true(t.getPositiveChain() == data.getChain(0));
         expect_true(t.getPrefixChain().empty());
 
         t.getMutableConditionIterator().putCurrentToSoFar(); // 0
         t.getMutableConditionIterator().next();
-        t.updateChain(data);
+        t.updatePositiveChain(data);
         expect_true(t.getPositiveChain() == data.getChain(1));
         expect_true(t.getPrefixChain().empty());
 
         t.getMutableConditionIterator().putCurrentToSoFar(); // 1
         t.getMutableConditionIterator().next();
-        t.updateChain(data);
+        t.updatePositiveChain(data);
         expect_true(t.getPositiveChain() == data.getChain(2));
         expect_true(t.getPrefixChain().empty());
 
@@ -72,7 +72,7 @@ context("dig/Task.h") {
         expect_true(t.getPositiveChain().empty());
         expect_true(t.getPrefixChain() == data.getChain(2));
 
-        t.updateChain(data);
+        t.updatePositiveChain(data);
         DualChainType newChain = data.getChain(0);
         newChain.toNumeric();
         newChain.conjunctWith(data.getChain(2));
