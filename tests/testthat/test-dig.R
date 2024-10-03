@@ -162,6 +162,20 @@ test_that("conti_pp arg", {
 })
 
 
+test_that("conti_np arg", {
+    m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
+    res <- dig(m,
+               f = function(conti_np) list(fs = conti_np),
+               condition = "1",
+               focus = "2")
+
+    expect_equal(length(res), 2)
+    expect_equal(res, list(list(fs = c("2" = 0/6)),
+                           list(fs = c("2" = 1/6))),
+                 tolerance = 1e-6)
+})
+
+
 test_that("min_length filter", {
     m <- matrix(1:12 / 12, ncol = 2)
 

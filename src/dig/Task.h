@@ -95,6 +95,8 @@ public:
 
     void updateNegativeChain(const DataType& data)
     {
+        // assert positiveChain is already updated
+
         negativeChain = positiveChain;
         negativeChain.negate();
     }
@@ -104,8 +106,7 @@ public:
         if (focusIterator.hasPredicate()) {
             int focus = focusIterator.getCurrentPredicate();
             ppFocusChains[focus] = data.getFocus(focus);
-            if (!positiveChain.empty()) {
-                // chain is not empty when the condition is of length > 0
+            if (conditionIterator.getLength() > 0) {
                 ppFocusChains[focus].conjunctWith(positiveChain);
             }
         }
@@ -115,10 +116,14 @@ public:
     {
         if (focusIterator.hasPredicate()) {
             int focus = focusIterator.getCurrentPredicate();
-            npFocusChains[focus] = data.getFocus(focus);
-            if (!negativeChain.empty()) {
-                // chain is not empty when the condition is of length > 0
-                ppFocusChains[focus].conjunctWith(negativeChain);
+            if (conditionIterator.getLength() > 0) {
+                npFocusChains[focus] = data.getFocus(focus);
+                npFocusChains[focus].conjunctWith(negativeChain);
+            } else {
+                // result is empty chain because we work with condition of length 0 (tautology)
+                // and hence the negation of tautology is contradiction.
+                // Empty chain indicates contradiction here.
+                npFocusChains[focus] = positiveChain;
             }
         }
     }
@@ -143,9 +148,9 @@ private:
     Iterator conditionIterator;
     Iterator focusIterator;
 
+    DualChainType prefixChain;
     DualChainType positiveChain;
     DualChainType negativeChain;
-    DualChainType prefixChain;
     unordered_map<int, DualChainType> ppFocusChains;
     unordered_map<int, DualChainType> npFocusChains;
 };

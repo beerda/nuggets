@@ -65,11 +65,24 @@ public:
     void setPositiveConditionChainsNeeded()
     { positiveConditionChainsNeeded = true; }
 
+    void setNegativeConditionChainsNeeded()
+    {
+        setPositiveConditionChainsNeeded(); // cannot compute negative condition chains without positive condition chains
+        negativeConditionChainsNeeded = true;
+    }
+
     void setPpFocusChainsNeeded()
     {
         setPositiveConditionChainsNeeded(); // cannot compute focus chains without condition chains
         ppFocusChainsNeeded = true;
     }
+
+    void setNpFocusChainsNeeded()
+    {
+        setNegativeConditionChainsNeeded();
+        npFocusChainsNeeded = true;
+    }
+
 
     vector<ArgumentValues> getResult() const
     { return result; }
@@ -82,7 +95,9 @@ private:
     vector<ArgumentatorType*> argumentators;
     vector<ArgumentValues> result;
     bool positiveConditionChainsNeeded = false;
+    bool negativeConditionChainsNeeded = false;
     bool ppFocusChainsNeeded = false;
+    bool npFocusChainsNeeded = false;
 
     int workingThreads;
     int allThreads;
@@ -202,14 +217,23 @@ private:
 
     void updateConditionChain(TaskType& task) const
     {
-        if (positiveConditionChainsNeeded)
+        if (positiveConditionChainsNeeded) {
             task.updatePositiveChain(data);
+
+            if (negativeConditionChainsNeeded) {
+                task.updateNegativeChain(data);
+            }
+        }
+
     }
 
     void computeFocusChain(TaskType& task) const
     {
         if (ppFocusChainsNeeded)
             task.computePpFocusChain(data);
+
+        if (npFocusChainsNeeded)
+            task.computeNpFocusChain(data);
     }
 
     bool isConditionRedundant(const TaskType& task) const

@@ -60,6 +60,9 @@ public:
     bool hasContiPpArgument() const
     { return contiPpArgument; }
 
+    bool hasContiNpArgument() const
+    { return contiNpArgument; }
+
     bool hasIndicesArgument() const
     { return indicesArgument; }
 
@@ -136,6 +139,7 @@ private:
     bool conditionArgument = false;
     bool fociSupportsArgument = false;
     bool contiPpArgument = false;
+    bool contiNpArgument = false;
     bool indicesArgument = false;
     bool sumArgument = false;
     bool supportArgument = false;
@@ -167,6 +171,8 @@ private:
                 fociSupportsArgument = true;
             if (vec[i] == "conti_pp")
                 contiPpArgument = true;
+            if (vec[i] == "conti_np")
+                contiNpArgument = true;
             if (vec[i] == "indices")
                 indicesArgument = true;
             if (vec[i] == "sum")
