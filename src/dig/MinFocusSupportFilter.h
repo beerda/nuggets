@@ -14,7 +14,7 @@ public:
     {
         if (task.getFocusIterator().hasPredicate()) {
             int curr = task.getFocusIterator().getCurrentPredicate();
-            return task.getFocusChain(curr).getSupport() < minFocusSupport;
+            return task.getPpFocusChain(curr).getSupport() < minFocusSupport;
         }
 
         return false;

@@ -54,11 +54,11 @@ public:
                                                                        config.getPredicateNames()));
         }
         if (config.hasFociSupportsArgument()) {
-            digger.setFocusChainsNeeded();
+            digger.setPpFocusChainsNeeded();
             digger.addArgumentator(new FociSupportsArgumentator<TaskType>(config.getFociNames()));
         }
         if (config.hasContiPpArgument()) {
-            digger.setFocusChainsNeeded();
+            digger.setPpFocusChainsNeeded();
             digger.addArgumentator(new ContiPpArgumentator<TaskType>(config.getFociNames()));
         }
         if (config.hasSumArgument()) {
@@ -89,7 +89,7 @@ public:
         }
 
         if (config.getMinFocusSupport() > 0) {
-            digger.setFocusChainsNeeded();
+            digger.setPpFocusChainsNeeded();
             digger.addFilter(new MinFocusSupportFilter<TaskType>(config.getMinFocusSupport()));
         }
 

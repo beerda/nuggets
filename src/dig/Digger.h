@@ -65,10 +65,10 @@ public:
     void setPositiveConditionChainsNeeded()
     { positiveConditionChainsNeeded = true; }
 
-    void setFocusChainsNeeded()
+    void setPpFocusChainsNeeded()
     {
         setPositiveConditionChainsNeeded(); // cannot compute focus chains without condition chains
-        focusChainsNeeded = true;
+        ppFocusChainsNeeded = true;
     }
 
     vector<ArgumentValues> getResult() const
@@ -82,7 +82,7 @@ private:
     vector<ArgumentatorType*> argumentators;
     vector<ArgumentValues> result;
     bool positiveConditionChainsNeeded = false;
-    bool focusChainsNeeded = false;
+    bool ppFocusChainsNeeded = false;
 
     int workingThreads;
     int allThreads;
@@ -208,8 +208,8 @@ private:
 
     void computeFocusChain(TaskType& task) const
     {
-        if (focusChainsNeeded)
-            task.computeFocusChain(data);
+        if (ppFocusChainsNeeded)
+            task.computePpFocusChain(data);
     }
 
     bool isConditionRedundant(const TaskType& task) const

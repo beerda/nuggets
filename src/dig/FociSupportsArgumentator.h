@@ -24,7 +24,7 @@ public:
         ArgumentValue arg("foci_supports", ArgumentType::ARG_NUMERIC);
 
         for (int i : task.getFocusIterator().getSoFar()) {
-            arg.push_back(task.getFocusChain(i).getSupport(), fociNames[i]);
+            arg.push_back(task.getPpFocusChain(i).getSupport(), fociNames[i]);
         }
 
         arguments.push_back(arg);

@@ -66,8 +66,8 @@ public:
     const DualChainType& getPrefixChain() const
     { return prefixChain; }
 
-    const DualChainType& getFocusChain(int focus) const
-    { return focusChains.at(focus); }
+    const DualChainType& getPpFocusChain(int focus) const
+    { return ppFocusChains.at(focus); }
 
     void updatePositiveChain(const DataType& data)
     {
@@ -87,14 +87,14 @@ public:
         }
     }
 
-    void computeFocusChain(const DataType& data)
+    void computePpFocusChain(const DataType& data)
     {
         if (focusIterator.hasPredicate()) {
             int focus = focusIterator.getCurrentPredicate();
-            focusChains[focus] = data.getFocus(focus);
+            ppFocusChains[focus] = data.getFocus(focus);
             if (!getPositiveChain().empty()) {
                 // chain is not empty when the condition is of length > 0
-                focusChains[focus].conjunctWith(positiveChain);
+                ppFocusChains[focus].conjunctWith(positiveChain);
             }
         }
     }
@@ -102,7 +102,7 @@ public:
     void resetFoci()
     {
         focusIterator.reset();
-        focusChains.clear();
+        ppFocusChains.clear();
     }
 
     bool operator == (const Task& other) const
@@ -120,5 +120,5 @@ private:
 
     DualChainType positiveChain;
     DualChainType prefixChain;
-    unordered_map<int, DualChainType> focusChains;
+    unordered_map<int, DualChainType> ppFocusChains;
 };
