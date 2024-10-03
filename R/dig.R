@@ -146,7 +146,7 @@ dig.default <- function(x, f, ...) {
     .must_be_function(f, call = caller_env(2))
 
     unrecognized_args <- setdiff(formalArgs(f),
-                                 c("condition", "foci_supports", "indices", "sum", "support", "weights"))
+                                 c("condition", "foci_supports", "conti_a", "indices", "sum", "support", "weights"))
     if (length(unrecognized_args) > 0) {
         details <- paste0("The argument {.var ", unrecognized_args, "} is not allowed.")
         cli_abort(c("The function {.var f} must have allowed formal arguments only.",

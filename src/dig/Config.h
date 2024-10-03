@@ -57,6 +57,9 @@ public:
     bool hasFociSupportsArgument() const
     { return fociSupportsArgument; }
 
+    bool hasContiAArgument() const
+    { return contiAArgument; }
+
     bool hasIndicesArgument() const
     { return indicesArgument; }
 
@@ -132,6 +135,7 @@ public:
 private:
     bool conditionArgument = false;
     bool fociSupportsArgument = false;
+    bool contiAArgument = false;
     bool indicesArgument = false;
     bool sumArgument = false;
     bool supportArgument = false;
@@ -161,6 +165,8 @@ private:
                 conditionArgument = true;
             if (vec[i] == "foci_supports")
                 fociSupportsArgument = true;
+            if (vec[i] == "conti_a")
+                contiAArgument = true;
             if (vec[i] == "indices")
                 indicesArgument = true;
             if (vec[i] == "sum")
