@@ -106,6 +106,11 @@ public:
                                                       config.getFociIndices(),
                                                       config.getDisjointPredicates(),
                                                       config.getDisjointFoci()));
+
+        if (digger.isNegativeFociChainsNeeded()) {
+            data.initializeNegativeFoci();
+        }
+
         {
             LogStartEnd l("digger.run");
             digger.run();

@@ -84,6 +84,18 @@ public:
     const DualChainType& getFocus(size_t i) const
     { return foci.at(i); }
 
+    const DualChainType& getNegativeFocus(size_t i) const
+    { return negativeFoci.at(i); }
+
+    void initializeNegativeFoci()
+    {
+        for (size_t i = 0; i < foci.size(); i++) {
+            DualChainType negativeFocus = foci[i];
+            negativeFocus.negate();
+            negativeFoci.push_back(negativeFocus);
+        }
+    }
+
     size_t size() const
     { return chains.size(); }
 
@@ -117,5 +129,6 @@ public:
 private:
     vector<DualChainType> chains;
     vector<DualChainType> foci;
+    vector<DualChainType> negativeFoci;
     vector<size_t> chainsPermutation;
 };

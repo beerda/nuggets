@@ -83,6 +83,8 @@ public:
         npFocusChainsNeeded = true;
     }
 
+    bool isNegativeFociChainsNeeded() const
+    { return npFocusChainsNeeded; }
 
     vector<ArgumentValues> getResult() const
     { return result; }
