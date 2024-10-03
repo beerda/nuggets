@@ -63,11 +63,17 @@ public:
     const DualChainType& getPositiveChain() const
     { return positiveChain; }
 
+    const DualChainType& getNegativeChain() const
+    { return negativeChain; }
+
     const DualChainType& getPrefixChain() const
     { return prefixChain; }
 
     const DualChainType& getPpFocusChain(int focus) const
     { return ppFocusChains.at(focus); }
+
+    const DualChainType& getNpFocusChain(int focus) const
+    { return npFocusChains.at(focus); }
 
     void updatePositiveChain(const DataType& data)
     {
@@ -87,14 +93,32 @@ public:
         }
     }
 
+    void updateNegativeChain(const DataType& data)
+    {
+        negativeChain = positiveChain;
+        negativeChain.negate();
+    }
+
     void computePpFocusChain(const DataType& data)
     {
         if (focusIterator.hasPredicate()) {
             int focus = focusIterator.getCurrentPredicate();
             ppFocusChains[focus] = data.getFocus(focus);
-            if (!getPositiveChain().empty()) {
+            if (!positiveChain.empty()) {
                 // chain is not empty when the condition is of length > 0
                 ppFocusChains[focus].conjunctWith(positiveChain);
+            }
+        }
+    }
+
+    void computeNpFocusChain(const DataType& data)
+    {
+        if (focusIterator.hasPredicate()) {
+            int focus = focusIterator.getCurrentPredicate();
+            npFocusChains[focus] = data.getFocus(focus);
+            if (!negativeChain.empty()) {
+                // chain is not empty when the condition is of length > 0
+                ppFocusChains[focus].conjunctWith(negativeChain);
             }
         }
     }
@@ -103,6 +127,7 @@ public:
     {
         focusIterator.reset();
         ppFocusChains.clear();
+        npFocusChains.clear();
     }
 
     bool operator == (const Task& other) const
@@ -119,6 +144,8 @@ private:
     Iterator focusIterator;
 
     DualChainType positiveChain;
+    DualChainType negativeChain;
     DualChainType prefixChain;
     unordered_map<int, DualChainType> ppFocusChains;
+    unordered_map<int, DualChainType> npFocusChains;
 };
