@@ -37,6 +37,16 @@ public:
         }
     }
 
+    void negate()
+    {
+        if (isBitwise()) {
+            bitData.negate();
+        }
+        if (isNumeric()) {
+            numData.negate();
+        }
+    }
+
     void conjunctWith(const DualChain<BITCHAIN, NUMCHAIN>& chain)
     {
         if (size() != chain.size()) {

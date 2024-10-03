@@ -3,8 +3,13 @@
 #include "dig/VectorNumChain.h"
 
 context("dig/VectorNumChain.h") {
-    test_that("initializations") {
+    test_that("initializations and negations") {
         VectorNumChain<GOGUEN> chain;
+        expect_true(chain.empty());
+        expect_true(chain.size() == 0);
+        expect_true(EQUAL(chain.getSum(), 0));
+
+        chain.negate();
         expect_true(chain.empty());
         expect_true(chain.size() == 0);
         expect_true(EQUAL(chain.getSum(), 0));
@@ -30,6 +35,13 @@ context("dig/VectorNumChain.h") {
         expect_true(EQUAL(chain.at(1), 0.5));
         expect_true(EQUAL(chain.at(2), 1.0));
 
+        chain.negate();
+        expect_false(chain.empty());
+        expect_true(chain.size() == 3);
+        expect_true(EQUAL(chain.getSum(), 1.5));
+        expect_true(EQUAL(chain.at(0), 1.0));
+        expect_true(EQUAL(chain.at(1), 0.5));
+        expect_true(EQUAL(chain.at(2), 0.0));
     }
 
     test_that("GOEDEL") {

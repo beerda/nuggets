@@ -27,6 +27,19 @@ context("dig/DualChain.h") {
         expect_true(chain.size() == 10);
         expect_true(EQUAL(chain.getSum(), 2.0));
         expect_true(EQUAL(chain.getSupport(), 0.2));
+        expect_true(chain.getValue(2));
+        expect_true(!chain.getValue(3));
+
+        chain.negate();
+
+        expect_true(!chain.empty());
+        expect_true(chain.isBitwise());
+        expect_true(!chain.isNumeric());
+        expect_true(chain.size() == 10);
+        expect_true(EQUAL(chain.getSum(), 8.0));
+        expect_true(EQUAL(chain.getSupport(), 0.8));
+        expect_true(!chain.getValue(2));
+        expect_true(chain.getValue(3));
     }
 
     test_that("numeric chain") {
@@ -42,6 +55,19 @@ context("dig/DualChain.h") {
         expect_true(chain.size() == 10);
         expect_true(EQUAL(chain.getSum(), 4.5));
         expect_true(EQUAL(chain.getSupport(), 0.45));
+        expect_true(EQUAL(chain.getValue(1), 0.1));
+        expect_true(EQUAL(chain.getValue(9), 0.9));
+
+        chain.negate();
+
+        expect_true(!chain.empty());
+        expect_true(!chain.isBitwise());
+        expect_true(chain.isNumeric());
+        expect_true(chain.size() == 10);
+        expect_true(EQUAL(chain.getSum(), 4.5));
+        expect_true(EQUAL(chain.getSupport(), 0.45));
+        expect_true(EQUAL(chain.getValue(1), 0.9));
+        expect_true(EQUAL(chain.getValue(9), 0.1));
     }
 
     test_that("toNumeric") {
@@ -52,11 +78,24 @@ context("dig/DualChain.h") {
         DualChainTestType chain(data);
 
         chain.toNumeric();
+
         expect_true(!chain.empty());
         expect_true(chain.isBitwise());
         expect_true(chain.isNumeric());
         expect_true(chain.size() == 10);
         expect_true(EQUAL(chain.getSum(), 2.0));
+        expect_true(EQUAL(chain.getValue(1), 0));
+        expect_true(EQUAL(chain.getValue(2), 1));
+
+        chain.negate();
+
+        expect_true(!chain.empty());
+        expect_true(chain.isBitwise());
+        expect_true(chain.isNumeric());
+        expect_true(chain.size() == 10);
+        expect_true(EQUAL(chain.getSum(), 8.0));
+        expect_true(EQUAL(chain.getValue(1), 1));
+        expect_true(EQUAL(chain.getValue(2), 0));
     }
 
     test_that("combine bit & bit") {

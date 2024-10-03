@@ -22,6 +22,24 @@ public:
         : AbstractVectorNumChain(vals)
     { }
 
+    void negate()
+    {
+        cachedSum = 0;
+        size_t simdSize = values.size() - values.size() % batchSize;
+
+        for (size_t i = 0; i < simdSize; i += batchSize) {
+            batchType a = batchType::load_unaligned(&values[i]);
+            batchType res = 1 - a;
+            res.store_unaligned(&values[i]);
+            cachedSum += xsimd::reduce_add(res);
+        }
+
+        for (size_t i = simdSize; i < values.size(); ++i) {
+            values[i] = 1 - values[i];
+            cachedSum += values[i];
+        }
+    }
+
     void conjunctWith(const SimdVectorNumChain<TNORM>& other);
 
     bool operator == (const SimdVectorNumChain& other) const

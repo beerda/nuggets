@@ -17,6 +17,12 @@ public:
         : AbstractVectorNumChain(vals)
     { }
 
+    void negate()
+    {
+        for (size_t i = 0; i < values.size(); ++i)
+            values[i] = 1 - values[i];
+    }
+
     void conjunctWith(const VectorNumChain<TNORM>& other);
 
     bool operator == (const VectorNumChain& other) const
