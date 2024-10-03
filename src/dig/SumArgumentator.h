@@ -23,10 +23,10 @@ public:
 
         ArgumentValue arg("sum", ArgumentType::ARG_NUMERIC);
 
-        if (task.getChain().empty())
+        if (task.getPositiveChain().empty())
             arg.push_back(dataLength);
         else
-            arg.push_back(task.getChain().getSum());
+            arg.push_back(task.getPositiveChain().getSum());
 
         arguments.push_back(arg);
     }

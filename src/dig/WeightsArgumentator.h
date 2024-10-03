@@ -21,14 +21,14 @@ public:
 
         ArgumentValue arg("weights", ArgumentType::ARG_NUMERIC);
 
-        if (task.getChain().empty()) {
+        if (task.getPositiveChain().empty()) {
             for (size_t i = 0; i < dataSize; i++) {
                 arg.push_back(1.0);
             }
         }
         else {
-            for (size_t i = 0; i < task.getChain().size(); i++) {
-                arg.push_back(task.getChain().getValue(i));
+            for (size_t i = 0; i < task.getPositiveChain().size(); i++) {
+                arg.push_back(task.getPositiveChain().getValue(i));
             }
         }
 

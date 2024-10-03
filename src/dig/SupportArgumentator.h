@@ -18,7 +18,7 @@ public:
         Argumentator<TASK>::prepare(arguments, task);
 
         ArgumentValue arg("support", ArgumentType::ARG_NUMERIC);
-        arg.push_back(task.getChain().getSupport());
+        arg.push_back(task.getPositiveChain().getSupport());
 
         arguments.push_back(arg);
     }

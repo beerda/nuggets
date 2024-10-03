@@ -53,15 +53,15 @@ public:
         Iterator newFocusIterator = Iterator({}, focusIterator.getSoFar()); // prefix is always empty
         Task result = Task(newConditionIterator, newFocusIterator);
 
-        if (!chain.empty()) {
-            result.prefixChain = chain;
+        if (!positiveChain.empty()) {
+            result.prefixChain = positiveChain;
         }
 
         return result;
     }
 
-    const DualChainType& getChain() const
-    { return chain; }
+    const DualChainType& getPositiveChain() const
+    { return positiveChain; }
 
     const DualChainType& getPrefixChain() const
     { return prefixChain; }
@@ -73,16 +73,16 @@ public:
     {
         if (conditionIterator.hasPredicate()) {
             int predicate = conditionIterator.getCurrentPredicate();
-            chain = data.getChain(predicate);
+            positiveChain = data.getChain(predicate);
             if (!prefixChain.empty()) {
-                if (chain.isBitwise() != prefixChain.isBitwise() && chain.isNumeric() != prefixChain.isNumeric()) {
+                if (positiveChain.isBitwise() != prefixChain.isBitwise() && positiveChain.isNumeric() != prefixChain.isNumeric()) {
                     if (prefixChain.isBitwise()) {
                         prefixChain.toNumeric();
                     } else {
-                        chain.toNumeric();
+                        positiveChain.toNumeric();
                     }
                 }
-                chain.conjunctWith(prefixChain);
+                positiveChain.conjunctWith(prefixChain);
             }
         }
     }
@@ -92,9 +92,9 @@ public:
         if (focusIterator.hasPredicate()) {
             int focus = focusIterator.getCurrentPredicate();
             focusChains[focus] = data.getFocus(focus);
-            if (!getChain().empty()) {
+            if (!getPositiveChain().empty()) {
                 // chain is not empty when the condition is of length > 0
-                focusChains[focus].conjunctWith(chain);
+                focusChains[focus].conjunctWith(positiveChain);
             }
         }
     }
@@ -118,7 +118,7 @@ private:
     Iterator conditionIterator;
     Iterator focusIterator;
 
-    DualChainType chain;
+    DualChainType positiveChain;
     DualChainType prefixChain;
     unordered_map<int, DualChainType> focusChains;
 };

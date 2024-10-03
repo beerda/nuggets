@@ -41,42 +41,42 @@ context("dig/Task.h") {
         data.addChain(data3);
 
         TaskType t(Iterator({0, 1, 2}), Iterator()); // empty task with soFar: 0,1,2
-        expect_true(t.getChain().empty());
+        expect_true(t.getPositiveChain().empty());
         expect_true(t.getPrefixChain().empty());
 
         t.updateChain(data); // chain not changed
-        expect_true(t.getChain().empty());
+        expect_true(t.getPositiveChain().empty());
         expect_true(t.getPrefixChain().empty());
 
         t = t.createChild();
-        expect_true(t.getChain().empty());
+        expect_true(t.getPositiveChain().empty());
         expect_true(t.getPrefixChain().empty());
 
         t.updateChain(data);
-        expect_true(t.getChain() == data.getChain(0));
+        expect_true(t.getPositiveChain() == data.getChain(0));
         expect_true(t.getPrefixChain().empty());
 
         t.getMutableConditionIterator().putCurrentToSoFar(); // 0
         t.getMutableConditionIterator().next();
         t.updateChain(data);
-        expect_true(t.getChain() == data.getChain(1));
+        expect_true(t.getPositiveChain() == data.getChain(1));
         expect_true(t.getPrefixChain().empty());
 
         t.getMutableConditionIterator().putCurrentToSoFar(); // 1
         t.getMutableConditionIterator().next();
         t.updateChain(data);
-        expect_true(t.getChain() == data.getChain(2));
+        expect_true(t.getPositiveChain() == data.getChain(2));
         expect_true(t.getPrefixChain().empty());
 
         t = t.createChild(); // prefix: 2 current: 0
-        expect_true(t.getChain().empty());
+        expect_true(t.getPositiveChain().empty());
         expect_true(t.getPrefixChain() == data.getChain(2));
 
         t.updateChain(data);
         DualChainType newChain = data.getChain(0);
         newChain.toNumeric();
         newChain.conjunctWith(data.getChain(2));
-        expect_true(t.getChain() == newChain);
+        expect_true(t.getPositiveChain() == newChain);
         expect_true(t.getPrefixChain() == data.getChain(2));
     }
 }

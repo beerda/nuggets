@@ -21,14 +21,14 @@ public:
         Argumentator<TASK>::prepare(arguments, task);
 
         ArgumentValue arg("indices", ArgumentType::ARG_LOGICAL);
-        if (task.getChain().empty()) {
+        if (task.getPositiveChain().empty()) {
             for (size_t i = 0; i < dataSize; i++) {
                 arg.push_back(true);
             }
         }
         else {
-            for (size_t i = 0; i < task.getChain().size(); i++) {
-                arg.push_back(task.getChain().getValue(i) > 0);
+            for (size_t i = 0; i < task.getPositiveChain().size(); i++) {
+                arg.push_back(task.getPositiveChain().getValue(i) > 0);
             }
         }
 

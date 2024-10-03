@@ -12,7 +12,7 @@ public:
 
     bool isConditionPrunable(const TASK& task) const override
     {
-        return task.getChain().getSupport() < minSupport;
+        return task.getPositiveChain().getSupport() < minSupport;
         }
 
 private:
