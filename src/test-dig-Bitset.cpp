@@ -115,6 +115,14 @@ context("dig/Bitset.h") {
     test_that("negate") {
         Bitset b;
 
+        expect_true(b.size() == 0);
+        expect_true(b.getSum() == 0);
+
+        b.negate();
+
+        expect_true(b.size() == 0);
+        expect_true(b.getSum() == 0);
+
         b.push_back(true);
         b.push_back(false);
         b.push_back(true);

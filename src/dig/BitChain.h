@@ -38,6 +38,12 @@ public:
             cachedSum++;
     }
 
+    void negate()
+    {
+        values.negate();
+        cachedSum = values.size() - cachedSum;
+    }
+
     void conjunctWith(const BitChain& other)
     {
         values &= other.values;

@@ -100,12 +100,14 @@ public:
 
     void negate()
     {
-        for (size_t i = 0; i < data.size() - 1; i++) {
-            data[i] = ~data[i];
-        }
+        if (n > 0) {
+            for (size_t i = 0; i < data.size() - 1; i++) {
+                data[i] = ~data[i];
+            }
 
-        for (size_t i = 0; i < n % CHUNK_SIZE; i++) {
-            data.back() ^= (1 << i);
+            for (size_t i = 0; i < n % CHUNK_SIZE; i++) {
+                data.back() ^= (1 << i);
+            }
         }
     }
 
