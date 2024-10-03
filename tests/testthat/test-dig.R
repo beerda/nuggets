@@ -148,10 +148,10 @@ test_that("foci_supports arg", {
 })
 
 
-test_that("conti_a arg", {
+test_that("conti_pp arg", {
     m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
     res <- dig(m,
-               f = function(conti_a) list(fs = conti_a),
+               f = function(conti_pp) list(fs = conti_pp),
                condition = "1",
                focus = "2")
 
