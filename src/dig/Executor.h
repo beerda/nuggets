@@ -7,6 +7,8 @@
 #include "dig/FociSupportsArgumentator.h"
 #include "dig/ContiPpArgumentator.h"
 #include "dig/ContiNpArgumentator.h"
+#include "dig/ContiPnArgumentator.h"
+#include "dig/ContiNnArgumentator.h"
 #include "dig/IndicesArgumentator.h"
 #include "dig/SumArgumentator.h"
 #include "dig/SupportArgumentator.h"
@@ -65,6 +67,14 @@ public:
         if (config.hasContiNpArgument()) {
             digger.setNpFocusChainsNeeded();
             digger.addArgumentator(new ContiNpArgumentator<TaskType>(config.getFociNames()));
+        }
+        if (config.hasContiPnArgument()) {
+            digger.setPnFocusChainsNeeded();
+            digger.addArgumentator(new ContiPnArgumentator<TaskType>(config.getFociNames()));
+        }
+        if (config.hasContiNnArgument()) {
+            digger.setNnFocusChainsNeeded();
+            digger.addArgumentator(new ContiNnArgumentator<TaskType>(config.getFociNames()));
         }
         if (config.hasSumArgument()) {
             digger.setPositiveConditionChainsNeeded();

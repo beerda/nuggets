@@ -176,6 +176,34 @@ test_that("conti_np arg", {
 })
 
 
+test_that("conti_pn arg", {
+    m <- matrix(c(T,T,T,T,F,F, T,F,T,F,F,F), ncol = 2)
+    res <- dig(m,
+               f = function(conti_pn) list(fs = conti_pn),
+               condition = "1",
+               focus = "2")
+
+    expect_equal(length(res), 2)
+    expect_equal(res, list(list(fs = c("2" = 4/6)),
+                           list(fs = c("2" = 2/6))),
+                 tolerance = 1e-6)
+})
+
+
+test_that("conti_nn arg", {
+    m <- matrix(c(T,T,T,T,F,F, T,F,T,F,F,T), ncol = 2)
+    res <- dig(m,
+               f = function(conti_nn) list(fs = conti_nn),
+               condition = "1",
+               focus = "2")
+
+    expect_equal(length(res), 2)
+    expect_equal(res, list(list(fs = c("2" = 0/6)),
+                           list(fs = c("2" = 1/6))),
+                 tolerance = 1e-6)
+})
+
+
 test_that("min_length filter", {
     m <- matrix(1:12 / 12, ncol = 2)
 

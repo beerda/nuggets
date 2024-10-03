@@ -75,6 +75,12 @@ public:
     const DualChainType& getNpFocusChain(int focus) const
     { return npFocusChains.at(focus); }
 
+    const DualChainType& getPnFocusChain(int focus) const
+    { return pnFocusChains.at(focus); }
+
+    const DualChainType& getNnFocusChain(int focus) const
+    { return nnFocusChains.at(focus); }
+
     void updatePositiveChain(const DataType& data)
     {
         if (conditionIterator.hasPredicate()) {
@@ -112,6 +118,17 @@ public:
         }
     }
 
+    void computePnFocusChain(const DataType& data)
+    {
+        if (focusIterator.hasPredicate()) {
+            int focus = focusIterator.getCurrentPredicate();
+            pnFocusChains[focus] = data.getNegativeFocus(focus);
+            if (conditionIterator.getLength() > 0) {
+                pnFocusChains[focus].conjunctWith(positiveChain);
+            }
+        }
+    }
+
     void computeNpFocusChain(const DataType& data)
     {
         if (focusIterator.hasPredicate()) {
@@ -128,11 +145,29 @@ public:
         }
     }
 
+    void computeNnFocusChain(const DataType& data)
+    {
+        if (focusIterator.hasPredicate()) {
+            int focus = focusIterator.getCurrentPredicate();
+            if (conditionIterator.getLength() > 0) {
+                nnFocusChains[focus] = data.getNegativeFocus(focus);
+                nnFocusChains[focus].conjunctWith(negativeChain);
+            } else {
+                // result is empty chain because we work with condition of length 0 (tautology)
+                // and hence the negation of tautology is contradiction.
+                // Empty chain indicates contradiction here.
+                nnFocusChains[focus] = positiveChain;
+            }
+        }
+    }
+
     void resetFoci()
     {
         focusIterator.reset();
         ppFocusChains.clear();
         npFocusChains.clear();
+        pnFocusChains.clear();
+        nnFocusChains.clear();
     }
 
     bool operator == (const Task& other) const
@@ -153,4 +188,6 @@ private:
     DualChainType negativeChain;
     unordered_map<int, DualChainType> ppFocusChains;
     unordered_map<int, DualChainType> npFocusChains;
+    unordered_map<int, DualChainType> pnFocusChains;
+    unordered_map<int, DualChainType> nnFocusChains;
 };

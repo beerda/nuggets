@@ -83,8 +83,20 @@ public:
         npFocusChainsNeeded = true;
     }
 
+    void setPnFocusChainsNeeded()
+    {
+        setPositiveConditionChainsNeeded();
+        pnFocusChainsNeeded = true;
+    }
+
+    void setNnFocusChainsNeeded()
+    {
+        setNegativeConditionChainsNeeded();
+        nnFocusChainsNeeded = true;
+    }
+
     bool isNegativeFociChainsNeeded() const
-    { return npFocusChainsNeeded; }
+    { return npFocusChainsNeeded || pnFocusChainsNeeded || nnFocusChainsNeeded; }
 
     vector<ArgumentValues> getResult() const
     { return result; }
@@ -100,6 +112,8 @@ private:
     bool negativeConditionChainsNeeded = false;
     bool ppFocusChainsNeeded = false;
     bool npFocusChainsNeeded = false;
+    bool pnFocusChainsNeeded = false;
+    bool nnFocusChainsNeeded = false;
 
     int workingThreads;
     int allThreads;
@@ -236,6 +250,12 @@ private:
 
         if (npFocusChainsNeeded)
             task.computeNpFocusChain(data);
+
+        if (pnFocusChainsNeeded)
+            task.computePnFocusChain(data);
+
+        if (nnFocusChainsNeeded)
+            task.computeNnFocusChain(data);
     }
 
     bool isConditionRedundant(const TaskType& task) const
