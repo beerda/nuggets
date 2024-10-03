@@ -111,4 +111,123 @@ context("dig/Bitset.h") {
         expect_true(b.size() == 0);
         expect_true(b.getMutableData().capacity() == 6);
     }
+
+    test_that("negate") {
+        Bitset b;
+
+        b.push_back(true);
+        b.push_back(false);
+        b.push_back(true);
+        b.push_back(true);
+        b.push_back(false);
+
+        expect_true(b.size() == 5);
+        expect_true(b.getSum() == 3);
+
+        b.negate();
+
+        expect_true(b.size() == 5);
+        expect_true(b.getSum() == 2);
+
+        expect_true(!b.at(0));
+        expect_true(b.at(1));
+        expect_true(!b.at(2));
+        expect_true(!b.at(3));
+        expect_true(b.at(4));
+    }
+
+    test_that("negate 2") {
+        Bitset b;
+        size_t limit = 200;
+
+        for (size_t i = 0; i < limit; ++i) {
+            b.push_back(i % 2 == 0);
+        }
+
+        for (size_t i = 0; i < limit; ++i) {
+            expect_true(b.at(i) == (i % 2 == 0));
+        }
+
+        b.negate();
+
+        for (size_t i = 0; i < limit; ++i) {
+            expect_true(b.at(i) == (i % 2 != 0));
+        }
+    }
+
+    test_that("conjunction") {
+        Bitset b1;
+        Bitset b2;
+
+        b1.push_back(true);
+        b1.push_back(false);
+        b1.push_back(true);
+        b1.push_back(true);
+        b1.push_back(false);
+
+        b2.push_back(true);
+        b2.push_back(true);
+        b2.push_back(false);
+        b2.push_back(true);
+        b2.push_back(false);
+
+        expect_true(b1.size() == 5);
+        expect_true(b1.getSum() == 3);
+
+        expect_true(b2.size() == 5);
+        expect_true(b2.getSum() == 3);
+
+        b1 &= b2;
+
+        expect_true(b1.size() == 5);
+        expect_true(b1.getSum() == 2);
+
+        expect_true(b1.at(0));
+        expect_true(!b1.at(1));
+        expect_true(!b1.at(2));
+        expect_true(b1.at(3));
+        expect_true(!b1.at(4));
+    }
+
+    test_that("negation and conjunction") {
+        Bitset b1;
+        Bitset b2;
+
+        b1.push_back(true);
+        b1.push_back(false);
+        b1.push_back(true);
+        b1.push_back(true);
+        b1.push_back(false);
+
+        b2.push_back(true);
+        b2.push_back(true);
+        b2.push_back(false);
+        b2.push_back(true);
+        b2.push_back(false);
+
+        expect_true(b1.size() == 5);
+        expect_true(b1.getSum() == 3);
+
+        expect_true(b2.size() == 5);
+        expect_true(b2.getSum() == 3);
+
+        b1.negate();
+        b2.negate();
+
+        expect_true(b1.size() == 5);
+        expect_true(b1.getSum() == 2);
+        expect_true(b2.size() == 5);
+        expect_true(b2.getSum() == 2);
+
+        b1 &= b2;
+
+        expect_true(b1.size() == 5);
+        expect_true(b1.getSum() == 1);
+
+        expect_true(!b1.at(0));
+        expect_true(!b1.at(1));
+        expect_true(!b1.at(2));
+        expect_true(!b1.at(3));
+        expect_true(b1.at(4));
+    }
 }

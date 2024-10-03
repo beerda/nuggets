@@ -98,6 +98,17 @@ public:
     AlignedVector<uintmax_t>& getMutableData()
     { return data; }
 
+    void negate()
+    {
+        for (size_t i = 0; i < data.size() - 1; i++) {
+            data[i] = ~data[i];
+        }
+
+        for (size_t i = 0; i < n % CHUNK_SIZE; i++) {
+            data.back() ^= (1 << i);
+        }
+    }
+
     void operator &= (const Bitset& other)
     {
         if (n != other.n) {
