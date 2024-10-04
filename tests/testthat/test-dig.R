@@ -204,6 +204,78 @@ test_that("conti_nn arg", {
 })
 
 
+test_that("complex contingency table test", {
+    set.seed(234)
+    cols <- 5
+    rows <- 65
+    m <- matrix(sample(c(T, F), cols * rows, TRUE), nrow = rows)
+    colnames(m) <- letters[seq_len(cols)]
+
+    a <- m[, "a"]
+    b <- m[, "b"]
+    c <- m[, "c"]
+    d <- m[, "d"]
+    e <- m[, "e"]
+
+    res <- dig(m,
+               f = function(condition, conti_pp, conti_pn, conti_np, conti_nn) {
+                   list(cond = format_condition(colnames(m)[condition]),
+                        a_pp = conti_pp[1], a_pn = conti_pn[1], a_np = conti_np[1], a_nn = conti_nn[1],
+                        b_pp = conti_pp[2], b_pn = conti_pn[2], b_np = conti_np[2], b_nn = conti_nn[2])
+               },
+               condition = c:e,
+               focus = a:b)
+    res <- lapply(res, as.data.frame)
+    res <- do.call(rbind, res)
+    rownames(res) <- res$cond
+    res$cond <- NULL
+
+    expect_true(is.data.frame(res))
+    expect_equal(nrow(res), 8)
+    expect_equal(ncol(res), 8)
+
+    expect_equal(res["{}", "a_pp"], mean(a), tolerance = 1e-6)
+    expect_equal(res["{}", "a_pn"], mean(!a), tolerance = 1e-6)
+    expect_equal(res["{}", "a_np"], 0)
+    expect_equal(res["{}", "a_nn"], 0)
+
+    expect_equal(res["{}", "b_pp"], mean(b), tolerance = 1e-6)
+    expect_equal(res["{}", "b_pn"], mean(!b), tolerance = 1e-6)
+    expect_equal(res["{}", "b_np"], 0)
+    expect_equal(res["{}", "b_nn"], 0)
+
+    expect_equal(res["{d}", "a_pp"], mean(d & a), tolerance = 1e-6)
+    expect_equal(res["{d}", "a_pn"], mean(d & !a), tolerance = 1e-6)
+    expect_equal(res["{d}", "a_np"], mean(!d & a), tolerance = 1e-6)
+    expect_equal(res["{d}", "a_nn"], mean(!d & !a), tolerance = 1e-6)
+
+    expect_equal(res["{d}", "b_pp"], mean(d & b), tolerance = 1e-6)
+    expect_equal(res["{d}", "b_pn"], mean(d & !b), tolerance = 1e-6)
+    expect_equal(res["{d}", "b_np"], mean(!d & b), tolerance = 1e-6)
+    expect_equal(res["{d}", "b_nn"], mean(!d & !b), tolerance = 1e-6)
+
+    expect_equal(res["{e,d}", "a_pp"], mean(e & d & a), tolerance = 1e-6)
+    expect_equal(res["{e,d}", "a_pn"], mean(e & d & !a), tolerance = 1e-6)
+    expect_equal(res["{e,d}", "a_np"], mean(!(e & d) & a), tolerance = 1e-6)
+    expect_equal(res["{e,d}", "a_nn"], mean(!(e & d) & !a), tolerance = 1e-6)
+
+    expect_equal(res["{e,d}", "b_pp"], mean(e & d & b), tolerance = 1e-6)
+    expect_equal(res["{e,d}", "b_pn"], mean(e & d & !b), tolerance = 1e-6)
+    expect_equal(res["{e,d}", "b_np"], mean(!(e & d) & b), tolerance = 1e-6)
+    expect_equal(res["{e,d}", "b_nn"], mean(!(e & d) & !b), tolerance = 1e-6)
+
+    expect_equal(res["{e,c,d}", "a_pp"], mean(e & c & d & a), tolerance = 1e-6)
+    expect_equal(res["{e,c,d}", "a_pn"], mean(e & c & d & !a), tolerance = 1e-6)
+    expect_equal(res["{e,c,d}", "a_np"], mean(!(e & c & d) & a), tolerance = 1e-6)
+    expect_equal(res["{e,c,d}", "a_nn"], mean(!(e & c & d) & !a), tolerance = 1e-6)
+
+    expect_equal(res["{e,c,d}", "b_pp"], mean(e & c & d & b), tolerance = 1e-6)
+    expect_equal(res["{e,c,d}", "b_pn"], mean(e & c & d & !b), tolerance = 1e-6)
+    expect_equal(res["{e,c,d}", "b_np"], mean(!(e & c & d) & b), tolerance = 1e-6)
+    expect_equal(res["{e,c,d}", "b_nn"], mean(!(e & c & d) & !b), tolerance = 1e-6)
+})
+
+
 test_that("min_length filter", {
     m <- matrix(1:12 / 12, ncol = 2)
 
