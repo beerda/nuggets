@@ -144,9 +144,9 @@ context("dig/Bitset.h") {
         expect_true(b.at(4));
     }
 
-    test_that("negate 2") {
+    test_that("negate 10") {
         Bitset b;
-        size_t limit = 200;
+        size_t limit = 10;
 
         for (size_t i = 0; i < limit; ++i) {
             b.push_back(i % 2 == 0);
@@ -159,6 +159,63 @@ context("dig/Bitset.h") {
         b.negate();
 
         for (size_t i = 0; i < limit; ++i) {
+            expect_true(b.at(i) == (i % 2 != 0));
+        }
+    }
+
+    test_that("negate 63") {
+        Bitset b;
+        size_t limit = 63;
+
+        for (size_t i = 0; i < limit; ++i) {
+            b.push_back(i % 2 == 0);
+        }
+
+        for (size_t i = 0; i < limit; ++i) {
+            expect_true(b.at(i) == (i % 2 == 0));
+        }
+
+        b.negate();
+
+        for (size_t i = 0; i < limit; ++i) {
+            expect_true(b.at(i) == (i % 2 != 0));
+        }
+    }
+
+    test_that("negate 64") {
+        Bitset b;
+        size_t limit = 64;
+
+        for (size_t i = 0; i < limit; ++i) {
+            b.push_back(i % 2 == 0);
+        }
+
+        for (size_t i = 0; i < limit; ++i) {
+            expect_true(b.at(i) == (i % 2 == 0));
+        }
+
+        b.negate();
+
+        for (size_t i = 0; i < limit /2; ++i) {
+            expect_true(b.at(i) == (i % 2 != 0));
+        }
+    }
+
+    test_that("negate 65") {
+        Bitset b;
+        size_t limit = 64;
+
+        for (size_t i = 0; i < limit; ++i) {
+            b.push_back(i % 2 == 0);
+        }
+
+        for (size_t i = 0; i < limit; ++i) {
+            expect_true(b.at(i) == (i % 2 == 0));
+        }
+
+        b.negate();
+
+        for (size_t i = 0; i < limit /2; ++i) {
             expect_true(b.at(i) == (i % 2 != 0));
         }
     }
