@@ -2,7 +2,7 @@
 - Update NEWS.md
 - Test:
     devtools::spell_check()
-    rhub::check_for_cran()
+    rhub::rhub_check()
     devtools::check_win_release()
     devtools::check_win_oldrelease()
     devtools::check_win_devel()
