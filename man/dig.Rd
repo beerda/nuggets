@@ -52,16 +52,34 @@ logical.}
 function may have some of the following arguments. Based on the present
 arguments, the algorithm would provide information about the generated
 condition:
-- condition - a named integer vector of column indices that represent
+- \code{condition} - a named integer vector of column indices that represent
 the predicates of the condition. Names of the vector correspond to
 column names;
-- foci_supports - a named numeric vector of supports of foci columns
+- \code{support} - a numeric scalar value of the current condition's support;
+- \code{indices} - a logical vector indicating the rows satisfying the condition;
+- \code{weights} - (similar to indices) weights of rows to which they satisfy
+the current condition;
+- \code{pp} - a value of a contingency table, \code{condition & focus}.
+\code{pp} is a named numeric vector where each value is a support of conjunction
+of the condition with a foci column (see the \code{focus} argument to specify,
+which columns). Names of the vector are foci column names.
+- \code{pn} - a value of a contingency table, \verb{condition & neg focus}.
+\code{pn} is a named numeric vector where each value is a support of conjunction
+of the condition with a negated foci column (see the \code{focus} argument to
+specify, which columns are foci) - names of the vector are foci column names.
+- \code{np} - a value of a contingency table, \verb{neg condition & focus}.
+\code{np} is a named numeric vector where each value is a support of conjunction
+of the negated condition with a foci column (see the \code{focus} argument to
+specify, which columns are foci) - names of the vector are foci column names.
+- \code{nn} - a value of a contingency table, \verb{neg condition & neg focus}.
+\code{nn} is a named numeric vector where each value is a support of conjunction
+of the negated condition with a negated foci column (see the \code{focus}
+argument to specify, which columns are foci) - names of the vector are foci
+column names.
+- \code{foci_supports} - (deprecated, use \code{pp} instead)
+a named numeric vector of supports of foci columns
 (see \code{focus} argument to specify, which columns are foci) - names of the
-vector are foci column names;
-- support - a numeric scalar value of the current condition's support;
-- indices - a logical vector indicating the rows satisfying the condition;
-- weights - (similar to indices) weights of rows to which they satisfy
-the current condition.}
+vector are foci column names.}
 
 \item{...}{Further arguments, currently unused.}
 

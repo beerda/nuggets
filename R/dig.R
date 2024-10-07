@@ -10,16 +10,34 @@
 #'      function may have some of the following arguments. Based on the present
 #'      arguments, the algorithm would provide information about the generated
 #'      condition:
-#'      - condition - a named integer vector of column indices that represent
+#'      - `condition` - a named integer vector of column indices that represent
 #'        the predicates of the condition. Names of the vector correspond to
 #'        column names;
-#'      - foci_supports - a named numeric vector of supports of foci columns
+#'      - `support` - a numeric scalar value of the current condition's support;
+#'      - `indices` - a logical vector indicating the rows satisfying the condition;
+#'      - `weights` - (similar to indices) weights of rows to which they satisfy
+#'        the current condition;
+#'      - `pp` - a value of a contingency table, `condition & focus`.
+#'        `pp` is a named numeric vector where each value is a support of conjunction
+#'        of the condition with a foci column (see the `focus` argument to specify,
+#'        which columns). Names of the vector are foci column names.
+#'      - `pn` - a value of a contingency table, `condition & neg focus`.
+#'        `pn` is a named numeric vector where each value is a support of conjunction
+#'        of the condition with a negated foci column (see the `focus` argument to
+#'        specify, which columns are foci) - names of the vector are foci column names.
+#'      - `np` - a value of a contingency table, `neg condition & focus`.
+#'        `np` is a named numeric vector where each value is a support of conjunction
+#'        of the negated condition with a foci column (see the `focus` argument to
+#'        specify, which columns are foci) - names of the vector are foci column names.
+#'      - `nn` - a value of a contingency table, `neg condition & neg focus`.
+#'        `nn` is a named numeric vector where each value is a support of conjunction
+#'        of the negated condition with a negated foci column (see the `focus`
+#'        argument to specify, which columns are foci) - names of the vector are foci
+#'        column names.
+#'      - `foci_supports` - (deprecated, use `pp` instead)
+#'        a named numeric vector of supports of foci columns
 #'        (see `focus` argument to specify, which columns are foci) - names of the
-#'        vector are foci column names;
-#'      - support - a numeric scalar value of the current condition's support;
-#'      - indices - a logical vector indicating the rows satisfying the condition;
-#'      - weights - (similar to indices) weights of rows to which they satisfy
-#'        the current condition.
+#'        vector are foci column names.
 #' @param condition a tidyselect expression (see
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying the columns to use as condition predicates
