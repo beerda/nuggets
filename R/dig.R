@@ -147,7 +147,7 @@ dig.default <- function(x, f, ...) {
 
     unrecognized_args <- setdiff(formalArgs(f),
                                  c("condition", "foci_supports",
-                                   "conti_pp", "conti_np", "conti_pn", "conti_nn",
+                                   "pp", "np", "pn", "nn",
                                    "indices", "sum", "support", "weights"))
 
     if (length(unrecognized_args) > 0) {

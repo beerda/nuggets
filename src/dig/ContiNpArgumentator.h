@@ -3,8 +3,8 @@
 #include "Argumentator.h"
 
 /**
- * Prepare the 'conti_np' argument for the R function callback.
- * The 'conti_np' argument is a double value with supports of
+ * Prepare the 'np' argument for the R function callback.
+ * The 'np' argument is a double value with supports of
  * foci combined with the negated condition.
  */
 template <typename TASK>
@@ -21,7 +21,7 @@ public:
     {
         Argumentator<TASK>::prepare(arguments, task);
 
-        ArgumentValue arg("conti_np", ArgumentType::ARG_NUMERIC);
+        ArgumentValue arg("np", ArgumentType::ARG_NUMERIC);
 
         for (int i : task.getFocusIterator().getSoFar()) {
             DualChainType chain = task.getNpFocusChain(i);

@@ -148,10 +148,10 @@ test_that("foci_supports arg", {
 })
 
 
-test_that("conti_pp arg", {
+test_that("pp arg", {
     m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
     res <- dig(m,
-               f = function(conti_pp) list(fs = conti_pp),
+               f = function(pp) list(fs = pp),
                condition = "1",
                focus = "2")
 
@@ -162,10 +162,10 @@ test_that("conti_pp arg", {
 })
 
 
-test_that("conti_np arg", {
+test_that("np arg", {
     m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
     res <- dig(m,
-               f = function(conti_np) list(fs = conti_np),
+               f = function(np) list(fs = np),
                condition = "1",
                focus = "2")
 
@@ -176,10 +176,10 @@ test_that("conti_np arg", {
 })
 
 
-test_that("conti_pn arg", {
+test_that("pn arg", {
     m <- matrix(c(T,T,T,T,F,F, T,F,T,F,F,F), ncol = 2)
     res <- dig(m,
-               f = function(conti_pn) list(fs = conti_pn),
+               f = function(pn) list(fs = pn),
                condition = "1",
                focus = "2")
 
@@ -190,10 +190,10 @@ test_that("conti_pn arg", {
 })
 
 
-test_that("conti_nn arg", {
+test_that("nn arg", {
     m <- matrix(c(T,T,T,T,F,F, T,F,T,F,F,T), ncol = 2)
     res <- dig(m,
-               f = function(conti_nn) list(fs = conti_nn),
+               f = function(nn) list(fs = nn),
                condition = "1",
                focus = "2")
 
@@ -218,10 +218,10 @@ test_that("complex contingency table test (logical)", {
     e <- m[, "e"]
 
     res <- dig(m,
-               f = function(condition, conti_pp, conti_pn, conti_np, conti_nn) {
+               f = function(condition, pp, pn, np, nn) {
                    list(cond = format_condition(sort(colnames(m)[condition])),
-                        a_pp = conti_pp[1], a_pn = conti_pn[1], a_np = conti_np[1], a_nn = conti_nn[1],
-                        b_pp = conti_pp[2], b_pn = conti_pn[2], b_np = conti_np[2], b_nn = conti_nn[2])
+                        a_pp = pp[1], a_pn = pn[1], a_np = np[1], a_nn = nn[1],
+                        b_pp = pp[2], b_pn = pn[2], b_np = np[2], b_nn = nn[2])
                },
                condition = c:e,
                focus = a:b)
@@ -290,10 +290,10 @@ test_that("complex contingency table test (numeric)", {
     e <- m[, "e"]
 
     res <- dig(m,
-               f = function(condition, conti_pp, conti_pn, conti_np, conti_nn) {
+               f = function(condition, pp, pn, np, nn) {
                    list(cond = format_condition(sort(colnames(m)[condition])),
-                        a_pp = conti_pp[1], a_pn = conti_pn[1], a_np = conti_np[1], a_nn = conti_nn[1],
-                        b_pp = conti_pp[2], b_pn = conti_pn[2], b_np = conti_np[2], b_nn = conti_nn[2])
+                        a_pp = pp[1], a_pn = pn[1], a_np = np[1], a_nn = nn[1],
+                        b_pp = pp[2], b_pn = pn[2], b_np = np[2], b_nn = nn[2])
                },
                condition = c:e,
                focus = a:b,

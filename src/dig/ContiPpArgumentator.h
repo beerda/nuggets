@@ -3,8 +3,8 @@
 #include "Argumentator.h"
 
 /**
- * Prepare the 'conti_pp' argument for the R function callback.
- * The 'conti_pp' argument is a double value with supports of
+ * Prepare the 'pp' argument for the R function callback.
+ * The 'pp' argument is a double value with supports of
  * foci combined with the condition.
  */
 template <typename TASK>
@@ -21,7 +21,7 @@ public:
     {
         Argumentator<TASK>::prepare(arguments, task);
 
-        ArgumentValue arg("conti_pp", ArgumentType::ARG_NUMERIC);
+        ArgumentValue arg("pp", ArgumentType::ARG_NUMERIC);
 
         for (int i : task.getFocusIterator().getSoFar()) {
             arg.push_back(task.getPpFocusChain(i).getSupport(), fociNames[i]);

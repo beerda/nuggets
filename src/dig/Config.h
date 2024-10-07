@@ -177,13 +177,13 @@ private:
                 conditionArgument = true;
             if (vec[i] == "foci_supports")
                 fociSupportsArgument = true;
-            if (vec[i] == "conti_pp")
+            if (vec[i] == "pp")
                 contiPpArgument = true;
-            if (vec[i] == "conti_np")
+            if (vec[i] == "np")
                 contiNpArgument = true;
-            if (vec[i] == "conti_pn")
+            if (vec[i] == "pn")
                 contiPnArgument = true;
-            if (vec[i] == "conti_nn")
+            if (vec[i] == "nn")
                 contiNnArgument = true;
             if (vec[i] == "indices")
                 indicesArgument = true;
