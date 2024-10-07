@@ -1,0 +1,12 @@
+ bibentry(bibtype = "InProceedings",
+          title="nuggets: Data Pattern Extraction Framework in R",
+          author = c(person("Michal", "Burda")),
+          editor = "Torra, Vicenc and Narukawa, Yasuo and Kikuchi, Hiroaki",
+          booktitle = "Modeling Decisions for Artificial Intelligence",
+          year = "2024",
+          publisher = "Springer Nature Switzerland",
+          address = "Cham",
+          pages = "115--126",
+          isbn = "978-3-031-68208-7",
+          doi = "https://doi.org/10.1007/978-3-031-68208-7_10",
+          url = "https://link.springer.com/chapter/10.1007/978-3-031-68208-7_10")
