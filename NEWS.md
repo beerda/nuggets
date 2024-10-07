@@ -2,6 +2,8 @@
 - released: ???
 - added .other argument to dichotomize()
 - fixed handling of xvars, yvars tidy-selectors in dig_correlations()
+- added the handling of callback function arguments related to contingency tables
+  (pp, pn, np, nn arguments)
 
 # nuggets 1.0.2
 - released: 2024-01-08
