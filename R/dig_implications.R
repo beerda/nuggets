@@ -97,14 +97,14 @@ dig_implications <- function(x,
                            threads = threads)
     conseq_supports <- unlist(conseq_supports)
 
-    f2 <- function(condition, sum, support, foci_supports) {
-        conf <- foci_supports / support
+    f2 <- function(condition, sum, support, pp) {
+        conf <- pp / support
 
-        sel <-!is.na(foci_supports) & !is.na(conf) & conf >= min_confidence
+        sel <-!is.na(pp) & !is.na(conf) & conf >= min_confidence
 
-        selnames <- names(foci_supports)[sel]
+        selnames <- names(pp)[sel]
         conf <- conf[sel]
-        supp <- foci_supports[sel]
+        supp <- pp[sel]
         lift <- supp / (support * conseq_supports[selnames])
         ante <- format_condition(names(condition))
         cons <- unlist(lapply(names(conf), format_condition))
