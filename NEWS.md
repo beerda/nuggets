@@ -1,5 +1,5 @@
-# nuggets ???
-- released: ???
+# nuggets 1.1.0
+- released: 2024-10-07
 - added .other argument to dichotomize()
 - fixed handling of xvars, yvars tidy-selectors in dig_correlations()
 - added filtering of foci by their support
