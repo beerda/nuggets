@@ -84,7 +84,9 @@ Implicative rules are characterized with the following quality measures.
 
 \emph{Coverage} of a rule is equal to \eqn{supp(A)}.
 
-\emph{Support} of a rule is equal to \eqn{supp(A \cup \{c\}}.
+\emph{Consequent support} of a rule is equal to \eqn{supp(\{c\})}.
+
+\emph{Support} of a rule is equal to \eqn{supp(A \cup \{c\})}.
 
 \emph{Confidence} of a rule is the fraction \eqn{supp(A) / supp(A \cup \{c\})}.
 }

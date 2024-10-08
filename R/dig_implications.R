@@ -17,7 +17,9 @@
 #'
 #' *Coverage* of a rule is equal to \eqn{supp(A)}.
 #'
-#' *Support* of a rule is equal to \eqn{supp(A \cup \{c\}}.
+#' *Consequent support* of a rule is equal to \eqn{supp(\{c\})}.
+#'
+#' *Support* of a rule is equal to \eqn{supp(A \cup \{c\})}.
 #'
 #' *Confidence* of a rule is the fraction \eqn{supp(A) / supp(A \cup \{c\})}.
 #'
@@ -118,6 +120,7 @@ dig_implications <- function(x,
                    support = supp,
                    confidence = conf,
                    coverage = support,
+                   conseq_support = conseq_supports[selnames],
                    lift = lift,
                    count = sum)
     }

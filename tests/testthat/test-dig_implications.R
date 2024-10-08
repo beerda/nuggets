@@ -12,7 +12,7 @@ test_that("dig_implications", {
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 7)
     expect_equal(colnames(res),
-                 c("antecedent", "consequent", "support", "confidence", "coverage", "lift", "count"))
+                 c("antecedent", "consequent", "support", "confidence", "coverage", "conseq_support", "lift", "count"))
     expect_true(is.character(res$antecedent))
     expect_true(is.character(res$consequent))
     expect_true(is.double(res$support))
@@ -23,6 +23,8 @@ test_that("dig_implications", {
                  c("{a}", "{b}", "{c}", "{a}", "{c}", "{b}", "{b}"))
     expect_equal(round(res$support, 6),
                  c(0.4, 0.8, 0.4, 0.4, 0.2, 0.4, 0.2))
+    expect_equal(round(res$conseq_support, 6),
+                 c(0.4, 0.8, 0.4, 0.4, 0.4, 0.8, 0.8))
     expect_equal(round(res$confidence, 6),
                  c(0.4, 0.8, 0.4, 0.5, 0.25, 1.0, 0.5))
 })
@@ -43,7 +45,7 @@ test_that("dig_implications with disjoint", {
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 5)
     expect_equal(colnames(res),
-                 c("antecedent", "consequent", "support", "confidence", "coverage", "lift", "count"))
+                 c("antecedent", "consequent", "support", "confidence", "coverage", "conseq_support", "lift", "count"))
     expect_true(is.character(res$antecedent))
     expect_true(is.character(res$consequent))
     expect_true(is.double(res$support))
@@ -54,6 +56,8 @@ test_that("dig_implications with disjoint", {
                  c("{a}", "{b}", "{c}", "{a}", "{b}"))
     expect_equal(res$support,
                  c(0.4, 0.8, 0.4, 0.4, 0.4))
+    expect_equal(round(res$conseq_support, 6),
+                 c(0.4, 0.8, 0.4, 0.4, 0.8))
     expect_equal(res$confidence,
                  c(0.4, 0.8, 0.4, 0.5, 1.0))
 })
