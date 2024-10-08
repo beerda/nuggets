@@ -10,7 +10,7 @@ status](https://www.r-pkg.org/badges/version/nuggets)](https://CRAN.R-project.or
 [![R-CMD-check](https://github.com/beerda/nuggets/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/beerda/nuggets/actions/workflows/R-CMD-check.yaml)
 [![test-coverage](https://github.com/beerda/nuggets/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/beerda/nuggets/actions/workflows/test-coverage.yaml)
 [![Codecov test
-coverage](https://codecov.io/gh/beerda/nuggets/branch/main/graph/badge.svg)](https://app.codecov.io/gh/beerda/nuggets?branch=main)
+coverage](https://codecov.io/gh/beerda/nuggets/graph/badge.svg)](https://app.codecov.io/gh/beerda/nuggets)
 <!-- badges: end -->
 
 Extensible R framework for subgroup discovery ([Atzmueller
@@ -143,14 +143,14 @@ print(result)
 #>    <chr>                      <chr>        <dbl>      <dbl>    <dbl> <dbl> <dbl>
 #>  1 {Type=Mississippi,uptake=… {Treatmen…  0.155       0.813   0.190   1.63    16
 #>  2 {Type=Mississippi,uptake=… {Treatmen…  0.119       1       0.119   2       10
-#>  3 {Plant=Qn1}                {Treatmen…  0.0833      1       0.0833  2        7
-#>  4 {Plant=Qn2}                {Treatmen…  0.0833      1       0.0833  2        7
-#>  5 {Plant=Qn3}                {Treatmen…  0.0833      1       0.0833  2        7
-#>  6 {Plant=Qc1}                {Treatmen…  0.0833      1       0.0833  2        7
-#>  7 {Plant=Qc3}                {Treatmen…  0.0833      1       0.0833  2        7
-#>  8 {Plant=Qc2}                {Treatmen…  0.0833      1       0.0833  2        7
+#>  3 {Plant=Mc3}                {Treatmen…  0.0833      1       0.0833  2        7
+#>  4 {Plant=Mc1}                {Treatmen…  0.0833      1       0.0833  2        7
+#>  5 {Plant=Qn1}                {Treatmen…  0.0833      1       0.0833  2        7
+#>  6 {Plant=Mc2}                {Treatmen…  0.0833      1       0.0833  2        7
+#>  7 {Plant=Mn1}                {Treatmen…  0.0833      1       0.0833  2        7
+#>  8 {Plant=Mn2}                {Treatmen…  0.0833      1       0.0833  2        7
 #>  9 {Plant=Mn3}                {Treatmen…  0.0833      1       0.0833  2        7
-#> 10 {Plant=Mn2}                {Treatmen…  0.0833      1       0.0833  2        7
+#> 10 {Plant=Qc2}                {Treatmen…  0.0833      1       0.0833  2        7
 #> # ℹ 215 more rows
 ```
 
@@ -254,13 +254,13 @@ print(result)
 #>    <chr>                                 <chr>                  <dbl>      <dbl>
 #>  1 {Type=Mississippi,uptake=(-Inf,17.9]} {Treatment=chilled}   0.155       0.813
 #>  2 {Type=Mississippi,uptake=(28.3,37.1]} {Treatment=nonchill…  0.119       1    
-#>  3 {Plant=Qn1}                           {Treatment=nonchill…  0.0833      1    
-#>  4 {Plant=Qn2}                           {Treatment=nonchill…  0.0833      1    
-#>  5 {Plant=Qn3}                           {Treatment=nonchill…  0.0833      1    
-#>  6 {Plant=Qc1}                           {Treatment=chilled}   0.0833      1    
-#>  7 {Plant=Qc3}                           {Treatment=chilled}   0.0833      1    
-#>  8 {Plant=Qc2}                           {Treatment=chilled}   0.0833      1    
+#>  3 {Plant=Mc3}                           {Treatment=chilled}   0.0833      1    
+#>  4 {Plant=Mc1}                           {Treatment=chilled}   0.0833      1    
+#>  5 {Plant=Qn1}                           {Treatment=nonchill…  0.0833      1    
+#>  6 {Plant=Mc2}                           {Treatment=chilled}   0.0833      1    
+#>  7 {Plant=Mn1}                           {Treatment=nonchill…  0.0833      1    
+#>  8 {Plant=Mn2}                           {Treatment=nonchill…  0.0833      1    
 #>  9 {Plant=Mn3}                           {Treatment=nonchill…  0.0833      1    
-#> 10 {Plant=Mn2}                           {Treatment=nonchill…  0.0833      1    
+#> 10 {Plant=Qc2}                           {Treatment=chilled}   0.0833      1    
 #> # ℹ 215 more rows
 ```
