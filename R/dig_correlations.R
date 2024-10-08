@@ -4,9 +4,7 @@
 #' of `x` in subdata corresponding to conditions generated from `condition`
 #' columns.
 #'
-#' @param x a matrix or data frame with data to search in. The matrix must be
-#'      numeric (double) or logical. If `x` is a data frame then each column
-#'      must be either numeric (double) or logical.
+#' @param x a matrix or data frame with data to search in.
 #' @param condition a tidyselect expression (see
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying the columns to use as condition predicates

@@ -20,9 +20,7 @@ dig_correlations(
 )
 }
 \arguments{
-\item{x}{a matrix or data frame with data to search in. The matrix must be
-numeric (double) or logical. If \code{x} is a data frame then each column
-must be either numeric (double) or logical.}
+\item{x}{a matrix or data frame with data to search in.}
 
 \item{condition}{a tidyselect expression (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
