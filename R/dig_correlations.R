@@ -60,41 +60,27 @@ dig_correlations <- function(x,
     condition <- enquo(condition)
     xvars <- enquo(xvars)
     yvars <- enquo(yvars)
-    grid <- var_grid(x, !!xvars, !!yvars)
 
-    f <- function(condition, sum, indices) {
-        cond <- format_condition(names(condition))
-        d <- x[indices, , drop = FALSE]
-
-        result <- apply(grid, 1, function(row) {
-            dd <- na.omit(d[, row, drop = FALSE])
-            fit <- cor.test(dd[[1]],
-                            dd[[2]],
-                            alternative = alternative,
-                            method = method,
-                            exact = exact)
-            return(list(estimate = fit$estimate,
-                        p_value = fit$p.value))
-        })
-
-        result <- lapply(result, as_tibble)
-        result <- do.call(rbind, result)
-
-        cbind(condition = rep(cond, nrow(grid)),
-              grid,
-              result)
+    f <- function(dd) {
+        fit <- cor.test(dd[[1]],
+                        dd[[2]],
+                        alternative = alternative,
+                        method = method,
+                        exact = exact)
+        return(list(estimate = fit$estimate,
+                    p_value = fit$p.value,
+                    rows = nrow(dd)))
     }
 
-    res <- dig(x = x,
-               f = f,
-               condition = !!condition,
-               min_length = min_length,
-               max_length = max_length,
-               min_support = min_support,
-               threads = threads,
-               ...)
-
-    res <- do.call(rbind, res)
-
-    as_tibble(res)
+    dig_grid(x = x,
+             f = f,
+             condition = !!condition,
+             xvars = !!xvars,
+             yvars = !!yvars,
+             na_rm = TRUE,
+             min_length = min_length,
+             max_length = max_length,
+             min_support = min_support,
+             threads = threads,
+             ...)
 }
