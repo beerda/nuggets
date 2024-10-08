@@ -48,6 +48,12 @@
 #'      (See Description for the definition of *support*.)
 #' @param min_confidence the minimum confidence of a rule in the dataset `x`.
 #'      (See Description for the definition of *confidence*.)
+#' @param contingency_table a logical value indicating whether to provide a contingency
+#'      table for each rule. If `TRUE`, the columns `pp`, `pn`, `np`, and `nn` are
+#'      added to the output table. These columns contain the number of rows satisfying
+#'      the antecedent and the consequent, the antecedent but not the consequent,
+#'      the consequent but not the antecedent, and neither the antecedent nor the
+#'      consequent, respectively.
 #' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
 #'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
 #'      (Lukasiewicz t-norm).
@@ -66,6 +72,7 @@ dig_implications <- function(x,
                              min_coverage = 0,
                              min_support = 0,
                              min_confidence = 0,
+                             contingency_table = FALSE,
                              t_norm = "goguen",
                              threads = 1,
                              ...) {
@@ -77,6 +84,8 @@ dig_implications <- function(x,
 
     .must_be_double_scalar(min_confidence)
     .must_be_in_range(min_confidence, c(0, 1))
+
+    .must_be_flag(contingency_table)
 
     min_coverage = max(min_coverage, min_support)
 
@@ -125,8 +134,20 @@ dig_implications <- function(x,
                    count = sum)
     }
 
+    f3 <- function(condition, sum, support, pp, pn, np, nn) {
+        res <- f2(condition, sum, support, pp)
+        res$pp <- pp
+        res$pn <- pn
+        res$np <- np
+        res$nn <- nn
+
+        res
+    }
+
+    f <- ifelse(contingency_table, f3, f2)
+
     res <- dig(x = x,
-               f = f2,
+               f = f,
                condition = !!antecedent,
                focus = !!consequent,
                disjoint = disjoint,

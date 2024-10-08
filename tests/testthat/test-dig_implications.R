@@ -1,4 +1,4 @@
-test_that("dig_implications", {
+test_that("dig_implications without contingency table", {
     d <- data.frame(a = c(T, T, F, F, F),
                     b = c(T, T, T, T, F),
                     c = c(F, F, F, T, T))
@@ -7,7 +7,8 @@ test_that("dig_implications", {
                             antecedent = everything(),
                             consequent = everything(),
                             min_support = 0.0001,
-                            min_confidence = 0.0001)
+                            min_confidence = 0.0001,
+                            contingency_table = FALSE)
 
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 7)
@@ -27,6 +28,48 @@ test_that("dig_implications", {
                  c(0.4, 0.8, 0.4, 0.4, 0.4, 0.8, 0.8))
     expect_equal(round(res$confidence, 6),
                  c(0.4, 0.8, 0.4, 0.5, 0.25, 1.0, 0.5))
+})
+
+
+test_that("dig_implications with contingency table", {
+    d <- data.frame(a = c(T, T, F, F, F),
+                    b = c(T, T, T, T, F),
+                    c = c(F, F, F, T, T))
+
+    res <- dig_implications(d,
+                            antecedent = everything(),
+                            consequent = everything(),
+                            min_support = 0.0001,
+                            min_confidence = 0.0001,
+                            contingency_table = TRUE)
+
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 7)
+    expect_equal(colnames(res),
+                 c("antecedent", "consequent", "support", "confidence", "coverage", "conseq_support", "lift", "count",
+                   "pp", "pn", "np", "nn"))
+    expect_true(is.character(res$antecedent))
+    expect_true(is.character(res$consequent))
+    expect_true(is.double(res$support))
+    expect_true(is.double(res$confidence))
+    expect_equal(res$antecedent,
+                 c("{}", "{}", "{}", "{b}", "{b}", "{a}", "{c}"))
+    expect_equal(res$consequent,
+                 c("{a}", "{b}", "{c}", "{a}", "{c}", "{b}", "{b}"))
+    expect_equal(round(res$support, 6),
+                 c(0.4, 0.8, 0.4, 0.4, 0.2, 0.4, 0.2))
+    expect_equal(round(res$conseq_support, 6),
+                 c(0.4, 0.8, 0.4, 0.4, 0.4, 0.8, 0.8))
+    expect_equal(round(res$confidence, 6),
+                 c(0.4, 0.8, 0.4, 0.5, 0.25, 1.0, 0.5))
+    expect_equal(round(res$pp, 6),
+                 c(0.4, 0.8, 0.4, 0.4, 0.2, 0.4, 0.2))
+    expect_equal(round(res$np, 6),
+                 c(0.0, 0.0, 0.0, 0.0, 0.2, 0.4, 0.6))
+    expect_equal(round(res$pn, 6),
+                 c(0.6, 0.2, 0.6, 0.4, 0.6, 0.0, 0.2))
+    expect_equal(round(res$nn, 6),
+                 c(0.0, 0.0, 0.0, 0.2, 0.0, 0.2, 0.0))
 })
 
 

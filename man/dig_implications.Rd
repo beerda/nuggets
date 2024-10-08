@@ -14,6 +14,7 @@ dig_implications(
   min_coverage = 0,
   min_support = 0,
   min_confidence = 0,
+  contingency_table = FALSE,
   t_norm = "goguen",
   threads = 1,
   ...
@@ -53,6 +54,13 @@ is limited only by the number of available predicates.}
 
 \item{min_confidence}{the minimum confidence of a rule in the dataset \code{x}.
 (See Description for the definition of \emph{confidence}.)}
+
+\item{contingency_table}{a logical value indicating whether to provide a contingency
+table for each rule. If \code{TRUE}, the columns \code{pp}, \code{pn}, \code{np}, and \code{nn} are
+added to the output table. These columns contain the number of rows satisfying
+the antecedent and the consequent, the antecedent but not the consequent,
+the consequent but not the antecedent, and neither the antecedent nor the
+consequent, respectively.}
 
 \item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
 \code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}
