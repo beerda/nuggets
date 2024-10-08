@@ -44,11 +44,14 @@ combinations use at the first place (xvar)}
 specifying the columns of \code{x}, whose names will be used as a domain for
 combinations use at the second place (yvar)}
 
+\item{na_rm}{a logical value indicating whether to remove rows with missing
+values from sub-data before the callback function \code{f} is called}
+
 \item{min_length}{the minimum size (the minimum number of predicates) of the
 condition to be generated (must be greater or equal to 0). If 0, the empty
 condition is generated in the first place.}
 
-\item{max_length}{The maximum size (the maximum number of predicates) of the
+\item{max_length}{the maximum size (the maximum number of predicates) of the
 condition to be generated. If equal to Inf, the maximum length of conditions
 is limited only by the number of available predicates.}
 

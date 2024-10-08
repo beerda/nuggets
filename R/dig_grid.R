@@ -28,10 +28,12 @@
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying the columns of `x`, whose names will be used as a domain for
 #'      combinations use at the second place (yvar)
+#' @param na_rm a logical value indicating whether to remove rows with missing
+#'      values from sub-data before the callback function `f` is called
 #' @param min_length the minimum size (the minimum number of predicates) of the
 #'      condition to be generated (must be greater or equal to 0). If 0, the empty
 #'      condition is generated in the first place.
-#' @param max_length The maximum size (the maximum number of predicates) of the
+#' @param max_length the maximum size (the maximum number of predicates) of the
 #'      condition to be generated. If equal to Inf, the maximum length of conditions
 #'      is limited only by the number of available predicates.
 #' @param min_support the minimum support of a condition to trigger the callback
