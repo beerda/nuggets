@@ -1,6 +1,6 @@
 # nuggets ???
 - released: ???
-- added var_grid()
+- added var_grid(), dig_grid()
 
 # nuggets 1.1.0
 - released: 2024-10-07
