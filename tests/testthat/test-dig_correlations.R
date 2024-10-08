@@ -13,13 +13,15 @@ test_that("dig_correlations", {
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 12)
     expect_equal(colnames(res),
-                 c("condition", "xvar", "yvar", "estimate", "p_value", "rows"))
+                 c("condition", "support", "xvar", "yvar", "estimate", "p_value", "rows"))
     expect_equal(res$condition,
                  c(rep("{}", 3), rep("{a}", 3), rep("{b}", 3), rep("{a,b}", 3)))
     expect_equal(res$xvar,
                  rep(c("x", "x", "y"), 4))
     expect_equal(res$yvar,
                  rep(c("y", "z", "z"), 4))
+    expect_equal(res$support,
+                 c(rep(100, 6), rep(50, 6)) / 100)
     expect_equal(res$rows,
                  c(rep(100, 6), rep(50, 6)))
 })
@@ -43,13 +45,15 @@ test_that("dig_correlations with NA", {
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 12)
     expect_equal(colnames(res),
-                 c("condition", "xvar", "yvar", "estimate", "p_value", "rows"))
+                 c("condition", "support", "xvar", "yvar", "estimate", "p_value", "rows"))
     expect_equal(res$condition,
                  c(rep("{}", 3), rep("{a}", 3), rep("{b}", 3), rep("{a,b}", 3)))
     expect_equal(res$xvar,
                  rep(c("x", "x", "y"), 4))
     expect_equal(res$yvar,
                  rep(c("y", "z", "z"), 4))
+    expect_equal(res$support,
+                 c(rep(100, 6), rep(50, 6)) / 100)
     expect_equal(res$rows,
                  c(98, 99, 99,
                    98, 99, 99,
