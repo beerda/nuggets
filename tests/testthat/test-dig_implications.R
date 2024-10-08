@@ -192,3 +192,40 @@ test_that("dig_implications min_coverage", {
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 3)
 })
+
+
+test_that("compare dig_implications to arules::apriori", {
+    set.seed(2123)
+    rows <- 100
+    cols <- 5
+    m <- matrix(sample(c(T, F), rows * cols, replace = TRUE),
+                nrow = rows,
+                ncol = cols)
+    colnames(m) <- letters[seq_len(cols)]
+
+    afit <- arules::apriori(m, parameter = list(minlen = 1,
+                                        maxlen = 6,
+                                        supp=0.001,
+                                        conf = 0.5),
+                    control = list(verbose = FALSE))
+
+    expected <- arules::DATAFRAME(afit)
+    expected$LHS <- as.character(expected$LHS)
+    expected$RHS <- as.character(expected$RHS)
+    expected <- expected[order(expected$LHS, expected$RHS), ]
+
+    res <- dig_implications(m,
+                            min_support = 0.001,
+                            min_length = 0,
+                            max_length = 5,
+                            min_confidence = 0.5)
+    res <- res[order(res$antecedent, res$consequent), ]
+
+    expect_equal(res$antecedent, expected$LHS)
+    expect_equal(res$consequent, expected$RHS)
+    expect_equal(res$support, expected$support, tolerance = 1e-6)
+    expect_equal(res$confidence, expected$confidence, tolerance = 1e-6)
+    expect_equal(res$coverage, expected$coverage, tolerance = 1e-6)
+    expect_equal(res$lift, expected$lift, tolerance = 1e-6)
+    expect_equal(res$count, expected$count)
+})

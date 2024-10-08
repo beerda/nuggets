@@ -40,6 +40,7 @@ LinkingTo:
     testthat
 SystemRequirements: C++17
 Suggests: 
+    arules,
     testthat (>= 3.0.0),
     xml2
 Config/testthat/edition: 3
