@@ -66,7 +66,7 @@ dig_grid <- function(x,
     yvars <- enquo(yvars)
     grid <- var_grid(x, !!xvars, !!yvars)
 
-    ff <- function(condition, indices) {
+    ff <- function(condition, support, indices) {
         cond <- format_condition(names(condition))
         d <- x[indices, , drop = FALSE]
 
@@ -82,6 +82,7 @@ dig_grid <- function(x,
         result <- do.call(rbind, result)
 
         cbind(condition = rep(cond, nrow(grid)),
+              support = support,
               grid,
               result)
     }
