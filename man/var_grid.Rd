@@ -4,7 +4,7 @@
 \alias{var_grid}
 \title{Create a tibble of combinations of xvar/yvar variable pairs.}
 \usage{
-var_grid(x, xvars = everything(), yvars = everything(), call = caller_env())
+var_grid(x, xvars = everything(), yvars = everything())
 }
 \arguments{
 \item{x}{either a data frame or a matrix}

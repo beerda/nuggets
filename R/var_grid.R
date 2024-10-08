@@ -27,8 +27,7 @@
 #' @export
 var_grid <- function(x,
                      xvars = everything(),
-                     yvars = everything(),
-                     call = caller_env()) {
+                     yvars = everything()) {
     xvars <- enquo(xvars)
     yvars <- enquo(yvars)
 
