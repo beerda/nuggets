@@ -1,3 +1,7 @@
+# nuggets ???
+- released: ???
+- added var_grid()
+
 # nuggets 1.1.0
 - released: 2024-10-07
 - added .other argument to dichotomize()

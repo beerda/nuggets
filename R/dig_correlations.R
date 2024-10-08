@@ -60,46 +60,14 @@ dig_correlations <- function(x,
     condition <- enquo(condition)
     xvars <- enquo(xvars)
     yvars <- enquo(yvars)
-
-    if (is.matrix(x)) {
-        cols <- lapply(seq_len(ncol(x)), function(i) x[, i])
-        names(cols) <- colnames(x)
-        if (is.null(names(cols))) {
-            names(cols) <- seq_len(length(cols))
-        }
-    } else if (is.data.frame(x)) {
-        cols <- as.list(x)
-        if (is.null(names(cols))) {
-            names(cols) <- seq_len(length(cols))
-        }
-    } else {
-        cli_abort(c("{.var x} must be a matrix or a data frame.",
-                    "x" = "You've supplied a {.cls {class(x)}}."))
-    }
-
-    xvars <- eval_select(xvars, cols)
-    yvars <- eval_select(yvars, cols)
-
-    if (length(xvars) <= 0) {
-        cli_abort(c("{.var xvars} must specify the list of numeric columns.",
-                    "x" = "{.var xvars} resulted in an empty list."))
-    }
-    if (length(yvars) <= 0) {
-        cli_abort(c("{.var yvars} must specify the list of numeric columns.",
-                    "x" = "{.var yvars} resulted in an empty list."))
-    }
-
-    grid <- expand_grid(xvar = xvars, yvar = yvars)
-    grid <- grid[grid$xvar != grid$yvar, ]
-    dup <- apply(grid, 1, function(row) paste(sort(row), collapse = " "))
-    grid <- grid[!duplicated(dup), ]
+    grid <- var_grid(x, !!xvars, !!yvars)
 
     f <- function(condition, sum, indices) {
         cond <- format_condition(names(condition))
         d <- x[indices, , drop = FALSE]
 
         result <- apply(grid, 1, function(row) {
-            dd <- na.omit(d[, row])
+            dd <- na.omit(d[, row, drop = FALSE])
             fit <- cor.test(dd[[1]],
                             dd[[2]],
                             alternative = alternative,
@@ -127,8 +95,6 @@ dig_correlations <- function(x,
                ...)
 
     res <- do.call(rbind, res)
-    res$xvar <- names(cols)[res$xvar]
-    res$yvar <- names(cols)[res$yvar]
 
     as_tibble(res)
 }
