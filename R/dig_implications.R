@@ -87,7 +87,8 @@ dig_implications <- function(x,
 
     .must_be_flag(contingency_table)
 
-    min_coverage = max(min_coverage, min_support)
+    min_coverage <- max(min_coverage, min_support)
+    n <- nrow(x)
 
     antecedent <- enquo(antecedent)
     consequent <- enquo(consequent)
@@ -108,7 +109,7 @@ dig_implications <- function(x,
                            threads = threads)
     conseq_supports <- unlist(conseq_supports)
 
-    f2 <- function(condition, sum, support, pp) {
+    f2 <- function(condition, support, pp) {
         conf <- pp / support
 
         sel <-!is.na(pp) & !is.na(conf) & conf >= min_confidence
@@ -131,11 +132,11 @@ dig_implications <- function(x,
                    coverage = support,
                    conseq_support = conseq_supports[selnames],
                    lift = lift,
-                   count = sum)
+                   count = as.integer(round(supp * n)))
     }
 
-    f3 <- function(condition, sum, support, pp, pn, np, nn) {
-        res <- f2(condition, sum, support, pp)
+    f3 <- function(condition, support, pp, pn, np, nn) {
+        res <- f2(condition, support, pp)
         res$pp <- pp
         res$pn <- pn
         res$np <- np
