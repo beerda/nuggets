@@ -54,6 +54,11 @@
 #'      the antecedent and the consequent, the antecedent but not the consequent,
 #'      the consequent but not the antecedent, and neither the antecedent nor the
 #'      consequent, respectively.
+#' @param measures a character vector specifying the additional quality measures to compute.
+#'      If `NULL`, no additional measures are computed. Possible values are `"lift"`,
+#'      `"added_value"`.
+#'      See [https://mhahsler.github.io/arules/docs/measures](https://mhahsler.github.io/arules/docs/measures)
+#'      for a description of the measures.
 #' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
 #'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
 #'      (Lukasiewicz t-norm).
@@ -73,6 +78,7 @@ dig_implications <- function(x,
                              min_support = 0,
                              min_confidence = 0,
                              contingency_table = FALSE,
+                             measures = NULL,
                              t_norm = "goguen",
                              threads = 1,
                              ...) {
@@ -86,6 +92,10 @@ dig_implications <- function(x,
     .must_be_in_range(min_confidence, c(0, 1))
 
     .must_be_flag(contingency_table)
+    .must_be_enum(measures,
+                  values = c("lift", "added_value"),
+                  null = TRUE,
+                  multi = TRUE)
 
     min_coverage <- max(min_coverage, min_support)
     n <- nrow(x)
@@ -117,7 +127,6 @@ dig_implications <- function(x,
         selnames <- names(pp)[sel]
         conf <- conf[sel]
         supp <- pp[sel]
-        lift <- supp / (support * conseq_supports[selnames])
         ante <- format_condition(names(condition))
         cons <- unlist(lapply(names(conf), format_condition))
 
@@ -131,7 +140,6 @@ dig_implications <- function(x,
                    confidence = conf,
                    coverage = support,
                    conseq_support = conseq_supports[selnames],
-                   lift = lift,
                    count = as.integer(round(supp * n)))
     }
 
@@ -162,6 +170,13 @@ dig_implications <- function(x,
                ...)
 
     res <- do.call(rbind, res)
+
+    if ("lift" %in% measures) {
+        res$lift <- res$support / (res$coverage * res$conseq_support)
+    }
+    if ("added_value" %in% measures) {
+        res$added_value <- res$confidence - res$conseq_support
+    }
 
     as_tibble(res)
 }

@@ -13,7 +13,7 @@ test_that("dig_implications without contingency table", {
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 7)
     expect_equal(colnames(res),
-                 c("antecedent", "consequent", "support", "confidence", "coverage", "conseq_support", "lift", "count"))
+                 c("antecedent", "consequent", "support", "confidence", "coverage", "conseq_support", "count"))
     expect_true(is.character(res$antecedent))
     expect_true(is.character(res$consequent))
     expect_true(is.double(res$support))
@@ -46,7 +46,7 @@ test_that("dig_implications with contingency table", {
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 7)
     expect_equal(colnames(res),
-                 c("antecedent", "consequent", "support", "confidence", "coverage", "conseq_support", "lift", "count",
+                 c("antecedent", "consequent", "support", "confidence", "coverage", "conseq_support", "count",
                    "pp", "pn", "np", "nn"))
     expect_true(is.character(res$antecedent))
     expect_true(is.character(res$consequent))
@@ -88,7 +88,7 @@ test_that("dig_implications with disjoint", {
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 5)
     expect_equal(colnames(res),
-                 c("antecedent", "consequent", "support", "confidence", "coverage", "conseq_support", "lift", "count"))
+                 c("antecedent", "consequent", "support", "confidence", "coverage", "conseq_support", "count"))
     expect_true(is.character(res$antecedent))
     expect_true(is.character(res$consequent))
     expect_true(is.double(res$support))
@@ -212,13 +212,19 @@ test_that("compare dig_implications to arules::apriori", {
     expected <- arules::DATAFRAME(afit)
     expected$LHS <- as.character(expected$LHS)
     expected$RHS <- as.character(expected$RHS)
+
+    for (inter in c("addedValue")) {
+        expected[[inter]] <- arules::interestMeasure(afit, inter)
+    }
     expected <- expected[order(expected$LHS, expected$RHS), ]
 
     res <- dig_implications(m,
                             min_support = 0.001,
                             min_length = 0,
                             max_length = 5,
-                            min_confidence = 0.5)
+                            min_confidence = 0.5,
+                            measures = c("lift",
+                                         "added_value"))
     res <- res[order(res$antecedent, res$consequent), ]
 
     expect_equal(res$antecedent, expected$LHS)
@@ -227,5 +233,6 @@ test_that("compare dig_implications to arules::apriori", {
     expect_equal(res$confidence, expected$confidence, tolerance = 1e-6)
     expect_equal(res$coverage, expected$coverage, tolerance = 1e-6)
     expect_equal(res$lift, expected$lift, tolerance = 1e-6)
+    expect_equal(res$added_value, expected$addedValue, tolerance = 1e-6)
     expect_equal(res$count, expected$count)
 })

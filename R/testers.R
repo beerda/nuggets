@@ -162,18 +162,28 @@
 
 .must_be_enum <- function(x,
                           values,
+                          null = FALSE,
+                          multi = FALSE,
                           name = deparse(substitute(x)),
                           call = caller_env()) {
-    test <- x %in% values
+    test <- FALSE
+    if (is.null(x)) {
+        test <- isTRUE(null)
+    } else {
+        if (isTRUE(multi)) {
+            test <- all(x %in% values)
+        } else {
+            test <- x %in% values
+        }
+    }
     if (!isTRUE(test)) {
+        msg <- if (null) " or NULL" else ""
         vals <- paste0('"', values, '"', collapse = ", ")
-        cli_abort(c("{.var {name}} must be equal to any value from: {vals}.",
+        cli_abort(c("{.var {name}} must be equal to any value from: {vals}{msg}.",
                     "x" = "You've supplied {x}."),
                   call = call)
     }
 }
-
-
 
 .must_have_length <- function(x,
                               value,
