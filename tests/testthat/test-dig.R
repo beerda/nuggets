@@ -156,8 +156,8 @@ test_that("pp arg", {
                focus = "2")
 
     expect_equal(length(res), 2)
-    expect_equal(res, list(list(fs = c("2" = 3/6)),
-                           list(fs = c("2" = 2/6))),
+    expect_equal(res, list(list(fs = c("2" = 3)),
+                           list(fs = c("2" = 2))),
                  tolerance = 1e-6)
 })
 
@@ -170,8 +170,8 @@ test_that("np arg", {
                focus = "2")
 
     expect_equal(length(res), 2)
-    expect_equal(res, list(list(fs = c("2" = 0/6)),
-                           list(fs = c("2" = 1/6))),
+    expect_equal(res, list(list(fs = c("2" = 3)),
+                           list(fs = c("2" = 1))),
                  tolerance = 1e-6)
 })
 
@@ -184,8 +184,8 @@ test_that("pn arg", {
                focus = "2")
 
     expect_equal(length(res), 2)
-    expect_equal(res, list(list(fs = c("2" = 4/6)),
-                           list(fs = c("2" = 2/6))),
+    expect_equal(res, list(list(fs = c("2" = 4)),
+                           list(fs = c("2" = 2))),
                  tolerance = 1e-6)
 })
 
@@ -198,8 +198,8 @@ test_that("nn arg", {
                focus = "2")
 
     expect_equal(length(res), 2)
-    expect_equal(res, list(list(fs = c("2" = 0/6)),
-                           list(fs = c("2" = 1/6))),
+    expect_equal(res, list(list(fs = c("2" = 3)),
+                           list(fs = c("2" = 1))),
                  tolerance = 1e-6)
 })
 
@@ -234,45 +234,45 @@ test_that("complex contingency table test (logical)", {
     expect_equal(nrow(res), 8)
     expect_equal(ncol(res), 8)
 
-    expect_equal(res["{}", "a_pp"], mean(a), tolerance = 1e-6)
-    expect_equal(res["{}", "a_pn"], mean(!a), tolerance = 1e-6)
-    expect_equal(res["{}", "a_np"], 0)
-    expect_equal(res["{}", "a_nn"], 0)
+    expect_equal(res["{}", "a_pp"], sum(a), tolerance = 1e-6)
+    expect_equal(res["{}", "a_pn"], sum(!a), tolerance = 1e-6)
+    expect_equal(res["{}", "a_np"], sum(a), tolerance = 1e-6)
+    expect_equal(res["{}", "a_nn"], sum(!a), tolerance = 1e-6)
 
-    expect_equal(res["{}", "b_pp"], mean(b), tolerance = 1e-6)
-    expect_equal(res["{}", "b_pn"], mean(!b), tolerance = 1e-6)
-    expect_equal(res["{}", "b_np"], 0)
-    expect_equal(res["{}", "b_nn"], 0)
+    expect_equal(res["{}", "b_pp"], sum(b), tolerance = 1e-6)
+    expect_equal(res["{}", "b_pn"], sum(!b), tolerance = 1e-6)
+    expect_equal(res["{}", "b_np"], sum(b), tolerance = 1e-6)
+    expect_equal(res["{}", "b_nn"], sum(!b), tolerance = 1e-6)
 
-    expect_equal(res["{d}", "a_pp"], mean(d & a), tolerance = 1e-6)
-    expect_equal(res["{d}", "a_pn"], mean(d & !a), tolerance = 1e-6)
-    expect_equal(res["{d}", "a_np"], mean(!d & a), tolerance = 1e-6)
-    expect_equal(res["{d}", "a_nn"], mean(!d & !a), tolerance = 1e-6)
+    expect_equal(res["{d}", "a_pp"], sum(d & a), tolerance = 1e-6)
+    expect_equal(res["{d}", "a_pn"], sum(d & !a), tolerance = 1e-6)
+    expect_equal(res["{d}", "a_np"], sum(!d & a), tolerance = 1e-6)
+    expect_equal(res["{d}", "a_nn"], sum(!d & !a), tolerance = 1e-6)
 
-    expect_equal(res["{d}", "b_pp"], mean(d & b), tolerance = 1e-6)
-    expect_equal(res["{d}", "b_pn"], mean(d & !b), tolerance = 1e-6)
-    expect_equal(res["{d}", "b_np"], mean(!d & b), tolerance = 1e-6)
-    expect_equal(res["{d}", "b_nn"], mean(!d & !b), tolerance = 1e-6)
+    expect_equal(res["{d}", "b_pp"], sum(d & b), tolerance = 1e-6)
+    expect_equal(res["{d}", "b_pn"], sum(d & !b), tolerance = 1e-6)
+    expect_equal(res["{d}", "b_np"], sum(!d & b), tolerance = 1e-6)
+    expect_equal(res["{d}", "b_nn"], sum(!d & !b), tolerance = 1e-6)
 
-    expect_equal(res["{d,e}", "a_pp"], mean(e & d & a), tolerance = 1e-6)
-    expect_equal(res["{d,e}", "a_pn"], mean(e & d & !a), tolerance = 1e-6)
-    expect_equal(res["{d,e}", "a_np"], mean(!(e & d) & a), tolerance = 1e-6)
-    expect_equal(res["{d,e}", "a_nn"], mean(!(e & d) & !a), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "a_pp"], sum(e & d & a), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "a_pn"], sum(e & d & !a), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "a_np"], sum(!(e & d) & a), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "a_nn"], sum(!(e & d) & !a), tolerance = 1e-6)
 
-    expect_equal(res["{d,e}", "b_pp"], mean(e & d & b), tolerance = 1e-6)
-    expect_equal(res["{d,e}", "b_pn"], mean(e & d & !b), tolerance = 1e-6)
-    expect_equal(res["{d,e}", "b_np"], mean(!(e & d) & b), tolerance = 1e-6)
-    expect_equal(res["{d,e}", "b_nn"], mean(!(e & d) & !b), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "b_pp"], sum(e & d & b), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "b_pn"], sum(e & d & !b), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "b_np"], sum(!(e & d) & b), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "b_nn"], sum(!(e & d) & !b), tolerance = 1e-6)
 
-    expect_equal(res["{c,d,e}", "a_pp"], mean(e & c & d & a), tolerance = 1e-6)
-    expect_equal(res["{c,d,e}", "a_pn"], mean(e & c & d & !a), tolerance = 1e-6)
-    expect_equal(res["{c,d,e}", "a_np"], mean(!(e & c & d) & a), tolerance = 1e-6)
-    expect_equal(res["{c,d,e}", "a_nn"], mean(!(e & c & d) & !a), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "a_pp"], sum(e & c & d & a), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "a_pn"], sum(e & c & d & !a), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "a_np"], sum(!(e & c & d) & a), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "a_nn"], sum(!(e & c & d) & !a), tolerance = 1e-6)
 
-    expect_equal(res["{c,d,e}", "b_pp"], mean(e & c & d & b), tolerance = 1e-6)
-    expect_equal(res["{c,d,e}", "b_pn"], mean(e & c & d & !b), tolerance = 1e-6)
-    expect_equal(res["{c,d,e}", "b_np"], mean(!(e & c & d) & b), tolerance = 1e-6)
-    expect_equal(res["{c,d,e}", "b_nn"], mean(!(e & c & d) & !b), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "b_pp"], sum(e & c & d & b), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "b_pn"], sum(e & c & d & !b), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "b_np"], sum(!(e & c & d) & b), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "b_nn"], sum(!(e & c & d) & !b), tolerance = 1e-6)
 })
 
 
@@ -307,45 +307,45 @@ test_that("complex contingency table test (numeric)", {
     expect_equal(nrow(res), 8)
     expect_equal(ncol(res), 8)
 
-    expect_equal(res["{}", "a_pp"], mean(a), tolerance = 1e-6)
-    expect_equal(res["{}", "a_pn"], mean(1 - a), tolerance = 1e-6)
-    expect_equal(res["{}", "a_np"], 0)
-    expect_equal(res["{}", "a_nn"], 0)
+    expect_equal(res["{}", "a_pp"], sum(a), tolerance = 1e-6)
+    expect_equal(res["{}", "a_pn"], sum(1 - a), tolerance = 1e-6)
+    expect_equal(res["{}", "a_np"], sum(a), tolerance = 1e-6)
+    expect_equal(res["{}", "a_nn"], sum(1 - a), tolerance = 1e-6)
 
-    expect_equal(res["{}", "b_pp"], mean(b), tolerance = 1e-6)
-    expect_equal(res["{}", "b_pn"], mean(1 - b), tolerance = 1e-6)
-    expect_equal(res["{}", "b_np"], 0)
-    expect_equal(res["{}", "b_nn"], 0)
+    expect_equal(res["{}", "b_pp"], sum(b), tolerance = 1e-6)
+    expect_equal(res["{}", "b_pn"], sum(1 - b), tolerance = 1e-6)
+    expect_equal(res["{}", "b_np"], sum(b), tolerance = 1e-6)
+    expect_equal(res["{}", "b_nn"], sum(1 - b), tolerance = 1e-6)
 
-    expect_equal(res["{d}", "a_pp"], mean(pmin(d, a)), tolerance = 1e-6)
-    expect_equal(res["{d}", "a_pn"], mean(pmin(d, 1 - a)), tolerance = 1e-6)
-    expect_equal(res["{d}", "a_np"], mean(pmin(1 - d, a)), tolerance = 1e-6)
-    expect_equal(res["{d}", "a_nn"], mean(pmin(1 - d, 1 - a)), tolerance = 1e-6)
+    expect_equal(res["{d}", "a_pp"], sum(pmin(d, a)), tolerance = 1e-6)
+    expect_equal(res["{d}", "a_pn"], sum(pmin(d, 1 - a)), tolerance = 1e-6)
+    expect_equal(res["{d}", "a_np"], sum(pmin(1 - d, a)), tolerance = 1e-6)
+    expect_equal(res["{d}", "a_nn"], sum(pmin(1 - d, 1 - a)), tolerance = 1e-6)
 
-    expect_equal(res["{d}", "b_pp"], mean(pmin(d, b)), tolerance = 1e-6)
-    expect_equal(res["{d}", "b_pn"], mean(pmin(d, 1 - b)), tolerance = 1e-6)
-    expect_equal(res["{d}", "b_np"], mean(pmin(1 - d, b)), tolerance = 1e-6)
-    expect_equal(res["{d}", "b_nn"], mean(pmin(1 - d, 1 - b)), tolerance = 1e-6)
+    expect_equal(res["{d}", "b_pp"], sum(pmin(d, b)), tolerance = 1e-6)
+    expect_equal(res["{d}", "b_pn"], sum(pmin(d, 1 - b)), tolerance = 1e-6)
+    expect_equal(res["{d}", "b_np"], sum(pmin(1 - d, b)), tolerance = 1e-6)
+    expect_equal(res["{d}", "b_nn"], sum(pmin(1 - d, 1 - b)), tolerance = 1e-6)
 
-    expect_equal(res["{d,e}", "a_pp"], mean(pmin(e, d, a)), tolerance = 1e-6)
-    expect_equal(res["{d,e}", "a_pn"], mean(pmin(e, d, 1 - a)), tolerance = 1e-6)
-    expect_equal(res["{d,e}", "a_np"], mean(pmin(1 - pmin(e, d), a)), tolerance = 1e-6)
-    expect_equal(res["{d,e}", "a_nn"], mean(pmin(1 - pmin(e, d), 1 - a)), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "a_pp"], sum(pmin(e, d, a)), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "a_pn"], sum(pmin(e, d, 1 - a)), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "a_np"], sum(pmin(1 - pmin(e, d), a)), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "a_nn"], sum(pmin(1 - pmin(e, d), 1 - a)), tolerance = 1e-6)
 
-    expect_equal(res["{d,e}", "b_pp"], mean(pmin(e, d, b)), tolerance = 1e-6)
-    expect_equal(res["{d,e}", "b_pn"], mean(pmin(e, d, 1 - b)), tolerance = 1e-6)
-    expect_equal(res["{d,e}", "b_np"], mean(pmin(1 - pmin(e, d), b)), tolerance = 1e-6)
-    expect_equal(res["{d,e}", "b_nn"], mean(pmin(1 - pmin(e, d), 1 - b)), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "b_pp"], sum(pmin(e, d, b)), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "b_pn"], sum(pmin(e, d, 1 - b)), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "b_np"], sum(pmin(1 - pmin(e, d), b)), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "b_nn"], sum(pmin(1 - pmin(e, d), 1 - b)), tolerance = 1e-6)
 
-    expect_equal(res["{c,d,e}", "a_pp"], mean(pmin(e, c, d, a)), tolerance = 1e-6)
-    expect_equal(res["{c,d,e}", "a_pn"], mean(pmin(e, c, d, 1 - a)), tolerance = 1e-6)
-    expect_equal(res["{c,d,e}", "a_np"], mean(pmin(1 - pmin(e, c, d), a)), tolerance = 1e-6)
-    expect_equal(res["{c,d,e}", "a_nn"], mean(pmin(1 - pmin(e, c, d), 1 - a)), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "a_pp"], sum(pmin(e, c, d, a)), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "a_pn"], sum(pmin(e, c, d, 1 - a)), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "a_np"], sum(pmin(1 - pmin(e, c, d), a)), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "a_nn"], sum(pmin(1 - pmin(e, c, d), 1 - a)), tolerance = 1e-6)
 
-    expect_equal(res["{c,d,e}", "b_pp"], mean(pmin(e, c, d, b)), tolerance = 1e-6)
-    expect_equal(res["{c,d,e}", "b_pn"], mean(pmin(e, c, d, 1 - b)), tolerance = 1e-6)
-    expect_equal(res["{c,d,e}", "b_np"], mean(pmin(1 - pmin(e, c, d), b)), tolerance = 1e-6)
-    expect_equal(res["{c,d,e}", "b_nn"], mean(pmin(1 - pmin(e, c, d), 1 - b)), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "b_pp"], sum(pmin(e, c, d, b)), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "b_pn"], sum(pmin(e, c, d, 1 - b)), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "b_np"], sum(pmin(1 - pmin(e, c, d), b)), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "b_nn"], sum(pmin(1 - pmin(e, c, d), 1 - b)), tolerance = 1e-6)
 })
 
 

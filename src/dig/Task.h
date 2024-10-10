@@ -133,14 +133,9 @@ public:
     {
         if (focusIterator.hasPredicate()) {
             int focus = focusIterator.getCurrentPredicate();
+            npFocusChains[focus] = data.getFocus(focus);
             if (conditionIterator.getLength() > 0) {
-                npFocusChains[focus] = data.getFocus(focus);
                 npFocusChains[focus].conjunctWith(negativeChain);
-            } else {
-                // result is empty chain because we work with condition of length 0 (tautology)
-                // and hence the negation of tautology is contradiction.
-                // Empty chain indicates contradiction here.
-                npFocusChains[focus] = positiveChain;
             }
         }
     }
@@ -149,14 +144,9 @@ public:
     {
         if (focusIterator.hasPredicate()) {
             int focus = focusIterator.getCurrentPredicate();
+            nnFocusChains[focus] = data.getNegativeFocus(focus);
             if (conditionIterator.getLength() > 0) {
-                nnFocusChains[focus] = data.getNegativeFocus(focus);
                 nnFocusChains[focus].conjunctWith(negativeChain);
-            } else {
-                // result is empty chain because we work with condition of length 0 (tautology)
-                // and hence the negation of tautology is contradiction.
-                // Empty chain indicates contradiction here.
-                nnFocusChains[focus] = positiveChain;
             }
         }
     }

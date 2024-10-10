@@ -24,14 +24,7 @@ public:
         ArgumentValue arg("np", ArgumentType::ARG_NUMERIC);
 
         for (int i : task.getFocusIterator().getSoFar()) {
-            DualChainType chain = task.getNpFocusChain(i);
-            if (chain.empty()) {
-                // special case: empty chain occurs on empty condition and indicates contradiction
-                // (see Task::computeNpFocusChain)
-                arg.push_back(0.0, fociNames[i]);
-            } else {
-                arg.push_back(chain.getSupport(), fociNames[i]);
-            }
+            arg.push_back(task.getNpFocusChain(i).getSum(), fociNames[i]);
         }
 
         arguments.push_back(arg);
