@@ -235,8 +235,7 @@ test_that("compare dig_implications to arules::apriori", {
                             min_confidence = 0.5,
                             measures = c("lift",
                                          "conviction",
-                                         "added_value",
-                                         "centered_confidence"))
+                                         "added_value"))
     res <- res[order(res$antecedent, res$consequent), ]
 
     expect_equal(res$antecedent, expected$LHS)
@@ -247,6 +246,5 @@ test_that("compare dig_implications to arules::apriori", {
     expect_equal(res$lift, expected$lift, tolerance = 1e-6)
     expect_equal(res$conviction, expected$conviction, tolerance = 1e-6)
     expect_equal(res$added_value, expected$addedValue, tolerance = 1e-6)
-    expect_equal(res$centered_confidence, expected$centeredConfidence, tolerance = 1e-6)
     expect_equal(res$count, expected$count)
 })

@@ -15,6 +15,7 @@ dig_implications(
   min_support = 0,
   min_confidence = 0,
   contingency_table = FALSE,
+  measures = NULL,
   t_norm = "goguen",
   threads = 1,
   ...
@@ -61,6 +62,12 @@ added to the output table. These columns contain the number of rows satisfying
 the antecedent and the consequent, the antecedent but not the consequent,
 the consequent but not the antecedent, and neither the antecedent nor the
 consequent, respectively.}
+
+\item{measures}{a character vector specifying the additional quality measures to compute.
+If \code{NULL}, no additional measures are computed. Possible values are \code{"lift"},
+\code{"conviction"}, \code{"added_value"}.
+See \url{https://mhahsler.github.io/arules/docs/measures}
+for a description of the measures.}
 
 \item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
 \code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}

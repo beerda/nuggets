@@ -56,7 +56,7 @@
 #'      consequent, respectively.
 #' @param measures a character vector specifying the additional quality measures to compute.
 #'      If `NULL`, no additional measures are computed. Possible values are `"lift"`,
-#'      `"conviction"`, `"added_value"`, `"centered_confidence"`.
+#'      `"conviction"`, `"added_value"`.
 #'      See [https://mhahsler.github.io/arules/docs/measures](https://mhahsler.github.io/arules/docs/measures)
 #'      for a description of the measures.
 #' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
@@ -93,7 +93,7 @@ dig_implications <- function(x,
 
     .must_be_flag(contingency_table)
     .must_be_enum(measures,
-                  values = c("lift", "conviction", "added_value", "centered_confidence"),
+                  values = c("lift", "conviction", "added_value"),
                   null = TRUE,
                   multi = TRUE)
 
@@ -190,11 +190,9 @@ dig_implications <- function(x,
     if ("conviction" %in% measures) {
         res$conviction <- res$coverage * (1 - res$conseq_support) / (res$pn / n)
     }
+
     if ("added_value" %in% measures) {
         res$added_value <- res$confidence - res$conseq_support
-    }
-    if ("centered_confidence" %in% measures) {
-        res$centered_confidence <- res$confidence - res$conseq_support
     }
 
     if (!contingency_table) {
