@@ -56,7 +56,7 @@
 #'      consequent, respectively.
 #' @param measures a character vector specifying the additional quality measures to compute.
 #'      If `NULL`, no additional measures are computed. Possible values are `"lift"`,
-#'      `"added_value"`.
+#'      `"conviction"`, `"added_value"`, `"centered_confidence"`.
 #'      See [https://mhahsler.github.io/arules/docs/measures](https://mhahsler.github.io/arules/docs/measures)
 #'      for a description of the measures.
 #' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
@@ -93,7 +93,7 @@ dig_implications <- function(x,
 
     .must_be_flag(contingency_table)
     .must_be_enum(measures,
-                  values = c("lift", "added_value"),
+                  values = c("lift", "conviction", "added_value", "centered_confidence"),
                   null = TRUE,
                   multi = TRUE)
 
@@ -119,41 +119,54 @@ dig_implications <- function(x,
                            threads = threads)
     conseq_supports <- unlist(conseq_supports)
 
-    f2 <- function(condition, support, pp) {
-        conf <- pp / support
-
+    basic_callback <- function(condition, sum, pp) {
+        conf <- pp / sum
         sel <-!is.na(pp) & !is.na(conf) & conf >= min_confidence
-
         selnames <- names(pp)[sel]
         conf <- conf[sel]
-        supp <- pp[sel]
+        supp <- pp[sel] / n
         ante <- format_condition(names(condition))
         cons <- unlist(lapply(names(conf), format_condition))
 
         if (length(conf) <= 0) {
+            return(list(sel = logical(0), res = NULL))
+        }
+
+        list(sel = sel,
+             res =  data.frame(antecedent = ante,
+                               consequent = cons,
+                               support = supp,
+                               confidence = conf,
+                               coverage = sum / n,
+                               conseq_support = conseq_supports[selnames],
+                               count = pp[sel],
+                               antecedent_length = length(condition)))
+    }
+
+    f2 <- function(condition, sum, pp) {
+        basic_callback(condition, sum, pp)$res
+    }
+
+    f3 <- function(condition, sum, pp, pn, np, nn) {
+        bas <- basic_callback(condition, sum, pp)
+        sel <- bas$sel
+        res <- bas$res
+
+        if (length(res) <= 0) {
             return(NULL)
         }
 
-        data.frame(antecedent = ante,
-                   consequent = cons,
-                   support = supp,
-                   confidence = conf,
-                   coverage = support,
-                   conseq_support = conseq_supports[selnames],
-                   count = as.integer(round(supp * n)))
-    }
-
-    f3 <- function(condition, support, pp, pn, np, nn) {
-        res <- f2(condition, support, pp)
-        res$pp <- pp
-        res$pn <- pn
-        res$np <- np
-        res$nn <- nn
+        res$pp <- pp[sel]
+        res$pn <- pn[sel]
+        res$np <- np[sel]
+        res$nn <- nn[sel]
 
         res
     }
 
-    f <- ifelse(contingency_table, f3, f2)
+    contingency_needed_measures <- c("conviction")
+    contingency_needed <- length(intersect(measures, contingency_needed_measures)) > 0
+    f <- ifelse(contingency_table || contingency_needed, f3, f2)
 
     res <- dig(x = x,
                f = f,
@@ -174,8 +187,21 @@ dig_implications <- function(x,
     if ("lift" %in% measures) {
         res$lift <- res$support / (res$coverage * res$conseq_support)
     }
+    if ("conviction" %in% measures) {
+        res$conviction <- res$coverage * (1 - res$conseq_support) / (res$pn / n)
+    }
     if ("added_value" %in% measures) {
         res$added_value <- res$confidence - res$conseq_support
+    }
+    if ("centered_confidence" %in% measures) {
+        res$centered_confidence <- res$confidence - res$conseq_support
+    }
+
+    if (!contingency_table) {
+        res$pp <- NULL
+        res$pn <- NULL
+        res$np <- NULL
+        res$nn <- NULL
     }
 
     as_tibble(res)
