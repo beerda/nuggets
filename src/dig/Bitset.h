@@ -20,8 +20,6 @@ public:
         : data((n + CHUNK_SIZE - 1) / CHUNK_SIZE), n(n)
     { }
 
-    virtual ~Bitset() = default;
-
     void clear()
     {
         data.clear();
