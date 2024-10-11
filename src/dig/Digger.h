@@ -47,7 +47,8 @@ public:
         initializeRun();
 
         #if defined(_OPENMP)
-            #pragma omp parallel num_threads(allThreads) default(shared)
+            //#pragma omp parallel num_threads(allThreads) default(shared)
+            #pragma omp parallel num_threads(allThreads) shared(data, initialTask, queue, filters, argumentators, result, workingThreads, allThreads, queueMutex, resultMutex, condVar)
         #endif
         {
             while (!workDone()) {
