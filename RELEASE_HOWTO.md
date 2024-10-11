@@ -1,5 +1,8 @@
 - Update version & date in DESCRIPTION
 - Update NEWS.md
+- Update Github actions:
+    usethis::use_github_action("check-standard")
+    usethis::use_github_action("test-coverage")
 - Test:
     devtools::spell_check()
     rhub::rhub_check()
