@@ -6,6 +6,7 @@
   they were computed as relative frequencies, now they are computed as counts
 - fixed new-delete-type-mismatch ASAN error caused by wrong implementation of
   AlignedAllocator
+- fixed memory leaks
 
 # nuggets 1.1.0
 - released: 2024-10-07
