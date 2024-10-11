@@ -68,7 +68,7 @@ class AlignedAllocator {
 
         template <typename U> AlignedAllocator(const AlignedAllocator<U, Alignment>&) { }
 
-        virtual ~AlignedAllocator() { }
+        virtual ~AlignedAllocator() = default;
 
 
         // The following will be different for each allocator.
