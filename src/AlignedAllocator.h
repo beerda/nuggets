@@ -1,124 +1,60 @@
 #pragma once
 
-#include <iostream>
+#include <memory>
+#include <stdlib.h>
 
-/**
- * Allocator for aligned data.
- *
- * Modified from the Mallocator from Stephan T. Lavavej.
- * <http://blogs.msdn.com/b/vcblog/archive/2008/08/28/the-mallocator.aspx>
- */
-template <typename T, std::size_t Alignment>
-class AlignedAllocator {
-    public:
-        typedef T * pointer;
-        typedef const T * const_pointer;
-        typedef T& reference;
-        typedef const T& const_reference;
-        typedef T value_type;
-        typedef std::size_t size_type;
-        typedef ptrdiff_t difference_type;
+// A minimal implementation of an allocator for C++ Standard Library, which
+// allocates aligned memory (specified by the alignment argument).
+// Note:
+//    A minimal custom allocator is preferred because C++ allocator_traits class
+//    provides default implementation for you. Take a look at Microsoft's
+//    documentation about Allocators and allocator class.
+template <typename T, std::size_t alignment> class AlignedAllocator {
+public:
+    using value_type = T;
 
-        T * address(T& r) const
-        { return &r; }
+public:
+    // According to Microsoft's documentation, default constructor is not required
+    // by C++ Standard Library.
+    AlignedAllocator() noexcept {};
 
-        const T * address(const T& s) const
-        { return &s; }
+    template <typename U> AlignedAllocator(const AlignedAllocator<U, alignment>& other) noexcept {};
 
-        std::size_t max_size() const
-        {
-            // The following has been carefully written to be independent of
-            // the definition of size_t and to avoid signed/unsigned warnings.
-            return (static_cast<std::size_t>(0) - static_cast<std::size_t>(1)) / sizeof(T);
-        }
+    template <typename U>
+    inline bool operator==(const AlignedAllocator<U, alignment>& other) const noexcept {
+        return true;
+    }
 
+    template <typename U>
+    inline bool operator!=(const AlignedAllocator<U, alignment>& other) const noexcept {
+        return false;
+    }
 
-        // The following must be the same for all allocators.
-        template <typename U>
-        struct rebind
-        {
-            typedef AlignedAllocator<U, Alignment> other;
-        };
+    template <typename U> struct rebind {
+        using other = AlignedAllocator<U, alignment>;
+    };
 
-        bool operator!=(const AlignedAllocator& other) const
-        { return !(*this == other); }
+    // STL containers call this function to allocate uninitialized memory block to
+    // store (no more than n) elements of type T (value_type).
+    inline value_type* allocate(const std::size_t n) const {
+        auto size = n;
+        /*
+         If you wish, for some strange reason, that the size of allocated buffer is
+         also aligned to alignment, uncomment the following statement.
 
-        void construct(T * const p, const T& t) const
-        {
-            void * const pv = static_cast<void *>(p);
+         Note: this increases the size of underlying memory, but STL containers
+         still treat it as a memory block of size n, i.e., STL containers will not
+         put more than n elements into the returned memory.
+         */
+        // size = (n + alignment - 1) / alignment * alignment;
+        value_type* ptr;
+        auto ret = posix_memalign((void**)&ptr, alignment, sizeof(T) * size);
+        if (ret != 0)
+            throw std::bad_alloc();
+        return ptr;
+    };
 
-            new (pv) T(t);
-        }
-
-        void destroy(T * const p) const
-        { p->~T(); }
-
-        // Returns true if and only if storage allocated from *this
-        // can be deallocated from other, and vice versa.
-        // Always returns true for stateless allocators.
-        bool operator==(const AlignedAllocator& other) const
-        { return true; }
-
-
-        // Default constructor, copy constructor, rebinding constructor, and destructor.
-        // Empty for stateless allocators.
-        AlignedAllocator() { }
-
-        AlignedAllocator(const AlignedAllocator&) { }
-
-        template <typename U> AlignedAllocator(const AlignedAllocator<U, Alignment>&) { }
-
-        virtual ~AlignedAllocator() = default;
-
-
-        // The following will be different for each allocator.
-        T * allocate(const std::size_t n) const
-        {
-            // The return value of allocate(0) is unspecified.
-            // Mallocator returns NULL in order to avoid depending
-            // on malloc(0)'s implementation-defined behavior
-            // (the implementation can define malloc(0) to return NULL,
-            // in which case the bad_alloc check below would fire).
-            // All allocators can return NULL in this case.
-            if (n == 0) {
-                return NULL;
-            }
-
-            // All allocators should contain an integer overflow check.
-            // The Standardization Committee recommends that std::length_error
-            // be thrown in the case of integer overflow.
-            if (n > max_size()) {
-                throw std::length_error("AlignedAllocator<T>::allocate() - Integer overflow.");
-            }
-
-            // Mallocator wraps malloc().
-            void * const pv = new (std::align_val_t(Alignment)) T[n];
-
-            // Allocators should throw std::bad_alloc in the case of memory allocation failure.
-            if (pv == NULL) {
-                throw std::bad_alloc();
-            }
-
-            return static_cast<T *>(pv);
-        }
-
-        void deallocate(T * const p, const std::size_t n) const
-        { delete [] p; }
-
-
-        // The following will be the same for all allocators that ignore hints.
-        template <typename U>
-        T * allocate(const std::size_t n, const U * /* const hint */) const
-        { return allocate(n); }
-
-
-        // Allocators are not required to be assignable, so
-        // all allocators should have a private unimplemented
-        // assignment operator. Note that this will trigger the
-        // off-by-default (enabled under /Wall) warning C4626
-        // "assignment operator could not be generated because a
-        // base class assignment operator is inaccessible" within
-        // the STL headers, but that warning is useless.
-    private:
-        AlignedAllocator& operator=(const AlignedAllocator&);
+    // STL containers call this function to free a memory block beginning at a
+    // specified position.
+    inline void deallocate(value_type* const ptr, std::size_t n) const noexcept { free(ptr); }
 };
