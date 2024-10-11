@@ -44,6 +44,8 @@ public:
         negOverflowMask = ~overflowMask;
     }
 
+    virtual ~BitwiseFuzzyChainBase1() = default;
+
     void clear()
     {
         data.clear();
