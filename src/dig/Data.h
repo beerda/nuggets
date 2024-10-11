@@ -16,12 +16,12 @@ public:
     {
         if (!chains.empty()) {
             if (((size_t) values.size()) != chains.front().size()) {
-                throw new runtime_error("Condition chain sizes mismatch in Data::addChain");
+                throw runtime_error("Condition chain sizes mismatch in Data::addChain");
             }
         }
         if (!foci.empty()) {
             if (((size_t) values.size()) != foci.front().size()) {
-                throw new runtime_error("Condition chain size differs from focus chain sizes in Data::addChain");
+                throw runtime_error("Condition chain size differs from focus chain sizes in Data::addChain");
             }
         }
 
@@ -50,12 +50,12 @@ public:
     {
         if (!chains.empty()) {
             if (((size_t) values.size()) != chains.front().size()) {
-                throw new runtime_error("Focus chain size differs from condition chain sizes in Data::addChain");
+                throw runtime_error("Focus chain size differs from condition chain sizes in Data::addChain");
             }
         }
         if (!foci.empty()) {
             if (((size_t) values.size()) != foci.front().size()) {
-                throw new runtime_error("Focus chain sizes mismatch in Data::addChain");
+                throw runtime_error("Focus chain sizes mismatch in Data::addChain");
             }
         }
 

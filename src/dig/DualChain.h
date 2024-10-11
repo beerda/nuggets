@@ -50,7 +50,7 @@ public:
     void conjunctWith(const DualChain<BITCHAIN, NUMCHAIN>& chain)
     {
         if (size() != chain.size()) {
-            throw new runtime_error("Incompatible chain lengths");
+            throw runtime_error("Incompatible chain lengths");
 
         } else if (isBitwise() && chain.isBitwise()) {
             bitData.conjunctWith(chain.bitData);
@@ -61,7 +61,7 @@ public:
             bitData.clear();
 
         } else {
-            throw new runtime_error("Incompatible chain types");
+            throw runtime_error("Incompatible chain types");
         }
     }
 

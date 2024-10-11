@@ -48,7 +48,7 @@ public:
         else if (tnormVec[0] == "lukas")
             tNorm = TNorm::LUKASIEWICZ;
         else
-            throw new runtime_error("Unknown t-norm in Config");
+            throw runtime_error("Unknown t-norm in Config");
     }
 
     bool hasConditionArgument() const

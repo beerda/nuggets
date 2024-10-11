@@ -40,7 +40,7 @@ public:
     LogicalVector asLogicalVector() const
     {
         if (type != ARG_LOGICAL)
-            throw new runtime_error("Cannot export Argument to LogicalVector");
+            throw runtime_error("Cannot export Argument to LogicalVector");
 
         LogicalVector result;
 
@@ -60,7 +60,7 @@ public:
     IntegerVector asIntegerVector() const
     {
         if (type != ARG_INTEGER)
-            throw new runtime_error("Cannot export Argument to IntegerVector");
+            throw runtime_error("Cannot export Argument to IntegerVector");
 
         IntegerVector result;
 
@@ -80,7 +80,7 @@ public:
     NumericVector asNumericVector() const
     {
         if (type != ARG_NUMERIC)
-            throw new runtime_error("Cannot export Argument to NumericVector");
+            throw runtime_error("Cannot export Argument to NumericVector");
 
         NumericVector result;
 
@@ -115,7 +115,7 @@ public:
                 ss << values[i].numeric << ",";
             }
             else {
-                throw new runtime_error("Unknown ArgumentType in ArgumentValue::toString()");
+                throw runtime_error("Unknown ArgumentType in ArgumentValue::toString()");
             }
         }
         ss << "}";

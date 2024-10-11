@@ -172,7 +172,7 @@ public:
             //cout << "jetu3\n";
             if (iter1.remainingGap() != 0 || iter2.remainingGap() != 0) {
                 //cout << "assertion failed: gaps must be 0" << endl;
-                throw new runtime_error("assertion failed: gaps must be 0");
+                throw runtime_error("assertion failed: gaps must be 0");
             }
 
             size_t newChunks = min(iter1.remainingChunks(), iter2.remainingChunks());
@@ -246,7 +246,7 @@ private:
         {
             if (offset < chain->gaps[index]) {
                 //cout << "assertion failed in bitsetOffset()" << endl;
-                throw new runtime_error("assertion failed in bitsetOffset()");
+                throw runtime_error("assertion failed in bitsetOffset()");
             }
 
             return offset - chain->gaps[index];
@@ -258,7 +258,7 @@ private:
                 //chain->bitsets[index].nChunks() - bitsetOffset();
             if (chain->bitsets[index].nChunks() < bitsetOffset()) {
                 //cout << "assertion failed in remainingChunks()" << endl;
-                throw new runtime_error("assertion failed in remainingChunks()");
+                throw runtime_error("assertion failed in remainingChunks()");
             }
 
 
@@ -271,7 +271,7 @@ private:
                 //chain->bitsets[index].size() - bitsetOffset() * Bitset::CHUNK_SIZE;
             if (chain->bitsets[index].size() < bitsetOffset() * Bitset::CHUNK_SIZE) {
                 //cout << "assertion failed in remainingBits()" << endl;
-                throw new runtime_error("assertion failed in remainingBits()");
+                throw runtime_error("assertion failed in remainingBits()");
             }
 
             return chain->bitsets[index].size() - bitsetOffset() * Bitset::CHUNK_SIZE;
@@ -281,7 +281,7 @@ private:
         {
             if (hold + chain->getTrailing() < offset * Bitset::CHUNK_SIZE) {
                 //cout << "assertion failed in remainingTrailing()" << endl;
-                throw new runtime_error("assertion failed in remainingTrailing()");
+                throw runtime_error("assertion failed in remainingTrailing()");
             }
 
             size_t res = hold + chain->getTrailing() - offset * Bitset::CHUNK_SIZE;

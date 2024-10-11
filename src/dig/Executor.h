@@ -143,7 +143,7 @@ public:
                     else if (a.getType() == ArgumentType::ARG_NUMERIC) {
                         item.push_back(a.asNumericVector(), a.getArgumentName());
                     } else {
-                        throw new runtime_error("Unhandled ArgumentType");
+                        throw runtime_error("Unhandled ArgumentType");
                     }
                 }
                 result.push_back(item);

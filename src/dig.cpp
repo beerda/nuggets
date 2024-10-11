@@ -35,7 +35,7 @@ List dig_(List logData,
         result = exec.execute(logData, numData, logFoci, numFoci);
     }
     else
-        throw new runtime_error("Unknown t-norm in C++ dig_()");
+        throw runtime_error("Unknown t-norm in C++ dig_()");
 
     return result;
 }

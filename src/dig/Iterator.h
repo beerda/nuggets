@@ -72,7 +72,7 @@ public:
     int getCurrentPredicate() const
     {
         if (!hasPredicate())
-            throw new runtime_error("Attempt to get unavailable predicate");
+            throw runtime_error("Attempt to get unavailable predicate");
 
         return available[current];
     }
