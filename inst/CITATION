@@ -1,12 +1,18 @@
- bibentry(bibtype = "InProceedings",
-          title="nuggets: Data Pattern Extraction Framework in R",
-          author = c(person("Michal", "Burda")),
-          editor = "Torra, Vicenc and Narukawa, Yasuo and Kikuchi, Hiroaki",
-          booktitle = "Modeling Decisions for Artificial Intelligence",
-          year = "2024",
-          publisher = "Springer Nature Switzerland",
-          address = "Cham",
-          pages = "115--126",
-          isbn = "978-3-031-68208-7",
-          doi = "10.1007/978-3-031-68208-7_10",
-          url = "https://link.springer.com/chapter/10.1007/978-3-031-68208-7_10")
+# Burda, M. nuggets: Data Pattern Extraction Framework in R. In: 21st
+# International Conference on Modeling Decisions for Artificial Intelligence,
+# MDAI 2024: Modeling Decisions for Artificial Intelligence 2024-08-27 Tokyo.
+# Cham: Springer Nature Switzerland, 2024. s. 115-126. ISBN 978-3-031-68208-7.
+# DOI: 10.1007/978-3-031-68208-7_10.
+
+bibentry(bibtype = "InProceedings",
+         title="nuggets: Data Pattern Extraction Framework in R",
+         author = c(person("Michal", "Burda")),
+         editor = "Torra, Vicenc and Narukawa, Yasuo and Kikuchi, Hiroaki",
+         booktitle = "Modeling Decisions for Artificial Intelligence",
+         year = "2024",
+         publisher = "Springer Nature Switzerland",
+         address = "Cham",
+         pages = "115--126",
+         isbn = "978-3-031-68208-7",
+         doi = "10.1007/978-3-031-68208-7_10",
+         url = "https://link.springer.com/chapter/10.1007/978-3-031-68208-7_10")
