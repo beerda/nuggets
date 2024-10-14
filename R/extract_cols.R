@@ -11,20 +11,12 @@
         errors <- c()
         for (i in which(!(logicals | doubles))) {
             errors <- c(errors,
-                        "x" = paste0("Column {.var ",
-                                     names(cols)[i],
-                                     "} is of type {.cls ",
-                                     typeof(cols[[i]]),
-                                     "}."))
+                        paste0("Column {.var ", names(cols)[i],
+                               "} is of type {.cls ", typeof(cols[[i]]), "}."))
         }
-        len <- length(errors)
-        if (len > 5) {
-            length(errors) <- 4
-            len <- len - length(errors)
-            errors <- c(errors, paste0("... and ", len, " more problems."))
-        }
+
         cli_abort(c("All columns in {.var x} must be either logical or double.",
-                    errors),
+                    ..error_details(errors)),
                   call = caller_env())
     }
 

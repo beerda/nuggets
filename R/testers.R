@@ -146,6 +146,27 @@
 .must_be_list <- ..must_be_type(is.list, "list")
 .must_be_data_frame <- ..must_be_type(is.data.frame, "data frame")
 
+
+.must_have_some_rows <- function(x,
+                                 name = deparse(substitute(x)),
+                                 call = caller_env()) {
+    if (nrow(x) <= 0) {
+        cli_abort(c("{.var {name}} must have at least one row.",
+                    "x" = "You've supplied a {.cls {class(x)}} with 0 rows."),
+                  call = call)
+    }
+}
+
+.must_have_some_cols <- function(x,
+                                 name = deparse(substitute(x)),
+                                 call = caller_env()) {
+    if (ncol(x) <= 0) {
+        cli_abort(c("{.var {name}} must have at least one column.",
+                    "x" = "You've supplied a {.cls {class(x)}} with 0 columns."),
+                  call = call)
+    }
+}
+
 .must_be_list_of_logicals <- ..must_be_list_of(is.logical, "logical vectors")
 .must_be_list_of_integerishes <- ..must_be_list_of(is_integerish, "integerish vectors")
 .must_be_list_of_doubles <- ..must_be_list_of(is.double, "double (numeric) vectors")

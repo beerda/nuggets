@@ -695,3 +695,10 @@ test_that("min_focus_support & filter_empty_foci", {
 
     expect_equal(unlist(res), c(" = 0.7, 0.6", "1 = 0.5", "2 = 0.5"))
 })
+
+
+test_that("errors", {
+    expect_error(dig(list()), "must be a matrix or a data frame")
+    expect_error(dig(matrix(0, nrow = 5, ncol = 0)), "must have at least one column")
+    expect_error(dig(matrix(0, nrow = 0, ncol = 5)), "must have at least one row")
+})

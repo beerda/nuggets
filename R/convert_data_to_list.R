@@ -12,6 +12,9 @@
                   call = caller_env(2))
     }
 
+    .must_have_some_cols(x, call = caller_env(2))
+    .must_have_some_rows(x, call = caller_env(2))
+
     if (is.null(names(cols))) {
         names(cols) <- seq_len(length(cols))
     }
