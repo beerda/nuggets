@@ -2,32 +2,9 @@
 % Please edit documentation in R/dig.R
 \name{dig}
 \alias{dig}
-\alias{dig.default}
-\alias{dig.matrix}
-\alias{dig.data.frame}
 \title{Search for rules}
 \usage{
-dig(x, f, ...)
-
-\method{dig}{default}(x, f, ...)
-
-\method{dig}{matrix}(
-  x,
-  f,
-  condition = everything(),
-  focus = NULL,
-  disjoint = NULL,
-  min_length = 0,
-  max_length = Inf,
-  min_support = 0,
-  min_focus_support = min_support,
-  filter_empty_foci = FALSE,
-  t_norm = "goguen",
-  threads = 1,
-  ...
-)
-
-\method{dig}{data.frame}(
+dig(
   x,
   f,
   condition = everything(),
@@ -81,8 +58,6 @@ a named numeric vector of supports of foci columns
 (see \code{focus} argument to specify, which columns are foci) - names of the
 vector are foci column names.}
 
-\item{...}{Further arguments, currently unused.}
-
 \item{condition}{a tidyselect expression (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
 specifying the columns to use as condition predicates}
@@ -128,6 +103,8 @@ callback function regardless of the number of remaining foci.}
 (Lukasiewicz t-norm).}
 
 \item{threads}{the number of threads to use for parallel computation.}
+
+\item{...}{Further arguments, currently unused.}
 }
 \value{
 A list of results provided by the callback function \code{f}.
