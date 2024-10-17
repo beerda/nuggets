@@ -1,6 +1,7 @@
-#' Tests whether the given argument is a numeric value from the interval [0,1]
+#' Tests whether the given argument is a numeric value from the interval \eqn{[0,1]}
 #'
 #' @param x the value to be tested
+#' @param na_rm whether to ignore `NA` values
 #' @return `TRUE` if `x` is a numeric vector or matrix with values between 0 and 1
 #' @author Michal Burda
 #' @export
