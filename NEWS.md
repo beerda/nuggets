@@ -1,3 +1,7 @@
+# nuggets 1.3.0
+- released: ???
+- added is_degree()
+
 # nuggets 1.2.0
 - released: 2024-10-11
 - added var_grid(), dig_grid()

@@ -1,0 +1,17 @@
+test_that("is_degree", {
+    expect_true(is_degree(0L))
+    expect_true(is_degree(1L))
+    expect_true(is_degree(0L:1L))
+    expect_true(is_degree(0.5))
+    expect_true(is_degree(c(0:100 / 100)))
+    expect_true(is_degree(matrix(c(0:99 / 99), nrow = 25)))
+    expect_true(is_degree(NA_real_, na_rm = TRUE))
+
+    expect_false(is_degree(c()))
+    expect_false(is_degree("0"))
+    expect_false(is_degree(list(a=0)))
+    expect_false(is_degree(2L))
+    expect_false(is_degree(1.1))
+    expect_false(is_degree(NA_real_, na_rm = FALSE))
+    expect_false(is_degree(NA_character_, na_rm = TRUE))
+})
