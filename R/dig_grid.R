@@ -9,12 +9,21 @@
 #' columns in the grid's row.
 #'
 #' @param x a matrix or data frame with data to search in.
-#' @param f the callback function to be executed on a data frame that is passed
-#'      to the function as the first argument. The data frame consists from two
-#'      columns (a combination of `xvars`/`yvars` columns) and from all rows
-#'      of `x` that satisfy the generated condition. The function must return
-#'      a list of scalar values, which will be converted into a single row
-#'      of result of final tibble.
+#' @param f the callback function to be executed for each generated condition.
+#'      The arguments of the callback function differ based on the value of the
+#'      `type` argument (see below). If `type = "bool"`, the callback function
+#'      `f` must accept a single argument `d` of type `data.frame` with two
+#'      columns (xvar and yvar). It is a subset of the original data frame
+#'      with all rows that satisfy the generated condition. If `type = "fuzzy"`,
+#'      the callback function `f` must accept an argument `d` of type
+#'      `data.frame` with two columns (xvar and yvar) and a numeric `weights`
+#'      argument with the same length as the number of rows in `d`. The
+#'      `weights` argument contains the truth degree of the generated condition
+#'      for each row of `d`. The truth degree is a number in the interval
+#'      \eqn{[0, 1]} that represents the degree of satisfaction of the condition
+#'      for the row.
+#'      In all cases, the function must return a list of scalar values, which
+#'      will be converted into a single row of result of final tibble.
 #' @param condition a tidyselect expression (see
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying the columns to use as condition predicates. The selected
@@ -30,6 +39,12 @@
 #'      combinations use at the second place (yvar)
 #' @param na_rm a logical value indicating whether to remove rows with missing
 #'      values from sub-data before the callback function `f` is called
+#' @param type a character string specifying the type of conditions to be processed.
+#'      The `"bool"` type accepts only logical columns as condition predicates.
+#'      The `"fuzzy"` type accepts both logical and numeric columns as condition
+#'      predicates where numeric data are in the interval \eqn{[0, 1]}. The
+#'      callback function `f` differs based on the value of the `type` argument
+#'      (see the description of `f` above).
 #' @param min_length the minimum size (the minimum number of predicates) of the
 #'      condition to be generated (must be greater or equal to 0). If 0, the empty
 #'      condition is generated in the first place.
@@ -56,12 +71,30 @@ dig_grid <- function(x,
                      xvars = where(is.numeric),
                      yvars = where(is.numeric),
                      na_rm = FALSE,
+                     type = "bool",
                      min_length = 0L,
                      max_length = Inf,
                      min_support = 0.0,
                      threads = 1,
                      ...) {
     .must_be_flag(na_rm)
+    .must_be_enum(type, c("bool", "fuzzy"))
+
+    .must_be_function(f)
+    required_args <- if (type == "bool") c("d") else c("d", "weights")
+    required_args_msg <- paste0("`", paste0(required_args, collapse = '`, `'), "`")
+    unrecognized_args <- setdiff(formalArgs(f), required_args)
+    if (length(unrecognized_args) > 0) {
+        details <- paste0("The argument {.var ", unrecognized_args, "} is not allowed.")
+        cli_abort(c("The function {.var f} must have the following arguments: {required_args_msg}.",
+                    ..error_details(details)))
+    }
+    unrecognized_args <- setdiff(required_args, formalArgs(f))
+    if (length(unrecognized_args) > 0) {
+        details <- paste0("The argument {.var ", unrecognized_args, "} is missing.")
+        cli_abort(c("The function {.var f} must have the following arguments: {required_args_msg}.",
+                    ..error_details(details)))
+    }
 
     condition <- enquo(condition)
 
@@ -69,13 +102,13 @@ dig_grid <- function(x,
     .extract_cols_and_check(cols,
                             !!condition,
                             varname = "condition",
-                            numeric_allowed = FALSE)
+                            numeric_allowed = (type == "fuzzy"))
 
     xvars <- enquo(xvars)
     yvars <- enquo(yvars)
     grid <- var_grid(x, !!xvars, !!yvars)
 
-    ff <- function(condition, support, indices) {
+    fbool <- function(condition, support, indices) {
         cond <- format_condition(names(condition))
         d <- x[indices, , drop = FALSE]
 
@@ -84,7 +117,7 @@ dig_grid <- function(x,
             if (na_rm)
                 dd <- na.omit(dd)
 
-            f(dd)
+            f(d = dd)
         })
 
         result <- lapply(result, as_tibble)
@@ -95,6 +128,30 @@ dig_grid <- function(x,
               grid,
               result)
     }
+
+    ffuzzy <- function(condition, support, weights) {
+        cond <- format_condition(names(condition))
+
+        result <- apply(grid, 1, function(row) {
+            dd <- x[, row, drop = FALSE]
+            if (na_rm) {
+                dd <- na.omit(dd)
+                weights <- weights[attr(dd, "na.action")]
+            }
+
+            f(d = dd, weights = weights)
+        })
+
+        result <- lapply(result, as_tibble)
+        result <- do.call(rbind, result)
+
+        cbind(condition = rep(cond, nrow(grid)),
+              support = support,
+              grid,
+              result)
+    }
+
+    ff <- ifelse(type == "bool", fbool, ffuzzy)
 
     res <- dig(x = x,
                f = ff,

@@ -1,6 +1,7 @@
 # nuggets 1.3.0
 - released: ???
 - added is_degree()
+- implemented fuzzy variant of dig_grid()
 
 # nuggets 1.2.0
 - released: 2024-10-11

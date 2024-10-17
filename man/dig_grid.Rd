@@ -11,6 +11,7 @@ dig_grid(
   xvars = where(is.numeric),
   yvars = where(is.numeric),
   na_rm = FALSE,
+  type = "bool",
   min_length = 0L,
   max_length = Inf,
   min_support = 0,
@@ -21,12 +22,21 @@ dig_grid(
 \arguments{
 \item{x}{a matrix or data frame with data to search in.}
 
-\item{f}{the callback function to be executed on a data frame that is passed
-to the function as the first argument. The data frame consists from two
-columns (a combination of \code{xvars}/\code{yvars} columns) and from all rows
-of \code{x} that satisfy the generated condition. The function must return
-a list of scalar values, which will be converted into a single row
-of result of final tibble.}
+\item{f}{the callback function to be executed for each generated condition.
+The arguments of the callback function differ based on the value of the
+\code{type} argument (see below). If \code{type = "bool"}, the callback function
+\code{f} must accept a single argument \code{d} of type \code{data.frame} with two
+columns (xvar and yvar). It is a subset of the original data frame
+with all rows that satisfy the generated condition. If \code{type = "fuzzy"},
+the callback function \code{f} must accept an argument \code{d} of type
+\code{data.frame} with two columns (xvar and yvar) and a numeric \code{weights}
+argument with the same length as the number of rows in \code{d}. The
+\code{weights} argument contains the truth degree of the generated condition
+for each row of \code{d}. The truth degree is a number in the interval
+\eqn{[0, 1]} that represents the degree of satisfaction of the condition
+for the row.
+In all cases, the function must return a list of scalar values, which
+will be converted into a single row of result of final tibble.}
 
 \item{condition}{a tidyselect expression (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
@@ -46,6 +56,13 @@ combinations use at the second place (yvar)}
 
 \item{na_rm}{a logical value indicating whether to remove rows with missing
 values from sub-data before the callback function \code{f} is called}
+
+\item{type}{a character string specifying the type of conditions to be processed.
+The \code{"bool"} type accepts only logical columns as condition predicates.
+The \code{"fuzzy"} type accepts both logical and numeric columns as condition
+predicates where numeric data are in the interval \eqn{[0, 1]}. The
+callback function \code{f} differs based on the value of the \code{type} argument
+(see the description of \code{f} above).}
 
 \item{min_length}{the minimum size (the minimum number of predicates) of the
 condition to be generated (must be greater or equal to 0). If 0, the empty
