@@ -74,3 +74,14 @@ test_that("dig_correlations iris", {
                             yvars = Sepal.Length:Petal.Width,
                             max_length = 0)
 })
+
+
+test_that("errors", {
+    d <- data.frame(n = 1:5 / 5, l = TRUE, i = 1:5, s = letters[1:5])
+
+    expect_true(is.list(dig_correlations(d, condition = c(l))))
+    expect_error(dig_correlations(d, condition = c(l, n)),
+                 "columns selected by `condition` must be logical.")
+    expect_error(dig_correlations(d, condition = c(l, s)),
+                 "columns selected by `condition` must be logical.")
+})

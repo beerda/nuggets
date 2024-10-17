@@ -64,6 +64,13 @@ dig_grid <- function(x,
     .must_be_flag(na_rm)
 
     condition <- enquo(condition)
+
+    cols <- .convert_data_to_list(x)
+    .extract_cols_and_check(cols,
+                            !!condition,
+                            varname = "condition",
+                            numeric_allowed = FALSE)
+
     xvars <- enquo(xvars)
     yvars <- enquo(yvars)
     grid <- var_grid(x, !!xvars, !!yvars)

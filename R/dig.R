@@ -95,8 +95,14 @@ dig <- function(x,
 
     condition <- enquo(condition)
     focus <- enquo(focus)
-    condition_cols <- .extract_cols(cols, !!condition)
-    foci_cols <- .extract_cols(cols, !!focus)
+    condition_cols <- .extract_cols_and_check(cols,
+                                              !!condition,
+                                              varname = "condition",
+                                              numeric_allowed = TRUE)
+    foci_cols <- .extract_cols_and_check(cols,
+                                         !!focus,
+                                         varname = "focus",
+                                         numeric_allowed = TRUE)
 
     .must_be_function(f, call = caller_env(2))
     unrecognized_args <- setdiff(formalArgs(f),

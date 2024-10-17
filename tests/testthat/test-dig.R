@@ -698,7 +698,22 @@ test_that("min_focus_support & filter_empty_foci", {
 
 
 test_that("errors", {
-    expect_error(dig(list()), "must be a matrix or a data frame")
-    expect_error(dig(matrix(0, nrow = 5, ncol = 0)), "must have at least one column")
-    expect_error(dig(matrix(0, nrow = 0, ncol = 5)), "must have at least one row")
+    f <- function(condition) { list() }
+    d <- data.frame(n = 1:5 / 5, l = TRUE, i = 1:5, s = letters[1:5])
+
+    expect_error(dig(list(), f), "must be a matrix or a data frame")
+    expect_error(dig(matrix(0, nrow = 5, ncol = 0), f), "must have at least one column")
+    expect_error(dig(matrix(0, nrow = 0, ncol = 5), f), "must have at least one row")
+
+    expect_true(is.list(dig(d, f, condition = c(n, l))))
+    expect_error(dig(d, f, condition = c(n, l, i)),
+                 "columns selected by `condition` must be logical or numeric")
+    expect_error(dig(d, f, condition = c(n, l, s)),
+                 "columns selected by `condition` must be logical or numeric")
+
+    expect_true(is.list(dig(d, f, condition = c(n, l), focus = c(n, l))))
+    expect_error(dig(d, f, condition = c(n, l), focus = c(n, l, i)),
+                 "columns selected by `focus` must be logical or numeric")
+    expect_error(dig(d, f, condition = c(n, l), focus = c(n, l, s)),
+                 "columns selected by `focus` must be logical or numeric")
 })
