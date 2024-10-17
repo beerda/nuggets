@@ -34,28 +34,26 @@ var_grid <- function(x,
     if (is.matrix(x)) {
         cols <- lapply(seq_len(ncol(x)), function(i) x[, i])
         names(cols) <- colnames(x)
-        if (is.null(names(cols))) {
-            names(cols) <- seq_len(length(cols))
-        }
     } else if (is.data.frame(x)) {
         cols <- as.list(x)
-        if (is.null(names(cols))) {
-            names(cols) <- seq_len(length(cols))
-        }
     } else {
         cli_abort(c("{.var x} must be a matrix or a data frame.",
                     "x" = "You've supplied a {.cls {class(x)}}."))
+    }
+
+    if (is.null(names(cols))) {
+        names(cols) <- seq_len(length(cols))
     }
 
     xvars <- eval_select(xvars, cols)
     yvars <- eval_select(yvars, cols)
 
     if (length(xvars) <= 0) {
-        cli_abort(c("{.var xvars} must specify the list of numeric columns.",
+        cli_abort(c("{.var xvars} must specify the list of columns.",
                     "x" = "{.var xvars} resulted in an empty list."))
     }
     if (length(yvars) <= 0) {
-        cli_abort(c("{.var yvars} must specify the list of numeric columns.",
+        cli_abort(c("{.var yvars} must specify the list of columns.",
                     "x" = "{.var yvars} resulted in an empty list."))
     }
 
