@@ -7,27 +7,54 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/nuggets)](https://CRAN.R-project.org/package=nuggets)
-[![R-CMD-check](https://github.com/beerda/nuggets/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/beerda/nuggets/actions/workflows/R-CMD-check.yaml)
-[![test-coverage](https://github.com/beerda/nuggets/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/beerda/nuggets/actions/workflows/test-coverage.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/beerda/nuggets/graph/badge.svg)](https://app.codecov.io/gh/beerda/nuggets)
 [![Downloads per
 month](https://cranlogs.r-pkg.org/badges/nuggets)](https://cran.r-project.org/package=nuggets)
+[![R-CMD-check](https://github.com/beerda/nuggets/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/beerda/nuggets/actions/workflows/R-CMD-check.yaml)
+[![test-coverage](https://github.com/beerda/nuggets/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/beerda/nuggets/actions/workflows/test-coverage.yaml)
 <!-- badges: end -->
 
-Extensible R framework for subgroup discovery ([Atzmueller
-(2015)](https://doi.org/10.1002/widm.1144)), contrast patterns ([Chen
-(2022)](https://doi.org/10.48550/arXiv.2209.13556)), emerging patterns
-([Dong (1999)](https://doi.org/10.1145/312129.312191)) and association
-rules ([Agrawal (1994)](https://www.vldb.org/conf/1994/P487.PDF)). Both
-crisp (binary) and fuzzy data are supported. It generates conditions in
-the form of elementary conjunctions, evaluates them on a dataset and
-checks the induced sub-data for interesting statistical properties.
-Currently, the package searches for implicative association rules and
-conditional correlations ([Hájek
-(1978)](https://doi.org/10.1007/978-3-642-66943-9)). A user-defined
-function may be defined to evaluate on each generated condition to
-search for custom patterns.
+Extensible R framework for **subgroup discovery** ([Atzmueller
+(2015)](https://doi.org/10.1002/widm.1144)), **contrast patterns**
+([Chen (2022)](https://doi.org/10.48550/arXiv.2209.13556)), **emerging
+patterns** ([Dong (1999)](https://doi.org/10.1145/312129.312191)),
+**association rules** ([Agrawal
+(1994)](https://www.vldb.org/conf/1994/P487.PDF)), and **conditional
+correlations** ([Hájek
+(1978)](https://doi.org/10.1007/978-3-642-66943-9)). Both **crisp**
+(Boolean, binary) and **fuzzy data** are supported. The package
+generates conditions in the form of elementary conjunctions, evaluates
+them on a dataset and checks the induced sub-data for interesting
+statistical properties. A user-defined function may be defined to
+evaluate on each generated condition to search for custom patterns.
+
+To cite package **nuggets** in publications use:
+
+> Burda M (2024). “nuggets: Data Pattern Extraction Framework in R.” In
+> Torra, Vicenc, Narukawa, Yasuo, Kikuchi, Hiroaki (eds.), *Modeling
+> Decisions for Artificial Intelligence*, 115-126. ISBN
+> 978-3-031-68208-7, <doi:10.1007/978-3-031-68208-7_10>
+> <https://doi.org/10.1007/978-3-031-68208-7_10>,
+> <https://link.springer.com/chapter/10.1007/978-3-031-68208-7_10>.
+
+A BibTeX entry for LaTeX users is:
+
+``` bibtex
+@InProceedings{burda2024,
+    title = {nuggets: Data Pattern Extraction Framework in R},
+    author = {Michal Burda},
+    editor = {{Torra} and {Vicenc} and {Narukawa} and {Yasuo} and {Kikuchi} and {Hiroaki}},
+    booktitle = {Modeling Decisions for Artificial Intelligence},
+    year = {2024},
+    publisher = {Springer Nature Switzerland},
+    address = {Cham},
+    pages = {115--126},
+    isbn = {978-3-031-68208-7},
+    doi = {10.1007/978-3-031-68208-7_10},
+    url = {https://link.springer.com/chapter/10.1007/978-3-031-68208-7_10},
+}
+```
 
 ## Installation
 
@@ -140,20 +167,21 @@ result <- dig_implications(d,
 
 result <- arrange(result, desc(support))
 print(result)
-#> # A tibble: 225 × 7
-#>    antecedent                 consequent support confidence coverage  lift count
-#>    <chr>                      <chr>        <dbl>      <dbl>    <dbl> <dbl> <dbl>
-#>  1 {Type=Mississippi,uptake=… {Treatmen…  0.155       0.813   0.190   1.63    16
-#>  2 {Type=Mississippi,uptake=… {Treatmen…  0.119       1       0.119   2       10
-#>  3 {Plant=Mc3}                {Treatmen…  0.0833      1       0.0833  2        7
-#>  4 {Plant=Mc1}                {Treatmen…  0.0833      1       0.0833  2        7
-#>  5 {Plant=Qn1}                {Treatmen…  0.0833      1       0.0833  2        7
-#>  6 {Plant=Mc2}                {Treatmen…  0.0833      1       0.0833  2        7
-#>  7 {Plant=Mn1}                {Treatmen…  0.0833      1       0.0833  2        7
-#>  8 {Plant=Mn2}                {Treatmen…  0.0833      1       0.0833  2        7
-#>  9 {Plant=Mn3}                {Treatmen…  0.0833      1       0.0833  2        7
-#> 10 {Plant=Qc2}                {Treatmen…  0.0833      1       0.0833  2        7
+#> # A tibble: 225 × 8
+#>    antecedent        consequent support confidence coverage conseq_support count
+#>    <chr>             <chr>        <dbl>      <dbl>    <dbl>          <dbl> <dbl>
+#>  1 {Type=Mississipp… {Treatmen…  0.155       0.812   0.190             0.5    13
+#>  2 {Type=Mississipp… {Treatmen…  0.119       1       0.119             0.5    10
+#>  3 {Plant=Mc3}       {Treatmen…  0.0833      1       0.0833            0.5     7
+#>  4 {Plant=Mc1}       {Treatmen…  0.0833      1       0.0833            0.5     7
+#>  5 {Plant=Qn1}       {Treatmen…  0.0833      1       0.0833            0.5     7
+#>  6 {Plant=Mc2}       {Treatmen…  0.0833      1       0.0833            0.5     7
+#>  7 {Plant=Mn1}       {Treatmen…  0.0833      1       0.0833            0.5     7
+#>  8 {Plant=Mn2}       {Treatmen…  0.0833      1       0.0833            0.5     7
+#>  9 {Plant=Mn3}       {Treatmen…  0.0833      1       0.0833            0.5     7
+#> 10 {Plant=Qc2}       {Treatmen…  0.0833      1       0.0833            0.5     7
 #> # ℹ 215 more rows
+#> # ℹ 1 more variable: antecedent_length <int>
 ```
 
 ### Custom Pattern Search
