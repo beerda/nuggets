@@ -52,7 +52,7 @@ dichotomize <- function(.data,
             names(res) <- paste0(colname, "=", levels(x))
             res <- as_tibble(res)
         } else {
-            cli_abort(c("Unable to dichotomize the column {.var {colname}}.",
+            cli_abort(c("Unable to dichotomize column {.var {colname}}.",
                        "i"="Column to dichotomize must be a factor or logical.",
                        "x"="The column {.var {colname}} is a {.cls {class(x)}}."),
                       call = call)
