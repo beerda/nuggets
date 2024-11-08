@@ -1,5 +1,54 @@
+#' Convert columns of data frame to Boolean or fuzzy sets
 #'
-#' @return
+#' Convert the selected columns of the data frame into either dummy
+#' logical columns (for logicalls and factors), or into membership degrees
+#' of fuzzy sets (for numeric columns). Each source column typically yields
+#' in multiple columns in the output.
+#'
+#' Concretely, the transformation of each selected column is performed as
+#' follows:
+#' - logical column `x` is transformed into pair of logical columns,
+#'   `x=TRUE` and`x=FALSE`;
+#' - factor column `x`, which has levels `l1`, `l2`, and `l3`, is transformed
+#'   into three logical columns named `x=l1`, `x=l2`, and `x=l3`;
+#' - numerical column`x` is transformed accordingly to `.method` argument:
+#'   - if `.method="crisp"`, the column is first transformed into a factor
+#'     with intervals as factor levels and then it is processed as a factor
+#'     (see above);
+#'   - for other `.method` (`triangle` or `raisedcos`), several new columns
+#'     are created, where each column has numeric values from the interval
+#'     \eqn{[0,1]} and represents a certain fuzzy set (either triangular or
+#'     raised-cosinal).
+#'   Details of transformation of numeric columns can be specified with
+#'   additional arguments (`.breaks`, `.labels`, `.right`).
+#'
+#' @param .data the data frame to be processed
+#' @param .what a tidyselect expression (see
+#'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
+#'      specifying the columns to be transformed
+#' @param ... optional other tidyselect expressions selecting additional
+#'      columns to be processed
+#' @param .breaks for numeric columns, this has to be either an integer scalar
+#'      or a numeric vector. If `.breaks` is an integer scalar, it specifies
+#'      the number of resulting intervals to break the numeric column to
+#'      (for `.method="crisp"`) or the number of target fuzzy sets (for
+#'      `.method="triangle"` or `.method="raisedcos`). If `.breaks` is a vector,
+#'      the values specify the borders of intervals (for `.method="crisp"`)
+#'      or the breaking points of fuzzy sets.
+#' @param .labels character vector specifying the names used to construct
+#'      the newly created column names. If `NULL`, the labels are generated
+#'      automatically.
+#' @param .na if `TRUE`, an additional logical column is created for each
+#'      source column that contains `NA` values. For column named `x`, the
+#'      newly created column's name will be `x=NA`.
+#' @param .keep if `TRUE`, the original columns being transformed remain
+#'      present in the resulting data frame.
+#' @param .method The method of transformation for numeric columns. Either
+#'      `"crisp"`, `"triangle"`, or `"raisedcos"` is required.
+#' @param .right If `.method="crisp"`, this argument specifies if the
+#'      intervals should be closed on the right (and open on the left) or
+#'      vice versa.
+#' @return A tibble created by transforming `.data`.
 #' @author Michal Burda
 #' @export
 partition <- function(.data,

@@ -1,6 +1,6 @@
 # nuggets 1.3.0
 - released: ???
-- added is_degree(), dig_contrasts()
+- added is_degree(), dig_contrasts(), partition()
 - implemented fuzzy variant of dig_grid()
 
 # nuggets 1.2.0
