@@ -123,3 +123,21 @@ test_that("partition crisp", {
                         "b=BBB" = c(F,F,F,F,T,T,T,F,F,F),
                         "b=cc"  = c(F,F,F,F,F,F,F,T,T,T)))
 })
+
+
+test_that("partition triangle", {
+    expect_equal(partition(data.frame(a = 0:10),
+                           .breaks = 2,
+                           .keep = FALSE,
+                           .method = "triangle"),
+                 tibble("a=(-Inf;0;10)" = seq(1, 0, length.out = 11),
+                        "a=(0;10;Inf)"  = seq(0, 1, length.out = 11)))
+
+    expect_equal(partition(data.frame(a = 0:10),
+                           .breaks = 3,
+                           .keep = FALSE,
+                           .method = "triangle"),
+                 tibble("a=(-Inf;0;5)" = c(1.0, 0.8, 0.6, 0.4, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+                        "a=(0;5;10)"   = c(0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 0.8, 0.6, 0.4, 0.2, 0.0),
+                        "a=(5;10;Inf)" = c(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0)))
+})
