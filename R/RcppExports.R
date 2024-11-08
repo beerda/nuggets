@@ -5,6 +5,14 @@ dig_ <- function(logData, numData, logFoci, numFoci, confList) {
     .Call(`_nuggets_dig_`, logData, numData, logFoci, numFoci, confList)
 }
 
+raisedcos_ <- function(x, ctx) {
+    .Call(`_nuggets_raisedcos_`, x, ctx)
+}
+
+triangle_ <- function(x, ctx) {
+    .Call(`_nuggets_triangle_`, x, ctx)
+}
+
 which_antichain_ <- function(x, dist) {
     .Call(`_nuggets_which_antichain_`, x, dist)
 }

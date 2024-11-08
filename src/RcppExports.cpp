@@ -25,6 +25,30 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// raisedcos_
+NumericVector raisedcos_(NumericVector x, NumericVector ctx);
+RcppExport SEXP _nuggets_raisedcos_(SEXP xSEXP, SEXP ctxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type ctx(ctxSEXP);
+    rcpp_result_gen = Rcpp::wrap(raisedcos_(x, ctx));
+    return rcpp_result_gen;
+END_RCPP
+}
+// triangle_
+NumericVector triangle_(NumericVector x, NumericVector ctx);
+RcppExport SEXP _nuggets_triangle_(SEXP xSEXP, SEXP ctxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type ctx(ctxSEXP);
+    rcpp_result_gen = Rcpp::wrap(triangle_(x, ctx));
+    return rcpp_result_gen;
+END_RCPP
+}
 // which_antichain_
 IntegerVector which_antichain_(List x, IntegerVector dist);
 RcppExport SEXP _nuggets_which_antichain_(SEXP xSEXP, SEXP distSEXP) {
@@ -42,6 +66,8 @@ RcppExport SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"_nuggets_dig_", (DL_FUNC) &_nuggets_dig_, 5},
+    {"_nuggets_raisedcos_", (DL_FUNC) &_nuggets_raisedcos_, 2},
+    {"_nuggets_triangle_", (DL_FUNC) &_nuggets_triangle_, 2},
     {"_nuggets_which_antichain_", (DL_FUNC) &_nuggets_which_antichain_, 2},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
