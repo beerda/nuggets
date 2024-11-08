@@ -24,6 +24,10 @@ partition <- function(.data,
     sel <- unlist(sel)
     emptydf <- as_tibble(data.frame(matrix(NA, nrow = nrow(.data), ncol = 0)))
 
+    if (!is.null(.breaks)) {
+        .breaks <- sort(.breaks)
+    }
+
     res <- lapply(seq_along(sel), function(i) {
         colname <- names(sel)[i]
         colindex <- sel[i]
@@ -40,15 +44,21 @@ partition <- function(.data,
             res <- .partition_factor(x, colname)
 
         } else if (is.numeric(x)) {
-            br <- .determine_breaks(x, colname, .breaks, call)
-            lb <- .determine_crisp_labels(br, .labels, .right, call)
-            if (.method == "crisp") {
-                xx <- cut(x, breaks = br, labels = lb, right = .right)
-                res <- .partition_factor(xx, colname)
+            if (is.null(.breaks)) {
+                cli_abort(c("{.var .breaks} must not be NULL in order to partition numeric column {.var {colname}}."),
+                          call = call)
             }
+
+            if (.method == "crisp") {
+                res <- .partition_crisp(x, colname, .breaks, .labels, .right, call)
+
+            } else if (.method == "triangle") {
+                br <- .determine_fuzzy_breaks(x, colname, .breaks, call)
+            }
+
         } else {
             cli_abort(c("Unable to partition column {.var {colname}}.",
-                       "i"="Column to partition must be a factor, logical, or numeric.",
+                       "i"="Column selected for partitioning must be a factor, logical, or numeric.",
                        "x"="The column {.var {colname}} is a {.cls {class(x)}}."),
                       call = call)
         }
@@ -81,45 +91,60 @@ partition <- function(.data,
 }
 
 
-.determine_breaks <- function(x, colname, breaks, call) {
-    if (is.null(breaks)) {
-        cli_abort(c("{.var .breaks} must not be NULL in order to partition numeric column {.var {colname}}."),
-                  call = call)
-
-    } else if (length(breaks) == 1) {
+.partition_crisp <- function(x, colname, breaks, labels, right, call) {
+    if (length(breaks) == 1) {
         if (breaks <= 1 || !is_integerish(breaks)) {
             cli_abort(c("If {.var .breaks} is a single value, it must be a natural number greater than 1.",
                         "i"="You've supplied {breaks}."),
                       call = call)
         }
-        br <- seq(from = min(x, na.rm = TRUE), to = max(x, na.rm = TRUE), length.out = breaks + 1)
-        br <- c(-Inf, br[c(-1, -length(br))], Inf)
-
+        br <- .determine_crisp_breaks(x, breaks)
     } else {
-        br <- sort(breaks)
+        br <- breaks
     }
 
-    br
+    if (is.null(labels)) {
+        lb <- .determine_crisp_labels(br, right)
+    } else {
+        if (length(labels) != length(br) - 1) {
+            if (length(breaks) == 1) {
+                cli_abort(c("If {.var .breaks} is scalar, the length of {.var .labels} must be equal to the value of {.var .breaks}.",
+                            "i"="The length of {.var .labels} is {length(labels)}.",
+                            "i"="{.var .breaks} is {breaks}."),
+                          call = call)
+            } else {
+                cli_abort(c("If {.var .breaks} is non-scalar, the length of {.var .labels} must be equal to the length of {.var .breaks} - 1.",
+                            "i"="The length of {.var .labels} is {length(labels)}.",
+                            "i"="The length of {.var .breaks} is {length(breaks)}."),
+                          call = call)
+            }
+        }
+        lb <- labels
+    }
+
+    xx <- cut(x, breaks = br, labels = lb, right = right)
+
+    .partition_factor(xx, colname)
 }
 
 
-.determine_crisp_labels <- function(breaks, labels, right, call) {
-    if (is.null(labels)) {
-        l <- signif(breaks[-length(breaks)], 3)
-        r <- signif(breaks[-1], 3)
-        ll <- ifelse(right, "(", "[")
-        rr <- ifelse(right, "]", ")")
-        ll <- ifelse(is.finite(l), ll, "(")
-        rr <- ifelse(is.finite(r), rr, ")")
-        labels <- paste0(ll, l, ";", r, rr)
-    } else {
-        if (length(labels) != length(breaks) - 1) {
-            cli_abort(c("The length of {.var .labels} must be equal to the length of {.var .breaks} - 1.",
-                        "i"="THe length of {.var .labels} is {length(labels)}.",
-                        "i"="THe length of {.var .breaks} is {length(breaks)}."),
-                      call = call)
-        }
-    }
+.partition_fuzzy <- function(x, colname, breaks, labels, right, call) {
 
-    labels
+}
+
+
+.determine_crisp_breaks <- function(x, breaks) {
+    breaks <- seq(from = min(x, na.rm = TRUE), to = max(x, na.rm = TRUE), length.out = breaks + 1)
+
+    c(-Inf, breaks[c(-1, -length(breaks))], Inf)
+}
+
+
+.determine_crisp_labels <- function(breaks, right) {
+    l <- signif(breaks[-length(breaks)], 3)
+    r <- signif(breaks[-1], 3)
+    ll <- ifelse(right, "(", "[")
+    rr <- ifelse(right, "]", ")")
+
+    paste0(ll, l, ";", r, rr)
 }

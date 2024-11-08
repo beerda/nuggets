@@ -69,7 +69,7 @@ test_that("partition crisp", {
                            .keep = FALSE,
                            .method = "crisp"),
                  tibble("a=(-Inf;5]" = c(T,T,T,T,T,T,F,F,F,F,F),
-                        "a=(5;Inf)"  = c(F,F,F,F,F,F,T,T,T,T,T)))
+                        "a=(5;Inf]"  = c(F,F,F,F,F,F,T,T,T,T,T)))
 
     expect_equal(partition(data.frame(b = 1:10),
                            .breaks = 3,
@@ -77,7 +77,7 @@ test_that("partition crisp", {
                            .method = "crisp"),
                  tibble("b=(-Inf;4]" = c(T,T,T,T,F,F,F,F,F,F),
                         "b=(4;7]"    = c(F,F,F,F,T,T,T,F,F,F),
-                        "b=(7;Inf)"  = c(F,F,F,F,F,F,F,T,T,T)))
+                        "b=(7;Inf]"  = c(F,F,F,F,F,F,F,T,T,T)))
 
     expect_equal(partition(data.frame(b = 1:10),
                            .breaks = c(-Inf, 4, 7, Inf),
@@ -86,7 +86,7 @@ test_that("partition crisp", {
                            .right = TRUE),
                  tibble("b=(-Inf;4]" = c(T,T,T,T,F,F,F,F,F,F),
                         "b=(4;7]"    = c(F,F,F,F,T,T,T,F,F,F),
-                        "b=(7;Inf)"  = c(F,F,F,F,F,F,F,T,T,T)))
+                        "b=(7;Inf]"  = c(F,F,F,F,F,F,F,T,T,T)))
 
     expect_equal(partition(data.frame(b = 1:10),
                            .breaks = c(4, 7),
@@ -122,5 +122,4 @@ test_that("partition crisp", {
                  tibble("b=A"   = c(T,T,T,T,F,F,F,F,F,F),
                         "b=BBB" = c(F,F,F,F,T,T,T,F,F,F),
                         "b=cc"  = c(F,F,F,F,F,F,F,T,T,T)))
-
 })
