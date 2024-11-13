@@ -69,7 +69,7 @@ A tibble with found rules.
 }
 \description{
 Compute correlation between all combinations of \code{xvars} and \code{yvars} columns
-of \code{x} in subdata corresponding to conditions generated from \code{condition}
+of \code{x} in sub-data corresponding to conditions generated from \code{condition}
 columns.
 }
 \seealso{

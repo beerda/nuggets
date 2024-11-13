@@ -1,7 +1,7 @@
 #' Convert columns of data frame to Boolean or fuzzy sets
 #'
 #' Convert the selected columns of the data frame into either dummy
-#' logical columns (for logicalls and factors), or into membership degrees
+#' logical columns (for logicals and factors), or into membership degrees
 #' of fuzzy sets (for numeric columns), while leaving the remaining columns
 #' untouched. Each column selected for transformation typically yields in
 #' multiple columns in the output.

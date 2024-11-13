@@ -1,7 +1,7 @@
 #' Search for conditional correlations
 #'
 #' Compute correlation between all combinations of `xvars` and `yvars` columns
-#' of `x` in subdata corresponding to conditions generated from `condition`
+#' of `x` in sub-data corresponding to conditions generated from `condition`
 #' columns.
 #'
 #' @param x a matrix or data frame with data to search in.

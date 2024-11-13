@@ -109,7 +109,7 @@ underlying logic:
   Goedel t-norm is defined as $\min(a, b)$, Goguen t-norm as $a \cdot b$, and
   Lukasiewicz t-norm as $\max(0, a + b - 1)$.
 
-Before analyzed by `nuggets`, the data columns that would serve as predices in
+Before analyzed by `nuggets`, the data columns that would serve as predicates in
 conditions have to be either dichotomized or transformed to fuzzy sets. The
 package provides functions for both transformations. See the section
 **Data Preparation** for more details.
@@ -342,7 +342,7 @@ TBD (`dig_contrasts`)
 The `nuggets` package allows to execute a user-defined callback function on each generated
 frequent condition. That way a custom type of patterns may be searched. The following example
 replicates the search for implicative rules with the custom callback function. For that, a dataset
-has to be dichotomized and the disjoint vector created as in the **Data Preparatio** section
+has to be dichotomized and the disjoint vector created as in the **Data Preparation** section
 above:
 
 ```{r}

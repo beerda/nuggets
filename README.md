@@ -107,9 +107,9 @@ interpretation of conditions by selecting the underlying logic:
   Lukasiewicz t-norm as $\max(0, a + b - 1)$.
 
 Before analyzed by `nuggets`, the data columns that would serve as
-predices in conditions have to be either dichotomized or transformed to
-fuzzy sets. The package provides functions for both transformations. See
-the section **Data Preparation** for more details.
+predicates in conditions have to be either dichotomized or transformed
+to fuzzy sets. The package provides functions for both transformations.
+See the section **Data Preparation** for more details.
 
 `nuggets` provides functions to search for patterns of pre-defined
 types, such as `dig_implications()` for implicative rules,
@@ -460,7 +460,7 @@ on each generated frequent condition. That way a custom type of patterns
 may be searched. The following example replicates the search for
 implicative rules with the custom callback function. For that, a dataset
 has to be dichotomized and the disjoint vector created as in the **Data
-Preparatio** section above:
+Preparation** section above:
 
 ``` r
 head(fuzzyCO2)
