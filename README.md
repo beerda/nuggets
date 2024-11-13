@@ -127,7 +127,7 @@ combination is evaluated by the user-defined function. See the section
 
 ## Data Preparation
 
-### Preparations for Crisp (Boolean) Conditions
+### Preparations of Crisp (Boolean) Predicates
 
 For patterns based on crisp conditions, the data columns that would
 serve as predicates in conditions have to be transformed to logical
@@ -137,10 +137,18 @@ serve as predicates in conditions have to be transformed to logical
   number of levels;
 - factors have to be transformed to dummy logical columns.
 
-Numeric columns can be transformed to factors with the `cut()` function
-from the `base` package. The `cut()` function divides the range of the
-data into intervals and codes the values into a factor with the level
-names corresponding to the intervals.
+Both operations can be done with the help of the `partition()` function.
+The `partition()` function requires the dataset as its first argument
+and a *tidyselect* selection expression to select the columns to be
+transformed. Factors and logical columns are transformed to dummy
+logical columns.
+
+For numeric columns, the `partition()` function requires the `.method`
+argument to specify the method of partitioning. The `"crisp"` method
+divides the range of values of the selected columns into intervals
+specified by the `.breaks` argument and codes the values into dummy
+logical columns. The `.breaks` argument is a numeric vector that
+specifies the border values of the intervals.
 
 For example, consider the `CO2` dataset from the `datasets` package:
 
@@ -156,38 +164,69 @@ head(CO2)
 #> 6   Qn1 Quebec nonchilled  675   39.2
 ```
 
-The `conc` and `uptake` columns are numeric. We can transform them to
-factors with the `cut()` function by specifying the breaks, which split
-the range of values into intervals. For example, we can split the `conc`
-column into four intervals: (-Inf, 175\], (175, 350\], (350, 675\], and
-(675, Inf). The breaks are thus `c(-Inf, 175, 350, 675, Inf)`.
-Similarly, we can split the `uptake` column into three intervals: (-Inf,
-10\], (10, 20\], and (20, Inf) by specifying the breaks
-`c(-Inf, 10, 20, Inf)`:
+The `Plant`, `Type`, and `Treatment` columns are factors and they will
+be transformed to dummy logical columns without any special arguments
+added to the `partition()` function:
 
 ``` r
-crispCO2 <- CO2
-crispCO2$conc <- cut(crispCO2$conc, c(-Inf, 175, 350, 675, Inf))
-crispCO2$uptake <- cut(crispCO2$uptake, c(-Inf, 10, 20, Inf))
-head(crispCO2)
-#> Grouped Data: uptake ~ conc | Plant
-#>   Plant   Type  Treatment       conc    uptake
-#> 1   Qn1 Quebec nonchilled (-Inf,175]   (10,20]
-#> 2   Qn1 Quebec nonchilled (-Inf,175] (20, Inf]
-#> 3   Qn1 Quebec nonchilled  (175,350] (20, Inf]
-#> 4   Qn1 Quebec nonchilled  (175,350] (20, Inf]
-#> 5   Qn1 Quebec nonchilled  (350,675] (20, Inf]
-#> 6   Qn1 Quebec nonchilled  (350,675] (20, Inf]
+partition(CO2, Plant:Treatment)
+#> # A tibble: 84 × 18
+#>     conc uptake `Plant=Qn1` `Plant=Qn2` `Plant=Qn3` `Plant=Qc1` `Plant=Qc3`
+#>    <dbl>  <dbl> <lgl>       <lgl>       <lgl>       <lgl>       <lgl>      
+#>  1    95   16   TRUE        FALSE       FALSE       FALSE       FALSE      
+#>  2   175   30.4 TRUE        FALSE       FALSE       FALSE       FALSE      
+#>  3   250   34.8 TRUE        FALSE       FALSE       FALSE       FALSE      
+#>  4   350   37.2 TRUE        FALSE       FALSE       FALSE       FALSE      
+#>  5   500   35.3 TRUE        FALSE       FALSE       FALSE       FALSE      
+#>  6   675   39.2 TRUE        FALSE       FALSE       FALSE       FALSE      
+#>  7  1000   39.7 TRUE        FALSE       FALSE       FALSE       FALSE      
+#>  8    95   13.6 FALSE       TRUE        FALSE       FALSE       FALSE      
+#>  9   175   27.3 FALSE       TRUE        FALSE       FALSE       FALSE      
+#> 10   250   37.1 FALSE       TRUE        FALSE       FALSE       FALSE      
+#> # ℹ 74 more rows
+#> # ℹ 11 more variables: `Plant=Qc2` <lgl>, `Plant=Mn3` <lgl>, `Plant=Mn2` <lgl>,
+#> #   `Plant=Mn1` <lgl>, `Plant=Mc2` <lgl>, `Plant=Mc3` <lgl>, `Plant=Mc1` <lgl>,
+#> #   `Type=Quebec` <lgl>, `Type=Mississippi` <lgl>,
+#> #   `Treatment=nonchilled` <lgl>, `Treatment=chilled` <lgl>
 ```
 
-Once the numeric columns are transformed to factors, the factors can be
-transformed to dummy logical columns. The `dichotomize()` function from
-the `nuggets` package transforms factors to dummy logical columns. The
-function creates a new column for each factor level and fills it with
-logical values (`TRUE`/`FALSE`) based on the factor values:
+The `conc` and `uptake` columns are numeric. For instance, we can split
+the `conc` column into four intervals: (-Inf, 175\], (175, 350\], (350,
+675\], and (675, Inf). The breaks are thus
+`c(-Inf, 175, 350, 675, Inf)`.
 
 ``` r
-crispCO2 <- dichotomize(crispCO2)
+partition(CO2, conc, .method = "crisp", .breaks = c(-Inf, 175, 350, 675, Inf))
+#> # A tibble: 84 × 8
+#>    Plant Type   Treatment  uptake `conc=(-Inf;175]` `conc=(175;350]`
+#>    <ord> <fct>  <fct>       <dbl> <lgl>             <lgl>           
+#>  1 Qn1   Quebec nonchilled   16   TRUE              FALSE           
+#>  2 Qn1   Quebec nonchilled   30.4 TRUE              FALSE           
+#>  3 Qn1   Quebec nonchilled   34.8 FALSE             TRUE            
+#>  4 Qn1   Quebec nonchilled   37.2 FALSE             TRUE            
+#>  5 Qn1   Quebec nonchilled   35.3 FALSE             FALSE           
+#>  6 Qn1   Quebec nonchilled   39.2 FALSE             FALSE           
+#>  7 Qn1   Quebec nonchilled   39.7 FALSE             FALSE           
+#>  8 Qn2   Quebec nonchilled   13.6 TRUE              FALSE           
+#>  9 Qn2   Quebec nonchilled   27.3 TRUE              FALSE           
+#> 10 Qn2   Quebec nonchilled   37.1 FALSE             TRUE            
+#> # ℹ 74 more rows
+#> # ℹ 2 more variables: `conc=(350;675]` <lgl>, `conc=(675;Inf]` <lgl>
+```
+
+Similarly, we can split the `uptake` column into three intervals: (-Inf,
+10\], (10, 20\], and (20, Inf) by specifying the breaks
+`c(-Inf, 10, 20, Inf)`.
+
+The transformation of the whole `CO2` dataset to crisp predicates can be
+done as follows:
+
+``` r
+crispCO2 <- CO2 |>
+    partition(Plant:Treatment) |>
+    partition(conc, .method = "crisp", .breaks = c(-Inf, 175, 350, 675, Inf)) |>
+    partition(uptake, .method = "crisp", .breaks = c(-Inf, 10, 20, Inf))
+
 head(crispCO2)
 #> # A tibble: 6 × 23
 #>   `Plant=Qn1` `Plant=Qn2` `Plant=Qn3` `Plant=Qc1` `Plant=Qc3` `Plant=Qc2`
@@ -202,17 +241,25 @@ head(crispCO2)
 #> #   `Plant=Mc2` <lgl>, `Plant=Mc3` <lgl>, `Plant=Mc1` <lgl>,
 #> #   `Type=Quebec` <lgl>, `Type=Mississippi` <lgl>,
 #> #   `Treatment=nonchilled` <lgl>, `Treatment=chilled` <lgl>,
-#> #   `conc=(-Inf,175]` <lgl>, `conc=(175,350]` <lgl>, `conc=(350,675]` <lgl>,
-#> #   `conc=(675, Inf]` <lgl>, `uptake=(-Inf,10]` <lgl>, `uptake=(10,20]` <lgl>,
-#> #   `uptake=(20, Inf]` <lgl>
+#> #   `conc=(-Inf;175]` <lgl>, `conc=(175;350]` <lgl>, `conc=(350;675]` <lgl>,
+#> #   `conc=(675;Inf]` <lgl>, `uptake=(-Inf;10]` <lgl>, `uptake=(10;20]` <lgl>,
+#> #   `uptake=(20;Inf]` <lgl>
 ```
 
-Note that each factor column became replaced by a set of logical
-columns, all of which start with the original column name and are
-followed by the factor level name. For example, the `Type` column, which
-is a factor with two levels `Quebec` and `Mississippi`, was replaced by
-two logical columns: `Type=Quebec` and `Type=Mississippi`. Other columns
-were replaced in a similar manner:
+Each call to the `partition()` function returns a tibble data frame with
+the selected columns transformed to dummy logical columns while the
+other columns remain unchanged.
+
+Each original factor column became replaced by a set of logical columns,
+all of which start with the original column name and are followed by the
+factor level name. For example, the `Type` column, which is a factor
+with two levels `Quebec` and `Mississippi`, was replaced by two logical
+columns: `Type=Quebec` and `Type=Mississippi`. Numeric columns were
+replaced by logical columns with names that indicate the interval to
+which the original value belongs. For example, the `conc` column was
+replaced by four logical columns: `conc=(-Inf,175]`, `conc=(175,350]`,
+`conc=(350,675]`, and `conc=(675,Inf)`. Other columns were transformed
+similarly:
 
 ``` r
 colnames(crispCO2)
@@ -221,15 +268,15 @@ colnames(crispCO2)
 #>  [7] "Plant=Mn3"            "Plant=Mn2"            "Plant=Mn1"           
 #> [10] "Plant=Mc2"            "Plant=Mc3"            "Plant=Mc1"           
 #> [13] "Type=Quebec"          "Type=Mississippi"     "Treatment=nonchilled"
-#> [16] "Treatment=chilled"    "conc=(-Inf,175]"      "conc=(175,350]"      
-#> [19] "conc=(350,675]"       "conc=(675, Inf]"      "uptake=(-Inf,10]"    
-#> [22] "uptake=(10,20]"       "uptake=(20, Inf]"
+#> [16] "Treatment=chilled"    "conc=(-Inf;175]"      "conc=(175;350]"      
+#> [19] "conc=(350;675]"       "conc=(675;Inf]"       "uptake=(-Inf;10]"    
+#> [22] "uptake=(10;20]"       "uptake=(20;Inf]"
 ```
 
 Now all the columns are logical and can be used as predicates in crisp
 conditions.
 
-### Preparations for Fuzzy Conditions
+### Preparations of Fuzzy Predicates
 
 For patterns based on fuzzy conditions, the data columns that would
 serve as predicates in conditions have to be transformed to fuzzy
@@ -241,60 +288,77 @@ between 0 and 1 indicates a partial truthfulness.
 
 In order to search for fuzzy patterns, the numeric input data columns
 have to be transformed to fuzzy predicates, i.e., to vectors of truth
-degrees from the interval $[0, 1]$. (The fuzzy approach may be also used
-with logical columns created from factors, as discussed in the previous
-section.)
+degrees from the interval $[0, 1]$. (Fuzzy methods allow to be used with
+logical columns too.)
 
-The transformation to fuzzy predicates can be done, for example, with
+The transformation to fuzzy predicates can be done again with the help
+of the `partition()` function. Again, factors will be transformed to
+dummy logical columns. On the other hand, numeric columns will be
+transformed to fuzzy predicates. For that, the `partition()` function
+provides two fuzzy partitioning methods: `"triangle"` and `"raisedcos"`.
+The `"triangle"` method creates fuzzy sets with triangular membership
+functions, while the `"raisedcos"` method creates fuzzy sets with raised
+cosine membership functions.
+
+More advanced fuzzy partitioning of numeric columns may be achieved with
 the help of the [lfl](https://cran.r-project.org/package=lfl) package,
 which provides tools for definition of fuzzy sets of many types
 including fuzzy sets that model linguistic terms such as “very small”,
-“extremely big” and so on. In the following example, the `fcut` function
-from the `lfl` package transforms the `CO2` dataset to fuzzy predicates
-as follows:
+“extremely big” and so on. See the [`lfl`
+documentation](https://github.com/beerda/lfl/blob/master/vignettes/main.pdf)
+for more information.
 
-- factors are transformed to fuzzy sets similarly as in the previous
-  section;
-- numeric columns are transformed into a set of columns, each
-  representing a fuzzy set. The type of fuzzy sets to be created is
-  specified by the `type` argument, which can be one of the following:
-  `"triangle"`, `"raisedcos"`. The `breaks` argument specifies the
-  breaks that define the shape of fuzzy sets. In the following example,
-  both the `conc` and `uptake` columns are transformed to fuzzy sets
-  with triangular membership functions. In both cases, three fuzzy sets
-  are created. For `conc`, the first triangular fuzzy set is determined
-  by the breaks `(-Inf, 175, 350)`, the second by `(175, 350, 675)`, and
-  the third by `(350, 675, Inf)`. For `uptake`, the first triangular
-  fuzzy set is determined by the breaks `(-Inf, 18, 28)`, the second by
-  `(18, 28, 37)`, and the third by `(28, 37, Inf)`.
+In the following example, both the `conc` and `uptake` columns are
+transformed to fuzzy sets with triangular membership functions. For
+that, the `partition()` function requires the `.breaks` argument to
+specify the shape of fuzzy sets. For `.method = "triangle"`, each
+consecutive triplet of values in the `.breaks` vector specifies a single
+triangular fuzzy set: the first and the last value of the triplet are
+the borders of the triangle, and the middle value is the peak of the
+triangle.
 
-``` r
-fuzzyCO2 <- fcut(CO2,
-                 type = "triangle",
-                 breaks = list(conc = c(-Inf, 175, 350, 675, Inf),
-                               uptake = c(-Inf, 18, 28, 37, Inf)))
-```
+For instance, the `conc` column’s `.breaks` may be specified as
+`c(-Inf, 175, 350, 675, Inf)`, which creates three triangular fuzzy
+sets: `conc=(-Inf,175,350)`, `conc=(175,350,675)`, and
+`conc=(350,675,Inf)`. Similarly, the `uptake` column’s `.breaks` may be
+specified as `c(-Inf, 18, 28, 37, Inf)`.
 
-Note that the `lfl`’s `fcut` function returns an `fsets` object, which
-should be converted to tibble data frame with the `as_tibble` function:
+The transformation of the whole `CO2` dataset to fuzzy predicates can be
+done as follows:
 
 ``` r
-fuzzyCO2 <- as_tibble(fuzzyCO2)
+fuzzyCO2 <- CO2 |>
+    partition(Plant:Treatment) |>
+    partition(conc, .method = "triangle", .breaks = c(-Inf, 175, 350, 675, Inf)) |>
+    partition(uptake, .method = "triangle", .breaks = c(-Inf, 18, 28, 37, Inf))
+
+head(fuzzyCO2)
+#> # A tibble: 6 × 22
+#>   `Plant=Qn1` `Plant=Qn2` `Plant=Qn3` `Plant=Qc1` `Plant=Qc3` `Plant=Qc2`
+#>   <lgl>       <lgl>       <lgl>       <lgl>       <lgl>       <lgl>      
+#> 1 TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      
+#> 2 TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      
+#> 3 TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      
+#> 4 TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      
+#> 5 TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      
+#> 6 TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      
+#> # ℹ 16 more variables: `Plant=Mn3` <lgl>, `Plant=Mn2` <lgl>, `Plant=Mn1` <lgl>,
+#> #   `Plant=Mc2` <lgl>, `Plant=Mc3` <lgl>, `Plant=Mc1` <lgl>,
+#> #   `Type=Quebec` <lgl>, `Type=Mississippi` <lgl>,
+#> #   `Treatment=nonchilled` <lgl>, `Treatment=chilled` <lgl>,
+#> #   `conc=(-Inf;175;350)` <dbl>, `conc=(175;350;675)` <dbl>,
+#> #   `conc=(350;675;Inf)` <dbl>, `uptake=(-Inf;18;28)` <dbl>,
+#> #   `uptake=(18;28;37)` <dbl>, `uptake=(28;37;Inf)` <dbl>
 colnames(fuzzyCO2)
 #>  [1] "Plant=Qn1"            "Plant=Qn2"            "Plant=Qn3"           
 #>  [4] "Plant=Qc1"            "Plant=Qc3"            "Plant=Qc2"           
 #>  [7] "Plant=Mn3"            "Plant=Mn2"            "Plant=Mn1"           
 #> [10] "Plant=Mc2"            "Plant=Mc3"            "Plant=Mc1"           
 #> [13] "Type=Quebec"          "Type=Mississippi"     "Treatment=nonchilled"
-#> [16] "Treatment=chilled"    "conc=1"               "conc=2"              
-#> [19] "conc=3"               "uptake=1"             "uptake=2"            
-#> [22] "uptake=3"
+#> [16] "Treatment=chilled"    "conc=(-Inf;175;350)"  "conc=(175;350;675)"  
+#> [19] "conc=(350;675;Inf)"   "uptake=(-Inf;18;28)"  "uptake=(18;28;37)"   
+#> [22] "uptake=(28;37;Inf)"
 ```
-
-See the [`lfl`
-documentation](https://github.com/beerda/lfl/blob/master/vignettes/main.pdf)
-for more possibilities of defining fuzzy sets such as by using
-linguistic expressions like “very small”, “extremely big” and so on.
 
 ## Pre-defined Patterns
 
@@ -402,19 +466,20 @@ Preparatio** section above:
 head(fuzzyCO2)
 #> # A tibble: 6 × 22
 #>   `Plant=Qn1` `Plant=Qn2` `Plant=Qn3` `Plant=Qc1` `Plant=Qc3` `Plant=Qc2`
-#>         <dbl>       <dbl>       <dbl>       <dbl>       <dbl>       <dbl>
-#> 1           1           0           0           0           0           0
-#> 2           1           0           0           0           0           0
-#> 3           1           0           0           0           0           0
-#> 4           1           0           0           0           0           0
-#> 5           1           0           0           0           0           0
-#> 6           1           0           0           0           0           0
-#> # ℹ 16 more variables: `Plant=Mn3` <dbl>, `Plant=Mn2` <dbl>, `Plant=Mn1` <dbl>,
-#> #   `Plant=Mc2` <dbl>, `Plant=Mc3` <dbl>, `Plant=Mc1` <dbl>,
-#> #   `Type=Quebec` <dbl>, `Type=Mississippi` <dbl>,
-#> #   `Treatment=nonchilled` <dbl>, `Treatment=chilled` <dbl>, `conc=1` <dbl>,
-#> #   `conc=2` <dbl>, `conc=3` <dbl>, `uptake=1` <dbl>, `uptake=2` <dbl>,
-#> #   `uptake=3` <dbl>
+#>   <lgl>       <lgl>       <lgl>       <lgl>       <lgl>       <lgl>      
+#> 1 TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      
+#> 2 TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      
+#> 3 TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      
+#> 4 TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      
+#> 5 TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      
+#> 6 TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      
+#> # ℹ 16 more variables: `Plant=Mn3` <lgl>, `Plant=Mn2` <lgl>, `Plant=Mn1` <lgl>,
+#> #   `Plant=Mc2` <lgl>, `Plant=Mc3` <lgl>, `Plant=Mc1` <lgl>,
+#> #   `Type=Quebec` <lgl>, `Type=Mississippi` <lgl>,
+#> #   `Treatment=nonchilled` <lgl>, `Treatment=chilled` <lgl>,
+#> #   `conc=(-Inf;175;350)` <dbl>, `conc=(175;350;675)` <dbl>,
+#> #   `conc=(350;675;Inf)` <dbl>, `uptake=(-Inf;18;28)` <dbl>,
+#> #   `uptake=(18;28;37)` <dbl>, `uptake=(28;37;Inf)` <dbl>
 print(disj)
 #>  [1] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    
 #>  [7] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    
@@ -476,25 +541,25 @@ flatten the first level of lists in the result and binding it into a
 data frame:
 
 ``` r
-result <- result %>%
-  unlist(recursive = FALSE) %>%
-  map(as_tibble) %>%
-  do.call(rbind, .) %>%
+result <- result |>
+  unlist(recursive = FALSE) |>
+  map(as_tibble) |>
+  do.call(rbind, args = _) |>
   arrange(desc(support))
 
 print(result)
 #> # A tibble: 188 × 4
-#>    antecedent                  consequent             support confidence
-#>    <chr>                       <chr>                    <dbl>      <dbl>
-#>  1 {Type=Mississippi,uptake=2} {Treatment=nonchilled}  0.135       0.895
-#>  2 {Plant=Mc3}                 {Treatment=chilled}     0.0833      1    
-#>  3 {Plant=Mc1}                 {Treatment=chilled}     0.0833      1    
-#>  4 {Plant=Qn1}                 {Treatment=nonchilled}  0.0833      1    
-#>  5 {Plant=Mc2}                 {Treatment=chilled}     0.0833      1    
-#>  6 {Plant=Mn1}                 {Treatment=nonchilled}  0.0833      1    
-#>  7 {Plant=Mn2}                 {Treatment=nonchilled}  0.0833      1    
-#>  8 {Plant=Mn3}                 {Treatment=nonchilled}  0.0833      1    
-#>  9 {Plant=Qc2}                 {Treatment=chilled}     0.0833      1    
-#> 10 {Plant=Qc3}                 {Treatment=chilled}     0.0833      1    
+#>    antecedent                           consequent            support confidence
+#>    <chr>                                <chr>                   <dbl>      <dbl>
+#>  1 {Type=Mississippi,uptake=(18;28;37)} {Treatment=nonchille…  0.135       0.895
+#>  2 {Plant=Mc3}                          {Treatment=chilled}    0.0833      1    
+#>  3 {Plant=Mc1}                          {Treatment=chilled}    0.0833      1    
+#>  4 {Plant=Qn1}                          {Treatment=nonchille…  0.0833      1    
+#>  5 {Plant=Mc2}                          {Treatment=chilled}    0.0833      1    
+#>  6 {Plant=Mn1}                          {Treatment=nonchille…  0.0833      1    
+#>  7 {Plant=Mn2}                          {Treatment=nonchille…  0.0833      1    
+#>  8 {Plant=Mn3}                          {Treatment=nonchille…  0.0833      1    
+#>  9 {Plant=Qc2}                          {Treatment=chilled}    0.0833      1    
+#> 10 {Plant=Qc3}                          {Treatment=chilled}    0.0833      1    
 #> # ℹ 178 more rows
 ```

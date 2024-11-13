@@ -129,7 +129,7 @@ user-defined function. See the section **Custom Patterns** for more details.
 
 ## Data Preparation
 
-### Preparations for Crisp (Boolean) Conditions
+### Preparations of Crisp (Boolean) Predicates
 
 For patterns based on crisp conditions, the data columns that would serve as
 predicates in conditions have to be transformed to logical (`TRUE`/`FALSE`)
@@ -139,10 +139,16 @@ data:
   levels;
 - factors have to be transformed to dummy logical columns.
 
-Numeric columns can be transformed to factors with the `cut()` function from
-the `base` package. The `cut()` function divides the range of the data into
-intervals and codes the values into a factor with the level names corresponding
-to the intervals.
+Both operations can be done with the help of the `partition()` function. The
+`partition()` function requires the dataset as its first argument and a
+*tidyselect* selection expression to select the columns to be transformed.
+Factors and logical columns are transformed to dummy logical columns.
+
+For numeric columns, the `partition()` function requires the `.method` argument
+to specify the method of partitioning. The `"crisp"` method divides the range of
+values of the selected columns into intervals specified by the `.breaks`
+argument and codes the values into dummy logical columns. The `.breaks` argument
+is a numeric vector that specifies the border values of the intervals.
 
 For example, consider the `CO2` dataset from the `datasets` package:
 
@@ -150,38 +156,50 @@ For example, consider the `CO2` dataset from the `datasets` package:
 head(CO2)
 ```
 
-The `conc` and `uptake` columns are numeric. We can transform them to factors
-with the `cut()` function by specifying the breaks, which split the range of
-values into intervals. For example, we can split the `conc` column into four
-intervals: (-Inf, 175], (175, 350], (350, 675], and (675, Inf). The breaks
-are thus `c(-Inf, 175, 350, 675, Inf)`. Similarly, we can split the `uptake`
-column into three intervals: (-Inf, 10], (10, 20], and (20, Inf) by specifying
-the breaks `c(-Inf, 10, 20, Inf)`:
+The `Plant`, `Type`, and `Treatment` columns are factors and they will be
+transformed to dummy logical columns without any special arguments added to the
+`partition()` function:
 
 ```{r}
-crispCO2 <- CO2
-crispCO2$conc <- cut(crispCO2$conc, c(-Inf, 175, 350, 675, Inf))
-crispCO2$uptake <- cut(crispCO2$uptake, c(-Inf, 10, 20, Inf))
+partition(CO2, Plant:Treatment)
+```
+
+The `conc` and `uptake` columns are numeric. For instance, we can split the
+`conc` column into four intervals: (-Inf, 175], (175, 350], (350, 675], and
+(675, Inf). The breaks are thus `c(-Inf, 175, 350, 675, Inf)`.
+
+```{r}
+partition(CO2, conc, .method = "crisp", .breaks = c(-Inf, 175, 350, 675, Inf))
+```
+
+Similarly, we can split the `uptake` column into three intervals: (-Inf, 10],
+(10, 20], and (20, Inf) by specifying the breaks `c(-Inf, 10, 20, Inf)`.
+
+The transformation of the whole `CO2` dataset to crisp predicates can be done as
+follows:
+
+```{r}
+crispCO2 <- CO2 |>
+    partition(Plant:Treatment) |>
+    partition(conc, .method = "crisp", .breaks = c(-Inf, 175, 350, 675, Inf)) |>
+    partition(uptake, .method = "crisp", .breaks = c(-Inf, 10, 20, Inf))
+
 head(crispCO2)
 ```
 
-Once the numeric columns are transformed to factors, the factors can be
-transformed to dummy logical columns. The `dichotomize()` function from the
-`nuggets` package transforms factors to dummy logical columns. The function
-creates a new column for each factor level and fills it with logical values
-(`TRUE`/`FALSE`) based on the factor values:
+Each call to the `partition()` function returns a tibble data frame with the
+selected columns transformed to dummy logical columns while the other columns
+remain unchanged.
 
-```{r}
-crispCO2 <- dichotomize(crispCO2)
-head(crispCO2)
-```
-
-Note that each factor column became replaced by a set of logical columns, all
+Each original factor column became replaced by a set of logical columns, all
 of which start with the original column name and are followed by the factor
 level name. For example, the `Type` column, which is a factor with two levels
 `Quebec` and `Mississippi`, was replaced by two logical columns: 
-`Type=Quebec` and `Type=Mississippi`. Other columns were replaced in a similar
-manner:
+`Type=Quebec` and `Type=Mississippi`. Numeric columns were replaced by logical
+columns with names that indicate the interval to which the original value
+belongs. For example, the `conc` column was replaced by four logical columns:
+`conc=(-Inf,175]`, `conc=(175,350]`, `conc=(350,675]`, and `conc=(675,Inf)`.
+Other columns were transformed similarly:
 
 ```{r}
 colnames(crispCO2)
@@ -190,7 +208,7 @@ colnames(crispCO2)
 Now all the columns are logical and can be used as predicates in crisp conditions.
 
 
-### Preparations for Fuzzy Conditions
+### Preparations of Fuzzy Predicates
 
 For patterns based on fuzzy conditions, the data columns that would serve as
 predicates in conditions have to be transformed to fuzzy predicates. The
@@ -201,48 +219,50 @@ predicate is true. A value between 0 and 1 indicates a partial truthfulness.
 
 In order to search for fuzzy patterns, the numeric input data columns have to be
 transformed to fuzzy predicates, i.e., to vectors of truth degrees from the
-interval $[0, 1]$. (The fuzzy approach may be also used with logical columns
-created from factors, as discussed in the previous section.)
+interval $[0, 1]$. (Fuzzy methods allow to be used with logical columns too.)
 
-The transformation to fuzzy predicates can be done, for example, with the help
-of the [lfl](https://cran.r-project.org/package=lfl) package, which provides
+The transformation to fuzzy predicates can be done again with the help of the
+`partition()` function. Again, factors will be transformed to dummy logical
+columns. On the other hand, numeric columns will be transformed to fuzzy
+predicates. For that, the `partition()` function provides two fuzzy partitioning
+methods: `"triangle"` and `"raisedcos"`. The `"triangle"` method creates fuzzy
+sets with triangular membership functions, while the `"raisedcos"` method creates
+fuzzy sets with raised cosine membership functions.
+
+More advanced fuzzy partitioning of numeric columns may be achieved with the
+help of the [lfl](https://cran.r-project.org/package=lfl) package, which provides
 tools for definition of fuzzy sets of many types including fuzzy sets that model
-linguistic terms such as "very small", "extremely big" and so on. In the following
-example, the `fcut` function from the `lfl` package transforms the `CO2` dataset
-to fuzzy predicates as follows:
+linguistic terms such as "very small", "extremely big" and so on.  See the
+[`lfl` documentation](https://github.com/beerda/lfl/blob/master/vignettes/main.pdf)
+for more information.
 
-- factors are transformed to fuzzy sets similarly as in the previous section;
-- numeric columns are transformed into a set of columns, each representing a
-  fuzzy set. The type of fuzzy sets to be created is specified by the `type`
-  argument, which can be one of the following: `"triangle"`, `"raisedcos"`.
-  The `breaks` argument specifies the breaks that define the shape of fuzzy
-  sets. In the following example, both the `conc` and `uptake` columns are
-  transformed to fuzzy sets with triangular membership functions. In both
-  cases, three fuzzy sets are created. For `conc`, the first triangular
-  fuzzy set is determined by the breaks `(-Inf, 175, 350)`, the second by
-  `(175, 350, 675)`, and the third by `(350, 675, Inf)`. For `uptake`, the
-  first triangular fuzzy set is determined by the breaks `(-Inf, 18, 28)`,
-  the second by `(18, 28, 37)`, and the third by `(28, 37, Inf)`.
+In the following example, both the `conc` and `uptake` columns are
+transformed to fuzzy sets with triangular membership functions. For that, the
+`partition()` function requires the `.breaks` argument to specify the shape
+of fuzzy sets. For `.method = "triangle"`, each consecutive triplet of values
+in the `.breaks` vector specifies a single triangular fuzzy set: the first and
+the last value of the triplet are the borders of the triangle, and the middle
+value is the peak of the triangle. 
 
-```{r, message=FALSE}
-fuzzyCO2 <- fcut(CO2,
-                 type = "triangle",
-                 breaks = list(conc = c(-Inf, 175, 350, 675, Inf),
-                               uptake = c(-Inf, 18, 28, 37, Inf)))
-```
+For instance, the `conc` column's `.breaks` may be specified as
+`c(-Inf, 175, 350, 675, Inf)`, which creates three triangular fuzzy sets:
+`conc=(-Inf,175,350)`, `conc=(175,350,675)`, and `conc=(350,675,Inf)`.
+Similarly, the `uptake` column's `.breaks` may be specified as
+`c(-Inf, 18, 28, 37, Inf)`.
 
-Note that the `lfl`'s `fcut` function returns an `fsets` object, which should be
-converted to tibble data frame with the `as_tibble` function:
+The transformation of the whole `CO2` dataset to fuzzy predicates can be done as
+follows:
 
 ```{r, message=FALSE}
-fuzzyCO2 <- as_tibble(fuzzyCO2)
+fuzzyCO2 <- CO2 |>
+    partition(Plant:Treatment) |>
+    partition(conc, .method = "triangle", .breaks = c(-Inf, 175, 350, 675, Inf)) |>
+    partition(uptake, .method = "triangle", .breaks = c(-Inf, 18, 28, 37, Inf))
+
+head(fuzzyCO2)
 colnames(fuzzyCO2)
 ```
 
-See the
-[`lfl` documentation](https://github.com/beerda/lfl/blob/master/vignettes/main.pdf)
-for more possibilities of defining fuzzy sets such as by using linguistic
-expressions like "very small", "extremely big" and so on.
 
 
 
@@ -378,10 +398,10 @@ As we return a list of lists in the callback function, we have to flatten the fi
 of lists in the result and binding it into a data frame:
 
 ```{r}
-result <- result %>%
-  unlist(recursive = FALSE) %>%
-  map(as_tibble) %>%
-  do.call(rbind, .) %>%
+result <- result |>
+  unlist(recursive = FALSE) |>
+  map(as_tibble) |>
+  do.call(rbind, args = _) |>
   arrange(desc(support))
 
 print(result)
