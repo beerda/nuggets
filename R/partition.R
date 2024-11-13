@@ -2,8 +2,9 @@
 #'
 #' Convert the selected columns of the data frame into either dummy
 #' logical columns (for logicalls and factors), or into membership degrees
-#' of fuzzy sets (for numeric columns). Each source column typically yields
-#' in multiple columns in the output.
+#' of fuzzy sets (for numeric columns), while leaving the remaining columns
+#' untouched. Each column selected for transformation typically yields in
+#' multiple columns in the output.
 #'
 #' Concretely, the transformation of each selected column is performed as
 #' follows:
@@ -126,14 +127,12 @@ partition <- function(.data,
             }
         }
 
-        if (.keep) {
-            res <- cbind(.data[colindex], res)
-        }
-
         res
     })
 
     res <- do.call(cbind, res)
+    keeped <- if (.keep) .data else .data[-sel]
+    res <- cbind(keeped, res)
 
     as_tibble(res)
 }

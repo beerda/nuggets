@@ -58,8 +58,9 @@ A tibble created by transforming \code{.data}.
 \description{
 Convert the selected columns of the data frame into either dummy
 logical columns (for logicalls and factors), or into membership degrees
-of fuzzy sets (for numeric columns). Each source column typically yields
-in multiple columns in the output.
+of fuzzy sets (for numeric columns), while leaving the remaining columns
+untouched. Each column selected for transformation typically yields in
+multiple columns in the output.
 }
 \details{
 Concretely, the transformation of each selected column is performed as
