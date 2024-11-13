@@ -26,7 +26,9 @@ public:
         }
 
         chainsPermutation.push_back(chains.size());
-        chains.push_back(DualChainType(values));
+        DualChainType chain(values);
+        chain.toNumeric();
+        chains.push_back(chain);
     }
 
     void addLogicalChains(const List& data)
@@ -59,7 +61,9 @@ public:
             }
         }
 
-        foci.push_back(DualChainType(values));
+        DualChainType focus(values);
+        focus.toNumeric();
+        foci.push_back(focus);
     }
 
     void addLogicalFoci(const List& data)

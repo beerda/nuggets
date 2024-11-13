@@ -85,13 +85,11 @@ public:
     {
         if (conditionIterator.hasPredicate()) {
             int predicate = conditionIterator.getCurrentPredicate();
-            positiveChain = data.getChain(predicate);
+            positiveChain = data.getChain(predicate); // always either numeric or bitwise+numeric
             if (!prefixChain.empty()) {
                 if (positiveChain.isBitwise() != prefixChain.isBitwise() && positiveChain.isNumeric() != prefixChain.isNumeric()) {
                     if (prefixChain.isBitwise()) {
                         prefixChain.toNumeric();
-                    } else {
-                        positiveChain.toNumeric();
                     }
                 }
                 positiveChain.conjunctWith(prefixChain);
@@ -111,8 +109,13 @@ public:
     {
         if (focusIterator.hasPredicate()) {
             int focus = focusIterator.getCurrentPredicate();
-            ppFocusChains[focus] = data.getFocus(focus);
+            ppFocusChains[focus] = data.getFocus(focus); // always either numeric or bitwise+numeric
             if (conditionIterator.getLength() > 0) {
+                if (ppFocusChains[focus].isBitwise() != positiveChain.isBitwise() && ppFocusChains[focus].isNumeric() != positiveChain.isNumeric()) {
+                    if (positiveChain.isBitwise()) {
+                        positiveChain.toNumeric();
+                    }
+                }
                 ppFocusChains[focus].conjunctWith(positiveChain);
             }
         }
@@ -122,8 +125,13 @@ public:
     {
         if (focusIterator.hasPredicate()) {
             int focus = focusIterator.getCurrentPredicate();
-            pnFocusChains[focus] = data.getNegativeFocus(focus);
+            pnFocusChains[focus] = data.getNegativeFocus(focus); // always either numeric or bitwise+numeric
             if (conditionIterator.getLength() > 0) {
+                if (pnFocusChains[focus].isBitwise() != positiveChain.isBitwise() && pnFocusChains[focus].isNumeric() != positiveChain.isNumeric()) {
+                    if (positiveChain.isBitwise()) {
+                        positiveChain.toNumeric();
+                    }
+                }
                 pnFocusChains[focus].conjunctWith(positiveChain);
             }
         }
@@ -133,8 +141,13 @@ public:
     {
         if (focusIterator.hasPredicate()) {
             int focus = focusIterator.getCurrentPredicate();
-            npFocusChains[focus] = data.getFocus(focus);
+            npFocusChains[focus] = data.getFocus(focus); // always either numeric or bitwise+numeric
             if (conditionIterator.getLength() > 0) {
+                if (npFocusChains[focus].isBitwise() != negativeChain.isBitwise() && npFocusChains[focus].isNumeric() != negativeChain.isNumeric()) {
+                    if (negativeChain.isBitwise()) {
+                        negativeChain.toNumeric();
+                    }
+                }
                 npFocusChains[focus].conjunctWith(negativeChain);
             }
         }
@@ -144,8 +157,13 @@ public:
     {
         if (focusIterator.hasPredicate()) {
             int focus = focusIterator.getCurrentPredicate();
-            nnFocusChains[focus] = data.getNegativeFocus(focus);
+            nnFocusChains[focus] = data.getNegativeFocus(focus); // always either numeric or bitwise+numeric
             if (conditionIterator.getLength() > 0) {
+                if (nnFocusChains[focus].isBitwise() != negativeChain.isBitwise() && nnFocusChains[focus].isNumeric() != negativeChain.isNumeric()) {
+                    if (negativeChain.isBitwise()) {
+                        negativeChain.toNumeric();
+                    }
+                }
                 nnFocusChains[focus].conjunctWith(negativeChain);
             }
         }

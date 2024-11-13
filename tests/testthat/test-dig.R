@@ -717,3 +717,22 @@ test_that("errors", {
     expect_error(dig(d, f, condition = c(n, l), focus = c(n, l, s)),
                  "columns selected by `focus` must be logical or numeric")
 })
+
+
+test_that("bug on mixed logical and numeric chains", {
+    fuzzyCO2 <- CO2 |>
+        partition(Plant:Treatment) |>
+        partition(conc, .method = "triangle", .breaks = c(-Inf, 175, 350, 675, Inf)) |>
+        partition(uptake, .method = "triangle", .breaks = c(-Inf, 18, 28, 37, Inf))
+
+    disj <- sub("=.*", "", colnames(fuzzyCO2))
+
+    result <- dig_implications(fuzzyCO2,
+                               antecedent = !starts_with("Treatment"),
+                               consequent = starts_with("Treatment"),
+                               disjoint = disj,
+                               min_support = 0.02,
+                               min_confidence = 0.8)
+
+    expect_true(is_tibble(result))
+})
