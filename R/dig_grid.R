@@ -112,7 +112,7 @@ dig_grid <- function(x,
         cond <- format_condition(names(condition))
         d <- x[indices, , drop = FALSE]
 
-        result <- apply(grid, 1, function(row) {
+        result <- apply(grid, MARGIN = 1, simplify = FALSE, FUN = function(row) {
             dd <- d[, row, drop = FALSE]
             if (na_rm)
                 dd <- na.omit(dd)
@@ -120,13 +120,19 @@ dig_grid <- function(x,
             f(d = dd)
         })
 
-        result <- lapply(result, as_tibble)
+        isnull <- sapply(result, is.null)
+        result <- lapply(result[!isnull], as_tibble)
         result <- do.call(rbind, result)
+        gr <- grid[!isnull, ]
 
-        cbind(condition = rep(cond, nrow(grid)),
-              support = support,
-              grid,
-              result)
+        if (!is.null(result)) {
+            result <- cbind(condition = rep(cond, nrow(gr)),
+                            support = support,
+                            gr,
+                            result)
+        }
+
+        result
     }
 
     ffuzzy <- function(condition, support, weights) {
