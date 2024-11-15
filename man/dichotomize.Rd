@@ -26,10 +26,13 @@ specified for dichotomization in \code{what} argument.}
 A tibble with selected columns replaced with dummy columns.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function is deprecated because \code{\link[=partition]{partition()}} is more general and
+can be used to create dummy columns as well.
+
 Create dummy logical columns from selected columns of the data frame.
 Dummy columns may be created for logical or factor columns as follows:
-}
-\details{
 \itemize{
 \item for logical column \code{col}, a pair of columns is created named \code{col=T}
 and \code{col=F} where the former (resp. latter) is equal to the original
@@ -39,6 +42,12 @@ level \code{l} of the factor \code{col} and named as \code{col=l} with a value s
 to TRUE wherever the original column is equal to \code{l}.
 }
 }
+\examples{
+dichotomize(CO2, Plant:Treatment, .other = TRUE)
+# ->
+partition(CO2, Plant:Treatment)
+}
 \author{
 Michal Burda
 }
+\keyword{internal}

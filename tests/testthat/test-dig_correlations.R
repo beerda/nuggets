@@ -63,7 +63,7 @@ test_that("dig_correlations with NA", {
 
 
 test_that("dig_correlations iris", {
-    dcor <- dichotomize(iris, what = Species, .other = TRUE)
+    dcor <- partition(iris, Species)
     res <- dig_correlations(dcor, max_length = 0)
 
     expect_true(is_tibble(res))

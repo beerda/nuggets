@@ -1,5 +1,11 @@
 #' Create dummy columns from logicals or factors in a data frame
 #'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' This function is deprecated because [partition()] is more general and
+#' can be used to create dummy columns as well.
+#'
 #' Create dummy logical columns from selected columns of the data frame.
 #' Dummy columns may be created for logical or factor columns as follows:
 #'
@@ -21,13 +27,20 @@
 #' @param .other whether to put into result the rest of columns that were not
 #'      specified for dichotomization in `what` argument.
 #' @returns A tibble with selected columns replaced with dummy columns.
+#' @examples
+#' dichotomize(CO2, Plant:Treatment, .other = TRUE)
+#' # ->
+#' partition(CO2, Plant:Treatment)
 #' @export
+#' @keywords internal
 #' @author Michal Burda
 dichotomize <- function(.data,
                         what = everything(),
                         ...,
                         .keep = FALSE,
                         .other = FALSE) {
+    lifecycle::deprecate_soft("1.3.0", "dichotomize()", with = "partition()")
+
     .must_be_data_frame(.data)
     .must_be_flag(.keep)
     .must_be_flag(.other)

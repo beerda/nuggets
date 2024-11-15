@@ -1,4 +1,6 @@
 test_that("dichotomize", {
+    withr::local_options(lifecycle_verbosity = "quiet") # because dichotomize is deprecated
+
     expect_equal(dichotomize(data.frame()),
                  tibble())
 
@@ -51,6 +53,8 @@ test_that("dichotomize", {
 
 
 test_that("dichotomize selected", {
+    withr::local_options(lifecycle_verbosity = "quiet") # because dichotomize is deprecated
+
     d <- tibble(a = 1:6,
                 b = c(T, T, T, F, F, F),
                 c = c(T, F, T, F, T, F),

@@ -1,3 +1,8 @@
+# nuggets 1.4.0
+- released: ???
+- start using lifecycle package
+- dichotomize() is deprecated (use partition() instead)
+
 # nuggets 1.3.0
 - released: 2024-11-13
 - added is_degree(), dig_contrasts(), partition()
