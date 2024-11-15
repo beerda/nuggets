@@ -3,6 +3,7 @@
 
 ## usethis namespace: start
 #' @importFrom cli cli_abort
+#' @importFrom lifecycle deprecated
 #' @importFrom methods formalArgs
 #' @importFrom Rcpp sourceCpp
 #' @importFrom rlang caller_env

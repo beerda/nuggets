@@ -27,6 +27,7 @@ RoxygenNote: 7.3.2
 Language: en-US
 Imports: 
     cli,
+    lifecycle,
     methods,
     Rcpp,
     rlang,
@@ -41,5 +42,6 @@ SystemRequirements: C++17
 Suggests: 
     arules,
     testthat (>= 3.0.0),
-    xml2
+    xml2,
+    withr
 Config/testthat/edition: 3
