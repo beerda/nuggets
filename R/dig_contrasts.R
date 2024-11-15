@@ -1,5 +1,14 @@
 #' Search for contrast patterns
 #'
+#' Contrast patterns are a generalization of association rules that allow
+#' for the specification of a condition under which there is a significant
+#' difference between two numeric variables. The contrast is computed using
+#' a statistical test, which is specified by the `method` argument. The
+#' function computes the contrast between all pairs of variables, where the
+#' first variable is specified by the `xvars` argument and the second variable
+#' is specified by the `yvars` argument. The contrast is computed in sub-data
+#' corresponding to conditions generated from the `condition` columns.
+#'
 #' @param x a matrix or data frame with data to search in.
 #' @param condition a tidyselect expression (see
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
@@ -29,6 +38,9 @@
 #'      relative frequency of rows such that all condition predicates are TRUE on it.
 #'      For numerical (double) input, the support is computed as the mean (over all
 #'      rows) of multiplications of predicate values.
+#' @param max_p_value the maximum p-value of a test for the pattern to be considered
+#'     significant. If the p-value of the test is greater than `max_p_value`, the
+#'     pattern is not included in the result.
 #' @param threads the number of threads to use for parallel computation.
 #' @param ... Further arguments passed to the underlying test function
 #'      ([t.test()], [wilcox.test()], or [var.test()] accordingly to the
@@ -36,6 +48,15 @@
 #' @return A tibble with found rules.
 #' @author Michal Burda
 #' @seealso [dig()], [dig_grid()], [stats::t.test()], [stats::wilcox.test()], [stats::var.test()]
+#' @examples
+#' crispCO2 <- partition(CO2, Plant:Treatment)
+#' dig_contrasts(crispCO2,
+#'               condition = where(is.logical),
+#'               xvars = conc,
+#'               yvars = uptake,
+#'               method = "t",
+#'               min_support = 0.1)
+#'
 #' @export
 dig_contrasts <- function(x,
                           condition = where(is.logical),
@@ -46,6 +67,7 @@ dig_contrasts <- function(x,
                           min_length = 0L,
                           max_length = Inf,
                           min_support = 0.0,
+                          max_p_value = 0.05,
                           threads = 1,
                           ...) {
     .must_be_enum(method, c("t", "wilcox", "var"))
@@ -74,6 +96,8 @@ dig_contrasts <- function(x,
                         stderr = NA,
                         alternative = NA,
                         method = "error"))
+        } else if (fit$p.value > max_p_value) {
+            return(NULL)
         } else {
             return(list(estimate_x = fit$estimate[1],
                         estimate_y = fit$estimate[2],
@@ -93,6 +117,7 @@ dig_contrasts <- function(x,
                                d[[2]],
                                alternative = alternative,
                                conf.int = TRUE,
+                               exact = FALSE,
                                ...),
                    silent = TRUE)
         if (inherits(fit, "try-error")) {
@@ -104,6 +129,8 @@ dig_contrasts <- function(x,
                         conf_int_hi = NA,
                         alternative = NA,
                         method = "error"))
+        } else if (fit$p.value > max_p_value) {
+            return(NULL)
         } else {
             return(list(estimate = fit$estimate[1],
                         W_statistic = fit$statistic,
@@ -130,6 +157,8 @@ dig_contrasts <- function(x,
                         conf_int_hi = NA,
                         alternative = NA,
                         method = "error"))
+        } else if (fit$p.value > max_p_value) {
+            return(NULL)
         } else {
             return(list(estimate = fit$estimate[1],
                         F_statistic = fit$statistic,

@@ -14,6 +14,7 @@ dig_contrasts(
   min_length = 0L,
   max_length = Inf,
   min_support = 0,
+  max_p_value = 0.05,
   threads = 1,
   ...
 )
@@ -57,6 +58,10 @@ relative frequency of rows such that all condition predicates are TRUE on it.
 For numerical (double) input, the support is computed as the mean (over all
 rows) of multiplications of predicate values.}
 
+\item{max_p_value}{the maximum p-value of a test for the pattern to be considered
+significant. If the p-value of the test is greater than \code{max_p_value}, the
+pattern is not included in the result.}
+
 \item{threads}{the number of threads to use for parallel computation.}
 
 \item{...}{Further arguments passed to the underlying test function
@@ -67,7 +72,24 @@ selected method).}
 A tibble with found rules.
 }
 \description{
-Search for contrast patterns
+Contrast patterns are a generalization of association rules that allow
+for the specification of a condition under which there is a significant
+difference between two numeric variables. The contrast is computed using
+a statistical test, which is specified by the \code{method} argument. The
+function computes the contrast between all pairs of variables, where the
+first variable is specified by the \code{xvars} argument and the second variable
+is specified by the \code{yvars} argument. The contrast is computed in sub-data
+corresponding to conditions generated from the \code{condition} columns.
+}
+\examples{
+crispCO2 <- partition(CO2, Plant:Treatment)
+dig_contrasts(crispCO2,
+              condition = where(is.logical),
+              xvars = conc,
+              yvars = uptake,
+              method = "t",
+              min_support = 0.1)
+
 }
 \seealso{
 \code{\link[=dig]{dig()}}, \code{\link[=dig_grid]{dig_grid()}}, \code{\link[stats:t.test]{stats::t.test()}}, \code{\link[stats:wilcox.test]{stats::wilcox.test()}}, \code{\link[stats:var.test]{stats::var.test()}}
