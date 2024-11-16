@@ -4,6 +4,7 @@
 ^LICENSE\.md$
 ^README\.Rmd$
 ^index\.Rmd$
+^index\.md$
 ^\.github$
 ^misc$
 ^RELEASE_HOWTO\.md$
