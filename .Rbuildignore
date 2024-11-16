@@ -3,6 +3,7 @@
 ^CITATION\.cff$
 ^LICENSE\.md$
 ^README\.Rmd$
+^index\.Rmd$
 ^\.github$
 ^misc$
 ^RELEASE_HOWTO\.md$
