@@ -34,14 +34,6 @@ To start using the package, load it to the R session with:
 library(nuggets)
 ```
 
-As some functions from the other packages are used throughout this text,
-it is needed to load the `tidyverse` package as well:
-
-```{r, message=FALSE}
-library(tidyverse)
-```
-
-
 
 ## Introduction
 
@@ -353,9 +345,8 @@ of lists in the result and binding it into a data frame:
 ```{r}
 result <- result |>
   unlist(recursive = FALSE) |>
-  map(as_tibble) |>
-  do.call(rbind, args = _) |>
-  arrange(desc(support))
+  lapply(as_tibble) |>
+  do.call(rbind, args = _)
 
 print(result)
 ```
