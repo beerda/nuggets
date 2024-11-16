@@ -4,10 +4,5 @@ template:
   bootstrap: 5
   light-switch: true
 
-footer:
-  structure:
-    left: [package, developed_by]
-    right: pkgdown
-
 news:
   cran_dates: false

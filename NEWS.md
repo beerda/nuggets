@@ -1,5 +1,5 @@
 # nuggets 1.4.0
-- released: ???
+- released: *not-yet*
 - start using lifecycle package
 - dichotomize() is deprecated (use partition() instead)
 - fixed handling of NULL returned by a callback function in dig_grid()
@@ -22,7 +22,7 @@
 - fixed memory leaks
 
 # nuggets 1.1.0
-- released: 2024-10-07
+- released: 2024-10-08
 - added .other argument to dichotomize()
 - fixed handling of xvars, yvars tidy-selectors in dig_correlations()
 - added filtering of foci by their support
@@ -30,7 +30,7 @@
   (pp, pn, np, nn arguments)
 
 # nuggets 1.0.2
-- released: 2024-01-08
+- released: 2024-01-09
 - fixed handling of arguments min_coverage and min_support in dig_implications()
 - attempt to fix LTO error related to run_testhat_tests() - fixed by using
   an RC version of Rcpp (1.0.11.6)
