@@ -45,5 +45,9 @@ Suggests:
     arules,
     testthat (>= 3.0.0),
     xml2,
-    withr
+    withr,
+    knitr,
+    rmarkdown,
+    tidyverse
 Config/testthat/edition: 3
+VignetteBuilder: knitr
