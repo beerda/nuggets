@@ -1,5 +1,6 @@
 ^nuggets\.Rproj$
 ^\.Rproj\.user$
+^CITATION\.cff$
 ^LICENSE\.md$
 ^README\.Rmd$
 ^\.github$
