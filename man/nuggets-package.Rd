@@ -12,6 +12,8 @@ Extensible framework for subgroup discovery (Atzmueller (2015) \doi{10.1002/widm
 Useful links:
 \itemize{
   \item \url{https://beerda.github.io/nuggets/}
+  \item \url{https://github.com/beerda/nuggets}
+  \item Report bugs at \url{https://github.com/beerda/nuggets/issues}
 }
 
 }
