@@ -1,4 +1,18 @@
-# nuggets
+---
+title: "nuggets"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{nuggets}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
 `nuggets` is an extensible R framework for
 **subgroup discovery** ([Atzmueller (2015)](https://doi.org/10.1002/widm.1144)),
@@ -13,7 +27,7 @@ properties. A user-defined function may be defined to evaluate on each generated
 condition to search for custom patterns.
 
 
-## Installation
+# Installation
 
 To install the stable version of `nuggets` from CRAN, type the following command within the R session:
 
@@ -43,7 +57,7 @@ library(tidyverse)
 
 
 
-## Introduction
+# Introduction
 
 Package `nuggets` searches for patterns that can be described with formulae in
 the form of elementary conjunctions, which are called **conditions** in this
@@ -80,9 +94,9 @@ conditions and a pair of columns, whose combination is evaluated by the
 user-defined function. See the section **Custom Patterns** for more details.
 
 
-## Data Preparation
+# Data Preparation
 
-### Preparations of Crisp (Boolean) Predicates
+## Preparations of Crisp (Boolean) Predicates
 
 For patterns based on crisp conditions, the data columns that would serve as
 predicates in conditions have to be transformed to logical (`TRUE`/`FALSE`)
@@ -161,7 +175,7 @@ colnames(crispCO2)
 Now all the columns are logical and can be used as predicates in crisp conditions.
 
 
-### Preparations of Fuzzy Predicates
+## Preparations of Fuzzy Predicates
 
 For patterns based on fuzzy conditions, the data columns that would serve as
 predicates in conditions have to be transformed to fuzzy predicates. The
@@ -219,7 +233,7 @@ colnames(fuzzyCO2)
 
 
 
-## Pre-defined Patterns
+# Pre-defined Patterns
 
 `nuggets` provides a set of functions for searching for some best-known pattern types.
 These functions allow to process Boolean data, fuzzy data, or both. The result of
@@ -280,17 +294,17 @@ print(result)
 ```
 
 
-### Conditional Correlations
+## Conditional Correlations
 
 TBD (`dig_correlations`)
 
-### Contrast Patterns
+## Contrast Patterns
 
 TBD (`dig_contrasts`)
 
 
 
-## Custom Patterns
+# Custom Patterns
 
 The `nuggets` package allows to execute a user-defined callback function on each generated
 frequent condition. That way a custom type of patterns may be searched. The following example
