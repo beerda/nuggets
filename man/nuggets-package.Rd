@@ -8,6 +8,13 @@
 \description{
 Extensible framework for subgroup discovery (Atzmueller (2015) \doi{10.1002/widm.1144}), contrast patterns (Chen (2022) \doi{10.48550/arXiv.2209.13556}), emerging patterns (Dong (1999) \doi{10.1145/312129.312191}), association rules (Agrawal (1994) \url{https://www.vldb.org/conf/1994/P487.PDF}) and conditional correlations (Hájek (1978) \doi{10.1007/978-3-642-66943-9}). Both crisp (Boolean, binary) and fuzzy data are supported. It generates conditions in the form of elementary conjunctions, evaluates them on a dataset and checks the induced sub-data for interesting statistical properties. A user-defined function may be defined to evaluate on each generated condition to search for custom patterns.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://beerda.github.io/nuggets/}
+}
+
+}
 \author{
 \strong{Maintainer}: Michal Burda \email{michal.burda@osu.cz} (\href{https://orcid.org/0000-0002-4182-4407}{ORCID})
 

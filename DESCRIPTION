@@ -45,3 +45,4 @@ Suggests:
     xml2,
     withr
 Config/testthat/edition: 3
+URL: https://beerda.github.io/nuggets/
