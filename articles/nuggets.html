@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title> • nuggets</title>
+<title>nuggets: Getting Started • nuggets</title>
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="nuggets: Getting Started">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -59,7 +59,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1></h1>
+      <h1>nuggets: Getting Started</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/vignettes/nuggets.Rmd" class="external-link"><code>vignettes/nuggets.Rmd</code></a></small>
@@ -69,44 +69,8 @@
     
     
 <div class="section level2">
-<h2 id="nuggets">nuggets<a class="anchor" aria-label="anchor" href="#nuggets"></a>
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p><code>nuggets</code> is an extensible R framework for
-<strong>subgroup discovery</strong> (<a href="https://doi.org/10.1002/widm.1144" class="external-link">Atzmueller (2015)</a>),
-<strong>contrast patterns</strong> (<a href="https://doi.org/10.48550/arXiv.2209.13556" class="external-link">Chen (2022)</a>),
-<strong>emerging patterns</strong> (<a href="https://doi.org/10.1145/312129.312191" class="external-link">Dong (1999)</a>),
-<strong>association rules</strong> (<a href="https://www.vldb.org/conf/1994/P487.PDF" class="external-link">Agrawal (1994)</a>), and
-<strong>conditional correlations</strong> (<a href="https://doi.org/10.1007/978-3-642-66943-9" class="external-link">Hájek (1978)</a>). Both
-<strong>crisp</strong> (Boolean, binary) and <strong>fuzzy data</strong>
-are supported. The package generates conditions in the form of
-elementary conjunctions, evaluates them on a dataset and checks the
-induced sub-data for interesting statistical properties. A user-defined
-function may be defined to evaluate on each generated condition to
-search for custom patterns.</p>
-<div class="section level3">
-<h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
-</h3>
-<p>To install the stable version of <code>nuggets</code> from CRAN, type
-the following command within the R session:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"nuggets"</span><span class="op">)</span></span></code></pre></div>
-<p>You can also install the development version of <code>nuggets</code>
-from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"beerda/nuggets"</span><span class="op">)</span></span></code></pre></div>
-<p>To start using the package, load it to the R session with:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://beerda.github.io/nuggets/">nuggets</a></span><span class="op">)</span></span></code></pre></div>
-<p>As some functions from the other packages are used throughout this
-text, it is needed to load the <code>tidyverse</code> package as
-well:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
-</h3>
 <p>Package <code>nuggets</code> searches for patterns that can be
 described with formulae in the form of elementary conjunctions, which
 are called <strong>conditions</strong> in this text. The conditions are
@@ -153,12 +117,12 @@ that allows to search for patterns defined by conditions and a pair of
 columns, whose combination is evaluated by the user-defined function.
 See the section <strong>Custom Patterns</strong> for more details.</p>
 </div>
+<div class="section level2">
+<h2 id="data-preparation">Data Preparation<a class="anchor" aria-label="anchor" href="#data-preparation"></a>
+</h2>
 <div class="section level3">
-<h3 id="data-preparation">Data Preparation<a class="anchor" aria-label="anchor" href="#data-preparation"></a>
+<h3 id="preparations-of-crisp-boolean-predicates">Preparations of Crisp (Boolean) Predicates<a class="anchor" aria-label="anchor" href="#preparations-of-crisp-boolean-predicates"></a>
 </h3>
-<div class="section level4">
-<h4 id="preparations-of-crisp-boolean-predicates">Preparations of Crisp (Boolean) Predicates<a class="anchor" aria-label="anchor" href="#preparations-of-crisp-boolean-predicates"></a>
-</h4>
 <p>For patterns based on crisp conditions, the data columns that would
 serve as predicates in conditions have to be transformed to logical
 (<code>TRUE</code>/<code>FALSE</code>) data:</p>
@@ -181,88 +145,88 @@ argument and codes the values into dummy logical columns. The
 border values of the intervals.</p>
 <p>For example, consider the <code>CO2</code> dataset from the
 <code>datasets</code> package:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">CO2</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##   Plant   Type  Treatment conc uptake</span></span>
-<span><span class="co">## 1   Qn1 Quebec nonchilled   95   16.0</span></span>
-<span><span class="co">## 2   Qn1 Quebec nonchilled  175   30.4</span></span>
-<span><span class="co">## 3   Qn1 Quebec nonchilled  250   34.8</span></span>
-<span><span class="co">## 4   Qn1 Quebec nonchilled  350   37.2</span></span>
-<span><span class="co">## 5   Qn1 Quebec nonchilled  500   35.3</span></span>
-<span><span class="co">## 6   Qn1 Quebec nonchilled  675   39.2</span></span></code></pre>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">CO2</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   Plant   Type  Treatment conc uptake</span></span>
+<span><span class="co">#&gt; 1   Qn1 Quebec nonchilled   95   16.0</span></span>
+<span><span class="co">#&gt; 2   Qn1 Quebec nonchilled  175   30.4</span></span>
+<span><span class="co">#&gt; 3   Qn1 Quebec nonchilled  250   34.8</span></span>
+<span><span class="co">#&gt; 4   Qn1 Quebec nonchilled  350   37.2</span></span>
+<span><span class="co">#&gt; 5   Qn1 Quebec nonchilled  500   35.3</span></span>
+<span><span class="co">#&gt; 6   Qn1 Quebec nonchilled  675   39.2</span></span></code></pre></div>
 <p>The <code>Plant</code>, <code>Type</code>, and <code>Treatment</code>
 columns are factors and they will be transformed to dummy logical
 columns without any special arguments added to the
 <code><a href="../reference/partition.html">partition()</a></code> function:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">CO2</span>, <span class="va">Plant</span><span class="op">:</span><span class="va">Treatment</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 84 × 18</span></span></span>
-<span><span class="co">##     conc uptake `Plant=Qn1` `Plant=Qn2` `Plant=Qn3` `Plant=Qc1` `Plant=Qc3`</span></span>
-<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span>    95   16   TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span>   175   30.4 TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span>   250   34.8 TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span>   350   37.2 TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span>   500   35.3 TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span>   675   39.2 TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span>  <span style="text-decoration: underline;">1</span>000   39.7 TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span>    95   13.6 FALSE       TRUE        FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span>   175   27.3 FALSE       TRUE        FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span>   250   37.1 FALSE       TRUE        FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 74 more rows</span></span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 11 more variables: `Plant=Qc2` &lt;lgl&gt;, `Plant=Mn3` &lt;lgl&gt;, `Plant=Mn2` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `Plant=Mn1` &lt;lgl&gt;, `Plant=Mc2` &lt;lgl&gt;, `Plant=Mc3` &lt;lgl&gt;, `Plant=Mc1` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `Type=Quebec` &lt;lgl&gt;, `Type=Mississippi` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `Treatment=nonchilled` &lt;lgl&gt;, `Treatment=chilled` &lt;lgl&gt;</span></span></span></code></pre>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">CO2</span>, <span class="va">Plant</span><span class="op">:</span><span class="va">Treatment</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 84 × 18</span></span></span>
+<span><span class="co">#&gt;     conc uptake `Plant=Qn1` `Plant=Qn2` `Plant=Qn3` `Plant=Qc1` `Plant=Qc3`</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>    95   16   TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>   175   30.4 TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>   250   34.8 TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>   350   37.2 TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>   500   35.3 TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>   675   39.2 TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  <span style="text-decoration: underline;">1</span>000   39.7 TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>    95   13.6 FALSE       TRUE        FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>   175   27.3 FALSE       TRUE        FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>   250   37.1 FALSE       TRUE        FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 74 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 11 more variables: `Plant=Qc2` &lt;lgl&gt;, `Plant=Mn3` &lt;lgl&gt;, `Plant=Mn2` &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `Plant=Mn1` &lt;lgl&gt;, `Plant=Mc2` &lt;lgl&gt;, `Plant=Mc3` &lt;lgl&gt;, `Plant=Mc1` &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `Type=Quebec` &lt;lgl&gt;, `Type=Mississippi` &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `Treatment=nonchilled` &lt;lgl&gt;, `Treatment=chilled` &lt;lgl&gt;</span></span></span></code></pre></div>
 <p>The <code>conc</code> and <code>uptake</code> columns are numeric.
 For instance, we can split the <code>conc</code> column into four
 intervals: (-Inf, 175], (175, 350], (350, 675], and (675, Inf). The
 breaks are thus <code>c(-Inf, 175, 350, 675, Inf)</code>.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">CO2</span>, <span class="va">conc</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">175</span>, <span class="fl">350</span>, <span class="fl">675</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 84 × 8</span></span></span>
-<span><span class="co">##    Plant Type   Treatment  uptake `conc=(-Inf;175]` `conc=(175;350]`</span></span>
-<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> Qn1   Quebec nonchilled   16   TRUE              FALSE           </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> Qn1   Quebec nonchilled   30.4 TRUE              FALSE           </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> Qn1   Quebec nonchilled   34.8 FALSE             TRUE            </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> Qn1   Quebec nonchilled   37.2 FALSE             TRUE            </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> Qn1   Quebec nonchilled   35.3 FALSE             FALSE           </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> Qn1   Quebec nonchilled   39.2 FALSE             FALSE           </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> Qn1   Quebec nonchilled   39.7 FALSE             FALSE           </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> Qn2   Quebec nonchilled   13.6 TRUE              FALSE           </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> Qn2   Quebec nonchilled   27.3 TRUE              FALSE           </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> Qn2   Quebec nonchilled   37.1 FALSE             TRUE            </span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 74 more rows</span></span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 2 more variables: `conc=(350;675]` &lt;lgl&gt;, `conc=(675;Inf]` &lt;lgl&gt;</span></span></span></code></pre>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">CO2</span>, <span class="va">conc</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">175</span>, <span class="fl">350</span>, <span class="fl">675</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 84 × 8</span></span></span>
+<span><span class="co">#&gt;    Plant Type   Treatment  uptake `conc=(-Inf;175]` `conc=(175;350]`</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Qn1   Quebec nonchilled   16   TRUE              FALSE           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Qn1   Quebec nonchilled   30.4 TRUE              FALSE           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Qn1   Quebec nonchilled   34.8 FALSE             TRUE            </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Qn1   Quebec nonchilled   37.2 FALSE             TRUE            </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Qn1   Quebec nonchilled   35.3 FALSE             FALSE           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> Qn1   Quebec nonchilled   39.2 FALSE             FALSE           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Qn1   Quebec nonchilled   39.7 FALSE             FALSE           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> Qn2   Quebec nonchilled   13.6 TRUE              FALSE           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Qn2   Quebec nonchilled   27.3 TRUE              FALSE           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Qn2   Quebec nonchilled   37.1 FALSE             TRUE            </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 74 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 2 more variables: `conc=(350;675]` &lt;lgl&gt;, `conc=(675;Inf]` &lt;lgl&gt;</span></span></span></code></pre></div>
 <p>Similarly, we can split the <code>uptake</code> column into three
 intervals: (-Inf, 10], (10, 20], and (20, Inf) by specifying the breaks
 <code>c(-Inf, 10, 20, Inf)</code>.</p>
 <p>The transformation of the whole <code>CO2</code> dataset to crisp
 predicates can be done as follows:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">crispCO2</span> <span class="op">&lt;-</span> <span class="va">CO2</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">Plant</span><span class="op">:</span><span class="va">Treatment</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">conc</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">175</span>, <span class="fl">350</span>, <span class="fl">675</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">uptake</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">10</span>, <span class="fl">20</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">crispCO2</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 23</span></span></span>
-<span><span class="co">##   `Plant=Qn1` `Plant=Qn2` `Plant=Qn3` `Plant=Qc1` `Plant=Qc3` `Plant=Qc2`</span></span>
-<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">6</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 17 more variables: `Plant=Mn3` &lt;lgl&gt;, `Plant=Mn2` &lt;lgl&gt;, `Plant=Mn1` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `Plant=Mc2` &lt;lgl&gt;, `Plant=Mc3` &lt;lgl&gt;, `Plant=Mc1` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `Type=Quebec` &lt;lgl&gt;, `Type=Mississippi` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `Treatment=nonchilled` &lt;lgl&gt;, `Treatment=chilled` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `conc=(-Inf;175]` &lt;lgl&gt;, `conc=(175;350]` &lt;lgl&gt;, `conc=(350;675]` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `conc=(675;Inf]` &lt;lgl&gt;, `uptake=(-Inf;10]` &lt;lgl&gt;, `uptake=(10;20]` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `uptake=(20;Inf]` &lt;lgl&gt;</span></span></span></code></pre>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">crispCO2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 23</span></span></span>
+<span><span class="co">#&gt;   `Plant=Qn1` `Plant=Qn2` `Plant=Qn3` `Plant=Qc1` `Plant=Qc3` `Plant=Qc2`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 17 more variables: `Plant=Mn3` &lt;lgl&gt;, `Plant=Mn2` &lt;lgl&gt;, `Plant=Mn1` &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `Plant=Mc2` &lt;lgl&gt;, `Plant=Mc3` &lt;lgl&gt;, `Plant=Mc1` &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `Type=Quebec` &lt;lgl&gt;, `Type=Mississippi` &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `Treatment=nonchilled` &lt;lgl&gt;, `Treatment=chilled` &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `conc=(-Inf;175]` &lt;lgl&gt;, `conc=(175;350]` &lt;lgl&gt;, `conc=(350;675]` &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `conc=(675;Inf]` &lt;lgl&gt;, `uptake=(-Inf;10]` &lt;lgl&gt;, `uptake=(10;20]` &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `uptake=(20;Inf]` &lt;lgl&gt;</span></span></span></code></pre></div>
 <p>Each call to the <code><a href="../reference/partition.html">partition()</a></code> function returns a tibble
 data frame with the selected columns transformed to dummy logical
 columns while the other columns remain unchanged.</p>
@@ -278,22 +242,22 @@ interval to which the original value belongs. For example, the
 <code>conc=(-Inf,175]</code>, <code>conc=(175,350]</code>,
 <code>conc=(350,675]</code>, and <code>conc=(675,Inf)</code>. Other
 columns were transformed similarly:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">crispCO2</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##  [1] "Plant=Qn1"            "Plant=Qn2"            "Plant=Qn3"           </span></span>
-<span><span class="co">##  [4] "Plant=Qc1"            "Plant=Qc3"            "Plant=Qc2"           </span></span>
-<span><span class="co">##  [7] "Plant=Mn3"            "Plant=Mn2"            "Plant=Mn1"           </span></span>
-<span><span class="co">## [10] "Plant=Mc2"            "Plant=Mc3"            "Plant=Mc1"           </span></span>
-<span><span class="co">## [13] "Type=Quebec"          "Type=Mississippi"     "Treatment=nonchilled"</span></span>
-<span><span class="co">## [16] "Treatment=chilled"    "conc=(-Inf;175]"      "conc=(175;350]"      </span></span>
-<span><span class="co">## [19] "conc=(350;675]"       "conc=(675;Inf]"       "uptake=(-Inf;10]"    </span></span>
-<span><span class="co">## [22] "uptake=(10;20]"       "uptake=(20;Inf]"</span></span></code></pre>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">crispCO2</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] "Plant=Qn1"            "Plant=Qn2"            "Plant=Qn3"           </span></span>
+<span><span class="co">#&gt;  [4] "Plant=Qc1"            "Plant=Qc3"            "Plant=Qc2"           </span></span>
+<span><span class="co">#&gt;  [7] "Plant=Mn3"            "Plant=Mn2"            "Plant=Mn1"           </span></span>
+<span><span class="co">#&gt; [10] "Plant=Mc2"            "Plant=Mc3"            "Plant=Mc1"           </span></span>
+<span><span class="co">#&gt; [13] "Type=Quebec"          "Type=Mississippi"     "Treatment=nonchilled"</span></span>
+<span><span class="co">#&gt; [16] "Treatment=chilled"    "conc=(-Inf;175]"      "conc=(175;350]"      </span></span>
+<span><span class="co">#&gt; [19] "conc=(350;675]"       "conc=(675;Inf]"       "uptake=(-Inf;10]"    </span></span>
+<span><span class="co">#&gt; [22] "uptake=(10;20]"       "uptake=(20;Inf]"</span></span></code></pre></div>
 <p>Now all the columns are logical and can be used as predicates in
 crisp conditions.</p>
 </div>
-<div class="section level4">
-<h4 id="preparations-of-fuzzy-predicates">Preparations of Fuzzy Predicates<a class="anchor" aria-label="anchor" href="#preparations-of-fuzzy-predicates"></a>
-</h4>
+<div class="section level3">
+<h3 id="preparations-of-fuzzy-predicates">Preparations of Fuzzy Predicates<a class="anchor" aria-label="anchor" href="#preparations-of-fuzzy-predicates"></a>
+</h3>
 <p>For patterns based on fuzzy conditions, the data columns that would
 serve as predicates in conditions have to be transformed to fuzzy
 predicates. The fuzzy predicate is represented by a vector of truth
@@ -340,44 +304,43 @@ Similarly, the <code>uptake</code> column’s <code>.breaks</code> may be
 specified as <code>c(-Inf, 18, 28, 37, Inf)</code>.</p>
 <p>The transformation of the whole <code>CO2</code> dataset to fuzzy
 predicates can be done as follows:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fuzzyCO2</span> <span class="op">&lt;-</span> <span class="va">CO2</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">Plant</span><span class="op">:</span><span class="va">Treatment</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">conc</span>, .method <span class="op">=</span> <span class="st">"triangle"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">175</span>, <span class="fl">350</span>, <span class="fl">675</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">uptake</span>, .method <span class="op">=</span> <span class="st">"triangle"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">18</span>, <span class="fl">28</span>, <span class="fl">37</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">fuzzyCO2</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 22</span></span></span>
-<span><span class="co">##   `Plant=Qn1` `Plant=Qn2` `Plant=Qn3` `Plant=Qc1` `Plant=Qc3` `Plant=Qc2`</span></span>
-<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">6</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 16 more variables: `Plant=Mn3` &lt;lgl&gt;, `Plant=Mn2` &lt;lgl&gt;, `Plant=Mn1` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `Plant=Mc2` &lt;lgl&gt;, `Plant=Mc3` &lt;lgl&gt;, `Plant=Mc1` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `Type=Quebec` &lt;lgl&gt;, `Type=Mississippi` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `Treatment=nonchilled` &lt;lgl&gt;, `Treatment=chilled` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `conc=(-Inf;175;350)` &lt;dbl&gt;, `conc=(175;350;675)` &lt;dbl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `conc=(350;675;Inf)` &lt;dbl&gt;, `uptake=(-Inf;18;28)` &lt;dbl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `uptake=(18;28;37)` &lt;dbl&gt;, `uptake=(28;37;Inf)` &lt;dbl&gt;</span></span></span></code></pre>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">fuzzyCO2</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##  [1] "Plant=Qn1"            "Plant=Qn2"            "Plant=Qn3"           </span></span>
-<span><span class="co">##  [4] "Plant=Qc1"            "Plant=Qc3"            "Plant=Qc2"           </span></span>
-<span><span class="co">##  [7] "Plant=Mn3"            "Plant=Mn2"            "Plant=Mn1"           </span></span>
-<span><span class="co">## [10] "Plant=Mc2"            "Plant=Mc3"            "Plant=Mc1"           </span></span>
-<span><span class="co">## [13] "Type=Quebec"          "Type=Mississippi"     "Treatment=nonchilled"</span></span>
-<span><span class="co">## [16] "Treatment=chilled"    "conc=(-Inf;175;350)"  "conc=(175;350;675)"  </span></span>
-<span><span class="co">## [19] "conc=(350;675;Inf)"   "uptake=(-Inf;18;28)"  "uptake=(18;28;37)"   </span></span>
-<span><span class="co">## [22] "uptake=(28;37;Inf)"</span></span></code></pre>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">fuzzyCO2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 22</span></span></span>
+<span><span class="co">#&gt;   `Plant=Qn1` `Plant=Qn2` `Plant=Qn3` `Plant=Qc1` `Plant=Qc3` `Plant=Qc2`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 16 more variables: `Plant=Mn3` &lt;lgl&gt;, `Plant=Mn2` &lt;lgl&gt;, `Plant=Mn1` &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `Plant=Mc2` &lt;lgl&gt;, `Plant=Mc3` &lt;lgl&gt;, `Plant=Mc1` &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `Type=Quebec` &lt;lgl&gt;, `Type=Mississippi` &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `Treatment=nonchilled` &lt;lgl&gt;, `Treatment=chilled` &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `conc=(-Inf;175;350)` &lt;dbl&gt;, `conc=(175;350;675)` &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `conc=(350;675;Inf)` &lt;dbl&gt;, `uptake=(-Inf;18;28)` &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `uptake=(18;28;37)` &lt;dbl&gt;, `uptake=(28;37;Inf)` &lt;dbl&gt;</span></span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">fuzzyCO2</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] "Plant=Qn1"            "Plant=Qn2"            "Plant=Qn3"           </span></span>
+<span><span class="co">#&gt;  [4] "Plant=Qc1"            "Plant=Qc3"            "Plant=Qc2"           </span></span>
+<span><span class="co">#&gt;  [7] "Plant=Mn3"            "Plant=Mn2"            "Plant=Mn1"           </span></span>
+<span><span class="co">#&gt; [10] "Plant=Mc2"            "Plant=Mc3"            "Plant=Mc1"           </span></span>
+<span><span class="co">#&gt; [13] "Type=Quebec"          "Type=Mississippi"     "Treatment=nonchilled"</span></span>
+<span><span class="co">#&gt; [16] "Treatment=chilled"    "conc=(-Inf;175;350)"  "conc=(175;350;675)"  </span></span>
+<span><span class="co">#&gt; [19] "conc=(350;675;Inf)"   "uptake=(-Inf;18;28)"  "uptake=(18;28;37)"   </span></span>
+<span><span class="co">#&gt; [22] "uptake=(28;37;Inf)"</span></span></code></pre></div>
 </div>
 </div>
-<div class="section level3">
-<h3 id="pre-defined-patterns">Pre-defined Patterns<a class="anchor" aria-label="anchor" href="#pre-defined-patterns"></a>
-</h3>
+<div class="section level2">
+<h2 id="pre-defined-patterns">Pre-defined Patterns<a class="anchor" aria-label="anchor" href="#pre-defined-patterns"></a>
+</h2>
 <p><code>nuggets</code> provides a set of functions for searching for
 some best-known pattern types. These functions allow to process Boolean
 data, fuzzy data, or both. The result of these functions is always a
@@ -408,13 +371,13 @@ any data row.</p>
 <p>The vector of disjoints can be easily created from the column names
 of the dataset, e.g., by obtaining the first part of column names before
 the equal sign as follows:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">disj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"=.*"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">fuzzyCO2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">disj</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##  [1] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    </span></span>
-<span><span class="co">##  [7] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    </span></span>
-<span><span class="co">## [13] "Type"      "Type"      "Treatment" "Treatment" "conc"      "conc"     </span></span>
-<span><span class="co">## [19] "conc"      "uptake"    "uptake"    "uptake"</span></span></code></pre>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">disj</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    </span></span>
+<span><span class="co">#&gt;  [7] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    </span></span>
+<span><span class="co">#&gt; [13] "Type"      "Type"      "Treatment" "Treatment" "conc"      "conc"     </span></span>
+<span><span class="co">#&gt; [19] "conc"      "uptake"    "uptake"    "uptake"</span></span></code></pre></div>
 <p>The function <code>dig_implications</code> takes the analyzed dataset
 as its first parameter and a pair of <code>tidyselect</code> expressions
 to select the column names to appear in the left-hand (antecedent) and
@@ -429,48 +392,48 @@ satisfy the antecedent AND consequent));</li>
 <li>the minimum confidence is 0.8 (confidence is the proportion of rows
 satisfying the consequent GIVEN the antecedent is true).</li>
 </ul>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_implications.html">dig_implications</a></span><span class="op">(</span><span class="va">fuzzyCO2</span>,</span>
-<span>                           antecedent <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"Treatment"</span><span class="op">)</span>,</span>
-<span>                           consequent <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"Treatment"</span><span class="op">)</span>,</span>
+<span>                           antecedent <span class="op">=</span> <span class="op">!</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"Treatment"</span><span class="op">)</span>,</span>
+<span>                           consequent <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"Treatment"</span><span class="op">)</span>,</span>
 <span>                           disjoint <span class="op">=</span> <span class="va">disj</span>,</span>
 <span>                           min_support <span class="op">=</span> <span class="fl">0.02</span>,</span>
 <span>                           min_confidence <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span></code></pre></div>
 <p>The result is a tibble with found rules. We may arrange it by support
 in descending order:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">result</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">support</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 188 × 8</span></span></span>
-<span><span class="co">##    antecedent        consequent support confidence coverage conseq_support count</span></span>
-<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> {Type=Mississipp… {Treatmen…  0.135       0.895   0.151             0.5  11.4</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> {Plant=Mc3}       {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> {Plant=Mc1}       {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> {Plant=Qn1}       {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> {Plant=Mc2}       {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> {Plant=Mn1}       {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> {Plant=Mn2}       {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> {Plant=Mn3}       {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> {Plant=Qc2}       {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> {Plant=Qc3}       {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 178 more rows</span></span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 1 more variable: antecedent_length &lt;int&gt;</span></span></span></code></pre>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">arrange</span><span class="op">(</span><span class="va">result</span>, <span class="fu">desc</span><span class="op">(</span><span class="va">support</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 188 × 8</span></span></span>
+<span><span class="co">#&gt;    antecedent        consequent support confidence coverage conseq_support count</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> {Type=Mississipp… {Treatmen…  0.135       0.895   0.151             0.5  11.4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> {Plant=Mc3}       {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> {Plant=Mc1}       {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> {Plant=Qn1}       {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> {Plant=Mc2}       {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> {Plant=Mn1}       {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> {Plant=Mn2}       {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> {Plant=Mn3}       {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> {Plant=Qc2}       {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> {Plant=Qc3}       {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 178 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1 more variable: antecedent_length &lt;int&gt;</span></span></span></code></pre></div>
 </div>
-<div class="section level4">
-<h4 id="conditional-correlations">Conditional Correlations<a class="anchor" aria-label="anchor" href="#conditional-correlations"></a>
-</h4>
+<div class="section level3">
+<h3 id="conditional-correlations">Conditional Correlations<a class="anchor" aria-label="anchor" href="#conditional-correlations"></a>
+</h3>
 <p>TBD (<code>dig_correlations</code>)</p>
 </div>
-<div class="section level4">
-<h4 id="contrast-patterns">Contrast Patterns<a class="anchor" aria-label="anchor" href="#contrast-patterns"></a>
-</h4>
+<div class="section level3">
+<h3 id="contrast-patterns">Contrast Patterns<a class="anchor" aria-label="anchor" href="#contrast-patterns"></a>
+</h3>
 <p>TBD (<code>dig_contrasts</code>)</p>
 </div>
 </div>
-<div class="section level3">
-<h3 id="custom-patterns">Custom Patterns<a class="anchor" aria-label="anchor" href="#custom-patterns"></a>
-</h3>
+<div class="section level2">
+<h2 id="custom-patterns">Custom Patterns<a class="anchor" aria-label="anchor" href="#custom-patterns"></a>
+</h2>
 <p>The <code>nuggets</code> package allows to execute a user-defined
 callback function on each generated frequent condition. That way a
 custom type of patterns may be searched. The following example
@@ -478,36 +441,35 @@ replicates the search for implicative rules with the custom callback
 function. For that, a dataset has to be dichotomized and the disjoint
 vector created as in the <strong>Data Preparation</strong> section
 above:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">fuzzyCO2</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 22</span></span></span>
-<span><span class="co">##   `Plant=Qn1` `Plant=Qn2` `Plant=Qn3` `Plant=Qc1` `Plant=Qc3` `Plant=Qc2`</span></span>
-<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">6</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 16 more variables: `Plant=Mn3` &lt;lgl&gt;, `Plant=Mn2` &lt;lgl&gt;, `Plant=Mn1` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `Plant=Mc2` &lt;lgl&gt;, `Plant=Mc3` &lt;lgl&gt;, `Plant=Mc1` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `Type=Quebec` &lt;lgl&gt;, `Type=Mississippi` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `Treatment=nonchilled` &lt;lgl&gt;, `Treatment=chilled` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `conc=(-Inf;175;350)` &lt;dbl&gt;, `conc=(175;350;675)` &lt;dbl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `conc=(350;675;Inf)` &lt;dbl&gt;, `uptake=(-Inf;18;28)` &lt;dbl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   `uptake=(18;28;37)` &lt;dbl&gt;, `uptake=(28;37;Inf)` &lt;dbl&gt;</span></span></span></code></pre>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">disj</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##  [1] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    </span></span>
-<span><span class="co">##  [7] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    </span></span>
-<span><span class="co">## [13] "Type"      "Type"      "Treatment" "Treatment" "conc"      "conc"     </span></span>
-<span><span class="co">## [19] "conc"      "uptake"    "uptake"    "uptake"</span></span></code></pre>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">fuzzyCO2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 22</span></span></span>
+<span><span class="co">#&gt;   `Plant=Qn1` `Plant=Qn2` `Plant=Qn3` `Plant=Qc1` `Plant=Qc3` `Plant=Qc2`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 16 more variables: `Plant=Mn3` &lt;lgl&gt;, `Plant=Mn2` &lt;lgl&gt;, `Plant=Mn1` &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `Plant=Mc2` &lt;lgl&gt;, `Plant=Mc3` &lt;lgl&gt;, `Plant=Mc1` &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `Type=Quebec` &lt;lgl&gt;, `Type=Mississippi` &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `Treatment=nonchilled` &lt;lgl&gt;, `Treatment=chilled` &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `conc=(-Inf;175;350)` &lt;dbl&gt;, `conc=(175;350;675)` &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `conc=(350;675;Inf)` &lt;dbl&gt;, `uptake=(-Inf;18;28)` &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `uptake=(18;28;37)` &lt;dbl&gt;, `uptake=(28;37;Inf)` &lt;dbl&gt;</span></span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">disj</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    </span></span>
+<span><span class="co">#&gt;  [7] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    </span></span>
+<span><span class="co">#&gt; [13] "Type"      "Type"      "Treatment" "Treatment" "conc"      "conc"     </span></span>
+<span><span class="co">#&gt; [19] "conc"      "uptake"    "uptake"    "uptake"</span></span></code></pre></div>
 <p>As we want to search for implicative rules with some minimum support
 and confidence, we define the variables to hold that thresholds. We also
 need to define a callback function that will be called for each found
 frequent condition. Its purpose is to generate the rules with the
 obtained condition as an antecedent:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">min_support</span> <span class="op">&lt;-</span> <span class="fl">0.02</span></span>
 <span><span class="va">min_confidence</span> <span class="op">&lt;-</span> <span class="fl">0.8</span></span>
 <span></span>
@@ -538,40 +500,39 @@ predicates, which we call “foci” (plural of “focus”), within the rows
 satisfying the condition. For implicative rules, foci are potential rule
 consequents.</p>
 <p>Now we can run the digging for rules:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig.html">dig</a></span><span class="op">(</span><span class="va">fuzzyCO2</span>,</span>
 <span>              f <span class="op">=</span> <span class="va">f</span>,</span>
-<span>              condition <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"Treatment"</span><span class="op">)</span>,</span>
-<span>              focus <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"Treatment"</span><span class="op">)</span>,</span>
+<span>              condition <span class="op">=</span> <span class="op">!</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"Treatment"</span><span class="op">)</span>,</span>
+<span>              focus <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"Treatment"</span><span class="op">)</span>,</span>
 <span>              disjoint <span class="op">=</span> <span class="va">disj</span>,</span>
 <span>              min_length <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>              min_support <span class="op">=</span> <span class="va">min_support</span><span class="op">)</span></span></code></pre></div>
 <p>As we return a list of lists in the callback function, we have to
 flatten the first level of lists in the result and binding it into a
 data frame:</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span>recursive <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">as_tibble</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">map</span><span class="op">(</span><span class="va">as_tibble</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, args <span class="op">=</span> <span class="va">_</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">support</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="va">support</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 188 × 4</span></span></span>
-<span><span class="co">##    antecedent                           consequent            support confidence</span></span>
-<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> {Type=Mississippi,uptake=(18;28;37)} {Treatment=nonchille…  0.135       0.895</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> {Plant=Mc3}                          {Treatment=chilled}    0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> {Plant=Mc1}                          {Treatment=chilled}    0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> {Plant=Qn1}                          {Treatment=nonchille…  0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> {Plant=Mc2}                          {Treatment=chilled}    0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> {Plant=Mn1}                          {Treatment=nonchille…  0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> {Plant=Mn2}                          {Treatment=nonchille…  0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> {Plant=Mn3}                          {Treatment=nonchille…  0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> {Plant=Qc2}                          {Treatment=chilled}    0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> {Plant=Qc3}                          {Treatment=chilled}    0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 178 more rows</span></span></span></code></pre>
-</div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 188 × 4</span></span></span>
+<span><span class="co">#&gt;    antecedent                           consequent            support confidence</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> {Type=Mississippi,uptake=(18;28;37)} {Treatment=nonchille…  0.135       0.895</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> {Plant=Mc3}                          {Treatment=chilled}    0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> {Plant=Mc1}                          {Treatment=chilled}    0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> {Plant=Qn1}                          {Treatment=nonchille…  0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> {Plant=Mc2}                          {Treatment=chilled}    0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> {Plant=Mn1}                          {Treatment=nonchille…  0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> {Plant=Mn2}                          {Treatment=nonchille…  0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> {Plant=Mn3}                          {Treatment=nonchille…  0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> {Plant=Qc2}                          {Treatment=chilled}    0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> {Plant=Qc3}                          {Treatment=chilled}    0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 178 more rows</span></span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
