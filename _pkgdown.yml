@@ -6,3 +6,36 @@ template:
 
 news:
   cran_dates: false
+
+reference:
+  - title: "Data Preparation"
+    desc: >
+      Functions for transformation of input data into the format suitable for
+      pattern extraction.
+    contents:
+      - partition
+
+  - title: "Pre-defined Pattern Extraction"
+    desc: >
+      Functions for extraction of pre-defined patterns from input data.
+    contents:
+      - dig_contrasts
+      - dig_correlations
+      - dig_implications
+
+  - title: "Custom Pattern Extraction"
+    desc: >
+      Functions for extraction of custom patterns from input data.
+    contents:
+      - dig
+      - dig_grid
+
+  - title: "Tools and Helper Functions"
+    desc: >
+      Other functions that can be useful in the pattern extraction process.
+    contents:
+      - format_condition
+      - is_degree
+      - is_subset
+      - var_grid
+      - which_antichain
