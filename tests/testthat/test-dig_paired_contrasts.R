@@ -1,7 +1,7 @@
-test_that("dig_contrasts t", {
+test_that("dig_paired_contrasts t", {
     d <- partition(CO2, Plant:Treatment)
 
-    res <- dig_contrasts(d,
+    res <- dig_paired_contrasts(d,
                          condition = where(is.logical),
                          xvars = conc,
                          yvars = uptake,
@@ -15,7 +15,7 @@ test_that("dig_contrasts t", {
     expect_equal(res$xvar, rep("conc", 9))
     expect_equal(res$yvar, rep("uptake", 9))
 
-    res <- dig_contrasts(d,
+    res <- dig_paired_contrasts(d,
                          condition = where(is.logical),
                          xvars = conc,
                          yvars = uptake,
@@ -27,10 +27,10 @@ test_that("dig_contrasts t", {
     expect_equal(ncol(res), 15)
 })
 
-test_that("dig_contrasts wilcox", {
+test_that("dig_paired_contrasts wilcox", {
     d <- partition(CO2, Plant:Treatment)
 
-    res <- dig_contrasts(d,
+    res <- dig_paired_contrasts(d,
                          condition = where(is.logical),
                          xvars = conc,
                          yvars = uptake,
@@ -44,7 +44,7 @@ test_that("dig_contrasts wilcox", {
     expect_equal(res$xvar, rep("conc", 9))
     expect_equal(res$yvar, rep("uptake", 9))
 
-    res <- dig_contrasts(d,
+    res <- dig_paired_contrasts(d,
                          condition = where(is.logical),
                          xvars = conc,
                          yvars = uptake,
@@ -57,10 +57,10 @@ test_that("dig_contrasts wilcox", {
     expect_equal(ncol(res), 12)
 })
 
-test_that("dig_contrasts var", {
+test_that("dig_paired_contrasts var", {
     d <- partition(CO2, Plant:Treatment)
 
-    res <- dig_contrasts(d,
+    res <- dig_paired_contrasts(d,
                          condition = where(is.logical),
                          xvars = conc,
                          yvars = uptake,

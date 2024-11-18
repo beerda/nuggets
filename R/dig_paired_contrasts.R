@@ -1,7 +1,7 @@
 #' Search for paired contrast patterns
 #'
 #' @description
-#' `r lifecycle::badge("deprecated")`
+#' `r lifecycle::badge("experimental")`
 #'
 #' Contrast patterns are a generalization of association rules that allow
 #' for the specification of a condition under which there is a significant
@@ -108,41 +108,138 @@
 #' @seealso [dig()], [dig_grid()], [stats::t.test()], [stats::wilcox.test()], [stats::var.test()]
 #' @examples
 #' crispCO2 <- partition(CO2, Plant:Treatment)
-#' dig_contrasts(crispCO2,
-#'              condition = where(is.logical),
-#'              xvars = conc,
-#'              yvars = uptake,
-#'              method = "t",
-#'              min_support = 0.1)
-#' @keywords internal
+#' dig_paired_contrasts(crispCO2,
+#'                      condition = where(is.logical),
+#'                      xvars = conc,
+#'                      yvars = uptake,
+#'                      method = "t",
+#'                      min_support = 0.1)
 #' @export
-dig_contrasts <- function(x,
-                         condition = where(is.logical),
-                         xvars = where(is.numeric),
-                         yvars = where(is.numeric),
-                         method = "t",
-                         alternative = "two.sided",
-                         min_length = 0L,
-                         max_length = Inf,
-                         min_support = 0.0,
-                         max_p_value = 0.05,
-                         threads = 1,
-                         ...) {
-    lifecycle::deprecate_warn("1.3.0", "dig_contrasts()", with = "dig_paired_contrasts()")
+dig_paired_contrasts <- function(x,
+                                 condition = where(is.logical),
+                                 xvars = where(is.numeric),
+                                 yvars = where(is.numeric),
+                                 method = "t",
+                                 alternative = "two.sided",
+                                 min_length = 0L,
+                                 max_length = Inf,
+                                 min_support = 0.0,
+                                 max_p_value = 0.05,
+                                 threads = 1,
+                                 ...) {
+    .must_be_enum(method, c("t", "wilcox", "var"))
+    .must_be_enum(alternative, c("two.sided", "less", "greater"))
+
     condition <- enquo(condition)
     xvars <- enquo(xvars)
     yvars <- enquo(yvars)
 
-    dig_paired_contrasts(x = x,
-                         condition = !!condition,
-                         xvars = !!xvars,
-                         yvars = !!yvars,
-                         method = method,
-                         alternative = alternative,
-                         min_length = min_length,
-                         max_length = max_length,
-                         min_support = min_support,
-                         max_p_value = max_p_value,
-                         threads = threads,
-                         ...)
+    f <- list()
+    f[["t"]] <- function(d) {
+        fit <- try(t.test(d[[1]],
+                          d[[2]],
+                          alternative = alternative,
+                          ...),
+                   silent = TRUE)
+        if (inherits(fit, "try-error")) {
+            return(list(estimate_x = NA,
+                        estimate_y = NA,
+                        t_statistic = NA,
+                        df = NA,
+                        p_value = NA,
+                        rows = nrow(d),
+                        conf_int_lo = NA,
+                        conf_int_hi = NA,
+                        stderr = NA,
+                        alternative = NA,
+                        method = "error"))
+        } else if (fit$p.value > max_p_value) {
+            return(NULL)
+        } else {
+            return(list(estimate_x = fit$estimate[1],
+                        estimate_y = fit$estimate[2],
+                        t_statistic = fit$statistic,
+                        df = fit$parameter,
+                        p_value = fit$p.value,
+                        rows = nrow(d),
+                        conf_int_lo = fit$conf.int[1],
+                        conf_int_hi = fit$conf.int[2],
+                        stderr = fit$stderr,
+                        alternative = fit$alternative,
+                        method = fit$method))
+        }
+    }
+    f[["wilcox"]] <- function(d) {
+        fit <- try(wilcox.test(d[[1]],
+                               d[[2]],
+                               alternative = alternative,
+                               conf.int = TRUE,
+                               exact = FALSE,
+                               ...),
+                   silent = TRUE)
+        if (inherits(fit, "try-error")) {
+            return(list(estimate = NA,
+                        W_statistic = NA,
+                        p_value = NA,
+                        rows = nrow(d),
+                        conf_int_lo = NA,
+                        conf_int_hi = NA,
+                        alternative = NA,
+                        method = "error"))
+        } else if (fit$p.value > max_p_value) {
+            return(NULL)
+        } else {
+            return(list(estimate = fit$estimate[1],
+                        W_statistic = fit$statistic,
+                        p_value = fit$p.value,
+                        rows = nrow(d),
+                        conf_int_lo = fit$conf.int[1],
+                        conf_int_hi = fit$conf.int[2],
+                        alternative = fit$alternative,
+                        method = fit$method))
+        }
+    }
+    f[["var"]] <- function(d) {
+        fit <- try(var.test(d[[1]],
+                            d[[2]],
+                            alternative = alternative,
+                            ...),
+                   silent = TRUE)
+        if (inherits(fit, "try-error")) {
+            return(list(estimate = NA,
+                        W_statistic = NA,
+                        p_value = NA,
+                        rows = nrow(d),
+                        conf_int_lo = NA,
+                        conf_int_hi = NA,
+                        alternative = NA,
+                        method = "error"))
+        } else if (fit$p.value > max_p_value) {
+            return(NULL)
+        } else {
+            return(list(estimate = fit$estimate[1],
+                        F_statistic = fit$statistic,
+                        df1 = fit$parameter[1],
+                        df2 = fit$parameter[2],
+                        p_value = fit$p.value,
+                        rows = nrow(d),
+                        conf_int_lo = fit$conf.int[1],
+                        conf_int_hi = fit$conf.int[2],
+                        alternative = fit$alternative,
+                        method = fit$method))
+        }
+    }
+
+    dig_grid(x = x,
+             f = f[[method]],
+             condition = !!condition,
+             xvars = !!xvars,
+             yvars = !!yvars,
+             na_rm = TRUE,
+             method = "bool",
+             min_length = min_length,
+             max_length = max_length,
+             min_support = min_support,
+             threads = threads,
+             ...)
 }
