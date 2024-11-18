@@ -113,11 +113,12 @@ ratio of the population variances.}
 ratio of the population variances.}
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 Contrast patterns are a generalization of association rules that allow
 for the specification of a condition under which there is a significant
 difference in some statistical feature between two numeric variables.
-}
-\details{
+
 \describe{
 \item{Scheme:}{\verb{theta(xvar) >> theta(yvar) | C}\cr\cr
 The feature \code{theta} of the first variable \code{xvar} is significantly higher

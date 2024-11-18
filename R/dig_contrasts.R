@@ -1,5 +1,8 @@
 #' Search for contrast patterns
 #'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' Contrast patterns are a generalization of association rules that allow
 #' for the specification of a condition under which there is a significant
 #' difference in some statistical feature between two numeric variables.

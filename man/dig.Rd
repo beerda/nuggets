@@ -110,6 +110,8 @@ callback function regardless of the number of remaining foci.}
 A list of results provided by the callback function \code{f}.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 This is a general function that enumerates all conditions created from
 data in \code{x} and calls the callback function \code{f} on each.
 }

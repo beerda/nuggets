@@ -1,5 +1,8 @@
 #' Search for implicative rules
 #'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' Implicative rule is a rule of the form \eqn{A \Rightarrow c}{A => c},
 #' where \eqn{A} (*antecedent*) is a set of predicates and \eqn{c} (*consequent*) is a predicate.
 #'

@@ -81,10 +81,11 @@ for a description of the measures.}
 A tibble with found rules and computed quality measures.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 Implicative rule is a rule of the form \eqn{A \Rightarrow c}{A => c},
 where \eqn{A} (\emph{antecedent}) is a set of predicates and \eqn{c} (\emph{consequent}) is a predicate.
-}
-\details{
+
 For the following explanations we need a mathematical function \eqn{supp(I)}, which
 is defined for a set \eqn{I} of predicates as a relative frequency of rows satisfying
 all predicates from \eqn{I}. For logical data, \eqn{supp(I)} equals to the relative

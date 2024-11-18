@@ -88,6 +88,8 @@ A tibble with found rules. Each row represents a single call of
 the callback function \code{f}.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 This function creates a grid of combinations of pairs of columns specified
 by \code{xvars} and \code{yvars} (see also \code{\link[=var_grid]{var_grid()}}). After that, it enumerates all
 conditions created from data in \code{x} (by calling \code{\link[=dig]{dig()}}) and for each such

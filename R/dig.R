@@ -1,5 +1,8 @@
 #' Search for rules
 #'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' This is a general function that enumerates all conditions created from
 #' data in `x` and calls the callback function `f` on each.
 #'

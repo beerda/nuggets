@@ -1,5 +1,8 @@
 #' Search for grid-based rules
 #'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' This function creates a grid of combinations of pairs of columns specified
 #' by `xvars` and `yvars` (see also [var_grid()]). After that, it enumerates all
 #' conditions created from data in `x` (by calling [dig()]) and for each such

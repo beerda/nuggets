@@ -1,5 +1,8 @@
 #' Search for conditional correlations
 #'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' Compute correlation between all combinations of `xvars` and `yvars` columns
 #' of `x` in sub-data corresponding to conditions generated from `condition`
 #' columns.
