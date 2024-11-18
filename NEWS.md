@@ -1,6 +1,6 @@
 # nuggets 1.4.0
 - released: *not-yet*
-- start using lifecycle package
+- started using lifecycle and pkgdown
 - dichotomize() is deprecated (use partition() instead)
 - fixed handling of NULL returned by a callback function in dig_grid()
 - added max_p_value argument to dig_contrasts()

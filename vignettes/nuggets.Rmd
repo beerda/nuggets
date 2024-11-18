@@ -1,5 +1,5 @@
 ---
-title: "nuggets: Getting Started"
+title: "nuggets: Get Started"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{nuggets}
