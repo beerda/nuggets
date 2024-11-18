@@ -39,12 +39,20 @@
       <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/RELEASE_HOWTO.md" class="external-link"><code>RELEASE_HOWTO.md</code></a></small>
     </div>
 
-<ul><li><p>Update version &amp; date in DESCRIPTION</p></li>
-<li><p>Update NEWS.md</p></li>
-<li><p>Update Github actions: usethis::use_github_action(“check-standard”) usethis::use_github_action(“test-coverage”)</p></li>
-<li><p>Test: devtools::spell_check() rhub::rhub_check() devtools::check_win_release() devtools::check_win_oldrelease() devtools::check_win_devel() devtools::check_mac_release()</p></li>
-<li><p>Release: devtools::release()</p></li>
-<li><p>To install the release candidate of Rcpp (to fix LTO errors): install.packages(“Rcpp”, repos = “<a href="https://RcppCore.github.io/drat" class="external-link uri">https://RcppCore.github.io/drat</a>”)</p></li>
+<ul><li>Update version &amp; date in DESCRIPTION</li>
+<li>Update NEWS.md</li>
+<li>Update Github actions: usethis::use_github_action(“check-standard”) usethis::use_github_action(“test-coverage”)</li>
+<li>Test: devtools::spell_check() rhub::rhub_check() devtools::check_win_release() devtools::check_win_oldrelease() devtools::check_win_devel() devtools::check_mac_release()</li>
+<li>Release: devtools::release()</li>
+<li>After release:
+<ul><li>commit CRAN-SUBMISSION and make GIT tag &amp; release</li>
+</ul></li>
+<li>Prepare for next development iteration:
+<ul><li>Search for deprecate_stop() and consider if you’re ready to the remove the function completely.</li>
+<li>Search for deprecate_warn() and replace with deprecate_stop(). Remove the remaining body of the function and any tests.</li>
+<li>Search for deprecate_soft() and replace with deprecate_warn().</li>
+</ul></li>
+<li>To install the release candidate of Rcpp (to fix LTO errors): install.packages(“Rcpp”, repos = “<a href="https://RcppCore.github.io/drat" class="external-link uri">https://RcppCore.github.io/drat</a>”)</li>
 </ul></main></div>
 
 
