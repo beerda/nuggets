@@ -50,7 +50,7 @@ test_that("dig_paired_contrasts wilcox", {
                          yvars = uptake,
                          method = "wilcox",
                          min_support = 0.1,
-                         max_p_value = 1e-9)
+                         max_p_value = 1e-5)
 
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 5)
