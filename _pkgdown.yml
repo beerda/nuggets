@@ -19,7 +19,7 @@ reference:
     desc: >
       Functions for extraction of pre-defined patterns from input data.
     contents:
-      - dig_contrasts
+      - dig_paired_contrasts
       - dig_correlations
       - dig_implications
 

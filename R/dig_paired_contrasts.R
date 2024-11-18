@@ -5,28 +5,28 @@
 #'
 #' Contrast patterns are a generalization of association rules that allow
 #' for the specification of a condition under which there is a significant
-#' difference in some statistical feature between two numeric variables.
+#' difference in some statistical feature between two paired numeric variables.
 #'
 #' \describe{
-#'   \item{Scheme:}{`theta(xvar) >> theta(yvar) | C`\cr\cr
-#'     The feature `theta` of the first variable `xvar` is significantly higher
-#'     than the feature `theta` of the second variable `yvar` under the
-#'     condition `C`.}
-#'   \item{Example:}{`mean(daily_ice_cream_income) >> mean(daily_tea_income) | sunny`\cr\cr
-#'     The *mean* of *daily ice-cream income* is significantly higher than
-#'     the *mean* of *daily tea income* under the condition of *sunny weather*.}
+#'   \item{Scheme:}{`xvar >> yvar | C`\cr\cr
+#'     The the difference between variable `xvar` and `yvar` under the condition
+#'     `C` is significant.}
+#'   \item{Example:}{`daily_ice_cream_income >> daily_tea_income | sunny`\cr\cr
+#'     Under the condition of *sunny weather*, the paired test shows that
+#'     *daily ice-cream income* is significantly higher than the
+#'     *daily tea income*.}
 #' }
 #'
-#' The contrast is computed using
-#' a statistical test, which is specified by the `method` argument. The
-#' function computes the contrast between all pairs of variables, where the
-#' first variable is specified by the `xvars` argument and the second variable
-#' is specified by the `yvars` argument. The contrast is computed in sub-data
-#' corresponding to conditions generated from the `condition` columns. The
-#' `dig_contrasts()` function supports crisp conditions only, i.e., the
-#' condition columns must be logical.
+#' The paired contrast is computed using a paired version of a statistical test,
+#' which is specified by the `method` argument. The function computes the paired
+#' contrast between all pairs of variables, where the first variable is
+#' specified by the `xvars` argument and the second variable is specified by the
+#' `yvars` argument. Paired contrasts are computed in sub-data corresponding
+#' to conditions generated from `condition` columns. The `dig_contrasts()`
+#' function supports crisp conditions only, i.e., the condition columns must be
+#' logical.
 #'
-#' @param x a matrix or data frame with data to search in.
+#' @param x a matrix or data frame with data to search the patterns in.
 #' @param condition a tidyselect expression (see
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying the columns to use as condition predicates
@@ -44,11 +44,11 @@
 #'      `"two.sided"`, `"greater"` or `"less"`. `"greater"` corresponds to
 #'      positive association, `"less"` to negative association.
 #' @param min_length the minimum size (the minimum number of predicates) of the
-#'      condition to be generated (must be greater or equal to 0). If 0, the empty
-#'      condition is generated in the first place.
+#'      condition to be generated (must be greater or equal to 0). If 0, the
+#'      empty condition is generated in the first place.
 #' @param max_length The maximum size (the maximum number of predicates) of the
-#'      condition to be generated. If equal to Inf, the maximum length of conditions
-#'      is limited only by the number of available predicates.
+#'      condition to be generated. If equal to Inf, the maximum length of
+#'      conditions is limited only by the number of available predicates.
 #' @param min_support the minimum support of a condition to trigger the callback
 #'      function for it. The support of the condition is the relative frequency
 #'      of the condition in the dataset `x`. For logical data, it equals to the
@@ -105,13 +105,22 @@
 #'      \item{conf_int_hi}{the upper bound of the confidence interval for the
 #'        ratio of the population variances.}
 #' @author Michal Burda
-#' @seealso [dig()], [dig_grid()], [stats::t.test()], [stats::wilcox.test()], [stats::var.test()]
+#' @seealso [dig()], [dig_grid()], [stats::t.test()], [stats::wilcox.test()],
+#'      [stats::var.test()]
 #' @examples
-#' crispCO2 <- partition(CO2, Plant:Treatment)
-#' dig_paired_contrasts(crispCO2,
+#' # Compute ratio of sepal and petal length and width for iris dataset
+#' crispIris <- iris
+#' crispIris$Sepal.Ratio <- iris$Sepal.Length / iris$Sepal.Width
+#' crispIris$Petal.Ratio <- iris$Petal.Length / iris$Petal.Width
+#'
+#' # Create predicates from the Species column
+#' crispIris <- partition(crispIris, Species)
+#'
+#' # Compute paired contrasts for ratios of sepal and petal length and width
+#' dig_paired_contrasts(crispIris,
 #'                      condition = where(is.logical),
-#'                      xvars = conc,
-#'                      yvars = uptake,
+#'                      xvars = Sepal.Ratio,
+#'                      yvars = Petal.Ratio,
 #'                      method = "t",
 #'                      min_support = 0.1)
 #' @export
@@ -139,6 +148,7 @@ dig_paired_contrasts <- function(x,
         fit <- try(t.test(d[[1]],
                           d[[2]],
                           alternative = alternative,
+                          paired = TRUE,
                           ...),
                    silent = TRUE)
         if (inherits(fit, "try-error")) {
@@ -173,6 +183,7 @@ dig_paired_contrasts <- function(x,
         fit <- try(wilcox.test(d[[1]],
                                d[[2]],
                                alternative = alternative,
+                               paired = TRUE,
                                conf.int = TRUE,
                                exact = FALSE,
                                ...),
