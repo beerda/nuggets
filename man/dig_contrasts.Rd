@@ -69,17 +69,73 @@ pattern is not included in the result.}
 selected method).}
 }
 \value{
-A tibble with found rules.
+A tibble with found patterns in rows. The following columns are always
+present:
+\item{condition}{the condition of the pattern as a character string
+in the form \code{{p1 & p2 & ... & pn}} where \code{p1}, \code{p2}, ..., \code{pn} are
+\code{x}'s column names.}
+\item{support}{the support of the condition, i.e., the relative
+frequency of the condition in the dataset \code{x}.}
+\item{xvar}{the name of the first variable in the contrast.}
+\item{yvar}{the name of the second variable in the contrast.}
+\item{p_value}{the p-value of the underlying test.}
+\item{rows}{the number of rows in the sub-data corresponding to
+the condition.}
+\item{alternative}{a character string indicating the alternative
+hypothesis.}
+\item{method}{a character string indicating the method used for the
+test.}
+For the \code{"t"} method, the following additional columns are also
+present (see also \code{\link[=t.test]{t.test()}}):
+\item{estimate_x}{the estimated mean of variable \code{xvar}.}
+\item{estimate_y}{the estimated mean of variable \code{yvar}.}
+\item{t_statistic}{the t-statistic of the t test.}
+\item{df}{the degrees of freedom of the t test.}
+\item{conf_int_lo}{the lower bound of the confidence interval.}
+\item{conf_int_hi}{the upper bound of the confidence interval.}
+\item{stderr}{the standard error of the mean difference.}
+For the \code{"wilcox"} method, the following additional columns are also
+present (see also \code{\link[=wilcox.test]{wilcox.test()}}):
+\item{estimate}{the estimate of the location parameter.}
+\item{W_statistic}{the Wilcoxon rank sum statistic.}
+\item{conf_int_lo}{the lower bound of the confidence interval.}
+\item{conf_int_hi}{the upper bound of the confidence interval.}
+For the \code{"var"} method, the following additional columns are also
+present (see also \code{\link[=var.test]{var.test()}}):
+\item{estimate}{the ratio of the sample variances of variables
+\code{xvar} and \code{yvar}.}
+\item{F_statistic}{the value of the F test statistic.}
+\item{df1}{the numerator degrees of freedom.}
+\item{df2}{the denominator degrees of freedom.}
+\item{conf_int_lo}{the lower bound of the confidence interval for the
+ratio of the population variances.}
+\item{conf_int_hi}{the upper bound of the confidence interval for the
+ratio of the population variances.}
 }
 \description{
 Contrast patterns are a generalization of association rules that allow
 for the specification of a condition under which there is a significant
-difference between two numeric variables. The contrast is computed using
+difference in some statistical feature between two numeric variables.
+}
+\details{
+\describe{
+\item{Scheme:}{\verb{theta(xvar) >> theta(yvar) | C}\cr\cr
+The feature \code{theta} of the first variable \code{xvar} is significantly higher
+than the feature \code{theta} of the second variable \code{yvar} under the
+condition \code{C}.}
+\item{Example:}{\verb{mean(daily_ice_cream_income) >> mean(daily_tea_income) | sunny}\cr\cr
+The \emph{mean} of \emph{daily ice-cream income} is significantly higher than
+the \emph{mean} of \emph{daily tea income} under the condition of \emph{sunny weather}.}
+}
+
+The contrast is computed using
 a statistical test, which is specified by the \code{method} argument. The
 function computes the contrast between all pairs of variables, where the
 first variable is specified by the \code{xvars} argument and the second variable
 is specified by the \code{yvars} argument. The contrast is computed in sub-data
-corresponding to conditions generated from the \code{condition} columns.
+corresponding to conditions generated from the \code{condition} columns. The
+\code{dig_contrasts()} function supports crisp conditions only, i.e., the
+condition columns must be logical.
 }
 \examples{
 crispCO2 <- partition(CO2, Plant:Treatment)
@@ -89,7 +145,6 @@ dig_contrasts(crispCO2,
               yvars = uptake,
               method = "t",
               min_support = 0.1)
-
 }
 \seealso{
 \code{\link[=dig]{dig()}}, \code{\link[=dig_grid]{dig_grid()}}, \code{\link[stats:t.test]{stats::t.test()}}, \code{\link[stats:wilcox.test]{stats::wilcox.test()}}, \code{\link[stats:var.test]{stats::var.test()}}
