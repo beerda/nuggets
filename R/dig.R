@@ -1,4 +1,4 @@
-#' Search for rules
+#' Search for patterns of custom type
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`

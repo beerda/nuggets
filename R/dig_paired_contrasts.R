@@ -17,6 +17,7 @@
 #'     *daily tea income*.}
 #' }
 #'
+#' @details
 #' The paired contrast is computed using a paired version of a statistical test,
 #' which is specified by the `method` argument. The function computes the paired
 #' contrast between all pairs of variables, where the first variable is
@@ -75,7 +76,8 @@
 #'      \item{rows}{the number of rows in the sub-data corresponding to
 #'        the condition.}
 #'      \item{alternative}{a character string indicating the alternative
-#'        hypothesis.}
+#'        hypothesis. The value must be one of `"two.sided"`, `"greater"`, or
+#'        `"less"`.}
 #'      \item{method}{a character string indicating the method used for the
 #'        test.}
 #'      For the `"t"` method, the following additional columns are also

@@ -2,7 +2,7 @@
 % Please edit documentation in R/dig.R
 \name{dig}
 \alias{dig}
-\title{Search for rules}
+\title{Search for patterns of custom type}
 \usage{
 dig(
   x,

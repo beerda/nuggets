@@ -82,7 +82,8 @@ frequency of the condition in the dataset \code{x}.}
 \item{rows}{the number of rows in the sub-data corresponding to
 the condition.}
 \item{alternative}{a character string indicating the alternative
-hypothesis.}
+hypothesis. The value must be one of \code{"two.sided"}, \code{"greater"}, or
+\code{"less"}.}
 \item{method}{a character string indicating the method used for the
 test.}
 For the \code{"t"} method, the following additional columns are also
@@ -128,7 +129,8 @@ Under the condition of \emph{sunny weather}, the paired test shows that
 \emph{daily ice-cream income} is significantly higher than the
 \emph{daily tea income}.}
 }
-
+}
+\details{
 The paired contrast is computed using a paired version of a statistical test,
 which is specified by the \code{method} argument. The function computes the paired
 contrast between all pairs of variables, where the first variable is
@@ -147,7 +149,7 @@ crispIris$Petal.Ratio <- iris$Petal.Length / iris$Petal.Width
 # Create predicates from the Species column
 crispIris <- partition(crispIris, Species)
 
-# Compute paired contrasts for the ratio of sepal and petal length and width
+# Compute paired contrasts for ratios of sepal and petal length and width
 dig_paired_contrasts(crispIris,
                      condition = where(is.logical),
                      xvars = Sepal.Ratio,
