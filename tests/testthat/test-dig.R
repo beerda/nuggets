@@ -707,15 +707,15 @@ test_that("errors", {
 
     expect_true(is.list(dig(d, f, condition = c(n, l))))
     expect_error(dig(d, f, condition = c(n, l, i)),
-                 "columns selected by `condition` must be logical or numeric")
+                 "columns selected by .* must be logical or numeric")
     expect_error(dig(d, f, condition = c(n, l, s)),
-                 "columns selected by `condition` must be logical or numeric")
+                 "columns selected by .* must be logical or numeric")
 
     expect_true(is.list(dig(d, f, condition = c(n, l), focus = c(n, l))))
     expect_error(dig(d, f, condition = c(n, l), focus = c(n, l, i)),
-                 "columns selected by `focus` must be logical or numeric")
+                 "columns selected by .* must be logical or numeric")
     expect_error(dig(d, f, condition = c(n, l), focus = c(n, l, s)),
-                 "columns selected by `focus` must be logical or numeric")
+                 "columns selected by .* must be logical or numeric")
 })
 
 

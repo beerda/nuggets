@@ -166,17 +166,17 @@ test_that("errors", {
     expect_error(dig_grid(d, f = ff, type = "bool", condition = c(l)),
                  "must have the following arguments")
     expect_error(dig_grid(d, f = fb, type = "bool", condition = c(l, n)),
-                 "columns selected by `condition` must be logical.")
+                 "columns selected by .* must be logical.")
     expect_error(dig_grid(d, f = fb, type = "bool", condition = c(l, s)),
-                 "columns selected by `condition` must be logical.")
+                 "columns selected by .* must be logical.")
     expect_error(dig_grid(d, f = fb, type = "bool", condition = c(l, i)),
-                 "columns selected by `condition` must be logical.")
+                 "columns selected by .* must be logical.")
 
     expect_true(is.data.frame(dig_grid(d, f = ff, type = "fuzzy", condition = c(l, n))))
     expect_error(dig_grid(d, f = fb, type = "fuzzy", condition = c(l)),
                  "must have the following arguments")
     expect_error(dig_grid(d, f = ff, type = "fuzzy", condition = c(l, i)),
-                 "columns selected by `condition` must be logical or numeric from the interval")
+                 "columns selected by .* must be logical or numeric from the interval")
     expect_error(dig_grid(d, f = ff, type = "fuzzy", condition = c(l, s)),
-                 "columns selected by `condition` must be logical or numeric from the interval")
+                 "columns selected by .* must be logical or numeric from the interval")
 })

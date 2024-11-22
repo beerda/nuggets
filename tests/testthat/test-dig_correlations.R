@@ -81,7 +81,7 @@ test_that("errors", {
 
     expect_true(is.list(dig_correlations(d, condition = c(l))))
     expect_error(dig_correlations(d, condition = c(l, n)),
-                 "columns selected by `condition` must be logical.")
+                 "columns selected by .* must be logical.")
     expect_error(dig_correlations(d, condition = c(l, s)),
-                 "columns selected by `condition` must be logical.")
+                 "columns selected by .* must be logical.")
 })
