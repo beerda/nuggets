@@ -6,6 +6,7 @@
 #' @importFrom lifecycle deprecated
 #' @importFrom methods formalArgs
 #' @importFrom Rcpp sourceCpp
+#' @importFrom rlang caller_arg
 #' @importFrom rlang caller_env
 #' @importFrom rlang current_env
 #' @importFrom rlang enquo

@@ -1,12 +1,12 @@
 ..must_be_type <- function(f, msg) {
     function(x,
              null = FALSE,
-             name = deparse(substitute(x)),
+             arg = caller_arg(x),
              call = caller_env()) {
         if (!isTRUE(f(x) | (isTRUE(null) && is.null(x)))) {
             na <- if (all(is.na(x))) " NA" else ""
             msg <- if (null) paste(msg, "or NULL") else msg
-            cli_abort(c("{.var {name}} must be a {msg}.",
+            cli_abort(c("{.arg {arg}} must be a {msg}.",
                         "x" = "You've supplied a {.cls {class(x)}}{na}."),
                       call = call)
         }
@@ -31,16 +31,16 @@
 ..must_be_list_of <- function(f, msg) {
     function(x,
              null = FALSE,
-             name = deparse(substitute(x)),
+             arg = caller_arg(x),
              call = caller_env()) {
-        .must_be_list(x, null = null, name, call)
+        .must_be_list(x, null = null, arg = arg, call = call)
         if (!is.null(x)) {
             test <- sapply(x, f)
             if (!isTRUE(all(test))) {
                 types <- sapply(x, function(i) class(i)[1])
                 details <- paste0("Element ", seq_along(types), " is a {.cls ", types, "}.")
                 details <- details[!test]
-                cli_abort(c("{.var {name}} must be a list of {msg}.",
+                cli_abort(c("{.arg {arg}} must be a list of {msg}.",
                             ..error_details(details)),
                           call = call)
             }
@@ -51,13 +51,13 @@
 
 ..must_be_value <- function(f, msg) {
     function(x,
-             name = deparse(substitute(x)),
+             arg = caller_arg(x),
              call = caller_env()) {
         test <- f(x)
         if (!isTRUE(all(test))) {
             details <- paste0("Element ", seq_along(x), " equals ", x, ".")
             details <- details[!test]
-            cli_abort(c("{.var {name}} must be {msg}.",
+            cli_abort(c("{.arg {arg}} must be {msg}.",
                         ..error_details(details)),
                       call = call)
         }
@@ -68,7 +68,7 @@
 ..must_be_comparable <- function(f, msg) {
     function(x,
              value,
-             name = deparse(substitute(x)),
+             arg = caller_arg(x),
              call = caller_env()) {
         test <- f(x, value)
         if (!isTRUE(all(test))) {
@@ -78,7 +78,7 @@
                 details <- paste0("Element ", seq_along(x), " equals ", x, ".")
                 details <- details[!test]
             }
-            cli_abort(c("{.var {name}} must be {msg} {value}.",
+            cli_abort(c("{.arg {arg}} must be {msg} {value}.",
                         ..error_details(details)),
                       call = call)
         }
@@ -90,11 +90,11 @@
 
 .must_be_null <- function(x,
                           when,
-                          name = deparse(substitute(x)),
+                          arg = caller_arg(x),
                           call = caller_env()) {
     if (!is.null(x)) {
         na <- if (all(is.na(x))) " NA" else ""
-        cli_abort(c("{.var {name}} can't be non-NULL when {when}.",
+        cli_abort(c("{.arg {arg}} can't be non-NULL when {when}.",
                     "x" = "You've supplied a {.cls {class(x)}}{na}."),
                   call = call)
     }
@@ -102,14 +102,14 @@
 
 .must_not_be_null <- function(x,
                               when = "",
-                              name = deparse(substitute(x)),
+                              arg = caller_arg(x),
                               call = caller_env()) {
     if (is.null(x)) {
         msg <- ifelse(when == "",
-                      "{.var {name}} must not be NULL",
-                      "{.var {name}} can't be NULL when {when}")
+                      "{.arg {arg}} must not be NULL",
+                      "{.arg {arg}} can't be NULL when {when}")
         cli_abort(c(msg,
-                    "x" = "{.var {name}} is NULL."),
+                    "x" = "{.arg {arg}} is NULL."),
                   call = call)
     }
 }
@@ -117,12 +117,12 @@
 ..must_be_type <- function(f, msg) {
     function(x,
              null = FALSE,
-             name = deparse(substitute(x)),
+             arg = caller_arg(x),
              call = caller_env()) {
         if (!isTRUE(f(x) | (isTRUE(null) && is.null(x)))) {
             na <- if (all(is.na(x))) " NA" else ""
             msg <- if (null) paste(msg, "or NULL") else msg
-            cli_abort(c("{.var {name}} must be a {msg}.",
+            cli_abort(c("{.arg {arg}} must be a {msg}.",
                         "x" = "You've supplied a {.cls {class(x)}}{na}."),
                       call = call)
         }
@@ -148,20 +148,20 @@
 
 
 .must_have_some_rows <- function(x,
-                                 name = deparse(substitute(x)),
+                                 arg = caller_arg(x),
                                  call = caller_env()) {
     if (nrow(x) <= 0) {
-        cli_abort(c("{.var {name}} must have at least one row.",
+        cli_abort(c("{.arg {arg}} must have at least one row.",
                     "x" = "You've supplied a {.cls {class(x)}} with 0 rows."),
                   call = call)
     }
 }
 
 .must_have_some_cols <- function(x,
-                                 name = deparse(substitute(x)),
+                                 arg = caller_arg(x),
                                  call = caller_env()) {
     if (ncol(x) <= 0) {
-        cli_abort(c("{.var {name}} must have at least one column.",
+        cli_abort(c("{.arg {arg}} must have at least one column.",
                     "x" = "You've supplied a {.cls {class(x)}} with 0 columns."),
                   call = call)
     }
@@ -185,7 +185,7 @@
                           values,
                           null = FALSE,
                           multi = FALSE,
-                          name = deparse(substitute(x)),
+                          arg = caller_arg(x),
                           call = caller_env()) {
     test <- FALSE
     if (is.null(x)) {
@@ -200,7 +200,7 @@
     if (!isTRUE(test)) {
         msg <- if (null) " or NULL" else ""
         vals <- paste0('"', values, '"', collapse = ", ")
-        cli_abort(c("{.var {name}} must be equal to any value from: {vals}{msg}.",
+        cli_abort(c("{.arg {arg}} must be equal to any value from: {vals}{msg}.",
                     "x" = "You've supplied {x}."),
                   call = call)
     }
@@ -208,11 +208,11 @@
 
 .must_have_length <- function(x,
                               value,
-                              name = deparse(substitute(x)),
+                              arg = caller_arg(x),
                               call = caller_env()) {
     if (!isTRUE(length(x) == value)) {
-        cli_abort(c("{.var {name}} must have {value} elements.",
-                    ..error_details("{.var {name}} has {length(x)} elements.")),
+        cli_abort(c("{.arg {arg}} must have {value} elements.",
+                    ..error_details("{.arg {arg}} has {length(x)} elements.")),
                   call = call)
     }
 }
@@ -231,15 +231,15 @@
 }
 
 .must_be_list_of_equal_length_vectors <- function(x,
-                                                  name = deparse(substitute(x)),
+                                                  arg = caller_arg(x),
                                                   call = caller_env()) {
-    .must_be_list(x, name, call)
+    .must_be_list(x, arg = arg, call = call)
     lengths <- sapply(x, length)
     if (!isTRUE(length(unique(lengths)) <= 1)) {
         test <- duplicated(lengths)
         details <- paste0("Element ", seq_along(lengths), " has length ", lengths, ".")
         details <- details[!test]
-        cli_abort(c("{.var {name}} must be a list of vectors of equal length.",
+        cli_abort(c("{.arg {arg}} must be a list of vectors of equal length.",
                     ..error_details(details)),
                   call = call)
     }
