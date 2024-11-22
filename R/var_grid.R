@@ -36,20 +36,7 @@ var_grid <- function(x,
     xvars <- enquo(xvars)
     yvars <- enquo(yvars)
 
-    if (is.matrix(x)) {
-        cols <- lapply(seq_len(ncol(x)), function(i) x[, i])
-        names(cols) <- colnames(x)
-    } else if (is.data.frame(x)) {
-        cols <- as.list(x)
-    } else {
-        cli_abort(c("{.var x} must be a matrix or a data frame.",
-                    "x" = "You've supplied a {.cls {class(x)}}."),
-                  call = call)
-    }
-
-    if (is.null(names(cols))) {
-        names(cols) <- seq_len(length(cols))
-    }
+    cols <- .convert_data_to_list(x, call = call)
 
     xvars <- eval_select(xvars, cols)
     yvars <- eval_select(yvars, cols)
