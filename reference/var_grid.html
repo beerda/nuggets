@@ -58,7 +58,7 @@ specified using a tidyselect expression (see
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">var_grid</span><span class="op">(</span><span class="va">x</span>, xvars <span class="op">=</span> <span class="fu">everything</span><span class="op">(</span><span class="op">)</span>, yvars <span class="op">=</span> <span class="fu">everything</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">var_grid</span><span class="op">(</span><span class="va">x</span>, xvars <span class="op">=</span> <span class="fu">everything</span><span class="op">(</span><span class="op">)</span>, yvars <span class="op">=</span> <span class="fu">everything</span><span class="op">(</span><span class="op">)</span>, call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -81,6 +81,13 @@ combinations use at the first place (xvar)</p></dd>
 <a href="https://tidyselect.r-lib.org/articles/syntax.html" class="external-link">tidyselect syntax</a>)
 specifying the columns of <code>x</code>, whose names will be used as a domain for
 combinations use at the second place (yvar)</p></dd>
+
+
+<dt id="arg-call">call<a class="anchor" aria-label="anchor" href="#arg-call"></a></dt>
+<dd><p>an environment in which to evaluate the error messages. This
+argument is useful when <code>var_grid()</code> is called from another function,
+which too has the arguments <code>x</code>, <code>xvars</code>, and <code>yvars</code>. In such a case,
+the <code>call</code> argument should be explicitly set to <code>current_env()</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

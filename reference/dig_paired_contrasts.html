@@ -17,15 +17,7 @@ daily tea income.
 
 
 
-
-The paired contrast is computed using a paired version of a statistical test,
-which is specified by the method argument. The function computes the paired
-contrast between all pairs of variables, where the first variable is
-specified by the xvars argument and the second variable is specified by the
-yvars argument. Paired contrasts are computed in sub-data corresponding
-to conditions generated from condition columns. The dig_contrasts()
-function supports crisp conditions only, i.e., the condition columns must be
-logical."><meta property="og:description" content="
+"><meta property="og:description" content="
 Contrast patterns are a generalization of association rules that allow
 for the specification of a condition under which there is a significant
 difference in some statistical feature between two paired numeric variables.
@@ -43,15 +35,7 @@ daily tea income.
 
 
 
-
-The paired contrast is computed using a paired version of a statistical test,
-which is specified by the method argument. The function computes the paired
-contrast between all pairs of variables, where the first variable is
-specified by the xvars argument and the second variable is specified by the
-yvars argument. Paired contrasts are computed in sub-data corresponding
-to conditions generated from condition columns. The dig_contrasts()
-function supports crisp conditions only, i.e., the condition columns must be
-logical."></head><body>
+"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -109,15 +93,7 @@ Under the condition of <em>sunny weather</em>, the paired test shows that
 <em>daily tea income</em>.</p></dd>
 
 
-</dl><p>The paired contrast is computed using a paired version of a statistical test,
-which is specified by the <code>method</code> argument. The function computes the paired
-contrast between all pairs of variables, where the first variable is
-specified by the <code>xvars</code> argument and the second variable is specified by the
-<code>yvars</code> argument. Paired contrasts are computed in sub-data corresponding
-to conditions generated from <code>condition</code> columns. The <code><a href="dig_contrasts.html">dig_contrasts()</a></code>
-function supports crisp conditions only, i.e., the condition columns must be
-logical.</p>
-    </div>
+</dl></div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
@@ -241,7 +217,8 @@ the condition.</p></dd>
 
 <dt>alternative</dt>
 <dd><p>a character string indicating the alternative
-hypothesis.</p></dd>
+hypothesis. The value must be one of <code>"two.sided"</code>, <code>"greater"</code>, or
+<code>"less"</code>.</p></dd>
 
 <dt>method</dt>
 <dd><p>a character string indicating the method used for the
@@ -309,6 +286,17 @@ ratio of the population variances.</p></dd>
 
 </dl></div>
     <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The paired contrast is computed using a paired version of a statistical test,
+which is specified by the <code>method</code> argument. The function computes the paired
+contrast between all pairs of variables, where the first variable is
+specified by the <code>xvars</code> argument and the second variable is specified by the
+<code>yvars</code> argument. Paired contrasts are computed in sub-data corresponding
+to conditions generated from <code>condition</code> columns. The <code><a href="dig_contrasts.html">dig_contrasts()</a></code>
+function supports crisp conditions only, i.e., the condition columns must be
+logical.</p>
+    </div>
+    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="dig.html">dig()</a></code>, <code><a href="dig_grid.html">dig_grid()</a></code>, <code><a href="https://rdrr.io/r/stats/t.test.html" class="external-link">stats::t.test()</a></code>, <code><a href="https://rdrr.io/r/stats/wilcox.test.html" class="external-link">stats::wilcox.test()</a></code>,
 <code><a href="https://rdrr.io/r/stats/var.test.html" class="external-link">stats::var.test()</a></code></p></div>
@@ -328,7 +316,7 @@ ratio of the population variances.</p></dd>
 <span class="r-in"><span><span class="co"># Create predicates from the Species column</span></span></span>
 <span class="r-in"><span><span class="va">crispIris</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition.html">partition</a></span><span class="op">(</span><span class="va">crispIris</span>, <span class="va">Species</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Compute paired contrasts for the ratio of sepal and petal length and width</span></span></span>
+<span class="r-in"><span><span class="co"># Compute paired contrasts for ratios of sepal and petal length and width</span></span></span>
 <span class="r-in"><span><span class="fu">dig_paired_contrasts</span><span class="op">(</span><span class="va">crispIris</span>,</span></span>
 <span class="r-in"><span>                     condition <span class="op">=</span> <span class="fu">where</span><span class="op">(</span><span class="va">is.logical</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                     xvars <span class="op">=</span> <span class="va">Sepal.Ratio</span>,</span></span>
