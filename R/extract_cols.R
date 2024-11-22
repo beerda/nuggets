@@ -1,7 +1,8 @@
 .extract_cols_and_check <- function(cols,
                                     selection,
                                     varname,
-                                    numeric_allowed) {
+                                    numeric_allowed,
+                                    call = caller_env()) {
     .must_be_list(cols)
 
     selection <- enquo(selection)
@@ -30,7 +31,7 @@
 
         cli_abort(c("All columns selected by {.var {varname}} must be logical{msg}.",
                     ..error_details(errors)),
-                  call = caller_env())
+                  call = call)
     }
 
     list(logicals = cols[logicals],
