@@ -58,3 +58,21 @@ test_that("var_grid everything on matrix", {
     expect_equal(res$xvar, c("v", "v", "v", "v", "w", "w", "w", "x", "x", "y"))
     expect_equal(res$yvar, c("w", "x", "y", "z", "x", "y", "z", "y", "z", "z"))
 })
+
+
+test_that("var_grid errors", {
+    d <- data.frame(v = FALSE,
+                    w = FALSE,
+                    x = TRUE,
+                    y = c(TRUE, FALSE),
+                    z = c(TRUE, FALSE))
+
+    expect_error(var_grid(d, xvars = where(is.numeric), yvars = x),
+                 "must specify the list of columns")
+
+    expect_error(var_grid(d, yvars = where(is.numeric), xvars = x),
+                 "must specify the list of columns")
+
+    expect_error(var_grid(d, xvars = x, yvars = x),
+                 "must specify different columns")
+})

@@ -15,6 +15,10 @@
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying the columns of `x`, whose names will be used as a domain for
 #'      combinations use at the second place (yvar)
+#' @param call an environment in which to evaluate the error messages. This
+#'      argument is useful when `var_grid()` is called from another function,
+#'      which too has the arguments `x`, `xvars`, and `yvars`. In such a case,
+#'      the `call` argument should be explicitly set to `current_env()`.
 #' @return a tibble with two columns (`xvar` and `yvar`) with rows enumerating
 #'      all combinations of column names specified by tidyselect expressions
 #'      in `xvars` and `yvars` arguments.
@@ -27,7 +31,8 @@
 #' @export
 var_grid <- function(x,
                      xvars = everything(),
-                     yvars = everything()) {
+                     yvars = everything(),
+                     call = current_env()) {
     xvars <- enquo(xvars)
     yvars <- enquo(yvars)
 
@@ -38,7 +43,8 @@ var_grid <- function(x,
         cols <- as.list(x)
     } else {
         cli_abort(c("{.var x} must be a matrix or a data frame.",
-                    "x" = "You've supplied a {.cls {class(x)}}."))
+                    "x" = "You've supplied a {.cls {class(x)}}."),
+                  call = call)
     }
 
     if (is.null(names(cols))) {
@@ -50,11 +56,18 @@ var_grid <- function(x,
 
     if (length(xvars) <= 0) {
         cli_abort(c("{.var xvars} must specify the list of columns.",
-                    "x" = "{.var xvars} resulted in an empty list."))
+                    "x" = "{.var xvars} resulted in an empty list."),
+                  call = call)
     }
     if (length(yvars) <= 0) {
         cli_abort(c("{.var yvars} must specify the list of columns.",
-                    "x" = "{.var yvars} resulted in an empty list."))
+                    "x" = "{.var yvars} resulted in an empty list."),
+                  call = call)
+    }
+    if (length(xvars) == 1 && length(yvars) == 1 && xvars == yvars) {
+        cli_abort(c("{.var xvars} and {.var yvars} must specify different columns.",
+                    "x" = "{.var xvars} and {.var yvars} are the same."),
+                  call = call)
     }
 
     grid <- expand_grid(xvar = xvars, yvar = yvars)

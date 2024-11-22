@@ -4,7 +4,7 @@
 \alias{var_grid}
 \title{Create a tibble of combinations of xvar/yvar variable pairs.}
 \usage{
-var_grid(x, xvars = everything(), yvars = everything())
+var_grid(x, xvars = everything(), yvars = everything(), call = current_env())
 }
 \arguments{
 \item{x}{either a data frame or a matrix}
@@ -18,6 +18,11 @@ combinations use at the first place (xvar)}
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
 specifying the columns of \code{x}, whose names will be used as a domain for
 combinations use at the second place (yvar)}
+
+\item{call}{an environment in which to evaluate the error messages. This
+argument is useful when \code{var_grid()} is called from another function,
+which too has the arguments \code{x}, \code{xvars}, and \code{yvars}. In such a case,
+the \code{call} argument should be explicitly set to \code{current_env()}.}
 }
 \value{
 a tibble with two columns (\code{xvar} and \code{yvar}) with rows enumerating

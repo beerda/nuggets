@@ -109,7 +109,7 @@ dig_grid <- function(x,
 
     xvars <- enquo(xvars)
     yvars <- enquo(yvars)
-    grid <- var_grid(x, !!xvars, !!yvars)
+    grid <- var_grid(x, !!xvars, !!yvars, call = current_env())
 
     fbool <- function(condition, support, indices) {
         cond <- format_condition(names(condition))
