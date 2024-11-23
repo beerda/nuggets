@@ -6,8 +6,10 @@
 # @param selection A tidyselect expression selecting the columns to be extracted.
 # @param allow_numeric Whether to allow numeric columns in the selection.
 # @param allow_empty Whether to allow empty selection.
-# @param arg The name of the `selection` argument (used for error messages).
-# @param call An environment in which to evaluate the error messages.
+# @param error_context A list of details to be used in error messages.
+#       It must contain:
+#       - `arg_selection`: the name of the `selection` argument;
+#       - `call`: an environment in which to evaluate the error messages.
 # @return A list with three elements:
 # \itemize{
 #   \item{logicals}{A list of logical columns.}
@@ -19,14 +21,14 @@
                           selection,
                           allow_numeric,
                           allow_empty,
-                          arg = caller_arg(selection),
-                          call = caller_env()) {
+                          error_context = list(arg_selection = caller_arg(selection),
+                                               call = caller_env())) {
     selection <- enquo(selection)
     indices <- eval_select(expr = selection,
                            data = cols,
                            allow_rename = FALSE,
                            allow_empty = allow_empty,
-                           error_call = call)
+                           error_call = error_context$call)
     cols <- cols[indices]
     logicals <- vapply(cols, is.logical, logical(1))
     doubles <- vapply(cols, is_degree, logical(1))
@@ -43,9 +45,9 @@
         }
 
         msg <- if (allow_numeric) " or numeric from the interval [0,1]" else ""
-        cli_abort(c("All columns selected by {.arg {arg}} must be logical{msg}.",
+        cli_abort(c("All columns selected by {.arg {error_context$arg_selection}} must be logical{msg}.",
                     ..error_details(errors)),
-                  call = call)
+                  call = error_context$call)
     }
 
     list(logicals = cols[logicals],

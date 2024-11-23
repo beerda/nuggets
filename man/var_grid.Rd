@@ -4,7 +4,13 @@
 \alias{var_grid}
 \title{Create a tibble of combinations of xvar/yvar variable pairs.}
 \usage{
-var_grid(x, xvars = everything(), yvars = everything(), call = current_env())
+var_grid(
+  x,
+  xvars = everything(),
+  yvars = everything(),
+  error_context = list(arg_x = "x", arg_xvars = "xvars", arg_yvars = "yvars", call =
+    current_env())
+)
 }
 \arguments{
 \item{x}{either a data frame or a matrix}
@@ -19,10 +25,14 @@ combinations use at the first place (xvar)}
 specifying the columns of \code{x}, whose names will be used as a domain for
 combinations use at the second place (yvar)}
 
-\item{call}{an environment in which to evaluate the error messages. This
-argument is useful when \code{var_grid()} is called from another function,
-which too has the arguments \code{x}, \code{xvars}, and \code{yvars}. In such a case,
-the \code{call} argument should be explicitly set to \code{current_env()}.}
+\item{error_context}{A list of details to be used in error messages.
+This argument is useful when \code{var_grid()} is called from another
+function to provide error messages, which refer to arguments of the
+calling function. The list must contain the following elements:
+- \code{arg_x} - the name of the argument \code{x} as a character string
+- \code{arg_xvars} - the name of the argument \code{xvars} as a character string
+- \code{arg_yvars} - the name of the argument \code{yvars} as a character string
+- \code{call} - an environment in which to evaluate the error messages.}
 }
 \value{
 a tibble with two columns (\code{xvar} and \code{yvar}) with rows enumerating
@@ -31,15 +41,27 @@ in \code{xvars} and \code{yvars} arguments.
 }
 \description{
 The function creates a tibble with two columns, \code{xvar} and \code{yvar}, whose
-rows enumerate all combinations of column names specified in the \code{xvars}
-and \code{yvars} argument. The column names to create the combinations from are
-specified using a tidyselect expression (see
+rows enumerate all combinations of column names specified by the \code{xvars}
+and \code{yvars} argument. These arguments are tidyselect expressions (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax}).
 }
-\examples{
-var_grid(CO2)
-var_grid(CO2, xvars = Plant:Treatment, yvars = conc:uptake)
+\details{
+It is allowed to specify the same column in both \code{xvars} and \code{yvars}
+arguments. In such a case, the combinations of the same column with itself
+are removed from the result.
 
+In other words, the function creates a grid of all possible pairs
+\eqn{(xx, yy)} where \eqn{xx \in xvars}, \eqn{yy \in yvars},
+and \eqn{xx \neq yy}.
+}
+\examples{
+# Create a grid of combinations of all pairs of columns in the CO2 dataset:
+var_grid(CO2)
+
+# Create a grid of combinations of all pairs of columns in the CO2 dataset
+# such that the first, i.e., `xvar` column is `Plant`, `Type`, or
+`Treatment`, and the second, i.e., `yvar` column is `conc` or `uptake`:
+var_grid(CO2, xvars = Plant:Treatment, yvars = conc:uptake)
 }
 \author{
 Michal Burda

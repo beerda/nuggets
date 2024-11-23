@@ -8,6 +8,7 @@
 ^\.github$
 ^misc$
 ^RELEASE_HOWTO\.md$
+^ERROR_CONTEXT_HOWTO\.md$
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
 ^_pkgdown\.yml$
