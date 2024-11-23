@@ -6,7 +6,7 @@
         if (!isTRUE(f(x) | (isTRUE(null) && is.null(x)))) {
             na <- if (length(x) == 1 && is.na(x)) " NA" else ""
             msg <- if (null) paste(msg, "or NULL") else msg
-            cli_abort(c("{.arg {arg}} must be a {msg}.",
+            cli_abort(c("{.arg {arg}} must be {msg}.",
                         "x" = "You've supplied a {.cls {class(x)}}{na}."),
                       call = call)
         }
@@ -86,7 +86,7 @@
 }
 
 
-.must_be_flag <- ..must_be_type(function(x) is_scalar_logical(x) && !is.na(x), "flag (TRUE or FALSE)")
+.must_be_flag <- ..must_be_type(function(x) is_scalar_logical(x) && !is.na(x), "a flag (TRUE or FALSE)")
 
 .must_be_null <- function(x,
                           when,
@@ -114,26 +114,26 @@
     }
 }
 
-.must_be_atomic_scalar <- ..must_be_type(is_scalar_atomic, "atomic scalar")
-.must_be_integerish_scalar <- ..must_be_type(is_scalar_integerish, "integerish scalar")
-.must_be_double_scalar <- ..must_be_type(is_scalar_double, "double scalar")
-.must_be_character_scalar <- ..must_be_type(is_scalar_character, "character scalar")
-.must_be_logical_scalar <- ..must_be_type(is_scalar_logical, "logical scalar")
+.must_be_atomic_scalar <- ..must_be_type(is_scalar_atomic, "an atomic scalar")
+.must_be_integerish_scalar <- ..must_be_type(is_scalar_integerish, "an integerish scalar")
+.must_be_double_scalar <- ..must_be_type(is_scalar_double, "a double scalar")
+.must_be_character_scalar <- ..must_be_type(is_scalar_character, "a character scalar")
+.must_be_logical_scalar <- ..must_be_type(is_scalar_logical, "a logical scalar")
 
 .is_just_vector <- function(x) {
     is.vector(x) && !is.matrix(x) && !is.list(x) && !is.array(x)
 }
 
-.must_be_vector <- ..must_be_type(.is_just_vector, "plain vector (not a matrix, list, or array)")
-.must_be_integer_vector <- ..must_be_type(is_integer, "integer vector")
-.must_be_integerish_vector <- ..must_be_type(is_integerish, "integerish vector")
-.must_be_numeric_vector <- ..must_be_type(is.numeric, "numeric vector")
-.must_be_character_vector <- ..must_be_type(is.character, "character vector")
-.must_be_factor <- ..must_be_type(is.factor, "factor")
-.must_be_matrix <- ..must_be_type(is.matrix, "matrix")
-.must_be_function <- ..must_be_type(is.function, "function")
-.must_be_list <- ..must_be_type(is.list, "list")
-.must_be_data_frame <- ..must_be_type(is.data.frame, "data frame")
+.must_be_vector <- ..must_be_type(.is_just_vector, "a plain vector (not a matrix, list, or array)")
+.must_be_integer_vector <- ..must_be_type(is_integer, "an integer vector")
+.must_be_integerish_vector <- ..must_be_type(is_integerish, "an integerish vector")
+.must_be_numeric_vector <- ..must_be_type(is.numeric, "a numeric vector")
+.must_be_character_vector <- ..must_be_type(is.character, "a character vector")
+.must_be_factor <- ..must_be_type(is.factor, "a factor")
+.must_be_matrix <- ..must_be_type(is.matrix, "a matrix")
+.must_be_function <- ..must_be_type(is.function, "a function")
+.must_be_list <- ..must_be_type(is.list, "a list")
+.must_be_data_frame <- ..must_be_type(is.data.frame, "a data frame")
 
 
 .must_have_some_rows <- function(x,
