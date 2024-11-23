@@ -12,7 +12,9 @@ is_subset(x, y)
 \item{y}{the second vector}
 }
 \value{
-TRUE if \code{x} is a subset of \code{y} or FALSE otherwise.
+\code{TRUE} if \code{x} is a subset of \code{y}, or \code{FALSE} otherwise. \code{x} is
+considered a subset of \code{y} if all elements of \code{x} are also in \code{y},
+i.e., if \code{setdiff(x, y)} is a vector of length 0.
 }
 \description{
 Determine whether the first vector is a subset of the second vector
