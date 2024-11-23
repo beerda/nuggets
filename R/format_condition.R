@@ -1,9 +1,11 @@
-#' Format condition - convert a character vector to character scalar
+#' Format a vector of predicates into a string with a condition
 #'
-#' Function takes a character vector of predicates and returns a formatted condition.
+#' Function takes a character vector of predicates and returns a formatted
+#' condition. The format of the condition is a string with predicates
+#' separated by commas and enclosed in curly braces.
 #'
-#' @param condition a character vector
-#' @return a character scalar
+#' @param condition a character vector of predicates to be formatted
+#' @return a character scalar with a formatted condition
 #' @author Michal Burda
 #' @export
 #' @examples

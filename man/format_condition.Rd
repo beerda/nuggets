@@ -2,18 +2,20 @@
 % Please edit documentation in R/format_condition.R
 \name{format_condition}
 \alias{format_condition}
-\title{Format condition - convert a character vector to character scalar}
+\title{Format a vector of predicates into a string with a condition}
 \usage{
 format_condition(condition)
 }
 \arguments{
-\item{condition}{a character vector}
+\item{condition}{a character vector of predicates to be formatted}
 }
 \value{
-a character scalar
+a character scalar with a formatted condition
 }
 \description{
-Function takes a character vector of predicates and returns a formatted condition.
+Function takes a character vector of predicates and returns a formatted
+condition. The format of the condition is a string with predicates
+separated by commas and enclosed in curly braces.
 }
 \examples{
 format_condition(NULL)              # returns {}
