@@ -5,6 +5,7 @@ test_that("is_degree", {
     expect_true(is_degree(0.5))
     expect_true(is_degree(c(0:100 / 100)))
     expect_true(is_degree(matrix(c(0:99 / 99), nrow = 25)))
+    expect_true(is_degree(array(c(0:99 / 99), dim = c(2, 5, 10))))
     expect_true(is_degree(NA_real_, na_rm = TRUE))
 
     expect_false(is_degree(c()))
