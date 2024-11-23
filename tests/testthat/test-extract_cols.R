@@ -27,7 +27,7 @@ test_that(".extract_cols", {
                                where(is.factor),
                                allow_numeric = FALSE,
                                allow_empty = FALSE),
-                 "Must select at least one item")
+                 "must select non-empty list of columns")
 
     x <- list(a = c(T,T,F), b = 1:3, c = c(F,T,F), d = 3:1)
     expect_error(.extract_cols(x,

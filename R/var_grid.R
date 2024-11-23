@@ -68,20 +68,19 @@ var_grid <- function(x,
                          error_call = error_context$call)
 
     if (length(xvars) <= 0) {
-        cli_abort(c("{.arg {error_context$arg_xvars}} must specify the list of columns.",
+        cli_abort(c("{.arg {error_context$arg_xvars}} must select non-empty list of columns.",
                     "x" = "{.arg {error_context$arg_xvars}} resulted in an empty list."),
                   call = error_context$call)
     }
     if (length(yvars) <= 0) {
-        cli_abort(c("{.arg {error_context$arg_yvars}} must specify the list of columns.",
+        cli_abort(c("{.arg {error_context$arg_yvars}} must select non-empty list of columns.",
                     "x" = "{.arg {error_context$arg_yvars}} resulted in an empty list."),
                   call = error_context$call)
     }
     if (length(xvars) == 1 && length(yvars) == 1 && xvars == yvars) {
-        cli_abort(c("{.arg {error_context$arg_xvars}} and {.arg {error_context$arg_yvars}} must specify different columns.",
-                    "x" = "{.arg {error_context$arg_xvars}} and {.arg {error_context$arg_yvars}} are the same.",
-                    "i" = "{.arg {error_context$arg_xvars}} results in columns: {paste(names(cols)[xvars], collapse = ', ')}.",
-                    "i" = "{.arg {error_context$arg_yvars}} results in columns: {paste(names(cols)[yvars], collapse = ', ')}."),
+        cli_abort(c("{.arg {error_context$arg_xvars}} and {.arg {error_context$arg_yvars}} can't select the same single column.",
+                    "i" = "{.arg {error_context$arg_xvars}} results in column: {paste(names(cols)[xvars], collapse = ', ')}.",
+                    "i" = "{.arg {error_context$arg_yvars}} results in column: {paste(names(cols)[yvars], collapse = ', ')}."),
                   call = error_context$call)
     }
 

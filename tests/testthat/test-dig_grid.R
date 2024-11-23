@@ -159,24 +159,46 @@ test_that("dig_grid fuzzy", {
 
 test_that("errors", {
     d <- data.frame(n = 1:5 / 5, l = TRUE, i = 1:5, s = letters[1:5])
+    l <- as.list(d)
     fb <- function(d) { 1 }
     ff <- function(d, weights) { 1 }
 
     expect_true(is.data.frame(dig_grid(d, f = fb, type = "bool", condition = c(l))))
     expect_error(dig_grid(d, f = ff, type = "bool", condition = c(l)),
-                 "must have the following arguments")
+                 "`f` must have the following arguments: `d`.")
     expect_error(dig_grid(d, f = fb, type = "bool", condition = c(l, n)),
-                 "columns selected by .* must be logical.")
+                 "All columns selected by `condition` must be logical.")
     expect_error(dig_grid(d, f = fb, type = "bool", condition = c(l, s)),
-                 "columns selected by .* must be logical.")
+                 "All columns selected by `condition` must be logical.")
     expect_error(dig_grid(d, f = fb, type = "bool", condition = c(l, i)),
-                 "columns selected by .* must be logical.")
+                 "All columns selected by `condition` must be logical.")
 
     expect_true(is.data.frame(dig_grid(d, f = ff, type = "fuzzy", condition = c(l, n))))
     expect_error(dig_grid(d, f = fb, type = "fuzzy", condition = c(l)),
-                 "must have the following arguments")
+                 "`f` must have the following arguments: `d`, `weights`.")
     expect_error(dig_grid(d, f = ff, type = "fuzzy", condition = c(l, i)),
-                 "columns selected by .* must be logical or numeric from the interval")
+                 "All columns selected by `condition` must be logical or numeric from the interval")
     expect_error(dig_grid(d, f = ff, type = "fuzzy", condition = c(l, s)),
-                 "columns selected by .* must be logical or numeric from the interval")
+                 "All columns selected by `condition` must be logical or numeric from the interval")
+
+    expect_error(dig_grid(l, f = fb, type = "bool", condition = c(l)),
+                 "`x` must be a matrix or a data frame")
+    expect_error(dig_grid(l, f = 1, type = "bool", condition = c(l)),
+                 "`f` must be a function")
+    expect_error(dig_grid(d, f = fb, type = "bool", condition = xxx),
+                 "Column `xxx` doesn't exist")
+    expect_error(dig_grid(d, f = fb, type = "bool", condition = where(is.factor)),
+                 "`condition` must select non-empty list of columns")
+    expect_error(dig_grid(d, f = fb, type = "bool", condition = l, na_rm = 3),
+                 "`na_rm` must be a flag")
+    expect_error(dig_grid(d, f = fb, type = "foo", condition = l),
+                 "`type` must be equal to any value from:")
+    expect_error(dig_grid(d, f = fb, type = "bool", condition = l, min_length = "x"),
+                 "`min_length` must be an integerish scalar")
+    expect_error(dig_grid(d, f = fb, type = "bool", condition = l, max_length = "x"),
+                 "`max_length` must be an integerish scalar")
+    expect_error(dig_grid(d, f = fb, type = "bool", condition = l, min_support = "x"),
+                 "`min_support` must be a double scalar")
+    expect_error(dig_grid(d, f = fb, type = "bool", condition = l, threads = "x"),
+                 "`threads` must be an integerish scalar")
 })

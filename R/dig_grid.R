@@ -78,7 +78,7 @@ dig_grid <- function(x,
                      min_length = 0L,
                      max_length = Inf,
                      min_support = 0.0,
-                     threads = 1,
+                     threads = 1L,
                      ...) {
     .must_be_flag(na_rm)
     .must_be_enum(type, c("bool", "fuzzy"))
@@ -105,7 +105,9 @@ dig_grid <- function(x,
     .extract_cols(cols,
                   !!condition,
                   allow_numeric = (type == "fuzzy"),
-                  allow_empty = FALSE)
+                  allow_empty = FALSE,
+                  error_context = list(arg_selection = "condition",
+                                       call = current_env()))
 
     xvars <- enquo(xvars)
     yvars <- enquo(yvars)

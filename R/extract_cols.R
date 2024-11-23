@@ -27,8 +27,15 @@
     indices <- eval_select(expr = selection,
                            data = cols,
                            allow_rename = FALSE,
-                           allow_empty = allow_empty,
+                           allow_empty = TRUE,
                            error_call = error_context$call)
+
+    if (!allow_empty && length(indices) <= 0) {
+        cli_abort(c("{.arg {error_context$arg_selection}} must select non-empty list of columns.",
+                    "x" = "{.arg {error_context$arg_selection}} resulted in an empty list."),
+                  call = error_context$call)
+    }
+
     cols <- cols[indices]
     logicals <- vapply(cols, is.logical, logical(1))
     doubles <- vapply(cols, is_degree, logical(1))
