@@ -51,7 +51,7 @@ var_grid <- function(x,
                                           arg_yvars = "yvars",
                                           call = current_env())) {
     cols <- .convert_data_to_list(x,
-                                  error_context = list(arg = error_context$arg_x,
+                                  error_context = list(arg_x = error_context$arg_x,
                                                        call = error_context$call))
 
     xvars <- eval_select(expr = enquo(xvars),

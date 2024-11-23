@@ -68,11 +68,16 @@ test_that("var_grid errors", {
                     z = c(TRUE, FALSE))
 
     expect_error(var_grid(d, xvars = where(is.numeric), yvars = x),
-                 "must specify the list of columns")
+                 "`xvars` must specify the list of columns")
 
     expect_error(var_grid(d, yvars = where(is.numeric), xvars = x),
-                 "must specify the list of columns")
+                 "`yvars` must specify the list of columns")
 
     expect_error(var_grid(d, xvars = x, yvars = x),
-                 "must specify different columns")
+                 "`xvars` and `yvars` must specify different columns")
+
+    expect_error(var_grid(list(a = 1, b = 2),
+                          xvars = everything(),
+                          yvars = everything()),
+                 "`x` must be a matrix or a data frame")
 })
