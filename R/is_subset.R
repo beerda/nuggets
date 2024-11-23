@@ -6,8 +6,8 @@
 #' @author Michal Burda
 #' @export
 is_subset <- function(x, y) {
-    .must_be_atomic_vector(x)
-    .must_be_atomic_vector(y)
+    .must_be_vector(x, null = TRUE)
+    .must_be_vector(y, null = TRUE)
 
     length(setdiff(x, y)) == 0L
 }

@@ -122,7 +122,7 @@ dig <- function(x,
         arguments <- ""
     }
 
-    .must_be_atomic_vector(disjoint, null = TRUE)
+    .must_be_vector(disjoint, null = TRUE)
     if (!isTRUE(length(disjoint) == 0 || length(disjoint) == ncol(x))) {
         cli_abort(c("The length of {.var disjoint} must be 0 or equal to the number of rows in {.var x}.",
                     "x" = "The number of rows in {.var x} is {nrow(x)}.",

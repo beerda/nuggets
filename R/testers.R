@@ -4,7 +4,7 @@
              arg = caller_arg(x),
              call = caller_env()) {
         if (!isTRUE(f(x) | (isTRUE(null) && is.null(x)))) {
-            na <- if (all(is.na(x))) " NA" else ""
+            na <- if (length(x) == 1 && is.na(x)) " NA" else ""
             msg <- if (null) paste(msg, "or NULL") else msg
             cli_abort(c("{.arg {arg}} must be a {msg}.",
                         "x" = "You've supplied a {.cls {class(x)}}{na}."),
@@ -93,7 +93,7 @@
                           arg = caller_arg(x),
                           call = caller_env()) {
     if (!is.null(x)) {
-        na <- if (all(is.na(x))) " NA" else ""
+        na <- if (length(x) == 1 && is.na(x)) " NA" else ""
         cli_abort(c("{.arg {arg}} can't be non-NULL when {when}.",
                     "x" = "You've supplied a {.cls {class(x)}}{na}."),
                   call = call)
@@ -114,28 +114,17 @@
     }
 }
 
-..must_be_type <- function(f, msg) {
-    function(x,
-             null = FALSE,
-             arg = caller_arg(x),
-             call = caller_env()) {
-        if (!isTRUE(f(x) | (isTRUE(null) && is.null(x)))) {
-            na <- if (all(is.na(x))) " NA" else ""
-            msg <- if (null) paste(msg, "or NULL") else msg
-            cli_abort(c("{.arg {arg}} must be a {msg}.",
-                        "x" = "You've supplied a {.cls {class(x)}}{na}."),
-                      call = call)
-        }
-    }
-}
-
 .must_be_atomic_scalar <- ..must_be_type(is_scalar_atomic, "atomic scalar")
 .must_be_integerish_scalar <- ..must_be_type(is_scalar_integerish, "integerish scalar")
 .must_be_double_scalar <- ..must_be_type(is_scalar_double, "double scalar")
 .must_be_character_scalar <- ..must_be_type(is_scalar_character, "character scalar")
 .must_be_logical_scalar <- ..must_be_type(is_scalar_logical, "logical scalar")
 
-.must_be_atomic_vector <- ..must_be_type(is.atomic, "atomic vector")
+.is_just_vector <- function(x) {
+    is.vector(x) && !is.matrix(x) && !is.list(x) && !is.array(x)
+}
+
+.must_be_vector <- ..must_be_type(.is_just_vector, "plain vector (not a matrix, list, or array)")
 .must_be_integer_vector <- ..must_be_type(is_integer, "integer vector")
 .must_be_integerish_vector <- ..must_be_type(is_integerish, "integerish vector")
 .must_be_numeric_vector <- ..must_be_type(is.numeric, "numeric vector")
