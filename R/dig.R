@@ -92,7 +92,7 @@ dig <- function(x,
                 min_focus_support = min_support,
                 filter_empty_foci = FALSE,
                 t_norm = "goguen",
-                threads = 1,
+                threads = 1L,
                 ...) {
     cols <- .convert_data_to_list(x)
 

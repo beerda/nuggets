@@ -60,7 +60,7 @@ var_grid(CO2)
 
 # Create a grid of combinations of all pairs of columns in the CO2 dataset
 # such that the first, i.e., `xvar` column is `Plant`, `Type`, or
-`Treatment`, and the second, i.e., `yvar` column is `conc` or `uptake`:
+# `Treatment`, and the second, i.e., `yvar` column is `conc` or `uptake`:
 var_grid(CO2, xvars = Plant:Treatment, yvars = conc:uptake)
 }
 \author{

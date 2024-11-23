@@ -15,7 +15,7 @@ dig_grid(
   min_length = 0L,
   max_length = Inf,
   min_support = 0,
-  threads = 1,
+  threads = 1L,
   ...
 )
 }
