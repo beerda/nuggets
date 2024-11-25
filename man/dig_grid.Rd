@@ -11,7 +11,7 @@ dig_grid(
   xvars = where(is.numeric),
   yvars = where(is.numeric),
   na_rm = FALSE,
-  type = "bool",
+  type = "crisp",
   min_length = 0L,
   max_length = Inf,
   min_support = 0,
@@ -24,11 +24,11 @@ dig_grid(
 
 \item{f}{the callback function to be executed for each generated condition.
 The arguments of the callback function differ based on the value of the
-\code{type} argument (see below). If \code{type = "bool"}, the callback function
-\code{f} must accept a single argument \code{d} of type \code{data.frame} with two
-columns, xvar (\code{d[[1]]}) and yvar (\code{d[[2]]}), named as in \code{x}. \code{d} is
-a subset of the original data frame \code{x} with all rows that satisfy the
-generated condition.
+\code{type} argument (see below). If \code{type = "crisp"} (that is, boolean),
+the callback function \code{f} must accept a single argument \code{d} of type
+\code{data.frame} with two columns, xvar (accessible as \code{d[[1]]}) and yvar
+(accessible as \code{d[[2]]}). Data frame \code{d} is a subset of the original
+data frame \code{x} with all rows that satisfy the generated condition.
 If \code{type = "fuzzy"}, the callback function \code{f} must accept an argument
 \code{d} of type \code{data.frame} with two columns, xvar (\code{d[[1]]}) and yvar
 (\code{d[[2]]}), named as in\code{x}, and a numeric argument \code{weights}
@@ -60,7 +60,7 @@ combinations use at the second place (yvar)}
 values from sub-data before the callback function \code{f} is called}
 
 \item{type}{a character string specifying the type of conditions to be processed.
-The \code{"bool"} type accepts only logical columns as condition predicates.
+The \code{"crisp"} type accepts only logical columns as condition predicates.
 The \code{"fuzzy"} type accepts both logical and numeric columns as condition
 predicates where numeric data are in the interval \eqn{[0, 1]}. The
 callback function \code{f} differs based on the value of the \code{type} argument
@@ -104,7 +104,7 @@ Function is useful for searching for patterns that are based on the
 relationships between pairs of columns, such as in \code{\link[=dig_correlations]{dig_correlations()}}.
 }
 \examples{
-# Example of crisp (bool) patterns:
+# Example of crisp (boolean) patterns:
 
 # dichotomize iris$Species
 crispIris <- partition(iris, Species)
@@ -121,7 +121,7 @@ dig_grid(crispIris,
          condition = starts_with("Species"),
          xvars = starts_with("Sepal"),
          yvars = starts_with("Petal"),
-         type = "bool")
+         type = "crisp")
 
 Example of fuzzy patterns:
 

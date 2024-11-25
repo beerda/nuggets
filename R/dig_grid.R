@@ -17,11 +17,11 @@
 #' @param x a matrix or data frame with data to search in.
 #' @param f the callback function to be executed for each generated condition.
 #'      The arguments of the callback function differ based on the value of the
-#'      `type` argument (see below). If `type = "bool"`, the callback function
-#'      `f` must accept a single argument `d` of type `data.frame` with two
-#'      columns, xvar (`d[[1]]`) and yvar (`d[[2]]`), named as in `x`. `d` is
-#'      a subset of the original data frame `x` with all rows that satisfy the
-#'      generated condition.
+#'      `type` argument (see below). If `type = "crisp"` (that is, boolean),
+#'      the callback function `f` must accept a single argument `d` of type
+#'      `data.frame` with two columns, xvar (accessible as `d[[1]]`) and yvar
+#'      (accessible as `d[[2]]`). Data frame `d` is a subset of the original
+#'      data frame `x` with all rows that satisfy the generated condition.
 #'      If `type = "fuzzy"`, the callback function `f` must accept an argument
 #'      `d` of type `data.frame` with two columns, xvar (`d[[1]]`) and yvar
 #'      (`d[[2]]`), named as in`x`, and a numeric argument `weights`
@@ -48,7 +48,7 @@
 #' @param na_rm a logical value indicating whether to remove rows with missing
 #'      values from sub-data before the callback function `f` is called
 #' @param type a character string specifying the type of conditions to be processed.
-#'      The `"bool"` type accepts only logical columns as condition predicates.
+#'      The `"crisp"` type accepts only logical columns as condition predicates.
 #'      The `"fuzzy"` type accepts both logical and numeric columns as condition
 #'      predicates where numeric data are in the interval \eqn{[0, 1]}. The
 #'      callback function `f` differs based on the value of the `type` argument
@@ -73,7 +73,7 @@
 #' @seealso [dig()], [var_grid()]; see also [dig_correlations()] and
 #'     [dig_paired_contrasts()], as they are using this function internally.
 #' @examples
-#' # Example of crisp (bool) patterns:
+#' # Example of crisp (boolean) patterns:
 #'
 #' # dichotomize iris$Species
 #' crispIris <- partition(iris, Species)
@@ -90,7 +90,7 @@
 #'          condition = starts_with("Species"),
 #'          xvars = starts_with("Sepal"),
 #'          yvars = starts_with("Petal"),
-#'          type = "bool")
+#'          type = "crisp")
 #'
 #' Example of fuzzy patterns:
 #'
@@ -122,17 +122,17 @@ dig_grid <- function(x,
                      xvars = where(is.numeric),
                      yvars = where(is.numeric),
                      na_rm = FALSE,
-                     type = "bool",
+                     type = "crisp",
                      min_length = 0L,
                      max_length = Inf,
                      min_support = 0.0,
                      threads = 1L,
                      ...) {
     .must_be_flag(na_rm)
-    .must_be_enum(type, c("bool", "fuzzy"))
+    .must_be_enum(type, c("crisp", "fuzzy"))
 
     .must_be_function(f)
-    required_args <- if (type == "bool") c("d") else c("d", "weights")
+    required_args <- if (type == "crisp") c("d") else c("d", "weights")
     required_args_msg <- paste0("`", paste0(required_args, collapse = '`, `'), "`")
     unrecognized_args <- setdiff(formalArgs(f), required_args)
     if (length(unrecognized_args) > 0) {
@@ -167,7 +167,7 @@ dig_grid <- function(x,
                                           arg_yvars = "yvars",
                                           call = current_env()))
 
-    fbool <- function(condition, support, indices) {
+    fcrisp <- function(condition, support, indices) {
         cond <- format_condition(names(condition))
         d <- x[indices, , drop = FALSE]
 
@@ -216,7 +216,7 @@ dig_grid <- function(x,
               result)
     }
 
-    ff <- ifelse(type == "bool", fbool, ffuzzy)
+    ff <- ifelse(type == "crisp", fcrisp, ffuzzy)
 
     res <- dig(x = x,
                f = ff,
