@@ -26,15 +26,17 @@ dig_grid(
 The arguments of the callback function differ based on the value of the
 \code{type} argument (see below). If \code{type = "bool"}, the callback function
 \code{f} must accept a single argument \code{d} of type \code{data.frame} with two
-columns (xvar and yvar). It is a subset of the original data frame
-with all rows that satisfy the generated condition. If \code{type = "fuzzy"},
-the callback function \code{f} must accept an argument \code{d} of type
-\code{data.frame} with two columns (xvar and yvar) and a numeric \code{weights}
-argument with the same length as the number of rows in \code{d}. The
-\code{weights} argument contains the truth degree of the generated condition
-for each row of \code{d}. The truth degree is a number in the interval
-\eqn{[0, 1]} that represents the degree of satisfaction of the condition
-for the row.
+columns, xvar (\code{d[[1]]}) and yvar (\code{d[[2]]}), named as in \code{x}. \code{d} is
+a subset of the original data frame \code{x} with all rows that satisfy the
+generated condition.
+If \code{type = "fuzzy"}, the callback function \code{f} must accept an argument
+\code{d} of type \code{data.frame} with two columns, xvar (\code{d[[1]]}) and yvar
+(\code{d[[2]]}), named as in\code{x}, and a numeric argument \code{weights}
+with the same length as the number of rows in \code{d}. The \code{weights}
+argument contains the truth degree
+of the generated condition for each row of \code{d}. The truth degree is
+a number in the interval \eqn{[0, 1]} that represents the degree of
+satisfaction of the condition in the original data row.
 In all cases, the function must return a list of scalar values, which
 will be converted into a single row of result of final tibble.}
 
@@ -97,10 +99,57 @@ condition and for each row of the grid of combinations, a user-defined
 function \code{f} is executed on each sub-data created from \code{x} by selecting all
 rows of \code{x} that satisfy the generated condition and by selecting the
 columns in the grid's row.
+
+Function is useful for searching for patterns that are based on the
+relationships between pairs of columns, such as in \code{\link[=dig_correlations]{dig_correlations()}}.
+}
+\examples{
+# Example of crisp (bool) patterns:
+
+# dichotomize iris$Species
+crispIris <- partition(iris, Species)
+
+# a simple callback function that computes mean difference of `xvar` and `yvar`
+f <- function(d) {
+    list(m = mean(d[[1]] - d[[2]]),
+         n = nrow(d))
+    }
+
+# call f() for each condition created from column `Species`
+dig_grid(crispIris,
+         f,
+         condition = starts_with("Species"),
+         xvars = starts_with("Sepal"),
+         yvars = starts_with("Petal"),
+         type = "bool")
+
+Example of fuzzy patterns:
+
+# create fuzzy sets from Sepal columns
+fuzzyIris <- partition(iris,
+                       starts_with("Sepal"),
+                       .method = "triangle",
+                       .breaks = 3)
+
+# a simple callback function that computes a weighted mean of a difference of
+`xvar` and `yvar`
+f <- function(d, weights) {
+    list(m = weighted.mean(d[[1]] - d[[2]], w = weights),
+         w = sum(weights))
+}
+
+# call f() for each fuzzy condition created from column fuzzy sets whose
+names start with "Sepal"
+dig_grid(fuzzyIris,
+         f,
+         condition = starts_with("Sepal"),
+         xvars = Petal.Length,
+         yvars = Petal.Width,
+         type = "fuzzy")
 }
 \seealso{
-\code{\link[=dig]{dig()}}, \code{\link[=var_grid]{var_grid()}}, and \code{\link[=dig_correlations]{dig_correlations()}}, as it is using this
-function internally
+\code{\link[=dig]{dig()}}, \code{\link[=var_grid]{var_grid()}}; see also \code{\link[=dig_correlations]{dig_correlations()}} and
+\code{\link[=dig_paired_contrasts]{dig_paired_contrasts()}}, as they are using this function internally.
 }
 \author{
 Michal Burda
