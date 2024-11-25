@@ -80,7 +80,7 @@ relationships between pairs of columns, such as in <code><a href="dig_correlatio
 <span>  xvars <span class="op">=</span> <span class="fu">where</span><span class="op">(</span><span class="va">is.numeric</span><span class="op">)</span>,</span>
 <span>  yvars <span class="op">=</span> <span class="fu">where</span><span class="op">(</span><span class="va">is.numeric</span><span class="op">)</span>,</span>
 <span>  na_rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">"bool"</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"crisp"</span>,</span>
 <span>  min_length <span class="op">=</span> <span class="fl">0L</span>,</span>
 <span>  max_length <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  min_support <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -100,11 +100,11 @@ relationships between pairs of columns, such as in <code><a href="dig_correlatio
 <dt id="arg-f">f<a class="anchor" aria-label="anchor" href="#arg-f"></a></dt>
 <dd><p>the callback function to be executed for each generated condition.
 The arguments of the callback function differ based on the value of the
-<code>type</code> argument (see below). If <code>type = "bool"</code>, the callback function
-<code>f</code> must accept a single argument <code>d</code> of type <code>data.frame</code> with two
-columns, xvar (<code>d[[1]]</code>) and yvar (<code>d[[2]]</code>), named as in <code>x</code>. <code>d</code> is
-a subset of the original data frame <code>x</code> with all rows that satisfy the
-generated condition.
+<code>type</code> argument (see below). If <code>type = "crisp"</code> (that is, boolean),
+the callback function <code>f</code> must accept a single argument <code>d</code> of type
+<code>data.frame</code> with two columns, xvar (accessible as <code>d[[1]]</code>) and yvar
+(accessible as <code>d[[2]]</code>). Data frame <code>d</code> is a subset of the original
+data frame <code>x</code> with all rows that satisfy the generated condition.
 If <code>type = "fuzzy"</code>, the callback function <code>f</code> must accept an argument
 <code>d</code> of type <code>data.frame</code> with two columns, xvar (<code>d[[1]]</code>) and yvar
 (<code>d[[2]]</code>), named as in<code>x</code>, and a numeric argument <code>weights</code>
@@ -146,7 +146,7 @@ values from sub-data before the callback function <code>f</code> is called</p></
 
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
 <dd><p>a character string specifying the type of conditions to be processed.
-The <code>"bool"</code> type accepts only logical columns as condition predicates.
+The <code>"crisp"</code> type accepts only logical columns as condition predicates.
 The <code>"fuzzy"</code> type accepts both logical and numeric columns as condition
 predicates where numeric data are in the interval \([0, 1]\). The
 callback function <code>f</code> differs based on the value of the <code>type</code> argument
