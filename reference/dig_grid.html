@@ -6,14 +6,18 @@ conditions created from data in x (by calling dig()) and for each such
 condition and for each row of the grid of combinations, a user-defined
 function f is executed on each sub-data created from x by selecting all
 rows of x that satisfy the generated condition and by selecting the
-columns in the grid's row."><meta property="og:description" content="
+columns in the grid's row.
+Function is useful for searching for patterns that are based on the
+relationships between pairs of columns, such as in dig_correlations()."><meta property="og:description" content="
 This function creates a grid of combinations of pairs of columns specified
 by xvars and yvars (see also var_grid()). After that, it enumerates all
 conditions created from data in x (by calling dig()) and for each such
 condition and for each row of the grid of combinations, a user-defined
 function f is executed on each sub-data created from x by selecting all
 rows of x that satisfy the generated condition and by selecting the
-columns in the grid's row."></head><body>
+columns in the grid's row.
+Function is useful for searching for patterns that are based on the
+relationships between pairs of columns, such as in dig_correlations()."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -63,6 +67,8 @@ condition and for each row of the grid of combinations, a user-defined
 function <code>f</code> is executed on each sub-data created from <code>x</code> by selecting all
 rows of <code>x</code> that satisfy the generated condition and by selecting the
 columns in the grid's row.</p>
+<p>Function is useful for searching for patterns that are based on the
+relationships between pairs of columns, such as in <code><a href="dig_correlations.html">dig_correlations()</a></code>.</p>
     </div>
 
     <div class="section level2">
@@ -96,15 +102,17 @@ columns in the grid's row.</p>
 The arguments of the callback function differ based on the value of the
 <code>type</code> argument (see below). If <code>type = "bool"</code>, the callback function
 <code>f</code> must accept a single argument <code>d</code> of type <code>data.frame</code> with two
-columns (xvar and yvar). It is a subset of the original data frame
-with all rows that satisfy the generated condition. If <code>type = "fuzzy"</code>,
-the callback function <code>f</code> must accept an argument <code>d</code> of type
-<code>data.frame</code> with two columns (xvar and yvar) and a numeric <code>weights</code>
-argument with the same length as the number of rows in <code>d</code>. The
-<code>weights</code> argument contains the truth degree of the generated condition
-for each row of <code>d</code>. The truth degree is a number in the interval
-\([0, 1]\) that represents the degree of satisfaction of the condition
-for the row.
+columns, xvar (<code>d[[1]]</code>) and yvar (<code>d[[2]]</code>), named as in <code>x</code>. <code>d</code> is
+a subset of the original data frame <code>x</code> with all rows that satisfy the
+generated condition.
+If <code>type = "fuzzy"</code>, the callback function <code>f</code> must accept an argument
+<code>d</code> of type <code>data.frame</code> with two columns, xvar (<code>d[[1]]</code>) and yvar
+(<code>d[[2]]</code>), named as in<code>x</code>, and a numeric argument <code>weights</code>
+with the same length as the number of rows in <code>d</code>. The <code>weights</code>
+argument contains the truth degree
+of the generated condition for each row of <code>d</code>. The truth degree is
+a number in the interval \([0, 1]\) that represents the degree of
+satisfaction of the condition in the original data row.
 In all cases, the function must return a list of scalar values, which
 will be converted into a single row of result of final tibble.</p></dd>
 
@@ -181,14 +189,18 @@ the callback function <code>f</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="dig.html">dig()</a></code>, <code><a href="var_grid.html">var_grid()</a></code>, and <code><a href="dig_correlations.html">dig_correlations()</a></code>, as it is using this
-function internally</p></div>
+    <div class="dont-index"><p><code><a href="dig.html">dig()</a></code>, <code><a href="var_grid.html">var_grid()</a></code>; see also <code><a href="dig_correlations.html">dig_correlations()</a></code> and
+<code><a href="dig_paired_contrasts.html">dig_paired_contrasts()</a></code>, as they are using this function internally.</p></div>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Michal Burda</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
