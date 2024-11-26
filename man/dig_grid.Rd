@@ -104,8 +104,7 @@ Function is useful for searching for patterns that are based on the
 relationships between pairs of columns, such as in \code{\link[=dig_correlations]{dig_correlations()}}.
 }
 \examples{
-# Example of crisp (boolean) patterns:
-
+# *** Example of crisp (boolean) patterns:
 # dichotomize iris$Species
 crispIris <- partition(iris, Species)
 
@@ -123,8 +122,7 @@ dig_grid(crispIris,
          yvars = starts_with("Petal"),
          type = "crisp")
 
-Example of fuzzy patterns:
-
+# *** Example of fuzzy patterns:
 # create fuzzy sets from Sepal columns
 fuzzyIris <- partition(iris,
                        starts_with("Sepal"),
@@ -132,14 +130,14 @@ fuzzyIris <- partition(iris,
                        .breaks = 3)
 
 # a simple callback function that computes a weighted mean of a difference of
-`xvar` and `yvar`
+# `xvar` and `yvar`
 f <- function(d, weights) {
     list(m = weighted.mean(d[[1]] - d[[2]], w = weights),
          w = sum(weights))
 }
 
 # call f() for each fuzzy condition created from column fuzzy sets whose
-names start with "Sepal"
+# names start with "Sepal"
 dig_grid(fuzzyIris,
          f,
          condition = starts_with("Sepal"),
