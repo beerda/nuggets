@@ -192,7 +192,7 @@ test_that("errors", {
     expect_error(dig_grid(d, f = fb, type = "crisp", condition = l, na_rm = 3),
                  "`na_rm` must be a flag")
     expect_error(dig_grid(d, f = fb, type = "foo", condition = l),
-                 "`type` must be equal to any value from:")
+                 "`type` must be equal to one of: \"crisp\", \"fuzzy\".")
     expect_error(dig_grid(d, f = fb, type = "crisp", condition = l, min_length = "x"),
                  "`min_length` must be an integerish scalar")
     expect_error(dig_grid(d, f = fb, type = "crisp", condition = l, max_length = "x"),

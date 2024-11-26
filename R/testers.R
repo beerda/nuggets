@@ -188,8 +188,9 @@
     }
     if (!isTRUE(test)) {
         msg <- if (null) " or NULL" else ""
+        single <- if (isTRUE(multi)) "any" else "one"
         vals <- paste0('"', values, '"', collapse = ", ")
-        cli_abort(c("{.arg {arg}} must be equal to any value from: {vals}{msg}.",
+        cli_abort(c("{.arg {arg}} must be equal to {single} of: {vals}{msg}.",
                     "x" = "You've supplied {x}."),
                   call = call)
     }
