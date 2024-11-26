@@ -199,7 +199,75 @@ the callback function <code>f</code>.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># *** Example of crisp (boolean) patterns:</span></span></span>
+<span class="r-in"><span><span class="co"># dichotomize iris$Species</span></span></span>
+<span class="r-in"><span><span class="va">crispIris</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition.html">partition</a></span><span class="op">(</span><span class="va">iris</span>, <span class="va">Species</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># a simple callback function that computes mean difference of `xvar` and `yvar`</span></span></span>
+<span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">d</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>m <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">d</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">-</span> <span class="va">d</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>         n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># call f() for each condition created from column `Species`</span></span></span>
+<span class="r-in"><span><span class="fu">dig_grid</span><span class="op">(</span><span class="va">crispIris</span>,</span></span>
+<span class="r-in"><span>         <span class="va">f</span>,</span></span>
+<span class="r-in"><span>         condition <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"Species"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>         xvars <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"Sepal"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>         yvars <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"Petal"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>         type <span class="op">=</span> <span class="st">"crisp"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 32 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    condition            support xvar         yvar              m     n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> {}                     1     Sepal.Length Petal.Length  2.09    150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> {}                     1     Sepal.Length Petal.Width   4.64    150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> {}                     1     Sepal.Width  Petal.Length -<span style="color: #BB0000;">0.701</span>   150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> {}                     1     Sepal.Width  Petal.Width   1.86    150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> {Species=setosa}       0.333 Sepal.Length Petal.Length  3.54     50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> {Species=setosa}       0.333 Sepal.Length Petal.Width   4.76     50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> {Species=setosa}       0.333 Sepal.Width  Petal.Length  1.97     50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> {Species=setosa}       0.333 Sepal.Width  Petal.Width   3.18     50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> {Species=versicolor}   0.333 Sepal.Length Petal.Length  1.68     50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> {Species=versicolor}   0.333 Sepal.Length Petal.Width   4.61     50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 22 more rows</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># *** Example of fuzzy patterns:</span></span></span>
+<span class="r-in"><span><span class="co"># create fuzzy sets from Sepal columns</span></span></span>
+<span class="r-in"><span><span class="va">fuzzyIris</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition.html">partition</a></span><span class="op">(</span><span class="va">iris</span>,</span></span>
+<span class="r-in"><span>                       <span class="fu">starts_with</span><span class="op">(</span><span class="st">"Sepal"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                       .method <span class="op">=</span> <span class="st">"triangle"</span>,</span></span>
+<span class="r-in"><span>                       .breaks <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># a simple callback function that computes a weighted mean of a difference of</span></span></span>
+<span class="r-in"><span><span class="co"># `xvar` and `yvar`</span></span></span>
+<span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">d</span>, <span class="va">weights</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>m <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/weighted.mean.html" class="external-link">weighted.mean</a></span><span class="op">(</span><span class="va">d</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">-</span> <span class="va">d</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, w <span class="op">=</span> <span class="va">weights</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>         w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">weights</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># call f() for each fuzzy condition created from column fuzzy sets whose</span></span></span>
+<span class="r-in"><span><span class="co"># names start with "Sepal"</span></span></span>
+<span class="r-in"><span><span class="fu">dig_grid</span><span class="op">(</span><span class="va">fuzzyIris</span>,</span></span>
+<span class="r-in"><span>         <span class="va">f</span>,</span></span>
+<span class="r-in"><span>         condition <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"Sepal"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>         xvars <span class="op">=</span> <span class="va">Petal.Length</span>,</span></span>
+<span class="r-in"><span>         yvars <span class="op">=</span> <span class="va">Petal.Width</span>,</span></span>
+<span class="r-in"><span>         type <span class="op">=</span> <span class="st">"fuzzy"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 64 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    condition                                    support xvar  yvar      m      w</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> {}                                            1      Peta… Peta…  2.56 150   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> {Sepal.Width=(2;3.2;4.4)}                     0.694  Peta… Peta…  2.56 104.  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> {Sepal.Length=(4.3;6.1;7.9)}                  0.600  Peta… Peta…  2.74  89.9 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> {Sepal.Length=(-Inf;4.3;6.1)}                 0.271  Peta… Peta…  1.59  40.7 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> {Sepal.Width=(-Inf;2;3.2)}                    0.212  Peta… Peta…  2.96  31.8 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> {Sepal.Length=(6.1;7.9;Inf)}                  0.129  Peta… Peta…  3.76  19.3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> {Sepal.Width=(3.2;4.4;Inf)}                   0.093<span style="text-decoration: underline;">3</span> Peta… Peta…  1.62  14.0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> {Sepal.Width=(2;3.2;4.4),Sepal.Width=(3.2;4…  0.049<span style="text-decoration: underline;">4</span> Peta… Peta…  1.70   7.40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> {Sepal.Length=(4.3;6.1;7.9),Sepal.Width=(3.…  0.048<span style="text-decoration: underline;">6</span> Peta… Peta…  1.47   7.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> {Sepal.Length=(-Inf;4.3;6.1),Sepal.Width=(3…  0.036<span style="text-decoration: underline;">4</span> Peta… Peta…  1.22   5.45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 54 more rows</span></span>
+</code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
