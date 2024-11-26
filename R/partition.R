@@ -1,18 +1,21 @@
 #' Convert columns of data frame to Boolean or fuzzy sets
 #'
 #' Convert the selected columns of the data frame into either dummy
-#' logical columns (for logicals and factors), or into membership degrees
-#' of fuzzy sets (for numeric columns), while leaving the remaining columns
-#' untouched. Each column selected for transformation typically yields in
-#' multiple columns in the output.
+#' logical columns, or into membership degrees of fuzzy sets, while leaving
+#' the remaining columns untouched. Each column selected for transformation
+#' typically yields in multiple columns in the output.
 #'
-#' Concretely, the transformation of each selected column is performed as
-#' follows:
-#' - logical column `x` is transformed into pair of logical columns,
+#' Transformations performed by this function are typically useful as a
+#' preprocessing step before using the [dig()] function or some of its
+#' derivatives ([dig_correlations()], [dig_paired_contrasts()],
+#' [dig_implications()]).
+#'
+#' The transformation of selected columns differ based on the type. Concretely:
+#' - **logical** column `x` is transformed into pair of logical columns,
 #'   `x=TRUE` and`x=FALSE`;
-#' - factor column `x`, which has levels `l1`, `l2`, and `l3`, is transformed
+#' - **factor** column `x`, which has levels `l1`, `l2`, and `l3`, is transformed
 #'   into three logical columns named `x=l1`, `x=l2`, and `x=l3`;
-#' - numerical column`x` is transformed accordingly to `.method` argument:
+#' - **numeric** column`x` is transformed accordingly to `.method` argument:
 #'   - if `.method="crisp"`, the column is first transformed into a factor
 #'     with intervals as factor levels and then it is processed as a factor
 #'     (see above);
@@ -51,6 +54,29 @@
 #'      vice versa.
 #' @return A tibble created by transforming `.data`.
 #' @author Michal Burda
+#' @examples
+#' # transform logical columns and factors
+#' d <- data.frame(a = c(TRUE, TRUE, FALSE),
+#'                 b = factor(c("A", "B", "A")),
+#'                 c = c(1, 2, 3))
+#' partition(d, a, b)
+#'
+#' # transform numeric columns to logical columns (crisp transformation)
+#' partition(CO2, conc:uptake, .method = "crisp", .breaks = 3)
+#'
+#' # transform numeric columns to fuzzy sets (triangle transformation)
+#' partition(CO2, conc:uptake, .method = "triangle", .breaks = 3)
+#'
+#' # complex transformation with different settings for each column
+#' CO2 |>
+#'     partition(Plant:Treatment) |>
+#'     partition(conc,
+#'               .method = "raisedcos",
+#'               .breaks = c(-Inf, 95, 175, 350, 675, 1000, Inf)) |>
+#'     partition(uptake,
+#'               .method = "triangle",
+#'               .breaks = c(-Inf, 7.7, 28.3, 45.5, Inf),
+#'               .labels = c("low", "medium", "high"))
 #' @export
 partition <- function(.data,
                       .what = everything(),
@@ -69,13 +95,24 @@ partition <- function(.data,
     .must_be_enum(.method, c("crisp", "triangle", "raisedcos"))
     .must_be_flag(.right)
 
-    sel <- enquos(.what, ...)
-    sel <- lapply(sel, eval_select, .data)
-    sel <- unlist(sel)
     emptydf <- as_tibble(data.frame(matrix(NA, nrow = nrow(.data), ncol = 0)))
+    call <- current_env()
 
     if (!is.null(.breaks)) {
         .breaks <- sort(.breaks)
+    }
+
+    sel <- enquos(.what, ...)
+    sel <- lapply(sel,
+                  eval_select,
+                  data = .data,
+                  allow_rename = FALSE,
+                  allow_empty = TRUE,
+                  error_call = current_env())
+    sel <- unlist(sel)
+
+    if (length(sel) <= 0) {
+        return(as_tibble(.data))
     }
 
     res <- lapply(seq_along(sel), function(i) {
@@ -83,7 +120,6 @@ partition <- function(.data,
         colindex <- sel[i]
         res <- emptydf
         x <- .data[[colindex]]
-        call <- current_env()
 
         if (is.logical(x)) {
             res <- tibble(a = !is.na(x) & x,
@@ -95,7 +131,7 @@ partition <- function(.data,
 
         } else if (is.numeric(x)) {
             if (is.null(.breaks)) {
-                cli_abort(c("{.var .breaks} must not be NULL in order to partition numeric column {.var {colname}}."),
+                cli_abort(c("{.arg .breaks} must not be NULL in order to partition numeric column {.var {colname}}."),
                           call = call)
             }
 
@@ -159,14 +195,14 @@ partition <- function(.data,
     } else {
         if (length(labels) != length(br) - 1) {
             if (length(breaks) == 1) {
-                cli_abort(c("If {.var .breaks} is scalar, the length of {.var .labels} must be equal to the value of {.var .breaks}.",
-                            "i"="The length of {.var .labels} is {length(labels)}.",
-                            "i"="{.var .breaks} is {breaks}."),
+                cli_abort(c("If {.arg .breaks} is scalar, the length of {.arg .labels} must be equal to the value of {.var .breaks}.",
+                            "i"="The length of {.arg .labels} is {length(labels)}.",
+                            "i"="{.arg .breaks} is scalar value {breaks}."),
                           call = call)
             } else {
-                cli_abort(c("If {.var .breaks} is non-scalar, the length of {.var .labels} must be equal to the length of {.var .breaks} - 1.",
-                            "i"="The length of {.var .labels} is {length(labels)}.",
-                            "i"="The length of {.var .breaks} is {length(breaks)}."),
+                cli_abort(c("If {.arg .breaks} is non-scalar, the length of {.arg .labels} must be equal to the length of {.var .breaks} - 1.",
+                            "i"="The length of {.arg .labels} is {length(labels)}.",
+                            "i"="The length of {.arg .breaks} is {length(breaks)}."),
                           call = call)
             }
         }
@@ -183,8 +219,8 @@ partition <- function(.data,
         br <- .determine_fuzzy_breaks(x, breaks)
     } else {
         if (length(breaks) < 3) {
-            cli_abort(c("If {.var .breaks} is non-scalar, it must be a vector with at least 3 elements.",
-                        "i"="The length of {.var .breaks} is {length(breaks)}."),
+            cli_abort(c("If {.arg .breaks} is non-scalar, it must be a vector with at least 3 elements.",
+                        "i"="The length of {.arg .breaks} is {length(breaks)}."),
                       call = call)
         }
         br <- breaks
@@ -195,14 +231,14 @@ partition <- function(.data,
     } else {
         if (length(labels) != length(br) - 2) {
             if (length(breaks) == 1) {
-                cli_abort(c("If {.var .breaks} is scalar, the length of {.var .labels} must be equal to the value of {.var .breaks}.",
-                            "i"="The length of {.var .labels} is {length(labels)}.",
-                            "i"="{.var .breaks} is {breaks}."),
+                cli_abort(c("If {.arg .breaks} is scalar, the length of {.arg .labels} must be equal to the value of {.var .breaks}.",
+                            "i"="The length of {.arg .labels} is {length(labels)}.",
+                            "i"="{.arg .breaks} is {breaks}."),
                           call = call)
             } else {
-                cli_abort(c("If {.var .breaks} is non-scalar, the length of {.var .labels} must be equal to the length of {.var .breaks} - 2.",
-                            "i"="The length of {.var .labels} is {length(labels)}.",
-                            "i"="The length of {.var .breaks} is {length(breaks)}."),
+                cli_abort(c("If {.arg .breaks} is non-scalar, the length of {.arg .labels} must be equal to the length of {.var .breaks} - 2.",
+                            "i"="The length of {.arg .labels} is {length(labels)}.",
+                            "i"="The length of {.arg .breaks} is {length(breaks)}."),
                           call = call)
             }
         }
@@ -226,7 +262,7 @@ partition <- function(.data,
 
 .check_scalar_breaks <- function(breaks, call) {
     if (breaks <= 1 || !is_integerish(breaks)) {
-        cli_abort(c("If {.var .breaks} is a single value, it must be a natural number greater than 1.",
+        cli_abort(c("If {.arg .breaks} is a single value, it must be a natural number greater than 1.",
                     "i"="You've supplied {breaks}."),
                   call = call)
     }

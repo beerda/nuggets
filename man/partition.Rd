@@ -57,20 +57,23 @@ A tibble created by transforming \code{.data}.
 }
 \description{
 Convert the selected columns of the data frame into either dummy
-logical columns (for logicals and factors), or into membership degrees
-of fuzzy sets (for numeric columns), while leaving the remaining columns
-untouched. Each column selected for transformation typically yields in
-multiple columns in the output.
+logical columns, or into membership degrees of fuzzy sets, while leaving
+the remaining columns untouched. Each column selected for transformation
+typically yields in multiple columns in the output.
 }
 \details{
-Concretely, the transformation of each selected column is performed as
-follows:
+Transformations performed by this function are typically useful as a
+preprocessing step before using the \code{\link[=dig]{dig()}} function or some of its
+derivatives (\code{\link[=dig_correlations]{dig_correlations()}}, \code{\link[=dig_paired_contrasts]{dig_paired_contrasts()}},
+\code{\link[=dig_implications]{dig_implications()}}).
+
+The transformation of selected columns differ based on the type. Concretely:
 \itemize{
-\item logical column \code{x} is transformed into pair of logical columns,
+\item \strong{logical} column \code{x} is transformed into pair of logical columns,
 \code{x=TRUE} and\code{x=FALSE};
-\item factor column \code{x}, which has levels \code{l1}, \code{l2}, and \code{l3}, is transformed
+\item \strong{factor} column \code{x}, which has levels \code{l1}, \code{l2}, and \code{l3}, is transformed
 into three logical columns named \code{x=l1}, \code{x=l2}, and \code{x=l3};
-\item numerical column\code{x} is transformed accordingly to \code{.method} argument:
+\item \strong{numeric} column\code{x} is transformed accordingly to \code{.method} argument:
 \itemize{
 \item if \code{.method="crisp"}, the column is first transformed into a factor
 with intervals as factor levels and then it is processed as a factor
@@ -83,6 +86,30 @@ Details of transformation of numeric columns can be specified with
 additional arguments (\code{.breaks}, \code{.labels}, \code{.right}).
 }
 }
+}
+\examples{
+# transform logical columns and factors
+d <- data.frame(a = c(TRUE, TRUE, FALSE),
+                b = factor(c("A", "B", "A")),
+                c = c(1, 2, 3))
+partition(d, a, b)
+
+# transform numeric columns to logical columns (crisp transformation)
+partition(CO2, conc:uptake, .method = "crisp", .breaks = 3)
+
+# transform numeric columns to fuzzy sets (triangle transformation)
+partition(CO2, conc:uptake, .method = "triangle", .breaks = 3)
+
+# complex transformation with different settings for each column
+CO2 |>
+    partition(Plant:Treatment) |>
+    partition(conc,
+              .method = "raisedcos",
+              .breaks = c(-Inf, 95, 175, 350, 675, 1000, Inf)) |>
+    partition(uptake,
+              .method = "triangle",
+              .breaks = c(-Inf, 7.7, 28.3, 45.5, Inf),
+              .labels = c("low", "medium", "high"))
 }
 \author{
 Michal Burda
