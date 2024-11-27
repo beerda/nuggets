@@ -8,8 +8,9 @@ var_grid(
   x,
   xvars = everything(),
   yvars = everything(),
-  error_context = list(arg_x = "x", arg_xvars = "xvars", arg_yvars = "yvars", call =
-    current_env())
+  allow = "all",
+  error_context = list(arg_x = "x", arg_xvars = "xvars", arg_yvars = "yvars", arg_allow =
+    "allow", call = current_env())
 )
 }
 \arguments{
@@ -24,6 +25,11 @@ combinations use at the first place (xvar)}
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
 specifying the columns of \code{x}, whose names will be used as a domain for
 combinations use at the second place (yvar)}
+
+\item{allow}{a character string specifying which columns are allowed to be
+selected by \code{xvars} and \code{yvars} arguments. Possible values are:
+- \code{"all"} - all columns are allowed to be selected
+- \code{"numeric"} - only numeric columns are allowed to be selected}
 
 \item{error_context}{A list of details to be used in error messages.
 This argument is useful when \code{var_grid()} is called from another

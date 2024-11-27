@@ -22,6 +22,10 @@
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying the columns of `x`, whose names will be used as a domain for
 #'      combinations use at the second place (yvar)
+#' @param allow a character string specifying which columns are allowed to be
+#'      selected by `xvars` and `yvars` arguments. Possible values are:
+#'      - `"all"` - all columns are allowed to be selected
+#'      - `"numeric"` - only numeric columns are allowed to be selected
 #' @param error_context A list of details to be used in error messages.
 #'      This argument is useful when `var_grid()` is called from another
 #'      function to provide error messages, which refer to arguments of the
@@ -46,10 +50,15 @@
 var_grid <- function(x,
                      xvars = everything(),
                      yvars = everything(),
+                     allow = "all",
                      error_context = list(arg_x = "x",
                                           arg_xvars = "xvars",
                                           arg_yvars = "yvars",
+                                          arg_allow = "allow",
                                           call = current_env())) {
+    .must_be_enum(allow, c("all", "numeric"),
+                  arg = error_context$arg_allow,
+                  call = error_context$call)
     cols <- .convert_data_to_list(x,
                                   error_context = list(arg_x = error_context$arg_x,
                                                        call = error_context$call))
@@ -84,6 +93,19 @@ var_grid <- function(x,
                   call = error_context$call)
     }
 
+    if (allow == "numeric") {
+        .all_selected_must_be(cols[xvars],
+                              error_context$arg_xvars,
+                              is.numeric,
+                              "numeric",
+                              error_context$call)
+        .all_selected_must_be(cols[yvars],
+                              error_context$arg_yvars,
+                              is.numeric,
+                              "numeric",
+                              error_context$call)
+    }
+
     grid <- expand_grid(xvar = xvars, yvar = yvars)
     grid <- grid[grid$xvar != grid$yvar, ]
     dup <- apply(grid, 1, function(row) paste(sort(row), collapse = " "))
@@ -92,4 +114,17 @@ var_grid <- function(x,
     grid$yvar <- names(cols)[grid$yvar]
 
     as_tibble(grid)
+}
+
+
+.all_selected_must_be <- function(x, arg, test_fun, test_type, call) {
+    test <- vapply(x, test_fun, logical(1))
+    if (!all(test)) {
+        types <- sapply(x, function(i) class(i)[1])
+        details <- paste0("Column {.var ", names(x), "} is a {.cls ", types, "}.")
+        details <- details[!test]
+        cli_abort(c("All columns selected by {.arg {arg}} must be {test_type}.",
+                    ..error_details(details)),
+                  call = call)
+    }
 }

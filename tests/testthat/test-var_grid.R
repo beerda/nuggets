@@ -66,16 +66,18 @@ test_that("var_grid errors", {
                     x = TRUE,
                     y = c(TRUE, FALSE),
                     z = c(TRUE, FALSE))
+    d2 <- data.frame(n = 1:5 / 5, l = TRUE, i = 1:5, s = letters[1:5])
 
     expect_error(var_grid(d, xvars = where(is.numeric), yvars = x),
                  "`xvars` must select non-empty list of columns")
-
     expect_error(var_grid(d, yvars = where(is.numeric), xvars = x),
                  "`yvars` must select non-empty list of columns")
-
     expect_error(var_grid(d, xvars = x, yvars = x),
                  "`xvars` and `yvars` can't select the same single column")
-
+    expect_error(var_grid(d2, xvars = n, yvars = l, allow = "numeric"),
+                 "All columns selected by `yvars` must be numeric.")
+    expect_error(var_grid(d2, xvars = s, yvars = n, allow = "numeric"),
+                 "All columns selected by `xvars` must be numeric.")
     expect_error(var_grid(list(a = 1, b = 2),
                           xvars = everything(),
                           yvars = everything()),
