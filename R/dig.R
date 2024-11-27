@@ -77,6 +77,30 @@
 #'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
 #'      (Lukasiewicz t-norm).
 #' @param threads the number of threads to use for parallel computation.
+#' @param error_context a list of details to be used in error messages.
+#'      This argument is useful when `dig()` is called from another
+#'      function to provide error messages, which refer to arguments of the
+#'      calling function. The list must contain the following elements:
+#'      - `arg_x` - the name of the argument `x` as a character string
+#'      - `arg_f` - the name of the argument `f` as a character string
+#'      - `arg_condition` - the name of the argument `condition` as a character
+#'         string
+#'      - `arg_focus` - the name of the argument `focus` as a character string
+#'      - `arg_disjoint` - the name of the argument `disjoint` as a character
+#'         string
+#'      - `arg_min_length` - the name of the argument `min_length` as a character
+#'         string
+#'      - `arg_max_length` - the name of the argument `max_length` as a character
+#'         string
+#'      - `arg_min_support` - the name of the argument `min_support` as a character
+#'         string
+#'      - `arg_min_focus_support` - the name of the argument `min_focus_support`
+#'         as a character string
+#'      - `arg_filter_empty_foci` - the name of the argument `filter_empty_foci`
+#'         as a character string
+#'      - `arg_t_norm` - the name of the argument `t_norm` as a character string
+#'      - `arg_threads` - the name of the argument `threads` as a character string
+#'      - `call` - an environment in which to evaluate the error messages.
 #' @param ... Further arguments, currently unused.
 #' @returns A list of results provided by the callback function `f`.
 #' @author Michal Burda
@@ -93,40 +117,64 @@ dig <- function(x,
                 filter_empty_foci = FALSE,
                 t_norm = "goguen",
                 threads = 1L,
+                error_context = list(arg_x = "x",
+                                     arg_f = "f",
+                                     arg_condition = "condition",
+                                     arg_focus = "focus",
+                                     arg_disjoint = "disjoint",
+                                     arg_min_length = "min_length",
+                                     arg_max_length = "max_length",
+                                     arg_min_support = "min_support",
+                                     arg_min_focus_support = "min_focus_support",
+                                     arg_filter_empty_foci = "filter_empty_foci",
+                                     arg_t_norm = "t_norm",
+                                     arg_threads = "threads",
+                                     call = current_env()),
                 ...) {
-    cols <- .convert_data_to_list(x)
+    cols <- .convert_data_to_list(x, error_context = error_context)
 
     condition <- enquo(condition)
     focus <- enquo(focus)
     condition_cols <- .extract_cols(cols,
                                     !!condition,
                                     allow_numeric = TRUE,
-                                    allow_empty = FALSE)
+                                    allow_empty = FALSE,
+                                    error_context = list(arg_selection = error_context$arg_condition,
+                                                         call = error_context$call))
     foci_cols <- .extract_cols(cols,
                                !!focus,
                                allow_numeric = TRUE,
-                               allow_empty = TRUE)
+                               allow_empty = TRUE,
+                               error_context = list(arg_selection = error_context$arg_focus,
+                                                    call = error_context$call))
 
-    .must_be_function(f, call = caller_env(2))
+    .must_be_function(f,
+                      arg = error_context$arg_f,
+                      call = error_context$call)
     unrecognized_args <- setdiff(formalArgs(f),
                                  c("condition", "foci_supports",
                                    "pp", "np", "pn", "nn",
                                    "indices", "sum", "support", "weights"))
     if (length(unrecognized_args) > 0) {
-        details <- paste0("The argument {.var ", unrecognized_args, "} is not allowed.")
-        cli_abort(c("The function {.var f} must have allowed formal arguments only.",
-                    ..error_details(details)))
+        details <- paste0("The argument {.arg ", unrecognized_args, "} is not allowed.")
+        cli_abort(c("The function {.arg error_context$arg_f} must have allowed formal arguments only.",
+                    ..error_details(details)),
+                  call = error_context$call)
     }
     arguments <- formalArgs(f)
     if (is.null(arguments)) {
         arguments <- ""
     }
 
-    .must_be_vector(disjoint, null = TRUE)
+    .must_be_vector(disjoint,
+                    null = TRUE,
+                    arg = error_context$arg_disjoint,
+                    call = error_context$call)
     if (!isTRUE(length(disjoint) == 0 || length(disjoint) == ncol(x))) {
-        cli_abort(c("The length of {.var disjoint} must be 0 or equal to the number of rows in {.var x}.",
-                    "x" = "The number of rows in {.var x} is {nrow(x)}.",
-                    "x" = "The length of {.var disjoint} is {length(disjoint)}."))
+        cli_abort(c("The length of {.arg error_context$arg_disjoint} must be 0 or equal to the number of rows in {.arg error_context$arg_x}.",
+                    "x" = "The number of rows in {.arg error_context$arg_x} is {nrow(x)}.",
+                    "x" = "The length of {.arg error_context$arg_disjoint} is {length(disjoint)}."),
+                  call = error_context$call)
     }
 
     disjoint_predicates <- integer(0L)
@@ -137,37 +185,64 @@ dig <- function(x,
         disjoint_foci <- disjoint[foci_cols$indices]
     }
 
-    .must_be_integerish_scalar(min_length)
-    .must_be_finite(min_length)
-    .must_be_greater_eq(min_length, 0)
+    .must_be_integerish_scalar(min_length,
+                               arg = error_context$arg_min_length,
+                               call = error_context$call)
+    .must_be_finite(min_length,
+                    arg = error_context$arg_min_length,
+                    call = error_context$call)
+    .must_be_greater_eq(min_length, 0,
+                        arg = error_context$arg_min_length,
+                        call = error_context$call)
     min_length <- as.integer(min_length)
 
-    .must_be_integerish_scalar(max_length)
-    .must_be_greater_eq(max_length, 0)
+    .must_be_integerish_scalar(max_length,
+                               arg = error_context$arg_max_length,
+                               call = error_context$call)
+    .must_be_greater_eq(max_length, 0,
+                        arg = error_context$arg_max_length,
+                        call = error_context$call)
     if (max_length < min_length) {
-        cli_abort(c("{.var max_length} must be greater or equal to {.var min_length}.",
-                    "x" = "{.var min_length} equals {min_length}.",
-                    "x" = "{.var max_length} equals {max_length}."))
+        cli_abort(c("{.arg error_context$arg_max_length} must be greater or equal to {.arg error_context$arg_min_length}.",
+                    "x" = "{.arg error_context$arg_min_length} equals {min_length}.",
+                    "x" = "{.arg error_context$arg_max_length} equals {max_length}."),
+                  call = error_context$call)
     }
     if (!is.finite(max_length)) {
         max_length <- -1L;
     }
     max_length <- as.integer(max_length)
 
-    .must_be_double_scalar(min_support)
-    .must_be_in_range(min_support, c(0, 1))
+    .must_be_double_scalar(min_support,
+                           arg = error_context$arg_min_support,
+                           call = error_context$call)
+    .must_be_in_range(min_support, c(0, 1),
+                      arg = error_context$arg_min_support,
+                      call = error_context$call)
     min_support <- as.double(min_support)
 
-    .must_be_double_scalar(min_focus_support)
-    .must_be_in_range(min_focus_support, c(0, 1))
+    .must_be_double_scalar(min_focus_support,
+                           arg = error_context$arg_min_focus_support,
+                           call = error_context$call)
+    .must_be_in_range(min_focus_support, c(0, 1),
+                      arg = error_context$arg_min_focus_support,
+                      call = error_context$call)
     min_focus_support <- as.double(min_focus_support)
 
-    .must_be_flag(filter_empty_foci)
+    .must_be_flag(filter_empty_foci,
+                  arg = error_context$arg_filter_empty_foci,
+                  call = error_context$call)
 
-    .must_be_enum(t_norm, c("goguen", "goedel", "lukas"))
+    .must_be_enum(t_norm, c("goguen", "goedel", "lukas"),
+                  arg = error_context$arg_t_norm,
+                  call = error_context$call)
 
-    .must_be_integerish_scalar(threads)
-    .must_be_greater_eq(threads, 1)
+    .must_be_integerish_scalar(threads,
+                               arg = error_context$arg_threads,
+                               call = error_context$call)
+    .must_be_greater_eq(threads, 1,
+                        arg = error_context$arg_threads,
+                        call = error_context$call)
     threads <- as.integer(threads)
 
     config <- list(arguments = arguments,

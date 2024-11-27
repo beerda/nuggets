@@ -17,6 +17,11 @@ dig(
   filter_empty_foci = FALSE,
   t_norm = "goguen",
   threads = 1L,
+  error_context = list(arg_x = "x", arg_f = "f", arg_condition = "condition", arg_focus =
+    "focus", arg_disjoint = "disjoint", arg_min_length = "min_length", arg_max_length =
+    "max_length", arg_min_support = "min_support", arg_min_focus_support =
+    "min_focus_support", arg_filter_empty_foci = "filter_empty_foci", arg_t_norm =
+    "t_norm", arg_threads = "threads", call = current_env()),
   ...
 )
 }
@@ -103,6 +108,31 @@ callback function regardless of the number of remaining foci.}
 (Lukasiewicz t-norm).}
 
 \item{threads}{the number of threads to use for parallel computation.}
+
+\item{error_context}{a list of details to be used in error messages.
+This argument is useful when \code{dig()} is called from another
+function to provide error messages, which refer to arguments of the
+calling function. The list must contain the following elements:
+- \code{arg_x} - the name of the argument \code{x} as a character string
+- \code{arg_f} - the name of the argument \code{f} as a character string
+- \code{arg_condition} - the name of the argument \code{condition} as a character
+string
+- \code{arg_focus} - the name of the argument \code{focus} as a character string
+- \code{arg_disjoint} - the name of the argument \code{disjoint} as a character
+string
+- \code{arg_min_length} - the name of the argument \code{min_length} as a character
+string
+- \code{arg_max_length} - the name of the argument \code{max_length} as a character
+string
+- \code{arg_min_support} - the name of the argument \code{min_support} as a character
+string
+- \code{arg_min_focus_support} - the name of the argument \code{min_focus_support}
+as a character string
+- \code{arg_filter_empty_foci} - the name of the argument \code{filter_empty_foci}
+as a character string
+- \code{arg_t_norm} - the name of the argument \code{t_norm} as a character string
+- \code{arg_threads} - the name of the argument \code{threads} as a character string
+- \code{call} - an environment in which to evaluate the error messages.}
 
 \item{...}{Further arguments, currently unused.}
 }
