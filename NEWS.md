@@ -7,6 +7,7 @@
 - added max_p_value argument to dig_contrasts()
 - added nuggets vignette
 - improved error messages
+- added varnames()
 
 # nuggets 1.3.0
 - released: 2024-11-13

@@ -38,4 +38,5 @@ reference:
       - is_degree
       - is_subset
       - var_grid
+      - varnames
       - which_antichain
