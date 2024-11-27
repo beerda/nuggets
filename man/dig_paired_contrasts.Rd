@@ -122,23 +122,22 @@ difference in some statistical feature between two paired numeric variables.
 
 \describe{
 \item{Scheme:}{\verb{xvar >> yvar | C}\cr\cr
-The the difference between variable \code{xvar} and \code{yvar} under the condition
-\code{C} is significant.}
+There is a statistically significant difference between variables \code{xvar}
+and \code{yvar} under the condition \code{C}.}
 \item{Example:}{\verb{daily_ice_cream_income >> daily_tea_income | sunny}\cr\cr
 Under the condition of \emph{sunny weather}, the paired test shows that
 \emph{daily ice-cream income} is significantly higher than the
 \emph{daily tea income}.}
 }
-}
-\details{
+
 The paired contrast is computed using a paired version of a statistical test,
 which is specified by the \code{method} argument. The function computes the paired
 contrast between all pairs of variables, where the first variable is
 specified by the \code{xvars} argument and the second variable is specified by the
 \code{yvars} argument. Paired contrasts are computed in sub-data corresponding
-to conditions generated from \code{condition} columns. The \code{dig_contrasts()}
-function supports crisp conditions only, i.e., the condition columns must be
-logical.
+to conditions generated from \code{condition} columns. Function
+\code{dig_paired_contrasts()} supports crisp conditions only, i.e., the condition
+columns must be logical.
 }
 \examples{
 # Compute ratio of sepal and petal length and width for iris dataset

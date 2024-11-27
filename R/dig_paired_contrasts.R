@@ -9,23 +9,22 @@
 #'
 #' \describe{
 #'   \item{Scheme:}{`xvar >> yvar | C`\cr\cr
-#'     The the difference between variable `xvar` and `yvar` under the condition
-#'     `C` is significant.}
+#'     There is a statistically significant difference between variables `xvar`
+#'     and `yvar` under the condition `C`.}
 #'   \item{Example:}{`daily_ice_cream_income >> daily_tea_income | sunny`\cr\cr
 #'     Under the condition of *sunny weather*, the paired test shows that
 #'     *daily ice-cream income* is significantly higher than the
 #'     *daily tea income*.}
 #' }
 #'
-#' @details
 #' The paired contrast is computed using a paired version of a statistical test,
 #' which is specified by the `method` argument. The function computes the paired
 #' contrast between all pairs of variables, where the first variable is
 #' specified by the `xvars` argument and the second variable is specified by the
 #' `yvars` argument. Paired contrasts are computed in sub-data corresponding
-#' to conditions generated from `condition` columns. The `dig_contrasts()`
-#' function supports crisp conditions only, i.e., the condition columns must be
-#' logical.
+#' to conditions generated from `condition` columns. Function
+#' `dig_paired_contrasts()` supports crisp conditions only, i.e., the condition
+#' columns must be logical.
 #'
 #' @param x a matrix or data frame with data to search the patterns in.
 #' @param condition a tidyselect expression (see
@@ -248,11 +247,21 @@ dig_paired_contrasts <- function(x,
              condition = !!condition,
              xvars = !!xvars,
              yvars = !!yvars,
+             allow = "numeric",
              na_rm = TRUE,
-             method = "crisp",
+             type = "crisp",
              min_length = min_length,
              max_length = max_length,
              min_support = min_support,
              threads = threads,
+             error_context = list(arg_x = "x",
+                                  arg_condition = "condition",
+                                  arg_xvars = "xvars",
+                                  arg_yvars = "yvars",
+                                  arg_min_length = "min_length",
+                                  arg_max_length = "max_length",
+                                  arg_min_support = "min_support",
+                                  arg_threads = "threads",
+                                  call = current_env()),
              ...)
 }
