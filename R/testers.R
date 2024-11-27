@@ -159,6 +159,7 @@
 .must_be_list_of_logicals <- ..must_be_list_of(is.logical, "logical vectors")
 .must_be_list_of_integerishes <- ..must_be_list_of(is_integerish, "integerish vectors")
 .must_be_list_of_doubles <- ..must_be_list_of(is.double, "double (numeric) vectors")
+.must_be_list_of_numeric <- ..must_be_list_of(is.numeric, "numeric vectors")
 .must_be_list_of_characters <- ..must_be_list_of(is.character, "character vectors")
 .must_be_list_of_functions <- ..must_be_list_of(is.function, "functions")
 

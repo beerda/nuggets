@@ -21,7 +21,7 @@
         names(cols) <- colnames(x)
 
     } else {
-        cli_abort(c("{.arg {error_context$arg}} must be a matrix or a data frame.",
+        cli_abort(c("{.arg {error_context$arg_x}} must be a matrix or a data frame.",
                     "x" = "You've supplied a {.cls {class(x)}}."),
                   call = error_context$call)
     }
