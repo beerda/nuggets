@@ -65,6 +65,11 @@ data in <code>x</code> and calls the callback function <code>f</code> on each.</
 <span>  filter_empty_foci <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  t_norm <span class="op">=</span> <span class="st">"goguen"</span>,</span>
 <span>  threads <span class="op">=</span> <span class="fl">1L</span>,</span>
+<span>  error_context <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>arg_x <span class="op">=</span> <span class="st">"x"</span>, arg_f <span class="op">=</span> <span class="st">"f"</span>, arg_condition <span class="op">=</span> <span class="st">"condition"</span>, arg_focus <span class="op">=</span></span>
+<span>    <span class="st">"focus"</span>, arg_disjoint <span class="op">=</span> <span class="st">"disjoint"</span>, arg_min_length <span class="op">=</span> <span class="st">"min_length"</span>, arg_max_length <span class="op">=</span></span>
+<span>    <span class="st">"max_length"</span>, arg_min_support <span class="op">=</span> <span class="st">"min_support"</span>, arg_min_focus_support <span class="op">=</span></span>
+<span>    <span class="st">"min_focus_support"</span>, arg_filter_empty_foci <span class="op">=</span> <span class="st">"filter_empty_foci"</span>, arg_t_norm <span class="op">=</span></span>
+<span>    <span class="st">"t_norm"</span>, arg_threads <span class="op">=</span> <span class="st">"threads"</span>, call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -178,6 +183,33 @@ callback function regardless of the number of remaining foci.</p></dd>
 
 <dt id="arg-threads">threads<a class="anchor" aria-label="anchor" href="#arg-threads"></a></dt>
 <dd><p>the number of threads to use for parallel computation.</p></dd>
+
+
+<dt id="arg-error-context">error_context<a class="anchor" aria-label="anchor" href="#arg-error-context"></a></dt>
+<dd><p>a list of details to be used in error messages.
+This argument is useful when <code>dig()</code> is called from another
+function to provide error messages, which refer to arguments of the
+calling function. The list must contain the following elements:
+- <code>arg_x</code> - the name of the argument <code>x</code> as a character string
+- <code>arg_f</code> - the name of the argument <code>f</code> as a character string
+- <code>arg_condition</code> - the name of the argument <code>condition</code> as a character
+string
+- <code>arg_focus</code> - the name of the argument <code>focus</code> as a character string
+- <code>arg_disjoint</code> - the name of the argument <code>disjoint</code> as a character
+string
+- <code>arg_min_length</code> - the name of the argument <code>min_length</code> as a character
+string
+- <code>arg_max_length</code> - the name of the argument <code>max_length</code> as a character
+string
+- <code>arg_min_support</code> - the name of the argument <code>min_support</code> as a character
+string
+- <code>arg_min_focus_support</code> - the name of the argument <code>min_focus_support</code>
+as a character string
+- <code>arg_filter_empty_foci</code> - the name of the argument <code>filter_empty_foci</code>
+as a character string
+- <code>arg_t_norm</code> - the name of the argument <code>t_norm</code> as a character string
+- <code>arg_threads</code> - the name of the argument <code>threads</code> as a character string
+- <code>call</code> - an environment in which to evaluate the error messages.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

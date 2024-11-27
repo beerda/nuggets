@@ -6,8 +6,8 @@ difference in some statistical feature between two paired numeric variables.
 
 Scheme:
 xvar &amp;gt;&amp;gt; yvar | C
-The the difference between variable xvar and yvar under the condition
-C is significant.
+There is a statistically significant difference between variables xvar
+and yvar under the condition C.
 
 Example:
 daily_ice_cream_income &amp;gt;&amp;gt; daily_tea_income | sunny
@@ -17,15 +17,23 @@ daily tea income.
 
 
 
-"><meta property="og:description" content="
+
+The paired contrast is computed using a paired version of a statistical test,
+which is specified by the method argument. The function computes the paired
+contrast between all pairs of variables, where the first variable is
+specified by the xvars argument and the second variable is specified by the
+yvars argument. Paired contrasts are computed in sub-data corresponding
+to conditions generated from condition columns. Function
+dig_paired_contrasts() supports crisp conditions only, i.e., the condition
+columns must be logical."><meta property="og:description" content="
 Contrast patterns are a generalization of association rules that allow
 for the specification of a condition under which there is a significant
 difference in some statistical feature between two paired numeric variables.
 
 Scheme:
 xvar &amp;gt;&amp;gt; yvar | C
-The the difference between variable xvar and yvar under the condition
-C is significant.
+There is a statistically significant difference between variables xvar
+and yvar under the condition C.
 
 Example:
 daily_ice_cream_income &amp;gt;&amp;gt; daily_tea_income | sunny
@@ -35,7 +43,15 @@ daily tea income.
 
 
 
-"></head><body>
+
+The paired contrast is computed using a paired version of a statistical test,
+which is specified by the method argument. The function computes the paired
+contrast between all pairs of variables, where the first variable is
+specified by the xvars argument and the second variable is specified by the
+yvars argument. Paired contrasts are computed in sub-data corresponding
+to conditions generated from condition columns. Function
+dig_paired_contrasts() supports crisp conditions only, i.e., the condition
+columns must be logical."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -83,8 +99,8 @@ for the specification of a condition under which there is a significant
 difference in some statistical feature between two paired numeric variables.</p>
 <dl><dt>Scheme:</dt>
 <dd><p><code>xvar &gt;&gt; yvar | C</code><br><br>
-The the difference between variable <code>xvar</code> and <code>yvar</code> under the condition
-<code>C</code> is significant.</p></dd>
+There is a statistically significant difference between variables <code>xvar</code>
+and <code>yvar</code> under the condition <code>C</code>.</p></dd>
 
 <dt>Example:</dt>
 <dd><p><code>daily_ice_cream_income &gt;&gt; daily_tea_income | sunny</code><br><br>
@@ -93,7 +109,15 @@ Under the condition of <em>sunny weather</em>, the paired test shows that
 <em>daily tea income</em>.</p></dd>
 
 
-</dl></div>
+</dl><p>The paired contrast is computed using a paired version of a statistical test,
+which is specified by the <code>method</code> argument. The function computes the paired
+contrast between all pairs of variables, where the first variable is
+specified by the <code>xvars</code> argument and the second variable is specified by the
+<code>yvars</code> argument. Paired contrasts are computed in sub-data corresponding
+to conditions generated from <code>condition</code> columns. Function
+<code>dig_paired_contrasts()</code> supports crisp conditions only, i.e., the condition
+columns must be logical.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
@@ -285,17 +309,6 @@ ratio of the population variances.</p></dd>
 ratio of the population variances.</p></dd>
 
 </dl></div>
-    <div class="section level2">
-    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The paired contrast is computed using a paired version of a statistical test,
-which is specified by the <code>method</code> argument. The function computes the paired
-contrast between all pairs of variables, where the first variable is
-specified by the <code>xvars</code> argument and the second variable is specified by the
-<code>yvars</code> argument. Paired contrasts are computed in sub-data corresponding
-to conditions generated from <code>condition</code> columns. The <code><a href="dig_contrasts.html">dig_contrasts()</a></code>
-function supports crisp conditions only, i.e., the condition columns must be
-logical.</p>
-    </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="dig.html">dig()</a></code>, <code><a href="dig_grid.html">dig_grid()</a></code>, <code><a href="https://rdrr.io/r/stats/t.test.html" class="external-link">stats::t.test()</a></code>, <code><a href="https://rdrr.io/r/stats/wilcox.test.html" class="external-link">stats::wilcox.test()</a></code>,
