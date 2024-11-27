@@ -45,6 +45,10 @@
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying the columns of `x`, whose names will be used as a domain for
 #'      combinations use at the second place (yvar)
+#' @param allow a character string specifying which columns are allowed to be
+#'      selected by `xvars` and `yvars` arguments. Possible values are:
+#'      - `"all"` - all columns are allowed to be selected
+#'      - `"numeric"` - only numeric columns are allowed to be selected
 #' @param na_rm a logical value indicating whether to remove rows with missing
 #'      values from sub-data before the callback function `f` is called
 #' @param type a character string specifying the type of conditions to be processed.
@@ -66,6 +70,16 @@
 #'      For numerical (double) input, the support is computed as the mean (over all
 #'      rows) of multiplications of predicate values.
 #' @param threads the number of threads to use for parallel computation.
+#' @param error_context a list of details to be used in error messages.
+#'      This argument is useful when `dig_grid()` is called from another
+#'      function to provide error messages, which refer to arguments of the
+#'      calling function. The list must contain the following elements:
+#'      - `arg_x` - the name of the argument `x` as a character string
+#'      - `arg_condition` - the name of the argument `condition` as a character
+#'         string
+#'      - `arg_xvars` - the name of the argument `xvars` as a character string
+#'      - `arg_yvars` - the name of the argument `yvars` as a character string
+#'      - `call` - an environment in which to evaluate the error messages.
 #' @param ... Further arguments, currently unused.
 #' @return A tibble with found rules. Each row represents a single call of
 #'      the callback function `f`.
@@ -119,51 +133,71 @@ dig_grid <- function(x,
                      condition = where(is.logical),
                      xvars = where(is.numeric),
                      yvars = where(is.numeric),
+                     allow = "all",
                      na_rm = FALSE,
                      type = "crisp",
                      min_length = 0L,
                      max_length = Inf,
                      min_support = 0.0,
                      threads = 1L,
+                     error_context = list(arg_x = "x",
+                                          arg_f = "f",
+                                          arg_condition = "condition",
+                                          arg_xvars = "xvars",
+                                          arg_yvars = "yvars",
+                                          arg_allow = "allow",
+                                          arg_na_rm = "na_rm",
+                                          arg_type = "type",
+                                          arg_min_length = "min_length",
+                                          arg_max_length = "max_length",
+                                          arg_min_support = "min_support",
+                                          arg_threads = "threads",
+                                          call = current_env()),
                      ...) {
-    .must_be_flag(na_rm)
-    .must_be_enum(type, c("crisp", "fuzzy"))
+    .must_be_flag(na_rm,
+                  arg = error_context$arg_na_rm,
+                  call = error_context$call)
+    .must_be_enum(type, c("crisp", "fuzzy"),
+                  arg = error_context$arg_type,
+                  call = error_context$call)
 
-    .must_be_function(f)
+    .must_be_function(f,
+                      arg = error_context$arg_f,
+                      call = error_context$call)
     required_args <- if (type == "crisp") c("d") else c("d", "weights")
     required_args_msg <- paste0("`", paste0(required_args, collapse = '`, `'), "`")
     unrecognized_args <- setdiff(formalArgs(f), required_args)
     if (length(unrecognized_args) > 0) {
-        details <- paste0("The argument {.var ", unrecognized_args, "} is not allowed.")
-        cli_abort(c("The function {.var f} must have the following arguments: {required_args_msg}.",
-                    ..error_details(details)))
+        details <- paste0("The argument {.arg ", unrecognized_args, "} is not allowed.")
+        cli_abort(c("The function {.arg {error_context$arg_f}} must have the following arguments: {required_args_msg}.",
+                    ..error_details(details)),
+                  call = error_context$call)
     }
     unrecognized_args <- setdiff(required_args, formalArgs(f))
     if (length(unrecognized_args) > 0) {
-        details <- paste0("The argument {.var ", unrecognized_args, "} is missing.")
-        cli_abort(c("The function {.var f} must have the following arguments: {required_args_msg}.",
-                    ..error_details(details)))
+        details <- paste0("The argument {.arg ", unrecognized_args, "} is missing.")
+        cli_abort(c("The function {.arg {error_context$arg_f}} must have the following arguments: {required_args_msg}.",
+                    ..error_details(details)),
+                  call = error_context$call)
     }
 
     condition <- enquo(condition)
 
-    cols <- .convert_data_to_list(x)
+    cols <- .convert_data_to_list(x, error_context = error_context)
     .extract_cols(cols,
                   !!condition,
                   allow_numeric = (type == "fuzzy"),
                   allow_empty = FALSE,
-                  error_context = list(arg_selection = "condition",
-                                       call = current_env()))
+                  error_context = list(arg_selection = error_context$arg_condition,
+                                       call = error_context$call))
 
     xvars <- enquo(xvars)
     yvars <- enquo(yvars)
     grid <- var_grid(x,
                      !!xvars,
                      !!yvars,
-                     error_context = list(arg_x = "x",
-                                          arg_xvars = "xvars",
-                                          arg_yvars = "yvars",
-                                          call = current_env()))
+                     allow = allow,
+                     error_context = error_context)
 
     fcrisp <- function(condition, support, indices) {
         cond <- format_condition(names(condition))
@@ -223,6 +257,13 @@ dig_grid <- function(x,
                max_length = max_length,
                min_support = min_support,
                threads = threads,
+               error_context = list(arg_x = "x",
+                                    arg_condition = "condition",
+                                    arg_min_length = "min_length",
+                                    arg_max_length = "max_length",
+                                    arg_min_support = "min_support",
+                                    arg_threads = "threads",
+                                    call = error_context$call),
                ...)
 
     res <- do.call(rbind, res)

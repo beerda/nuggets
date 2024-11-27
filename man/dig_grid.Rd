@@ -10,12 +10,17 @@ dig_grid(
   condition = where(is.logical),
   xvars = where(is.numeric),
   yvars = where(is.numeric),
+  allow = "all",
   na_rm = FALSE,
   type = "crisp",
   min_length = 0L,
   max_length = Inf,
   min_support = 0,
   threads = 1L,
+  error_context = list(arg_x = "x", arg_f = "f", arg_condition = "condition", arg_xvars =
+    "xvars", arg_yvars = "yvars", arg_allow = "allow", arg_na_rm = "na_rm", arg_type =
+    "type", arg_min_length = "min_length", arg_max_length = "max_length", arg_min_support
+    = "min_support", arg_threads = "threads", call = current_env()),
   ...
 )
 }
@@ -56,6 +61,11 @@ combinations use at the first place (xvar)}
 specifying the columns of \code{x}, whose names will be used as a domain for
 combinations use at the second place (yvar)}
 
+\item{allow}{a character string specifying which columns are allowed to be
+selected by \code{xvars} and \code{yvars} arguments. Possible values are:
+- \code{"all"} - all columns are allowed to be selected
+- \code{"numeric"} - only numeric columns are allowed to be selected}
+
 \item{na_rm}{a logical value indicating whether to remove rows with missing
 values from sub-data before the callback function \code{f} is called}
 
@@ -82,6 +92,17 @@ For numerical (double) input, the support is computed as the mean (over all
 rows) of multiplications of predicate values.}
 
 \item{threads}{the number of threads to use for parallel computation.}
+
+\item{error_context}{a list of details to be used in error messages.
+This argument is useful when \code{dig_grid()} is called from another
+function to provide error messages, which refer to arguments of the
+calling function. The list must contain the following elements:
+- \code{arg_x} - the name of the argument \code{x} as a character string
+- \code{arg_condition} - the name of the argument \code{condition} as a character
+string
+- \code{arg_xvars} - the name of the argument \code{xvars} as a character string
+- \code{arg_yvars} - the name of the argument \code{yvars} as a character string
+- \code{call} - an environment in which to evaluate the error messages.}
 
 \item{...}{Further arguments, currently unused.}
 }
