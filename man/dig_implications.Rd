@@ -80,7 +80,7 @@ for a description of the measures.}
 \item{...}{Further arguments, currently unused.}
 }
 \value{
-A tibble with found rules and computed quality measures.
+A tibble with found patterns and computed quality measures.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}

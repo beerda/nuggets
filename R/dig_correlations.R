@@ -57,7 +57,7 @@
 #'      rows) of multiplications of predicate values.
 #' @param threads the number of threads to use for parallel computation.
 #' @param ... Further arguments, currently unused.
-#' @return A tibble with found rules.
+#' @return A tibble with found patterns.
 #' @author Michal Burda
 #' @seealso [dig()], [stats::cor.test()]
 #' @examples
@@ -65,18 +65,18 @@
 #' d <- partition(iris, Species)
 #'
 #' # find conditional correlations between all pairs of numeric variables
-#' res <- dig_correlations(d,
- #'                        condition = where(is.logical),
-#'                         xvars = Sepal.Length:Petal.Width,
-#'                         yvars = Sepal.Length:Petal.Width)
+#' dig_correlations(d,
+#'                  condition = where(is.logical),
+#'                  xvars = Sepal.Length:Petal.Width,
+#'                  yvars = Sepal.Length:Petal.Width)
 #'
 #' # With `condition = NULL`, dig_correlations() computes correlations between
 #' # all pairs of numeric variables on the whole dataset only, which is an
 #' # alternative way of computing the correlation matrix
-#' res <- dig_correlations(iris,
-#'                         condition = NULL,
-#'                         xvars = Sepal.Length:Petal.Width,
-#'                         yvars = Sepal.Length:Petal.Width)
+#' dig_correlations(iris,
+#'                  condition = NULL,
+#'                  xvars = Sepal.Length:Petal.Width,
+#'                  yvars = Sepal.Length:Petal.Width)
 #' @export
 dig_correlations <- function(x,
                              condition = where(is.logical),

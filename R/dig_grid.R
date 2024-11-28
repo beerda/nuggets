@@ -17,12 +17,14 @@
 #' @param x a matrix or data frame with data to search in.
 #' @param f the callback function to be executed for each generated condition.
 #'      The arguments of the callback function differ based on the value of the
-#'      `type` argument (see below). If `type = "crisp"` (that is, boolean),
+#'      `type` argument (see below):
+#'      \itemize{
+#'      \item If `type = "crisp"` (that is, boolean),
 #'      the callback function `f` must accept a single argument `d` of type
 #'      `data.frame` with two columns, xvar (accessible as `d[[1]]`) and yvar
 #'      (accessible as `d[[2]]`). Data frame `d` is a subset of the original
 #'      data frame `x` with all rows that satisfy the generated condition.
-#'      If `type = "fuzzy"`, the callback function `f` must accept an argument
+#'      \item If `type = "fuzzy"`, the callback function `f` must accept an argument
 #'      `d` of type `data.frame` with two columns, xvar (`d[[1]]`) and yvar
 #'      (`d[[2]]`), named as in`x`, and a numeric argument `weights`
 #'      with the same length as the number of rows in `d`. The `weights`
@@ -30,6 +32,7 @@
 #'      of the generated condition for each row of `d`. The truth degree is
 #'      a number in the interval \eqn{[0, 1]} that represents the degree of
 #'      satisfaction of the condition in the original data row.
+#'      }
 #'      In all cases, the function must return a list of scalar values, which
 #'      will be converted into a single row of result of final tibble.
 #' @param condition a tidyselect expression (see
@@ -53,8 +56,10 @@
 #'      is a convenient way to create the `disjoint` vector.
 #' @param allow a character string specifying which columns are allowed to be
 #'      selected by `xvars` and `yvars` arguments. Possible values are:
-#'      - `"all"` - all columns are allowed to be selected
-#'      - `"numeric"` - only numeric columns are allowed to be selected
+#'      \itemize{
+#'      \item `"all"` - all columns are allowed to be selected
+#'      \item `"numeric"` - only numeric columns are allowed to be selected
+#'      }
 #' @param na_rm a logical value indicating whether to remove rows with missing
 #'      values from sub-data before the callback function `f` is called
 #' @param type a character string specifying the type of conditions to be processed.
@@ -80,14 +85,16 @@
 #'      This argument is useful when `dig_grid()` is called from another
 #'      function to provide error messages, which refer to arguments of the
 #'      calling function. The list must contain the following elements:
-#'      - `arg_x` - the name of the argument `x` as a character string
-#'      - `arg_condition` - the name of the argument `condition` as a character
+#'      \itemize{
+#'      \item `arg_x` - the name of the argument `x` as a character string
+#'      \item `arg_condition` - the name of the argument `condition` as a character
 #'         string
-#'      - `arg_xvars` - the name of the argument `xvars` as a character string
-#'      - `arg_yvars` - the name of the argument `yvars` as a character string
-#'      - `call` - an environment in which to evaluate the error messages.
+#'      \item `arg_xvars` - the name of the argument `xvars` as a character string
+#'      \item `arg_yvars` - the name of the argument `yvars` as a character string
+#'      \item `call` - an environment in which to evaluate the error messages.
+#'      }
 #' @param ... Further arguments, currently unused.
-#' @return A tibble with found rules. Each row represents a single call of
+#' @return A tibble with found patterns. Each row represents a single call of
 #'      the callback function `f`.
 #' @author Michal Burda
 #' @seealso [dig()], [var_grid()]; see also [dig_correlations()] and

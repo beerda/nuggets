@@ -73,7 +73,7 @@ rows) of multiplications of predicate values.}
 \item{...}{Further arguments, currently unused.}
 }
 \value{
-A tibble with found rules.
+A tibble with found patterns.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -99,18 +99,18 @@ generated from \code{condition} columns.
 d <- partition(iris, Species)
 
 # find conditional correlations between all pairs of numeric variables
-res <- dig_correlations(d,
-                       condition = where(is.logical),
-                        xvars = Sepal.Length:Petal.Width,
-                        yvars = Sepal.Length:Petal.Width)
+dig_correlations(d,
+                 condition = where(is.logical),
+                 xvars = Sepal.Length:Petal.Width,
+                 yvars = Sepal.Length:Petal.Width)
 
 # With `condition = NULL`, dig_correlations() computes correlations between
 # all pairs of numeric variables on the whole dataset only, which is an
 # alternative way of computing the correlation matrix
-res <- dig_correlations(iris,
-                        condition = NULL,
-                        xvars = Sepal.Length:Petal.Width,
-                        yvars = Sepal.Length:Petal.Width)
+dig_correlations(iris,
+                 condition = NULL,
+                 xvars = Sepal.Length:Petal.Width,
+                 yvars = Sepal.Length:Petal.Width)
 }
 \seealso{
 \code{\link[=dig]{dig()}}, \code{\link[stats:cor.test]{stats::cor.test()}}

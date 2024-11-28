@@ -40,34 +40,36 @@
 #'      function may have some of the following arguments. Based on the present
 #'      arguments, the algorithm would provide information about the generated
 #'      condition:
-#'      - `condition` - a named integer vector of column indices that represent
+#'      \itemize{
+#'      \item `condition` - a named integer vector of column indices that represent
 #'        the predicates of the condition. Names of the vector correspond to
 #'        column names;
-#'      - `support` - a numeric scalar value of the current condition's support;
-#'      - `indices` - a logical vector indicating the rows satisfying the condition;
-#'      - `weights` - (similar to indices) weights of rows to which they satisfy
+#'      \item `support` - a numeric scalar value of the current condition's support;
+#'      \item `indices` - a logical vector indicating the rows satisfying the condition;
+#'      \item `weights` - (similar to indices) weights of rows to which they satisfy
 #'        the current condition;
-#'      - `pp` - a value of a contingency table, `condition & focus`.
+#'      \item `pp` - a value of a contingency table, `condition & focus`.
 #'        `pp` is a named numeric vector where each value is a support of conjunction
 #'        of the condition with a foci column (see the `focus` argument to specify,
 #'        which columns). Names of the vector are foci column names.
-#'      - `pn` - a value of a contingency table, `condition & neg focus`.
+#'      \item `pn` - a value of a contingency table, `condition & neg focus`.
 #'        `pn` is a named numeric vector where each value is a support of conjunction
 #'        of the condition with a negated foci column (see the `focus` argument to
 #'        specify, which columns are foci) - names of the vector are foci column names.
-#'      - `np` - a value of a contingency table, `neg condition & focus`.
+#'      \item `np` - a value of a contingency table, `neg condition & focus`.
 #'        `np` is a named numeric vector where each value is a support of conjunction
 #'        of the negated condition with a foci column (see the `focus` argument to
 #'        specify, which columns are foci) - names of the vector are foci column names.
-#'      - `nn` - a value of a contingency table, `neg condition & neg focus`.
+#'      \item `nn` - a value of a contingency table, `neg condition & neg focus`.
 #'        `nn` is a named numeric vector where each value is a support of conjunction
 #'        of the negated condition with a negated foci column (see the `focus`
 #'        argument to specify, which columns are foci) - names of the vector are foci
 #'        column names.
-#'      - `foci_supports` - (deprecated, use `pp` instead)
+#'      \item `foci_supports` - (deprecated, use `pp` instead)
 #'        a named numeric vector of supports of foci columns
 #'        (see `focus` argument to specify, which columns are foci) - names of the
 #'        vector are foci column names.
+#'      }
 #' @param condition a tidyselect expression (see
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying the columns to use as condition predicates
@@ -110,26 +112,28 @@
 #'      This argument is useful when `dig()` is called from another
 #'      function to provide error messages, which refer to arguments of the
 #'      calling function. The list must contain the following elements:
-#'      - `arg_x` - the name of the argument `x` as a character string
-#'      - `arg_f` - the name of the argument `f` as a character string
-#'      - `arg_condition` - the name of the argument `condition` as a character
+#'      \itemize{
+#'      \item `arg_x` - the name of the argument `x` as a character string
+#'      \item `arg_f` - the name of the argument `f` as a character string
+#'      \item `arg_condition` - the name of the argument `condition` as a character
 #'         string
-#'      - `arg_focus` - the name of the argument `focus` as a character string
-#'      - `arg_disjoint` - the name of the argument `disjoint` as a character
+#'      \item `arg_focus` - the name of the argument `focus` as a character string
+#'      \item `arg_disjoint` - the name of the argument `disjoint` as a character
 #'         string
-#'      - `arg_min_length` - the name of the argument `min_length` as a character
+#'      \item `arg_min_length` - the name of the argument `min_length` as a character
 #'         string
-#'      - `arg_max_length` - the name of the argument `max_length` as a character
+#'      \item `arg_max_length` - the name of the argument `max_length` as a character
 #'         string
-#'      - `arg_min_support` - the name of the argument `min_support` as a character
+#'      \item `arg_min_support` - the name of the argument `min_support` as a character
 #'         string
-#'      - `arg_min_focus_support` - the name of the argument `min_focus_support`
+#'      \item `arg_min_focus_support` - the name of the argument `min_focus_support`
 #'         as a character string
-#'      - `arg_filter_empty_foci` - the name of the argument `filter_empty_foci`
+#'      \item `arg_filter_empty_foci` - the name of the argument `filter_empty_foci`
 #'         as a character string
-#'      - `arg_t_norm` - the name of the argument `t_norm` as a character string
-#'      - `arg_threads` - the name of the argument `threads` as a character string
-#'      - `call` - an environment in which to evaluate the error messages.
+#'      \item `arg_t_norm` - the name of the argument `t_norm` as a character string
+#'      \item `arg_threads` - the name of the argument `threads` as a character string
+#'      \item `call` - an environment in which to evaluate the error messages.
+#'      }
 #' @param ... Further arguments, currently unused.
 #' @returns A list of results provided by the callback function `f`.
 #' @seealso [partition()], [varnames()], [dig_grid()]

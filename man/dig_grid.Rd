@@ -31,12 +31,14 @@ dig_grid(
 
 \item{f}{the callback function to be executed for each generated condition.
 The arguments of the callback function differ based on the value of the
-\code{type} argument (see below). If \code{type = "crisp"} (that is, boolean),
+\code{type} argument (see below):
+\itemize{
+\item If \code{type = "crisp"} (that is, boolean),
 the callback function \code{f} must accept a single argument \code{d} of type
 \code{data.frame} with two columns, xvar (accessible as \code{d[[1]]}) and yvar
 (accessible as \code{d[[2]]}). Data frame \code{d} is a subset of the original
 data frame \code{x} with all rows that satisfy the generated condition.
-If \code{type = "fuzzy"}, the callback function \code{f} must accept an argument
+\item If \code{type = "fuzzy"}, the callback function \code{f} must accept an argument
 \code{d} of type \code{data.frame} with two columns, xvar (\code{d[[1]]}) and yvar
 (\code{d[[2]]}), named as in\code{x}, and a numeric argument \code{weights}
 with the same length as the number of rows in \code{d}. The \code{weights}
@@ -44,6 +46,7 @@ argument contains the truth degree
 of the generated condition for each row of \code{d}. The truth degree is
 a number in the interval \eqn{[0, 1]} that represents the degree of
 satisfaction of the condition in the original data row.
+}
 In all cases, the function must return a list of scalar values, which
 will be converted into a single row of result of final tibble.}
 
@@ -72,8 +75,10 @@ is a convenient way to create the \code{disjoint} vector.}
 
 \item{allow}{a character string specifying which columns are allowed to be
 selected by \code{xvars} and \code{yvars} arguments. Possible values are:
-- \code{"all"} - all columns are allowed to be selected
-- \code{"numeric"} - only numeric columns are allowed to be selected}
+\itemize{
+\item \code{"all"} - all columns are allowed to be selected
+\item \code{"numeric"} - only numeric columns are allowed to be selected
+}}
 
 \item{na_rm}{a logical value indicating whether to remove rows with missing
 values from sub-data before the callback function \code{f} is called}
@@ -106,17 +111,19 @@ rows) of multiplications of predicate values.}
 This argument is useful when \code{dig_grid()} is called from another
 function to provide error messages, which refer to arguments of the
 calling function. The list must contain the following elements:
-- \code{arg_x} - the name of the argument \code{x} as a character string
-- \code{arg_condition} - the name of the argument \code{condition} as a character
+\itemize{
+\item \code{arg_x} - the name of the argument \code{x} as a character string
+\item \code{arg_condition} - the name of the argument \code{condition} as a character
 string
-- \code{arg_xvars} - the name of the argument \code{xvars} as a character string
-- \code{arg_yvars} - the name of the argument \code{yvars} as a character string
-- \code{call} - an environment in which to evaluate the error messages.}
+\item \code{arg_xvars} - the name of the argument \code{xvars} as a character string
+\item \code{arg_yvars} - the name of the argument \code{yvars} as a character string
+\item \code{call} - an environment in which to evaluate the error messages.
+}}
 
 \item{...}{Further arguments, currently unused.}
 }
 \value{
-A tibble with found rules. Each row represents a single call of
+A tibble with found patterns. Each row represents a single call of
 the callback function \code{f}.
 }
 \description{

@@ -34,34 +34,36 @@ logical.}
 function may have some of the following arguments. Based on the present
 arguments, the algorithm would provide information about the generated
 condition:
-- \code{condition} - a named integer vector of column indices that represent
+\itemize{
+\item \code{condition} - a named integer vector of column indices that represent
 the predicates of the condition. Names of the vector correspond to
 column names;
-- \code{support} - a numeric scalar value of the current condition's support;
-- \code{indices} - a logical vector indicating the rows satisfying the condition;
-- \code{weights} - (similar to indices) weights of rows to which they satisfy
+\item \code{support} - a numeric scalar value of the current condition's support;
+\item \code{indices} - a logical vector indicating the rows satisfying the condition;
+\item \code{weights} - (similar to indices) weights of rows to which they satisfy
 the current condition;
-- \code{pp} - a value of a contingency table, \code{condition & focus}.
+\item \code{pp} - a value of a contingency table, \code{condition & focus}.
 \code{pp} is a named numeric vector where each value is a support of conjunction
 of the condition with a foci column (see the \code{focus} argument to specify,
 which columns). Names of the vector are foci column names.
-- \code{pn} - a value of a contingency table, \verb{condition & neg focus}.
+\item \code{pn} - a value of a contingency table, \verb{condition & neg focus}.
 \code{pn} is a named numeric vector where each value is a support of conjunction
 of the condition with a negated foci column (see the \code{focus} argument to
 specify, which columns are foci) - names of the vector are foci column names.
-- \code{np} - a value of a contingency table, \verb{neg condition & focus}.
+\item \code{np} - a value of a contingency table, \verb{neg condition & focus}.
 \code{np} is a named numeric vector where each value is a support of conjunction
 of the negated condition with a foci column (see the \code{focus} argument to
 specify, which columns are foci) - names of the vector are foci column names.
-- \code{nn} - a value of a contingency table, \verb{neg condition & neg focus}.
+\item \code{nn} - a value of a contingency table, \verb{neg condition & neg focus}.
 \code{nn} is a named numeric vector where each value is a support of conjunction
 of the negated condition with a negated foci column (see the \code{focus}
 argument to specify, which columns are foci) - names of the vector are foci
 column names.
-- \code{foci_supports} - (deprecated, use \code{pp} instead)
+\item \code{foci_supports} - (deprecated, use \code{pp} instead)
 a named numeric vector of supports of foci columns
 (see \code{focus} argument to specify, which columns are foci) - names of the
-vector are foci column names.}
+vector are foci column names.
+}}
 
 \item{condition}{a tidyselect expression (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
@@ -115,26 +117,28 @@ callback function regardless of the number of remaining foci.}
 This argument is useful when \code{dig()} is called from another
 function to provide error messages, which refer to arguments of the
 calling function. The list must contain the following elements:
-- \code{arg_x} - the name of the argument \code{x} as a character string
-- \code{arg_f} - the name of the argument \code{f} as a character string
-- \code{arg_condition} - the name of the argument \code{condition} as a character
+\itemize{
+\item \code{arg_x} - the name of the argument \code{x} as a character string
+\item \code{arg_f} - the name of the argument \code{f} as a character string
+\item \code{arg_condition} - the name of the argument \code{condition} as a character
 string
-- \code{arg_focus} - the name of the argument \code{focus} as a character string
-- \code{arg_disjoint} - the name of the argument \code{disjoint} as a character
+\item \code{arg_focus} - the name of the argument \code{focus} as a character string
+\item \code{arg_disjoint} - the name of the argument \code{disjoint} as a character
 string
-- \code{arg_min_length} - the name of the argument \code{min_length} as a character
+\item \code{arg_min_length} - the name of the argument \code{min_length} as a character
 string
-- \code{arg_max_length} - the name of the argument \code{max_length} as a character
+\item \code{arg_max_length} - the name of the argument \code{max_length} as a character
 string
-- \code{arg_min_support} - the name of the argument \code{min_support} as a character
+\item \code{arg_min_support} - the name of the argument \code{min_support} as a character
 string
-- \code{arg_min_focus_support} - the name of the argument \code{min_focus_support}
+\item \code{arg_min_focus_support} - the name of the argument \code{min_focus_support}
 as a character string
-- \code{arg_filter_empty_foci} - the name of the argument \code{filter_empty_foci}
+\item \code{arg_filter_empty_foci} - the name of the argument \code{filter_empty_foci}
 as a character string
-- \code{arg_t_norm} - the name of the argument \code{t_norm} as a character string
-- \code{arg_threads} - the name of the argument \code{threads} as a character string
-- \code{call} - an environment in which to evaluate the error messages.}
+\item \code{arg_t_norm} - the name of the argument \code{t_norm} as a character string
+\item \code{arg_threads} - the name of the argument \code{threads} as a character string
+\item \code{call} - an environment in which to evaluate the error messages.
+}}
 
 \item{...}{Further arguments, currently unused.}
 }

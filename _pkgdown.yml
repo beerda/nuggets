@@ -3,6 +3,7 @@ url: https://beerda.github.io/nuggets/
 template:
   bootstrap: 5
   light-switch: true
+  math-rendering: mathjax
 
 news:
   cran_dates: false

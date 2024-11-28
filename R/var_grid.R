@@ -1,5 +1,6 @@
 #' Create a tibble of combinations of xvar/yvar variable pairs.
 #'
+#' @description
 #' The function creates a tibble with two columns, `xvar` and `yvar`, whose
 #' rows enumerate all combinations of column names specified by the `xvars`
 #' and `yvars` argument. These arguments are tidyselect expressions (see
@@ -24,16 +25,20 @@
 #'      combinations use at the second place (yvar)
 #' @param allow a character string specifying which columns are allowed to be
 #'      selected by `xvars` and `yvars` arguments. Possible values are:
-#'      - `"all"` - all columns are allowed to be selected
-#'      - `"numeric"` - only numeric columns are allowed to be selected
+#'      \itemize{
+#'      \item `"all"` - all columns are allowed to be selected
+#'      \item `"numeric"` - only numeric columns are allowed to be selected
+#'      }
 #' @param error_context A list of details to be used in error messages.
 #'      This argument is useful when `var_grid()` is called from another
 #'      function to provide error messages, which refer to arguments of the
 #'      calling function. The list must contain the following elements:
-#'      - `arg_x` - the name of the argument `x` as a character string
-#'      - `arg_xvars` - the name of the argument `xvars` as a character string
-#'      - `arg_yvars` - the name of the argument `yvars` as a character string
-#'      - `call` - an environment in which to evaluate the error messages.
+#'      \itemize{
+#'      \item `arg_x` - the name of the argument `x` as a character string
+#'      \item `arg_xvars` - the name of the argument `xvars` as a character string
+#'      \item `arg_yvars` - the name of the argument `yvars` as a character string
+#'      \item `call` - an environment in which to evaluate the error messages.
+#'      }
 #' @return a tibble with two columns (`xvar` and `yvar`) with rows enumerating
 #'      all combinations of column names specified by tidyselect expressions
 #'      in `xvars` and `yvars` arguments.

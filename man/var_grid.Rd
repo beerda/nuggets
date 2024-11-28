@@ -28,17 +28,21 @@ combinations use at the second place (yvar)}
 
 \item{allow}{a character string specifying which columns are allowed to be
 selected by \code{xvars} and \code{yvars} arguments. Possible values are:
-- \code{"all"} - all columns are allowed to be selected
-- \code{"numeric"} - only numeric columns are allowed to be selected}
+\itemize{
+\item \code{"all"} - all columns are allowed to be selected
+\item \code{"numeric"} - only numeric columns are allowed to be selected
+}}
 
 \item{error_context}{A list of details to be used in error messages.
 This argument is useful when \code{var_grid()} is called from another
 function to provide error messages, which refer to arguments of the
 calling function. The list must contain the following elements:
-- \code{arg_x} - the name of the argument \code{x} as a character string
-- \code{arg_xvars} - the name of the argument \code{xvars} as a character string
-- \code{arg_yvars} - the name of the argument \code{yvars} as a character string
-- \code{call} - an environment in which to evaluate the error messages.}
+\itemize{
+\item \code{arg_x} - the name of the argument \code{x} as a character string
+\item \code{arg_xvars} - the name of the argument \code{xvars} as a character string
+\item \code{arg_yvars} - the name of the argument \code{yvars} as a character string
+\item \code{call} - an environment in which to evaluate the error messages.
+}}
 }
 \value{
 a tibble with two columns (\code{xvar} and \code{yvar}) with rows enumerating
@@ -50,8 +54,7 @@ The function creates a tibble with two columns, \code{xvar} and \code{yvar}, who
 rows enumerate all combinations of column names specified by the \code{xvars}
 and \code{yvars} argument. These arguments are tidyselect expressions (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax}).
-}
-\details{
+
 It is allowed to specify the same column in both \code{xvars} and \code{yvars}
 arguments. In such a case, the combinations of the same column with itself
 are removed from the result.
