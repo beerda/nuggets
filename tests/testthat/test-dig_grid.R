@@ -1,3 +1,47 @@
+test_that("dig_grid empty condition", {
+    d <- data.frame(a = TRUE,
+                    b = c(TRUE, FALSE),
+                    x = letters[1:10],
+                    y = letters[11:20],
+                    z = LETTERS[1:10])
+
+    f <- function(d) {
+        paste(paste(d[[1]], collapse = "|"),
+              paste(d[[2]], collapse = "|"))
+    }
+
+    res <- dig_grid(x = d,
+                    f = f,
+                    type = "crisp",
+                    condition = NULL,
+                    xvars = where(is.character),
+                    yvars = where(is.character))
+
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 3)
+    expect_equal(colnames(res),
+                 c("condition", "support", "xvar", "yvar", "value"))
+    expect_equal(res$condition, rep("{}", 3))
+    expect_equal(res$xvar, c("x", "x", "y"))
+    expect_equal(res$yvar, c("y", "z", "z"))
+    expect_equal(res$support, rep(1.0, 3))
+
+    v1 <- list(x = "a|b|c|d|e|f|g|h|i|j",
+               y = "k|l|m|n|o|p|q|r|s|t",
+               z = "A|B|C|D|E|F|G|H|I|J")
+    v2 <- list(x = "a|c|e|g|i",
+               y = "k|m|o|q|s",
+               z = "A|C|E|G|I")
+    for (i in seq_len(nrow(res))) {
+        cond <- res$condition[i]
+        x <- res$xvar[i]
+        y <- res$yvar[i]
+        value <- res$value[i]
+
+        expect_equal(value, paste(v1[[x]], v1[[y]]))
+    }
+})
+
 test_that("dig_grid crisp", {
     d <- data.frame(a = TRUE,
                     b = c(TRUE, FALSE),
@@ -187,8 +231,6 @@ test_that("errors", {
                  "`f` must be a function")
     expect_error(dig_grid(d, f = fb, type = "crisp", condition = xxx),
                  "Column `xxx` doesn't exist")
-    expect_error(dig_grid(d, f = fb, type = "crisp", condition = where(is.factor)),
-                 "`condition` must select non-empty list of columns")
     expect_error(dig_grid(d, f = fb, type = "crisp", condition = l, na_rm = 3),
                  "`na_rm` must be a flag")
     expect_error(dig_grid(d, f = fb, type = "foo", condition = l),

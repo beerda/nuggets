@@ -35,7 +35,7 @@ context("dig/Task.h") {
             data3[i] = i / 10.0;
         }
 
-        DataType data;
+        DataType data(data1.size());
         data.addChain(data1);
         data.addChain(data2);
         data.addChain(data3);

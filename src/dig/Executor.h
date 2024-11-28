@@ -34,7 +34,7 @@ public:
     List execute(List logData, List numData, List logFoci, List numFoci)
     {
         List result;
-        DataType data;
+        DataType data(config.getNrow());
 
         {
             LogStartEnd l("data init");

@@ -8,7 +8,8 @@ class Data {
 public:
     using DualChainType = DualChain<BITCHAIN, NUMCHAIN>;
 
-    Data()
+    Data(size_t rows)
+        : rows(rows)
     { }
 
     template <typename T>
@@ -107,15 +108,7 @@ public:
     { return foci.size(); }
 
     size_t nrow() const
-    {
-        if (!chains.empty())
-            return chains.front().size();
-
-        if (!foci.empty())
-            return foci.front().size();
-
-        return 0;
-    }
+    { return rows; }
 
     void sortChains()
     {
@@ -131,6 +124,7 @@ public:
     { return chainsPermutation; }
 
 private:
+    size_t rows;
     vector<DualChainType> chains;
     vector<DualChainType> foci;
     vector<DualChainType> negativeFoci;

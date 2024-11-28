@@ -141,7 +141,7 @@ dig <- function(x,
     condition_cols <- .extract_cols(cols,
                                     !!condition,
                                     allow_numeric = TRUE,
-                                    allow_empty = FALSE,
+                                    allow_empty = TRUE,
                                     error_context = list(arg_selection = error_context$arg_condition,
                                                          call = error_context$call))
     foci_cols <- .extract_cols(cols,
@@ -248,7 +248,8 @@ dig <- function(x,
                         call = error_context$call)
     threads <- as.integer(threads)
 
-    config <- list(arguments = arguments,
+    config <- list(nrow = nrow(x),
+                   arguments = arguments,
                    predicates = condition_cols$indices,
                    foci = foci_cols$indices,
                    disjoint_predicates = disjoint_predicates,

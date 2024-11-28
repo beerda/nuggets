@@ -195,7 +195,7 @@ dig_grid <- function(x,
     .extract_cols(cols,
                   !!condition,
                   allow_numeric = (type == "fuzzy"),
-                  allow_empty = FALSE,
+                  allow_empty = TRUE,
                   error_context = list(arg_selection = error_context$arg_condition,
                                        call = error_context$call))
 

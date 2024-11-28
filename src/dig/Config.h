@@ -8,6 +8,9 @@ class Config {
 public:
     Config(List configuration)
     {
+        IntegerVector nrowVec = configuration["nrow"];
+        nrow = nrowVec[0];
+
         parseArguments(configuration["arguments"]);
 
         IntegerVector predicates = configuration["predicates"];
@@ -105,6 +108,9 @@ public:
     const vector<int>& getDisjointFoci() const
     { return disjointFoci; }
 
+    int getNrow() const
+    { return nrow; }
+
     int getThreads() const
     { return threads; }
 
@@ -162,6 +168,7 @@ private:
     vector<int> disjointPredicates;
     vector<int> disjointFoci;
 
+    int nrow;
     int threads;
     int minLength;
     int maxLength;
