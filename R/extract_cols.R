@@ -44,7 +44,7 @@
     if (!all(test)) {
         errors <- c()
         for (i in which(!test)) {
-            msg2 <- if (is.numeric(cols[[i]]))
+            msg2 <- if (allow_numeric && is.numeric(cols[[i]]))
                 " with values less than 0 or greater than 1" else ""
             errors <- c(errors,
                         paste0("Column {.var ", names(cols)[i],
