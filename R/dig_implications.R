@@ -3,8 +3,19 @@
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
-#' Implicative rule is a rule of the form \eqn{A \Rightarrow c}{A => c},
-#' where \eqn{A} (*antecedent*) is a set of predicates and \eqn{c} (*consequent*) is a predicate.
+#' Implicative patterns identify conditions (*antecedents*) under which
+#' a specific feature (*consequent*) is present very often.
+#'
+#' \describe{
+#'   \item{Scheme:}{`A => C`\cr\cr
+#'     If condition `A` is satisfied, then the feature `C` is present very often.}
+#'   \item{Example:}{`university_edu & middle_age & IT_industry => high_income`\cr\cr
+#'     People in *middle age* with *university education* working in IT industry
+#'     have very likely a *high income*.}
+#' }
+#'
+#' Antecedent `A` is usually a set of predicates, and consequent `C` is a single
+#' predicate.
 #'
 #' For the following explanations we need a mathematical function \eqn{supp(I)}, which
 #' is defined for a set \eqn{I} of predicates as a relative frequency of rows satisfying
@@ -71,7 +82,15 @@
 #' @param ... Further arguments, currently unused.
 #' @returns A tibble with found rules and computed quality measures.
 #' @author Michal Burda
-#' @seealso [dig()]
+#' @seealso [partition()], [varnames()], [dig()]
+#' @examples
+#' d <- partition(mtcars, .breaks = 2)
+#' dig_implications(d,
+#'                  antecedent = !starts_with("mpg"),
+#'                  consequent = starts_with("mpg"),
+#'                  min_support = 0.3,
+#'                  min_confidence = 0.8,
+#'                  measures = c("lift", "conviction"))
 #' @export
 dig_implications <- function(x,
                              antecedent = everything(),
@@ -118,10 +137,19 @@ dig_implications <- function(x,
     conseq_supports <- dig(x = x,
                            f = f1,
                            condition = !!consequent,
+                           disjoint = disjoint,
                            min_length = 1,
                            max_length = 1,
                            min_support = 0.0,
-                           threads = threads)
+                           threads = threads,
+                           error_context = list(arg_x = "x",
+                                                arg_condition = "consequent",
+                                                arg_disjoint = "disjoint",
+                                                arg_min_length = "min_length",
+                                                arg_max_length = "max_length",
+                                                arg_min_support = "min_support",
+                                                arg_threads = "threads",
+                                                call = current_env()))
     conseq_supports <- unlist(conseq_supports)
 
     basic_callback <- function(condition, sum, pp) {
@@ -185,6 +213,17 @@ dig_implications <- function(x,
                filter_empty_foci = TRUE,
                t_norm = t_norm,
                threads = threads,
+               error_context = list(arg_x = "x",
+                                    arg_condition = "antecedent",
+                                    arg_focus = "consequent",
+                                    arg_disjoint = "disjoint",
+                                    arg_min_length = "min_length",
+                                    arg_max_length = "max_length",
+                                    arg_min_support = "min_coverage",
+                                    arg_min_focus_support = "min_support",
+                                    arg_t_norm = "t_norm",
+                                    arg_threads = "threads",
+                                    call = current_env()),
                ...)
 
     res <- do.call(rbind, res)

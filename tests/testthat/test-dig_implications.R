@@ -248,3 +248,30 @@ test_that("compare dig_implications to arules::apriori", {
     expect_equal(res$added_value, expected$addedValue, tolerance = 1e-6)
     expect_equal(res$count, expected$count)
 })
+
+
+test_that("dig_implications errors", {
+    d <- data.frame(a = c(T, T, F, F, F),
+                    b = c(T, T, T, T, F),
+                    c = c(T, F, F, T, T))
+    d2 <- data.frame(a = c(T, T, F, F, F),
+                     b = c(T, T, T, T, F),
+                     c = as.character(c(T, F, F, T, T)))
+
+    expect_error(dig_implications(as.list(d)),
+                 "`x` must be a matrix or a data frame.")
+    expect_error(dig_implications(d2, antecedent = b:c, consequent = a),
+                 "All columns selected by `antecedent` must be logical or numeric from the interval")
+    expect_error(dig_implications(d2, antecedent = a:b, consequent = c),
+                 "All columns selected by `consequent` must be logical or numeric from the interval")
+    expect_error(dig_implications(d, min_length = "x"),
+                 "`min_length` must be an integerish scalar.")
+    expect_error(dig_implications(d, max_length = "x"),
+                 "`max_length` must be an integerish scalar.")
+    expect_error(dig_implications(d, min_coverage = "x"),
+                 "`min_coverage` must be a double scalar.")
+    expect_error(dig_implications(d, min_support = "x"),
+                 "`min_support` must be a double scalar.")
+    expect_error(dig_implications(d, min_confidence = "x"),
+                 "`min_confidence` must be a double scalar.")
+})
