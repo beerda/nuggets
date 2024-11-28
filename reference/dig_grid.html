@@ -79,6 +79,7 @@ relationships between pairs of columns, such as in <code><a href="dig_correlatio
 <span>  condition <span class="op">=</span> <span class="fu">where</span><span class="op">(</span><span class="va">is.logical</span><span class="op">)</span>,</span>
 <span>  xvars <span class="op">=</span> <span class="fu">where</span><span class="op">(</span><span class="va">is.numeric</span><span class="op">)</span>,</span>
 <span>  yvars <span class="op">=</span> <span class="fu">where</span><span class="op">(</span><span class="va">is.numeric</span><span class="op">)</span>,</span>
+<span>  disjoint <span class="op">=</span> <span class="fu"><a href="varnames.html">varnames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  allow <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  na_rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"crisp"</span>,</span>
@@ -87,9 +88,10 @@ relationships between pairs of columns, such as in <code><a href="dig_correlatio
 <span>  min_support <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  threads <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  error_context <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>arg_x <span class="op">=</span> <span class="st">"x"</span>, arg_f <span class="op">=</span> <span class="st">"f"</span>, arg_condition <span class="op">=</span> <span class="st">"condition"</span>, arg_xvars <span class="op">=</span></span>
-<span>    <span class="st">"xvars"</span>, arg_yvars <span class="op">=</span> <span class="st">"yvars"</span>, arg_allow <span class="op">=</span> <span class="st">"allow"</span>, arg_na_rm <span class="op">=</span> <span class="st">"na_rm"</span>, arg_type <span class="op">=</span></span>
-<span>    <span class="st">"type"</span>, arg_min_length <span class="op">=</span> <span class="st">"min_length"</span>, arg_max_length <span class="op">=</span> <span class="st">"max_length"</span>, arg_min_support</span>
-<span>    <span class="op">=</span> <span class="st">"min_support"</span>, arg_threads <span class="op">=</span> <span class="st">"threads"</span>, call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    <span class="st">"xvars"</span>, arg_yvars <span class="op">=</span> <span class="st">"yvars"</span>, arg_disjoint <span class="op">=</span> <span class="st">"disjoint"</span>, arg_allow <span class="op">=</span> <span class="st">"allow"</span>,</span>
+<span>    arg_na_rm <span class="op">=</span> <span class="st">"na_rm"</span>, arg_type <span class="op">=</span> <span class="st">"type"</span>, arg_min_length <span class="op">=</span> <span class="st">"min_length"</span>, arg_max_length</span>
+<span>    <span class="op">=</span> <span class="st">"max_length"</span>, arg_min_support <span class="op">=</span> <span class="st">"min_support"</span>, arg_threads <span class="op">=</span> <span class="st">"threads"</span>, call <span class="op">=</span></span>
+<span>    <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -142,6 +144,15 @@ combinations use at the first place (xvar)</p></dd>
 <a href="https://tidyselect.r-lib.org/articles/syntax.html" class="external-link">tidyselect syntax</a>)
 specifying the columns of <code>x</code>, whose names will be used as a domain for
 combinations use at the second place (yvar)</p></dd>
+
+
+<dt id="arg-disjoint">disjoint<a class="anchor" aria-label="anchor" href="#arg-disjoint"></a></dt>
+<dd><p>an atomic vector of size equal to the number of columns of <code>x</code>
+that specifies the groups of predicates: if some elements of the <code>disjoint</code>
+vector are equal, then the corresponding columns of <code>x</code> will NOT be
+present together in a single condition. If <code>x</code> is prepared with
+<code><a href="partition.html">partition()</a></code>, using the <code><a href="varnames.html">varnames()</a></code> function on <code>x</code>'s column names
+is a convenient way to create the <code>disjoint</code> vector.</p></dd>
 
 
 <dt id="arg-allow">allow<a class="anchor" aria-label="anchor" href="#arg-allow"></a></dt>
@@ -241,7 +252,7 @@ the callback function <code>f</code>.</p>
 <span class="r-in"><span>         xvars <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"Sepal"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>         yvars <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"Petal"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>         type <span class="op">=</span> <span class="st">"crisp"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 32 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 16 × 6</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    condition            support xvar         yvar              m     n</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> {}                     1     Sepal.Length Petal.Length  2.09    150</span>
@@ -254,7 +265,12 @@ the callback function <code>f</code>.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> {Species=setosa}       0.333 Sepal.Width  Petal.Width   3.18     50</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> {Species=versicolor}   0.333 Sepal.Length Petal.Length  1.68     50</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> {Species=versicolor}   0.333 Sepal.Length Petal.Width   4.61     50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 22 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> {Species=versicolor}   0.333 Sepal.Width  Petal.Length -<span style="color: #BB0000;">1.49</span>     50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> {Species=versicolor}   0.333 Sepal.Width  Petal.Width   1.44     50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> {Species=virginica}    0.333 Sepal.Length Petal.Length  1.04     50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> {Species=virginica}    0.333 Sepal.Length Petal.Width   4.56     50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span> {Species=virginica}    0.333 Sepal.Width  Petal.Length -<span style="color: #BB0000;">2.58</span>     50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span> {Species=virginica}    0.333 Sepal.Width  Petal.Width   0.948    50</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># *** Example of fuzzy patterns:</span></span></span>
 <span class="r-in"><span><span class="co"># create fuzzy sets from Sepal columns</span></span></span>
@@ -278,20 +294,25 @@ the callback function <code>f</code>.</p>
 <span class="r-in"><span>         xvars <span class="op">=</span> <span class="va">Petal.Length</span>,</span></span>
 <span class="r-in"><span>         yvars <span class="op">=</span> <span class="va">Petal.Width</span>,</span></span>
 <span class="r-in"><span>         type <span class="op">=</span> <span class="st">"fuzzy"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 64 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 16 × 6</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    condition                                    support xvar  yvar      m      w</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> {}                                            1      Peta… Peta…  2.56 150   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> {Sepal.Width=(2;3.2;4.4)}                     0.694  Peta… Peta…  2.56 104.  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> {Sepal.Length=(4.3;6.1;7.9)}                  0.600  Peta… Peta…  2.74  89.9 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> {Sepal.Length=(-Inf;4.3;6.1)}                 0.271  Peta… Peta…  1.59  40.7 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> {Sepal.Width=(-Inf;2;3.2)}                    0.212  Peta… Peta…  2.96  31.8 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> {Sepal.Length=(6.1;7.9;Inf)}                  0.129  Peta… Peta…  3.76  19.3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> {Sepal.Width=(3.2;4.4;Inf)}                   0.093<span style="text-decoration: underline;">3</span> Peta… Peta…  1.62  14.0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> {Sepal.Width=(2;3.2;4.4),Sepal.Width=(3.2;4…  0.049<span style="text-decoration: underline;">4</span> Peta… Peta…  1.70   7.40</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> {Sepal.Length=(4.3;6.1;7.9),Sepal.Width=(3.…  0.048<span style="text-decoration: underline;">6</span> Peta… Peta…  1.47   7.30</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> {Sepal.Length=(-Inf;4.3;6.1),Sepal.Width=(3…  0.036<span style="text-decoration: underline;">4</span> Peta… Peta…  1.22   5.45</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 54 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> {}                                           1       Peta… Peta…  2.56 150   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> {Sepal.Width=(2;3.2;4.4)}                    0.694   Peta… Peta…  2.56 104.  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> {Sepal.Length=(4.3;6.1;7.9)}                 0.600   Peta… Peta…  2.74  89.9 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> {Sepal.Length=(-Inf;4.3;6.1)}                0.271   Peta… Peta…  1.59  40.7 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> {Sepal.Width=(-Inf;2;3.2)}                   0.212   Peta… Peta…  2.96  31.8 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> {Sepal.Length=(6.1;7.9;Inf)}                 0.129   Peta… Peta…  3.76  19.3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> {Sepal.Width=(3.2;4.4;Inf)}                  0.093<span style="text-decoration: underline;">3</span>  Peta… Peta…  1.62  14.0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> {Sepal.Length=(4.3;6.1;7.9),Sepal.Width=(3.… 0.048<span style="text-decoration: underline;">6</span>  Peta… Peta…  1.47   7.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> {Sepal.Length=(-Inf;4.3;6.1),Sepal.Width=(3… 0.036<span style="text-decoration: underline;">4</span>  Peta… Peta…  1.22   5.45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> {Sepal.Length=(6.1;7.9;Inf),Sepal.Width=(3.… 0.008<span style="text-decoration: underline;">33</span> Peta… Peta…  4.22   1.25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> {Sepal.Length=(-Inf;4.3;6.1),Sepal.Width=(2… 0.188   Peta… Peta…  1.50  28.2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> {Sepal.Length=(6.1;7.9;Inf),Sepal.Width=(2;… 0.098<span style="text-decoration: underline;">8</span>  Peta… Peta…  3.70  14.8 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> {Sepal.Length=(6.1;7.9;Inf),Sepal.Width=(-I… 0.021<span style="text-decoration: underline;">8</span>  Peta… Peta…  3.87   3.26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> {Sepal.Length=(4.3;6.1;7.9),Sepal.Width=(2;… 0.408   Peta… Peta…  2.78  61.2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span> {Sepal.Length=(4.3;6.1;7.9),Sepal.Width=(-I… 0.143   Peta… Peta…  3.06  21.5 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span> {Sepal.Length=(-Inf;4.3;6.1),Sepal.Width=(-… 0.047<span style="text-decoration: underline;">2</span>  Peta… Peta…  2.23   7.08</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
