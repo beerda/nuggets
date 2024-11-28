@@ -149,9 +149,9 @@ allows for the selection of columns of \code{x} to be used as condition
 predicates. The function enumerates all possible conditions in the form of
 elementary conjunctions of selected predicates, and for each condition,
 a user-defined callback function \code{f} is executed. The callback function is
-intended to perform some analysis and return a list of patterns related
-to the condition. A pattern here is an arbitrary object. \code{\link[=dig]{dig()}} returns
-a list of these objects generated for all conditions.
+intended to perform some analysis and return an object representing a pattern
+or patterns related to the condition. \code{\link[=dig]{dig()}} returns a list of these
+returned objects.
 
 The callback function \code{f} may have some arguments that are listed in the
 \code{f} argument description. The algorithm provides information about the
@@ -175,6 +175,70 @@ of the focus is the relative frequency of rows such that all condition
 predicates AND the focus are TRUE on it. Foci with support lower than
 \code{min_focus_support} are filtered out.
 }
+}
+\examples{
+library(tibble)
+
+# Prepare iris data for use with dig()
+d <- partition(iris, .breaks = 2)
+
+# Call f() for each condition with support >= 0.5. The result is a list
+# of strings representing the conditions.
+dig(x = d,
+    f = function(condition) {
+        format_condition(names(condition))
+    },
+    min_support = 0.5)
+
+# Create a more complex pattern object - a list with some statistics
+res <- dig(x = d,
+           f = function(condition, support) {
+               list(condition = format_condition(names(condition)),
+                    support = support)
+           },
+           min_support = 0.5)
+print(res)
+
+# Format the result as a data frame
+do.call(rbind, lapply(res, as_tibble))
+
+# Within each condition, evaluate also supports of columns starting with
+# "Species"
+res <- dig(x = d,
+           f = function(condition, support, pp) {
+               c(list(condition = format_condition(names(condition))),
+                 list(condition_support = support),
+                 as.list(pp / nrow(d)))
+           },
+           condition = !starts_with("Species"),
+           focus = starts_with("Species"),
+           min_support = 0.5,
+           min_focus_support = 0)
+
+# Format the result as a tibble
+do.call(rbind, lapply(res, as_tibble))
+
+# For each condition, create multiple patterns based on the focus columns
+res <- dig(x = d,
+           f = function(condition, support, pp) {
+               lapply(seq_along(pp), function(i) {
+                   list(condition = format_condition(names(condition)),
+                        condition_support = support,
+                        focus = names(pp)[i],
+                        focus_support = pp[[i]] / nrow(d))
+               })
+           },
+           condition = !starts_with("Species"),
+           focus = starts_with("Species"),
+           min_support = 0.5,
+           min_focus_support = 0)
+
+# As res is now a list of lists, we need to flatten it before converting to
+# a tibble
+res <- unlist(res, recursive = FALSE)
+
+# Format the result as a tibble
+do.call(rbind, lapply(res, as_tibble))
 }
 \seealso{
 \code{\link[=partition]{partition()}}, \code{\link[=varnames]{varnames()}}, \code{\link[=dig_grid]{dig_grid()}}
