@@ -10,7 +10,7 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="nuggets: Get Started">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><script src="../deps/MathJax-3.2.2/tex-chtml.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="nuggets: Get Started">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -85,19 +85,16 @@ the condition is computed using the laws of classical Boolean algebra;
 or</li>
 <li>
 <strong>fuzzy logic</strong>, where each predicate may have assigned
-a <em>truth degree</em> from the interval
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0, 1]</annotation></semantics></math>
-and the truth degree of the conjunction is computed with a selected
-<em>triangular norm (t-norm)</em>. Package <code>nuggets</code> allows
-to work with three most common t-norms: <em>Goedel</em> (minimum),
-<em>Goguen</em> (product), and <em>Lukasiewicz</em>. Let
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>,</mo><mi>b</mi><mo>∈</mo><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">a, b \in [0, 1]</annotation></semantics></math>
-be the truth degrees of two predicates. Goedel t-norm is defined as
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>min</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\min(a, b)</annotation></semantics></math>,
-Goguen t-norm as
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>⋅</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">a \cdot b</annotation></semantics></math>,
-and Lukasiewicz t-norm as
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>max</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mi>a</mi><mo>+</mo><mi>b</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\max(0, a + b - 1)</annotation></semantics></math>.</li>
+a <em>truth degree</em> from the interval <span class="math inline">\([0, 1]\)</span> and the truth degree of the
+conjunction is computed with a selected <em>triangular norm
+(t-norm)</em>. Package <code>nuggets</code> allows to work with three
+most common t-norms: <em>Goedel</em> (minimum), <em>Goguen</em>
+(product), and <em>Lukasiewicz</em>. Let <span class="math inline">\(a,
+b \in [0, 1]\)</span> be the truth degrees of two predicates. Goedel
+t-norm is defined as <span class="math inline">\(\min(a, b)\)</span>,
+Goguen t-norm as <span class="math inline">\(a \cdot b\)</span>, and
+Lukasiewicz t-norm as <span class="math inline">\(\max(0, a + b -
+1)\)</span>.</li>
 </ul>
 <p>Before analyzed by <code>nuggets</code>, the data columns that would
 serve as predicates in conditions have to be either dichotomized or
@@ -261,16 +258,14 @@ crisp conditions.</p>
 <p>For patterns based on fuzzy conditions, the data columns that would
 serve as predicates in conditions have to be transformed to fuzzy
 predicates. The fuzzy predicate is represented by a vector of truth
-degrees from the interval
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0, 1]</annotation></semantics></math>.
+degrees from the interval <span class="math inline">\([0, 1]\)</span>.
 The truth degree of a predicate is the degree to which the predicate is
 true with 0 meaning that the predicate is false and 1 meaning that the
 predicate is true. A value between 0 and 1 indicates a partial
 truthfulness.</p>
 <p>In order to search for fuzzy patterns, the numeric input data columns
 have to be transformed to fuzzy predicates, i.e., to vectors of truth
-degrees from the interval
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0, 1]</annotation></semantics></math>.
+degrees from the interval <span class="math inline">\([0, 1]\)</span>.
 (Fuzzy methods allow to be used with logical columns too.)</p>
 <p>The transformation to fuzzy predicates can be done again with the
 help of the <code><a href="../reference/partition.html">partition()</a></code> function. Again, factors will be
@@ -350,13 +345,9 @@ and statistics, see the section <strong>Custom Patterns</strong>.</p>
 <div class="section level4">
 <h4 id="search-for-implicative-rules">Search for Implicative Rules<a class="anchor" aria-label="anchor" href="#search-for-implicative-rules"></a>
 </h4>
-<p>Implicative patterns are rules of the form
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo>⇒</mo><mi>B</mi></mrow><annotation encoding="application/x-tex">A \Rightarrow B</annotation></semantics></math>,
-where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
-is either Boolean or fuzzy condition in the form of conjunction, and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
-is a Boolean or fuzzy predicate.</p>
+<p>Implicative patterns are rules of the form <span class="math inline">\(A \Rightarrow B\)</span>, where <span class="math inline">\(A\)</span> is either Boolean or fuzzy condition in
+the form of conjunction, and <span class="math inline">\(B\)</span> is a
+Boolean or fuzzy predicate.</p>
 <p>Before continuing with the search for rules, it is advisable to
 create the so-called <em>vector of disjoints</em>. The vector of
 disjoints is a character vector with the same length as the number of
