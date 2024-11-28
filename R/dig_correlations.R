@@ -3,9 +3,21 @@
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
-#' Compute correlation between all combinations of `xvars` and `yvars` columns
-#' of `x` in sub-data corresponding to conditions generated from `condition`
-#' columns.
+#' Conditional correlations are patterns that identify strong relationships
+#' between pairs of numeric variables under specific conditions.
+#'
+#' \describe{
+#'   \item{Scheme:}{`xvar ~ yvar | C`\cr\cr
+#'     `xvar` and `yvar` highly correlates in data that satisfy the condition
+#'     `C`.}
+#'   \item{Example:}{`study_time ~ test_score | hard_exam`\cr\cr
+#'     For *hard exams*, the amount of *study time* is highly correlated with
+#'     the obtained exam's *test score*.}
+#' }
+#'
+#' The function computes correlations between all combinations of `xvars` and
+#' `yvars` columns of `x` in multiple sub-data corresponding to conditions
+#' generated from `condition` columns.
 #'
 #' @param x a matrix or data frame with data to search in.
 #' @param condition a tidyselect expression (see
@@ -48,6 +60,23 @@
 #' @return A tibble with found rules.
 #' @author Michal Burda
 #' @seealso [dig()], [stats::cor.test()]
+#' @examples
+#' # convert iris$Species into dummy logical variables
+#' d <- partition(iris, Species)
+#'
+#' # find conditional correlations between all pairs of numeric variables
+#' res <- dig_correlations(d,
+ #'                        condition = where(is.logical),
+#'                         xvars = Sepal.Length:Petal.Width,
+#'                         yvars = Sepal.Length:Petal.Width)
+#'
+#' # With `condition = NULL`, dig_correlations() computes correlations between
+#' # all pairs of numeric variables on the whole dataset only, which is an
+#' # alternative way of computing the correlation matrix
+#' res <- dig_correlations(iris,
+#'                         condition = NULL,
+#'                         xvars = Sepal.Length:Petal.Width,
+#'                         yvars = Sepal.Length:Petal.Width)
 #' @export
 dig_correlations <- function(x,
                              condition = where(is.logical),
@@ -64,6 +93,7 @@ dig_correlations <- function(x,
                              ...) {
     .must_be_enum(method, c("pearson", "kendall", "spearman"))
     .must_be_enum(alternative, c("two.sided", "less", "greater"))
+    .must_be_flag(exact, null = TRUE)
 
     condition <- enquo(condition)
     xvars <- enquo(xvars)
@@ -77,6 +107,8 @@ dig_correlations <- function(x,
                         exact = exact)
         return(list(estimate = fit$estimate,
                     p_value = fit$p.value,
+                    method = fit$method,
+                    alternative = fit$alternative,
                     rows = nrow(d)))
     }
 
@@ -92,5 +124,14 @@ dig_correlations <- function(x,
              max_length = max_length,
              min_support = min_support,
              threads = threads,
+             error_context = list(arg_x = "x",
+                                  arg_condition = "condition",
+                                  arg_xvars = "xvars",
+                                  arg_yvars = "yvars",
+                                  arg_min_length = "min_length",
+                                  arg_max_length = "max_length",
+                                  arg_min_support = "min_support",
+                                  arg_threads = "threads",
+                                  call = current_env()),
              ...)
 }

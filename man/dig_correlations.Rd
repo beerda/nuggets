@@ -78,9 +78,39 @@ A tibble with found rules.
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
-Compute correlation between all combinations of \code{xvars} and \code{yvars} columns
-of \code{x} in sub-data corresponding to conditions generated from \code{condition}
-columns.
+Conditional correlations are patterns that identify strong relationships
+between pairs of numeric variables under specific conditions.
+
+\describe{
+\item{Scheme:}{\code{xvar ~ yvar | C}\cr\cr
+\code{xvar} and \code{yvar} highly correlates in data that satisfy the condition
+\code{C}.}
+\item{Example:}{\code{study_time ~ test_score | hard_exam}\cr\cr
+For \emph{hard exams}, the amount of \emph{study time} is highly correlated with
+the obtained exam's \emph{test score}.}
+}
+
+The function computes correlations between all combinations of \code{xvars} and
+\code{yvars} columns of \code{x} in multiple sub-data corresponding to conditions
+generated from \code{condition} columns.
+}
+\examples{
+# convert iris$Species into dummy logical variables
+d <- partition(iris, Species)
+
+# find conditional correlations between all pairs of numeric variables
+res <- dig_correlations(d,
+                       condition = where(is.logical),
+                        xvars = Sepal.Length:Petal.Width,
+                        yvars = Sepal.Length:Petal.Width)
+
+# With `condition = NULL`, dig_correlations() computes correlations between
+# all pairs of numeric variables on the whole dataset only, which is an
+# alternative way of computing the correlation matrix
+res <- dig_correlations(iris,
+                        condition = NULL,
+                        xvars = Sepal.Length:Petal.Width,
+                        yvars = Sepal.Length:Petal.Width)
 }
 \seealso{
 \code{\link[=dig]{dig()}}, \code{\link[stats:cor.test]{stats::cor.test()}}
