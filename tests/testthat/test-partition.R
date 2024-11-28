@@ -225,6 +225,48 @@ test_that("partition triangle", {
 })
 
 
+test_that("partition raisedcos", {
+    res <- partition(data.frame(a = 0:10),
+                     .breaks = 2,
+                     .keep = FALSE,
+                     .method = "raisedcos")
+
+    expect_equal(names(res), c("a=(-Inf;0;10)", "a=(0;10;Inf)"))
+    expect_equal(res[[1]],
+                 c(1.00000000, 0.97552826, 0.90450850, 0.79389263, 0.65450850,
+                   0.50000000, 0.34549150, 0.20610737, 0.09549150, 0.02447174,
+                   0.00000000))
+    expect_equal(res[[2]],
+                 c(0.00000000, 0.02447174, 0.09549150, 0.20610737, 0.34549150,
+                   0.50000000, 0.65450850, 0.79389263, 0.90450850, 0.97552826,
+                   1.00000000))
+
+    expect_error(partition(data.frame(a = 0:10),
+                           .breaks = 1,
+                           .keep = FALSE,
+                           .method = "raisedcos"),
+                 "If `.breaks` is a single value, it must be a natural number greater than 1.")
+
+    expect_error(partition(data.frame(a = 0:10),
+                           .breaks = c(2, 5),
+                           .keep = FALSE,
+                           .method = "raisedcos"),
+                 "If `.breaks` is non-scalar, it must be a vector with at least 3 elements.")
+
+    expect_error(partition(data.frame(b = 1:10),
+                           .breaks = 2,
+                           .method = "raisedcos",
+                           .labels = c("A", "BBB", "cc")),
+                 "If `.breaks` is scalar, the length of `.labels` must be equal to the value of `.breaks`.")
+
+    expect_error(partition(data.frame(b = 1:10),
+                           .breaks = c(-Inf, 4, 7, Inf),
+                           .method = "raisedcos",
+                           .labels = c("A", "b", "cc")),
+                 "If `.breaks` is non-scalar, the length of `.labels` must be equal to the length of `.breaks` - 2.")
+})
+
+
 test_that("partition errors", {
     d <- data.frame(a = factor(c("a", "a", "b", "b", "a")))
 
