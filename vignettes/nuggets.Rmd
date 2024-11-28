@@ -221,10 +221,11 @@ no sense, e.g., to combine `Plant=Qn1` and `Plant=Qn2` in a condition
 `Plant=Qn1 & Plant=Qn2` as such formula is never true for any data row.
 
 The vector of disjoints can be easily created from the column names of the dataset, e.g.,
-by obtaining the first part of column names before the equal sign as follows:
+by obtaining the first part of column names before the equal sign, which is neatly
+provided by the `varnames()` function as follows:
 
 ```{r}
-disj <- sub("=.*", "", colnames(fuzzyCO2))
+disj <- varnames(colnames(fuzzyCO2))
 print(disj)
 ```
 
