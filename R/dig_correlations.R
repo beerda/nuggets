@@ -17,6 +17,12 @@
 #' @param yvars a tidyselect expression (see
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying the columns to use for computation of correlations
+#' @param disjoint an atomic vector of size equal to the number of columns of `x`
+#'      that specifies the groups of predicates: if some elements of the `disjoint`
+#'      vector are equal, then the corresponding columns of `x` will NOT be
+#'      present together in a single condition. If `x` is prepared with
+#'      [partition()], using the [varnames()] function on `x`'s column names
+#'      is a convenient way to create the `disjoint` vector.
 #' @param method a character string indicating which correlation coefficient is
 #'      to be used for the test. One of `"pearson"`, `"kendall"`, or `"spearman"`
 #' @param alternative indicates the alternative hypothesis and must be one of
@@ -47,6 +53,7 @@ dig_correlations <- function(x,
                              condition = where(is.logical),
                              xvars = where(is.numeric),
                              yvars = where(is.numeric),
+                             disjoint = varnames(colnames(x)),
                              method = "pearson",
                              alternative = "two.sided",
                              exact = NULL,
@@ -78,6 +85,7 @@ dig_correlations <- function(x,
              condition = !!condition,
              xvars = !!xvars,
              yvars = !!yvars,
+             disjoint = disjoint,
              na_rm = TRUE,
              type = "crisp",
              min_length = min_length,

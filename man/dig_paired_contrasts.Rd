@@ -9,6 +9,7 @@ dig_paired_contrasts(
   condition = where(is.logical),
   xvars = where(is.numeric),
   yvars = where(is.numeric),
+  disjoint = varnames(colnames(x)),
   method = "t",
   alternative = "two.sided",
   min_length = 0L,
@@ -33,6 +34,13 @@ specifying the columns to use for computation of contrasts}
 \item{yvars}{a tidyselect expression (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
 specifying the columns to use for computation of contrasts}
+
+\item{disjoint}{an atomic vector of size equal to the number of columns of \code{x}
+that specifies the groups of predicates: if some elements of the \code{disjoint}
+vector are equal, then the corresponding columns of \code{x} will NOT be
+present together in a single condition. If \code{x} is prepared with
+\code{\link[=partition]{partition()}}, using the \code{\link[=varnames]{varnames()}} function on \code{x}'s column names
+is a convenient way to create the \code{disjoint} vector.}
 
 \item{method}{a character string indicating which contrast to compute.
 One of \code{"t"}, \code{"wilcox"}, or \code{"var"}. \code{"t"} (resp. \code{"wilcos"}) compute

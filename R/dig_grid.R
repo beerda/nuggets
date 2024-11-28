@@ -45,6 +45,12 @@
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying the columns of `x`, whose names will be used as a domain for
 #'      combinations use at the second place (yvar)
+#' @param disjoint an atomic vector of size equal to the number of columns of `x`
+#'      that specifies the groups of predicates: if some elements of the `disjoint`
+#'      vector are equal, then the corresponding columns of `x` will NOT be
+#'      present together in a single condition. If `x` is prepared with
+#'      [partition()], using the [varnames()] function on `x`'s column names
+#'      is a convenient way to create the `disjoint` vector.
 #' @param allow a character string specifying which columns are allowed to be
 #'      selected by `xvars` and `yvars` arguments. Possible values are:
 #'      - `"all"` - all columns are allowed to be selected
@@ -133,6 +139,7 @@ dig_grid <- function(x,
                      condition = where(is.logical),
                      xvars = where(is.numeric),
                      yvars = where(is.numeric),
+                     disjoint = varnames(colnames(x)),
                      allow = "all",
                      na_rm = FALSE,
                      type = "crisp",
@@ -145,6 +152,7 @@ dig_grid <- function(x,
                                           arg_condition = "condition",
                                           arg_xvars = "xvars",
                                           arg_yvars = "yvars",
+                                          arg_disjoint = "disjoint",
                                           arg_allow = "allow",
                                           arg_na_rm = "na_rm",
                                           arg_type = "type",
@@ -253,16 +261,18 @@ dig_grid <- function(x,
     res <- dig(x = x,
                f = ff,
                condition = !!condition,
+               disjoint = disjoint,
                min_length = min_length,
                max_length = max_length,
                min_support = min_support,
                threads = threads,
-               error_context = list(arg_x = "x",
-                                    arg_condition = "condition",
-                                    arg_min_length = "min_length",
-                                    arg_max_length = "max_length",
-                                    arg_min_support = "min_support",
-                                    arg_threads = "threads",
+               error_context = list(arg_x = error_context$arg_x,
+                                    arg_condition = error_context$arg_condition,
+                                    arg_disjoint = error_context$arg_disjoint,
+                                    arg_min_length = error_context$arg_min_length,
+                                    arg_max_length = error_context$arg_max_length,
+                                    arg_min_support = error_context$arg_min_support,
+                                    arg_threads = error_context$arg_threads,
                                     call = error_context$call),
                ...)
 

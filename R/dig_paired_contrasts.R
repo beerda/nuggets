@@ -36,6 +36,12 @@
 #' @param yvars a tidyselect expression (see
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying the columns to use for computation of contrasts
+#' @param disjoint an atomic vector of size equal to the number of columns of `x`
+#'      that specifies the groups of predicates: if some elements of the `disjoint`
+#'      vector are equal, then the corresponding columns of `x` will NOT be
+#'      present together in a single condition. If `x` is prepared with
+#'      [partition()], using the [varnames()] function on `x`'s column names
+#'      is a convenient way to create the `disjoint` vector.
 #' @param method a character string indicating which contrast to compute.
 #'      One of `"t"`, `"wilcox"`, or `"var"`. `"t"` (resp. `"wilcos"`) compute
 #'      a parametric (resp. non-parametric) test on equality in position, and
@@ -129,6 +135,7 @@ dig_paired_contrasts <- function(x,
                                  condition = where(is.logical),
                                  xvars = where(is.numeric),
                                  yvars = where(is.numeric),
+                                 disjoint = varnames(colnames(x)),
                                  method = "t",
                                  alternative = "two.sided",
                                  min_length = 0L,
@@ -247,6 +254,7 @@ dig_paired_contrasts <- function(x,
              condition = !!condition,
              xvars = !!xvars,
              yvars = !!yvars,
+             disjoint = disjoint,
              allow = "numeric",
              na_rm = TRUE,
              type = "crisp",

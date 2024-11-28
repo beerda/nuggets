@@ -10,6 +10,7 @@ dig_grid(
   condition = where(is.logical),
   xvars = where(is.numeric),
   yvars = where(is.numeric),
+  disjoint = varnames(colnames(x)),
   allow = "all",
   na_rm = FALSE,
   type = "crisp",
@@ -18,9 +19,10 @@ dig_grid(
   min_support = 0,
   threads = 1L,
   error_context = list(arg_x = "x", arg_f = "f", arg_condition = "condition", arg_xvars =
-    "xvars", arg_yvars = "yvars", arg_allow = "allow", arg_na_rm = "na_rm", arg_type =
-    "type", arg_min_length = "min_length", arg_max_length = "max_length", arg_min_support
-    = "min_support", arg_threads = "threads", call = current_env()),
+    "xvars", arg_yvars = "yvars", arg_disjoint = "disjoint", arg_allow = "allow",
+    arg_na_rm = "na_rm", arg_type = "type", arg_min_length = "min_length", arg_max_length
+    = "max_length", arg_min_support = "min_support", arg_threads = "threads", call =
+    current_env()),
   ...
 )
 }
@@ -60,6 +62,13 @@ combinations use at the first place (xvar)}
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
 specifying the columns of \code{x}, whose names will be used as a domain for
 combinations use at the second place (yvar)}
+
+\item{disjoint}{an atomic vector of size equal to the number of columns of \code{x}
+that specifies the groups of predicates: if some elements of the \code{disjoint}
+vector are equal, then the corresponding columns of \code{x} will NOT be
+present together in a single condition. If \code{x} is prepared with
+\code{\link[=partition]{partition()}}, using the \code{\link[=varnames]{varnames()}} function on \code{x}'s column names
+is a convenient way to create the \code{disjoint} vector.}
 
 \item{allow}{a character string specifying which columns are allowed to be
 selected by \code{xvars} and \code{yvars} arguments. Possible values are:

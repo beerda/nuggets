@@ -50,7 +50,9 @@
 #' @param disjoint an atomic vector of size equal to the number of columns of `x`
 #'      that specifies the groups of predicates: if some elements of the `disjoint`
 #'      vector are equal, then the corresponding columns of `x` will NOT be
-#'      present together in a single condition.
+#'      present together in a single condition. If `x` is prepared with
+#'      [partition()], using the [varnames()] function on `x`'s column names
+#'      is a convenient way to create the `disjoint` vector.
 #' @param min_length the minimum size (the minimum number of predicates) of the
 #'      condition to be generated (must be greater or equal to 0). If 0, the empty
 #'      condition is generated in the first place.
@@ -103,13 +105,14 @@
 #'      - `call` - an environment in which to evaluate the error messages.
 #' @param ... Further arguments, currently unused.
 #' @returns A list of results provided by the callback function `f`.
+#' @seealso [partition()], [varnames()]
 #' @author Michal Burda
 #' @export
 dig <- function(x,
                 f,
                 condition = everything(),
                 focus = NULL,
-                disjoint = NULL,
+                disjoint = varnames(colnames(x)),
                 min_length = 0,
                 max_length = Inf,
                 min_support = 0.0,

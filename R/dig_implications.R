@@ -38,7 +38,9 @@
 #' @param disjoint an atomic vector of size equal to the number of columns of `x`
 #'      that specifies the groups of predicates: if some elements of the `disjoint`
 #'      vector are equal, then the corresponding columns of `x` will NOT be
-#'      present together in a single condition.
+#'      present together in a single condition. If `x` is prepared with
+#'      [partition()], using the [varnames()] function on `x`'s column names
+#'      is a convenient way to create the `disjoint` vector.
 #' @param min_length the minimum length, i.e., the minimum number of predicates in the
 #'      antecedent, of a rule to be generated. Value must be greater or equal to 0.
 #'       If 0, rules with empty antecedent are generated in the first place.
@@ -74,7 +76,7 @@
 dig_implications <- function(x,
                              antecedent = everything(),
                              consequent = everything(),
-                             disjoint = NULL,
+                             disjoint = varnames(colnames(x)),
                              min_length = 0L,
                              max_length = Inf,
                              min_coverage = 0,

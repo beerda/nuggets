@@ -9,7 +9,7 @@ dig(
   f,
   condition = everything(),
   focus = NULL,
-  disjoint = NULL,
+  disjoint = varnames(colnames(x)),
   min_length = 0,
   max_length = Inf,
   min_support = 0,
@@ -74,7 +74,9 @@ specifying the columns to use as focus predicates}
 \item{disjoint}{an atomic vector of size equal to the number of columns of \code{x}
 that specifies the groups of predicates: if some elements of the \code{disjoint}
 vector are equal, then the corresponding columns of \code{x} will NOT be
-present together in a single condition.}
+present together in a single condition. If \code{x} is prepared with
+\code{\link[=partition]{partition()}}, using the \code{\link[=varnames]{varnames()}} function on \code{x}'s column names
+is a convenient way to create the \code{disjoint} vector.}
 
 \item{min_length}{the minimum size (the minimum number of predicates) of the
 condition to be generated (must be greater or equal to 0). If 0, the empty
@@ -144,6 +146,9 @@ A list of results provided by the callback function \code{f}.
 
 This is a general function that enumerates all conditions created from
 data in \code{x} and calls the callback function \code{f} on each.
+}
+\seealso{
+\code{\link[=partition]{partition()}}, \code{\link[=varnames]{varnames()}}
 }
 \author{
 Michal Burda
