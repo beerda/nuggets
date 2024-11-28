@@ -3,8 +3,35 @@
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
-#' This is a general function that enumerates all conditions created from
-#' data in `x` and calls the callback function `f` on each.
+#' A general function for searching for patterns of custom type. The function
+#' allows for the selection of columns of `x` to be used as condition
+#' predicates. The function enumerates all possible conditions in the form of
+#' elementary conjunctions of selected predicates, and for each condition,
+#' a user-defined callback function `f` is executed. The callback function is
+#' intended to perform some analysis and return a list of patterns related
+#' to the condition. A pattern here is an arbitrary object. [dig()] returns
+#' a list of these objects generated for all conditions.
+#'
+#' The callback function `f` may have some arguments that are listed in the
+#' `f` argument description. The algorithm provides information about the
+#' generated condition based on the present arguments.
+#'
+#' Additionally to `condition`, the function allows for the selection of
+#' the so-called *focus* predicates. The focus predicates, a.k.a. *foci*, are
+#' predicates that are evaluated within each condition and some additional
+#' information is provided to the callback function about them.
+#'
+#' `dig()` allows to specify some restrictions on the generated conditions,
+#' such as:
+#' - the minimum and maximum length of the condition (`min_length` and
+#'   `max_length` arguments).
+#' - the minimum support of the condition (`min_support` argument). Support
+#'   of the condition is the relative frequency of the condition in the dataset
+#'   `x`.
+#' - the minimum support of the focus (`min_focus_support` argument). Support
+#'   of the focus is the relative frequency of rows such that all condition
+#'   predicates AND the focus are TRUE on it. Foci with support lower than
+#'   `min_focus_support` are filtered out.
 #'
 #' @param x a matrix or data frame. The matrix must be numeric (double) or logical.
 #'      If `x` is a data frame then each column must be either numeric (double) or
@@ -105,7 +132,7 @@
 #'      - `call` - an environment in which to evaluate the error messages.
 #' @param ... Further arguments, currently unused.
 #' @returns A list of results provided by the callback function `f`.
-#' @seealso [partition()], [varnames()]
+#' @seealso [partition()], [varnames()], [dig_grid()]
 #' @author Michal Burda
 #' @export
 dig <- function(x,
@@ -134,7 +161,8 @@ dig <- function(x,
                                      arg_threads = "threads",
                                      call = current_env()),
                 ...) {
-    cols <- .convert_data_to_list(x, error_context = error_context)
+    cols <- .convert_data_to_list(x,
+                                  error_context = error_context)
 
     condition <- enquo(condition)
     focus <- enquo(focus)
@@ -154,13 +182,14 @@ dig <- function(x,
     .must_be_function(f,
                       arg = error_context$arg_f,
                       call = error_context$call)
-    unrecognized_args <- setdiff(formalArgs(f),
-                                 c("condition", "foci_supports",
-                                   "pp", "np", "pn", "nn",
-                                   "indices", "sum", "support", "weights"))
+    allowed_args <- c("condition", "foci_supports", "pp", "np", "pn", "nn",
+                      "indices", "sum", "support", "weights")
+    unrecognized_args <- setdiff(formalArgs(f), allowed_args)
     if (length(unrecognized_args) > 0) {
         details <- paste0("The argument {.arg ", unrecognized_args, "} is not allowed.")
-        cli_abort(c("The function {.arg error_context$arg_f} must have allowed formal arguments only.",
+        cli_abort(c("Function {.arg {error_context$arg_f}} must have only some of
+                    the following arguments: {allowed_args}.",
+                    "i" = "Function {.arg {error_context$arg_f}} has the following arguments: {formalArgs(f)}.",
                     ..error_details(details)),
                   call = error_context$call)
     }
@@ -174,9 +203,9 @@ dig <- function(x,
                     arg = error_context$arg_disjoint,
                     call = error_context$call)
     if (!isTRUE(length(disjoint) == 0 || length(disjoint) == ncol(x))) {
-        cli_abort(c("The length of {.arg error_context$arg_disjoint} must be 0 or equal to the number of rows in {.arg error_context$arg_x}.",
-                    "x" = "The number of rows in {.arg error_context$arg_x} is {nrow(x)}.",
-                    "x" = "The length of {.arg error_context$arg_disjoint} is {length(disjoint)}."),
+        cli_abort(c("The length of {.arg {error_context$arg_disjoint}} must be 0 or must be equal to the number of columns in {.arg {error_context$arg_x}}.",
+                    "x" = "The number of columns in {.arg {error_context$arg_x}} is {ncol(x)}.",
+                    "x" = "The length of {.arg {error_context$arg_disjoint}} is {length(disjoint)}."),
                   call = error_context$call)
     }
 
@@ -206,9 +235,9 @@ dig <- function(x,
                         arg = error_context$arg_max_length,
                         call = error_context$call)
     if (max_length < min_length) {
-        cli_abort(c("{.arg error_context$arg_max_length} must be greater or equal to {.arg error_context$arg_min_length}.",
-                    "x" = "{.arg error_context$arg_min_length} equals {min_length}.",
-                    "x" = "{.arg error_context$arg_max_length} equals {max_length}."),
+        cli_abort(c("{.arg {error_context$arg_max_length}} must be greater or equal to {.arg {error_context$arg_min_length}}.",
+                    "x" = "{.arg {error_context$arg_min_length}} equals {min_length}.",
+                    "x" = "{.arg {error_context$arg_max_length}} equals {max_length}."),
                   call = error_context$call)
     }
     if (!is.finite(max_length)) {

@@ -144,11 +144,40 @@ A list of results provided by the callback function \code{f}.
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
-This is a general function that enumerates all conditions created from
-data in \code{x} and calls the callback function \code{f} on each.
+A general function for searching for patterns of custom type. The function
+allows for the selection of columns of \code{x} to be used as condition
+predicates. The function enumerates all possible conditions in the form of
+elementary conjunctions of selected predicates, and for each condition,
+a user-defined callback function \code{f} is executed. The callback function is
+intended to perform some analysis and return a list of patterns related
+to the condition. A pattern here is an arbitrary object. \code{\link[=dig]{dig()}} returns
+a list of these objects generated for all conditions.
+
+The callback function \code{f} may have some arguments that are listed in the
+\code{f} argument description. The algorithm provides information about the
+generated condition based on the present arguments.
+
+Additionally to \code{condition}, the function allows for the selection of
+the so-called \emph{focus} predicates. The focus predicates, a.k.a. \emph{foci}, are
+predicates that are evaluated within each condition and some additional
+information is provided to the callback function about them.
+
+\code{dig()} allows to specify some restrictions on the generated conditions,
+such as:
+\itemize{
+\item the minimum and maximum length of the condition (\code{min_length} and
+\code{max_length} arguments).
+\item the minimum support of the condition (\code{min_support} argument). Support
+of the condition is the relative frequency of the condition in the dataset
+\code{x}.
+\item the minimum support of the focus (\code{min_focus_support} argument). Support
+of the focus is the relative frequency of rows such that all condition
+predicates AND the focus are TRUE on it. Foci with support lower than
+\code{min_focus_support} are filtered out.
+}
 }
 \seealso{
-\code{\link[=partition]{partition()}}, \code{\link[=varnames]{varnames()}}
+\code{\link[=partition]{partition()}}, \code{\link[=varnames]{varnames()}}, \code{\link[=dig_grid]{dig_grid()}}
 }
 \author{
 Michal Burda

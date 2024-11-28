@@ -701,21 +701,58 @@ test_that("errors", {
     f <- function(condition) { list() }
     d <- data.frame(n = 1:5 / 5, l = TRUE, i = 1:5, s = letters[1:5])
 
-    expect_error(dig(list(), f), "must be a matrix or a data frame")
-    expect_error(dig(matrix(0, nrow = 5, ncol = 0), f), "must have at least one column")
-    expect_error(dig(matrix(0, nrow = 0, ncol = 5), f), "must have at least one row")
+    expect_error(dig(list(), f), "`x` must be a matrix or a data frame.")
+    expect_error(dig(matrix(0, nrow = 5, ncol = 0), f), "`x` must have at least one column.")
+    expect_error(dig(matrix(0, nrow = 0, ncol = 5), f), "`x` must have at least one row.")
 
     expect_true(is.list(dig(d, f, condition = c(n, l))))
     expect_error(dig(d, f, condition = c(n, l, i)),
-                 "columns selected by .* must be logical or numeric")
+                 "All columns selected by `condition` must be logical or numeric")
     expect_error(dig(d, f, condition = c(n, l, s)),
-                 "columns selected by .* must be logical or numeric")
+                 "All columns selected by `condition` must be logical or numeric")
 
     expect_true(is.list(dig(d, f, condition = c(n, l), focus = c(n, l))))
     expect_error(dig(d, f, condition = c(n, l), focus = c(n, l, i)),
-                 "columns selected by .* must be logical or numeric")
+                 "All columns selected by `focus` must be logical or numeric")
     expect_error(dig(d, f, condition = c(n, l), focus = c(n, l, s)),
-                 "columns selected by .* must be logical or numeric")
+                 "All columns selected by `focus` must be logical or numeric")
+
+    expect_error(dig(d, f = "x", condition = n),
+                 "`f` must be a function.")
+    expect_error(dig(d, f = function(a) { }, condition = n),
+                 "Function `f` must have only some of the following arguments")
+    expect_error(dig(d, f, condition = n, disjoint = list("x")),
+                 "`disjoint` must be a plain vector")
+    expect_error(dig(d, f, condition = n, disjoint = "x"),
+                 "The length of `disjoint` must be 0 or must be equal to the number of columns in `x`.")
+    expect_error(dig(d, f, condition = n, min_length = "x"),
+                 "`min_length` must be an integerish scalar.");
+    expect_error(dig(d, f, condition = n, min_length = Inf),
+                 "`min_length` must be finite.");
+    expect_error(dig(d, f, condition = n, min_length = -1),
+                 "`min_length` must be >= 0.");
+    expect_error(dig(d, f, condition = n, max_length = "x"),
+                 "`max_length` must be an integerish scalar.");
+    expect_error(dig(d, f, condition = n, max_length = -1),
+                 "`max_length` must be >= 0.");
+    expect_error(dig(d, f, condition = n, min_length = 5, max_length = 4),
+                 "`max_length` must be greater or equal to `min_length`.");
+    expect_error(dig(d, f, condition = n, min_support = "x"),
+                 "`min_support` must be a double scalar.");
+    expect_error(dig(d, f, condition = n, min_support = 1.1),
+                 "`min_support` must be between 0 and 1.");
+    expect_error(dig(d, f, condition = n, min_focus_support = "x"),
+                 "`min_focus_support` must be a double scalar.");
+    expect_error(dig(d, f, condition = n, min_focus_support = 1.1),
+                 "`min_focus_support` must be between 0 and 1.");
+    expect_error(dig(d, f, condition = n, filter_empty_foci = "x"),
+                 "`filter_empty_foci` must be a flag");
+    expect_error(dig(d, f, condition = n, t_norm = "x"),
+                 "`t_norm` must be equal to one of:");
+    expect_error(dig(d, f, condition = n, threads = "x"),
+                 "`threads` must be an integerish scalar.");
+    expect_error(dig(d, f, condition = n, threads = 0),
+                 "`threads` must be >= 1.");
 })
 
 
