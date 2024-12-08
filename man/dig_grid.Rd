@@ -34,10 +34,13 @@ The arguments of the callback function differ based on the value of the
 \code{type} argument (see below):
 \itemize{
 \item If \code{type = "crisp"} (that is, boolean),
-the callback function \code{f} must accept a single argument \code{d} of type
-\code{data.frame} with two columns, xvar (accessible as \code{d[[1]]}) and yvar
-(accessible as \code{d[[2]]}). Data frame \code{d} is a subset of the original
+the callback function \code{f} must accept a single argument \code{pd} of type
+\code{data.frame} with two columns, xvar (accessible as \code{pd[[1]]}) and yvar
+(accessible as \code{pd[[2]]}). Data frame \code{pd} is a subset of the original
 data frame \code{x} with all rows that satisfy the generated condition.
+Optionally, the callback function may accept an argument \code{nd} that
+is a subset of the original data frame \code{x} with all rows that do not
+satisfy the generated condition.
 \item If \code{type = "fuzzy"}, the callback function \code{f} must accept an argument
 \code{d} of type \code{data.frame} with two columns, xvar (\code{d[[1]]}) and yvar
 (\code{d[[2]]}), named as in\code{x}, and a numeric argument \code{weights}
@@ -146,9 +149,9 @@ relationships between pairs of columns, such as in \code{\link[=dig_correlations
 crispIris <- partition(iris, Species)
 
 # a simple callback function that computes mean difference of `xvar` and `yvar`
-f <- function(d) {
-    list(m = mean(d[[1]] - d[[2]]),
-         n = nrow(d))
+f <- function(pd) {
+    list(m = mean(pd[[1]] - pd[[2]]),
+         n = nrow(pd))
     }
 
 # call f() for each condition created from column `Species`

@@ -99,9 +99,9 @@ dig_correlations <- function(x,
     xvars <- enquo(xvars)
     yvars <- enquo(yvars)
 
-    f <- function(d) {
-        fit <- cor.test(d[[1]],
-                        d[[2]],
+    f <- function(pd) {
+        fit <- cor.test(pd[[1]],
+                        pd[[2]],
                         alternative = alternative,
                         method = method,
                         exact = exact)
@@ -109,7 +109,7 @@ dig_correlations <- function(x,
                     p_value = fit$p.value,
                     method = fit$method,
                     alternative = fit$alternative,
-                    rows = nrow(d)))
+                    rows = nrow(pd)))
     }
 
     dig_grid(x = x,

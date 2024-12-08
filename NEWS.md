@@ -1,13 +1,15 @@
 # nuggets 1.4.0
 - released: *not-yet*
-- started using lifecycle and pkgdown
-- dichotomize() is deprecated (use partition() instead)
-- dig_contrasts() renamed to dig_paired_contrasts()
-- fixed handling of NULL returned by a callback function in dig_grid()
-- added max_p_value argument to dig_contrasts()
-- added nuggets vignette
-- improved error messages
 - added varnames()
+- fixed handling of NULL returned by a callback function in dig_grid()
+- added max_p_value argument to dig_paired_contrasts()
+- d argument of the callback function in dig_grid() renamed to pd
+- added handling of nd argument of the callback function in dig_grid()
+- improved error messages
+- added nuggets vignette
+- started using lifecycle and pkgdown
+- dig_contrasts() renamed to dig_paired_contrasts()
+- dichotomize() is deprecated (use partition() instead)
 
 # nuggets 1.3.0
 - released: 2024-11-13

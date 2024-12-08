@@ -5,9 +5,9 @@ test_that("dig_grid empty condition", {
                     y = letters[11:20],
                     z = LETTERS[1:10])
 
-    f <- function(d) {
-        paste(paste(d[[1]], collapse = "|"),
-              paste(d[[2]], collapse = "|"))
+    f <- function(pd) {
+        paste(paste(pd[[1]], collapse = "|"),
+              paste(pd[[2]], collapse = "|"))
     }
 
     res <- dig_grid(x = d,
@@ -49,9 +49,9 @@ test_that("dig_grid crisp", {
                     y = letters[11:20],
                     z = LETTERS[1:10])
 
-    f <- function(d) {
-        paste(paste(d[[1]], collapse = "|"),
-              paste(d[[2]], collapse = "|"))
+    f <- function(pd) {
+        paste(paste(pd[[1]], collapse = "|"),
+              paste(pd[[2]], collapse = "|"))
     }
 
     res <- dig_grid(x = d,
@@ -97,6 +97,69 @@ test_that("dig_grid crisp", {
 })
 
 
+test_that("dig_grid crisp nd", {
+    d <- data.frame(a = TRUE,
+                    b = c(TRUE, FALSE),
+                    x = letters[1:10],
+                    y = letters[11:20],
+                    z = LETTERS[1:10])
+
+    f <- function(pd, nd) {
+        list(p = paste(paste(pd[[1]], collapse = "|"),
+                       paste(pd[[2]], collapse = "|")),
+             n = paste(paste(nd[[1]], collapse = "|"),
+                       paste(nd[[2]], collapse = "|")))
+    }
+
+    res <- dig_grid(x = d,
+                    f = f,
+                    type = "crisp",
+                    condition = where(is.logical),
+                    xvars = where(is.character),
+                    yvars = where(is.character))
+
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 12)
+    expect_equal(colnames(res),
+                 c("condition", "support", "xvar", "yvar", "p", "n"))
+    expect_equal(res$condition,
+                 c(rep("{}", 3), rep("{a}", 3), rep("{b}", 3), rep("{a,b}", 3)))
+    expect_equal(res$xvar,
+                 rep(c("x", "x", "y"), 4))
+    expect_equal(res$yvar,
+                 rep(c("y", "z", "z"), 4))
+    expect_equal(res$support,
+                 c(rep(100, 6), rep(50, 6)) / 100)
+
+    v1 <- list(x = "a|b|c|d|e|f|g|h|i|j",
+               y = "k|l|m|n|o|p|q|r|s|t",
+               z = "A|B|C|D|E|F|G|H|I|J")
+    v2 <- list(x = "a|c|e|g|i",
+               y = "k|m|o|q|s",
+               z = "A|C|E|G|I")
+    v3 <- list(x = "b|d|f|h|j",
+               y = "l|n|p|r|t",
+               z = "B|D|F|H|J")
+    for (i in seq_len(nrow(res))) {
+        cond <- res$condition[i]
+        x <- res$xvar[i]
+        y <- res$yvar[i]
+        p <- res$p[i]
+        n <- res$n[i]
+
+        if (cond == "{}" || cond == "{a}") {
+            expect_equal(p, paste(v1[[x]], v1[[y]]))
+            expect_equal(n, " ")
+        } else if (cond == "{b}" || cond == "{a,b}") {
+            expect_equal(p, paste(v2[[x]], v2[[y]]))
+            expect_equal(n, paste(v3[[x]], v3[[y]]))
+        } else {
+            expect_true(FALSE);
+        }
+    }
+})
+
+
 test_that("dig_grid crisp with NA", {
     d <- data.frame(a = TRUE,
                     b = c(TRUE, FALSE),
@@ -106,9 +169,9 @@ test_that("dig_grid crisp with NA", {
     d[1, "x"] <- NA
     d[2, "y"] <- NA
 
-    f <- function(d) {
-        paste(paste(d[[1]], collapse = "|"),
-              paste(d[[2]], collapse = "|"))
+    f <- function(pd) {
+        paste(paste(pd[[1]], collapse = "|"),
+              paste(pd[[2]], collapse = "|"))
     }
 
     res <- dig_grid(x = d,
@@ -204,12 +267,12 @@ test_that("dig_grid fuzzy", {
 test_that("errors", {
     d <- data.frame(n = 1:5 / 5, l = TRUE, i = 1:5, s = letters[1:5])
     l <- as.list(d)
-    fb <- function(d) { 1 }
+    fb <- function(pd) { 1 }
     ff <- function(d, weights) { 1 }
 
     expect_true(is.data.frame(dig_grid(d, f = fb, type = "crisp", condition = c(l))))
     expect_error(dig_grid(d, f = ff, type = "crisp", condition = c(l)),
-                 "Function `f` is allowed to have the following arguments only: `d`.")
+                 "Function `f` must have the following arguments: `pd`.")
     expect_error(dig_grid(d, f = fb, type = "crisp", condition = c(l, n)),
                  "All columns selected by `condition` must be logical.")
     expect_error(dig_grid(d, f = fb, type = "crisp", condition = c(l, s)),

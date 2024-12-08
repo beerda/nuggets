@@ -20,10 +20,13 @@
 #'      `type` argument (see below):
 #'      \itemize{
 #'      \item If `type = "crisp"` (that is, boolean),
-#'      the callback function `f` must accept a single argument `d` of type
-#'      `data.frame` with two columns, xvar (accessible as `d[[1]]`) and yvar
-#'      (accessible as `d[[2]]`). Data frame `d` is a subset of the original
+#'      the callback function `f` must accept a single argument `pd` of type
+#'      `data.frame` with two columns, xvar (accessible as `pd[[1]]`) and yvar
+#'      (accessible as `pd[[2]]`). Data frame `pd` is a subset of the original
 #'      data frame `x` with all rows that satisfy the generated condition.
+#'      Optionally, the callback function may accept an argument `nd` that
+#'      is a subset of the original data frame `x` with all rows that do not
+#'      satisfy the generated condition.
 #'      \item If `type = "fuzzy"`, the callback function `f` must accept an argument
 #'      `d` of type `data.frame` with two columns, xvar (`d[[1]]`) and yvar
 #'      (`d[[2]]`), named as in`x`, and a numeric argument `weights`
@@ -105,9 +108,9 @@
 #' crispIris <- partition(iris, Species)
 #'
 #' # a simple callback function that computes mean difference of `xvar` and `yvar`
-#' f <- function(d) {
-#'     list(m = mean(d[[1]] - d[[2]]),
-#'          n = nrow(d))
+#' f <- function(pd) {
+#'     list(m = mean(pd[[1]] - pd[[2]]),
+#'          n = nrow(pd))
 #'     }
 #'
 #' # call f() for each condition created from column `Species`
@@ -176,11 +179,19 @@ dig_grid <- function(x,
                   arg = error_context$arg_type,
                   call = error_context$call)
 
-    .must_be_function(f,
-                      required = if (type == "crisp") c("d") else c("d", "weights"),
-                      optional = NULL,
-                      arg = error_context$arg_f,
-                      call = error_context$call)
+    if (type == "crisp") {
+        .must_be_function(f,
+                          required = c("pd"),
+                          optional = c("nd"),
+                          arg = error_context$arg_f,
+                          call = error_context$call)
+    } else {
+        .must_be_function(f,
+                          required = c("d", "weights"),
+                          optional = NULL,
+                          arg = error_context$arg_f,
+                          call = error_context$call)
+    }
 
     condition <- enquo(condition)
 
@@ -200,18 +211,39 @@ dig_grid <- function(x,
                      allow = allow,
                      error_context = error_context)
 
+    if ("nd" %in% formalArgs(f)) {
+        sub_fcrisp <- function(indices) {
+            pd <- x[indices, , drop = FALSE]
+            nd <- x[!indices, , drop = FALSE]
+
+            apply(grid, MARGIN = 1, simplify = FALSE, FUN = function(row) {
+                pdd <- pd[, row, drop = FALSE]
+                ndd <- nd[, row, drop = FALSE]
+                if (na_rm) {
+                    pdd <- na.omit(pdd)
+                    ndd <- na.omit(ndd)
+                }
+
+                f(pd = pdd, nd = ndd)
+            })
+        }
+    } else {
+        sub_fcrisp <- function(indices) {
+            pd <- x[indices, , drop = FALSE]
+
+            apply(grid, MARGIN = 1, simplify = FALSE, FUN = function(row) {
+                pdd <- pd[, row, drop = FALSE]
+                if (na_rm)
+                    pdd <- na.omit(pdd)
+
+                f(pd = pdd)
+            })
+        }
+    }
+
     fcrisp <- function(condition, support, indices) {
         cond <- format_condition(names(condition))
-        d <- x[indices, , drop = FALSE]
-
-        result <- apply(grid, MARGIN = 1, simplify = FALSE, FUN = function(row) {
-            dd <- d[, row, drop = FALSE]
-            if (na_rm)
-                dd <- na.omit(dd)
-
-            f(d = dd)
-        })
-
+        result <- sub_fcrisp(indices)
         isnull <- sapply(result, is.null)
         result <- lapply(result[!isnull], as_tibble)
         result <- do.call(rbind, result)
