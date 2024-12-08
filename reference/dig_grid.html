@@ -108,10 +108,13 @@ relationships between pairs of columns, such as in <code><a href="dig_correlatio
 <dd><p>the callback function to be executed for each generated condition.
 The arguments of the callback function differ based on the value of the
 <code>type</code> argument (see below):</p><ul><li><p>If <code>type = "crisp"</code> (that is, boolean),
-the callback function <code>f</code> must accept a single argument <code>d</code> of type
-<code>data.frame</code> with two columns, xvar (accessible as <code>d[[1]]</code>) and yvar
-(accessible as <code>d[[2]]</code>). Data frame <code>d</code> is a subset of the original
-data frame <code>x</code> with all rows that satisfy the generated condition.</p></li>
+the callback function <code>f</code> must accept a single argument <code>pd</code> of type
+<code>data.frame</code> with two columns, xvar (accessible as <code>pd[[1]]</code>) and yvar
+(accessible as <code>pd[[2]]</code>). Data frame <code>pd</code> is a subset of the original
+data frame <code>x</code> with all rows that satisfy the generated condition.
+Optionally, the callback function may accept an argument <code>nd</code> that
+is a subset of the original data frame <code>x</code> with all rows that do not
+satisfy the generated condition.</p></li>
 <li><p>If <code>type = "fuzzy"</code>, the callback function <code>f</code> must accept an argument
 <code>d</code> of type <code>data.frame</code> with two columns, xvar (<code>d[[1]]</code>) and yvar
 (<code>d[[2]]</code>), named as in<code>x</code>, and a numeric argument <code>weights</code>
@@ -240,9 +243,9 @@ the callback function <code>f</code>.</p>
 <span class="r-in"><span><span class="va">crispIris</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition.html">partition</a></span><span class="op">(</span><span class="va">iris</span>, <span class="va">Species</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># a simple callback function that computes mean difference of `xvar` and `yvar`</span></span></span>
-<span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">d</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>m <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">d</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">-</span> <span class="va">d</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>         n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">pd</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>m <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">pd</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">-</span> <span class="va">pd</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>         n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">pd</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>    <span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># call f() for each condition created from column `Species`</span></span></span>
