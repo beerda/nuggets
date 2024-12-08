@@ -52,16 +52,15 @@ inline void* alignedMalloc(size_t size, size_t alignment)
 {
     const int pointerSize = sizeof(void*);
     const int requestedSize = size + alignment - 1 + pointerSize;
+    void* aligned = 0;
     void* raw = std::malloc(requestedSize);
 
-    if (!raw)
-    {
-        return 0;
+    if (raw) {
+        void* start = (uint8_t*)raw + pointerSize;
+        aligned = (void*)(((uintptr_t)((uint8_t*)start+alignment-1)) & ~(alignment-1));
+        *(void**)((uint8_t*)aligned-pointerSize) = raw;
     }
 
-    void* start = (uint8_t*)raw + pointerSize;
-    void* aligned = (void*)(((uintptr_t)((uint8_t*)start+alignment-1)) & ~(alignment-1));
-    *(void**)((uint8_t*)aligned-pointerSize) = raw;
     return aligned;
 }
 
@@ -71,21 +70,17 @@ inline void* alignedMalloc(size_t size, size_t alignment)
  */
 inline void alignedFree(void* aligned)
 {
-    if (!aligned)
-    {
-        return;
+    if (aligned) {
+        void* raw = *(void**)((uint8_t*)aligned - sizeof(void*));
+        std::free(raw);
     }
-
-    void* raw = *(void**)((uint8_t*)aligned - sizeof(void*));
-    std::free(raw);
 }
 
 template<class T, size_t align> class AlignedAllocator;
 
 // specialize for void:
 template<size_t align>
-class AlignedAllocator<void, align>
-{
+class AlignedAllocator<void, align> {
 public:
     typedef void* pointer;
     typedef const void* const_pointer;
@@ -93,8 +88,7 @@ public:
     typedef void value_type;
 
     template<class U>
-    struct rebind
-    {
+    struct rebind {
         typedef AlignedAllocator<U, align> other;
     };
 };
@@ -105,8 +99,7 @@ public:
  * \param align The alignment to allocate on
  */
 template<class T, size_t align>
-class AlignedAllocator
-{
+class AlignedAllocator {
 public:
     typedef size_t size_type;
     typedef ptrdiff_t difference_type;
@@ -121,14 +114,12 @@ public:
     { typedef AlignedAllocator<U, align> other; };
 
     template <typename U>
-    inline bool operator==(const AlignedAllocator<U, align>& other) const noexcept {
-        return true;
-    }
+    inline bool operator==(const AlignedAllocator<U, align>& other) const noexcept
+    { return true; }
 
     template <typename U>
-    inline bool operator!=(const AlignedAllocator<U, align>& other) const noexcept {
-        return false;
-    }
+    inline bool operator!=(const AlignedAllocator<U, align>& other) const noexcept
+    { return false; }
 
     AlignedAllocator() throw ()
     { }
@@ -148,8 +139,7 @@ public:
     pointer allocate(size_type n, typename AlignedAllocator<void, align>::const_pointer hint = 0)
     {
         void* mem = alignedMalloc(n * sizeof(T), align);
-        if (!mem)
-        {
+        if (!mem) {
             throw std::bad_alloc();
         }
 
