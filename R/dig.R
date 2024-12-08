@@ -247,19 +247,12 @@ dig <- function(x,
                                                     call = error_context$call))
 
     .must_be_function(f,
+                      required = NULL,
+                      optional = c("condition", "foci_supports",
+                                   "pp", "np", "pn", "nn",
+                                   "indices", "sum", "support", "weights"),
                       arg = error_context$arg_f,
                       call = error_context$call)
-    allowed_args <- c("condition", "foci_supports", "pp", "np", "pn", "nn",
-                      "indices", "sum", "support", "weights")
-    unrecognized_args <- setdiff(formalArgs(f), allowed_args)
-    if (length(unrecognized_args) > 0) {
-        details <- paste0("The argument {.arg ", unrecognized_args, "} is not allowed.")
-        cli_abort(c("Function {.arg {error_context$arg_f}} must have only some of
-                    the following arguments: {allowed_args}.",
-                    "i" = "Function {.arg {error_context$arg_f}} has the following arguments: {formalArgs(f)}.",
-                    ..error_details(details)),
-                  call = error_context$call)
-    }
     arguments <- formalArgs(f)
     if (is.null(arguments)) {
         arguments <- ""

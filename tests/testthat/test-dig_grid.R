@@ -209,7 +209,7 @@ test_that("errors", {
 
     expect_true(is.data.frame(dig_grid(d, f = fb, type = "crisp", condition = c(l))))
     expect_error(dig_grid(d, f = ff, type = "crisp", condition = c(l)),
-                 "`f` must have the following arguments: `d`.")
+                 "Function `f` is allowed to have the following arguments only: `d`.")
     expect_error(dig_grid(d, f = fb, type = "crisp", condition = c(l, n)),
                  "All columns selected by `condition` must be logical.")
     expect_error(dig_grid(d, f = fb, type = "crisp", condition = c(l, s)),

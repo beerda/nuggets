@@ -720,7 +720,7 @@ test_that("errors", {
     expect_error(dig(d, f = "x", condition = n),
                  "`f` must be a function.")
     expect_error(dig(d, f = function(a) { }, condition = n),
-                 "Function `f` must have only some of the following arguments")
+                 "Function `f` is allowed to have the following arguments")
     expect_error(dig(d, f, condition = n, disjoint = list("x")),
                  "`disjoint` must be a plain vector")
     expect_error(dig(d, f, condition = n, disjoint = "x"),

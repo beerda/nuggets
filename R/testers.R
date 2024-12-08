@@ -131,9 +131,47 @@
 .must_be_character_vector <- ..must_be_type(is.character, "a character vector")
 .must_be_factor <- ..must_be_type(is.factor, "a factor")
 .must_be_matrix <- ..must_be_type(is.matrix, "a matrix")
-.must_be_function <- ..must_be_type(is.function, "a function")
 .must_be_list <- ..must_be_type(is.list, "a list")
 .must_be_data_frame <- ..must_be_type(is.data.frame, "a data frame")
+
+
+..must_be_function <- ..must_be_type(is.function, "a function")
+
+.must_be_function <- function(x,
+                              null = FALSE,
+                              required = NULL,
+                              optional = NA,
+                              arg = caller_arg(x),
+                              call = caller_env()) {
+    ..must_be_function(x, null = null, arg = arg, call = call)
+
+    if (!is.null(x)) {
+        found <- formalArgs(x)
+        found_msg <- paste0("`", paste0(found, collapse = '`, `'), "`")
+        missing_required <- setdiff(required, found)
+        if (length(missing_required) > 0) {
+            msg <- paste0("`", paste0(required, collapse = '`, `'), "`")
+            details <- paste0("The required argument {.arg ", missing_required, "} is missing.")
+            cli_abort(c("Function {.arg {arg}} must have the following arguments: {msg}.",
+                        "i" = "{.arg {arg}} has the following arguments: {found_msg}.",
+                        ..error_details(details)),
+                      call = call)
+        }
+        if (!any(is.na(optional))) {
+            allowed <- c(required, optional)
+            forbidden <- setdiff(found, allowed)
+            if (length(forbidden) > 0) {
+                msg <- paste0("`", paste0(allowed, collapse = '`, `'), "`")
+                details <- paste0("Argument {.arg ", forbidden, "} isn't allowed.")
+                cli_abort(c("Function {.arg {arg}} is allowed to have the following arguments only: {msg}.",
+                        "i" = "{.arg {arg}} has the following arguments: {found_msg}.",
+                            ..error_details(details)),
+                          call = call)
+            }
+        }
+    }
+}
+
 
 
 .must_have_some_rows <- function(x,

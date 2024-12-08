@@ -177,24 +177,10 @@ dig_grid <- function(x,
                   call = error_context$call)
 
     .must_be_function(f,
+                      required = if (type == "crisp") c("d") else c("d", "weights"),
+                      optional = NULL,
                       arg = error_context$arg_f,
                       call = error_context$call)
-    required_args <- if (type == "crisp") c("d") else c("d", "weights")
-    required_args_msg <- paste0("`", paste0(required_args, collapse = '`, `'), "`")
-    unrecognized_args <- setdiff(formalArgs(f), required_args)
-    if (length(unrecognized_args) > 0) {
-        details <- paste0("The argument {.arg ", unrecognized_args, "} is not allowed.")
-        cli_abort(c("The function {.arg {error_context$arg_f}} must have the following arguments: {required_args_msg}.",
-                    ..error_details(details)),
-                  call = error_context$call)
-    }
-    unrecognized_args <- setdiff(required_args, formalArgs(f))
-    if (length(unrecognized_args) > 0) {
-        details <- paste0("The argument {.arg ", unrecognized_args, "} is missing.")
-        cli_abort(c("The function {.arg {error_context$arg_f}} must have the following arguments: {required_args_msg}.",
-                    ..error_details(details)),
-                  call = error_context$call)
-    }
 
     condition <- enquo(condition)
 
