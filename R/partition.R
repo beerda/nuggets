@@ -8,7 +8,7 @@
 #' Transformations performed by this function are typically useful as a
 #' preprocessing step before using the [dig()] function or some of its
 #' derivatives ([dig_correlations()], [dig_paired_baseline_contrasts()],
-#' [dig_implications()]).
+#' [dig_associations()]).
 #'
 #' The transformation of selected columns differ based on the type. Concretely:
 #' - **logical** column `x` is transformed into pair of logical columns,

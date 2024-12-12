@@ -1,9 +1,9 @@
-test_that("dig_implications without contingency table", {
+test_that("dig_associations without contingency table", {
     d <- data.frame(a = c(T, T, F, F, F),
                     b = c(T, T, T, T, F),
                     c = c(F, F, F, T, T))
 
-    res <- dig_implications(d,
+    res <- dig_associations(d,
                             antecedent = everything(),
                             consequent = everything(),
                             min_support = 0.0001,
@@ -34,12 +34,12 @@ test_that("dig_implications without contingency table", {
 })
 
 
-test_that("dig_implications with contingency table", {
+test_that("dig_associations with contingency table", {
     d <- data.frame(a = c(T, T, F, F, F),
                     b = c(T, T, T, T, F),
                     c = c(F, F, F, T, T))
 
-    res <- dig_implications(d,
+    res <- dig_associations(d,
                             antecedent = everything(),
                             consequent = everything(),
                             min_support = 0.0001,
@@ -79,12 +79,12 @@ test_that("dig_implications with contingency table", {
 })
 
 
-test_that("dig_implications with disjoint", {
+test_that("dig_associations with disjoint", {
     d <- data.frame(a = c(T, T, F, F, F),
                     b = c(T, T, T, T, F),
                     c = c(F, F, F, T, T))
 
-    res <- dig_implications(d,
+    res <- dig_associations(d,
                             antecedent = everything(),
                             consequent = everything(),
                             disjoint = c(1, 2, 2),
@@ -115,13 +115,13 @@ test_that("dig_implications with disjoint", {
 })
 
 
-test_that("dig_implications min_support", {
+test_that("dig_associations min_support", {
     # min_support is the support of the whole rule
     d <- data.frame(a = c(T, T, F, F, F),
                     b = c(T, T, T, T, F),
                     c = c(T, F, F, T, T))
 
-    res <- dig_implications(d,
+    res <- dig_associations(d,
                             antecedent = everything(),
                             consequent = everything(),
                             disjoint = c(1, 2, 3),
@@ -130,7 +130,7 @@ test_that("dig_implications min_support", {
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 12)
 
-    res <- dig_implications(d,
+    res <- dig_associations(d,
                             antecedent = everything(),
                             consequent = everything(),
                             disjoint = c(1, 2, 3),
@@ -139,7 +139,7 @@ test_that("dig_implications min_support", {
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 7)
 
-    res <- dig_implications(d,
+    res <- dig_associations(d,
                             antecedent = everything(),
                             consequent = everything(),
                             disjoint = c(1, 2, 3),
@@ -148,7 +148,7 @@ test_that("dig_implications min_support", {
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 1)
 
-    res <- dig_implications(d,
+    res <- dig_associations(d,
                             antecedent = everything(),
                             consequent = everything(),
                             disjoint = c(1, 2, 3),
@@ -159,13 +159,13 @@ test_that("dig_implications min_support", {
 })
 
 
-test_that("dig_implications min_coverage", {
+test_that("dig_associations min_coverage", {
     # min_coverage is the support of the antecedent
     d <- data.frame(a = c(T, T, F, F, F),
                     b = c(T, T, T, T, F),
                     c = c(T, F, F, T, T))
 
-    res <- dig_implications(d,
+    res <- dig_associations(d,
                             antecedent = everything(),
                             consequent = everything(),
                             disjoint = c(1, 2, 3),
@@ -174,7 +174,7 @@ test_that("dig_implications min_coverage", {
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 12)
 
-    res <- dig_implications(d,
+    res <- dig_associations(d,
                             antecedent = everything(),
                             consequent = everything(),
                             disjoint = c(1, 2, 3),
@@ -183,7 +183,7 @@ test_that("dig_implications min_coverage", {
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 11)
 
-    res <- dig_implications(d,
+    res <- dig_associations(d,
                             antecedent = everything(),
                             consequent = everything(),
                             disjoint = c(1, 2, 3),
@@ -192,7 +192,7 @@ test_that("dig_implications min_coverage", {
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 5)
 
-    res <- dig_implications(d,
+    res <- dig_associations(d,
                             antecedent = everything(),
                             consequent = everything(),
                             disjoint = c(1, 2, 3),
@@ -203,7 +203,7 @@ test_that("dig_implications min_coverage", {
 })
 
 
-test_that("compare dig_implications to arules::apriori", {
+test_that("compare dig_associations to arules::apriori", {
     set.seed(2123)
     rows <- 100
     cols <- 5
@@ -228,7 +228,7 @@ test_that("compare dig_implications to arules::apriori", {
 
     expected <- expected[order(expected$LHS, expected$RHS), ]
 
-    res <- dig_implications(m,
+    res <- dig_associations(m,
                             min_support = 0.001,
                             min_length = 0,
                             max_length = 5,
@@ -250,7 +250,7 @@ test_that("compare dig_implications to arules::apriori", {
 })
 
 
-test_that("dig_implications errors", {
+test_that("dig_associations errors", {
     d <- data.frame(a = c(T, T, F, F, F),
                     b = c(T, T, T, T, F),
                     c = c(T, F, F, T, T))
@@ -258,20 +258,20 @@ test_that("dig_implications errors", {
                      b = c(T, T, T, T, F),
                      c = as.character(c(T, F, F, T, T)))
 
-    expect_error(dig_implications(as.list(d)),
+    expect_error(dig_associations(as.list(d)),
                  "`x` must be a matrix or a data frame.")
-    expect_error(dig_implications(d2, antecedent = b:c, consequent = a),
+    expect_error(dig_associations(d2, antecedent = b:c, consequent = a),
                  "All columns selected by `antecedent` must be logical or numeric from the interval")
-    expect_error(dig_implications(d2, antecedent = a:b, consequent = c),
+    expect_error(dig_associations(d2, antecedent = a:b, consequent = c),
                  "All columns selected by `consequent` must be logical or numeric from the interval")
-    expect_error(dig_implications(d, min_length = "x"),
+    expect_error(dig_associations(d, min_length = "x"),
                  "`min_length` must be an integerish scalar.")
-    expect_error(dig_implications(d, max_length = "x"),
+    expect_error(dig_associations(d, max_length = "x"),
                  "`max_length` must be an integerish scalar.")
-    expect_error(dig_implications(d, min_coverage = "x"),
+    expect_error(dig_associations(d, min_coverage = "x"),
                  "`min_coverage` must be a double scalar.")
-    expect_error(dig_implications(d, min_support = "x"),
+    expect_error(dig_associations(d, min_support = "x"),
                  "`min_support` must be a double scalar.")
-    expect_error(dig_implications(d, min_confidence = "x"),
+    expect_error(dig_associations(d, min_confidence = "x"),
                  "`min_confidence` must be a double scalar.")
 })

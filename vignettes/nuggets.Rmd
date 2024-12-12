@@ -45,9 +45,10 @@ package provides functions for both transformations. See the section
 **Data Preparation** for more details.
 
 `nuggets` provides functions to search for patterns of pre-defined types, such
-as `dig_implications()` for implicative rules, `dig_contrasts()` for contrast
-patterns, and `dig_correlations()` for conditional correlations. See the section
-**Pre-defined Patterns** for more details.
+as `dig_associations()` for association rules, `dig_paired_baseline_contrasts()`
+for contrast patterns on paired numeric variables, and `dig_correlations()`
+for conditional correlations. See the section **Pre-defined Patterns** for more
+details.
 
 The user may also define a custom function to evaluate the conditions and
 search for patterns of a different type. `dig()` function is a general function
@@ -205,9 +206,9 @@ usage, which allows to search for custom patterns or to compute user-defined mea
 and statistics, see the section **Custom Patterns**.
 
 
-### Search for Implicative Rules
+### Search for Association Rules
 
-Implicative patterns are rules of the form $A \Rightarrow B$, where $A$ is either
+Association rules are rules of the form $A \Rightarrow B$, where $A$ is either
 Boolean or fuzzy condition in the form of conjunction, and $B$ is a Boolean or
 fuzzy predicate.
 
@@ -229,10 +230,10 @@ disj <- varnames(colnames(fuzzyCO2))
 print(disj)
 ```
 
-The function `dig_implications` takes the analyzed dataset as its first parameter and
+The function `dig_associations` takes the analyzed dataset as its first parameter and
 a pair of `tidyselect` expressions to select the column names to appear
 in the left-hand (antecedent) and right-hand (consequent) side of the rule. The following
-command searches for implicative rules, such that:
+command searches for associations rules, such that:
 
 - any column except those starting with "Treatment" is in the antecedent;
 - any column starting with "Treatment" is in the consequent;
@@ -242,7 +243,7 @@ command searches for implicative rules, such that:
   consequent GIVEN the antecedent is true).
 
 ```{r}
-result <- dig_implications(fuzzyCO2,
+result <- dig_associations(fuzzyCO2,
                            antecedent = !starts_with("Treatment"),
                            consequent = starts_with("Treatment"),
                            disjoint = disj,
@@ -272,7 +273,7 @@ TBD (`dig_contrasts`)
 
 The `nuggets` package allows to execute a user-defined callback function on each generated
 frequent condition. That way a custom type of patterns may be searched. The following example
-replicates the search for implicative rules with the custom callback function. For that, a dataset
+replicates the search for associations rules with the custom callback function. For that, a dataset
 has to be dichotomized and the disjoint vector created as in the **Data Preparation** section
 above:
 
@@ -281,7 +282,7 @@ head(fuzzyCO2)
 print(disj)
 ```
 
-As we want to search for implicative rules with some minimum support and confidence, we define
+As we want to search for associations rules with some minimum support and confidence, we define
 the variables to hold that thresholds. We also need to define a callback function that will be
 called for each found frequent condition. Its purpose is to generate the rules with the
 obtained condition as an antecedent:
@@ -311,7 +312,7 @@ the searching algorithm provides information to the function. Here `condition` i
 representing the conjunction of predicates in a condition. By the predicate we mean the column in the
 source dataset. The `support` argument gets the relative frequency of the condition in the dataset.
 `foci_supports` is a vector of supports of special predicates, which we call "foci" (plural of "focus"),
-within the rows satisfying the condition. For implicative rules, foci are potential rule consequents.
+within the rows satisfying the condition. For associations rules, foci are potential rule consequents.
 
 Now we can run the digging for rules:
 

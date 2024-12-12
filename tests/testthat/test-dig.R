@@ -764,7 +764,7 @@ test_that("bug on mixed logical and numeric chains", {
 
     disj <- sub("=.*", "", colnames(fuzzyCO2))
 
-    result <- dig_implications(fuzzyCO2,
+    result <- dig_associations(fuzzyCO2,
                                antecedent = !starts_with("Treatment"),
                                consequent = starts_with("Treatment"),
                                disjoint = disj,

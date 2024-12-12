@@ -2,6 +2,7 @@
 - released: *not-yet*
 - added varnames()
 - dig_contrasts() renamed to dig_paired_baseline_contrasts()
+- dig_implications() renamed to dig_associations()
 - dichotomize() is deprecated (use partition() instead)
 - fixed handling of NULL returned by a callback function in dig_grid()
 - added max_p_value argument to dig_paired_baseline_contrasts()
