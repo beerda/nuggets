@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -102,10 +102,11 @@ transformed to fuzzy sets. The package provides functions for both
 transformations. See the section <strong>Data Preparation</strong> for
 more details.</p>
 <p><code>nuggets</code> provides functions to search for patterns of
-pre-defined types, such as <code><a href="../reference/dig_implications.html">dig_implications()</a></code> for
-implicative rules, <code><a href="../reference/dig_contrasts.html">dig_contrasts()</a></code> for contrast patterns,
-and <code><a href="../reference/dig_correlations.html">dig_correlations()</a></code> for conditional correlations. See
-the section <strong>Pre-defined Patterns</strong> for more details.</p>
+pre-defined types, such as <code><a href="../reference/dig_associations.html">dig_associations()</a></code> for
+association rules, <code><a href="../reference/dig_paired_baseline_contrasts.html">dig_paired_baseline_contrasts()</a></code> for
+contrast patterns on paired numeric variables, and
+<code><a href="../reference/dig_correlations.html">dig_correlations()</a></code> for conditional correlations. See the
+section <strong>Pre-defined Patterns</strong> for more details.</p>
 <p>The user may also define a custom function to evaluate the conditions
 and search for patterns of a different type. <code><a href="../reference/dig.html">dig()</a></code> function
 is a general function that allows to search for patterns of any type.
@@ -343,11 +344,11 @@ tibble with patterns stored as rows. For more advance usage, which
 allows to search for custom patterns or to compute user-defined measures
 and statistics, see the section <strong>Custom Patterns</strong>.</p>
 <div class="section level4">
-<h4 id="search-for-implicative-rules">Search for Implicative Rules<a class="anchor" aria-label="anchor" href="#search-for-implicative-rules"></a>
+<h4 id="search-for-association-rules">Search for Association Rules<a class="anchor" aria-label="anchor" href="#search-for-association-rules"></a>
 </h4>
-<p>Implicative patterns are rules of the form <span class="math inline">\(A \Rightarrow B\)</span>, where <span class="math inline">\(A\)</span> is either Boolean or fuzzy condition in
-the form of conjunction, and <span class="math inline">\(B\)</span> is a
-Boolean or fuzzy predicate.</p>
+<p>Association rules are rules of the form <span class="math inline">\(A
+\Rightarrow B\)</span>, where <span class="math inline">\(A\)</span> is
+either Boolean or fuzzy condition in the form of conjunction, and <span class="math inline">\(B\)</span> is a Boolean or fuzzy predicate.</p>
 <p>Before continuing with the search for rules, it is advisable to
 create the so-called <em>vector of disjoints</em>. The vector of
 disjoints is a character vector with the same length as the number of
@@ -370,11 +371,11 @@ function as follows:</p>
 <span><span class="co">#&gt;  [7] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    </span></span>
 <span><span class="co">#&gt; [13] "Type"      "Type"      "Treatment" "Treatment" "conc"      "conc"     </span></span>
 <span><span class="co">#&gt; [19] "conc"      "uptake"    "uptake"    "uptake"</span></span></code></pre></div>
-<p>The function <code>dig_implications</code> takes the analyzed dataset
+<p>The function <code>dig_associations</code> takes the analyzed dataset
 as its first parameter and a pair of <code>tidyselect</code> expressions
 to select the column names to appear in the left-hand (antecedent) and
 right-hand (consequent) side of the rule. The following command searches
-for implicative rules, such that:</p>
+for associations rules, such that:</p>
 <ul>
 <li>any column except those starting with “Treatment” is in the
 antecedent;</li>
@@ -385,7 +386,7 @@ satisfy the antecedent AND consequent));</li>
 satisfying the consequent GIVEN the antecedent is true).</li>
 </ul>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_implications.html">dig_implications</a></span><span class="op">(</span><span class="va">fuzzyCO2</span>,</span>
+<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">fuzzyCO2</span>,</span>
 <span>                           antecedent <span class="op">=</span> <span class="op">!</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"Treatment"</span><span class="op">)</span>,</span>
 <span>                           consequent <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"Treatment"</span><span class="op">)</span>,</span>
 <span>                           disjoint <span class="op">=</span> <span class="va">disj</span>,</span>
@@ -429,7 +430,7 @@ in descending order:</p>
 <p>The <code>nuggets</code> package allows to execute a user-defined
 callback function on each generated frequent condition. That way a
 custom type of patterns may be searched. The following example
-replicates the search for implicative rules with the custom callback
+replicates the search for associations rules with the custom callback
 function. For that, a dataset has to be dichotomized and the disjoint
 vector created as in the <strong>Data Preparation</strong> section
 above:</p>
@@ -456,7 +457,7 @@ above:</p>
 <span><span class="co">#&gt;  [7] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    </span></span>
 <span><span class="co">#&gt; [13] "Type"      "Type"      "Treatment" "Treatment" "conc"      "conc"     </span></span>
 <span><span class="co">#&gt; [19] "conc"      "uptake"    "uptake"    "uptake"</span></span></code></pre></div>
-<p>As we want to search for implicative rules with some minimum support
+<p>As we want to search for associations rules with some minimum support
 and confidence, we define the variables to hold that thresholds. We also
 need to define a callback function that will be called for each found
 frequent condition. Its purpose is to generate the rules with the
@@ -489,8 +490,8 @@ column in the source dataset. The <code>support</code> argument gets the
 relative frequency of the condition in the dataset.
 <code>foci_supports</code> is a vector of supports of special
 predicates, which we call “foci” (plural of “focus”), within the rows
-satisfying the condition. For implicative rules, foci are potential rule
-consequents.</p>
+satisfying the condition. For associations rules, foci are potential
+rule consequents.</p>
 <p>Now we can run the digging for rules:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig.html">dig</a></span><span class="op">(</span><span class="va">fuzzyCO2</span>,</span>

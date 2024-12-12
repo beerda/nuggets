@@ -36,28 +36,20 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>NA</h1>
-      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/ERROR_CONTEXT_HOWTO.md" class="external-link"><code>ERROR_CONTEXT_HOWTO.md</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/IDEAS.md" class="external-link"><code>IDEAS.md</code></a></small>
     </div>
 
-
-<p>Internal functions:</p>
-<ul><li>the name must start with “.”</li>
-<li>the function must not be exported</li>
-<li>the last argument of the function may be the <code>error_context</code> object, which is a list of the following elements:
-<ul><li>names of arguments that appear in error messages initialized with the call of <code>caller_arg()</code> (e.g. <code>arg_x = caller_arg(x)</code>)</li>
-<li>the <code>call</code> object pointing to caller’s environment, <code>call = caller_env()</code>
-</li>
-</ul></li>
-<li>see <code>.extract_cols()</code> for an example</li>
-</ul><p>Exported functions:</p>
-<ul><li>these functions may be used by the user</li>
-<li>the function must be exported</li>
-<li>the last argument of the function may be the <code>error_context</code> object, which is a list of the following elements:
-<ul><li>names of arguments that appear in error messages initialized to a string constant equal to a name of the argument (e.g. <code>arg_x = "x"</code>)</li>
-<li>the <code>call</code> object pointing to the current environment, <code>call = current_env()</code>
-</li>
-</ul></li>
-<li>see <code><a href="reference/var_grid.html">var_grid()</a></code> for an example</li>
+<ul><li><p>var_grid(), dig_grid() - allow to specify xvars only and then make all combinations of them</p></li>
+<li><p>dig_baseline_contrasts()</p></li>
+<li><p>dig_conditional_contrasts()</p></li>
+<li><p>dig_level_contrasts()</p></li>
+<li><p>dig_post_hoc_contrasts()</p></li>
+<li><p>dig_paired_baseline_contrasts()</p></li>
+<li><p>dig_paired_conditional_contrasts()</p></li>
+<li><p>dig_paired_level_contrasts()</p></li>
+<li><p>dig_paired_post_hoc_contrasts()</p></li>
+<li><p>dig_correlations()</p></li>
+<li><p>dig_correlation_contrasts()</p></li>
 </ul></main></div>
 
 
