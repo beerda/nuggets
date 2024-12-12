@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 ```{r, include=FALSE}
 library(nuggets)
-library(tidyverse)
+library(dplyr)
 ```
 
 
@@ -332,7 +332,7 @@ of lists in the result and binding it into a data frame:
 ```{r}
 result <- result |>
   unlist(recursive = FALSE) |>
-  map(as_tibble) |>
+  lapply(as_tibble) |>
   do.call(rbind, args = _) |>
   arrange(desc(support))
 
