@@ -101,7 +101,7 @@
 #'      the callback function `f`.
 #' @author Michal Burda
 #' @seealso [dig()], [var_grid()]; see also [dig_correlations()] and
-#'     [dig_paired_contrasts()], as they are using this function internally.
+#'     [dig_paired_baseline_contrasts()], as they are using this function internally.
 #' @examples
 #' # *** Example of crisp (boolean) patterns:
 #' # dichotomize iris$Species

@@ -187,7 +187,7 @@ dig_grid(fuzzyIris,
 }
 \seealso{
 \code{\link[=dig]{dig()}}, \code{\link[=var_grid]{var_grid()}}; see also \code{\link[=dig_correlations]{dig_correlations()}} and
-\code{\link[=dig_paired_contrasts]{dig_paired_contrasts()}}, as they are using this function internally.
+\code{\link[=dig_paired_baseline_contrasts]{dig_paired_baseline_contrasts()}}, as they are using this function internally.
 }
 \author{
 Michal Burda

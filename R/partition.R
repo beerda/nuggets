@@ -7,7 +7,7 @@
 #'
 #' Transformations performed by this function are typically useful as a
 #' preprocessing step before using the [dig()] function or some of its
-#' derivatives ([dig_correlations()], [dig_paired_contrasts()],
+#' derivatives ([dig_correlations()], [dig_paired_baseline_contrasts()],
 #' [dig_implications()]).
 #'
 #' The transformation of selected columns differ based on the type. Concretely:

@@ -1,7 +1,7 @@
-test_that("dig_paired_contrasts t", {
+test_that("dig_paired_baseline_contrasts t", {
     d <- partition(CO2, Plant:Treatment)
 
-    res <- dig_paired_contrasts(d,
+    res <- dig_paired_baseline_contrasts(d,
                          condition = where(is.logical),
                          xvars = conc,
                          yvars = uptake,
@@ -15,7 +15,7 @@ test_that("dig_paired_contrasts t", {
     expect_equal(res$xvar, rep("conc", 9))
     expect_equal(res$yvar, rep("uptake", 9))
 
-    res <- dig_paired_contrasts(d,
+    res <- dig_paired_baseline_contrasts(d,
                          condition = where(is.logical),
                          xvars = conc,
                          yvars = uptake,
@@ -27,10 +27,10 @@ test_that("dig_paired_contrasts t", {
     expect_equal(ncol(res), 15)
 })
 
-test_that("dig_paired_contrasts wilcox", {
+test_that("dig_paired_baseline_contrasts wilcox", {
     d <- partition(CO2, Plant:Treatment)
 
-    res <- dig_paired_contrasts(d,
+    res <- dig_paired_baseline_contrasts(d,
                          condition = where(is.logical),
                          xvars = conc,
                          yvars = uptake,
@@ -44,7 +44,7 @@ test_that("dig_paired_contrasts wilcox", {
     expect_equal(res$xvar, rep("conc", 9))
     expect_equal(res$yvar, rep("uptake", 9))
 
-    res <- dig_paired_contrasts(d,
+    res <- dig_paired_baseline_contrasts(d,
                          condition = where(is.logical),
                          xvars = conc,
                          yvars = uptake,
@@ -57,10 +57,10 @@ test_that("dig_paired_contrasts wilcox", {
     expect_equal(ncol(res), 12)
 })
 
-test_that("dig_paired_contrasts var", {
+test_that("dig_paired_baseline_contrasts var", {
     d <- partition(CO2, Plant:Treatment)
 
-    res <- dig_paired_contrasts(d,
+    res <- dig_paired_baseline_contrasts(d,
                          condition = where(is.logical),
                          xvars = conc,
                          yvars = uptake,
@@ -79,18 +79,18 @@ test_that("dig_paired_contrasts var", {
 test_that("dig_paired contrasts errors", {
     d <- data.frame(n = 1:5 / 5, l = TRUE, i = 1:5, s = letters[1:5])
 
-    expect_error(dig_paired_contrasts(x = 1:5),
+    expect_error(dig_paired_baseline_contrasts(x = 1:5),
                  "`x` must be a matrix or a data frame")
-    expect_error(dig_paired_contrasts(d, condition = n:l),
+    expect_error(dig_paired_baseline_contrasts(d, condition = n:l),
                  "All columns selected by `condition` must be logical.")
-    expect_error(dig_paired_contrasts(d, xvars = n, yvars = l),
+    expect_error(dig_paired_baseline_contrasts(d, xvars = n, yvars = l),
                  "All columns selected by `yvars` must be numeric.")
-    expect_error(dig_paired_contrasts(d, xvars = s, yvars = n),
+    expect_error(dig_paired_baseline_contrasts(d, xvars = s, yvars = n),
                  "All columns selected by `xvars` must be numeric.")
-    expect_error(dig_paired_contrasts(d, method = "foo"),
+    expect_error(dig_paired_baseline_contrasts(d, method = "foo"),
                  '`method` must be equal to one of: "t", "wilcox", "var".')
-    expect_error(dig_paired_contrasts(d, alternative = "foo"),
+    expect_error(dig_paired_baseline_contrasts(d, alternative = "foo"),
                  '`alternative` must be equal to one of: "two.sided", "less", "greater".')
-    expect_error(dig_paired_contrasts(d, min_length = "x"),
+    expect_error(dig_paired_baseline_contrasts(d, min_length = "x"),
                  "`min_length` must be an integerish scalar.")
 })

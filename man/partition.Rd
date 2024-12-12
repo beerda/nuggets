@@ -64,7 +64,7 @@ typically yields in multiple columns in the output.
 \details{
 Transformations performed by this function are typically useful as a
 preprocessing step before using the \code{\link[=dig]{dig()}} function or some of its
-derivatives (\code{\link[=dig_correlations]{dig_correlations()}}, \code{\link[=dig_paired_contrasts]{dig_paired_contrasts()}},
+derivatives (\code{\link[=dig_correlations]{dig_correlations()}}, \code{\link[=dig_paired_baseline_contrasts]{dig_paired_baseline_contrasts()}},
 \code{\link[=dig_implications]{dig_implications()}}).
 
 The transformation of selected columns differ based on the type. Concretely:

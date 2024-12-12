@@ -1,4 +1,5 @@
-#' Search for paired contrast patterns
+#' Search for conditions that provide significant differences between paired
+#' variables
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
@@ -8,8 +9,8 @@
 #'
 #' \describe{
 #'   \item{Scheme:}{`xvar >> yvar | C`\cr\cr
-#'     There is a statistically significant difference between variables `xvar`
-#'     and `yvar` under the condition `C`.}
+#'     There is a statistically significant difference between paired variables
+#'     `xvar` and `yvar` under the condition `C`.}
 #'   \item{Example:}{`daily_ice_cream_income >> daily_tea_income | sunny`\cr\cr
 #'     Under the condition of *sunny weather*, the paired test shows that
 #'     *daily ice-cream income* is significantly higher than the
@@ -22,8 +23,8 @@
 #' specified by the `xvars` argument and the second variable is specified by the
 #' `yvars` argument. Paired contrasts are computed in sub-data corresponding
 #' to conditions generated from `condition` columns. Function
-#' `dig_paired_contrasts()` supports crisp conditions only, i.e., the condition
-#' columns must be logical.
+#' `dig_paired_baseline_contrasts()` supports crisp conditions only, i.e.,
+#' the condition columns must be logical.
 #'
 #' @param x a matrix or data frame with data to search the patterns in.
 #' @param condition a tidyselect expression (see
@@ -123,26 +124,26 @@
 #' crispIris <- partition(crispIris, Species)
 #'
 #' # Compute paired contrasts for ratios of sepal and petal length and width
-#' dig_paired_contrasts(crispIris,
-#'                      condition = where(is.logical),
-#'                      xvars = Sepal.Ratio,
-#'                      yvars = Petal.Ratio,
-#'                      method = "t",
-#'                      min_support = 0.1)
+#' dig_paired_baseline_contrasts(crispIris,
+#'                               condition = where(is.logical),
+#'                               xvars = Sepal.Ratio,
+#'                               yvars = Petal.Ratio,
+#'                               method = "t",
+#'                               min_support = 0.1)
 #' @export
-dig_paired_contrasts <- function(x,
-                                 condition = where(is.logical),
-                                 xvars = where(is.numeric),
-                                 yvars = where(is.numeric),
-                                 disjoint = varnames(colnames(x)),
-                                 method = "t",
-                                 alternative = "two.sided",
-                                 min_length = 0L,
-                                 max_length = Inf,
-                                 min_support = 0.0,
-                                 max_p_value = 0.05,
-                                 threads = 1,
-                                 ...) {
+dig_paired_baseline_contrasts <- function(x,
+                                          condition = where(is.logical),
+                                          xvars = where(is.numeric),
+                                          yvars = where(is.numeric),
+                                          disjoint = varnames(colnames(x)),
+                                          method = "t",
+                                          alternative = "two.sided",
+                                          min_length = 0L,
+                                          max_length = Inf,
+                                          min_support = 0.0,
+                                          max_p_value = 0.05,
+                                          threads = 1,
+                                          ...) {
     .must_be_enum(method, c("t", "wilcox", "var"))
     .must_be_enum(alternative, c("two.sided", "less", "greater"))
 
