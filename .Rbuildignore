@@ -9,6 +9,7 @@
 ^misc$
 ^RELEASE_HOWTO\.md$
 ^ERROR_CONTEXT_HOWTO\.md$
+^IDEAS\.md$
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
 ^_pkgdown\.yml$
