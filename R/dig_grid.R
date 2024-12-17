@@ -211,60 +211,14 @@ dig_grid <- function(x,
                      allow = allow,
                      error_context = error_context)
 
-    if (type == "fuzzy") {
-        # fuzzy variant
-        subF <- function(weights) {
-            apply(grid, 1, function(row) {
-                dd <- x[, row, drop = FALSE]
-                if (na_rm) {
-                    dd <- na.omit(dd)
-                    weights <- weights[attr(dd, "na.action")]
-                }
-
-                f(d = dd, weights = weights)
-            })
-        }
-    } else if ("nd" %in% formalArgs(f)) {
-        # crisp variant with nd
-        subF <- function(indices) {
-            pd <- x[indices, , drop = FALSE]
-            nd <- x[!indices, , drop = FALSE]
-
-            apply(grid, MARGIN = 1, simplify = FALSE, FUN = function(row) {
-                pdd <- pd[, row, drop = FALSE]
-                ndd <- nd[, row, drop = FALSE]
-                if (na_rm) {
-                    pdd <- na.omit(pdd)
-                    ndd <- na.omit(ndd)
-                }
-
-                f(pd = pdd, nd = ndd)
-            })
-        }
-    } else {
-        # crisp variant without nd
-        subF <- function(indices) {
-            pd <- x[indices, , drop = FALSE]
-
-            apply(grid, MARGIN = 1, simplify = FALSE, FUN = function(row) {
-                pdd <- pd[, row, drop = FALSE]
-                if (na_rm)
-                    pdd <- na.omit(pdd)
-
-                f(pd = pdd)
-            })
-        }
-    }
-
-    mainF <- function(condition, support, param) {
-        cond <- format_condition(names(condition))
-        result <- subF(param)
+    processF <- function(condition, support, result) {
         isnull <- sapply(result, is.null)
         result <- lapply(result[!isnull], as_tibble)
         result <- do.call(rbind, result)
-        gr <- grid[!isnull, ]
 
         if (!is.null(result)) {
+            cond <- format_condition(names(condition))
+            gr <- grid[!isnull, ]
             result <- cbind(condition = rep(cond, nrow(gr)),
                             support = support,
                             gr,
@@ -274,10 +228,55 @@ dig_grid <- function(x,
         result
     }
 
-    if (type == "crisp") {
-        callbackF <- function(condition, support, indices) mainF(condition, support, indices)
+    if (type == "fuzzy") {
+        # fuzzy variant
+        callbackF <- function(condition, support, weights) {
+            result <- apply(grid, 1, function(row) {
+                dd <- x[, row, drop = FALSE]
+                if (na_rm) {
+                    dd <- na.omit(dd)
+                    weights <- weights[attr(dd, "na.action")]
+                }
+
+                f(d = dd, weights = weights)
+            })
+
+            processF(condition, support, result)
+        }
+    } else if ("nd" %in% formalArgs(f)) {
+        # crisp variant with nd
+        callbackF <- function(condition, support, indices) {
+            pd <- x[indices, , drop = FALSE]
+            nd <- x[!indices, , drop = FALSE]
+
+            result <- apply(grid, MARGIN = 1, simplify = FALSE, FUN = function(row) {
+                pdd <- pd[, row, drop = FALSE]
+                ndd <- nd[, row, drop = FALSE]
+                if (na_rm) {
+                    pdd <- na.omit(pdd)
+                    ndd <- na.omit(ndd)
+                }
+
+                f(pd = pdd, nd = ndd)
+            })
+
+            processF(condition, support, result)
+        }
     } else {
-        callbackF <- function(condition, support, weights) mainF(condition, support, weights)
+        # crisp variant without nd
+        callbackF <- function(condition, support, indices) {
+            pd <- x[indices, , drop = FALSE]
+
+            result <- apply(grid, MARGIN = 1, simplify = FALSE, FUN = function(row) {
+                pdd <- pd[, row, drop = FALSE]
+                if (na_rm)
+                    pdd <- na.omit(pdd)
+
+                f(pd = pdd)
+            })
+
+            processF(condition, support, result)
+        }
     }
 
     res <- dig(x = x,
@@ -302,3 +301,4 @@ dig_grid <- function(x,
 
     as_tibble(res)
 }
+
