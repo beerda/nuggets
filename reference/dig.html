@@ -132,7 +132,7 @@ predicates AND the focus are TRUE on it. Foci with support lower than
 <span>  <span class="va">f</span>,</span>
 <span>  condition <span class="op">=</span> <span class="fu">everything</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  focus <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  disjoint <span class="op">=</span> <span class="fu"><a href="varnames.html">varnames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  disjoint <span class="op">=</span> <span class="fu"><a href="var_names.html">var_names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  min_length <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  max_length <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  min_support <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -211,7 +211,7 @@ specifying the columns to use as focus predicates</p></dd>
 that specifies the groups of predicates: if some elements of the <code>disjoint</code>
 vector are equal, then the corresponding columns of <code>x</code> will NOT be
 present together in a single condition. If <code>x</code> is prepared with
-<code><a href="partition.html">partition()</a></code>, using the <code><a href="varnames.html">varnames()</a></code> function on <code>x</code>'s column names
+<code><a href="partition.html">partition()</a></code>, using the <code><a href="var_names.html">var_names()</a></code> function on <code>x</code>'s column names
 is a convenient way to create the <code>disjoint</code> vector.</p></dd>
 
 
@@ -299,7 +299,7 @@ as a character string</p></li>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="partition.html">partition()</a></code>, <code><a href="varnames.html">varnames()</a></code>, <code><a href="dig_grid.html">dig_grid()</a></code></p></div>
+    <div class="dont-index"><p><code><a href="partition.html">partition()</a></code>, <code><a href="var_names.html">var_names()</a></code>, <code><a href="dig_grid.html">dig_grid()</a></code></p></div>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>

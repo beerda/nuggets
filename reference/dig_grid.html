@@ -79,7 +79,7 @@ relationships between pairs of columns, such as in <code><a href="dig_correlatio
 <span>  condition <span class="op">=</span> <span class="fu">where</span><span class="op">(</span><span class="va">is.logical</span><span class="op">)</span>,</span>
 <span>  xvars <span class="op">=</span> <span class="fu">where</span><span class="op">(</span><span class="va">is.numeric</span><span class="op">)</span>,</span>
 <span>  yvars <span class="op">=</span> <span class="fu">where</span><span class="op">(</span><span class="va">is.numeric</span><span class="op">)</span>,</span>
-<span>  disjoint <span class="op">=</span> <span class="fu"><a href="varnames.html">varnames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  disjoint <span class="op">=</span> <span class="fu"><a href="var_names.html">var_names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  allow <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  na_rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"crisp"</span>,</span>
@@ -154,7 +154,7 @@ combinations use at the second place (yvar)</p></dd>
 that specifies the groups of predicates: if some elements of the <code>disjoint</code>
 vector are equal, then the corresponding columns of <code>x</code> will NOT be
 present together in a single condition. If <code>x</code> is prepared with
-<code><a href="partition.html">partition()</a></code>, using the <code><a href="varnames.html">varnames()</a></code> function on <code>x</code>'s column names
+<code><a href="partition.html">partition()</a></code>, using the <code><a href="var_names.html">var_names()</a></code> function on <code>x</code>'s column names
 is a convenient way to create the <code>disjoint</code> vector.</p></dd>
 
 
