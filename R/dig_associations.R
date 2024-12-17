@@ -50,7 +50,7 @@
 #'      that specifies the groups of predicates: if some elements of the `disjoint`
 #'      vector are equal, then the corresponding columns of `x` will NOT be
 #'      present together in a single condition. If `x` is prepared with
-#'      [partition()], using the [varnames()] function on `x`'s column names
+#'      [partition()], using the [var_names()] function on `x`'s column names
 #'      is a convenient way to create the `disjoint` vector.
 #' @param min_length the minimum length, i.e., the minimum number of predicates in the
 #'      antecedent, of a rule to be generated. Value must be greater or equal to 0.
@@ -82,7 +82,7 @@
 #' @param ... Further arguments, currently unused.
 #' @returns A tibble with found patterns and computed quality measures.
 #' @author Michal Burda
-#' @seealso [partition()], [varnames()], [dig()]
+#' @seealso [partition()], [var_names()], [dig()]
 #' @examples
 #' d <- partition(mtcars, .breaks = 2)
 #' dig_associations(d,
@@ -95,7 +95,7 @@
 dig_associations <- function(x,
                              antecedent = everything(),
                              consequent = everything(),
-                             disjoint = varnames(colnames(x)),
+                             disjoint = var_names(colnames(x)),
                              min_length = 0L,
                              max_length = Inf,
                              min_coverage = 0,

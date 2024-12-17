@@ -223,10 +223,10 @@ no sense, e.g., to combine `Plant=Qn1` and `Plant=Qn2` in a condition
 
 The vector of disjoints can be easily created from the column names of the dataset, e.g.,
 by obtaining the first part of column names before the equal sign, which is neatly
-provided by the `varnames()` function as follows:
+provided by the `var_names()` function as follows:
 
 ```{r}
-disj <- varnames(colnames(fuzzyCO2))
+disj <- var_names(colnames(fuzzyCO2))
 print(disj)
 ```
 

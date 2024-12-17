@@ -9,7 +9,7 @@ dig(
   f,
   condition = everything(),
   focus = NULL,
-  disjoint = varnames(colnames(x)),
+  disjoint = var_names(colnames(x)),
   min_length = 0,
   max_length = Inf,
   min_support = 0,
@@ -77,7 +77,7 @@ specifying the columns to use as focus predicates}
 that specifies the groups of predicates: if some elements of the \code{disjoint}
 vector are equal, then the corresponding columns of \code{x} will NOT be
 present together in a single condition. If \code{x} is prepared with
-\code{\link[=partition]{partition()}}, using the \code{\link[=varnames]{varnames()}} function on \code{x}'s column names
+\code{\link[=partition]{partition()}}, using the \code{\link[=var_names]{var_names()}} function on \code{x}'s column names
 is a convenient way to create the \code{disjoint} vector.}
 
 \item{min_length}{the minimum size (the minimum number of predicates) of the
@@ -245,7 +245,7 @@ res <- unlist(res, recursive = FALSE)
 do.call(rbind, lapply(res, as_tibble))
 }
 \seealso{
-\code{\link[=partition]{partition()}}, \code{\link[=varnames]{varnames()}}, \code{\link[=dig_grid]{dig_grid()}}
+\code{\link[=partition]{partition()}}, \code{\link[=var_names]{var_names()}}, \code{\link[=dig_grid]{dig_grid()}}
 }
 \author{
 Michal Burda

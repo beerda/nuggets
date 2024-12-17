@@ -80,7 +80,7 @@
 #'      that specifies the groups of predicates: if some elements of the `disjoint`
 #'      vector are equal, then the corresponding columns of `x` will NOT be
 #'      present together in a single condition. If `x` is prepared with
-#'      [partition()], using the [varnames()] function on `x`'s column names
+#'      [partition()], using the [var_names()] function on `x`'s column names
 #'      is a convenient way to create the `disjoint` vector.
 #' @param min_length the minimum size (the minimum number of predicates) of the
 #'      condition to be generated (must be greater or equal to 0). If 0, the empty
@@ -136,7 +136,7 @@
 #'      }
 #' @param ... Further arguments, currently unused.
 #' @returns A list of results provided by the callback function `f`.
-#' @seealso [partition()], [varnames()], [dig_grid()]
+#' @seealso [partition()], [var_names()], [dig_grid()]
 #' @author Michal Burda
 #' @examples
 #' library(tibble)
@@ -206,7 +206,7 @@ dig <- function(x,
                 f,
                 condition = everything(),
                 focus = NULL,
-                disjoint = varnames(colnames(x)),
+                disjoint = var_names(colnames(x)),
                 min_length = 0,
                 max_length = Inf,
                 min_support = 0.0,

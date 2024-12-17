@@ -55,7 +55,7 @@
 #'      that specifies the groups of predicates: if some elements of the `disjoint`
 #'      vector are equal, then the corresponding columns of `x` will NOT be
 #'      present together in a single condition. If `x` is prepared with
-#'      [partition()], using the [varnames()] function on `x`'s column names
+#'      [partition()], using the [var_names()] function on `x`'s column names
 #'      is a convenient way to create the `disjoint` vector.
 #' @param allow a character string specifying which columns are allowed to be
 #'      selected by `xvars` and `yvars` arguments. Possible values are:
@@ -149,7 +149,7 @@ dig_grid <- function(x,
                      condition = where(is.logical),
                      xvars = where(is.numeric),
                      yvars = where(is.numeric),
-                     disjoint = varnames(colnames(x)),
+                     disjoint = var_names(colnames(x)),
                      allow = "all",
                      na_rm = FALSE,
                      type = "crisp",

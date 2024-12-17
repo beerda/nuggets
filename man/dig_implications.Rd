@@ -8,7 +8,7 @@ dig_implications(
   x,
   antecedent = everything(),
   consequent = everything(),
-  disjoint = varnames(colnames(x)),
+  disjoint = var_names(colnames(x)),
   min_length = 0L,
   max_length = Inf,
   min_coverage = 0,
@@ -38,7 +38,7 @@ specifying the columns to use in the consequent (right) part of the rules}
 that specifies the groups of predicates: if some elements of the \code{disjoint}
 vector are equal, then the corresponding columns of \code{x} will NOT be
 present together in a single condition. If \code{x} is prepared with
-\code{\link[=partition]{partition()}}, using the \code{\link[=varnames]{varnames()}} function on \code{x}'s column names
+\code{\link[=partition]{partition()}}, using the \code{\link[=var_names]{var_names()}} function on \code{x}'s column names
 is a convenient way to create the \code{disjoint} vector.}
 
 \item{min_length}{the minimum length, i.e., the minimum number of predicates in the
@@ -129,7 +129,7 @@ dig_associations(d,
                  measures = c("lift", "conviction"))
 }
 \seealso{
-\code{\link[=partition]{partition()}}, \code{\link[=varnames]{varnames()}}, \code{\link[=dig]{dig()}}
+\code{\link[=partition]{partition()}}, \code{\link[=var_names]{var_names()}}, \code{\link[=dig]{dig()}}
 }
 \author{
 Michal Burda

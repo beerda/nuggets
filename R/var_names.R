@@ -10,9 +10,9 @@
 #' @return A `<varname>` part of predicate names in `x`.
 #' @author Michal Burda
 #' @examples
-#' varnames(c("a=1", "a=2", "b=x", "b=y")) # returns c("a", "a", "b", "b")
+#' var_names(c("a=1", "a=2", "b=x", "b=y")) # returns c("a", "a", "b", "b")
 #' @export
-varnames <- function(x) {
+var_names <- function(x) {
     .must_be_character_vector(x, null = TRUE)
 
     if (is.null(x))

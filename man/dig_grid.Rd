@@ -10,7 +10,7 @@ dig_grid(
   condition = where(is.logical),
   xvars = where(is.numeric),
   yvars = where(is.numeric),
-  disjoint = varnames(colnames(x)),
+  disjoint = var_names(colnames(x)),
   allow = "all",
   na_rm = FALSE,
   type = "crisp",
@@ -73,7 +73,7 @@ combinations use at the second place (yvar)}
 that specifies the groups of predicates: if some elements of the \code{disjoint}
 vector are equal, then the corresponding columns of \code{x} will NOT be
 present together in a single condition. If \code{x} is prepared with
-\code{\link[=partition]{partition()}}, using the \code{\link[=varnames]{varnames()}} function on \code{x}'s column names
+\code{\link[=partition]{partition()}}, using the \code{\link[=var_names]{var_names()}} function on \code{x}'s column names
 is a convenient way to create the \code{disjoint} vector.}
 
 \item{allow}{a character string specifying which columns are allowed to be
