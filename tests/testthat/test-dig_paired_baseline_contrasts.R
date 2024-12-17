@@ -9,7 +9,7 @@ test_that("dig_paired_baseline_contrasts t", {
 
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 9)
-    expect_equal(ncol(res), 15)
+    expect_equal(ncol(res), 14)
     expect_true(is.character(res$condition))
     expect_equal(res$support, c(1, 0.5, 0.5, 0.5, 0.5, 0.25, 0.25, 0.25, 0.25))
     expect_equal(res$xvar, rep("conc", 9))
@@ -24,7 +24,7 @@ test_that("dig_paired_baseline_contrasts t", {
 
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 5)
-    expect_equal(ncol(res), 15)
+    expect_equal(ncol(res), 14)
 })
 
 test_that("dig_paired_baseline_contrasts wilcox", {

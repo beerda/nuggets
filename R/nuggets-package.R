@@ -18,6 +18,7 @@
 #' @importFrom rlang is_scalar_double
 #' @importFrom rlang is_scalar_integerish
 #' @importFrom rlang is_scalar_logical
+#' @importFrom rlang warn
 #' @importFrom stats cor.test
 #' @importFrom stats na.omit
 #' @importFrom stats t.test

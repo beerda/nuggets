@@ -13,12 +13,13 @@ dig_paired_baseline_contrasts(
   disjoint = var_names(colnames(x)),
   method = "t",
   alternative = "two.sided",
+  h0 = if (method == "var") 1 else 0,
+  conf_level = 0.95,
+  max_p_value = 1,
   min_length = 0L,
   max_length = Inf,
   min_support = 0,
-  max_p_value = 0.05,
-  threads = 1,
-  ...
+  threads = 1
 )
 }
 \arguments{
@@ -52,6 +53,19 @@ a parametric (resp. non-parametric) test on equality in position, and
 \code{"two.sided"}, \code{"greater"} or \code{"less"}. \code{"greater"} corresponds to
 positive association, \code{"less"} to negative association.}
 
+\item{h0}{a numeric value specifying the null hypothesis for the test. For
+the \code{"t"} method, it is the difference in means. For the \code{"wilcox"} method,
+it is the difference in medians. For the \code{"var"} method, it is the ratio
+of variances. The default value is 0 for the \code{"t"} and \code{"wilcox"} methods
+and 1 for the \code{"var"} method.}
+
+\item{conf_level}{a numeric value specifying the level of the confidence
+interval. The default value is 0.95.}
+
+\item{max_p_value}{the maximum p-value of a test for the pattern to be considered
+significant. If the p-value of the test is greater than \code{max_p_value}, the
+pattern is not included in the result.}
+
 \item{min_length}{the minimum size (the minimum number of predicates) of the
 condition to be generated (must be greater or equal to 0). If 0, the
 empty condition is generated in the first place.}
@@ -67,15 +81,7 @@ relative frequency of rows such that all condition predicates are TRUE on it.
 For numerical (double) input, the support is computed as the mean (over all
 rows) of multiplications of predicate values.}
 
-\item{max_p_value}{the maximum p-value of a test for the pattern to be considered
-significant. If the p-value of the test is greater than \code{max_p_value}, the
-pattern is not included in the result.}
-
 \item{threads}{the number of threads to use for parallel computation.}
-
-\item{...}{Further arguments passed to the underlying test function
-(\code{\link[=t.test]{t.test()}}, \code{\link[=wilcox.test]{wilcox.test()}}, or \code{\link[=var.test]{var.test()}} accordingly to the
-selected method).}
 }
 \value{
 A tibble with found patterns in rows. The following columns are always
@@ -129,10 +135,10 @@ Contrast patterns identify conditions under which there is a significant
 difference in some statistical feature between two paired numeric variables.
 
 \describe{
-\item{Scheme:}{\verb{xvar >> yvar | C}\cr\cr
+\item{Scheme:}{\code{(xvar - yvar) != 0 | C}\cr\cr
 There is a statistically significant difference between paired variables
 \code{xvar} and \code{yvar} under the condition \code{C}.}
-\item{Example:}{\verb{daily_ice_cream_income >> daily_tea_income | sunny}\cr\cr
+\item{Example:}{\code{(daily_ice_cream_income - daily_tea_income) > 0 | sunny}\cr\cr
 Under the condition of \emph{sunny weather}, the paired test shows that
 \emph{daily ice-cream income} is significantly higher than the
 \emph{daily tea income}.}

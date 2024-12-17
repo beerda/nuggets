@@ -8,10 +8,10 @@
 #' difference in some statistical feature between two paired numeric variables.
 #'
 #' \describe{
-#'   \item{Scheme:}{`xvar >> yvar | C`\cr\cr
+#'   \item{Scheme:}{`(xvar - yvar) != 0 | C`\cr\cr
 #'     There is a statistically significant difference between paired variables
 #'     `xvar` and `yvar` under the condition `C`.}
-#'   \item{Example:}{`daily_ice_cream_income >> daily_tea_income | sunny`\cr\cr
+#'   \item{Example:}{`(daily_ice_cream_income - daily_tea_income) > 0 | sunny`\cr\cr
 #'     Under the condition of *sunny weather*, the paired test shows that
 #'     *daily ice-cream income* is significantly higher than the
 #'     *daily tea income*.}
@@ -49,6 +49,16 @@
 #' @param alternative indicates the alternative hypothesis and must be one of
 #'      `"two.sided"`, `"greater"` or `"less"`. `"greater"` corresponds to
 #'      positive association, `"less"` to negative association.
+#' @param h0 a numeric value specifying the null hypothesis for the test. For
+#'      the `"t"` method, it is the difference in means. For the `"wilcox"` method,
+#'      it is the difference in medians. For the `"var"` method, it is the ratio
+#'      of variances. The default value is 0 for the `"t"` and `"wilcox"` methods
+#'      and 1 for the `"var"` method.
+#' @param conf_level a numeric value specifying the level of the confidence
+#'      interval. The default value is 0.95.
+#' @param max_p_value the maximum p-value of a test for the pattern to be considered
+#'     significant. If the p-value of the test is greater than `max_p_value`, the
+#'     pattern is not included in the result.
 #' @param min_length the minimum size (the minimum number of predicates) of the
 #'      condition to be generated (must be greater or equal to 0). If 0, the
 #'      empty condition is generated in the first place.
@@ -61,13 +71,7 @@
 #'      relative frequency of rows such that all condition predicates are TRUE on it.
 #'      For numerical (double) input, the support is computed as the mean (over all
 #'      rows) of multiplications of predicate values.
-#' @param max_p_value the maximum p-value of a test for the pattern to be considered
-#'     significant. If the p-value of the test is greater than `max_p_value`, the
-#'     pattern is not included in the result.
 #' @param threads the number of threads to use for parallel computation.
-#' @param ... Further arguments passed to the underlying test function
-#'      ([t.test()], [wilcox.test()], or [var.test()] accordingly to the
-#'      selected method).
 #' @return A tibble with found patterns in rows. The following columns are always
 #'      present:
 #'      \item{condition}{the condition of the pattern as a character string
@@ -138,14 +142,20 @@ dig_paired_baseline_contrasts <- function(x,
                                           disjoint = var_names(colnames(x)),
                                           method = "t",
                                           alternative = "two.sided",
+                                          h0 = if (method == "var") 1 else 0,
+                                          conf_level = 0.95,
+                                          max_p_value = 1,
                                           min_length = 0L,
                                           max_length = Inf,
                                           min_support = 0.0,
-                                          max_p_value = 0.05,
-                                          threads = 1,
-                                          ...) {
+                                          threads = 1) {
     .must_be_enum(method, c("t", "wilcox", "var"))
     .must_be_enum(alternative, c("two.sided", "less", "greater"))
+    .must_be_double_scalar(h0)
+    .must_be_double_scalar(conf_level)
+    .must_be_in_range(conf_level, c(0, 1))
+    .must_be_double_scalar(max_p_value)
+    .must_be_in_range(max_p_value, c(0, 1))
 
     condition <- enquo(condition)
     xvars <- enquo(xvars)
@@ -153,39 +163,14 @@ dig_paired_baseline_contrasts <- function(x,
 
     f <- list()
     f[["t"]] <- function(pd) {
-        fit <- try(t.test(pd[[1]],
-                          pd[[2]],
-                          alternative = alternative,
-                          paired = TRUE,
-                          ...),
-                   silent = TRUE)
-        if (inherits(fit, "try-error")) {
-            return(list(estimate_x = NA,
-                        estimate_y = NA,
-                        t_statistic = NA,
-                        df = NA,
-                        p_value = NA,
-                        rows = nrow(pd),
-                        conf_int_lo = NA,
-                        conf_int_hi = NA,
-                        stderr = NA,
-                        alternative = NA,
-                        method = "error"))
-        } else if (fit$p.value > max_p_value) {
-            return(NULL)
-        } else {
-            return(list(estimate_x = fit$estimate[1],
-                        estimate_y = fit$estimate[2],
-                        t_statistic = fit$statistic,
-                        df = fit$parameter,
-                        p_value = fit$p.value,
-                        rows = nrow(pd),
-                        conf_int_lo = fit$conf.int[1],
-                        conf_int_hi = fit$conf.int[2],
-                        stderr = fit$stderr,
-                        alternative = fit$alternative,
-                        method = fit$method))
-        }
+        .t_test(x = pd[[1]],
+                y = pd[[2]],
+                mu = h0,
+                alternative = alternative,
+                paired = TRUE,
+                var_equal = FALSE,
+                conf_level = conf_level,
+                max_p_value = max_p_value)
     }
     f[["wilcox"]] <- function(pd) {
         fit <- try(wilcox.test(pd[[1]],
@@ -193,8 +178,7 @@ dig_paired_baseline_contrasts <- function(x,
                                alternative = alternative,
                                paired = TRUE,
                                conf.int = TRUE,
-                               exact = FALSE,
-                               ...),
+                               exact = FALSE),
                    silent = TRUE)
         if (inherits(fit, "try-error")) {
             return(list(estimate = NA,
@@ -221,8 +205,7 @@ dig_paired_baseline_contrasts <- function(x,
     f[["var"]] <- function(pd) {
         fit <- try(var.test(pd[[1]],
                             pd[[2]],
-                            alternative = alternative,
-                            ...),
+                            alternative = alternative),
                    silent = TRUE)
         if (inherits(fit, "try-error")) {
             return(list(estimate = NA,
@@ -270,6 +253,5 @@ dig_paired_baseline_contrasts <- function(x,
                                   arg_max_length = "max_length",
                                   arg_min_support = "min_support",
                                   arg_threads = "threads",
-                                  call = current_env()),
-             ...)
+                                  call = current_env()))
 }
