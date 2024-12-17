@@ -207,9 +207,106 @@ test_that("dig_grid crisp with NA", {
                    "c|e|g|i m|o|q|s",
                    "c|e|g|i C|E|G|I",
                    "k|m|o|q|s A|C|E|G|I"))
-
 })
 
+
+test_that("dig_grid with NULL results", {
+    d <- data.frame(a = c(TRUE, FALSE),
+                    b = c(TRUE, TRUE, FALSE),
+                    x = letters[1:12],
+                    y = letters[11:22],
+                    z = LETTERS[1:12])
+
+    f <- function(pd) {
+        if (all(names(pd) == c("x", "y"))) {
+            return(NULL)
+        }
+        list(value = 1)
+    }
+
+    res <- dig_grid(x = d,
+                    f = f,
+                    type = "crisp",
+                    na_rm = TRUE,
+                    condition = where(is.logical),
+                    xvars = where(is.character),
+                    yvars = where(is.character))
+
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 8)
+    expect_equal(colnames(res),
+                 c("condition", "support", "xvar", "yvar", "value"))
+    expect_equal(res$condition,
+                 c(rep("{}", 2), rep("{b}", 2), rep("{a}", 2), rep("{a,b}", 2)))
+    expect_equal(res$xvar,
+                 rep(c("x", "y"), 4))
+    expect_equal(res$yvar,
+                 rep(c("z", "z"), 4))
+    expect_equal(res$support,
+                 c(1, 1, 2/3, 2/3, 1/2, 1/2, 1/3, 1/3), tolerance = 1e-3)
+    expect_equal(res$value,
+                 rep(1, 8))
+
+    f <- function(pd, nd) {
+        if (all(names(pd) == c("x", "y"))) {
+            return(NULL)
+        }
+        list(value = 1)
+    }
+
+    res <- dig_grid(x = d,
+                    f = f,
+                    type = "crisp",
+                    na_rm = TRUE,
+                    condition = where(is.logical),
+                    xvars = where(is.character),
+                    yvars = where(is.character))
+
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 8)
+    expect_equal(colnames(res),
+                 c("condition", "support", "xvar", "yvar", "value"))
+    expect_equal(res$condition,
+                 c(rep("{}", 2), rep("{b}", 2), rep("{a}", 2), rep("{a,b}", 2)))
+    expect_equal(res$xvar,
+                 rep(c("x", "y"), 4))
+    expect_equal(res$yvar,
+                 rep(c("z", "z"), 4))
+    expect_equal(res$support,
+                 c(1, 1, 2/3, 2/3, 1/2, 1/2, 1/3, 1/3), tolerance = 1e-3)
+    expect_equal(res$value,
+                 rep(1, 8))
+
+    f <- function(d, weights) {
+        if (all(names(d) == c("x", "y"))) {
+            return(NULL)
+        }
+        list(value = 1)
+    }
+
+    res <- dig_grid(x = d,
+                    f = f,
+                    type = "fuzzy",
+                    na_rm = TRUE,
+                    condition = where(is.logical),
+                    xvars = where(is.character),
+                    yvars = where(is.character))
+
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 8)
+    expect_equal(colnames(res),
+                 c("condition", "support", "xvar", "yvar", "value"))
+    expect_equal(res$condition,
+                 c(rep("{}", 2), rep("{b}", 2), rep("{a}", 2), rep("{a,b}", 2)))
+    expect_equal(res$xvar,
+                 rep(c("x", "y"), 4))
+    expect_equal(res$yvar,
+                 rep(c("z", "z"), 4))
+    expect_equal(res$support,
+                 c(1, 1, 2/3, 2/3, 1/2, 1/2, 1/3, 1/3), tolerance = 1e-3)
+    expect_equal(res$value,
+                 rep(1, 8))
+})
 
 test_that("dig_grid fuzzy", {
     d <- data.frame(a = 1.0,

@@ -211,8 +211,22 @@ dig_grid <- function(x,
                      allow = allow,
                      error_context = error_context)
 
-    if ("nd" %in% formalArgs(f)) {
-        sub_fcrisp <- function(indices) {
+    if (type == "fuzzy") {
+        # fuzzy variant
+        subF <- function(weights) {
+            apply(grid, 1, function(row) {
+                dd <- x[, row, drop = FALSE]
+                if (na_rm) {
+                    dd <- na.omit(dd)
+                    weights <- weights[attr(dd, "na.action")]
+                }
+
+                f(d = dd, weights = weights)
+            })
+        }
+    } else if ("nd" %in% formalArgs(f)) {
+        # crisp variant with nd
+        subF <- function(indices) {
             pd <- x[indices, , drop = FALSE]
             nd <- x[!indices, , drop = FALSE]
 
@@ -228,7 +242,8 @@ dig_grid <- function(x,
             })
         }
     } else {
-        sub_fcrisp <- function(indices) {
+        # crisp variant without nd
+        subF <- function(indices) {
             pd <- x[indices, , drop = FALSE]
 
             apply(grid, MARGIN = 1, simplify = FALSE, FUN = function(row) {
@@ -241,9 +256,9 @@ dig_grid <- function(x,
         }
     }
 
-    fcrisp <- function(condition, support, indices) {
+    mainF <- function(condition, support, param) {
         cond <- format_condition(names(condition))
-        result <- sub_fcrisp(indices)
+        result <- subF(param)
         isnull <- sapply(result, is.null)
         result <- lapply(result[!isnull], as_tibble)
         result <- do.call(rbind, result)
@@ -259,32 +274,14 @@ dig_grid <- function(x,
         result
     }
 
-    ffuzzy <- function(condition, support, weights) {
-        cond <- format_condition(names(condition))
-
-        result <- apply(grid, 1, function(row) {
-            dd <- x[, row, drop = FALSE]
-            if (na_rm) {
-                dd <- na.omit(dd)
-                weights <- weights[attr(dd, "na.action")]
-            }
-
-            f(d = dd, weights = weights)
-        })
-
-        result <- lapply(result, as_tibble)
-        result <- do.call(rbind, result)
-
-        cbind(condition = rep(cond, nrow(grid)),
-              support = support,
-              grid,
-              result)
+    if (type == "crisp") {
+        callbackF <- function(condition, support, indices) mainF(condition, support, indices)
+    } else {
+        callbackF <- function(condition, support, weights) mainF(condition, support, weights)
     }
 
-    ff <- ifelse(type == "crisp", fcrisp, ffuzzy)
-
     res <- dig(x = x,
-               f = ff,
+               f = callbackF,
                condition = !!condition,
                disjoint = disjoint,
                min_length = min_length,
