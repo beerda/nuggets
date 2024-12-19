@@ -11,14 +11,19 @@ dig_paired_baseline_contrasts(
   xvars = where(is.numeric),
   yvars = where(is.numeric),
   disjoint = var_names(colnames(x)),
+  min_length = 0L,
+  max_length = Inf,
+  min_support = 0,
   method = "t",
   alternative = "two.sided",
   h0 = if (method == "var") 1 else 0,
   conf_level = 0.95,
   max_p_value = 1,
-  min_length = 0L,
-  max_length = Inf,
-  min_support = 0,
+  t_var_equal = FALSE,
+  wilcox_exact = FALSE,
+  wilcox_correct = TRUE,
+  wilcox_tol_root = 1e-04,
+  wilcox_digits_rank = Inf,
   threads = 1
 )
 }
@@ -44,6 +49,21 @@ present together in a single condition. If \code{x} is prepared with
 \code{\link[=partition]{partition()}}, using the \code{\link[=var_names]{var_names()}} function on \code{x}'s column names
 is a convenient way to create the \code{disjoint} vector.}
 
+\item{min_length}{the minimum size (the minimum number of predicates) of the
+condition to be generated (must be greater or equal to 0). If 0, the
+empty condition is generated in the first place.}
+
+\item{max_length}{The maximum size (the maximum number of predicates) of the
+condition to be generated. If equal to Inf, the maximum length of
+conditions is limited only by the number of available predicates.}
+
+\item{min_support}{the minimum support of a condition to trigger the callback
+function for it. The support of the condition is the relative frequency
+of the condition in the dataset \code{x}. For logical data, it equals to the
+relative frequency of rows such that all condition predicates are TRUE on it.
+For numerical (double) input, the support is computed as the mean (over all
+rows) of multiplications of predicate values.}
+
 \item{method}{a character string indicating which contrast to compute.
 One of \code{"t"}, \code{"wilcox"}, or \code{"var"}. \code{"t"} (resp. \code{"wilcos"}) compute
 a parametric (resp. non-parametric) test on equality in position, and
@@ -66,20 +86,32 @@ interval. The default value is 0.95.}
 significant. If the p-value of the test is greater than \code{max_p_value}, the
 pattern is not included in the result.}
 
-\item{min_length}{the minimum size (the minimum number of predicates) of the
-condition to be generated (must be greater or equal to 0). If 0, the
-empty condition is generated in the first place.}
+\item{t_var_equal}{(used for the \code{"t"} method only) a logical value indicating
+whether the variances of the two samples are assumed to be equal. If
+\code{TRUE}, the pooled variance is used to estimate the variance in the t-test.
+If \code{FALSE}, the Welch (or Satterthwaite) approximation to the degrees of
+freedom is used. See \code{\link[=t.test]{t.test()}} and its \code{var.equal} argument for more
+information.}
 
-\item{max_length}{The maximum size (the maximum number of predicates) of the
-condition to be generated. If equal to Inf, the maximum length of
-conditions is limited only by the number of available predicates.}
+\item{wilcox_exact}{(used for the \code{"wilcox"} method only) a logical value
+indicating whether the exact p-value should be computed. If \code{NULL}, the
+exact p-value is computed for sample sizes less than 50. See \code{\link[=wilcox.test]{wilcox.test()}}
+and its \code{exact} argument for more information. Contrary to the behavior
+of \code{\link[=wilcox.test]{wilcox.test()}}, the default value is \code{FALSE}.}
 
-\item{min_support}{the minimum support of a condition to trigger the callback
-function for it. The support of the condition is the relative frequency
-of the condition in the dataset \code{x}. For logical data, it equals to the
-relative frequency of rows such that all condition predicates are TRUE on it.
-For numerical (double) input, the support is computed as the mean (over all
-rows) of multiplications of predicate values.}
+\item{wilcox_correct}{(used for the \code{"wilcox"} method only) a logical value
+indicating whether the continuity correction should be applied in the
+normal approximation for the p-value, if \code{wilcox_exact} is \code{FALSE}. See
+\code{\link[=wilcox.test]{wilcox.test()}} and its \code{correct} argument for more information.}
+
+\item{wilcox_tol_root}{(used for the \code{"wilcox"} method only) a numeric value
+specifying the tolerance for the root-finding algorithm used to compute
+the exact p-value. See \code{\link[=wilcox.test]{wilcox.test()}} and its \code{tol.root} argument for
+more information.}
+
+\item{wilcox_digits_rank}{(used for the \code{"wilcox"} method only) a numeric value
+specifying the number of digits to round the ranks to. See \code{\link[=wilcox.test]{wilcox.test()}}
+and its \code{digits.rank} argument for more information.}
 
 \item{threads}{the number of threads to use for parallel computation.}
 }
