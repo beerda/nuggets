@@ -1,6 +1,6 @@
 test_that(".wilcox_test error", {
     expect_warning(res <- .wilcox_test(NULL, 2),
-                   "wilcox.test: 'x' must be numeric")
+                   "wilcox.test: error: 'x' must be numeric")
     expect_null(res)
 })
 
@@ -19,7 +19,7 @@ test_that(".wilcox_test one-sample", {
                         exact = FALSE)
 
     expect_true(is.list(res))
-    expect_equal(length(res), 8)
+    expect_equal(length(res), 9)
     expect_equal(res$estimate, 0)
     expect_equal(res$statistic, 105)
     expect_equal(res$p_value, 1)
@@ -28,6 +28,7 @@ test_that(".wilcox_test one-sample", {
     expect_equal(res$conf_hi, 3, tolerance = 1e-4)
     expect_equal(res$alternative, "two.sided")
     expect_equal(res$method, "Wilcoxon signed rank test with continuity correction")
+    expect_equal(res$comment, "")
 })
 
 test_that(".wilcox_test paired", {
@@ -41,7 +42,7 @@ test_that(".wilcox_test paired", {
                         alternative = "two.sided")
 
     expect_true(is.list(res))
-    expect_equal(length(res), 8)
+    expect_equal(length(res), 9)
     expect_equal(res$estimate, 0)
     expect_equal(res$statistic, 105, tolerance = 1e-4)
     expect_equal(res$p_value, 1.0, tolerance = 1e-3)
@@ -50,6 +51,7 @@ test_that(".wilcox_test paired", {
     expect_equal(res$conf_hi, 6, tolerance = 1e-4)
     expect_equal(res$alternative, "two.sided")
     expect_equal(res$method, "Wilcoxon signed rank test with continuity correction")
+    expect_equal(res$comment, "")
 })
 
 test_that(".wilcox_test two-sample", {
@@ -63,7 +65,7 @@ test_that(".wilcox_test two-sample", {
                         alternative = "two.sided")
 
     expect_true(is.list(res))
-    expect_equal(length(res), 9)
+    expect_equal(length(res), 10)
     expect_equal(res$estimate, -1)
     expect_equal(res$statistic, 162, tolerance = 1e-4)
     expect_equal(res$p_value, 0.60857, tolerance = 1e-4)
@@ -73,4 +75,21 @@ test_that(".wilcox_test two-sample", {
     expect_equal(res$conf_hi, 3, tolerance = 1e-4)
     expect_equal(res$alternative, "two.sided")
     expect_equal(res$method, "Wilcoxon rank sum test with continuity correction")
+    expect_equal(res$comment, "")
+})
+
+test_that(".wilcox_test warning in comment", {
+    x <- 1:20
+    y <- x + 1
+
+    res <- .wilcox_test(x = x,
+                        y = y,
+                        paired = TRUE,
+                        exact = FALSE,
+                        alternative = "two.sided")
+
+    expect_true(is.list(res))
+    expect_equal(length(res), 9)
+    expect_equal(res$method, "Wilcoxon signed rank test with continuity correction")
+    expect_equal(res$comment, "warning: cannot compute confidence interval when all observations are zero or tied")
 })

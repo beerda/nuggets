@@ -13,21 +13,21 @@
                     var_equal = FALSE,
                     conf_level = 0.95,
                     max_p_value = 1) {
-    fit <- try(t.test(x = x,
-                      y = y,
-                      alternative = alternative,
-                      mu = mu,
-                      paired = paired,
-                      var.equal = var_equal,
-                      conf.level = conf_level),
-               silent = TRUE)
+    res <- .quietly(t.test(x = x,
+                           y = y,
+                           alternative = alternative,
+                           mu = mu,
+                           paired = paired,
+                           var.equal = var_equal,
+                           conf.level = conf_level))
+    fit <- res$result
 
-    if (inherits(fit, "try-error")) {
+    if (is.null(fit)) {
         # error
-        warn(paste("t.test:", conditionMessage(attr(fit, "condition"))))
+        warn(paste("t.test:", res$comment))
         return(NULL)
 
-    } else if (fit$p.value > max_p_value) {
+    } else if (is.finite(fit$p.value) && fit$p.value > max_p_value) {
         # omit the result
         return(NULL)
 
@@ -42,7 +42,8 @@
                     conf_hi = as.numeric(fit$conf.int[2]),
                     stderr = as.numeric(fit$stderr),
                     alternative = fit$alternative,
-                    method = fit$method))
+                    method = fit$method,
+                    comment = res$comment))
 
     } else {
         # two-sample test
@@ -57,6 +58,7 @@
                     conf_hi = as.numeric(fit$conf.int[2]),
                     stderr = as.numeric(fit$stderr),
                     alternative = fit$alternative,
-                    method = fit$method))
+                    method = fit$method,
+                    comment = res$comment))
     }
 }

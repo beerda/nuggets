@@ -16,25 +16,25 @@
                          tol_root = 1e-4,
                          digits_rank = Inf,
                          max_p_value = 1) {
-    fit <- try(wilcox.test(x = x,
-                           y = y,
-                           alternative = alternative,
-                           mu = mu,
-                           paired = paired,
-                           exact = exact,
-                           correct = correct,
-                           conf.int = TRUE,
-                           conf.level = conf_level,
-                           tol.root = tol_root,
-                           digits.rank = digits_rank),
-               silent = TRUE)
+    res <- .quietly(wilcox.test(x = x,
+                                y = y,
+                                alternative = alternative,
+                                mu = mu,
+                                paired = paired,
+                                exact = exact,
+                                correct = correct,
+                                conf.int = TRUE,
+                                conf.level = conf_level,
+                                tol.root = tol_root,
+                                digits.rank = digits_rank))
+    fit <- res$result
 
-    if (inherits(fit, "try-error")) {
+    if (is.null(fit)) {
         # error
-        warn(paste("wilcox.test:", conditionMessage(attr(fit, "condition"))))
+        warn(paste("wilcox.test:", res$comment))
         return(NULL)
 
-    } else if (fit$p.value > max_p_value) {
+    } else if (is.finite(fit$p.value) && fit$p.value > max_p_value) {
         # omit the result
         return(NULL)
 
@@ -47,7 +47,8 @@
                     conf_lo = as.numeric(fit$conf.int[1]),
                     conf_hi = as.numeric(fit$conf.int[2]),
                     alternative = fit$alternative,
-                    method = fit$method))
+                    method = fit$method,
+                    comment = res$comment))
 
     } else {
         # two-sample test
@@ -59,6 +60,7 @@
                     conf_lo = as.numeric(fit$conf.int[1]),
                     conf_hi = as.numeric(fit$conf.int[2]),
                     alternative = fit$alternative,
-                    method = fit$method))
+                    method = fit$method,
+                    comment = res$comment))
     }
 }

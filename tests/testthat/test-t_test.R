@@ -1,6 +1,6 @@
 test_that(".t_test error", {
     expect_warning(res <- .t_test(1, 2),
-                   "t.test: not enough 'x' observations")
+                   "t.test: error: not enough 'x' observations")
     expect_null(res)
 })
 
@@ -17,7 +17,7 @@ test_that(".t_test one-sample", {
     res <- .t_test(x = x, mu = 0, alternative = "two.sided")
 
     expect_true(is.list(res))
-    expect_equal(length(res), 10)
+    expect_equal(length(res), 11)
     expect_equal(res$estimate, 0)
     expect_equal(res$statistic, 0)
     expect_equal(res$df, 20)
@@ -28,6 +28,7 @@ test_that(".t_test one-sample", {
     expect_equal(res$stderr, 1.3540, tolerance = 1e-4)
     expect_equal(res$alternative, "two.sided")
     expect_equal(res$method, "One Sample t-test")
+    expect_equal(res$comment, "")
 })
 
 test_that(".t_test paired", {
@@ -38,7 +39,7 @@ test_that(".t_test paired", {
     res <- .t_test(x = x, y = y, paired = TRUE, alternative = "two.sided")
 
     expect_true(is.list(res))
-    expect_equal(length(res), 10)
+    expect_equal(length(res), 11)
     expect_equal(res$estimate, -0.7)
     expect_equal(res$statistic, -2.3333, tolerance = 1e-4)
     expect_equal(res$df, 19)
@@ -49,6 +50,7 @@ test_that(".t_test paired", {
     expect_equal(res$stderr, 0.3, tolerance = 1e-4)
     expect_equal(res$alternative, "two.sided")
     expect_equal(res$method, "Paired t-test")
+    expect_equal(res$comment, "")
 })
 
 test_that(".t_test two-sample", {
@@ -58,7 +60,7 @@ test_that(".t_test two-sample", {
     res <- .t_test(x = x, y = y, paired = FALSE, alternative = "two.sided")
 
     expect_true(is.list(res))
-    expect_equal(length(res), 12)
+    expect_equal(length(res), 13)
     expect_equal(res$estimate_x, 10.5)
     expect_equal(res$estimate_y, 11.5)
     expect_equal(res$statistic, -0.54772, tolerance = 1e-4)
@@ -71,4 +73,5 @@ test_that(".t_test two-sample", {
     expect_equal(res$stderr, 1.8257, tolerance = 1e-4)
     expect_equal(res$alternative, "two.sided")
     expect_equal(res$method, "Welch Two Sample t-test")
+    expect_equal(res$comment, "")
 })
