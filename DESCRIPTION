@@ -31,9 +31,11 @@ Imports:
     cli,
     lifecycle,
     methods,
+    purrr,
     Rcpp,
     rlang,
     stats,
+    stringr,
     tibble,
     tidyr,
     tidyselect
