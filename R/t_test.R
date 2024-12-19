@@ -31,21 +31,8 @@
         # omit the result
         return(NULL)
 
-    } else if (is.null(y)) {
-        # one-sample test
-        return(list(estimate = as.numeric(fit$estimate[1]),
-                    statistic = as.numeric(fit$statistic[1]),
-                    df = as.numeric(fit$parameter[1]),
-                    p_value = as.numeric(fit$p.value),
-                    n = length(x),
-                    conf_lo = as.numeric(fit$conf.int[1]),
-                    conf_hi = as.numeric(fit$conf.int[2]),
-                    stderr = as.numeric(fit$stderr),
-                    alternative = fit$alternative,
-                    method = fit$method))
-
-    } else if (paired) {
-        # paired test
+    } else if (is.null(y) || paired) {
+        # one-sample test or paired test
         return(list(estimate = as.numeric(fit$estimate[1]),
                     statistic = as.numeric(fit$statistic[1]),
                     df = as.numeric(fit$parameter[1]),
