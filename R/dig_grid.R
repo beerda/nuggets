@@ -84,6 +84,9 @@
 #'      relative frequency of rows such that all condition predicates are TRUE on it.
 #'      For numerical (double) input, the support is computed as the mean (over all
 #'      rows) of multiplications of predicate values.
+#' @param max_support the maximum support of a condition to trigger the callback
+#'      function for it. See argument `min_support` for details of what is the
+#'      support of a condition.
 #' @param threads the number of threads to use for parallel computation.
 #' @param error_context a list of details to be used in error messages.
 #'      This argument is useful when `dig_grid()` is called from another
@@ -157,6 +160,7 @@ dig_grid <- function(x,
                      min_length = 0L,
                      max_length = Inf,
                      min_support = 0.0,
+                     max_support = 1.0,
                      threads = 1L,
                      error_context = list(arg_x = "x",
                                           arg_f = "f",
@@ -170,6 +174,7 @@ dig_grid <- function(x,
                                           arg_min_length = "min_length",
                                           arg_max_length = "max_length",
                                           arg_min_support = "min_support",
+                                          arg_max_support = "max_support",
                                           arg_threads = "threads",
                                           call = current_env()),
                      ...) {
@@ -287,6 +292,7 @@ dig_grid <- function(x,
                min_length = min_length,
                max_length = max_length,
                min_support = min_support,
+               max_support = max_support,
                threads = threads,
                error_context = list(arg_x = error_context$arg_x,
                                     arg_condition = error_context$arg_condition,
@@ -294,6 +300,7 @@ dig_grid <- function(x,
                                     arg_min_length = error_context$arg_min_length,
                                     arg_max_length = error_context$arg_max_length,
                                     arg_min_support = error_context$arg_min_support,
+                                    arg_max_support = error_context$arg_max_support,
                                     arg_threads = error_context$arg_threads,
                                     call = error_context$call),
                ...)

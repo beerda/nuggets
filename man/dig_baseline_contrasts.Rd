@@ -13,6 +13,7 @@ dig_baseline_contrasts(
   min_length = 0L,
   max_length = Inf,
   min_support = 0,
+  max_support = 1,
   method = "t",
   alternative = "two.sided",
   h0 = 0,
@@ -57,6 +58,10 @@ of the condition in the dataset \code{x}. For logical data, it equals to the
 relative frequency of rows such that all condition predicates are TRUE on it.
 For numerical (double) input, the support is computed as the mean (over all
 rows) of multiplications of predicate values.}
+
+\item{max_support}{the maximum support of a condition to trigger the callback
+function for it. See argument \code{min_support} for details of what is the
+support of a condition.}
 
 \item{method}{a character string indicating which contrast to compute.
 One of \code{"t"}, for parametric, or \code{"wilcox"}, for non-parametric test on
@@ -151,7 +156,8 @@ are computed in sub-data corresponding to conditions generated from the
 conditions only, i.e., the condition columns in \code{x} must be logical.
 }
 \seealso{
-\code{\link[=dig_paired_baseline_contrasts]{dig_paired_baseline_contrasts()}}, \code{\link[=dig]{dig()}}, \code{\link[=dig_grid]{dig_grid()}},
+\code{\link[=dig_paired_baseline_contrasts]{dig_paired_baseline_contrasts()}}, \code{\link[=dig_conditional_contrasts]{dig_conditional_contrasts()}},
+\code{\link[=dig]{dig()}}, \code{\link[=dig_grid]{dig_grid()}},
 \code{\link[stats:t.test]{stats::t.test()}}, \code{\link[stats:wilcox.test]{stats::wilcox.test()}}
 }
 \author{

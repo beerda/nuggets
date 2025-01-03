@@ -16,6 +16,7 @@ dig_correlations(
   min_length = 0L,
   max_length = Inf,
   min_support = 0,
+  max_support = 1,
   threads = 1,
   ...
 )
@@ -67,6 +68,10 @@ of the condition in the dataset \code{x}. For logical data, it equals to the
 relative frequency of rows such that all condition predicates are TRUE on it.
 For numerical (double) input, the support is computed as the mean (over all
 rows) of multiplications of predicate values.}
+
+\item{max_support}{the maximum support of a condition to trigger the callback
+function for it. See argument \code{min_support} for details of what is the
+support of a condition.}
 
 \item{threads}{the number of threads to use for parallel computation.}
 

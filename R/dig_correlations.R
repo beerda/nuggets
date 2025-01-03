@@ -55,6 +55,9 @@
 #'      relative frequency of rows such that all condition predicates are TRUE on it.
 #'      For numerical (double) input, the support is computed as the mean (over all
 #'      rows) of multiplications of predicate values.
+#' @param max_support the maximum support of a condition to trigger the callback
+#'      function for it. See argument `min_support` for details of what is the
+#'      support of a condition.
 #' @param threads the number of threads to use for parallel computation.
 #' @param ... Further arguments, currently unused.
 #' @return A tibble with found patterns.
@@ -89,6 +92,7 @@ dig_correlations <- function(x,
                              min_length = 0L,
                              max_length = Inf,
                              min_support = 0.0,
+                             max_support = 1.0,
                              threads = 1,
                              ...) {
     .must_be_enum(method, c("pearson", "kendall", "spearman"))
@@ -123,6 +127,7 @@ dig_correlations <- function(x,
              min_length = min_length,
              max_length = max_length,
              min_support = min_support,
+             max_support = max_support,
              threads = threads,
              error_context = list(arg_x = "x",
                                   arg_condition = "condition",
@@ -131,6 +136,7 @@ dig_correlations <- function(x,
                                   arg_min_length = "min_length",
                                   arg_max_length = "max_length",
                                   arg_min_support = "min_support",
+                                  arg_max_support = "max_support",
                                   arg_threads = "threads",
                                   call = current_env()),
              ...)
