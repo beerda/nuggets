@@ -111,6 +111,7 @@ generated from <code>condition</code> columns.</p>
 <span>  min_length <span class="op">=</span> <span class="fl">0L</span>,</span>
 <span>  max_length <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  min_support <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  max_support <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  threads <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -187,6 +188,12 @@ of the condition in the dataset <code>x</code>. For logical data, it equals to t
 relative frequency of rows such that all condition predicates are TRUE on it.
 For numerical (double) input, the support is computed as the mean (over all
 rows) of multiplications of predicate values.</p></dd>
+
+
+<dt id="arg-max-support">max_support<a class="anchor" aria-label="anchor" href="#arg-max-support"></a></dt>
+<dd><p>the maximum support of a condition to trigger the callback
+function for it. See argument <code>min_support</code> for details of what is the
+support of a condition.</p></dd>
 
 
 <dt id="arg-threads">threads<a class="anchor" aria-label="anchor" href="#arg-threads"></a></dt>

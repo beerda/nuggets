@@ -137,15 +137,16 @@ predicates AND the focus are TRUE on it. Foci with support lower than
 <span>  max_length <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  min_support <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  min_focus_support <span class="op">=</span> <span class="va">min_support</span>,</span>
+<span>  max_support <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  filter_empty_foci <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  t_norm <span class="op">=</span> <span class="st">"goguen"</span>,</span>
 <span>  threads <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  error_context <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>arg_x <span class="op">=</span> <span class="st">"x"</span>, arg_f <span class="op">=</span> <span class="st">"f"</span>, arg_condition <span class="op">=</span> <span class="st">"condition"</span>, arg_focus <span class="op">=</span></span>
 <span>    <span class="st">"focus"</span>, arg_disjoint <span class="op">=</span> <span class="st">"disjoint"</span>, arg_min_length <span class="op">=</span> <span class="st">"min_length"</span>, arg_max_length <span class="op">=</span></span>
 <span>    <span class="st">"max_length"</span>, arg_min_support <span class="op">=</span> <span class="st">"min_support"</span>, arg_min_focus_support <span class="op">=</span></span>
-<span>    <span class="st">"min_focus_support"</span>, arg_filter_empty_foci <span class="op">=</span> <span class="st">"filter_empty_foci"</span>, arg_t_norm <span class="op">=</span></span>
-<span>    <span class="st">"t_norm"</span>, arg_threads <span class="op">=</span> <span class="st">"threads"</span>, call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  <span class="va">...</span></span>
+<span>    <span class="st">"min_focus_support"</span>, arg_max_support <span class="op">=</span> <span class="st">"max_support"</span>, arg_filter_empty_foci <span class="op">=</span></span>
+<span>    <span class="st">"filter_empty_foci"</span>, arg_t_norm <span class="op">=</span> <span class="st">"t_norm"</span>, arg_threads <span class="op">=</span> <span class="st">"threads"</span>, call <span class="op">=</span></span>
+<span>    <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -244,6 +245,10 @@ For numerical (double) input, the support is computed as the mean (over all
 rows) of multiplications of predicate values.</p></dd>
 
 
+<dt id="arg-max-support">max_support<a class="anchor" aria-label="anchor" href="#arg-max-support"></a></dt>
+<dd><p>the maximum support of a condition to trigger the callback</p></dd>
+
+
 <dt id="arg-filter-empty-foci">filter_empty_foci<a class="anchor" aria-label="anchor" href="#arg-filter-empty-foci"></a></dt>
 <dd><p>a logical scalar indicating whether to skip conditions,
 for which no focus remains available after filtering by <code>min_focus_support</code>.
@@ -281,16 +286,13 @@ string</p></li>
 string</p></li>
 <li><p><code>arg_min_focus_support</code> - the name of the argument <code>min_focus_support</code>
 as a character string</p></li>
+<li><p><code>arg_max_support</code> - the name of the argument <code>max_support</code> as a character</p></li>
 <li><p><code>arg_filter_empty_foci</code> - the name of the argument <code>filter_empty_foci</code>
 as a character string</p></li>
 <li><p><code>arg_t_norm</code> - the name of the argument <code>t_norm</code> as a character string</p></li>
 <li><p><code>arg_threads</code> - the name of the argument <code>threads</code> as a character string</p></li>
 <li><p><code>call</code> - an environment in which to evaluate the error messages.</p></li>
 </ul></dd>
-
-
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Further arguments, currently unused.</p></dd>
 
 </dl></div>
     <div class="section level2">
