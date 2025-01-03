@@ -236,7 +236,7 @@ dig_grid <- function(x,
 
     if (type == "fuzzy") {
         # fuzzy variant
-        callbackF <- function(condition, support, weights) {
+        tempF1 <- function(condition, support, weights) {
             result <- apply(grid, 1, function(row) {
                 dd <- x[, row, drop = FALSE]
                 if (na_rm) {
@@ -249,9 +249,10 @@ dig_grid <- function(x,
 
             processF(condition, support, result)
         }
+        callbackF <- tempF1
     } else if ("nd" %in% formalArgs(f)) {
         # crisp variant with nd
-        callbackF <- function(condition, support, indices) {
+        tempF2 <- function(condition, support, indices) {
             pd <- x[indices, , drop = FALSE]
             nd <- x[!indices, , drop = FALSE]
 
@@ -268,9 +269,10 @@ dig_grid <- function(x,
 
             processF(condition, support, result)
         }
+        callbackF <- tempF2
     } else {
         # crisp variant without nd
-        callbackF <- function(condition, support, indices) {
+        tempF3 <- function(condition, support, indices) {
             pd <- x[indices, , drop = FALSE]
 
             result <- apply(grid, MARGIN = 1, simplify = FALSE, FUN = function(row) {
@@ -283,6 +285,7 @@ dig_grid <- function(x,
 
             processF(condition, support, result)
         }
+        callbackF <- tempF3
     }
 
     res <- dig(x = x,
