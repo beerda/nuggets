@@ -16,7 +16,7 @@ dig_paired_baseline_contrasts(
   min_support = 0,
   method = "t",
   alternative = "two.sided",
-  h0 = if (method == "var") 1 else 0,
+  h0 = 0,
   conf_level = 0.95,
   max_p_value = 1,
   t_var_equal = FALSE,
@@ -65,9 +65,8 @@ For numerical (double) input, the support is computed as the mean (over all
 rows) of multiplications of predicate values.}
 
 \item{method}{a character string indicating which contrast to compute.
-One of \code{"t"}, \code{"wilcox"}, or \code{"var"}. \code{"t"} (resp. \code{"wilcos"}) compute
-a parametric (resp. non-parametric) test on equality in position, and
-\code{"var"} performs the F-test on equality of variance.}
+One of \code{"t"}, for parametric, or \code{"wilcox"}, for non-parametric test on
+equality in position.}
 
 \item{alternative}{indicates the alternative hypothesis and must be one of
 \code{"two.sided"}, \code{"greater"} or \code{"less"}. \code{"greater"} corresponds to
@@ -75,9 +74,7 @@ positive association, \code{"less"} to negative association.}
 
 \item{h0}{a numeric value specifying the null hypothesis for the test. For
 the \code{"t"} method, it is the difference in means. For the \code{"wilcox"} method,
-it is the difference in medians. For the \code{"var"} method, it is the ratio
-of variances. The default value is 0 for the \code{"t"} and \code{"wilcox"} methods
-and 1 for the \code{"var"} method.}
+it is the difference in medians. The default value is 0.}
 
 \item{conf_level}{a numeric value specifying the level of the confidence
 interval. The default value is 0.95.}
@@ -148,17 +145,6 @@ present (see also \code{\link[=wilcox.test]{wilcox.test()}}):
 \item{W_statistic}{the Wilcoxon rank sum statistic.}
 \item{conf_int_lo}{the lower bound of the confidence interval.}
 \item{conf_int_hi}{the upper bound of the confidence interval.}
-For the \code{"var"} method, the following additional columns are also
-present (see also \code{\link[=var.test]{var.test()}}):
-\item{estimate}{the ratio of the sample variances of variables
-\code{xvar} and \code{yvar}.}
-\item{F_statistic}{the value of the F test statistic.}
-\item{df1}{the numerator degrees of freedom.}
-\item{df2}{the denominator degrees of freedom.}
-\item{conf_int_lo}{the lower bound of the confidence interval for the
-ratio of the population variances.}
-\item{conf_int_hi}{the upper bound of the confidence interval for the
-ratio of the population variances.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -203,8 +189,7 @@ dig_paired_baseline_contrasts(crispIris,
                               min_support = 0.1)
 }
 \seealso{
-\code{\link[=dig]{dig()}}, \code{\link[=dig_grid]{dig_grid()}}, \code{\link[stats:t.test]{stats::t.test()}}, \code{\link[stats:wilcox.test]{stats::wilcox.test()}},
-\code{\link[stats:var.test]{stats::var.test()}}
+\code{\link[=dig]{dig()}}, \code{\link[=dig_grid]{dig_grid()}}, \code{\link[stats:t.test]{stats::t.test()}}, \code{\link[stats:wilcox.test]{stats::wilcox.test()}}
 }
 \author{
 Michal Burda

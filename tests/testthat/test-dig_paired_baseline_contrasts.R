@@ -57,25 +57,6 @@ test_that("dig_paired_baseline_contrasts wilcox", {
     expect_equal(ncol(res), 13)
 })
 
-test_that("dig_paired_baseline_contrasts var", {
-    d <- partition(CO2, Plant:Treatment)
-
-    res <- dig_paired_baseline_contrasts(d,
-                         condition = where(is.logical),
-                         xvars = conc,
-                         yvars = uptake,
-                         method = "var",
-                         min_support = 0.1)
-
-    expect_true(is_tibble(res))
-    expect_equal(nrow(res), 9)
-    expect_equal(ncol(res), 14)
-    expect_equal(res$support, c(1, 0.5, 0.5, 0.5, 0.5, 0.25, 0.25, 0.25, 0.25))
-    expect_equal(res$xvar, rep("conc", 9))
-    expect_equal(res$yvar, rep("uptake", 9))
-    expect_equal(res$p_value, rep(0, 9))
-})
-
 test_that("dig_paired contrasts errors", {
     d <- data.frame(n = 1:5 / 5, l = TRUE, i = 1:5, s = letters[1:5])
 
@@ -88,7 +69,7 @@ test_that("dig_paired contrasts errors", {
     expect_error(dig_paired_baseline_contrasts(d, xvars = s, yvars = n),
                  "All columns selected by `xvars` must be numeric.")
     expect_error(dig_paired_baseline_contrasts(d, method = "foo"),
-                 '`method` must be equal to one of: "t", "wilcox", "var".')
+                 '`method` must be equal to one of: "t", "wilcox".')
     expect_error(dig_paired_baseline_contrasts(d, alternative = "foo"),
                  '`alternative` must be equal to one of: "two.sided", "less", "greater".')
     expect_error(dig_paired_baseline_contrasts(d, min_length = "x"),

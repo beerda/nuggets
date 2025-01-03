@@ -55,17 +55,14 @@
 #'      For numerical (double) input, the support is computed as the mean (over all
 #'      rows) of multiplications of predicate values.
 #' @param method a character string indicating which contrast to compute.
-#'      One of `"t"`, `"wilcox"`, or `"var"`. `"t"` (resp. `"wilcos"`) compute
-#'      a parametric (resp. non-parametric) test on equality in position, and
-#'      `"var"` performs the F-test on equality of variance.
+#'      One of `"t"`, for parametric, or `"wilcox"`, for non-parametric test on
+#'      equality in position.
 #' @param alternative indicates the alternative hypothesis and must be one of
 #'      `"two.sided"`, `"greater"` or `"less"`. `"greater"` corresponds to
 #'      positive association, `"less"` to negative association.
 #' @param h0 a numeric value specifying the null hypothesis for the test. For
 #'      the `"t"` method, it is the difference in means. For the `"wilcox"` method,
-#'      it is the difference in medians. For the `"var"` method, it is the ratio
-#'      of variances. The default value is 0 for the `"t"` and `"wilcox"` methods
-#'      and 1 for the `"var"` method.
+#'      it is the difference in medians. The default value is 0.
 #' @param conf_level a numeric value specifying the level of the confidence
 #'      interval. The default value is 0.95.
 #' @param max_p_value the maximum p-value of a test for the pattern to be considered
@@ -126,20 +123,8 @@
 #'      \item{W_statistic}{the Wilcoxon rank sum statistic.}
 #'      \item{conf_int_lo}{the lower bound of the confidence interval.}
 #'      \item{conf_int_hi}{the upper bound of the confidence interval.}
-#'      For the `"var"` method, the following additional columns are also
-#'      present (see also [var.test()]):
-#'      \item{estimate}{the ratio of the sample variances of variables
-#'        `xvar` and `yvar`.}
-#'      \item{F_statistic}{the value of the F test statistic.}
-#'      \item{df1}{the numerator degrees of freedom.}
-#'      \item{df2}{the denominator degrees of freedom.}
-#'      \item{conf_int_lo}{the lower bound of the confidence interval for the
-#'        ratio of the population variances.}
-#'      \item{conf_int_hi}{the upper bound of the confidence interval for the
-#'        ratio of the population variances.}
 #' @author Michal Burda
-#' @seealso [dig()], [dig_grid()], [stats::t.test()], [stats::wilcox.test()],
-#'      [stats::var.test()]
+#' @seealso [dig()], [dig_grid()], [stats::t.test()], [stats::wilcox.test()]
 #' @examples
 #' # Compute ratio of sepal and petal length and width for iris dataset
 #' crispIris <- iris
@@ -167,7 +152,7 @@ dig_paired_baseline_contrasts <- function(x,
                                           min_support = 0.0,
                                           method = "t",
                                           alternative = "two.sided",
-                                          h0 = if (method == "var") 1 else 0,
+                                          h0 = 0,
                                           conf_level = 0.95,
                                           max_p_value = 1,
                                           t_var_equal = FALSE,
@@ -176,74 +161,56 @@ dig_paired_baseline_contrasts <- function(x,
                                           wilcox_tol_root = 1e-4,
                                           wilcox_digits_rank = Inf,
                                           threads = 1) {
-    .must_be_enum(method, c("t", "wilcox", "var"))
+    .must_be_enum(method, c("t", "wilcox"))
     .must_be_enum(alternative, c("two.sided", "less", "greater"))
     .must_be_double_scalar(h0)
     .must_be_double_scalar(conf_level)
     .must_be_in_range(conf_level, c(0, 1))
     .must_be_double_scalar(max_p_value)
     .must_be_in_range(max_p_value, c(0, 1))
+    .must_be_flag(t_var_equal)
+    .must_be_flag(wilcox_exact, null = TRUE)
+    .must_be_flag(wilcox_correct)
+    .must_be_double_scalar(wilcox_tol_root)
+    .must_be_double_scalar(wilcox_digits_rank)
 
     condition <- enquo(condition)
     xvars <- enquo(xvars)
     yvars <- enquo(yvars)
 
-    f <- list()
-    f[["t"]] <- function(pd) {
-        .t_test(x = pd[[1]],
-                y = pd[[2]],
-                alternative = alternative,
-                mu = h0,
-                paired = TRUE,
-                var_equal = t_var_equal,
-                conf_level = conf_level,
-                max_p_value = max_p_value)
-    }
-    f[["wilcox"]] <- function(pd) {
-        .wilcox_test(x = pd[[1]],
-                     y = pd[[2]],
-                     alternative = alternative,
-                     mu = h0,
-                     paired = TRUE,
-                     exact = wilcox_exact,
-                     correct = wilcox_correct,
-                     conf_level = conf_level,
-                     tol_root = wilcox_tol_root,
-                     digits_rank = wilcox_digits_rank,
-                     max_p_value = max_p_value)
-    }
-    f[["var"]] <- function(pd) {
-        fit <- try(var.test(pd[[1]],
-                            pd[[2]],
-                            alternative = alternative),
-                   silent = TRUE)
-        if (inherits(fit, "try-error")) {
-            return(list(estimate = NA,
-                        W_statistic = NA,
-                        p_value = NA,
-                        rows = nrow(pd),
-                        conf_int_lo = NA,
-                        conf_int_hi = NA,
-                        alternative = NA,
-                        method = "error"))
-        } else if (fit$p.value > max_p_value) {
-            return(NULL)
-        } else {
-            return(list(estimate = fit$estimate[1],
-                        F_statistic = fit$statistic,
-                        df1 = fit$parameter[1],
-                        df2 = fit$parameter[2],
-                        p_value = fit$p.value,
-                        rows = nrow(pd),
-                        conf_int_lo = fit$conf.int[1],
-                        conf_int_hi = fit$conf.int[2],
-                        alternative = fit$alternative,
-                        method = fit$method))
+    if (method == "t") {
+        f <- function(pd) {
+            .t_test(x = pd[[1]],
+                    y = pd[[2]],
+                    alternative = alternative,
+                    mu = h0,
+                    paired = TRUE,
+                    var_equal = t_var_equal,
+                    conf_level = conf_level,
+                    max_p_value = max_p_value)
         }
+
+    } else if (method == "wilcox") {
+        f <- function(pd) {
+            .wilcox_test(x = pd[[1]],
+                         y = pd[[2]],
+                         alternative = alternative,
+                         mu = h0,
+                         paired = TRUE,
+                         exact = wilcox_exact,
+                         correct = wilcox_correct,
+                         conf_level = conf_level,
+                         tol_root = wilcox_tol_root,
+                         digits_rank = wilcox_digits_rank,
+                         max_p_value = max_p_value)
+        }
+
+    } else {
+        stop("Internal error - unknown method: ", method)
     }
 
     dig_grid(x = x,
-             f = f[[method]],
+             f = f,
              condition = !!condition,
              xvars = !!xvars,
              yvars = !!yvars,
