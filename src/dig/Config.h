@@ -40,6 +40,9 @@ public:
         NumericVector minFocusSupportVec = configuration["minFocusSupport"];
         minFocusSupport = minFocusSupportVec[0];
 
+        NumericVector maxSupportVec = configuration["maxSupport"];
+        maxSupport = maxSupportVec[0];
+
         LogicalVector filterEmptyFociVec = configuration["filterEmptyFoci"];
         filterEmptyFoci = filterEmptyFociVec[0];
 
@@ -126,6 +129,9 @@ public:
     double getMinFocusSupport() const
     { return minFocusSupport; }
 
+    double getMaxSupport() const
+    { return maxSupport; }
+
     bool hasFilterEmptyFoci() const
     { return filterEmptyFoci; }
 
@@ -174,6 +180,7 @@ private:
     int maxLength;
     double minSupport;
     double minFocusSupport;
+    double maxSupport;
     bool filterEmptyFoci;
     TNorm tNorm;
 

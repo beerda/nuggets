@@ -99,6 +99,7 @@
 #'      of rows such that all condition predicates AND the focus are TRUE on it.
 #'      For numerical (double) input, the support is computed as the mean (over all
 #'      rows) of multiplications of predicate values.
+#' @param max_support the maximum support of a condition to trigger the callback
 #' @param filter_empty_foci a logical scalar indicating whether to skip conditions,
 #'      for which no focus remains available after filtering by `min_focus_support`.
 #'      If `TRUE`, the condition is passed to the callback function only if at least
@@ -128,13 +129,13 @@
 #'         string
 #'      \item `arg_min_focus_support` - the name of the argument `min_focus_support`
 #'         as a character string
+#'      \item `arg_max_support` - the name of the argument `max_support` as a character
 #'      \item `arg_filter_empty_foci` - the name of the argument `filter_empty_foci`
 #'         as a character string
 #'      \item `arg_t_norm` - the name of the argument `t_norm` as a character string
 #'      \item `arg_threads` - the name of the argument `threads` as a character string
 #'      \item `call` - an environment in which to evaluate the error messages.
 #'      }
-#' @param ... Further arguments, currently unused.
 #' @returns A list of results provided by the callback function `f`.
 #' @seealso [partition()], [var_names()], [dig_grid()]
 #' @author Michal Burda
@@ -211,6 +212,7 @@ dig <- function(x,
                 max_length = Inf,
                 min_support = 0.0,
                 min_focus_support = min_support,
+                max_support = 1.0,
                 filter_empty_foci = FALSE,
                 t_norm = "goguen",
                 threads = 1L,
@@ -223,11 +225,11 @@ dig <- function(x,
                                      arg_max_length = "max_length",
                                      arg_min_support = "min_support",
                                      arg_min_focus_support = "min_focus_support",
+                                     arg_max_support = "max_support",
                                      arg_filter_empty_foci = "filter_empty_foci",
                                      arg_t_norm = "t_norm",
                                      arg_threads = "threads",
-                                     call = current_env()),
-                ...) {
+                                     call = current_env())) {
     cols <- .convert_data_to_list(x,
                                   error_context = error_context)
 
@@ -321,6 +323,14 @@ dig <- function(x,
                       call = error_context$call)
     min_focus_support <- as.double(min_focus_support)
 
+    .must_be_double_scalar(max_support,
+                           arg = error_context$arg_max_support,
+                           call = error_context$call)
+    .must_be_in_range(max_support, c(0, 1),
+                      arg = error_context$arg_max_support,
+                      call = error_context$call)
+    max_support <- as.double(max_support)
+
     .must_be_flag(filter_empty_foci,
                   arg = error_context$arg_filter_empty_foci,
                   call = error_context$call)
@@ -347,6 +357,7 @@ dig <- function(x,
                    maxLength = max_length,
                    minSupport = min_support,
                    minFocusSupport = min_focus_support,
+                   maxSupport = max_support,
                    filterEmptyFoci = filter_empty_foci,
                    tNorm = t_norm,
                    threads = threads)

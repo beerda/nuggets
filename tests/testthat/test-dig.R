@@ -402,6 +402,25 @@ test_that("min_support filter", {
     expect_equal(length(res), 1)
 })
 
+test_that("max_support filter", {
+    m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
+
+    res <- dig(m, function() 1, max_support = 1)
+    expect_equal(length(res), 4)
+
+    res <- dig(m, function() 1, max_support = 0.7)
+    expect_equal(length(res), 3)
+
+    res <- dig(m, function() 1, max_support = 0.6)
+    expect_equal(length(res), 2)
+
+    res <- dig(m, function() 1, max_support = 0.4)
+    expect_equal(length(res), 1)
+
+    res <- dig(m, function() 1, max_support = 0.3)
+    expect_equal(length(res), 0)
+})
+
 test_that("disjoint filter", {
     m <- matrix(T, ncol = 3)
 

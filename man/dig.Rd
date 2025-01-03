@@ -14,15 +14,16 @@ dig(
   max_length = Inf,
   min_support = 0,
   min_focus_support = min_support,
+  max_support = 1,
   filter_empty_foci = FALSE,
   t_norm = "goguen",
   threads = 1L,
   error_context = list(arg_x = "x", arg_f = "f", arg_condition = "condition", arg_focus =
     "focus", arg_disjoint = "disjoint", arg_min_length = "min_length", arg_max_length =
     "max_length", arg_min_support = "min_support", arg_min_focus_support =
-    "min_focus_support", arg_filter_empty_foci = "filter_empty_foci", arg_t_norm =
-    "t_norm", arg_threads = "threads", call = current_env()),
-  ...
+    "min_focus_support", arg_max_support = "max_support", arg_filter_empty_foci =
+    "filter_empty_foci", arg_t_norm = "t_norm", arg_threads = "threads", call =
+    current_env())
 )
 }
 \arguments{
@@ -101,6 +102,8 @@ of rows such that all condition predicates AND the focus are TRUE on it.
 For numerical (double) input, the support is computed as the mean (over all
 rows) of multiplications of predicate values.}
 
+\item{max_support}{the maximum support of a condition to trigger the callback}
+
 \item{filter_empty_foci}{a logical scalar indicating whether to skip conditions,
 for which no focus remains available after filtering by \code{min_focus_support}.
 If \code{TRUE}, the condition is passed to the callback function only if at least
@@ -133,14 +136,13 @@ string
 string
 \item \code{arg_min_focus_support} - the name of the argument \code{min_focus_support}
 as a character string
+\item \code{arg_max_support} - the name of the argument \code{max_support} as a character
 \item \code{arg_filter_empty_foci} - the name of the argument \code{filter_empty_foci}
 as a character string
 \item \code{arg_t_norm} - the name of the argument \code{t_norm} as a character string
 \item \code{arg_threads} - the name of the argument \code{threads} as a character string
 \item \code{call} - an environment in which to evaluate the error messages.
 }}
-
-\item{...}{Further arguments, currently unused.}
 }
 \value{
 A list of results provided by the callback function \code{f}.

@@ -17,6 +17,7 @@
 #include "dig/MaxLengthFilter.h"
 #include "dig/MinSupportFilter.h"
 #include "dig/MinFocusSupportFilter.h"
+#include "dig/MaxSupportFilter.h"
 #include "dig/DisjointFilter.h"
 #include "dig/EmptyFociFilter.h"
 
@@ -98,16 +99,18 @@ public:
         if (config.getMaxLength() >= 0) {
             digger.addFilter(new MaxLengthFilter<TaskType>(config.getMaxLength()));
         }
-        if (config.getMinSupport() > 0) {
+        if (config.getMinSupport() > 0.0) {
             digger.setPositiveConditionChainsNeeded();
             digger.addFilter(new MinSupportFilter<TaskType>(config.getMinSupport()));
         }
-
-        if (config.getMinFocusSupport() > 0) {
+        if (config.getMinFocusSupport() > 0.0) {
             digger.setPpFocusChainsNeeded();
             digger.addFilter(new MinFocusSupportFilter<TaskType>(config.getMinFocusSupport()));
         }
-
+        if (config.getMaxSupport() < 1.0) {
+            digger.setPositiveConditionChainsNeeded();
+            digger.addFilter(new MaxSupportFilter<TaskType>(config.getMaxSupport()));
+        }
         if (config.hasFilterEmptyFoci()) {
             digger.addFilter(new EmptyFociFilter<TaskType>());
         }
