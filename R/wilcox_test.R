@@ -1,9 +1,5 @@
-# Internal function for the Wilcoxon test
+# Internal function for the Wilcoxon test used in pre-defined dig functions.
 #
-# The result is always a list with the same elements. If an error occurs,
-# the returned list contains the desired elements filled with NAs.
-#
-# @return
 # @author Michal Burda
 .wilcox_test <- function(x,
                          y = NULL,

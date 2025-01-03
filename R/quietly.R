@@ -1,4 +1,5 @@
 # Run expr and handle errors, warnings and messages.
+#
 # @return a list with two elements: result, comment. If expr results with error,
 #       the result element is set to NULL. Comment contains all output, warnings
 #       and messages
