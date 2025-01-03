@@ -35,17 +35,18 @@ The arguments of the callback function differ based on the value of the
 \itemize{
 \item If \code{type = "crisp"} (that is, boolean),
 the callback function \code{f} must accept a single argument \code{pd} of type
-\code{data.frame} with two columns, xvar (accessible as \code{pd[[1]]}) and yvar
-(accessible as \code{pd[[2]]}). Data frame \code{pd} is a subset of the original
+\code{data.frame} with single (if \code{yvars == NULL}) or two (if \code{yvars != NULL})
+columns, accessible as \code{pd[[1]]} and \code{pd[[2]]}. Data frame \code{pd} is
+a subset of the original
 data frame \code{x} with all rows that satisfy the generated condition.
 Optionally, the callback function may accept an argument \code{nd} that
 is a subset of the original data frame \code{x} with all rows that do not
 satisfy the generated condition.
 \item If \code{type = "fuzzy"}, the callback function \code{f} must accept an argument
-\code{d} of type \code{data.frame} with two columns, xvar (\code{d[[1]]}) and yvar
-(\code{d[[2]]}), named as in\code{x}, and a numeric argument \code{weights}
-with the same length as the number of rows in \code{d}. The \code{weights}
-argument contains the truth degree
+\code{d} of type \code{data.frame} with single (if \code{yvars == NULL}) or two (if
+\code{yvars != NULL}) columns, accessible as \code{d[[1]]} and \code{d[[2]]}, and
+a numeric argument \code{weights} with the same length as the number of rows
+in \code{d}. The \code{weights} argument contains the truth degree
 of the generated condition for each row of \code{d}. The truth degree is
 a number in the interval \eqn{[0, 1]} that represents the degree of
 satisfaction of the condition in the original data row.
@@ -64,7 +65,7 @@ considered.}
 specifying the columns of \code{x}, whose names will be used as a domain for
 combinations use at the first place (xvar)}
 
-\item{yvars}{a tidyselect expression (see
+\item{yvars}{\code{NULL} or a tidyselect expression (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
 specifying the columns of \code{x}, whose names will be used as a domain for
 combinations use at the second place (yvar)}
@@ -132,8 +133,8 @@ the callback function \code{f}.
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
-This function creates a grid of combinations of pairs of columns specified
-by \code{xvars} and \code{yvars} (see also \code{\link[=var_grid]{var_grid()}}). After that, it enumerates all
+This function creates a grid column names specified
+by \code{xvars} and \code{yvars} (see \code{\link[=var_grid]{var_grid()}}). After that, it enumerates all
 conditions created from data in \code{x} (by calling \code{\link[=dig]{dig()}}) and for each such
 condition and for each row of the grid of combinations, a user-defined
 function \code{f} is executed on each sub-data created from \code{x} by selecting all

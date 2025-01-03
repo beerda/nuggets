@@ -3,8 +3,8 @@
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
-#' This function creates a grid of combinations of pairs of columns specified
-#' by `xvars` and `yvars` (see also [var_grid()]). After that, it enumerates all
+#' This function creates a grid column names specified
+#' by `xvars` and `yvars` (see [var_grid()]). After that, it enumerates all
 #' conditions created from data in `x` (by calling [dig()]) and for each such
 #' condition and for each row of the grid of combinations, a user-defined
 #' function `f` is executed on each sub-data created from `x` by selecting all
@@ -21,17 +21,18 @@
 #'      \itemize{
 #'      \item If `type = "crisp"` (that is, boolean),
 #'      the callback function `f` must accept a single argument `pd` of type
-#'      `data.frame` with two columns, xvar (accessible as `pd[[1]]`) and yvar
-#'      (accessible as `pd[[2]]`). Data frame `pd` is a subset of the original
+#'      `data.frame` with single (if `yvars == NULL`) or two (if `yvars != NULL`)
+#'      columns, accessible as `pd[[1]]` and `pd[[2]]`. Data frame `pd` is
+#'      a subset of the original
 #'      data frame `x` with all rows that satisfy the generated condition.
 #'      Optionally, the callback function may accept an argument `nd` that
 #'      is a subset of the original data frame `x` with all rows that do not
 #'      satisfy the generated condition.
 #'      \item If `type = "fuzzy"`, the callback function `f` must accept an argument
-#'      `d` of type `data.frame` with two columns, xvar (`d[[1]]`) and yvar
-#'      (`d[[2]]`), named as in`x`, and a numeric argument `weights`
-#'      with the same length as the number of rows in `d`. The `weights`
-#'      argument contains the truth degree
+#'      `d` of type `data.frame` with single (if `yvars == NULL`) or two (if
+#'      `yvars != NULL`) columns, accessible as `d[[1]]` and `d[[2]]`, and
+#'      a numeric argument `weights` with the same length as the number of rows
+#'      in `d`. The `weights` argument contains the truth degree
 #'      of the generated condition for each row of `d`. The truth degree is
 #'      a number in the interval \eqn{[0, 1]} that represents the degree of
 #'      satisfaction of the condition in the original data row.
@@ -47,7 +48,7 @@
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying the columns of `x`, whose names will be used as a domain for
 #'      combinations use at the first place (xvar)
-#' @param yvars a tidyselect expression (see
+#' @param yvars `NULL` or a tidyselect expression (see
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying the columns of `x`, whose names will be used as a domain for
 #'      combinations use at the second place (yvar)

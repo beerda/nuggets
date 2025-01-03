@@ -1,10 +1,17 @@
-#' Create a tibble of combinations of xvar/yvar variable pairs.
+#' Create a tibble of combinations of selected column names
 #'
 #' @description
-#' The function creates a tibble with two columns, `xvar` and `yvar`, whose
-#' rows enumerate all combinations of column names specified by the `xvars`
-#' and `yvars` argument. These arguments are tidyselect expressions (see
-#' [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html)).
+#' `xvars` and `yvars` arguments are tidyselect expressions (see
+#' [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html)) that
+#' specify the columns of `x` whose names will be used as a domain for
+#' combinations.
+#'
+#' If `yvars` is `NULL`, the function creates a tibble with one column `var`
+#' enumerating all column names specified by the `xvars` argument.
+#'
+#' If `yvars` is not `NULL`, the function creates a tibble with two columns,
+#' `xvar` and `yvar`, whose rows enumerate all combinations of column names
+#' specified by the `xvars` and `yvars` argument.
 #'
 #' It is allowed to specify the same column in both `xvars` and `yvars`
 #' arguments. In such a case, the combinations of the same column with itself
@@ -19,7 +26,7 @@
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying the columns of `x`, whose names will be used as a domain for
 #'      combinations use at the first place (xvar)
-#' @param yvars a tidyselect expression (see
+#' @param yvars `NULL` or a tidyselect expression (see
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying the columns of `x`, whose names will be used as a domain for
 #'      combinations use at the second place (yvar)
@@ -29,6 +36,9 @@
 #'      \item `"all"` - all columns are allowed to be selected
 #'      \item `"numeric"` - only numeric columns are allowed to be selected
 #'      }
+#' @param xvar_name the name of the first column in the resulting tibble.
+#' @param yvar_name the name of the second column in the resulting tibble.
+#'      The column does not exist if `yvars` is `NULL`.
 #' @param error_context A list of details to be used in error messages.
 #'      This argument is useful when `var_grid()` is called from another
 #'      function to provide error messages, which refer to arguments of the
@@ -37,9 +47,14 @@
 #'      \item `arg_x` - the name of the argument `x` as a character string
 #'      \item `arg_xvars` - the name of the argument `xvars` as a character string
 #'      \item `arg_yvars` - the name of the argument `yvars` as a character string
+#'      \item `arg_allow` - the name of the argument `allow` as a character string
+#'      \item `arg_xvar_name` - the name of the `xvar` column in the output tibble
+#'      \item `arg_yvar_name` - the name of the `yvar` column in the output tibble
 #'      \item `call` - an environment in which to evaluate the error messages.
 #'      }
-#' @return a tibble with two columns (`xvar` and `yvar`) with rows enumerating
+#' @return if `yvars` is `NULL`, the function returns a tibble with a single
+#'      column (`var`). If `yvars` is a non-`NULL` expression, the function
+#'      returns two columns (`xvar` and `yvar`) with rows enumerating
 #'      all combinations of column names specified by tidyselect expressions
 #'      in `xvars` and `yvars` arguments.
 #' @author Michal Burda
@@ -56,14 +71,25 @@ var_grid <- function(x,
                      xvars = everything(),
                      yvars = everything(),
                      allow = "all",
+                     xvar_name = if (quo_is_null(enquo(yvars))) "var" else "xvar",
+                     yvar_name = "yvar",
                      error_context = list(arg_x = "x",
                                           arg_xvars = "xvars",
                                           arg_yvars = "yvars",
                                           arg_allow = "allow",
+                                          arg_xvar_name = "xvar_name",
+                                          arg_yvar_name = "yvar_name",
                                           call = current_env())) {
     .must_be_enum(allow, c("all", "numeric"),
                   arg = error_context$arg_allow,
                   call = error_context$call)
+    .must_be_character_scalar(xvar_name,
+                              arg = error_context$arg_xvar_name,
+                              call = error_context$call)
+    .must_be_character_scalar(yvar_name,
+                              arg = error_context$arg_yvar_name,
+                              call = error_context$call)
+
     cols <- .convert_data_to_list(x,
                                   error_context = list(arg_x = error_context$arg_x,
                                                        call = error_context$call))
@@ -74,28 +100,34 @@ var_grid <- function(x,
                          allow_empty = TRUE, # we test for empty selection later
                          allow_predicates = TRUE,
                          error_call = error_context$call)
-    yvars <- eval_select(expr = enquo(yvars),
-                         data = cols,
-                         allow_rename = FALSE,
-                         allow_empty = TRUE, # we test for empty selection later
-                         allow_predicates = TRUE,
-                         error_call = error_context$call)
+
 
     if (length(xvars) <= 0) {
         cli_abort(c("{.arg {error_context$arg_xvars}} must select non-empty list of columns.",
                     "x" = "{.arg {error_context$arg_xvars}} resulted in an empty list."),
                   call = error_context$call)
     }
-    if (length(yvars) <= 0) {
-        cli_abort(c("{.arg {error_context$arg_yvars}} must select non-empty list of columns.",
-                    "x" = "{.arg {error_context$arg_yvars}} resulted in an empty list."),
-                  call = error_context$call)
-    }
-    if (length(xvars) == 1 && length(yvars) == 1 && xvars == yvars) {
-        cli_abort(c("{.arg {error_context$arg_xvars}} and {.arg {error_context$arg_yvars}} can't select the same single column.",
-                    "i" = "{.arg {error_context$arg_xvars}} results in column: {paste(names(cols)[xvars], collapse = ', ')}.",
-                    "i" = "{.arg {error_context$arg_yvars}} results in column: {paste(names(cols)[yvars], collapse = ', ')}."),
-                  call = error_context$call)
+
+    has_yvars <- !quo_is_null(enquo(yvars))
+    if (has_yvars) {
+        yvars <- eval_select(expr = enquo(yvars),
+                             data = cols,
+                             allow_rename = FALSE,
+                             allow_empty = TRUE, # we test for empty selection later
+                             allow_predicates = TRUE,
+                             error_call = error_context$call)
+
+        if (length(yvars) <= 0) {
+            cli_abort(c("{.arg {error_context$arg_yvars}} must select non-empty list of columns.",
+                        "x" = "{.arg {error_context$arg_yvars}} resulted in an empty list."),
+                      call = error_context$call)
+        }
+        if (length(xvars) == 1 && length(yvars) == 1 && xvars == yvars) {
+            cli_abort(c("{.arg {error_context$arg_xvars}} and {.arg {error_context$arg_yvars}} can't select the same single column.",
+                        "i" = "{.arg {error_context$arg_xvars}} results in column: {paste(names(cols)[xvars], collapse = ', ')}.",
+                        "i" = "{.arg {error_context$arg_yvars}} results in column: {paste(names(cols)[yvars], collapse = ', ')}."),
+                      call = error_context$call)
+        }
     }
 
     if (allow == "numeric") {
@@ -104,19 +136,29 @@ var_grid <- function(x,
                               is.numeric,
                               "numeric",
                               error_context$call)
-        .all_selected_must_be(cols[yvars],
-                              error_context$arg_yvars,
-                              is.numeric,
-                              "numeric",
-                              error_context$call)
+        if (has_yvars) {
+            .all_selected_must_be(cols[yvars],
+                                  error_context$arg_yvars,
+                                  is.numeric,
+                                  "numeric",
+                                  error_context$call)
+        }
     }
 
-    grid <- expand_grid(xvar = xvars, yvar = yvars)
-    grid <- grid[grid$xvar != grid$yvar, ]
-    dup <- apply(grid, 1, function(row) paste(sort(row), collapse = " "))
-    grid <- grid[!duplicated(dup), ]
-    grid$xvar <- names(cols)[grid$xvar]
-    grid$yvar <- names(cols)[grid$yvar]
+    if (has_yvars) {
+        grid <- expand_grid(xvar = xvars, yvar = yvars)
+        grid <- grid[grid$xvar != grid$yvar, ]
+        dup <- apply(grid, 1, function(row) paste(sort(row), collapse = " "))
+        grid <- grid[!duplicated(dup), ]
+        grid$xvar <- names(cols)[grid$xvar]
+        grid$yvar <- names(cols)[grid$yvar]
+        colnames(grid) <- c(xvar_name, yvar_name)
+
+    } else {
+        grid <- expand_grid(xvar = xvars)
+        grid$xvar <- names(cols)[grid$xvar]
+        colnames(grid) <- xvar_name
+    }
 
     as_tibble(grid)
 }

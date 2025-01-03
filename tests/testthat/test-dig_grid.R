@@ -361,6 +361,86 @@ test_that("dig_grid fuzzy", {
 })
 
 
+test_that("dig_grid number of columns in data frames", {
+    d <- data.frame(a = TRUE,
+                    b = c(TRUE, FALSE),
+                    x = letters[1:10],
+                    y = letters[11:20],
+                    z = LETTERS[1:10])
+
+    # crisp / xvars & yvars / pd
+    res <- dig_grid(x = d,
+                    f = function(pd) { ncol(pd) },
+                    type = "crisp",
+                    condition = NULL,
+                    xvars = where(is.character),
+                    yvars = where(is.character))
+
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 3)
+    expect_equal(res$value, rep(2, 3))
+
+    # crisp / xvars & yvars / pd & nd
+    res <- dig_grid(x = d,
+                    f = function(pd, nd) { paste(ncol(pd), ncol(nd)) },
+                    type = "crisp",
+                    condition = NULL,
+                    xvars = where(is.character),
+                    yvars = where(is.character))
+
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 3)
+    expect_equal(res$value, rep("2 2", 3))
+
+    # fuzzy / xvars & yvars / d
+    res <- dig_grid(x = d,
+                    f = function(d, weights) { ncol(d) },
+                    type = "fuzzy",
+                    condition = NULL,
+                    xvars = where(is.character),
+                    yvars = where(is.character))
+
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 3)
+    expect_equal(res$value, rep(2, 3))
+
+    # crisp / xvars only / pd
+    res <- dig_grid(x = d,
+                    f = function(pd) { ncol(pd) },
+                    type = "crisp",
+                    condition = NULL,
+                    xvars = where(is.character),
+                    yvars = NULL)
+
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 3)
+    expect_equal(res$value, rep(1, 3))
+
+    # crisp / xvars only / pd & nd
+    res <- dig_grid(x = d,
+                    f = function(pd, nd) { paste(ncol(pd), ncol(nd)) },
+                    type = "crisp",
+                    condition = NULL,
+                    xvars = where(is.character),
+                    yvars = NULL)
+
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 3)
+    expect_equal(res$value, rep("1 1", 3))
+
+    # fuzzy / xvars only / d
+    res <- dig_grid(x = d,
+                    f = function(d, weights) { ncol(d) },
+                    type = "fuzzy",
+                    condition = NULL,
+                    xvars = where(is.character),
+                    yvars = NULL)
+
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 3)
+    expect_equal(res$value, rep(1, 3))
+})
+
 test_that("errors", {
     d <- data.frame(n = 1:5 / 5, l = TRUE, i = 1:5, s = letters[1:5])
     l <- as.list(d)

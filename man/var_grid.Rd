@@ -2,15 +2,18 @@
 % Please edit documentation in R/var_grid.R
 \name{var_grid}
 \alias{var_grid}
-\title{Create a tibble of combinations of xvar/yvar variable pairs.}
+\title{Create a tibble of combinations of selected column names}
 \usage{
 var_grid(
   x,
   xvars = everything(),
   yvars = everything(),
   allow = "all",
+  xvar_name = if (quo_is_null(enquo(yvars))) "var" else "xvar",
+  yvar_name = "yvar",
   error_context = list(arg_x = "x", arg_xvars = "xvars", arg_yvars = "yvars", arg_allow =
-    "allow", call = current_env())
+    "allow", arg_xvar_name = "xvar_name", arg_yvar_name = "yvar_name", call =
+    current_env())
 )
 }
 \arguments{
@@ -21,7 +24,7 @@ var_grid(
 specifying the columns of \code{x}, whose names will be used as a domain for
 combinations use at the first place (xvar)}
 
-\item{yvars}{a tidyselect expression (see
+\item{yvars}{\code{NULL} or a tidyselect expression (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
 specifying the columns of \code{x}, whose names will be used as a domain for
 combinations use at the second place (yvar)}
@@ -33,6 +36,11 @@ selected by \code{xvars} and \code{yvars} arguments. Possible values are:
 \item \code{"numeric"} - only numeric columns are allowed to be selected
 }}
 
+\item{xvar_name}{the name of the first column in the resulting tibble.}
+
+\item{yvar_name}{the name of the second column in the resulting tibble.
+The column does not exist if \code{yvars} is \code{NULL}.}
+
 \item{error_context}{A list of details to be used in error messages.
 This argument is useful when \code{var_grid()} is called from another
 function to provide error messages, which refer to arguments of the
@@ -41,19 +49,31 @@ calling function. The list must contain the following elements:
 \item \code{arg_x} - the name of the argument \code{x} as a character string
 \item \code{arg_xvars} - the name of the argument \code{xvars} as a character string
 \item \code{arg_yvars} - the name of the argument \code{yvars} as a character string
+\item \code{arg_allow} - the name of the argument \code{allow} as a character string
+\item \code{arg_xvar_name} - the name of the \code{xvar} column in the output tibble
+\item \code{arg_yvar_name} - the name of the \code{yvar} column in the output tibble
 \item \code{call} - an environment in which to evaluate the error messages.
 }}
 }
 \value{
-a tibble with two columns (\code{xvar} and \code{yvar}) with rows enumerating
+if \code{yvars} is \code{NULL}, the function returns a tibble with a single
+column (\code{var}). If \code{yvars} is a non-\code{NULL} expression, the function
+returns two columns (\code{xvar} and \code{yvar}) with rows enumerating
 all combinations of column names specified by tidyselect expressions
 in \code{xvars} and \code{yvars} arguments.
 }
 \description{
-The function creates a tibble with two columns, \code{xvar} and \code{yvar}, whose
-rows enumerate all combinations of column names specified by the \code{xvars}
-and \code{yvars} argument. These arguments are tidyselect expressions (see
-\href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax}).
+\code{xvars} and \code{yvars} arguments are tidyselect expressions (see
+\href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax}) that
+specify the columns of \code{x} whose names will be used as a domain for
+combinations.
+
+If \code{yvars} is \code{NULL}, the function creates a tibble with one column \code{var}
+enumerating all column names specified by the \code{xvars} argument.
+
+If \code{yvars} is not \code{NULL}, the function creates a tibble with two columns,
+\code{xvar} and \code{yvar}, whose rows enumerate all combinations of column names
+specified by the \code{xvars} and \code{yvars} argument.
 
 It is allowed to specify the same column in both \code{xvars} and \code{yvars}
 arguments. In such a case, the combinations of the same column with itself

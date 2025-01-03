@@ -5,13 +5,35 @@ test_that("var_grid everything on data.frame", {
                     y = c(TRUE, FALSE),
                     z = c(TRUE, FALSE))
 
-    res <- var_grid(d, xvars = everything(), yvars = everything())
+    res <- var_grid(d,
+                    xvars = everything(),
+                    yvars = everything())
 
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 10)
     expect_equal(colnames(res), c("xvar", "yvar"))
     expect_equal(res$xvar, c("v", "v", "v", "v", "w", "w", "w", "x", "x", "y"))
     expect_equal(res$yvar, c("w", "x", "y", "z", "x", "y", "z", "y", "z", "z"))
+})
+
+test_that("var_grid everything on data.frame (with custom colnames)", {
+    d <- data.frame(v = FALSE,
+                    w = FALSE,
+                    x = TRUE,
+                    y = c(TRUE, FALSE),
+                    z = c(TRUE, FALSE))
+
+    res <- var_grid(d,
+                    xvars = everything(),
+                    yvars = everything(),
+                    xvar_name = "blaX",
+                    yvar_name = "blaY")
+
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 10)
+    expect_equal(colnames(res), c("blaX", "blaY"))
+    expect_equal(res$blaX, c("v", "v", "v", "v", "w", "w", "w", "x", "x", "y"))
+    expect_equal(res$blaY, c("w", "x", "y", "z", "x", "y", "z", "y", "z", "z"))
 })
 
 test_that("var_grid selected on data.frame", {
@@ -57,6 +79,23 @@ test_that("var_grid everything on matrix", {
     expect_equal(colnames(res), c("xvar", "yvar"))
     expect_equal(res$xvar, c("v", "v", "v", "v", "w", "w", "w", "x", "x", "y"))
     expect_equal(res$yvar, c("w", "x", "y", "z", "x", "y", "z", "y", "z", "z"))
+})
+
+test_that("var_grid only xvar", {
+    d <- data.frame(v = FALSE,
+                    w = FALSE,
+                    x = TRUE,
+                    y = c(TRUE, FALSE),
+                    z = c(TRUE, FALSE))
+
+    res <- var_grid(d,
+                    xvars = everything(),
+                    yvars = NULL)
+
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 5)
+    expect_equal(colnames(res), "var")
+    expect_equal(res$var, c("v", "w", "x", "y", "z"))
 })
 
 
