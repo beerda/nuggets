@@ -4,8 +4,9 @@
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
-#' Contrast patterns identify conditions under which there is a significant
-#' difference in some statistical feature between two paired numeric variables.
+#' Paired baseline contrast patterns identify conditions under which there is
+#' a significant difference in some statistical feature between two paired
+#' numeric variables.
 #'
 #' \describe{
 #'   \item{Scheme:}{`(xvar - yvar) != 0 | C`\cr\cr
@@ -17,14 +18,14 @@
 #'     *daily tea income*.}
 #' }
 #'
-#' The paired contrast is computed using a paired version of a statistical test,
+#' The paired baseline contrast  is computed using a paired version of a statistical test,
 #' which is specified by the `method` argument. The function computes the paired
 #' contrast between all pairs of variables, where the first variable is
 #' specified by the `xvars` argument and the second variable is specified by the
-#' `yvars` argument. Paired contrasts are computed in sub-data corresponding
-#' to conditions generated from `condition` columns. Function
+#' `yvars` argument. Paired baseline contrasts are computed in sub-data corresponding
+#' to conditions generated from the `condition` columns. Function
 #' `dig_paired_baseline_contrasts()` supports crisp conditions only, i.e.,
-#' the condition columns must be logical.
+#' the condition columns in `x` must be logical.
 #'
 #' @param x a matrix or data frame with data to search the patterns in.
 #' @param condition a tidyselect expression (see
@@ -100,29 +101,24 @@
 #'        frequency of the condition in the dataset `x`.}
 #'      \item{xvar}{the name of the first variable in the contrast.}
 #'      \item{yvar}{the name of the second variable in the contrast.}
+#'      \item{estimate}{the estimated difference of variable `var`.}
+#'      \item{statistic}{the statistic of the selected test.}
 #'      \item{p_value}{the p-value of the underlying test.}
-#'      \item{rows}{the number of rows in the sub-data corresponding to
+#'      \item{n}{the number of rows in the sub-data corresponding to
 #'        the condition.}
+#'      \item{conf_int_lo}{the lower bound of the confidence interval of the estimate.}
+#'      \item{conf_int_hi}{the upper bound of the confidence interval of the estimate.}
 #'      \item{alternative}{a character string indicating the alternative
 #'        hypothesis. The value must be one of `"two.sided"`, `"greater"`, or
 #'        `"less"`.}
 #'      \item{method}{a character string indicating the method used for the
 #'        test.}
+#'      \item{comment}{a character string with additional information about the
+#'        test (mainly error messages on failure).}
 #'      For the `"t"` method, the following additional columns are also
 #'      present (see also [t.test()]):
-#'      \item{estimate_x}{the estimated mean of variable `xvar`.}
-#'      \item{estimate_y}{the estimated mean of variable `yvar`.}
-#'      \item{t_statistic}{the t-statistic of the t test.}
 #'      \item{df}{the degrees of freedom of the t test.}
-#'      \item{conf_int_lo}{the lower bound of the confidence interval.}
-#'      \item{conf_int_hi}{the upper bound of the confidence interval.}
 #'      \item{stderr}{the standard error of the mean difference.}
-#'      For the `"wilcox"` method, the following additional columns are also
-#'      present (see also [wilcox.test()]):
-#'      \item{estimate}{the estimate of the location parameter.}
-#'      \item{W_statistic}{the Wilcoxon rank sum statistic.}
-#'      \item{conf_int_lo}{the lower bound of the confidence interval.}
-#'      \item{conf_int_hi}{the upper bound of the confidence interval.}
 #' @author Michal Burda
 #' @seealso [dig()], [dig_grid()], [stats::t.test()], [stats::wilcox.test()]
 #' @examples

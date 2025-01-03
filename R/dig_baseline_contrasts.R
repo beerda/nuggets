@@ -1,5 +1,111 @@
+#' Search for conditions that yield in statistically significant one-sample
+#' test in selected variables.
 #'
-#' @return
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
+#' Baseline contrast patterns identify conditions under which a specific feature
+#' is significantly different from a given value by performing a one-sample
+#' statistical test.
+#'
+#' \describe{
+#'   \item{Scheme:}{`var != 0 | C`\cr\cr
+#'     Variable `var` is (in average) significantly different from 0 under the
+#'     condition `C`.}
+#'   \item{Example:}{`(measure_error != 0 | measure_tool_A `\cr\cr
+#'     If measuring with measure tool *A*, the average measure error is
+#'     significantly different from 0.}
+#' }
+#'
+#' The baseline contrast is computed using a one-sample statistical test, which
+#' is specified by the `method` argument. The function computes the contrast
+#' between all variables specified by the `vars` argument. Baseline contrasts
+#' are computed in sub-data corresponding to conditions generated from the
+#' `condition` columns. Function `dig_baseline_contrasts()` supports crisp
+#' conditions only, i.e., the condition columns in `x` must be logical.
+#'
+#' @param x a matrix or data frame with data to search the patterns in.
+#' @param condition a tidyselect expression (see
+#'     [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
+#'     specifying the columns to use as condition predicates
+#' @param vars a tidyselect expression (see
+#'     [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
+#'     specifying the columns to use for computation of contrasts
+#' @param disjoint an atomic vector of size equal to the number of columns of `x`
+#'      that specifies the groups of predicates: if some elements of the `disjoint`
+#'      vector are equal, then the corresponding columns of `x` will NOT be
+#'      present together in a single condition. If `x` is prepared with
+#'      [partition()], using the [var_names()] function on `x`'s column names
+#'      is a convenient way to create the `disjoint` vector.
+#' @param min_length the minimum size (the minimum number of predicates) of the
+#'      condition to be generated (must be greater or equal to 0). If 0, the
+#'      empty condition is generated in the first place.
+#' @param max_length The maximum size (the maximum number of predicates) of the
+#'      condition to be generated. If equal to Inf, the maximum length of
+#'      conditions is limited only by the number of available predicates.
+#' @param min_support the minimum support of a condition to trigger the callback
+#'      function for it. The support of the condition is the relative frequency
+#'      of the condition in the dataset `x`. For logical data, it equals to the
+#'      relative frequency of rows such that all condition predicates are TRUE on it.
+#'      For numerical (double) input, the support is computed as the mean (over all
+#'      rows) of multiplications of predicate values.
+#' @param method a character string indicating which contrast to compute.
+#'      One of `"t"`, for parametric, or `"wilcox"`, for non-parametric test on
+#'      equality in position.
+#' @param alternative indicates the alternative hypothesis and must be one of
+#'      `"two.sided"`, `"greater"` or `"less"`. `"greater"` corresponds to
+#'      positive association, `"less"` to negative association.
+#' @param h0 a numeric value specifying the null hypothesis for the test. For
+#'      the `"t"` method, it is the value of the mean. For the `"wilcox"` method,
+#'      it is the value of the median. The default value is 0.
+#' @param conf_level a numeric value specifying the level of the confidence
+#'      interval. The default value is 0.95.
+#' @param max_p_value the maximum p-value of a test for the pattern to be considered
+#'      significant. If the p-value of the test is greater than `max_p_value`, the
+#'      pattern is not included in the result.
+#' @param wilcox_exact (used for the `"wilcox"` method only) a logical value
+#'      indicating whether the exact p-value should be computed. If `NULL`, the
+#'      exact p-value is computed for sample sizes less than 50. See [wilcox.test()]
+#'      and its `exact` argument for more information. Contrary to the behavior
+#'      of [wilcox.test()], the default value is `FALSE`.
+#' @param wilcox_correct (used for the `"wilcox"` method only) a logical value
+#'      indicating whether the continuity correction should be applied in the
+#'      normal approximation for the p-value, if `wilcox_exact` is `FALSE`. See
+#'      [wilcox.test()] and its `correct` argument for more information.
+#' @param wilcox_tol_root (used for the `"wilcox"` method only) a numeric value
+#'      specifying the tolerance for the root-finding algorithm used to compute
+#'      the exact p-value. See [wilcox.test()] and its `tol.root` argument for
+#'      more information.
+#' @param wilcox_digits_rank (used for the `"wilcox"` method only) a numeric value
+#'      specifying the number of digits to round the ranks to. See [wilcox.test()]
+#'      and its `digits.rank` argument for more information.
+#' @param threads the number of threads to use for parallel computation.
+#' @return A tibble with found patterns in rows. The following columns are always
+#'      present:
+#'      \item{condition}{the condition of the pattern as a character string
+#'        in the form `{p1 & p2 & ... & pn}` where `p1`, `p2`, ..., `pn` are
+#'        `x`'s column names.}
+#'      \item{support}{the support of the condition, i.e., the relative
+#'        frequency of the condition in the dataset `x`.}
+#'      \item{var}{the name of the contrast variable.}
+#'      \item{estimate}{the estimated mean or median of variable `var`.}
+#'      \item{statistic}{the statistic of the selected test.}
+#'      \item{p_value}{the p-value of the underlying test.}
+#'      \item{n}{the number of rows in the sub-data corresponding to
+#'        the condition.}
+#'      \item{conf_int_lo}{the lower bound of the confidence interval of the estimate.}
+#'      \item{conf_int_hi}{the upper bound of the confidence interval of the estimate.}
+#'      \item{alternative}{a character string indicating the alternative
+#'        hypothesis. The value must be one of `"two.sided"`, `"greater"`, or
+#'        `"less"`.}
+#'      \item{method}{a character string indicating the method used for the
+#'        test.}
+#'      \item{comment}{a character string with additional information about the
+#'        test (mainly error messages on failure).}
+#'      For the `"t"` method, the following additional columns are also
+#'      present (see also [t.test()]):
+#'      \item{df}{the degrees of freedom of the t test.}
+#'      \item{stderr}{the standard error of the mean.}
 #' @author Michal Burda
 #' @export
 dig_baseline_contrasts <- function(x,
