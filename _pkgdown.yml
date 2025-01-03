@@ -20,9 +20,10 @@ reference:
     desc: >
       Functions for extraction of pre-defined patterns from input data.
     contents:
-      - dig_paired_baseline_contrasts
-      - dig_correlations
       - dig_associations
+      - dig_baseline_contrasts
+      - dig_correlations
+      - dig_paired_baseline_contrasts
 
   - title: "Custom Pattern Extraction"
     desc: >

@@ -1,6 +1,6 @@
 # nuggets 1.4.0
 - released: *not-yet*
-- added var_names()
+- added var_names(), dig_baseline_contrasts()
 - dig_contrasts() renamed to dig_paired_baseline_contrasts()
 - dig_implications() renamed to dig_associations()
 - dichotomize() is deprecated (use partition() instead)
