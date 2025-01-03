@@ -185,7 +185,8 @@ dig_paired_baseline_contrasts(crispIris,
                               min_support = 0.1)
 }
 \seealso{
-\code{\link[=dig]{dig()}}, \code{\link[=dig_grid]{dig_grid()}}, \code{\link[stats:t.test]{stats::t.test()}}, \code{\link[stats:wilcox.test]{stats::wilcox.test()}}
+\code{\link[=dig_baseline_contrasts]{dig_baseline_contrasts()}}, \code{\link[=dig]{dig()}}, \code{\link[=dig_grid]{dig_grid()}},
+\code{\link[stats:t.test]{stats::t.test()}}, \code{\link[stats:wilcox.test]{stats::wilcox.test()}}
 }
 \author{
 Michal Burda

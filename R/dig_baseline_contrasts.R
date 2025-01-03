@@ -107,6 +107,8 @@
 #'      \item{df}{the degrees of freedom of the t test.}
 #'      \item{stderr}{the standard error of the mean.}
 #' @author Michal Burda
+#' @seealso [dig_paired_baseline_contrasts()], [dig()], [dig_grid()],
+#'      [stats::t.test()], [stats::wilcox.test()]
 #' @export
 dig_baseline_contrasts <- function(x,
                                    condition = where(is.logical),

@@ -120,7 +120,8 @@
 #'      \item{df}{the degrees of freedom of the t test.}
 #'      \item{stderr}{the standard error of the mean difference.}
 #' @author Michal Burda
-#' @seealso [dig()], [dig_grid()], [stats::t.test()], [stats::wilcox.test()]
+#' @seealso [dig_baseline_contrasts()], [dig()], [dig_grid()],
+#'      [stats::t.test()], [stats::wilcox.test()]
 #' @examples
 #' # Compute ratio of sepal and petal length and width for iris dataset
 #' crispIris <- iris
