@@ -1,5 +1,5 @@
 # nuggets 1.4.0
-- released: *not-yet*
+- released: 2025-01-04
 - added var_names(), dig_baseline_contrasts(), dig_conditional_contrasts()
 - dig_contrasts() renamed to dig_paired_baseline_contrasts()
 - dig_implications() renamed to dig_associations()
