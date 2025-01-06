@@ -153,6 +153,7 @@ private:
             //cout << "receiving: " + task.toString() << endl;
             workingThreads++;
             received = true;
+            //cout << "received task - working: " << workingThreads << " queue size: " << queue.size() << endl;
         }
 
         return received;
@@ -171,48 +172,44 @@ private:
     void processTask(TaskType& task)
     {
         //cout << "processing: " + task.toString() << endl;
-        TaskType child;
+        do {
+            if (!isConditionRedundant(task)) {
+                updateConditionChain(task);
+                if (!isConditionPrunable(task)) {
 
-        if (!isConditionRedundant(task)) {
-            updateConditionChain(task);
-            if (!isConditionPrunable(task)) {
-
-                task.resetFoci();
-                Iterator& iter = task.getMutableFocusIterator();
-                while (iter.hasPredicate()) {
-                    if (!isFocusRedundant(task)) {
-                        computeFocusChain(task);
-                        if (!isFocusPrunable(task)) {
-                            iter.putCurrentToSoFar();
-                            if (isFocusStorable(task)) {
-                                iter.storeCurrent();
+                    task.resetFoci();
+                    Iterator& iter = task.getMutableFocusIterator();
+                    while (iter.hasPredicate()) {
+                        if (!isFocusRedundant(task)) {
+                            computeFocusChain(task);
+                            if (!isFocusPrunable(task)) {
+                                iter.putCurrentToSoFar();
+                                if (isFocusStorable(task)) {
+                                    iter.storeCurrent();
+                                }
                             }
                         }
+                        iter.next();
                     }
-                    iter.next();
-                }
 
-                if (isConditionStorable(task)) {
-                    store(task);
-                }
-                if (isConditionExtendable(task)) {
-                    if (task.getConditionIterator().hasSoFar()) {
-                        child = task.createChild();
+                    if (isConditionStorable(task)) {
+                        store(task);
                     }
-                    if (task.getConditionIterator().hasPredicate()) {
-                        task.getMutableConditionIterator().putCurrentToSoFar();
+                    if (isConditionExtendable(task)) {
+                        if (task.getConditionIterator().hasSoFar()) {
+                            TaskType child = task.createChild();
+                            sendTask(child);
+                        }
+                        if (task.getConditionIterator().hasPredicate()) {
+                            task.getMutableConditionIterator().putCurrentToSoFar();
+                        }
                     }
                 }
             }
-        }
 
-        task.getMutableConditionIterator().next();
-        if (task.getConditionIterator().hasPredicate()) {
-            sendTask(task);
+            task.getMutableConditionIterator().next();
         }
-        if (!child.getConditionIterator().empty()) {
-            sendTask(child);
-        }
+        while (task.getConditionIterator().hasPredicate());
     }
 
     void taskFinished(TaskType& task)

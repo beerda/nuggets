@@ -10,32 +10,39 @@ template <typename TASK>
 class TaskQueue {
 public:
     TaskQueue()
-        : queue(TaskCompare())
+        : q(TaskCompare())
     { }
 
     void add(const TASK& task)
-    { queue.push(task); }
+    { q.push(task); }
 
     bool empty() const
-    { return queue.empty(); }
+    { return q.empty(); }
 
     size_t size() const
-    { return queue.size(); }
+    { return q.size(); }
 
     TASK pop()
     {
-        TASK task = queue.top();
-        queue.pop();
+        TASK task = q.top();
+        q.pop();
         return task;
     }
 
     void clear()
-    { queue = priority_queue<TASK, vector<TASK>, TaskCompare>(TaskCompare()); }
+    { q = priority_queue<TASK, vector<TASK>, TaskCompare>(TaskCompare()); }
 
+    /// Returns true if the first task has higher priority than the second one.
     static bool hasPriority(TASK& lhs, TASK& rhs)
     {
-        // TODO: add better heuristics (e.g. based on parent support)
-        return (lhs.getConditionIterator().getLength() < rhs.getConditionIterator().getLength());
+        if (lhs.getConditionIterator().getLength() > rhs.getConditionIterator().getLength()) {
+            return true;
+        }
+        else if (lhs.getConditionIterator().getLength() == rhs.getConditionIterator().getLength()) {
+            return lhs.getConditionIterator().getSoFar().size() < rhs.getConditionIterator().getSoFar().size();
+        }
+
+        return false;
     }
 
 private:
@@ -48,5 +55,5 @@ private:
         { return !TaskQueue::hasPriority(lhs, rhs); }
     };
 
-    priority_queue<TASK, vector<TASK>, TaskCompare> queue;
+    priority_queue<TASK, vector<TASK>, TaskCompare> q;
 };

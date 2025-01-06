@@ -140,6 +140,12 @@ public:
     { return prefix.empty() && available.empty() && soFar.empty() && stored.empty(); }
 
     /**
+     * Get the number of predicates that are available for processing
+     */
+    size_t toBeProcessed() const
+    { return available.size() - current; }
+
+    /**
      * Get the prefix of the condition represented by this iterator
      */
     const set<int> getPrefix() const

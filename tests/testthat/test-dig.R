@@ -433,14 +433,14 @@ test_that("disjoint filter", {
                disjoint = c(1, 2, 3))
 
     expect_equal(length(res), 8)
-    expect_equal(res, list(list(cond = integer(0)),
-                           list(cond = c("1"=1L)),
-                           list(cond = c("2"=2L)),
-                           list(cond = c("3"=3L)),
-                           list(cond = c("1"=1L, "3"=3L)),
-                           list(cond = c("2"=2L, "3"=3L)),
-                           list(cond = c("1"=1L, "2"=2L)),
-                           list(cond = c("1"=1L, "2"=2L, "3"=3L))))
+    expect_setequal(res, list(list(cond = integer(0)),
+                              list(cond = c("1"=1L)),
+                              list(cond = c("2"=2L)),
+                              list(cond = c("3"=3L)),
+                              list(cond = c("1"=1L, "3"=3L)),
+                              list(cond = c("2"=2L, "3"=3L)),
+                              list(cond = c("1"=1L, "2"=2L)),
+                              list(cond = c("1"=1L, "2"=2L, "3"=3L))))
 
     # disjoint 1, 1, 2
     res <- dig(m,
@@ -448,12 +448,12 @@ test_that("disjoint filter", {
                disjoint = c(1, 1, 2))
 
     expect_equal(length(res), 6)
-    expect_equal(res, list(list(cond = integer(0)),
-                           list(cond = c("1"=1L)),
-                           list(cond = c("2"=2L)),
-                           list(cond = c("3"=3L)),
-                           list(cond = c("1"=1L, "3"=3L)),
-                           list(cond = c("2"=2L, "3"=3L))))
+    expect_setequal(res, list(list(cond = integer(0)),
+                              list(cond = c("1"=1L)),
+                              list(cond = c("2"=2L)),
+                              list(cond = c("3"=3L)),
+                              list(cond = c("1"=1L, "3"=3L)),
+                              list(cond = c("2"=2L, "3"=3L))))
 
     # disjoint 1, 1, 1
     res <- dig(m,
@@ -461,10 +461,10 @@ test_that("disjoint filter", {
                disjoint = c(1, 1, 1))
 
     expect_equal(length(res), 4)
-    expect_equal(res, list(list(cond = integer(0)),
-                           list(cond = c("1"=1L)),
-                           list(cond = c("2"=2L)),
-                           list(cond = c("3"=3L))))
+    expect_setequal(res, list(list(cond = integer(0)),
+                              list(cond = c("1"=1L)),
+                              list(cond = c("2"=2L)),
+                              list(cond = c("3"=3L))))
 
 
     # disjoint 1, 1, 2 with condition and focus
@@ -476,12 +476,12 @@ test_that("disjoint filter", {
                focus = 4:6)
 
     expect_equal(length(res), 6)
-    expect_equal(res, list(list(cond = integer(0)),
-                           list(cond = c("1"=1L)),
-                           list(cond = c("2"=2L)),
-                           list(cond = c("3"=3L)),
-                           list(cond = c("1"=1L, "3"=3L)),
-                           list(cond = c("2"=2L, "3"=3L))))
+    expect_setequal(res, list(list(cond = integer(0)),
+                              list(cond = c("1"=1L)),
+                              list(cond = c("2"=2L)),
+                              list(cond = c("3"=3L)),
+                              list(cond = c("1"=1L, "3"=3L)),
+                              list(cond = c("2"=2L, "3"=3L))))
 })
 
 
