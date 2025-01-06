@@ -19,6 +19,9 @@ public:
     bool empty() const
     { return queue.empty(); }
 
+    size_t size() const
+    { return queue.size(); }
+
     TASK pop()
     {
         TASK task = queue.top();
