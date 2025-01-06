@@ -5,6 +5,7 @@
 - dig_implications() renamed to dig_associations()
 - dichotomize() is deprecated (use partition() instead)
 - added max_support argument to dig()
+- added min_conditional_focus_support argument to dig()
 - fixed handling of NULL returned by a callback function in dig_grid()
 - added max_p_value argument to dig_paired_baseline_contrasts()
 - argument d of the callback function in dig_grid() renamed to pd

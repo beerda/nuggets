@@ -154,52 +154,46 @@ dig_associations <- function(x,
 
     basic_callback <- function(condition, sum, pp) {
         conf <- pp / sum
-        sel <-!is.na(pp) & !is.na(conf) & conf >= min_confidence
-        selnames <- names(pp)[sel]
-        conf <- conf[sel]
-        supp <- pp[sel] / n
+        conf <- conf
+        supp <- pp / n
         ante <- format_condition(names(condition))
         cons <- unlist(lapply(names(conf), format_condition))
 
         if (length(conf) <= 0) {
-            return(list(sel = logical(0), res = NULL))
+            return(NULL)
         }
 
-        list(sel = sel,
-             res =  data.frame(antecedent = ante,
-                               consequent = cons,
-                               support = supp,
-                               confidence = conf,
-                               coverage = sum / n,
-                               conseq_support = conseq_supports[selnames],
-                               count = pp[sel],
-                               antecedent_length = length(condition)))
+        data.frame(antecedent = ante,
+                   consequent = cons,
+                   support = supp,
+                   confidence = conf,
+                   coverage = sum / n,
+                   conseq_support = conseq_supports[names(pp)],
+                   count = pp,
+                   antecedent_length = length(condition))
     }
 
-    f2 <- function(condition, sum, pp) {
-        basic_callback(condition, sum, pp)$res
-    }
-
-    f3 <- function(condition, sum, pp, pn, np, nn) {
-        bas <- basic_callback(condition, sum, pp)
-        sel <- bas$sel
-        res <- bas$res
+    extended_callback <- function(condition, sum, pp, pn, np, nn) {
+        res <- basic_callback(condition, sum, pp)
 
         if (length(res) <= 0) {
             return(NULL)
         }
 
-        res$pp <- pp[sel]
-        res$pn <- pn[sel]
-        res$np <- np[sel]
-        res$nn <- nn[sel]
+        res$pp <- pp
+        res$pn <- pn
+        res$np <- np
+        res$nn <- nn
 
         res
     }
 
     contingency_needed_measures <- c("conviction")
     contingency_needed <- length(intersect(measures, contingency_needed_measures)) > 0
-    f <- ifelse(contingency_table || contingency_needed, f3, f2)
+
+    f <- ifelse(contingency_table || contingency_needed,
+                extended_callback,
+                basic_callback)
 
     res <- dig(x = x,
                f = f,
