@@ -10,7 +10,7 @@ public:
     { }
 
     bool isConditionStorable(const TASK& task) const override
-    { return task.getFocusIterator().hasSoFar(); }
+    { return task.getFocusIterator().hasStored(); }
 
     bool isConditionExtendable(const TASK& task) const override
     { return task.getFocusIterator().hasSoFar(); }

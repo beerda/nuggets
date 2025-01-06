@@ -716,6 +716,41 @@ test_that("min_focus_support & filter_empty_foci", {
 })
 
 
+test_that("min_conditional_focus_support & filter_empty_foci", {
+    m <- matrix(c(c(1,1,1,1,1,1,1,1,0,0),
+                  c(1,1,1,1,1,1,0,0,1,1),
+                  c(0,0,0,1,1,1,1,1,1,1),
+                  c(0,0,0,0,1,1,1,1,1,1)), ncol = 4)
+
+    f <- function(condition, support, foci_supports) {
+       paste(paste(condition, collapse = " & "),
+             ":", round(support, 1),
+             "=",
+             paste0(names(foci_supports), "/", round(foci_supports, 1), collapse = ", "))
+    }
+
+    res <- dig(m,
+               f,
+               condition = 1:2,
+               focus = 3:4,
+               min_support = 0.1,
+               min_conditional_focus_support = 0.6,
+               filter_empty_foci = FALSE)
+
+    expect_equal(unlist(res), c(" : 1 = 3/0.7, 4/0.6", "1 : 0.8 = 3/0.5", "2 : 0.8 = 3/0.5", "1 & 2 : 0.6 = /"))
+
+    res <- dig(m,
+               f,
+               condition = 1:2,
+               focus = 3:4,
+               min_support = 0.1,
+               min_conditional_focus_support = 0.6,
+               filter_empty_foci = TRUE)
+
+    expect_equal(unlist(res), c(" : 1 = 3/0.7, 4/0.6", "1 : 0.8 = 3/0.5", "2 : 0.8 = 3/0.5"))
+})
+
+
 test_that("errors", {
     f <- function(condition) { list() }
     d <- data.frame(n = 1:5 / 5, l = TRUE, i = 1:5, s = letters[1:5])

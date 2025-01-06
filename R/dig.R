@@ -99,6 +99,10 @@
 #'      of rows such that all condition predicates AND the focus are TRUE on it.
 #'      For numerical (double) input, the support is computed as the mean (over all
 #'      rows) of multiplications of predicate values.
+#' @param min_conditional_focus_support the minimum relative support of a focus
+#'      within a condition. The conditional support of the focus is the relative
+#'      frequency of rows with focus being TRUE within rows where the condition is
+#'      TRUE.
 #' @param max_support the maximum support of a condition to trigger the callback
 #' @param filter_empty_foci a logical scalar indicating whether to skip conditions,
 #'      for which no focus remains available after filtering by `min_focus_support`.
@@ -212,6 +216,7 @@ dig <- function(x,
                 max_length = Inf,
                 min_support = 0.0,
                 min_focus_support = min_support,
+                min_conditional_focus_support = 0.0,
                 max_support = 1.0,
                 filter_empty_foci = FALSE,
                 t_norm = "goguen",
@@ -225,6 +230,7 @@ dig <- function(x,
                                      arg_max_length = "max_length",
                                      arg_min_support = "min_support",
                                      arg_min_focus_support = "min_focus_support",
+                                     arg_min_conditional_focus_support = "min_conditional_focus_support",
                                      arg_max_support = "max_support",
                                      arg_filter_empty_foci = "filter_empty_foci",
                                      arg_t_norm = "t_norm",
@@ -323,6 +329,14 @@ dig <- function(x,
                       call = error_context$call)
     min_focus_support <- as.double(min_focus_support)
 
+    .must_be_double_scalar(min_conditional_focus_support,
+                           arg = error_context$arg_min_conditional_focus_support,
+                           call = error_context$call)
+    .must_be_in_range(min_conditional_focus_support, c(0, 1),
+                      arg = error_context$arg_min_conditional_focus_support,
+                      call = error_context$call)
+    min_conditional_focus_support <- as.double(min_conditional_focus_support)
+
     .must_be_double_scalar(max_support,
                            arg = error_context$arg_max_support,
                            call = error_context$call)
@@ -357,6 +371,7 @@ dig <- function(x,
                    maxLength = max_length,
                    minSupport = min_support,
                    minFocusSupport = min_focus_support,
+                   minConditionalFocusSupport = min_conditional_focus_support,
                    maxSupport = max_support,
                    filterEmptyFoci = filter_empty_foci,
                    tNorm = t_norm,
