@@ -9,9 +9,9 @@ public:
     EmptyFociFilter()
     { }
 
-    bool isStorable(const TASK& task) const override
+    bool isConditionStorable(const TASK& task) const override
     { return task.getFocusIterator().hasSoFar(); }
 
-    bool isExtendable(const TASK& task) const override
+    bool isConditionExtendable(const TASK& task) const override
     { return task.getFocusIterator().hasSoFar(); }
 };

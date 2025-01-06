@@ -10,7 +10,7 @@ public:
         : maxSupport(maxSupport)
     { }
 
-    bool isStorable(const TASK& task) const override
+    bool isConditionStorable(const TASK& task) const override
     { return task.getPositiveChain().getSupport() <= maxSupport; }
 
 private:

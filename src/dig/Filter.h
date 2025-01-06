@@ -24,10 +24,13 @@ public:
     virtual bool isFocusPrunable(const TASK& task) const
     { return false; }
 
-    virtual bool isStorable(const TASK& task) const
+    virtual bool isFocusStorable(const TASK& task) const
     { return true; }
 
-    virtual bool isExtendable(const TASK& task) const
+    virtual bool isConditionStorable(const TASK& task) const
+    { return true; }
+
+    virtual bool isConditionExtendable(const TASK& task) const
     { return true; }
 
 };

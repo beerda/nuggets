@@ -184,15 +184,18 @@ private:
                         computeFocusChain(task);
                         if (!isFocusPrunable(task)) {
                             iter.putCurrentToSoFar();
+                            if (isFocusStorable(task)) {
+                                iter.storeCurrent();
+                            }
                         }
                     }
                     iter.next();
                 }
 
-                if (isStorable(task)) {
+                if (isConditionStorable(task)) {
                     store(task);
                 }
-                if (isExtendable(task)) {
+                if (isConditionExtendable(task)) {
                     if (task.getConditionIterator().hasSoFar()) {
                         child = task.createChild();
                     }
@@ -295,19 +298,28 @@ private:
         return false;
     }
 
-    bool isStorable(const TaskType& task) const
+    bool isFocusStorable(const TaskType& task) const
     {
         for (const FilterType* e : filters)
-            if (!e->isStorable(task))
+            if (!e->isFocusStorable(task))
                 return false;
 
         return true;
     }
 
-    bool isExtendable(const TaskType& task) const
+    bool isConditionStorable(const TaskType& task) const
     {
         for (const FilterType* e : filters)
-            if (!e->isExtendable(task))
+            if (!e->isConditionStorable(task))
+                return false;
+
+        return true;
+    }
+
+    bool isConditionExtendable(const TaskType& task) const
+    {
+        for (const FilterType* e : filters)
+            if (!e->isConditionExtendable(task))
                 return false;
 
         return true;

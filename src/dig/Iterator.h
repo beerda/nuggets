@@ -105,6 +105,7 @@ public:
     void reset()
     {
         current = 0;
+        stored.clear();
         soFar.clear();
     }
 
@@ -127,10 +128,16 @@ public:
     { return !soFar.empty(); }
 
     /**
-     * TRUE if the iterator is empty (empty prefix, available predicates and soFar predicates)
+     * TRUE if the iterator has any predicates stored in stored vector
+     */
+    bool hasStored() const
+    { return !stored.empty(); }
+
+    /**
+     * TRUE if the iterator is empty (empty prefix, available predicates, stored and soFar predicates)
      */
     bool empty() const
-    { return prefix.empty() && available.empty() && soFar.empty(); }
+    { return prefix.empty() && available.empty() && soFar.empty() && stored.empty(); }
 
     /**
      * Get the prefix of the condition represented by this iterator
@@ -151,10 +158,22 @@ public:
     { return soFar; }
 
     /**
+     * Get the stored predicates
+     */
+    const vector<int> getStored() const
+    { return stored; }
+
+    /**
      * Put current predicate into soFar predicates
      */
     void putCurrentToSoFar()
     { soFar.push_back(getCurrentPredicate()); }
+
+    /**
+     * Put current predicate into stored predicates
+     */
+    void storeCurrent()
+    { stored.push_back(getCurrentPredicate()); }
 
     /**
      * Compare two iterators for equality
@@ -164,7 +183,8 @@ public:
         return current == other.current
             && prefix == other.prefix
             && available == other.available
-            && soFar == other.soFar;
+            && soFar == other.soFar
+            && stored == other.stored;
     }
 
     /**
@@ -197,10 +217,15 @@ private:
     /// A set of constant predicates that are part of the whole condition represented by this iterator
     set<int> prefix;
 
-    /// A vector of available predicates (predicates to be tested by this iterator)
+    /// A vector of predicates available to processing (predicates to be tested by this iterator)
     vector<int> available;
 
     /// A vector of predicates, which will be "available" in sub iterators
     vector<int> soFar;
 
+    /// A vector of predicates, which are processed and selected for current condition.
+    /// Stored predicates do not necessarily go to sub iterations.
+    /// If the iterator captures foci, stored foci are those that are connected
+    /// to current condition.
+    vector<int> stored;
 };
