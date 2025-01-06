@@ -137,6 +137,7 @@ predicates AND the focus are TRUE on it. Foci with support lower than
 <span>  max_length <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  min_support <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  min_focus_support <span class="op">=</span> <span class="va">min_support</span>,</span>
+<span>  min_conditional_focus_support <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  max_support <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  filter_empty_foci <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  t_norm <span class="op">=</span> <span class="st">"goguen"</span>,</span>
@@ -144,9 +145,10 @@ predicates AND the focus are TRUE on it. Foci with support lower than
 <span>  error_context <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>arg_x <span class="op">=</span> <span class="st">"x"</span>, arg_f <span class="op">=</span> <span class="st">"f"</span>, arg_condition <span class="op">=</span> <span class="st">"condition"</span>, arg_focus <span class="op">=</span></span>
 <span>    <span class="st">"focus"</span>, arg_disjoint <span class="op">=</span> <span class="st">"disjoint"</span>, arg_min_length <span class="op">=</span> <span class="st">"min_length"</span>, arg_max_length <span class="op">=</span></span>
 <span>    <span class="st">"max_length"</span>, arg_min_support <span class="op">=</span> <span class="st">"min_support"</span>, arg_min_focus_support <span class="op">=</span></span>
-<span>    <span class="st">"min_focus_support"</span>, arg_max_support <span class="op">=</span> <span class="st">"max_support"</span>, arg_filter_empty_foci <span class="op">=</span></span>
-<span>    <span class="st">"filter_empty_foci"</span>, arg_t_norm <span class="op">=</span> <span class="st">"t_norm"</span>, arg_threads <span class="op">=</span> <span class="st">"threads"</span>, call <span class="op">=</span></span>
-<span>    <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="st">"min_focus_support"</span>, arg_min_conditional_focus_support <span class="op">=</span></span>
+<span>    <span class="st">"min_conditional_focus_support"</span>, arg_max_support <span class="op">=</span> <span class="st">"max_support"</span>,</span>
+<span>    arg_filter_empty_foci <span class="op">=</span> <span class="st">"filter_empty_foci"</span>, arg_t_norm <span class="op">=</span> <span class="st">"t_norm"</span>, arg_threads <span class="op">=</span></span>
+<span>    <span class="st">"threads"</span>, call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -243,6 +245,13 @@ to the callback function. The support of the focus is the relative frequency
 of rows such that all condition predicates AND the focus are TRUE on it.
 For numerical (double) input, the support is computed as the mean (over all
 rows) of multiplications of predicate values.</p></dd>
+
+
+<dt id="arg-min-conditional-focus-support">min_conditional_focus_support<a class="anchor" aria-label="anchor" href="#arg-min-conditional-focus-support"></a></dt>
+<dd><p>the minimum relative support of a focus
+within a condition. The conditional support of the focus is the relative
+frequency of rows with focus being TRUE within rows where the condition is
+TRUE.</p></dd>
 
 
 <dt id="arg-max-support">max_support<a class="anchor" aria-label="anchor" href="#arg-max-support"></a></dt>
