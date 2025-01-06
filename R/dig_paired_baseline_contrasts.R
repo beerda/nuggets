@@ -123,7 +123,7 @@
 #'      \item{df}{the degrees of freedom of the t test.}
 #'      \item{stderr}{the standard error of the mean difference.}
 #' @author Michal Burda
-#' @seealso [dig_baseline_contrasts()], [dig_conditional_contrasts()],
+#' @seealso [dig_baseline_contrasts()], [dig_complement_contrasts()],
 #'      [dig()], [dig_grid()],
 #'      [stats::t.test()], [stats::wilcox.test()]
 #' @examples

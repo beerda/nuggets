@@ -4,7 +4,7 @@
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
-#' Conditional contrast patterns identify conditions under which there is
+#' Complement contrast patterns identify conditions under which there is
 #' a significant difference in some numerical variable between elements
 #' that satisfy the identified condition and the rest of the data table.
 #'
@@ -18,12 +18,12 @@
 #'     significantly lower than in people that do not smoke.}
 #' }
 #'
-#' The conditional contrast is computed using a two-sample statistical test,
+#' The complement contrast is computed using a two-sample statistical test,
 #' which is specified by the `method` argument. The function computes the
-#' conditional contrast in all variables specified by the `vars` argument.
-#' Conditional contrasts are computed based on sub-data corresponding
+#' complement contrast in all variables specified by the `vars` argument.
+#' Complement contrasts are computed based on sub-data corresponding
 #' to conditions generated from the `condition` columns and the rest of the
-#' data table. Function #' `dig_conditional_contrasts()` supports crisp
+#' data table. Function #' `dig_complement_contrasts()` supports crisp
 #' conditions only, i.e., the condition columns in `x` must be logical.
 #'
 #' @param x a matrix or data frame with data to search the patterns in.
@@ -127,7 +127,7 @@
 #'      [dig()], [dig_grid()],
 #'      [stats::t.test()], [stats::wilcox.test()], [stats::var.test()]
 #' @export
-dig_conditional_contrasts <- function(x,
+dig_complement_contrasts <- function(x,
                                       condition = where(is.logical),
                                       vars = where(is.numeric),
                                       disjoint = var_names(colnames(x)),

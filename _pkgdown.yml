@@ -23,7 +23,7 @@ reference:
       - dig_associations
       - dig_correlations
       - dig_baseline_contrasts
-      - dig_conditional_contrasts
+      - dig_complement_contrasts
       - dig_paired_baseline_contrasts
 
   - title: "Custom Pattern Extraction"

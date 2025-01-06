@@ -156,7 +156,7 @@ are computed in sub-data corresponding to conditions generated from the
 conditions only, i.e., the condition columns in \code{x} must be logical.
 }
 \seealso{
-\code{\link[=dig_paired_baseline_contrasts]{dig_paired_baseline_contrasts()}}, \code{\link[=dig_conditional_contrasts]{dig_conditional_contrasts()}},
+\code{\link[=dig_paired_baseline_contrasts]{dig_paired_baseline_contrasts()}}, \code{\link[=dig_complement_contrasts]{dig_complement_contrasts()}},
 \code{\link[=dig]{dig()}}, \code{\link[=dig_grid]{dig_grid()}},
 \code{\link[stats:t.test]{stats::t.test()}}, \code{\link[stats:wilcox.test]{stats::wilcox.test()}}
 }

@@ -1,7 +1,7 @@
-test_that("dig_conditional_contrasts t", {
+test_that("dig_complement_contrasts t", {
     d <- partition(CO2, Plant:Treatment)
 
-    res <- dig_conditional_contrasts(d,
+    res <- dig_complement_contrasts(d,
                          condition = where(is.logical),
                          vars = conc:uptake,
                          min_support = 0.1)
@@ -13,7 +13,7 @@ test_that("dig_conditional_contrasts t", {
     expect_equal(res$support, c(0.5, 0.5, 0.5, 0.5, 0.25, 0.25, 0.25))
     expect_equal(res$var, rep(c("uptake"), 7))
 
-    res <- dig_conditional_contrasts(d,
+    res <- dig_complement_contrasts(d,
                          condition = where(is.logical),
                          vars = conc:uptake,
                          min_support = 0.1,
@@ -24,10 +24,10 @@ test_that("dig_conditional_contrasts t", {
     expect_equal(ncol(res), 16)
 })
 
-test_that("dig_conditional_contrasts wilcox", {
+test_that("dig_complement_contrasts wilcox", {
     d <- partition(CO2, Plant:Treatment)
 
-    res <- dig_conditional_contrasts(d,
+    res <- dig_complement_contrasts(d,
                          condition = where(is.logical),
                          vars = conc:uptake,
                          method = "wilcox",
@@ -39,7 +39,7 @@ test_that("dig_conditional_contrasts wilcox", {
     expect_equal(res$support, c(0.5, 0.5, 0.5, 0.5, 0.25, 0.25, 0.25))
     expect_equal(res$var, rep(c("uptake"), 7))
 
-    res <- dig_conditional_contrasts(d,
+    res <- dig_complement_contrasts(d,
                          condition = where(is.logical),
                          vars = conc:uptake,
                          method = "wilcox",
@@ -54,16 +54,16 @@ test_that("dig_conditional_contrasts wilcox", {
 test_that("dig_paired contrasts errors", {
     d <- data.frame(n = 1:5 / 5, l = TRUE, i = 1:5, s = letters[1:5])
 
-    expect_error(dig_conditional_contrasts(x = 1:5),
+    expect_error(dig_complement_contrasts(x = 1:5),
                  "`x` must be a matrix or a data frame")
-    expect_error(dig_conditional_contrasts(d, condition = n:l),
+    expect_error(dig_complement_contrasts(d, condition = n:l),
                  "All columns selected by `condition` must be logical.")
-    expect_error(dig_conditional_contrasts(d, vars = s),
+    expect_error(dig_complement_contrasts(d, vars = s),
                  "All columns selected by `vars` must be numeric.")
-    expect_error(dig_conditional_contrasts(d, method = "foo"),
+    expect_error(dig_complement_contrasts(d, method = "foo"),
                  '`method` must be equal to one of: "t", "wilcox".')
-    expect_error(dig_conditional_contrasts(d, alternative = "foo"),
+    expect_error(dig_complement_contrasts(d, alternative = "foo"),
                  '`alternative` must be equal to one of: "two.sided", "less", "greater".')
-    expect_error(dig_conditional_contrasts(d, min_length = "x"),
+    expect_error(dig_complement_contrasts(d, min_length = "x"),
                  "`min_length` must be an integerish scalar.")
 })
