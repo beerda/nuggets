@@ -23,7 +23,7 @@ public:
 
         ArgumentValue arg("pn", ArgumentType::ARG_NUMERIC);
 
-        for (int i : task.getFocusIterator().getSoFar()) {
+        for (int i : task.getFocusIterator().getStored()) {
             arg.push_back(task.getPnFocusChain(i).getSum(), fociNames[i]);
         }
 

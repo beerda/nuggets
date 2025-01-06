@@ -110,7 +110,8 @@ public:
         }
         if (config.getMinConditionalFocusSupport() > 0.0) {
             digger.setPpFocusChainsNeeded();
-            digger.addFilter(new MinConditionalFocusSupportFilter<TaskType>(config.getMinConditionalFocusSupport()));
+            digger.addFilter(new MinConditionalFocusSupportFilter<TaskType>(config.getMinConditionalFocusSupport(),
+                                                                            data.nrow()));
         }
         if (config.getMaxSupport() < 1.0) {
             digger.setPositiveConditionChainsNeeded();

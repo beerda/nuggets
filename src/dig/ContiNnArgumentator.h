@@ -23,7 +23,7 @@ public:
 
         ArgumentValue arg("nn", ArgumentType::ARG_NUMERIC);
 
-        for (int i : task.getFocusIterator().getSoFar()) {
+        for (int i : task.getFocusIterator().getStored()) {
             arg.push_back(task.getNnFocusChain(i).getSum(), fociNames[i]);
         }
 

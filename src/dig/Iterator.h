@@ -113,7 +113,7 @@ public:
      * Go to the next available predicate.
      */
     void next()
-    {  current++; }
+    { current++; }
 
     /**
      * TRUE if iterator has more predicates, i.e., if getCurrentPredicate() can be called.
