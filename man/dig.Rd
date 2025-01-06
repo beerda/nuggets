@@ -14,6 +14,7 @@ dig(
   max_length = Inf,
   min_support = 0,
   min_focus_support = min_support,
+  min_conditional_focus_support = 0,
   max_support = 1,
   filter_empty_foci = FALSE,
   t_norm = "goguen",
@@ -21,9 +22,10 @@ dig(
   error_context = list(arg_x = "x", arg_f = "f", arg_condition = "condition", arg_focus =
     "focus", arg_disjoint = "disjoint", arg_min_length = "min_length", arg_max_length =
     "max_length", arg_min_support = "min_support", arg_min_focus_support =
-    "min_focus_support", arg_max_support = "max_support", arg_filter_empty_foci =
-    "filter_empty_foci", arg_t_norm = "t_norm", arg_threads = "threads", call =
-    current_env())
+    "min_focus_support", arg_min_conditional_focus_support =
+    "min_conditional_focus_support", arg_max_support = "max_support",
+    arg_filter_empty_foci = "filter_empty_foci", arg_t_norm = "t_norm", arg_threads =
+    "threads", call = current_env())
 )
 }
 \arguments{
@@ -101,6 +103,11 @@ to the callback function. The support of the focus is the relative frequency
 of rows such that all condition predicates AND the focus are TRUE on it.
 For numerical (double) input, the support is computed as the mean (over all
 rows) of multiplications of predicate values.}
+
+\item{min_conditional_focus_support}{the minimum relative support of a focus
+within a condition. The conditional support of the focus is the relative
+frequency of rows with focus being TRUE within rows where the condition is
+TRUE.}
 
 \item{max_support}{the maximum support of a condition to trigger the callback}
 
