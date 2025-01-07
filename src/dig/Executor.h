@@ -44,6 +44,11 @@ public:
             data.addNumericChains(numData);
             data.addLogicalFoci(logFoci);
             data.addNumericFoci(numFoci);
+            if (config.isVerbose()) {
+                Rcout << "dig: loaded " << data.nrow() << " rows of "
+                      << data.size() << " condition chains and "
+                      << data.fociSize() << " foci chains" << endl;
+            }
         }
 
         {
@@ -131,6 +136,9 @@ public:
         }
 
         {
+            if (config.isVerbose()) {
+                Rcout << "dig: searching for frequent conditions" << endl;
+            }
             LogStartEnd l("digger.run");
             digger.run();
         }
@@ -138,6 +146,9 @@ public:
         {
             LogStartEnd l("collecting arguments");
             vector<ArgumentValues> diggerResult = digger.getResult();
+            if (config.isVerbose()) {
+                Rcout << "dig: collecting " << diggerResult.size() << " arguments" << endl;
+            }
             for (size_t i = 0; i < diggerResult.size(); ++i) {
                 List item;
                 for (size_t j = 0; j < diggerResult[i].size(); ++j) {

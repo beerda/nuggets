@@ -17,6 +17,7 @@ dig_associations(
   contingency_table = FALSE,
   measures = NULL,
   t_norm = "goguen",
+  verbose = FALSE,
   threads = 1
 )
 }
@@ -73,6 +74,8 @@ for a description of the measures.}
 \item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
 \code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}
 (Lukasiewicz t-norm).}
+
+\item{verbose}{a logical value indicating whether to print progress messages.}
 
 \item{threads}{the number of threads to use for parallel computation.}
 }

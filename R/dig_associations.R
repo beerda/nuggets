@@ -78,6 +78,7 @@
 #' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
 #'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
 #'      (Lukasiewicz t-norm).
+#' @param verbose a logical value indicating whether to print progress messages.
 #' @param threads the number of threads to use for parallel computation.
 #' @returns A tibble with found patterns and computed quality measures.
 #' @author Michal Burda
@@ -103,6 +104,7 @@ dig_associations <- function(x,
                              contingency_table = FALSE,
                              measures = NULL,
                              t_norm = "goguen",
+                             verbose = FALSE,
                              threads = 1) {
     .must_be_double_scalar(min_coverage)
     .must_be_in_range(min_coverage, c(0, 1))
@@ -114,6 +116,7 @@ dig_associations <- function(x,
     .must_be_in_range(min_confidence, c(0, 1))
 
     .must_be_flag(contingency_table)
+    .must_be_flag(verbose)
     .must_be_enum(measures,
                   values = c("lift", "conviction", "added_value"),
                   null = TRUE,
@@ -132,6 +135,7 @@ dig_associations <- function(x,
         res
     }
 
+    .msg(verbose, "dig_associations: computing consequent supports")
     conseq_supports <- dig(x = x,
                            f = f1,
                            condition = !!consequent,
@@ -139,6 +143,7 @@ dig_associations <- function(x,
                            min_length = 1,
                            max_length = 1,
                            min_support = 0.0,
+                           verbose = verbose,
                            threads = threads,
                            error_context = list(arg_x = "x",
                                                 arg_condition = "consequent",
@@ -146,6 +151,7 @@ dig_associations <- function(x,
                                                 arg_min_length = "min_length",
                                                 arg_max_length = "max_length",
                                                 arg_min_support = "min_support",
+                                                arg_verbose = "verbose",
                                                 arg_threads = "threads",
                                                 call = current_env()))
     conseq_supports <- unlist(conseq_supports)
@@ -193,6 +199,7 @@ dig_associations <- function(x,
                 extended_callback,
                 basic_callback)
 
+    .msg(verbose, "dig_associations: computing rules")
     res <- dig(x = x,
                f = f,
                condition = !!antecedent,
@@ -205,6 +212,7 @@ dig_associations <- function(x,
                min_conditional_focus_support = min_confidence,
                filter_empty_foci = TRUE,
                t_norm = t_norm,
+               verbose = verbose,
                threads = threads,
                error_context = list(arg_x = "x",
                                     arg_condition = "antecedent",
@@ -216,9 +224,11 @@ dig_associations <- function(x,
                                     arg_min_focus_support = "min_support",
                                     arg_min_conditional_focus_support = "min_confidence",
                                     arg_t_norm = "t_norm",
+                                    arg_verbose = "verbose",
                                     arg_threads = "threads",
                                     call = current_env()))
 
+    .msg(verbose, "dig_associations: post-processing")
     res <- do.call(rbind, res)
 
     if ("lift" %in% measures) {

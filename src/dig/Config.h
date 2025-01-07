@@ -49,6 +49,9 @@ public:
         LogicalVector filterEmptyFociVec = configuration["filterEmptyFoci"];
         filterEmptyFoci = filterEmptyFociVec[0];
 
+        LogicalVector verboseVec = configuration["verbose"];
+        verbose = verboseVec[0];
+
         CharacterVector tnormVec = configuration["tNorm"];
         if (tnormVec[0] == "goedel")
             tNorm = TNorm::GOEDEL;
@@ -141,6 +144,9 @@ public:
     bool hasFilterEmptyFoci() const
     { return filterEmptyFoci; }
 
+    bool isVerbose() const
+    { return verbose; }
+
     TNorm getTNorm() const
     { return tNorm; }
 
@@ -189,6 +195,7 @@ private:
     double minConditionalFocusSupport;
     double maxSupport;
     bool filterEmptyFoci;
+    bool verbose;
     TNorm tNorm;
 
     void parseArguments(const CharacterVector& vec)

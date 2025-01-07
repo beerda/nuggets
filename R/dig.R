@@ -112,6 +112,7 @@
 #' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
 #'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
 #'      (Lukasiewicz t-norm).
+#' @param verbose a logical scalar indicating whether to print progress messages.
 #' @param threads the number of threads to use for parallel computation.
 #' @param error_context a list of details to be used in error messages.
 #'      This argument is useful when `dig()` is called from another
@@ -220,6 +221,7 @@ dig <- function(x,
                 max_support = 1.0,
                 filter_empty_foci = FALSE,
                 t_norm = "goguen",
+                verbose = FALSE,
                 threads = 1L,
                 error_context = list(arg_x = "x",
                                      arg_f = "f",
@@ -234,6 +236,7 @@ dig <- function(x,
                                      arg_max_support = "max_support",
                                      arg_filter_empty_foci = "filter_empty_foci",
                                      arg_t_norm = "t_norm",
+                                     arg_verbose = "verbose",
                                      arg_threads = "threads",
                                      call = current_env())) {
     cols <- .convert_data_to_list(x,
@@ -353,6 +356,10 @@ dig <- function(x,
                   arg = error_context$arg_t_norm,
                   call = error_context$call)
 
+    .must_be_flag(verbose,
+                  arg = error_context$arg_verbose,
+                  call = error_context$call)
+
     .must_be_integerish_scalar(threads,
                                arg = error_context$arg_threads,
                                call = error_context$call)
@@ -375,6 +382,7 @@ dig <- function(x,
                    maxSupport = max_support,
                    filterEmptyFoci = filter_empty_foci,
                    tNorm = t_norm,
+                   verbose = verbose,
                    threads = threads)
 
     res <- dig_(condition_cols$logicals,
@@ -382,5 +390,6 @@ dig <- function(x,
                 foci_cols$logicals,
                 foci_cols$doubles, config)
 
+    .msg(verbose, "dig: executing callback function on the results")
     lapply(res, do.call, what = f)
 }
