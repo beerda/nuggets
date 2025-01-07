@@ -35,7 +35,6 @@ public:
 
     List execute(List logData, List numData, List logFoci, List numFoci)
     {
-        List result;
         DataType data(config.getNrow());
 
         {
@@ -146,31 +145,36 @@ public:
         {
             LogStartEnd l("collecting arguments");
             vector<ArgumentValues> diggerResult = digger.getResult();
+            Rcpp::List result(diggerResult.size());
+
             if (config.isVerbose()) {
                 Rcout << "dig: collecting " << diggerResult.size() << " arguments" << endl;
             }
             for (size_t i = 0; i < diggerResult.size(); ++i) {
-                List item;
+                List item(diggerResult[i].size());
+                CharacterVector itemNames(diggerResult[i].size());
                 for (size_t j = 0; j < diggerResult[i].size(); ++j) {
                     ArgumentValue a = diggerResult[i][j];
+                    itemNames[j] = a.getArgumentName();
 
                     if (a.getType() == ArgumentType::ARG_LOGICAL) {
-                        item.push_back(a.asLogicalVector(), a.getArgumentName());
+                        item[j] = a.asLogicalVector();
                     }
                     else if (a.getType() == ArgumentType::ARG_INTEGER) {
-                        item.push_back(a.asIntegerVector(), a.getArgumentName());
+                        item[j] = a.asIntegerVector();
                     }
                     else if (a.getType() == ArgumentType::ARG_NUMERIC) {
-                        item.push_back(a.asNumericVector(), a.getArgumentName());
+                        item[j] = a.asNumericVector();
                     } else {
                         throw runtime_error("Unhandled ArgumentType");
                     }
                 }
-                result.push_back(item);
+                item.names() = itemNames;
+                result[i] = item;
             }
-        }
 
-        return result;
+            return result;
+        }
     }
 
 private:

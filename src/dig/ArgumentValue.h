@@ -42,16 +42,13 @@ public:
         if (type != ARG_LOGICAL)
             throw runtime_error("Cannot export Argument to LogicalVector");
 
-        LogicalVector result;
+        LogicalVector result(values.size());
 
         if (isNamed()) {
-            for (size_t i = 0; i < values.size(); ++i) {
-                result.push_back(values[i].logical, names[i]);
-            }
-        } else {
-            for (size_t i = 0; i < values.size(); ++i) {
-                result.push_back(values[i].logical);
-            }
+            result.names() = CharacterVector(names.begin(), names.end());
+        }
+        for (size_t i = 0; i < values.size(); ++i) {
+            result[i] = values[i].logical;
         }
 
         return result;
@@ -62,16 +59,13 @@ public:
         if (type != ARG_INTEGER)
             throw runtime_error("Cannot export Argument to IntegerVector");
 
-        IntegerVector result;
+        IntegerVector result(values.size());
 
         if (isNamed()) {
-            for (size_t i = 0; i < values.size(); ++i) {
-                result.push_back(values[i].integer, names[i]);
-            }
-        } else {
-            for (size_t i = 0; i < values.size(); ++i) {
-                result.push_back(values[i].integer);
-            }
+            result.names() = CharacterVector(names.begin(), names.end());
+        }
+        for (size_t i = 0; i < values.size(); ++i) {
+            result[i] = values[i].integer;
         }
 
         return result;
@@ -82,16 +76,13 @@ public:
         if (type != ARG_NUMERIC)
             throw runtime_error("Cannot export Argument to NumericVector");
 
-        NumericVector result;
+        NumericVector result(values.size());
 
         if (isNamed()) {
-            for (size_t i = 0; i < values.size(); ++i) {
-                result.push_back(values[i].numeric, names[i]);
-            }
-        } else {
-            for (size_t i = 0; i < values.size(); ++i) {
-                result.push_back(values[i].numeric);
-            }
+            result.names() = CharacterVector(names.begin(), names.end());
+        }
+        for (size_t i = 0; i < values.size(); ++i) {
+            result[i] = values[i].numeric;
         }
 
         return result;

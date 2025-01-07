@@ -10,6 +10,7 @@
 - added max_p_value argument to dig_paired_baseline_contrasts()
 - argument d of the callback function in dig_grid() renamed to pd
 - added handling of nd argument of the callback function in dig_grid()
+- optimized performance of dig()
 - improved error messages
 - added nuggets vignette
 - started using lifecycle and pkgdown
