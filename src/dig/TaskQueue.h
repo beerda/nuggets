@@ -1,6 +1,7 @@
 #pragma once
 
 #include <queue>
+#include <memory>
 #include "Task.h"
 
 using namespace std;
@@ -14,7 +15,7 @@ public:
     { }
 
     void add(const TASK& task)
-    { q.push(task); }
+    { q.push(make_shared<TASK>(task)); }
 
     bool empty() const
     { return q.empty(); }
@@ -24,13 +25,13 @@ public:
 
     TASK pop()
     {
-        TASK task = q.top();
+        TASK task = *(q.top());
         q.pop();
         return task;
     }
 
     void clear()
-    { q = priority_queue<TASK, vector<TASK>, TaskCompare>(TaskCompare()); }
+    { q = priority_queue<shared_ptr<TASK>, vector<shared_ptr<TASK>>, TaskCompare>(TaskCompare()); }
 
     /// Returns true if the first task has higher priority than the second one.
     static bool hasPriority(TASK& lhs, TASK& rhs)
@@ -51,9 +52,9 @@ private:
         TaskCompare()
         { }
 
-        bool operator() (TASK& lhs, TASK& rhs)
-        { return !TaskQueue::hasPriority(lhs, rhs); }
+        bool operator() (const shared_ptr<TASK>& lhs, const shared_ptr<TASK> rhs)
+        { return !TaskQueue::hasPriority(*lhs, *rhs); }
     };
 
-    priority_queue<TASK, vector<TASK>, TaskCompare> q;
+    priority_queue<shared_ptr<TASK>, vector<shared_ptr<TASK>>, TaskCompare> q;
 };
