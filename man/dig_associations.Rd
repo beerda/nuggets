@@ -75,8 +75,6 @@ for a description of the measures.}
 (Lukasiewicz t-norm).}
 
 \item{threads}{the number of threads to use for parallel computation.}
-
-\item{...}{Further arguments, currently unused.}
 }
 \value{
 A tibble with found patterns and computed quality measures.

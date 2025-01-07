@@ -79,7 +79,6 @@
 #'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
 #'      (Lukasiewicz t-norm).
 #' @param threads the number of threads to use for parallel computation.
-#' @param ... Further arguments, currently unused.
 #' @returns A tibble with found patterns and computed quality measures.
 #' @author Michal Burda
 #' @seealso [partition()], [var_names()], [dig()]
