@@ -46,6 +46,9 @@ public:
         NumericVector maxSupportVec = configuration["maxSupport"];
         maxSupport = maxSupportVec[0];
 
+        IntegerVector maxResultsVec = configuration["maxResults"];
+        maxResults = maxResultsVec[0]; // -1 means infinite
+
         LogicalVector filterEmptyFociVec = configuration["filterEmptyFoci"];
         filterEmptyFoci = filterEmptyFociVec[0];
 
@@ -129,6 +132,9 @@ public:
     int getMaxLength() const
     { return maxLength; }
 
+    int getMaxResults() const
+    { return maxResults; }
+
     double getMinSupport() const
     { return minSupport; }
 
@@ -190,6 +196,7 @@ private:
     int threads;
     int minLength;
     int maxLength;
+    int maxResults; // -1 means infinite
     double minSupport;
     double minFocusSupport;
     double minConditionalFocusSupport;

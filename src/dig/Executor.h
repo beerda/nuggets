@@ -44,7 +44,7 @@ public:
             data.addLogicalFoci(logFoci);
             data.addNumericFoci(numFoci);
             if (config.isVerbose()) {
-                Rcout << "dig: loaded " << data.nrow() << " rows of "
+                Rcout << "dig: loaded " << data.nrow() << " rows / "
                       << data.size() << " condition chains and "
                       << data.fociSize() << " foci chains" << endl;
             }

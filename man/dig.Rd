@@ -18,6 +18,7 @@ dig(
   max_support = 1,
   filter_empty_foci = FALSE,
   t_norm = "goguen",
+  max_results = Inf,
   verbose = FALSE,
   threads = 1L,
   error_context = list(arg_x = "x", arg_f = "f", arg_condition = "condition", arg_focus =
@@ -25,8 +26,10 @@ dig(
     "max_length", arg_min_support = "min_support", arg_min_focus_support =
     "min_focus_support", arg_min_conditional_focus_support =
     "min_conditional_focus_support", arg_max_support = "max_support",
-    arg_filter_empty_foci = "filter_empty_foci", arg_t_norm = "t_norm", arg_verbose =
-    "verbose", arg_threads = "threads", call = current_env())
+    arg_filter_empty_foci = "filter_empty_foci", arg_t_norm = "t_norm", arg_max_results =
+    "max_results", arg_verbose = "verbose", arg_threads = "threads", 
+     call =
+    current_env())
 )
 }
 \arguments{
@@ -121,6 +124,13 @@ callback function regardless of the number of remaining foci.}
 \item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
 \code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}
 (Lukasiewicz t-norm).}
+
+\item{max_results}{the maximum number of generated conditions to execute the
+callback function on. If the number of found conditions exceeds
+\code{max_results}, the function stops generating new conditions and returns
+the results. To avoid long computations during the search, it is recommended
+to set \code{max_results} to a reasonable positive value. Setting \code{max_results}
+to \code{Inf} will generate all possible conditions.}
 
 \item{verbose}{a logical scalar indicating whether to print progress messages.}
 

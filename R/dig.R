@@ -112,6 +112,12 @@
 #' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
 #'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
 #'      (Lukasiewicz t-norm).
+#' @param max_results the maximum number of generated conditions to execute the
+#'      callback function on. If the number of found conditions exceeds
+#'      `max_results`, the function stops generating new conditions and returns
+#'      the results. To avoid long computations during the search, it is recommended
+#'      to set `max_results` to a reasonable positive value. Setting `max_results`
+#'      to `Inf` will generate all possible conditions.
 #' @param verbose a logical scalar indicating whether to print progress messages.
 #' @param threads the number of threads to use for parallel computation.
 #' @param error_context a list of details to be used in error messages.
@@ -221,6 +227,7 @@ dig <- function(x,
                 max_support = 1.0,
                 filter_empty_foci = FALSE,
                 t_norm = "goguen",
+                max_results = Inf,
                 verbose = FALSE,
                 threads = 1L,
                 error_context = list(arg_x = "x",
@@ -236,6 +243,7 @@ dig <- function(x,
                                      arg_max_support = "max_support",
                                      arg_filter_empty_foci = "filter_empty_foci",
                                      arg_t_norm = "t_norm",
+                                     arg_max_results = "max_results",
                                      arg_verbose = "verbose",
                                      arg_threads = "threads",
                                      call = current_env())) {
@@ -356,6 +364,18 @@ dig <- function(x,
                   arg = error_context$arg_t_norm,
                   call = error_context$call)
 
+    .must_be_integerish_scalar(max_results,
+                               arg = error_context$arg_max_results,
+                               call = error_context$call)
+    .must_be_greater_eq(max_results, 1,
+                        arg = error_context$arg_max_results,
+                        call = error_context$call)
+    if (is.finite(max_results)) {
+        max_results <- as.integer(max_results)
+    } else {
+        max_results <- -1L
+    }
+
     .must_be_flag(verbose,
                   arg = error_context$arg_verbose,
                   call = error_context$call)
@@ -382,6 +402,7 @@ dig <- function(x,
                    maxSupport = max_support,
                    filterEmptyFoci = filter_empty_foci,
                    tNorm = t_norm,
+                   maxResults = max_results,
                    verbose = verbose,
                    threads = threads)
 

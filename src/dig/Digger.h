@@ -20,7 +20,8 @@ public:
     using ArgumentatorType = Argumentator<TaskType>;
 
     Digger(DataType& data, const Config& config)
-        : data(data),
+        : config(config),
+          data(data),
           initialTask(Iterator(data.size()),          // condition predicates to "soFar"
                       Iterator({}, data.fociSize())), // focus predicates to "available"
           sequence(),
@@ -54,7 +55,9 @@ public:
             while (!workDone()) {
                 TaskType task;
                 if (receiveTask(task)) {
-                    processTask(task);
+                    if (!isStorageFull()) {
+                        processTask(task);
+                    }
                     taskFinished(task);
                 }
             }
@@ -103,6 +106,7 @@ public:
     { return result; }
 
 private:
+    const Config& config;
     DataType& data;
     TaskType initialTask;
     TaskSequence<TaskType> sequence;
@@ -229,7 +233,16 @@ private:
         }
         unique_lock lock(resultMutex);
         //cout << omp_get_thread_num() << "store" << endl;
-        result.push_back(args);
+        if (!isStorageFull()) {
+            result.push_back(args);
+        }
+    }
+
+    bool isStorageFull() {
+        if (config.getMaxResults() < 0)
+            return false;
+
+        return result.size() >= config.getMaxResults();
     }
 
     void updateConditionChain(TaskType& task) const

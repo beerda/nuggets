@@ -26,6 +26,27 @@ test_that("data frame", {
 })
 
 
+test_that("max_results limiting", {
+    d <- data.frame(a = 1:6 / 10,
+                    b = c(T, T, T, F, F, F))
+
+    res <- dig(d, function() 1, max_results = Inf)
+    expect_equal(length(res), 4)
+
+    res <- dig(d, function() 1, max_results = 1)
+    expect_equal(length(res), 1)
+
+    res <- dig(d, function() 1, max_results = 2)
+    expect_equal(length(res), 2)
+
+    res <- dig(d, function() 1, max_results = 4)
+    expect_equal(length(res), 4)
+
+    res <- dig(d, function() 1, max_results = 10)
+    expect_equal(length(res), 4)
+})
+
+
 test_that("select condition columns", {
     m <- matrix(rep(c(T, F), 12), ncol = 3)
 
@@ -803,6 +824,10 @@ test_that("errors", {
                  "`filter_empty_foci` must be a flag");
     expect_error(dig(d, f, condition = n, t_norm = "x"),
                  "`t_norm` must be equal to one of:");
+    expect_error(dig(d, f, condition = n, max_results = -1),
+                 "`max_results` must be >= 1.")
+    expect_error(dig(d, f, condition = n, verbose = "x"),
+                 "`verbose` must be a flag");
     expect_error(dig(d, f, condition = n, threads = "x"),
                  "`threads` must be an integerish scalar.");
     expect_error(dig(d, f, condition = n, threads = 0),
