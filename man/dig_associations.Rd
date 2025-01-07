@@ -17,8 +17,7 @@ dig_associations(
   contingency_table = FALSE,
   measures = NULL,
   t_norm = "goguen",
-  threads = 1,
-  ...
+  threads = 1
 )
 }
 \arguments{

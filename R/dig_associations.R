@@ -104,8 +104,7 @@ dig_associations <- function(x,
                              contingency_table = FALSE,
                              measures = NULL,
                              t_norm = "goguen",
-                             threads = 1,
-                             ...) {
+                             threads = 1) {
     .must_be_double_scalar(min_coverage)
     .must_be_in_range(min_coverage, c(0, 1))
 
@@ -219,8 +218,7 @@ dig_associations <- function(x,
                                     arg_min_conditional_focus_support = "min_confidence",
                                     arg_t_norm = "t_norm",
                                     arg_threads = "threads",
-                                    call = current_env()),
-               ...)
+                                    call = current_env()))
 
     res <- do.call(rbind, res)
 
