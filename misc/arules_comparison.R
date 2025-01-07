@@ -37,7 +37,7 @@ testIt <- function(m, n) {
         })
 
         t2 <- system.time({
-            rules2 <- dig_implications(d,
+            rules2 <- dig_associations(d,
                                        min_support = 0.001,
                                        min_length = 0,
                                        max_length = 5,
@@ -68,7 +68,7 @@ result <- data.frame()
 for (i in 5:7) {
     for (j in c(5, 10, 15)) {
         result <- rbind(result, testIt(10^i, j))
-        saveRDS(result, "comparison_result.rds")
+        saveRDS(result, "comparison_result-2025-01-07.rds")
         cat("\n---------------------------------------------------------------------\n")
         print(result)
     }
