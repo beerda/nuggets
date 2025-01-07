@@ -17,6 +17,7 @@ dig_associations(
   contingency_table = FALSE,
   measures = NULL,
   t_norm = "goguen",
+  max_results = Inf,
   verbose = FALSE,
   threads = 1
 )
@@ -74,6 +75,13 @@ for a description of the measures.}
 \item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
 \code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}
 (Lukasiewicz t-norm).}
+
+\item{max_results}{the maximum number of generated conditions to execute the
+callback function on. If the number of found conditions exceeds
+\code{max_results}, the function stops generating new conditions and returns
+the results. To avoid long computations during the search, it is recommended
+to set \code{max_results} to a reasonable positive value. Setting \code{max_results}
+to \code{Inf} will generate all possible conditions.}
 
 \item{verbose}{a logical value indicating whether to print progress messages.}
 

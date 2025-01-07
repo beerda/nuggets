@@ -17,8 +17,9 @@ dig_correlations(
   max_length = Inf,
   min_support = 0,
   max_support = 1,
-  threads = 1,
-  ...
+  max_results = Inf,
+  verbose = FALSE,
+  threads = 1
 )
 }
 \arguments{
@@ -73,9 +74,16 @@ rows) of multiplications of predicate values.}
 function for it. See argument \code{min_support} for details of what is the
 support of a condition.}
 
-\item{threads}{the number of threads to use for parallel computation.}
+\item{max_results}{the maximum number of generated conditions to execute the
+callback function on. If the number of found conditions exceeds
+\code{max_results}, the function stops generating new conditions and returns
+the results. To avoid long computations during the search, it is recommended
+to set \code{max_results} to a reasonable positive value. Setting \code{max_results}
+to \code{Inf} will generate all possible conditions.}
 
-\item{...}{Further arguments, currently unused.}
+\item{verbose}{a logical scalar indicating whether to print progress messages.}
+
+\item{threads}{the number of threads to use for parallel computation.}
 }
 \value{
 A tibble with found patterns.

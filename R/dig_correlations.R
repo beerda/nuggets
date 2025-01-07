@@ -58,8 +58,14 @@
 #' @param max_support the maximum support of a condition to trigger the callback
 #'      function for it. See argument `min_support` for details of what is the
 #'      support of a condition.
+#' @param max_results the maximum number of generated conditions to execute the
+#'      callback function on. If the number of found conditions exceeds
+#'      `max_results`, the function stops generating new conditions and returns
+#'      the results. To avoid long computations during the search, it is recommended
+#'      to set `max_results` to a reasonable positive value. Setting `max_results`
+#'      to `Inf` will generate all possible conditions.
+#' @param verbose a logical scalar indicating whether to print progress messages.
 #' @param threads the number of threads to use for parallel computation.
-#' @param ... Further arguments, currently unused.
 #' @return A tibble with found patterns.
 #' @author Michal Burda
 #' @seealso [dig()], [stats::cor.test()]
@@ -93,8 +99,9 @@ dig_correlations <- function(x,
                              max_length = Inf,
                              min_support = 0.0,
                              max_support = 1.0,
-                             threads = 1,
-                             ...) {
+                             max_results = Inf,
+                             verbose = FALSE,
+                             threads = 1) {
     .must_be_enum(method, c("pearson", "kendall", "spearman"))
     .must_be_enum(alternative, c("two.sided", "less", "greater"))
     .must_be_flag(exact, null = TRUE)
@@ -128,6 +135,8 @@ dig_correlations <- function(x,
              max_length = max_length,
              min_support = min_support,
              max_support = max_support,
+             max_results = max_results,
+             verbose = verbose,
              threads = threads,
              error_context = list(arg_x = "x",
                                   arg_condition = "condition",
@@ -137,7 +146,8 @@ dig_correlations <- function(x,
                                   arg_max_length = "max_length",
                                   arg_min_support = "min_support",
                                   arg_max_support = "max_support",
+                                  arg_max_results = "max_results",
+                                  arg_verbose = "verbose",
                                   arg_threads = "threads",
-                                  call = current_env()),
-             ...)
+                                  call = current_env()))
 }

@@ -18,13 +18,15 @@ dig_grid(
   max_length = Inf,
   min_support = 0,
   max_support = 1,
+  max_results = Inf,
+  verbose = FALSE,
   threads = 1L,
   error_context = list(arg_x = "x", arg_f = "f", arg_condition = "condition", arg_xvars =
     "xvars", arg_yvars = "yvars", arg_disjoint = "disjoint", arg_allow = "allow",
     arg_na_rm = "na_rm", arg_type = "type", arg_min_length = "min_length", arg_max_length
     = "max_length", arg_min_support = "min_support", arg_max_support = "max_support",
-    arg_threads = "threads", call = current_env()),
-  ...
+    arg_max_results = "max_results", arg_verbose = "verbose", arg_threads = "threads",
+    call = current_env())
 )
 }
 \arguments{
@@ -114,6 +116,15 @@ rows) of multiplications of predicate values.}
 function for it. See argument \code{min_support} for details of what is the
 support of a condition.}
 
+\item{max_results}{the maximum number of generated conditions to execute the
+callback function on. If the number of found conditions exceeds
+\code{max_results}, the function stops generating new conditions and returns
+the results. To avoid long computations during the search, it is recommended
+to set \code{max_results} to a reasonable positive value. Setting \code{max_results}
+to \code{Inf} will generate all possible conditions.}
+
+\item{verbose}{a logical scalar indicating whether to print progress messages.}
+
 \item{threads}{the number of threads to use for parallel computation.}
 
 \item{error_context}{a list of details to be used in error messages.
@@ -128,8 +139,6 @@ string
 \item \code{arg_yvars} - the name of the argument \code{yvars} as a character string
 \item \code{call} - an environment in which to evaluate the error messages.
 }}
-
-\item{...}{Further arguments, currently unused.}
 }
 \value{
 A tibble with found patterns. Each row represents a single call of

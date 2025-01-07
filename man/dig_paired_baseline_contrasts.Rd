@@ -25,6 +25,8 @@ dig_paired_baseline_contrasts(
   wilcox_correct = TRUE,
   wilcox_tol_root = 1e-04,
   wilcox_digits_rank = Inf,
+  max_results = Inf,
+  verbose = FALSE,
   threads = 1
 )
 }
@@ -114,6 +116,15 @@ more information.}
 \item{wilcox_digits_rank}{(used for the \code{"wilcox"} method only) a numeric value
 specifying the number of digits to round the ranks to. See \code{\link[=wilcox.test]{wilcox.test()}}
 and its \code{digits.rank} argument for more information.}
+
+\item{max_results}{the maximum number of generated conditions to execute the
+callback function on. If the number of found conditions exceeds
+\code{max_results}, the function stops generating new conditions and returns
+the results. To avoid long computations during the search, it is recommended
+to set \code{max_results} to a reasonable positive value. Setting \code{max_results}
+to \code{Inf} will generate all possible conditions.}
+
+\item{verbose}{a logical scalar indicating whether to print progress messages.}
 
 \item{threads}{the number of threads to use for parallel computation.}
 }

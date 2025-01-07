@@ -87,6 +87,13 @@
 #' @param max_support the maximum support of a condition to trigger the callback
 #'      function for it. See argument `min_support` for details of what is the
 #'      support of a condition.
+#' @param max_results the maximum number of generated conditions to execute the
+#'      callback function on. If the number of found conditions exceeds
+#'      `max_results`, the function stops generating new conditions and returns
+#'      the results. To avoid long computations during the search, it is recommended
+#'      to set `max_results` to a reasonable positive value. Setting `max_results`
+#'      to `Inf` will generate all possible conditions.
+#' @param verbose a logical scalar indicating whether to print progress messages.
 #' @param threads the number of threads to use for parallel computation.
 #' @param error_context a list of details to be used in error messages.
 #'      This argument is useful when `dig_grid()` is called from another
@@ -100,7 +107,6 @@
 #'      \item `arg_yvars` - the name of the argument `yvars` as a character string
 #'      \item `call` - an environment in which to evaluate the error messages.
 #'      }
-#' @param ... Further arguments, currently unused.
 #' @return A tibble with found patterns. Each row represents a single call of
 #'      the callback function `f`.
 #' @author Michal Burda
@@ -161,6 +167,8 @@ dig_grid <- function(x,
                      max_length = Inf,
                      min_support = 0.0,
                      max_support = 1.0,
+                     max_results = Inf,
+                     verbose = FALSE,
                      threads = 1L,
                      error_context = list(arg_x = "x",
                                           arg_f = "f",
@@ -175,9 +183,10 @@ dig_grid <- function(x,
                                           arg_max_length = "max_length",
                                           arg_min_support = "min_support",
                                           arg_max_support = "max_support",
+                                          arg_max_results = "max_results",
+                                          arg_verbose = "verbose",
                                           arg_threads = "threads",
-                                          call = current_env()),
-                     ...) {
+                                          call = current_env())) {
     .must_be_flag(na_rm,
                   arg = error_context$arg_na_rm,
                   call = error_context$call)
@@ -296,6 +305,8 @@ dig_grid <- function(x,
                max_length = max_length,
                min_support = min_support,
                max_support = max_support,
+               max_results = max_results,
+               verbose = verbose,
                threads = threads,
                error_context = list(arg_x = error_context$arg_x,
                                     arg_condition = error_context$arg_condition,
@@ -304,9 +315,10 @@ dig_grid <- function(x,
                                     arg_max_length = error_context$arg_max_length,
                                     arg_min_support = error_context$arg_min_support,
                                     arg_max_support = error_context$arg_max_support,
+                                    arg_max_results = error_context$arg_max_results,
+                                    arg_verbose = error_context$arg_verbose,
                                     arg_threads = error_context$arg_threads,
-                                    call = error_context$call),
-               ...)
+                                    call = error_context$call))
 
     res <- do.call(rbind, res)
 

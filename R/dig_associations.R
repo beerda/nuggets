@@ -78,6 +78,12 @@
 #' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
 #'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
 #'      (Lukasiewicz t-norm).
+#' @param max_results the maximum number of generated conditions to execute the
+#'      callback function on. If the number of found conditions exceeds
+#'      `max_results`, the function stops generating new conditions and returns
+#'      the results. To avoid long computations during the search, it is recommended
+#'      to set `max_results` to a reasonable positive value. Setting `max_results`
+#'      to `Inf` will generate all possible conditions.
 #' @param verbose a logical value indicating whether to print progress messages.
 #' @param threads the number of threads to use for parallel computation.
 #' @returns A tibble with found patterns and computed quality measures.
@@ -104,6 +110,7 @@ dig_associations <- function(x,
                              contingency_table = FALSE,
                              measures = NULL,
                              t_norm = "goguen",
+                             max_results = Inf,
                              verbose = FALSE,
                              threads = 1) {
     .must_be_double_scalar(min_coverage)
@@ -212,6 +219,7 @@ dig_associations <- function(x,
                min_conditional_focus_support = min_confidence,
                filter_empty_foci = TRUE,
                t_norm = t_norm,
+               max_results = max_results,
                verbose = verbose,
                threads = threads,
                error_context = list(arg_x = "x",
@@ -224,6 +232,7 @@ dig_associations <- function(x,
                                     arg_min_focus_support = "min_support",
                                     arg_min_conditional_focus_support = "min_confidence",
                                     arg_t_norm = "t_norm",
+                                    arg_max_results = "max_results",
                                     arg_verbose = "verbose",
                                     arg_threads = "threads",
                                     call = current_env()))
