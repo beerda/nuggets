@@ -6,7 +6,7 @@
 
 #include "Data.h"
 #include "Config.h"
-#include "TaskQueue.h"
+#include "TaskSequence.h"
 #include "Filter.h"
 #include "Argumentator.h"
 
@@ -23,7 +23,7 @@ public:
         : data(data),
           initialTask(Iterator(data.size()),          // condition predicates to "soFar"
                       Iterator({}, data.fociSize())), // focus predicates to "available"
-          queue(),
+          sequence(),
           allThreads(config.getThreads())
     { }
 
@@ -48,7 +48,7 @@ public:
 
         #if defined(_OPENMP)
             //#pragma omp parallel num_threads(allThreads) default(shared)
-            #pragma omp parallel num_threads(allThreads) shared(data, initialTask, queue, filters, argumentators, result, workingThreads, allThreads, queueMutex, resultMutex, condVar)
+            #pragma omp parallel num_threads(allThreads) shared(data, initialTask, sequence, filters, argumentators, result, workingThreads, allThreads, sequenceMutex, resultMutex, condVar)
         #endif
         {
             while (!workDone()) {
@@ -105,7 +105,7 @@ public:
 private:
     DataType& data;
     TaskType initialTask;
-    TaskQueue<TaskType> queue;
+    TaskSequence<TaskType> sequence;
     vector<FilterType*> filters;
     vector<ArgumentatorType*> argumentators;
     vector<ArgumentValues> result;
@@ -118,38 +118,38 @@ private:
 
     int workingThreads;
     int allThreads;
-    mutex queueMutex;
+    mutex sequenceMutex;
     mutex resultMutex;
     condition_variable condVar;
 
 
     void initializeRun()
     {
-        queue.clear();
-        queue.add(initialTask);
+        sequence.clear();
+        sequence.add(initialTask);
         workingThreads = 0;
     }
 
     bool workDone()
     {
-        unique_lock lock(queueMutex);
+        unique_lock lock(sequenceMutex);
         //cout << omp_get_thread_num() << "workDone" << endl;
-        return queue.empty() && workingThreads <= 0;
+        return sequence.empty() && workingThreads <= 0;
     }
 
     bool receiveTask(TaskType& task)
     {
-        unique_lock lock(queueMutex);
+        unique_lock lock(sequenceMutex);
         //cout << omp_get_thread_num() << "receiveTask" << endl;
-        while (queue.empty() && workingThreads > 0) {
+        while (sequence.empty() && workingThreads > 0) {
             //cout << omp_get_thread_num() << "waiting" << endl;
             condVar.wait(lock);
         }
 
         //cout << omp_get_thread_num() << "continue" << endl;
         bool received = false;
-        if (!queue.empty()) {
-            task = queue.pop();
+        if (!sequence.empty()) {
+            task = sequence.pop();
             //cout << "receiving: " + task.toString() << endl;
             workingThreads++;
             received = true;
@@ -161,10 +161,10 @@ private:
 
     void sendTask(const TaskType& task)
     {
-        unique_lock lock(queueMutex);
+        unique_lock lock(sequenceMutex);
         //cout << omp_get_thread_num() << "sendTask" << endl;
         //cout << "sending: " + task.toString() << endl;
-        queue.add(task);
+        sequence.add(task);
         lock.unlock();
         condVar.notify_one();
     }
@@ -214,7 +214,7 @@ private:
 
     void taskFinished(TaskType& task)
     {
-        unique_lock lock(queueMutex);
+        unique_lock lock(sequenceMutex);
         //cout << omp_get_thread_num() << "taskFinished" << endl;
         //cout << "finished: " + task.toString() << endl;
         workingThreads--;
