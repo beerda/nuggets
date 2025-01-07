@@ -87,13 +87,15 @@ relationships between pairs of columns, such as in <code><a href="dig_correlatio
 <span>  max_length <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  min_support <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  max_support <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  max_results <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  threads <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  error_context <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>arg_x <span class="op">=</span> <span class="st">"x"</span>, arg_f <span class="op">=</span> <span class="st">"f"</span>, arg_condition <span class="op">=</span> <span class="st">"condition"</span>, arg_xvars <span class="op">=</span></span>
 <span>    <span class="st">"xvars"</span>, arg_yvars <span class="op">=</span> <span class="st">"yvars"</span>, arg_disjoint <span class="op">=</span> <span class="st">"disjoint"</span>, arg_allow <span class="op">=</span> <span class="st">"allow"</span>,</span>
 <span>    arg_na_rm <span class="op">=</span> <span class="st">"na_rm"</span>, arg_type <span class="op">=</span> <span class="st">"type"</span>, arg_min_length <span class="op">=</span> <span class="st">"min_length"</span>, arg_max_length</span>
 <span>    <span class="op">=</span> <span class="st">"max_length"</span>, arg_min_support <span class="op">=</span> <span class="st">"min_support"</span>, arg_max_support <span class="op">=</span> <span class="st">"max_support"</span>,</span>
-<span>    arg_threads <span class="op">=</span> <span class="st">"threads"</span>, call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  <span class="va">...</span></span>
+<span>    arg_max_results <span class="op">=</span> <span class="st">"max_results"</span>, arg_verbose <span class="op">=</span> <span class="st">"verbose"</span>, arg_threads <span class="op">=</span> <span class="st">"threads"</span>,</span>
+<span>    call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -208,6 +210,19 @@ function for it. See argument <code>min_support</code> for details of what is th
 support of a condition.</p></dd>
 
 
+<dt id="arg-max-results">max_results<a class="anchor" aria-label="anchor" href="#arg-max-results"></a></dt>
+<dd><p>the maximum number of generated conditions to execute the
+callback function on. If the number of found conditions exceeds
+<code>max_results</code>, the function stops generating new conditions and returns
+the results. To avoid long computations during the search, it is recommended
+to set <code>max_results</code> to a reasonable positive value. Setting <code>max_results</code>
+to <code>Inf</code> will generate all possible conditions.</p></dd>
+
+
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p>a logical scalar indicating whether to print progress messages.</p></dd>
+
+
 <dt id="arg-threads">threads<a class="anchor" aria-label="anchor" href="#arg-threads"></a></dt>
 <dd><p>the number of threads to use for parallel computation.</p></dd>
 
@@ -223,10 +238,6 @@ string</p></li>
 <li><p><code>arg_yvars</code> - the name of the argument <code>yvars</code> as a character string</p></li>
 <li><p><code>call</code> - an environment in which to evaluate the error messages.</p></li>
 </ul></dd>
-
-
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Further arguments, currently unused.</p></dd>
 
 </dl></div>
     <div class="section level2">
