@@ -1,17 +1,17 @@
 # nuggets 1.4.0
-- released: 2025-01-07
+- released: 2025-01-08
 - added var_names(), dig_baseline_contrasts(), dig_complement_contrasts()
 - dig_contrasts() renamed to dig_paired_baseline_contrasts()
 - dig_implications() renamed to dig_associations()
 - dichotomize() is deprecated (use partition() instead)
 - added max_support argument to dig()
 - added max_results argument to dig()
+- optimized performance of dig()
 - added min_conditional_focus_support argument to dig()
 - fixed handling of NULL returned by a callback function in dig_grid()
-- added max_p_value argument to dig_paired_baseline_contrasts()
 - argument d of the callback function in dig_grid() renamed to pd
 - added handling of nd argument of the callback function in dig_grid()
-- optimized performance of dig()
+- added max_p_value argument to dig_paired_baseline_contrasts()
 - improved error messages
 - added nuggets vignette
 - started using lifecycle and pkgdown

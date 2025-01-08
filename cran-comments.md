@@ -8,7 +8,7 @@
 
 ## R CMD check results
 
-Duration: 34.5s
+Duration: 34.6s
 
 ❯ checking installed package size ... NOTE
     installed size is 19.8Mb
