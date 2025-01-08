@@ -1,5 +1,7 @@
 # nuggets 1.5.0
 - released: ???
+- added is_almost_constant()
+- added remove_almost_constant()
 
 # nuggets 1.4.0
 - released: 2025-01-08

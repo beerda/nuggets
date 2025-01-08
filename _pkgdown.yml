@@ -15,6 +15,7 @@ reference:
       pattern extraction.
     contents:
       - partition
+      - remove_almost_constant
 
   - title: "Pre-defined Pattern Extraction"
     desc: >
@@ -38,6 +39,7 @@ reference:
       Other functions that can be useful in the pattern extraction process.
     contents:
       - format_condition
+      - is_almost_constant
       - is_degree
       - is_subset
       - var_grid
