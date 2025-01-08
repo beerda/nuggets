@@ -506,6 +506,42 @@ test_that("disjoint filter", {
 })
 
 
+test_that("disjoint is factor", {
+    m <- matrix(T, ncol = 3)
+
+    res <- dig(m, function() 1)
+    expect_equal(length(res), 8)
+
+    # disjoint 1, 2, 3
+    res <- dig(m,
+               function(condition) list(cond = condition),
+               disjoint = factor(c(1, 2, 3)))
+
+    expect_equal(length(res), 8)
+    expect_setequal(res, list(list(cond = integer(0)),
+                              list(cond = c("1"=1L)),
+                              list(cond = c("2"=2L)),
+                              list(cond = c("3"=3L)),
+                              list(cond = c("1"=1L, "3"=3L)),
+                              list(cond = c("2"=2L, "3"=3L)),
+                              list(cond = c("1"=1L, "2"=2L)),
+                              list(cond = c("1"=1L, "2"=2L, "3"=3L))))
+
+    # disjoint 1, 1, 2
+    res <- dig(m,
+               function(condition) list(cond = condition),
+               disjoint = factor(c(1, 1, 2)))
+
+    expect_equal(length(res), 6)
+    expect_setequal(res, list(list(cond = integer(0)),
+                              list(cond = c("1"=1L)),
+                              list(cond = c("2"=2L)),
+                              list(cond = c("3"=3L)),
+                              list(cond = c("1"=1L, "3"=3L)),
+                              list(cond = c("2"=2L, "3"=3L))))
+})
+
+
 test_that("conditions and foci are disjoint", {
     d <- data.frame(a = c(T,    T, T, F, F),
                     b = c(T,    F, T, T, T),

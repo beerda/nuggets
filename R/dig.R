@@ -277,10 +277,10 @@ dig <- function(x,
         arguments <- ""
     }
 
-    .must_be_vector(disjoint,
-                    null = TRUE,
-                    arg = error_context$arg_disjoint,
-                    call = error_context$call)
+    .must_be_vector_or_factor(disjoint,
+                              null = TRUE,
+                              arg = error_context$arg_disjoint,
+                              call = error_context$call)
     if (!isTRUE(length(disjoint) == 0 || length(disjoint) == ncol(x))) {
         cli_abort(c("The length of {.arg {error_context$arg_disjoint}} must be 0 or must be equal to the number of columns in {.arg {error_context$arg_x}}.",
                     "x" = "The number of columns in {.arg {error_context$arg_x}} is {ncol(x)}.",

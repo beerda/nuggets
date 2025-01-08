@@ -124,7 +124,12 @@
     is.vector(x) && !is.matrix(x) && !is.list(x) && !is.array(x)
 }
 
+.is_just_vector_or_factor <- function(x) {
+    is.vector(x) && !is.matrix(x) && !is.list(x) && !is.array(x) || is.factor(x)
+}
+
 .must_be_vector <- ..must_be_type(.is_just_vector, "a plain vector (not a matrix, list, or array)")
+.must_be_vector_or_factor <- ..must_be_type(.is_just_vector_or_factor, "a plain vector or a factor (not a matrix, list, or array)")
 .must_be_integer_vector <- ..must_be_type(is_integer, "an integer vector")
 .must_be_integerish_vector <- ..must_be_type(is_integerish, "an integerish vector")
 .must_be_numeric_vector <- ..must_be_type(is.numeric, "a numeric vector")
