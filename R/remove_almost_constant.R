@@ -28,9 +28,9 @@
 #'                 a2 = c(1:9, NA),
 #'                 b1 = "b",
 #'                 b2 = NA,
-#'                 c1 = rep(c(T,F), 5),
-#'                 c2 = rep(c(T,NA), 5),
-#'                 d = c(T,T,T,T,F,F,F,F,NA,NA))
+#'                 c1 = rep(c(TRUE, FALSE), 5),
+#'                 c2 = rep(c(TRUE, NA), 5),
+#'                 d = c(rep(TRUE, 4), rep(FALSE, 4), NA, NA))
 #' remove_almost_constant(d, .threshold = 1.0, .na_rm = FALSE)
 #' remove_almost_constant(d, .threshold = 1.0, .na_rm = TRUE)
 #' remove_almost_constant(d, .threshold = 0.5, .na_rm = FALSE)

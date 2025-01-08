@@ -138,15 +138,6 @@ corresponding to conditions generated from the \code{condition} columns. The
 \code{dig_contrasts()} function supports crisp conditions only, i.e., the
 condition columns must be logical.
 }
-\examples{
-crispCO2 <- partition(CO2, Plant:Treatment)
-dig_contrasts(crispCO2,
-             condition = where(is.logical),
-             xvars = conc,
-             yvars = uptake,
-             method = "t",
-             min_support = 0.1)
-}
 \seealso{
 \code{\link[=dig]{dig()}}, \code{\link[=dig_grid]{dig_grid()}}, \code{\link[stats:t.test]{stats::t.test()}}, \code{\link[stats:wilcox.test]{stats::wilcox.test()}}, \code{\link[stats:var.test]{stats::var.test()}}
 }

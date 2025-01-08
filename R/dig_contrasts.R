@@ -106,14 +106,6 @@
 #'        ratio of the population variances.}
 #' @author Michal Burda
 #' @seealso [dig()], [dig_grid()], [stats::t.test()], [stats::wilcox.test()], [stats::var.test()]
-#' @examples
-#' crispCO2 <- partition(CO2, Plant:Treatment)
-#' dig_contrasts(crispCO2,
-#'              condition = where(is.logical),
-#'              xvars = conc,
-#'              yvars = uptake,
-#'              method = "t",
-#'              min_support = 0.1)
 #' @keywords internal
 #' @export
 dig_contrasts <- function(x,
