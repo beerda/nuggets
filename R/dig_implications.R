@@ -107,20 +107,5 @@ dig_implications <- function(x,
                              t_norm = "goguen",
                              threads = 1,
                              ...) {
-    lifecycle::deprecate_warn("1.4.0", "dig_implications()", with = "dig_associations()")
-
-    dig_associations(x = x,
-                     antecedent = antecedent,
-                     consequent = consequent,
-                     disjoint = disjoint,
-                     min_length = min_length,
-                     max_length = max_length,
-                     min_coverage = min_coverage,
-                     min_support = min_support,
-                     min_confidence = min_confidence,
-                     contingency_table = contingency_table,
-                     measures = measures,
-                     t_norm = t_norm,
-                     threads = threads,
-                     ...)
+    lifecycle::deprecate_stop("1.4.0", "dig_implications()", with = "dig_associations()")
 }

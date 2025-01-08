@@ -39,7 +39,7 @@ dichotomize <- function(.data,
                         ...,
                         .keep = FALSE,
                         .other = FALSE) {
-    lifecycle::deprecate_soft("1.3.0", "dichotomize()", with = "partition()")
+    lifecycle::deprecate_warn("1.4.0", "dichotomize()", with = "partition()")
 
     .must_be_data_frame(.data)
     .must_be_flag(.keep)

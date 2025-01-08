@@ -128,21 +128,5 @@ dig_contrasts <- function(x,
                          max_p_value = 0.05,
                          threads = 1,
                          ...) {
-    lifecycle::deprecate_warn("1.3.0", "dig_contrasts()", with = "dig_paired_baseline_contrasts()")
-    condition <- enquo(condition)
-    xvars <- enquo(xvars)
-    yvars <- enquo(yvars)
-
-    dig_paired_baseline_contrasts(x = x,
-                                  condition = !!condition,
-                                  xvars = !!xvars,
-                                  yvars = !!yvars,
-                                  method = method,
-                                  alternative = alternative,
-                                  min_length = min_length,
-                                  max_length = max_length,
-                                  min_support = min_support,
-                                  max_p_value = max_p_value,
-                                  threads = threads,
-                                  ...)
+    lifecycle::deprecate_stop("1.4.0", "dig_contrasts()", with = "dig_paired_baseline_contrasts()")
 }
