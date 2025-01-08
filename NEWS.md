@@ -1,3 +1,6 @@
+# nuggets 1.5.0
+- released: ???
+
 # nuggets 1.4.0
 - released: 2025-01-08
 - added var_names(), dig_baseline_contrasts(), dig_complement_contrasts()
@@ -43,7 +46,7 @@
 # nuggets 1.0.2
 - released: 2024-01-09
 - fixed handling of arguments min_coverage and min_support in dig_implications()
-- attempt to fix LTO error related to run_testhat_tests() - fixed by using
+- attempt to fix LTO error related to run_testthat_tests() - fixed by using
   an RC version of Rcpp (1.0.11.6)
 
 # nuggets 1.0.1
