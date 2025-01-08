@@ -30,7 +30,7 @@
 is_almost_constant <- function(x,
                                threshold = 1.0,
                                na_rm = FALSE) {
-    .must_be_vector(x, null = TRUE)
+    .must_be_vector_or_factor(x, null = TRUE)
     .must_be_flag(na_rm)
     .must_be_double_scalar(threshold)
     .must_be_in_range(threshold, c(0, 1))

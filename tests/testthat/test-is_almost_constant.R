@@ -17,6 +17,9 @@ test_that("is_almost_constant", {
     expect_true(is_almost_constant(rep(NA, 5), na_rm = FALSE))
     expect_true(is_almost_constant(rep(NA, 5), na_rm = TRUE))
 
+    expect_false(is_almost_constant(factor(letters[1:5]), na_rm = FALSE))
+    expect_true(is_almost_constant(factor(rep("x", 10), levels = letters), na_rm = FALSE))
+
     expect_false(is_almost_constant(1:2, na_rm = FALSE))
     expect_false(is_almost_constant(1:2, na_rm = TRUE))
     expect_false(is_almost_constant(1:12, na_rm = FALSE))
