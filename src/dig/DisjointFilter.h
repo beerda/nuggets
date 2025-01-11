@@ -22,7 +22,11 @@ public:
         if (task.getConditionIterator().hasPredicate()) {
             int curr = task.getConditionIterator().getCurrentPredicate();
             int currDisj = disjointPredicates[curr];
-            for (int pref : task.getConditionIterator().getPrefix()) {
+
+            if (task.getConditionIterator().hasPrefix()) {
+                // It is enough to check the last element of the prefix because
+                // previous elements were already checked in parent tasks
+                int pref = task.getConditionIterator().getPrefix().back();
                 if (disjointPredicates[pref] == currDisj) {
                     return true;
                 }
