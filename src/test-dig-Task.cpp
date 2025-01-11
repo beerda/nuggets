@@ -14,14 +14,14 @@ context("dig/Task.h") {
         TaskType t(Iterator({0, 1, 2}, {10, 11, 12}, {5, 6}), Iterator());
 
         TaskType ch = t.createChild();
-        expect_true(ch.getConditionIterator().getPrefix() == set<int>({0, 1, 2, 10}));
+        expect_true(ch.getConditionIterator().getPrefix() == vector<int>({0, 1, 2, 10}));
         expect_true(ch.getConditionIterator().getAvailable() == vector<int>({5, 6}));
 
         t.getMutableConditionIterator().next();
         t.getMutableConditionIterator().next();
         t.getMutableConditionIterator().next();
         ch = t.createChild();
-        expect_true(ch.getConditionIterator().getPrefix() == set<int>({0, 1, 2}));
+        expect_true(ch.getConditionIterator().getPrefix() == vector<int>({0, 1, 2}));
         expect_true(ch.getConditionIterator().getAvailable() == vector<int>({5, 6}));
     }
 

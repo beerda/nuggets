@@ -17,12 +17,12 @@ context("dig/Iterator.h") {
 
     test_that("getPrefix") {
         Iterator i({0, 1, 2}, {10, 11, 12}, {5, 6});
-        expect_true(i.getPrefix() == set<int>({0, 1, 2}));
+        expect_true(i.getPrefix() == vector<int>({0, 1, 2}));
     }
 
     test_that("getPrefix") {
         Iterator t({0, 1, 2}, {10, 11, 12}, {5, 6});
-        expect_true(t.getPrefix() == set<int>({0, 1, 2}));
+        expect_true(t.getPrefix() == vector<int>({0, 1, 2}));
     }
 
     test_that("getAvailable") {
@@ -102,5 +102,4 @@ context("dig/Iterator.h") {
         expect_true(tn.getLength() == 0);
         expect_false(tn.hasPredicate());
     }
-
 }

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <set>
 #include "../common.h"
 
 
@@ -37,7 +36,7 @@ public:
      * @param prefix the prefix of the condition (constant predicates)
      * @param n The number of predicates to store into soFar
      */
-    Iterator(set<int> prefix, size_t n)
+    Iterator(vector<int> prefix, size_t n)
         : current(0), prefix(prefix)
     {
         available.reserve(n);
@@ -51,7 +50,7 @@ public:
      * @param prefix the prefix of the condition (constant predicates)
      * @param available a vector of available predicates to be examined in this iterator
      */
-    Iterator(set<int> prefix, vector<int> available)
+    Iterator(vector<int> prefix, vector<int> available)
         : current(0), prefix(prefix), available(available)
     { }
 
@@ -61,7 +60,7 @@ public:
      * @param a vector of available predicates to be examined in this iterator
      * @param soFar a vector of predicates for sub iterators
      */
-    Iterator(set<int> prefix, vector<int> available, vector<int> soFar)
+    Iterator(vector<int> prefix, vector<int> available, vector<int> soFar)
         : current(0), prefix(prefix), available(available), soFar(soFar)
     { }
 
@@ -83,7 +82,7 @@ public:
      */
     set<int> getCurrentCondition() const
     {
-        set<int> result = getPrefix();
+        set<int> result(prefix.begin(), prefix.end());
 
         if (hasPredicate()) {
             result.insert(getCurrentPredicate());
@@ -134,6 +133,12 @@ public:
     { return !stored.empty(); }
 
     /**
+     * TRUE if the iterator has a non-empty prefix
+     */
+    bool hasPrefix() const
+    { return !prefix.empty(); }
+
+    /**
      * TRUE if the iterator is empty (empty prefix, available predicates, stored and soFar predicates)
      */
     bool empty() const
@@ -148,7 +153,7 @@ public:
     /**
      * Get the prefix of the condition represented by this iterator
      */
-    const set<int> getPrefix() const
+    const vector<int> getPrefix() const
     { return prefix; }
 
     /**
@@ -221,7 +226,7 @@ private:
     size_t current;
 
     /// A set of constant predicates that are part of the whole condition represented by this iterator
-    set<int> prefix;
+    vector<int> prefix;
 
     /// A vector of predicates available to processing (predicates to be tested by this iterator)
     vector<int> available;

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <set>
 #include <unordered_map>
 
 #include "../common.h"
@@ -42,8 +41,8 @@ public:
         Iterator newConditionIterator;
 
         if (conditionIterator.hasPredicate()) {
-            set<int> newPrefix = conditionIterator.getPrefix();
-            newPrefix.insert(conditionIterator.getCurrentPredicate());
+            vector<int> newPrefix = conditionIterator.getPrefix();
+            newPrefix.push_back(conditionIterator.getCurrentPredicate());
             newConditionIterator = Iterator(newPrefix, conditionIterator.getSoFar());
         }
         else {
