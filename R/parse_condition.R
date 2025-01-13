@@ -41,8 +41,14 @@ parse_condition <- function(...,
                   call = current_env())
     }
 
-    res <- lapply(dots, .parse_condition)
-    res <- do.call(mapply, c(list(c), res, list(SIMPLIFY = FALSE)))
+    if (length(dots) > 1) {
+        res <- lapply(dots, .parse_condition)
+        res <- do.call(mapply, c(list(c), res, list(SIMPLIFY = FALSE)))
+    } else {
+        res <- .parse_condition(dots[[1]])
+    }
+
+    res <- lapply(res, unique)
 
     if (.sort) {
         res <- lapply(res, sort, na.last = TRUE)
