@@ -48,8 +48,6 @@ parse_condition <- function(...,
         res <- .parse_condition(dots[[1]])
     }
 
-    res <- lapply(res, unique)
-
     if (.sort) {
         res <- lapply(res, sort, na.last = TRUE)
     }
