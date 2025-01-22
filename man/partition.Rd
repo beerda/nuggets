@@ -2,7 +2,8 @@
 % Please edit documentation in R/partition.R
 \name{partition}
 \alias{partition}
-\title{Convert columns of data frame to Boolean or fuzzy sets}
+\title{Convert columns of data frame to Boolean or fuzzy sets (of triangular,
+trapezoidal, or raised-cosinal shape)}
 \usage{
 partition(
   .data,
@@ -13,7 +14,9 @@ partition(
   .na = TRUE,
   .keep = FALSE,
   .method = "crisp",
-  .right = TRUE
+  .right = TRUE,
+  .span = 1,
+  .inc = 1
 )
 }
 \arguments{
@@ -51,6 +54,21 @@ present in the resulting data frame.}
 \item{.right}{If \code{.method="crisp"}, this argument specifies if the
 intervals should be closed on the right (and open on the left) or
 vice versa.}
+
+\item{.span}{The span of the intervals for numeric columns. If \code{.method="crisp"},
+this argument specifies the number of consecutive breaks in a single
+resulting interval. If \code{.method="triangle"} or \code{.method="raisedcos"},
+this argument specifies the number of breaks that should form the
+core of the fuzzy set, (i.e. where the membership degrees are 1). For
+\code{.span = 1}, the fuzzy set has a triangular shape with only a single
+value with membership equal to 1, for \code{.span = 2}, the fuzzy set has
+a trapezoidal shape.}
+
+\item{.inc}{how many breaks to move on to the right when creating the next
+column from a numeric column in \code{x}. In other words, if \code{.inc = 1},
+all resulting columns are created (by shifting breaks by 1), if
+\code{.inc = 2}, the first, third, fifth, etc. columns are created, i.e.,
+every second resulting column is skipped.}
 }
 \value{
 A tibble created by transforming \code{.data}.
@@ -59,7 +77,7 @@ A tibble created by transforming \code{.data}.
 Convert the selected columns of the data frame into either dummy
 logical columns, or into membership degrees of fuzzy sets, while leaving
 the remaining columns untouched. Each column selected for transformation
-typically yields in multiple columns in the output.
+typically results in multiple columns in the output.
 }
 \details{
 Transformations performed by this function are typically useful as a
@@ -86,6 +104,89 @@ Details of transformation of numeric columns can be specified with
 additional arguments (\code{.breaks}, \code{.labels}, \code{.right}).
 }
 }
+
+The processing of source \strong{numeric} columns is quite complex and depends
+on the following arguments: \code{.method}, \code{.breaks}, \code{.right}, \code{.span}, and
+\code{.inc}.
+
+\subsection{Crisp transformation of numeric data}
+
+For \code{.method = "crisp"}, the numeric column is transformed into a set of
+logical columns where each column represents a certain interval of values.
+The intervals are determined by the \code{.breaks} argument.
+
+If \code{.breaks} is an integer scalar, it specifies the number of resulting
+intervals to break the numeric column to. The intervals are obtained
+automatically from the source column by splitting the range of the source
+values into \code{.breaks} intervals of equal length. The first and the last
+interval are defined from the minimum infinity to the first break and from
+the last break to the maximum infinity, respectively.
+
+If \code{.breaks} is a vector, the values specify the manual borders of intervals.
+(Infinite values are allowed.)
+
+For \code{.span = 1} and \code{.inc = 1}, the intervals are consecutive and
+non-overlapping. If \code{.breaks = c(1, 3, 5, 7, 9, 11)} and \code{.right = TRUE},
+for example, the following intervals are considered: \eqn{(1;3]}, \eqn{(3;5]},
+\eqn{(5;7]}, \eqn{(7;9]}, and \eqn{(9;11]}. (If \code{.right = FALSE}, the intervals are:
+\eqn{[1;3)}, \eqn{[3;5)}, \eqn{[5;7)}, \eqn{[7;9)}, and \eqn{[9;11)}.)
+
+For \code{.span} > 1, the intervals overlap in \code{.span} breaks. For
+\code{.span = 2}, \code{.inc = 1}, and \code{.right = TRUE}, the intervals are: \eqn{(1;5]},
+\eqn{(3;7]}, \eqn{(5;9]}, and \eqn{(7;11]}.
+
+As can be seen, so far the next interval was created by shifting in 1
+position in \code{.breaks}. The \code{.inc} argument modifies that shift. If \code{.inc = 2}
+and \code{.span = 1}, the intervals are: \eqn{(1;3]}, \eqn{(5;7]}, and \eqn{(9;11]}.
+For \code{.span = 2} and \code{.inc = 3}, the intervals are: \eqn{(1;5]}, and \eqn{(9;11]}.
+
+\subsection{Fuzzy transformation of numeric data}
+
+For \code{.method = "triangle"} or \code{.method = "raisedcos"}, the numeric column is
+transformed into a set of columns where each column represents membership
+degrees to a certain fuzzy set. The shape of the underlying fuzzy sets
+is again determined by the \code{.breaks} argument.
+
+If \code{.breaks} is an integer scalar, it specifies the number of target fuzzy
+sets. The breaks are determined automatically from the source data column
+similarly as in the crisp transformation described above.
+
+If \code{.breaks} is a vector, the values specify the breaking points of fuzzy sets.
+Infinite values as breaks produce fuzzy sets with open borders.
+
+For \code{.span = 1}, each underlying fuzzy set is determined by three consecutive
+breaks. Outside of these breaks, the membership degree is 0. In the interval
+between the first two breaks, the membership degree is increasing and
+in the interval between the last two breaks, the membership degree is
+decreasing. Hence the membership degree 1 is obtained for values equal to
+the middle break. This practically forms fuzzy sets of triangular or
+raised-cosinal shape.
+
+For \code{.span} > 1, the fuzzy set is determined by four breaks. Outside of
+these breaks, the membership degree is 0. In the interval between the first
+and the second break, the membership degree is increasing, in the interval
+between the third and the fourth break, the membership degree is decreasing,
+and in the interval between the second and the third break, the membership
+degree is 1. This practically forms fuzzy sets of trapezoidal shape.
+
+Similar to the crisp transformation, the \code{.inc} argument determines the
+shift of breaks when creating the next underlying fuzzy set.
+
+Let \code{.breaks = c(1, 3, 5, 7, 9, 11)}. For \code{.span = 1} and \code{.inc = 1}, the
+fuzzy sets are determined by the following triplets having effectively the
+triangular or raised-cosinal shape: \eqn{(1;3;5)},
+\eqn{(3;5;7)}, \eqn{(5;7;9)}, and \eqn{(7;9;11)}.
+
+For \code{.span = 2} and \code{.inc = 1}, the fuzzy sets are determined by the following
+quadruplets: \eqn{(1;3;5;7)}, \eqn{(3;5;7;9)}, and \eqn{(5;7;9;11)}. These
+fuzzy sets have the trapezoidal shape with linear (if \code{.method = "triangle"})
+or cosine (if \code{.method = "raisedcos"}) increasing and decreasing border-parts.
+
+For \code{.span = 1} and \code{.inc = 3}, the fuzzy sets are determined by the following
+triplets: \eqn{(1;3;5)}, and \eqn{(7;9;11)} while skipping 2nd and 3rd fuzzy
+sets.
+
+See the examples for more details.
 }
 \examples{
 # transform logical columns and factors
@@ -97,8 +198,16 @@ partition(d, a, b)
 # transform numeric columns to logical columns (crisp transformation)
 partition(CO2, conc:uptake, .method = "crisp", .breaks = 3)
 
-# transform numeric columns to fuzzy sets (triangle transformation)
+# transform numeric columns to triangular fuzzy sets:
 partition(CO2, conc:uptake, .method = "triangle", .breaks = 3)
+
+# transform numeric columns to raised-cosinal fuzzy sets
+partition(CO2, conc:uptake, .method = "raisedcos", .breaks = 3)
+
+# transform numeric columns to trapezoidal fuzzy sets overlapping in non-core
+regions so that the membership degrees sum to 1 along the consecutive fuzzy sets
+(i.e., the so-called Ruspini condition is met)
+partition(CO2, conc:uptake, .method = "triangle", .breaks = 3, .span = 2, .inc = 2)
 
 # complex transformation with different settings for each column
 CO2 |>

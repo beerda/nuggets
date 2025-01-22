@@ -1,6 +1,7 @@
 # nuggets 1.5.0
 - released: ???
 - added is_almost_constant(), remove_almost_constant(), parse_condition()
+- added .span and .inc arguments to partition()
 
 # nuggets 1.4.0
 - released: 2025-01-08

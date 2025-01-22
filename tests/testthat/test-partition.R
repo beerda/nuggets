@@ -155,12 +155,58 @@ test_that("partition crisp", {
                         "b=BBB" = c(F,F,F,F,T,T,T,F,F,F),
                         "b=cc"  = c(F,F,F,F,F,F,F,T,T,T)))
 
+    expect_equal(partition(data.frame(b = 1:10),
+                           .breaks = c(1, 3, 5, 7, 10),
+                           .keep = FALSE,
+                           .method = "crisp",
+                           .right = TRUE,
+                           .span = 2),
+                 tibble("b=(1;5]"  = c(F,T,T,T,T,F,F,F,F,F),
+                        "b=(3;7]"  = c(F,F,F,T,T,T,T,F,F,F),
+                        "b=(5;10]" = c(F,F,F,F,F,T,T,T,T,T)))
+
+    expect_equal(partition(data.frame(b = 1:10),
+                           .breaks = c(1, 3, 5, 7, 10),
+                           .keep = FALSE,
+                           .method = "crisp",
+                           .right = TRUE,
+                           .span = 2,
+                           .inc = 2),
+                 tibble("b=(1;5]"  = c(F,T,T,T,T,F,F,F,F,F),
+                        "b=(5;10]" = c(F,F,F,F,F,T,T,T,T,T)))
+
+    expect_equal(partition(data.frame(b = 1:10),
+                           .breaks = 1:9,
+                           .keep = FALSE,
+                           .method = "crisp",
+                           .right = TRUE,
+                           .span = 2,
+                           .inc = 3),
+                 tibble("b=(1;3]"  = c(F,T,T,F,F,F,F,F,F,F),
+                        "b=(4;6]" = c(F,F,F,F,T,T,F,F,F,F),
+                        "b=(7;9]" = c(F,F,F,F,F,F,F,T,T,F)))
+
+    expect_equal(partition(data.frame(b = 1:10),
+                           .breaks = c(-Inf, 4, 7, Inf),
+                           .keep = FALSE,
+                           .method = "crisp",
+                           .right = TRUE,
+                           .inc = 2),
+                 tibble("b=(-Inf;4]" = c(T,T,T,T,F,F,F,F,F,F),
+                        "b=(7;Inf]"  = c(F,F,F,F,F,F,F,T,T,T)))
+
+
     expect_error(partition(data.frame(a = 0:10),
                            .method = "crisp"),
                  "`.breaks` must not be NULL in order to partition numeric column `a`")
 
     expect_error(partition(data.frame(a = 0:10),
                            .breaks = -1,
+                           .method = "crisp"),
+                 "If `.breaks` is a single value, it must be a natural number greater than 1.")
+
+    expect_error(partition(data.frame(a = 0:10),
+                           .breaks = 1,
                            .method = "crisp"),
                  "If `.breaks` is a single value, it must be a natural number greater than 1.")
 
@@ -179,7 +225,7 @@ test_that("partition crisp", {
                            .breaks = c(-Inf, 4, 7, Inf),
                            .method = "crisp",
                            .labels = c("A", "cc")),
-                 "If `.breaks` is non-scalar, the length of `.labels` must be equal to the length of `.breaks` - 1.")
+                 "If `.breaks` is non-scalar, the length of `.labels` must be equal to")
 })
 
 
@@ -198,6 +244,48 @@ test_that("partition triangle", {
                  tibble("a=(-Inf;0;5)" = c(1.0, 0.8, 0.6, 0.4, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
                         "a=(0;5;10)"   = c(0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 0.8, 0.6, 0.4, 0.2, 0.0),
                         "a=(5;10;Inf)" = c(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0)))
+
+    expect_equal(partition(data.frame(b = 0:10),
+                           .breaks = c(1, 3, 5, 7, 10),
+                           .keep = FALSE,
+                           .method = "triangle",
+                           .right = TRUE,
+                           .span = 2),
+                 tibble("b=(1;3;5;7)"  = c(0, 0, 0.5, 1, 1, 1, 0.5, 0, 0, 0, 0),
+                        "b=(3;5;7;10)"  = c(0, 0, 0, 0, 0.5, 1, 1, 1, 0.66667, 0.33333, 0)),
+                 tolerance = 1e-3)
+
+    expect_equal(partition(data.frame(b = 0:10),
+                           .breaks = c(1, 3, 5, 7, 9, 10),
+                           .keep = FALSE,
+                           .method = "triangle",
+                           .right = TRUE,
+                           .span = 2,
+                           .inc = 2),
+                 tibble("b=(1;3;5;7)"  = c(0, 0, 0.5, 1, 1, 1, 0.5, 0, 0, 0, 0),
+                        "b=(5;7;9;10)" = c(0, 0, 0, 0, 0, 0, 0.5, 1, 1, 1, 0)))
+
+    expect_equal(partition(data.frame(b = 0:11),
+                           .breaks = 1:10,
+                           .keep = FALSE,
+                           .method = "triangle",
+                           .right = TRUE,
+                           .span = 2,
+                           .inc = 3),
+                 tibble("b=(1;2;3;4)"  = c(0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0),
+                        "b=(4;5;6;7)"  = c(0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0),
+                        "b=(7;8;9;10)" = c(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0)))
+
+    expect_equal(partition(data.frame(b = 0:10),
+                           .breaks = c(-Inf, 3, 6, 9, Inf),
+                           .keep = FALSE,
+                           .method = "triangle",
+                           .right = TRUE,
+                           .inc = 2),
+                 tibble("b=(-Inf;3;6)" = c(1, 1, 1, 1, 0.6667, 0.3333, 0, 0, 0, 0, 0),
+                        "b=(6;9;Inf)"  = c(0, 0, 0, 0, 0, 0, 0, 0.3333, 0.6667, 1, 1)),
+                 tolerance = 1e-3)
+
 
     expect_error(partition(data.frame(a = 0:10),
                            .breaks = 1,
@@ -221,7 +309,7 @@ test_that("partition triangle", {
                            .breaks = c(-Inf, 4, 7, Inf),
                            .method = "triangle",
                            .labels = c("A", "b", "cc")),
-                 "If `.breaks` is non-scalar, the length of `.labels` must be equal to the length of `.breaks` - 2.")
+                 "If `.breaks` is non-scalar, the length of `.labels` must be equal to")
 })
 
 
@@ -263,7 +351,7 @@ test_that("partition raisedcos", {
                            .breaks = c(-Inf, 4, 7, Inf),
                            .method = "raisedcos",
                            .labels = c("A", "b", "cc")),
-                 "If `.breaks` is non-scalar, the length of `.labels` must be equal to the length of `.breaks` - 2.")
+                 "If `.breaks` is non-scalar, the length of `.labels` must be equal to")
 })
 
 
@@ -290,3 +378,4 @@ test_that("partition errors", {
                  '`.method` must be equal to one of: "crisp", "triangle", "raisedcos".')
 
 })
+
