@@ -137,16 +137,20 @@ partition <- function(.data,
 
             if (.method == "crisp") {
                 pp <- .prepare_crisp(x, colname, .breaks, .labels, .right, call)
-                xx <- cut(x, breaks = pp$breaks, labels = pp$labels, right = .right)
-                res <- .partition_factor(xx, colname)
+                f <- if (.right) {
+                    function(x, br)  !is.na(x) & x > br[1] & x <= br[2]
+                } else {
+                    function(x, br)  !is.na(x) & x >= br[1] & x < br[2]
+                }
+                res <- .partition_numeric(x, pp, colname, f, 2)
 
             } else if (.method == "triangle") {
                 pp <- .prepare_fuzzy(x, colname, .breaks, .labels, call)
-                res <- .partition_fuzzy(x, pp, colname, triangle_)
+                res <- .partition_numeric(x, pp, colname, triangle_, 3)
 
             } else if (.method == "raisedcos") {
                 pp <- .prepare_fuzzy(x, colname, .breaks, .labels, call)
-                res <- .partition_fuzzy(x, pp, colname, raisedcos_)
+                res <- .partition_numeric(x, pp, colname, raisedcos_, 3)
             }
 
         } else {
@@ -249,9 +253,9 @@ partition <- function(.data,
 }
 
 
-.partition_fuzzy <- function(x, pp, colname, fun) {
+.partition_numeric <- function(x, pp, colname, fun, len) {
     res <- lapply(seq_along(pp$labels), function(i) {
-        ii <- seq(from = i, length.out = 3)
+        ii <- seq(from = i, length.out = len)
         fun(x, pp$breaks[ii])
     })
     names(res) <- paste0(colname, "=", pp$labels)
