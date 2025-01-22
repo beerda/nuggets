@@ -42,6 +42,7 @@ reference:
       - is_almost_constant
       - is_degree
       - is_subset
+      - parse_condition
       - var_grid
       - var_names
       - which_antichain
