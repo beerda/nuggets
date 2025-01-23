@@ -29,6 +29,7 @@ RoxygenNote: 7.3.2
 Language: en-US
 Imports: 
     cli,
+    fastmatch,
     lifecycle,
     methods,
     purrr,

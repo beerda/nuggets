@@ -21,6 +21,7 @@
 #include "dig/MaxSupportFilter.h"
 #include "dig/DisjointFilter.h"
 #include "dig/EmptyFociFilter.h"
+#include "dig/ExcludedSubsetsFilter.h"
 
 
 template <typename BITCHAIN, typename NUMCHAIN>
@@ -129,6 +130,11 @@ public:
                                                       config.getFociIndices(),
                                                       config.getDisjointPredicates(),
                                                       config.getDisjointFoci()));
+
+        ExcludedSubsets excluded(config.getExcluded(), data.getInverseChainsPermutation());
+        if (!excluded.empty()) {
+            digger.addFilter(new ExcludedSubsetsFilter<TaskType>(excluded));
+        }
 
         if (digger.isNegativeFociChainsNeeded()) {
             data.initializeNegativeFoci();

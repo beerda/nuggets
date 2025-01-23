@@ -10,6 +10,7 @@ dig(
   condition = everything(),
   focus = NULL,
   disjoint = var_names(colnames(x)),
+  excluded = NULL,
   min_length = 0,
   max_length = Inf,
   min_support = 0,
@@ -22,13 +23,13 @@ dig(
   verbose = FALSE,
   threads = 1L,
   error_context = list(arg_x = "x", arg_f = "f", arg_condition = "condition", arg_focus =
-    "focus", arg_disjoint = "disjoint", arg_min_length = "min_length", arg_max_length =
-    "max_length", arg_min_support = "min_support", arg_min_focus_support =
-    "min_focus_support", arg_min_conditional_focus_support =
+    "focus", arg_disjoint = "disjoint", arg_excluded = "excluded", arg_min_length =
+    "min_length", arg_max_length = "max_length", arg_min_support = "min_support",
+    arg_min_focus_support = "min_focus_support", arg_min_conditional_focus_support =
     "min_conditional_focus_support", arg_max_support = "max_support",
     arg_filter_empty_foci = "filter_empty_foci", arg_t_norm = "t_norm", arg_max_results =
-    "max_results", arg_verbose = "verbose", arg_threads = "threads", 
-     call =
+    "max_results", arg_verbose = "verbose", 
+     arg_threads = "threads", call =
     current_env())
 )
 }
@@ -86,6 +87,10 @@ vector are equal, then the corresponding columns of \code{x} will NOT be
 present together in a single condition. If \code{x} is prepared with
 \code{\link[=partition]{partition()}}, using the \code{\link[=var_names]{var_names()}} function on \code{x}'s column names
 is a convenient way to create the \code{disjoint} vector.}
+
+\item{excluded}{NULL or a list of character vectors, where each character vector
+contains the names of columns that must not appear together in a single
+condition.}
 
 \item{min_length}{the minimum size (the minimum number of predicates) of the
 condition to trigger the callback function \code{f}. The value of this argument must be

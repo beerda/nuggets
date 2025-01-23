@@ -686,6 +686,197 @@ test_that("data frame select & disjoint", {
 })
 
 
+test_that("excluded nothing", {
+    set.seed(32344)
+
+    d <- data.frame(a = c(T,    T, T, F, F),
+                    b = c(T,    F, T, T, T),
+                    c = c(T,    T, F, F, F),
+                    d = c(T,    F, F, F, F),
+                    x = c(1.0,  0.1, 0.2, 0.3, 0.4),
+                    y = c(1.0,  0.9, 0.8, 0.7, 0.6),
+                    z = c(1.0,  0.8, 0.6, 0.4, 0.2),
+                    w = c(1.0,  0, 0, 0, 0))
+
+    comb <- function(what, n) {
+        res <- combn(what, n)
+        apply(res, 2, function(w) {
+            w <- sort(w)
+            paste(w, collapse = " & ")
+        })
+    }
+
+    f <- function(condition, support) {
+        paste(sort(names(condition)), collapse = " & ")
+    }
+
+    sel <- c("a", "b", "c", "x", "y", "z")
+    expected <- c(comb(sel, 1), comb(sel, 2), comb(sel, 3))
+
+    # permutation 1
+    perm <- seq_along(d)
+    res <- dig(d[, perm],
+               f,
+               condition = c(a, b, c, x, y, z),
+               excluded = list(),
+               min_length = 1,
+               max_length = 3)
+    expect_equal(sort(unlist(res)), sort(expected))
+
+    # permutation 2
+    perm <- sample(perm)
+    res <- dig(d[, perm],
+               f,
+               condition = c(a, b, c, x, y, z),
+               excluded = list(),
+               min_length = 1,
+               max_length = 3)
+    expect_equal(sort(unlist(res)), sort(expected))
+
+    # permutation 3
+    perm <- sample(perm)
+    res <- dig(d[, perm],
+               f,
+               condition = c(a, b, c, x, y, z),
+               excluded = list(),
+               min_length = 1,
+               max_length = 3)
+    expect_equal(sort(unlist(res)), sort(expected))
+})
+
+
+test_that("excluded single", {
+    set.seed(32344)
+
+    d <- data.frame(a = c(T,    T, T, F, F),
+                    b = c(T,    F, T, T, T),
+                    c = c(T,    T, F, F, F),
+                    d = c(T,    F, F, F, F),
+                    x = c(1.0,  0.1, 0.2, 0.3, 0.4),
+                    y = c(1.0,  0.9, 0.8, 0.7, 0.6),
+                    z = c(1.0,  0.8, 0.6, 0.4, 0.2),
+                    w = c(1.0,  0, 0, 0, 0))
+
+    comb <- function(what, n) {
+        res <- combn(what, n)
+        apply(res, 2, function(w) {
+            w <- sort(w)
+            paste(w, collapse = " & ")
+        })
+    }
+
+    f <- function(condition, support) {
+        paste(sort(names(condition)), collapse = " & ")
+    }
+
+    excl <- list("c", "x")
+    sel <- c("a", "b", "y", "z")
+    expected <- c(comb(sel, 1), comb(sel, 2), comb(sel, 3))
+
+    # permutation 1
+    perm <- seq_along(d)
+    res <- dig(d[, perm],
+               f,
+               condition = c(a, b, c, x, y, z),
+               excluded = excl,
+               min_length = 1,
+               max_length = 3)
+    expect_equal(length(unlist(res)), 14)
+    expect_equal(sort(unlist(res)), sort(expected))
+
+    # permutation 2
+    perm <- sample(perm)
+    res <- dig(d[, perm],
+               f,
+               condition = c(a, b, c, x, y, z),
+               excluded = excl,
+               min_length = 1,
+               max_length = 3)
+    expect_equal(length(unlist(res)), 14)
+    expect_equal(sort(unlist(res)), sort(expected))
+
+    # permutation 3
+    perm <- sample(perm)
+    res <- dig(d[, perm],
+               f,
+               condition = c(a, b, c, x, y, z),
+               excluded = excl,
+               min_length = 1,
+               max_length = 3)
+    expect_equal(length(unlist(res)), 14)
+    expect_equal(sort(unlist(res)), sort(expected))
+})
+
+
+test_that("excluded complex", {
+    set.seed(32344)
+
+    d <- data.frame(a = c(T,    T, T, F, F),
+                    b = c(T,    F, T, T, T),
+                    c = c(T,    T, F, F, F),
+                    d = c(T,    F, F, F, F),
+                    x = c(1.0,  0.1, 0.2, 0.3, 0.4),
+                    y = c(1.0,  0.9, 0.8, 0.7, 0.6),
+                    z = c(1.0,  0.8, 0.6, 0.4, 0.2),
+                    w = c(1.0,  0, 0, 0, 0))
+
+    comb <- function(what, n) {
+        res <- combn(what, n)
+        apply(res, 2, function(w) {
+            w <- sort(w)
+            paste(w, collapse = " & ")
+        })
+    }
+
+    f <- function(condition, support) {
+        paste(sort(names(condition)), collapse = " & ")
+    }
+
+    excl <- list("c",
+                 "x",
+                 c("b", "z"),
+                 c("a", "y", "z"))
+
+    sel <- c("a", "b", "y", "z")
+    expected <- c(comb(sel, 1), comb(sel, 2), comb(sel, 3))
+    expected <- grep("b.*z", expected, invert = TRUE, value = TRUE)
+    expected <- grep("a.*y.*z", expected, invert = TRUE, value = TRUE)
+
+    # permutation 1
+    perm <- seq_along(d)
+    res <- dig(d[, perm],
+               f,
+               condition = c(a, b, c, x, y, z),
+               excluded = excl,
+               min_length = 1,
+               max_length = 3)
+    expect_equal(length(unlist(res)), 10)
+    expect_equal(sort(unlist(res)), sort(expected))
+
+    # permutation 2
+    perm <- sample(perm)
+    res <- dig(d[, perm],
+               f,
+               condition = c(a, b, c, x, y, z),
+               excluded = excl,
+               min_length = 1,
+               max_length = 3)
+    expect_equal(length(unlist(res)), 10)
+    expect_equal(sort(unlist(res)), sort(expected))
+
+    # permutation 3
+    perm <- sample(perm)
+    res <- dig(d[, perm],
+               f,
+               condition = c(a, b, c, x, y, z),
+               excluded = excl,
+               min_length = 1,
+               max_length = 3)
+    expect_equal(length(unlist(res)), 10)
+    expect_equal(sort(unlist(res)), sort(expected))
+})
+
+
 test_that("t-norm goedel", {
     c1 <- c(0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
     c2 <- c(0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
@@ -834,6 +1025,10 @@ test_that("errors", {
                  "Function `f` is allowed to have the following arguments")
     expect_error(dig(d, f, condition = n, disjoint = list("x")),
                  "`disjoint` must be a plain vector")
+    expect_error(dig(d, f, condition = n, excluded = 3),
+                 "`excluded` must be a list or NULL.")
+    expect_error(dig(d, f, condition = n, excluded = list(3)),
+                 "`excluded` must be a list of character vectors.")
     expect_error(dig(d, f, condition = n, disjoint = "x"),
                  "The length of `disjoint` must be 0 or must be equal to the number of columns in `x`.")
     expect_error(dig(d, f, condition = n, min_length = "x"),

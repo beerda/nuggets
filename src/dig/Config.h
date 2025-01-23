@@ -25,6 +25,8 @@ public:
         IntegerVector disjFoci = configuration["disjoint_foci"];
         copy(disjFoci, disjointFoci);
 
+        excluded = configuration["excluded"];
+
         IntegerVector threadsVec = configuration["threads"];
         threads = threadsVec[0];
 
@@ -120,6 +122,9 @@ public:
     const vector<int>& getDisjointFoci() const
     { return disjointFoci; }
 
+    const List getExcluded() const
+    { return excluded; }
+
     int getNrow() const
     { return nrow; }
 
@@ -191,6 +196,8 @@ private:
 
     vector<int> disjointPredicates;
     vector<int> disjointFoci;
+
+    List excluded;
 
     int nrow;
     int threads;

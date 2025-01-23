@@ -3,6 +3,7 @@
 
 ## usethis namespace: start
 #' @importFrom cli cli_abort
+#' @importFrom fastmatch fmatch
 #' @importFrom lifecycle deprecated
 #' @importFrom methods formalArgs
 #' @importFrom purrr quietly

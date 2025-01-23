@@ -82,6 +82,9 @@
 #'      present together in a single condition. If `x` is prepared with
 #'      [partition()], using the [var_names()] function on `x`'s column names
 #'      is a convenient way to create the `disjoint` vector.
+#' @param excluded NULL or a list of character vectors, where each character vector
+#'      contains the names of columns that must not appear together in a single
+#'      condition.
 #' @param min_length the minimum size (the minimum number of predicates) of the
 #'      condition to trigger the callback function `f`. The value of this argument must be
 #'      greater or equal to 0. If 0, also the empty condition triggers the callback.
@@ -253,6 +256,7 @@ dig <- function(x,
                 condition = everything(),
                 focus = NULL,
                 disjoint = var_names(colnames(x)),
+                excluded = NULL,
                 min_length = 0,
                 max_length = Inf,
                 min_support = 0.0,
@@ -269,6 +273,7 @@ dig <- function(x,
                                      arg_condition = "condition",
                                      arg_focus = "focus",
                                      arg_disjoint = "disjoint",
+                                     arg_excluded = "excluded",
                                      arg_min_length = "min_length",
                                      arg_max_length = "max_length",
                                      arg_min_support = "min_support",
@@ -328,6 +333,18 @@ dig <- function(x,
         disjoint <- as.integer(as.factor(disjoint))
         disjoint_predicates <- disjoint[condition_cols$indices]
         disjoint_foci <- disjoint[foci_cols$indices]
+    }
+
+    .must_be_list_of_characters(excluded,
+                                null = TRUE,
+                                arg = error_context$arg_excluded,
+                                call = error_context$call)
+    if (is.null(excluded)) {
+        excluded <- list()
+    } else {
+        # convert list elements to C++ indices starting from 0
+        excluded <- lapply(excluded,
+                           function(i) { fmatch(i, names(condition_cols$indices)) - 1 })
     }
 
     .must_be_integerish_scalar(min_length,
@@ -428,6 +445,7 @@ dig <- function(x,
                    foci = foci_cols$indices,
                    disjoint_predicates = disjoint_predicates,
                    disjoint_foci = disjoint_foci,
+                   excluded = excluded,
                    minLength = min_length,
                    maxLength = max_length,
                    minSupport = min_support,

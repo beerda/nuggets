@@ -123,6 +123,16 @@ public:
     const vector<size_t> getChainsPermutation() const
     { return chainsPermutation; }
 
+    const vector<size_t> getInverseChainsPermutation() const
+    {
+        vector<size_t> inversePermutation(chainsPermutation.size());
+        for (size_t i = 0; i < chainsPermutation.size(); i++) {
+            inversePermutation[chainsPermutation[i]] = i;
+        }
+
+        return inversePermutation;
+    }
+
 private:
     size_t rows;
     vector<DualChainType> chains;

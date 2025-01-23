@@ -15,14 +15,26 @@ public:
     ExcludedSubsets()
     { }
 
-    void initialize(List excludedList)
+    /**
+     * Constructs excluded subsets from the given list of excluded subsets.
+     * Constructor assumes that the list elements are integer vectors of indices
+     * of the original R data columns minus 1 (i.e. 0-based). Because the indexing
+     * of predicates is permuted (because of sorting that is done in Data class),
+     * the permutation vector is used to map the original indices to the permuted ones
+     * that are used internally in condition Iterator.
+     */
+    ExcludedSubsets(List excludedList, vector<size_t> permutation)
     {
         Subsets excludedVec;
         excludedVec.reserve(excludedList.size());
         for (R_xlen_t i = 0; i < excludedList.size(); i++) {
             IntegerVector vec = excludedList[i];
             if (vec.size() > 0) {
-                Subset subset(vec.begin(), vec.end());
+                Subset subset;
+                subset.reserve(vec.size());
+                for (R_xlen_t j = 0; j < vec.size(); j++) {
+                    subset.push_back(permutation[vec[j]]);
+                }
                 sort(subset.begin(), subset.end());
                 excludedVec.push_back(subset);
             }
