@@ -31,7 +31,7 @@
 #' on the following arguments: `.method`, `.breaks`, `.right`, `.span`, and
 #' `.inc`.
 #'
-#' \subsection{Crisp transformation of numeric data}
+#' @section Crisp transformation of numeric data:
 #'
 #' For `.method = "crisp"`, the numeric column is transformed into a set of
 #' logical columns where each column represents a certain interval of values.
@@ -63,7 +63,7 @@
 #' For `.span = 2` and `.inc = 3`, the intervals are: \eqn{(1;5]}, and \eqn{(9;11]}.
 #'
 #'
-#' \subsection{Fuzzy transformation of numeric data}
+#' @section Fuzzy transformation of numeric data:
 #'
 #' For `.method = "triangle"` or `.method = "raisedcos"`, the numeric column is
 #' transformed into a set of columns where each column represents membership
@@ -169,8 +169,8 @@
 #' partition(CO2, conc:uptake, .method = "raisedcos", .breaks = 3)
 #'
 #' # transform numeric columns to trapezoidal fuzzy sets overlapping in non-core
-#' regions so that the membership degrees sum to 1 along the consecutive fuzzy sets
-#' (i.e., the so-called Ruspini condition is met)
+#' # regions so that the membership degrees sum to 1 along the consecutive fuzzy sets
+#' # (i.e., the so-called Ruspini condition is met)
 #' partition(CO2, conc:uptake, .method = "triangle", .breaks = 3, .span = 2, .inc = 2)
 #'
 #' # complex transformation with different settings for each column

@@ -88,38 +88,72 @@ present together in a single condition. If \code{x} is prepared with
 is a convenient way to create the \code{disjoint} vector.}
 
 \item{min_length}{the minimum size (the minimum number of predicates) of the
-condition to be generated (must be greater or equal to 0). If 0, the empty
-condition is generated in the first place.}
+condition to trigger the callback function \code{f}. The value of this argument must be
+greater or equal to 0. If 0, also the empty condition triggers the callback.}
 
-\item{max_length}{The maximum size (the maximum number of predicates) of the
-condition to be generated. If equal to Inf, the maximum length of conditions
-is limited only by the number of available predicates.}
+\item{max_length}{The maximum allowed size (the maximum number of predicates)
+of the condition. Conditions longer than \code{max_length} are not generated.
+If equal to Inf, the maximum length of conditions is limited only by the
+number of available predicates. The value of this argument must be greater
+or equal to 0 and also greater or equal to \code{min_length}. This argument
+effectively affects the speed of the search process and the number of
+triggered calls of the callback function \code{f}.}
 
 \item{min_support}{the minimum support of a condition to trigger the callback
-function for it. The support of the condition is the relative frequency
+function \code{f}. The support of the condition is the relative frequency
 of the condition in the dataset \code{x}. For logical data, it equals to the
 relative frequency of rows such that all condition predicates are TRUE on it.
 For numerical (double) input, the support is computed as the mean (over all
-rows) of multiplications of predicate values.}
+rows) of multiplications of predicate values. The value of this argument
+must be in the range \eqn{[0, 1]}. If the support of the condition is
+lower than \code{min_support}, the recursive search for conditions containing
+the current condition is stopped. Therefore, the value of \code{min_support}
+effectively affects the speed of the search process and the number of
+triggered calls of the callback function \code{f}.}
 
-\item{min_focus_support}{the minimum support of a focus, for the focus to be passed
-to the callback function. The support of the focus is the relative frequency
-of rows such that all condition predicates AND the focus are TRUE on it.
-For numerical (double) input, the support is computed as the mean (over all
-rows) of multiplications of predicate values.}
+\item{min_focus_support}{the minimum required support of a focus, for it to be
+passed to the callback function \code{f}. The support of the focus is the
+relative frequency of rows such that all condition predicates AND the
+focus are TRUE on it. For logical data, it equals to the relative frequency
+of rows, for which all condition predicates AND the focus are TRUE. The
+numerical (double) input is treated as membership degrees to fuzzy sets
+and the support is computed as the mean (over all rows) of a t-norm
+of predicate values. (The applied t-norm is selected by the \code{t_norm}
+argument, see below.) The value of this argument must be in the range \eqn{[0, 1]}.
+If the support of the focus is lower than \code{min_focus_support}, the focus
+is not passed to the callback function \code{f}. See also the \code{filter_empty_foci}
+argument which, together with \code{min_focus_support}, effectively affects
+the speed of the search process and the number of triggered calls of the
+callback function \code{f}.}
 
 \item{min_conditional_focus_support}{the minimum relative support of a focus
 within a condition. The conditional support of the focus is the relative
 frequency of rows with focus being TRUE within rows where the condition is
-TRUE.}
+TRUE. If \eqn{s(C)} represents the relative frequency of the condition
+being TRUE within the dataset and \eqn{s(C \cup F)} represents the relative
+frequency of the condition and the focus being both TRUE within the dataset,
+(computed as t-norm if the input is numerical), then the conditional support
+of the focus is \eqn{s(C \cup F) / s(C)}. The value of this argument must
+be in the range \eqn{[0, 1]}. If the conditional support of the focus is
+lower than \code{min_conditional_focus_support}, the focus is not passed to the
+callback function \code{f}. See also the \code{filter_empty_foci} argument which,
+together with \code{min_conditional_focus_support}, effectively affects the
+speed of the search process and the number of triggered calls of the
+callback function \code{f}.}
 
-\item{max_support}{the maximum support of a condition to trigger the callback}
+\item{max_support}{the maximum support of a condition to trigger the callback
+function \code{f}. If the support of the condition is greater than
+\code{max_support}, the condition is not passed to the callback function.
+\code{max_support} does not stop the recursive generation of conditions
+containing the current condition, but only the execution of the callback
+function. The value of this argument must be in the range \eqn{[0, 1]}.}
 
-\item{filter_empty_foci}{a logical scalar indicating whether to skip conditions,
-for which no focus remains available after filtering by \code{min_focus_support}.
-If \code{TRUE}, the condition is passed to the callback function only if at least
-one focus remains after filtering. If \code{FALSE}, the condition is passed to the
-callback function regardless of the number of remaining foci.}
+\item{filter_empty_foci}{a logical scalar indicating whether to skip triggering
+the callback function \code{f} on conditions, for which no focus remains
+available after filtering by \code{min_focus_support} or \code{min_conditional_focus_support}.
+If \code{TRUE}, the callback function \code{f} is triggered only if at least
+one focus remains after filtering. If \code{FALSE}, the callback function \code{f}
+is triggered regardless of the number of remaining foci.}
 
 \item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
 \code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}

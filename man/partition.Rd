@@ -108,8 +108,9 @@ additional arguments (\code{.breaks}, \code{.labels}, \code{.right}).
 The processing of source \strong{numeric} columns is quite complex and depends
 on the following arguments: \code{.method}, \code{.breaks}, \code{.right}, \code{.span}, and
 \code{.inc}.
+}
+\section{Crisp transformation of numeric data}{
 
-\subsection{Crisp transformation of numeric data}
 
 For \code{.method = "crisp"}, the numeric column is transformed into a set of
 logical columns where each column represents a certain interval of values.
@@ -139,8 +140,10 @@ As can be seen, so far the next interval was created by shifting in 1
 position in \code{.breaks}. The \code{.inc} argument modifies that shift. If \code{.inc = 2}
 and \code{.span = 1}, the intervals are: \eqn{(1;3]}, \eqn{(5;7]}, and \eqn{(9;11]}.
 For \code{.span = 2} and \code{.inc = 3}, the intervals are: \eqn{(1;5]}, and \eqn{(9;11]}.
+}
 
-\subsection{Fuzzy transformation of numeric data}
+\section{Fuzzy transformation of numeric data}{
+
 
 For \code{.method = "triangle"} or \code{.method = "raisedcos"}, the numeric column is
 transformed into a set of columns where each column represents membership
@@ -188,6 +191,7 @@ sets.
 
 See the examples for more details.
 }
+
 \examples{
 # transform logical columns and factors
 d <- data.frame(a = c(TRUE, TRUE, FALSE),
@@ -205,8 +209,8 @@ partition(CO2, conc:uptake, .method = "triangle", .breaks = 3)
 partition(CO2, conc:uptake, .method = "raisedcos", .breaks = 3)
 
 # transform numeric columns to trapezoidal fuzzy sets overlapping in non-core
-regions so that the membership degrees sum to 1 along the consecutive fuzzy sets
-(i.e., the so-called Ruspini condition is met)
+# regions so that the membership degrees sum to 1 along the consecutive fuzzy sets
+# (i.e., the so-called Ruspini condition is met)
 partition(CO2, conc:uptake, .method = "triangle", .breaks = 3, .span = 2, .inc = 2)
 
 # complex transformation with different settings for each column
