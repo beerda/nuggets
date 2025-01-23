@@ -127,6 +127,7 @@ the condition columns in <code>x</code> must be logical.</p>
 <span>  xvars <span class="op">=</span> <span class="fu">where</span><span class="op">(</span><span class="va">is.numeric</span><span class="op">)</span>,</span>
 <span>  yvars <span class="op">=</span> <span class="fu">where</span><span class="op">(</span><span class="va">is.numeric</span><span class="op">)</span>,</span>
 <span>  disjoint <span class="op">=</span> <span class="fu"><a href="var_names.html">var_names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  excluded <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  min_length <span class="op">=</span> <span class="fl">0L</span>,</span>
 <span>  max_length <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  min_support <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -180,6 +181,12 @@ vector are equal, then the corresponding columns of <code>x</code> will NOT be
 present together in a single condition. If <code>x</code> is prepared with
 <code><a href="partition.html">partition()</a></code>, using the <code><a href="var_names.html">var_names()</a></code> function on <code>x</code>'s column names
 is a convenient way to create the <code>disjoint</code> vector.</p></dd>
+
+
+<dt id="arg-excluded">excluded<a class="anchor" aria-label="anchor" href="#arg-excluded"></a></dt>
+<dd><p>NULL or a list of character vectors, where each character vector
+contains the names of columns that must not appear together in a single
+condition.</p></dd>
 
 
 <dt id="arg-min-length">min_length<a class="anchor" aria-label="anchor" href="#arg-min-length"></a></dt>

@@ -133,6 +133,7 @@ predicates AND the focus are TRUE on it. Foci with support lower than
 <span>  condition <span class="op">=</span> <span class="fu">everything</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  focus <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  disjoint <span class="op">=</span> <span class="fu"><a href="var_names.html">var_names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  excluded <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  min_length <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  max_length <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  min_support <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -145,13 +146,13 @@ predicates AND the focus are TRUE on it. Foci with support lower than
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  threads <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  error_context <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>arg_x <span class="op">=</span> <span class="st">"x"</span>, arg_f <span class="op">=</span> <span class="st">"f"</span>, arg_condition <span class="op">=</span> <span class="st">"condition"</span>, arg_focus <span class="op">=</span></span>
-<span>    <span class="st">"focus"</span>, arg_disjoint <span class="op">=</span> <span class="st">"disjoint"</span>, arg_min_length <span class="op">=</span> <span class="st">"min_length"</span>, arg_max_length <span class="op">=</span></span>
-<span>    <span class="st">"max_length"</span>, arg_min_support <span class="op">=</span> <span class="st">"min_support"</span>, arg_min_focus_support <span class="op">=</span></span>
-<span>    <span class="st">"min_focus_support"</span>, arg_min_conditional_focus_support <span class="op">=</span></span>
+<span>    <span class="st">"focus"</span>, arg_disjoint <span class="op">=</span> <span class="st">"disjoint"</span>, arg_excluded <span class="op">=</span> <span class="st">"excluded"</span>, arg_min_length <span class="op">=</span></span>
+<span>    <span class="st">"min_length"</span>, arg_max_length <span class="op">=</span> <span class="st">"max_length"</span>, arg_min_support <span class="op">=</span> <span class="st">"min_support"</span>,</span>
+<span>    arg_min_focus_support <span class="op">=</span> <span class="st">"min_focus_support"</span>, arg_min_conditional_focus_support <span class="op">=</span></span>
 <span>    <span class="st">"min_conditional_focus_support"</span>, arg_max_support <span class="op">=</span> <span class="st">"max_support"</span>,</span>
 <span>    arg_filter_empty_foci <span class="op">=</span> <span class="st">"filter_empty_foci"</span>, arg_t_norm <span class="op">=</span> <span class="st">"t_norm"</span>, arg_max_results <span class="op">=</span></span>
-<span>    <span class="st">"max_results"</span>, arg_verbose <span class="op">=</span> <span class="st">"verbose"</span>, arg_threads <span class="op">=</span> <span class="st">"threads"</span>, </span>
-<span>     call <span class="op">=</span></span>
+<span>    <span class="st">"max_results"</span>, arg_verbose <span class="op">=</span> <span class="st">"verbose"</span>, </span>
+<span>     arg_threads <span class="op">=</span> <span class="st">"threads"</span>, call <span class="op">=</span></span>
 <span>    <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -222,52 +223,92 @@ present together in a single condition. If <code>x</code> is prepared with
 is a convenient way to create the <code>disjoint</code> vector.</p></dd>
 
 
+<dt id="arg-excluded">excluded<a class="anchor" aria-label="anchor" href="#arg-excluded"></a></dt>
+<dd><p>NULL or a list of character vectors, where each character vector
+contains the names of columns that must not appear together in a single
+condition.</p></dd>
+
+
 <dt id="arg-min-length">min_length<a class="anchor" aria-label="anchor" href="#arg-min-length"></a></dt>
 <dd><p>the minimum size (the minimum number of predicates) of the
-condition to be generated (must be greater or equal to 0). If 0, the empty
-condition is generated in the first place.</p></dd>
+condition to trigger the callback function <code>f</code>. The value of this argument must be
+greater or equal to 0. If 0, also the empty condition triggers the callback.</p></dd>
 
 
 <dt id="arg-max-length">max_length<a class="anchor" aria-label="anchor" href="#arg-max-length"></a></dt>
-<dd><p>The maximum size (the maximum number of predicates) of the
-condition to be generated. If equal to Inf, the maximum length of conditions
-is limited only by the number of available predicates.</p></dd>
+<dd><p>The maximum allowed size (the maximum number of predicates)
+of the condition. Conditions longer than <code>max_length</code> are not generated.
+If equal to Inf, the maximum length of conditions is limited only by the
+number of available predicates. The value of this argument must be greater
+or equal to 0 and also greater or equal to <code>min_length</code>. This argument
+effectively affects the speed of the search process and the number of
+triggered calls of the callback function <code>f</code>.</p></dd>
 
 
 <dt id="arg-min-support">min_support<a class="anchor" aria-label="anchor" href="#arg-min-support"></a></dt>
 <dd><p>the minimum support of a condition to trigger the callback
-function for it. The support of the condition is the relative frequency
+function <code>f</code>. The support of the condition is the relative frequency
 of the condition in the dataset <code>x</code>. For logical data, it equals to the
 relative frequency of rows such that all condition predicates are TRUE on it.
 For numerical (double) input, the support is computed as the mean (over all
-rows) of multiplications of predicate values.</p></dd>
+rows) of multiplications of predicate values. The value of this argument
+must be in the range \([0, 1]\). If the support of the condition is
+lower than <code>min_support</code>, the recursive search for conditions containing
+the current condition is stopped. Therefore, the value of <code>min_support</code>
+effectively affects the speed of the search process and the number of
+triggered calls of the callback function <code>f</code>.</p></dd>
 
 
 <dt id="arg-min-focus-support">min_focus_support<a class="anchor" aria-label="anchor" href="#arg-min-focus-support"></a></dt>
-<dd><p>the minimum support of a focus, for the focus to be passed
-to the callback function. The support of the focus is the relative frequency
-of rows such that all condition predicates AND the focus are TRUE on it.
-For numerical (double) input, the support is computed as the mean (over all
-rows) of multiplications of predicate values.</p></dd>
+<dd><p>the minimum required support of a focus, for it to be
+passed to the callback function <code>f</code>. The support of the focus is the
+relative frequency of rows such that all condition predicates AND the
+focus are TRUE on it. For logical data, it equals to the relative frequency
+of rows, for which all condition predicates AND the focus are TRUE. The
+numerical (double) input is treated as membership degrees to fuzzy sets
+and the support is computed as the mean (over all rows) of a t-norm
+of predicate values. (The applied t-norm is selected by the <code>t_norm</code>
+argument, see below.) The value of this argument must be in the range \([0, 1]\).
+If the support of the focus is lower than <code>min_focus_support</code>, the focus
+is not passed to the callback function <code>f</code>. See also the <code>filter_empty_foci</code>
+argument which, together with <code>min_focus_support</code>, effectively affects
+the speed of the search process and the number of triggered calls of the
+callback function <code>f</code>.</p></dd>
 
 
 <dt id="arg-min-conditional-focus-support">min_conditional_focus_support<a class="anchor" aria-label="anchor" href="#arg-min-conditional-focus-support"></a></dt>
 <dd><p>the minimum relative support of a focus
 within a condition. The conditional support of the focus is the relative
 frequency of rows with focus being TRUE within rows where the condition is
-TRUE.</p></dd>
+TRUE. If \(s(C)\) represents the relative frequency of the condition
+being TRUE within the dataset and \(s(C \cup F)\) represents the relative
+frequency of the condition and the focus being both TRUE within the dataset,
+(computed as t-norm if the input is numerical), then the conditional support
+of the focus is \(s(C \cup F) / s(C)\). The value of this argument must
+be in the range \([0, 1]\). If the conditional support of the focus is
+lower than <code>min_conditional_focus_support</code>, the focus is not passed to the
+callback function <code>f</code>. See also the <code>filter_empty_foci</code> argument which,
+together with <code>min_conditional_focus_support</code>, effectively affects the
+speed of the search process and the number of triggered calls of the
+callback function <code>f</code>.</p></dd>
 
 
 <dt id="arg-max-support">max_support<a class="anchor" aria-label="anchor" href="#arg-max-support"></a></dt>
-<dd><p>the maximum support of a condition to trigger the callback</p></dd>
+<dd><p>the maximum support of a condition to trigger the callback
+function <code>f</code>. If the support of the condition is greater than
+<code>max_support</code>, the condition is not passed to the callback function.
+<code>max_support</code> does not stop the recursive generation of conditions
+containing the current condition, but only the execution of the callback
+function. The value of this argument must be in the range \([0, 1]\).</p></dd>
 
 
 <dt id="arg-filter-empty-foci">filter_empty_foci<a class="anchor" aria-label="anchor" href="#arg-filter-empty-foci"></a></dt>
-<dd><p>a logical scalar indicating whether to skip conditions,
-for which no focus remains available after filtering by <code>min_focus_support</code>.
-If <code>TRUE</code>, the condition is passed to the callback function only if at least
-one focus remains after filtering. If <code>FALSE</code>, the condition is passed to the
-callback function regardless of the number of remaining foci.</p></dd>
+<dd><p>a logical scalar indicating whether to skip triggering
+the callback function <code>f</code> on conditions, for which no focus remains
+available after filtering by <code>min_focus_support</code> or <code>min_conditional_focus_support</code>.
+If <code>TRUE</code>, the callback function <code>f</code> is triggered only if at least
+one focus remains after filtering. If <code>FALSE</code>, the callback function <code>f</code>
+is triggered regardless of the number of remaining foci.</p></dd>
 
 
 <dt id="arg-t-norm">t_norm<a class="anchor" aria-label="anchor" href="#arg-t-norm"></a></dt>
