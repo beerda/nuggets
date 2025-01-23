@@ -35,6 +35,9 @@
 #'      present together in a single condition. If `x` is prepared with
 #'      [partition()], using the [var_names()] function on `x`'s column names
 #'      is a convenient way to create the `disjoint` vector.
+#' @param excluded NULL or a list of character vectors, where each character vector
+#'      contains the names of columns that must not appear together in a single
+#'      condition.
 #' @param method a character string indicating which correlation coefficient is
 #'      to be used for the test. One of `"pearson"`, `"kendall"`, or `"spearman"`
 #' @param alternative indicates the alternative hypothesis and must be one of
@@ -92,6 +95,7 @@ dig_correlations <- function(x,
                              xvars = where(is.numeric),
                              yvars = where(is.numeric),
                              disjoint = var_names(colnames(x)),
+                             excluded = NULL,
                              method = "pearson",
                              alternative = "two.sided",
                              exact = NULL,
@@ -129,6 +133,7 @@ dig_correlations <- function(x,
              xvars = !!xvars,
              yvars = !!yvars,
              disjoint = disjoint,
+             excluded = excluded,
              na_rm = TRUE,
              type = "crisp",
              min_length = min_length,
@@ -142,6 +147,8 @@ dig_correlations <- function(x,
                                   arg_condition = "condition",
                                   arg_xvars = "xvars",
                                   arg_yvars = "yvars",
+                                  arg_disjoint = "disjoint",
+                                  arg_excluded = "excluded",
                                   arg_min_length = "min_length",
                                   arg_max_length = "max_length",
                                   arg_min_support = "min_support",

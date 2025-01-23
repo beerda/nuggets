@@ -11,6 +11,7 @@ dig_grid(
   xvars = where(is.numeric),
   yvars = where(is.numeric),
   disjoint = var_names(colnames(x)),
+  excluded = NULL,
   allow = "all",
   na_rm = FALSE,
   type = "crisp",
@@ -22,11 +23,11 @@ dig_grid(
   verbose = FALSE,
   threads = 1L,
   error_context = list(arg_x = "x", arg_f = "f", arg_condition = "condition", arg_xvars =
-    "xvars", arg_yvars = "yvars", arg_disjoint = "disjoint", arg_allow = "allow",
-    arg_na_rm = "na_rm", arg_type = "type", arg_min_length = "min_length", arg_max_length
-    = "max_length", arg_min_support = "min_support", arg_max_support = "max_support",
-    arg_max_results = "max_results", arg_verbose = "verbose", arg_threads = "threads",
-    call = current_env())
+    "xvars", arg_yvars = "yvars", arg_disjoint = "disjoint", arg_excluded = "excluded",
+    arg_allow = "allow", arg_na_rm = "na_rm", arg_type = "type", arg_min_length =
+    "min_length", arg_max_length = "max_length", arg_min_support = "min_support",
+    arg_max_support = "max_support", arg_max_results = "max_results", arg_verbose =
+    "verbose", arg_threads = "threads", call = current_env())
 )
 }
 \arguments{
@@ -79,6 +80,10 @@ vector are equal, then the corresponding columns of \code{x} will NOT be
 present together in a single condition. If \code{x} is prepared with
 \code{\link[=partition]{partition()}}, using the \code{\link[=var_names]{var_names()}} function on \code{x}'s column names
 is a convenient way to create the \code{disjoint} vector.}
+
+\item{excluded}{NULL or a list of character vectors, where each character vector
+contains the names of columns that must not appear together in a single
+condition.}
 
 \item{allow}{a character string specifying which columns are allowed to be
 selected by \code{xvars} and \code{yvars} arguments. Possible values are:

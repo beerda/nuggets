@@ -10,6 +10,7 @@ dig_correlations(
   xvars = where(is.numeric),
   yvars = where(is.numeric),
   disjoint = var_names(colnames(x)),
+  excluded = NULL,
   method = "pearson",
   alternative = "two.sided",
   exact = NULL,
@@ -43,6 +44,10 @@ vector are equal, then the corresponding columns of \code{x} will NOT be
 present together in a single condition. If \code{x} is prepared with
 \code{\link[=partition]{partition()}}, using the \code{\link[=var_names]{var_names()}} function on \code{x}'s column names
 is a convenient way to create the \code{disjoint} vector.}
+
+\item{excluded}{NULL or a list of character vectors, where each character vector
+contains the names of columns that must not appear together in a single
+condition.}
 
 \item{method}{a character string indicating which correlation coefficient is
 to be used for the test. One of \code{"pearson"}, \code{"kendall"}, or \code{"spearman"}}

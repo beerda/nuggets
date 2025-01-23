@@ -43,6 +43,9 @@
 #'      present together in a single condition. If `x` is prepared with
 #'      [partition()], using the [var_names()] function on `x`'s column names
 #'      is a convenient way to create the `disjoint` vector.
+#' @param excluded NULL or a list of character vectors, where each character vector
+#'      contains the names of columns that must not appear together in a single
+#'      condition.
 #' @param min_length the minimum size (the minimum number of predicates) of the
 #'      condition to be generated (must be greater or equal to 0). If 0, the
 #'      empty condition is generated in the first place.
@@ -155,6 +158,7 @@ dig_paired_baseline_contrasts <- function(x,
                                           xvars = where(is.numeric),
                                           yvars = where(is.numeric),
                                           disjoint = var_names(colnames(x)),
+                                          excluded = NULL,
                                           min_length = 0L,
                                           max_length = Inf,
                                           min_support = 0.0,
@@ -226,6 +230,7 @@ dig_paired_baseline_contrasts <- function(x,
              xvars = !!xvars,
              yvars = !!yvars,
              disjoint = disjoint,
+             excluded = excluded,
              allow = "numeric",
              na_rm = TRUE,
              type = "crisp",
@@ -240,6 +245,8 @@ dig_paired_baseline_contrasts <- function(x,
                                   arg_condition = "condition",
                                   arg_xvars = "xvars",
                                   arg_yvars = "yvars",
+                                  arg_disjoint = "disjoint",
+                                  arg_excluded = "excluded",
                                   arg_min_length = "min_length",
                                   arg_max_length = "max_length",
                                   arg_min_support = "min_support",

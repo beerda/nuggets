@@ -2,6 +2,7 @@
 - released: ???
 - added is_almost_constant(), remove_almost_constant(), parse_condition()
 - added .span and .inc arguments to partition()
+- added exclude argument to dig() and other dig_*() functions
 
 # nuggets 1.4.0
 - released: 2025-01-08

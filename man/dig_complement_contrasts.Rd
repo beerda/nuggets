@@ -10,6 +10,7 @@ dig_complement_contrasts(
   condition = where(is.logical),
   vars = where(is.numeric),
   disjoint = var_names(colnames(x)),
+  excluded = NULL,
   min_length = 0L,
   max_length = Inf,
   min_support = 0,
@@ -46,6 +47,10 @@ vector are equal, then the corresponding columns of \code{x} will NOT be
 present together in a single condition. If \code{x} is prepared with
 \code{\link[=partition]{partition()}}, using the \code{\link[=var_names]{var_names()}} function on \code{x}'s column names
 is a convenient way to create the \code{disjoint} vector.}
+
+\item{excluded}{NULL or a list of character vectors, where each character vector
+contains the names of columns that must not appear together in a single
+condition.}
 
 \item{min_length}{the minimum size (the minimum number of predicates) of the
 condition to be generated (must be greater or equal to 0). If 0, the

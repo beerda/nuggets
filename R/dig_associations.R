@@ -52,6 +52,9 @@
 #'      present together in a single condition. If `x` is prepared with
 #'      [partition()], using the [var_names()] function on `x`'s column names
 #'      is a convenient way to create the `disjoint` vector.
+#' @param excluded NULL or a list of character vectors, where each character vector
+#'      contains the names of columns that must not appear together in a single
+#'      antecedent.
 #' @param min_length the minimum length, i.e., the minimum number of predicates in the
 #'      antecedent, of a rule to be generated. Value must be greater or equal to 0.
 #'       If 0, rules with empty antecedent are generated in the first place.
@@ -102,6 +105,7 @@ dig_associations <- function(x,
                              antecedent = everything(),
                              consequent = everything(),
                              disjoint = var_names(colnames(x)),
+                             excluded = NULL,
                              min_length = 0L,
                              max_length = Inf,
                              min_coverage = 0,
@@ -212,6 +216,7 @@ dig_associations <- function(x,
                condition = !!antecedent,
                focus = !!consequent,
                disjoint = disjoint,
+               excluded = excluded,
                min_length = min_length,
                max_length = max_length,
                min_support = min_coverage,
@@ -226,6 +231,7 @@ dig_associations <- function(x,
                                     arg_condition = "antecedent",
                                     arg_focus = "consequent",
                                     arg_disjoint = "disjoint",
+                                    arg_excluded = "excluded",
                                     arg_min_length = "min_length",
                                     arg_max_length = "max_length",
                                     arg_min_support = "min_coverage",

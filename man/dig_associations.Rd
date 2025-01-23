@@ -9,6 +9,7 @@ dig_associations(
   antecedent = everything(),
   consequent = everything(),
   disjoint = var_names(colnames(x)),
+  excluded = NULL,
   min_length = 0L,
   max_length = Inf,
   min_coverage = 0,
@@ -41,6 +42,10 @@ vector are equal, then the corresponding columns of \code{x} will NOT be
 present together in a single condition. If \code{x} is prepared with
 \code{\link[=partition]{partition()}}, using the \code{\link[=var_names]{var_names()}} function on \code{x}'s column names
 is a convenient way to create the \code{disjoint} vector.}
+
+\item{excluded}{NULL or a list of character vectors, where each character vector
+contains the names of columns that must not appear together in a single
+antecedent.}
 
 \item{min_length}{the minimum length, i.e., the minimum number of predicates in the
 antecedent, of a rule to be generated. Value must be greater or equal to 0.
