@@ -4,7 +4,7 @@
 \alias{parse_condition}
 \title{Convert character vector of conditions into a list of vectors of predicates}
 \usage{
-parse_condition(..., .sort = TRUE)
+parse_condition(..., .sort = FALSE)
 }
 \arguments{
 \item{...}{character vectors of conditions to be parsed.}

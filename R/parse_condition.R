@@ -22,7 +22,7 @@
 #'
 #' @export
 parse_condition <- function(...,
-                            .sort = TRUE) {
+                            .sort = FALSE) {
     .must_be_flag(.sort)
 
     dots <- list(...)
