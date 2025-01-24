@@ -169,6 +169,8 @@
 #'      \item `arg_focus` - the name of the argument `focus` as a character string
 #'      \item `arg_disjoint` - the name of the argument `disjoint` as a character
 #'         string
+#'      \item `arg_excluded` - the name of the argument `excluded` as a character
+#'         string
 #'      \item `arg_min_length` - the name of the argument `min_length` as a character
 #'         string
 #'      \item `arg_max_length` - the name of the argument `max_length` as a character
@@ -177,6 +179,8 @@
 #'         string
 #'      \item `arg_min_focus_support` - the name of the argument `min_focus_support`
 #'         as a character string
+#'      \item `arg_min_conditional_focus_support` - the name of the argument
+#'         `min_conditional_focus_support` as a character string
 #'      \item `arg_max_support` - the name of the argument `max_support` as a character
 #'      \item `arg_filter_empty_foci` - the name of the argument `filter_empty_foci`
 #'         as a character string
