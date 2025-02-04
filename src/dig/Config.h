@@ -54,6 +54,14 @@ public:
         LogicalVector filterEmptyFociVec = configuration["filterEmptyFoci"];
         filterEmptyFoci = filterEmptyFociVec[0];
 
+        if (configuration["tautologyLimit"] == R_NilValue) {
+            tautologyLimitEnabled = false;
+        } else {
+            tautologyLimitEnabled = true;
+            NumericVector tautologyLimitVec = configuration["tautologyLimit"];
+            tautologyLimit = tautologyLimitVec[0];
+        }
+
         LogicalVector verboseVec = configuration["verbose"];
         verbose = verboseVec[0];
 
@@ -103,6 +111,12 @@ public:
 
     bool hasDisjointFoci() const
     { return disjointFoci.size() > 0; }
+
+    bool hasTautologyLimit() const
+    { return tautologyLimitEnabled; }
+
+    double getTautologyLimit() const
+    { return tautologyLimit; }
 
     const vector<int>& getPredicateIndices() const
     { return predicateIndices; }
@@ -187,6 +201,7 @@ private:
     bool sumArgument = false;
     bool supportArgument = false;
     bool weightsArgument = false;
+    bool tautologyLimitEnabled = false;
 
     vector<int> predicateIndices;
     vector<string> predicateNames;
@@ -208,6 +223,7 @@ private:
     double minFocusSupport;
     double minConditionalFocusSupport;
     double maxSupport;
+    double tautologyLimit;
     bool filterEmptyFoci;
     bool verbose;
     TNorm tNorm;

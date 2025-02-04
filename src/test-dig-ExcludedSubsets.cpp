@@ -12,9 +12,7 @@ context("dig/ExcludedSubsets.h") {
         l.push_back(IntegerVector::create(0, 9));
         l.push_back(IntegerVector::create(8));
 
-        vector<size_t> permutation = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-
-        ExcludedSubsets e(l, permutation);
+        ExcludedSubsets e(l);
         expect_true(!e.empty());
         expect_true(e.size() == 7);
 
@@ -84,9 +82,7 @@ context("dig/ExcludedSubsets.h") {
 
     test_that("initialize with empty list") {
         List l;
-        vector<size_t> permutation = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-
-        ExcludedSubsets e(l, permutation);
+        ExcludedSubsets e(l);
         expect_true(e.empty());
         expect_true(e.size() == 0);
     }
@@ -97,9 +93,7 @@ context("dig/ExcludedSubsets.h") {
         l.push_back(IntegerVector::create());
         l.push_back(IntegerVector::create());
 
-        vector<size_t> permutation = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-
-        ExcludedSubsets e(l, permutation);
+        ExcludedSubsets e(l);
         expect_true(e.empty());
         expect_true(e.size() == 0);
     }
@@ -113,9 +107,7 @@ context("dig/ExcludedSubsets.h") {
         l.push_back(IntegerVector::create(0, 9));
         l.push_back(IntegerVector::create(8));
 
-        vector<size_t> permutation = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-
-        ExcludedSubsets e(l, permutation);
+        ExcludedSubsets e(l);
 
         expect_true(!e.isExcluded({}, 0));
         expect_true(!e.isExcluded({4}, 0));

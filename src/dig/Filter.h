@@ -33,4 +33,9 @@ public:
     virtual bool isConditionExtendable(const TASK& task) const
     { return true; }
 
+    virtual bool isFocusExtendable(const TASK& task) const
+    { return true; }
+
+    virtual void notifyConditionStored(const TASK& task)
+    { }
 };

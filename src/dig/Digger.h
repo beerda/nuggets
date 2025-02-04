@@ -187,9 +187,11 @@ private:
                         if (!isFocusRedundant(task)) {
                             computeFocusChain(task);
                             if (!isFocusPrunable(task)) {
-                                iter.putCurrentToSoFar();
                                 if (isFocusStorable(task)) {
                                     iter.storeCurrent();
+                                }
+                                if (isFocusExtendable(task)) {
+                                    iter.putCurrentToSoFar();
                                 }
                             }
                         }
@@ -197,6 +199,7 @@ private:
                     }
 
                     if (isConditionStorable(task)) {
+                        notifyConditionStored(task);
                         store(task);
                     }
                     if (isConditionExtendable(task)) {
@@ -308,19 +311,19 @@ private:
         return false;
     }
 
-    bool isFocusStorable(const TaskType& task) const
+    bool isConditionStorable(const TaskType& task) const
     {
         for (const FilterType* e : filters)
-            if (!e->isFocusStorable(task))
+            if (!e->isConditionStorable(task))
                 return false;
 
         return true;
     }
 
-    bool isConditionStorable(const TaskType& task) const
+    bool isFocusStorable(const TaskType& task) const
     {
         for (const FilterType* e : filters)
-            if (!e->isConditionStorable(task))
+            if (!e->isFocusStorable(task))
                 return false;
 
         return true;
@@ -334,4 +337,20 @@ private:
 
         return true;
     }
+
+    bool isFocusExtendable(const TaskType& task) const
+    {
+        for (const FilterType* e : filters)
+            if (!e->isFocusExtendable(task))
+                return false;
+
+        return true;
+    }
+
+    void notifyConditionStored(const TaskType& task) const
+    {
+        for (FilterType* e : filters)
+            e->notifyConditionStored(task);
+    }
+
 };

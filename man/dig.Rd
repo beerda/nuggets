@@ -18,6 +18,7 @@ dig(
   min_conditional_focus_support = 0,
   max_support = 1,
   filter_empty_foci = FALSE,
+  tautology_limit = NULL,
   t_norm = "goguen",
   max_results = Inf,
   verbose = FALSE,
@@ -27,10 +28,10 @@ dig(
     "min_length", arg_max_length = "max_length", arg_min_support = "min_support",
     arg_min_focus_support = "min_focus_support", arg_min_conditional_focus_support =
     "min_conditional_focus_support", arg_max_support = "max_support",
-    arg_filter_empty_foci = "filter_empty_foci", arg_t_norm = "t_norm", arg_max_results =
-    "max_results", arg_verbose = "verbose", 
-     arg_threads = "threads", call =
-    current_env())
+    arg_filter_empty_foci = "filter_empty_foci", arg_tautology_limit = "tautology_limit",
+    arg_t_norm = "t_norm", arg_max_results = "max_results", 
+     arg_verbose =
+    "verbose", arg_threads = "threads", call = current_env())
 )
 }
 \arguments{
@@ -187,6 +188,8 @@ string
 \item \code{arg_focus} - the name of the argument \code{focus} as a character string
 \item \code{arg_disjoint} - the name of the argument \code{disjoint} as a character
 string
+\item \code{arg_excluded} - the name of the argument \code{excluded} as a character
+string
 \item \code{arg_min_length} - the name of the argument \code{min_length} as a character
 string
 \item \code{arg_max_length} - the name of the argument \code{max_length} as a character
@@ -195,6 +198,8 @@ string
 string
 \item \code{arg_min_focus_support} - the name of the argument \code{min_focus_support}
 as a character string
+\item \code{arg_min_conditional_focus_support} - the name of the argument
+\code{min_conditional_focus_support} as a character string
 \item \code{arg_max_support} - the name of the argument \code{max_support} as a character
 \item \code{arg_filter_empty_foci} - the name of the argument \code{filter_empty_foci}
 as a character string

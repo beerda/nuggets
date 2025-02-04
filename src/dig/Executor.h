@@ -22,7 +22,7 @@
 #include "dig/DisjointFilter.h"
 #include "dig/EmptyFociFilter.h"
 #include "dig/ExcludedSubsetsFilter.h"
-
+#include "dig/TautologyLimitFilter.h"
 
 template <typename BITCHAIN, typename NUMCHAIN>
 class Executor {
@@ -131,9 +131,19 @@ public:
                                                       config.getDisjointPredicates(),
                                                       config.getDisjointFoci()));
 
-        ExcludedSubsets excluded(config.getExcluded(), data.getInverseChainsPermutation());
-        if (!excluded.empty()) {
-            digger.addFilter(new ExcludedSubsetsFilter<TaskType>(excluded));
+        ExcludedSubsets excluded(config.getExcluded());
+        if (!excluded.empty() || config.hasTautologyLimit()) {
+            digger.addFilter(new ExcludedSubsetsFilter<TaskType>(excluded,
+                                                                 config.getPredicateIndices()));
+        }
+
+        if (config.hasTautologyLimit()) {
+            digger.setPpFocusChainsNeeded();
+            digger.addFilter(new TautologyLimitFilter<TaskType>(excluded,
+                                                                config.getPredicateIndices(),
+                                                                config.getFociIndices(),
+                                                                config.getTautologyLimit(),
+                                                                data.nrow()));
         }
 
         if (digger.isNegativeFociChainsNeeded()) {

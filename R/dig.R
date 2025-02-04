@@ -268,6 +268,7 @@ dig <- function(x,
                 min_conditional_focus_support = 0.0,
                 max_support = 1.0,
                 filter_empty_foci = FALSE,
+                tautology_limit = NULL,
                 t_norm = "goguen",
                 max_results = Inf,
                 verbose = FALSE,
@@ -285,6 +286,7 @@ dig <- function(x,
                                      arg_min_conditional_focus_support = "min_conditional_focus_support",
                                      arg_max_support = "max_support",
                                      arg_filter_empty_foci = "filter_empty_foci",
+                                     arg_tautology_limit = "tautology_limit",
                                      arg_t_norm = "t_norm",
                                      arg_max_results = "max_results",
                                      arg_verbose = "verbose",
@@ -346,9 +348,14 @@ dig <- function(x,
     if (is.null(excluded)) {
         excluded <- list()
     } else {
-        # convert list elements to C++ indices starting from 0
         excluded <- lapply(excluded,
-                           function(i) { fmatch(i, names(condition_cols$indices)) - 1 })
+                           fmatch,
+                           colnames(x))
+        #excluded <- lapply(excluded,
+                           #function(x) {
+                               #i <- fmatch(x, names(condition_cols$indices))
+                               #condition_cols$indices[i]
+                           #})
     }
 
     .must_be_integerish_scalar(min_length,
@@ -415,6 +422,17 @@ dig <- function(x,
                   arg = error_context$arg_filter_empty_foci,
                   call = error_context$call)
 
+    .must_be_double_scalar(tautology_limit,
+                           null = TRUE,
+                           arg = error_context$arg_tautology_limit,
+                           call = error_context$call)
+    if (!is.null(tautology_limit)) {
+        .must_be_in_range(tautology_limit, c(0, 1),
+                          arg = error_context$arg_tautology_limit,
+                          call = error_context$call)
+        tautology_limit <- as.double(tautology_limit)
+    }
+
     .must_be_enum(t_norm, c("goguen", "goedel", "lukas"),
                   arg = error_context$arg_t_norm,
                   call = error_context$call)
@@ -457,6 +475,7 @@ dig <- function(x,
                    minConditionalFocusSupport = min_conditional_focus_support,
                    maxSupport = max_support,
                    filterEmptyFoci = filter_empty_foci,
+                   tautologyLimit = tautology_limit,
                    tNorm = t_norm,
                    maxResults = max_results,
                    verbose = verbose,
