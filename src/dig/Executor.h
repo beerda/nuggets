@@ -40,6 +40,7 @@ public:
 
         {
             LogStartEnd l("data init");
+            data.reserve(chainsList.size() + 1);
             data.addUnusedChain(); // 0th element is always empty to match C++ indices to R's indices that start from 1
 
             for (R_xlen_t i = 0; i < chainsList.size(); i++) {

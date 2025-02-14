@@ -12,6 +12,13 @@ public:
         : rows(rows)
     { }
 
+    void reserve(size_t size)
+    {
+        positiveChains.reserve(size);
+        negativeChains.reserve(size);
+        names.reserve(size);
+    }
+
     void addUnusedChain()
     {
         DualChainType emptyChain;
