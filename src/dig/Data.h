@@ -54,13 +54,34 @@ public:
     }
 
     const DualChainType& getPositiveChain(size_t i) const
-    { return positiveChains.at(i); }
+    {
+        const DualChainType& chain = positiveChains.at(i);
+        if (chain.isNull()) {
+            throw runtime_error("Attempt to use null chain in Data::getPositiveChain");
+        }
+
+        return chain;
+    }
 
     const DualChainType& getNegativeChain(size_t i) const
-    { return negativeChains.at(i); }
+    {
+        const DualChainType& chain = negativeChains.at(i);
+        if (chain.isNull()) {
+            throw runtime_error("Attempt to use null chain in Data::getNegativeChain");
+        }
+
+        return chain;
+    }
 
     const string& getName(size_t i) const
-    { return names.at(i); }
+    {
+        const DualChainType& chain = positiveChains.at(i);
+        if (chain.isNull()) {
+            throw runtime_error("Attempt to get name of null chain in Data::getName");
+        }
+
+        return names.at(i);
+    }
 
     const vector<int>& getCondition() const
     { return condition; }

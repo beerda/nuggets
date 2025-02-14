@@ -74,34 +74,34 @@ context("dig/Data.h") {
         expect_true(data.getName(3) == "d2");
         expect_true(data.getName(5) == "d3");
 
-        expect_true(data.getPositiveChain(0).empty());
-        expect_true(data.getPositiveChain(1).empty());
+        expect_error(data.getPositiveChain(0));
+        expect_error(data.getPositiveChain(1));
         expect_true(!data.getPositiveChain(2).empty());
         expect_true(!data.getPositiveChain(3).empty());
-        expect_true(data.getPositiveChain(4).empty());
+        expect_error(data.getPositiveChain(4));
         expect_true(!data.getPositiveChain(5).empty());
 
-        expect_true(data.getNegativeChain(0).empty());
-        expect_true(data.getNegativeChain(1).empty());
-        expect_true(data.getNegativeChain(2).empty());
-        expect_true(data.getNegativeChain(3).empty());
-        expect_true(data.getNegativeChain(4).empty());
-        expect_true(data.getNegativeChain(5).empty());
+        expect_error(data.getNegativeChain(0));
+        expect_error(data.getNegativeChain(1));
+        expect_error(data.getNegativeChain(2));
+        expect_error(data.getNegativeChain(3));
+        expect_error(data.getNegativeChain(4));
+        expect_error(data.getNegativeChain(5));
 
         data.initializeNegativeFoci();
 
-        expect_true(data.getPositiveChain(0).empty());
-        expect_true(data.getPositiveChain(1).empty());
+        expect_error(data.getPositiveChain(0));
+        expect_error(data.getPositiveChain(1));
         expect_true(!data.getPositiveChain(2).empty());
         expect_true(!data.getPositiveChain(3).empty());
-        expect_true(data.getPositiveChain(4).empty());
+        expect_error(data.getPositiveChain(4));
         expect_true(!data.getPositiveChain(5).empty());
 
-        expect_true(data.getNegativeChain(0).empty());
-        expect_true(data.getNegativeChain(1).empty());
-        expect_true(data.getNegativeChain(2).empty());
+        expect_error(data.getNegativeChain(0));
+        expect_error(data.getNegativeChain(1));
+        expect_error(data.getNegativeChain(2));
         expect_true(!data.getNegativeChain(3).empty());
-        expect_true(data.getNegativeChain(4).empty());
+        expect_error(data.getNegativeChain(4));
         expect_true(!data.getNegativeChain(5).empty());
     }
 }

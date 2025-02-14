@@ -11,6 +11,7 @@ context("dig/DualChain.h") {
     test_that("empty chain") {
         DualChainTestType chain;
         expect_true(chain.empty());
+        expect_true(chain.isNull());
         expect_true(chain.size() == 0);
     }
 
@@ -23,6 +24,7 @@ context("dig/DualChain.h") {
         DualChainTestType chain(data);
 
         expect_true(!chain.empty());
+        expect_true(!chain.isNull());
         expect_true(chain.isBitwise());
         expect_true(!chain.isNumeric());
         expect_true(chain.size() == len);
@@ -34,6 +36,7 @@ context("dig/DualChain.h") {
         chain.negate();
 
         expect_true(!chain.empty());
+        expect_true(!chain.isNull());
         expect_true(chain.isBitwise());
         expect_true(!chain.isNumeric());
         expect_true(chain.size() == len);
@@ -52,6 +55,7 @@ context("dig/DualChain.h") {
         DualChainTestType chain(data);
 
         expect_true(!chain.empty());
+        expect_true(!chain.isNull());
         expect_true(chain.isBitwise());
         expect_true(!chain.isNumeric());
         expect_true(chain.size() == len);
@@ -63,6 +67,7 @@ context("dig/DualChain.h") {
         chain.negate();
 
         expect_true(!chain.empty());
+        expect_true(!chain.isNull());
         expect_true(chain.isBitwise());
         expect_true(!chain.isNumeric());
         expect_true(chain.size() == len);
@@ -80,6 +85,7 @@ context("dig/DualChain.h") {
         DualChainTestType chain(data);
 
         expect_true(!chain.empty());
+        expect_true(!chain.isNull());
         expect_true(!chain.isBitwise());
         expect_true(chain.isNumeric());
         expect_true(chain.size() == 10);
@@ -91,6 +97,7 @@ context("dig/DualChain.h") {
         chain.negate();
 
         expect_true(!chain.empty());
+        expect_true(!chain.isNull());
         expect_true(!chain.isBitwise());
         expect_true(chain.isNumeric());
         expect_true(chain.size() == 10);
@@ -110,6 +117,7 @@ context("dig/DualChain.h") {
         chain.toNumeric();
 
         expect_true(!chain.empty());
+        expect_true(!chain.isNull());
         expect_true(chain.isBitwise());
         expect_true(chain.isNumeric());
         expect_true(chain.size() == 10);
@@ -120,6 +128,7 @@ context("dig/DualChain.h") {
         chain.negate();
 
         expect_true(!chain.empty());
+        expect_true(!chain.isNull());
         expect_true(chain.isBitwise());
         expect_true(chain.isNumeric());
         expect_true(chain.size() == 10);
@@ -140,6 +149,7 @@ context("dig/DualChain.h") {
 
         chain1.conjunctWith(chain1);
         expect_true(!chain1.empty());
+        expect_true(!chain1.isNull());
         expect_true(chain1.isBitwise());
         expect_true(!chain1.isNumeric());
         expect_true(chain1.size() == 10);
@@ -147,6 +157,7 @@ context("dig/DualChain.h") {
 
         chain2.conjunctWith(chain1);
         expect_true(!chain2.empty());
+        expect_true(!chain2.isNull());
         expect_true(chain2.isBitwise());
         expect_true(!chain2.isNumeric());
         expect_true(chain2.size() == 10);
@@ -163,6 +174,7 @@ context("dig/DualChain.h") {
 
         chain2.conjunctWith(chain1);
         expect_true(!chain2.empty());
+        expect_true(!chain2.isNull());
         expect_true(!chain2.isBitwise());
         expect_true(chain2.isNumeric());
         expect_true(chain2.size() == 10);
@@ -194,6 +206,7 @@ context("dig/DualChain.h") {
 
         chain2.conjunctWith(chain1);
         expect_true(!chain2.empty());
+        expect_true(!chain2.isNull());
         expect_true(!chain2.isBitwise());
         expect_true(chain2.isNumeric());
         expect_true(chain2.size() == 10);
@@ -216,6 +229,7 @@ context("dig/DualChain.h") {
 
         chain2.conjunctWith(chain1);
         expect_true(!chain2.empty());
+        expect_true(!chain2.isNull());
         expect_true(chain2.isBitwise());
         expect_true(!chain2.isNumeric());
         expect_true(chain2.size() == 10);
@@ -241,6 +255,7 @@ context("dig/DualChain.h") {
 
         chain2.conjunctWith(chain1);
         expect_true(!chain2.empty());
+        expect_true(!chain2.isNull());
         expect_true(chain2.isBitwise());
         expect_true(!chain2.isNumeric());
         expect_true(chain2.size() == 10);

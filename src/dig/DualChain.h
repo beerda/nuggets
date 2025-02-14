@@ -7,14 +7,15 @@ template <typename BITCHAIN, typename NUMCHAIN>
 class DualChain {
 public:
     DualChain()
+        : null(true)
     { }
 
     DualChain(const NumericVector& values)
-        : numData(values)
+        : null(false), numData(values)
     { }
 
     DualChain(const LogicalVector& values)
-        : bitData(values)
+        : null(false), bitData(values)
     { }
 
     size_t size() const
@@ -89,6 +90,9 @@ public:
     bool empty() const
     { return numData.empty() && bitData.empty(); }
 
+    bool isNull() const
+    { return null; }
+
     void print() const
     {
         printf("\n");
@@ -111,6 +115,7 @@ public:
     { return !(*this == other); }
 
 private:
+    bool null = true;
     BITCHAIN bitData;
     NUMCHAIN numData;
 };
