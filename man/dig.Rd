@@ -161,6 +161,8 @@ If \code{TRUE}, the callback function \code{f} is triggered only if at least
 one focus remains after filtering. If \code{FALSE}, the callback function \code{f}
 is triggered regardless of the number of remaining foci.}
 
+\item{tautology_limit}{a numeric scalar (experimental feature)}
+
 \item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
 \code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}
 (Lukasiewicz t-norm).}

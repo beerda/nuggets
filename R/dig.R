@@ -146,6 +146,7 @@
 #'      If `TRUE`, the callback function `f` is triggered only if at least
 #'      one focus remains after filtering. If `FALSE`, the callback function `f`
 #'      is triggered regardless of the number of remaining foci.
+#' @param tautology_limit a numeric scalar (experimental feature)
 #' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
 #'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
 #'      (Lukasiewicz t-norm).
