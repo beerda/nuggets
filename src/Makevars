@@ -14,6 +14,7 @@ SOURCES=RcppExports.cpp \
 	test-antichain-Tree.cpp \
 	test-dig-Bitset.cpp \
 	test-dig-BitChain.cpp \
+	test-dig-Data.cpp \
 	test-dig-DualChain.cpp \
 	test-dig-ExcludedSubsets.cpp \
 	test-dig-Iterator.cpp \
