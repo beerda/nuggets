@@ -34,27 +34,40 @@ public:
         : config(config)
     { }
 
-    List execute(List logData, List numData, List logFoci, List numFoci)
+    List execute(List chainsList, CharacterVector namesVec, LogicalVector isConditionVec, LogicalVector isFocusVec)
     {
         DataType data(config.getNrow());
 
         {
             LogStartEnd l("data init");
-            data.addLogicalChains(logData);
-            data.addNumericChains(numData);
-            data.addLogicalFoci(logFoci);
-            data.addNumericFoci(numFoci);
-            if (config.isVerbose()) {
-                Rcout << "dig: loaded " << data.nrow() << " rows / "
-                      << data.size() << " condition chains and "
-                      << data.fociSize() << " foci chains" << endl;
-            }
-        }
+            data.addUnusedChain(); // 0th element is always empty to match C++ indices to R's indices that start from 1
 
-        {
-            LogStartEnd l("data sort");
-            data.sortChains();
-            config.permuteConditions(data.getChainsPermutation());
+            for (R_xlen_t i = 0; i < chainsList.size(); i++) {
+                bool isCondition = isConditionVec[i];
+                bool isFocus = isFocusVec[i];
+
+                if (isCondition || isFocus) {
+                    String name = namesVec[i];
+                    if (Rf_isReal(chainsList[i])) {
+                        const NumericVector vec = chainsList[i];
+                        data.addChain(vec, name, isCondition, isFocus);
+                    }
+                    else if (Rf_isLogical(chainsList[i])) {
+                        const LogicalVector vec = chainsList[i];
+                        data.addChain(vec, name, isCondition, isFocus);
+                    }
+                    else {
+                        throw runtime_error("Data element of unknown type");
+                    }
+                }
+                else {
+                    data.addUnusedChain();
+                }
+            }
+
+            if (config.isVerbose()) {
+                Rcout << "dig: loaded " << data.nrow() << " rows / " << data.size() << " chains" << endl;
+            }
         }
 
         Digger<DataType> digger(data, config);

@@ -93,13 +93,4 @@ context("dig/Iterator.h") {
         t.next();
         expect_true(!t.hasPredicate());
     }
-
-    test_that("constructor n") {
-        Iterator tn(5);
-        expect_true(tn.getPrefix().size() == 0);
-        expect_true(tn.getAvailable().size() == 0);
-        expect_true(tn.getSoFar() == vector<int>({0, 1, 2, 3, 4}));
-        expect_true(tn.getLength() == 0);
-        expect_false(tn.hasPredicate());
-    }
 }

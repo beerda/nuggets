@@ -36,9 +36,9 @@ context("dig/Task.h") {
         }
 
         DataType data(data1.size());
-        data.addChain(data1);
-        data.addChain(data2);
-        data.addChain(data3);
+        data.addChain(data1, "d1", true, true);
+        data.addChain(data2, "d2", true, true);
+        data.addChain(data3, "d3", true, true);
 
         TaskType t(Iterator({0, 1, 2}), Iterator()); // empty task with soFar: 0,1,2
         expect_true(t.getPositiveChain().empty());
@@ -53,30 +53,30 @@ context("dig/Task.h") {
         expect_true(t.getPrefixChain().empty());
 
         t.updatePositiveChain(data);
-        expect_true(t.getPositiveChain() == data.getChain(0));
+        expect_true(t.getPositiveChain() == data.getPositiveChain(0));
         expect_true(t.getPrefixChain().empty());
 
         t.getMutableConditionIterator().putCurrentToSoFar(); // 0
         t.getMutableConditionIterator().next();
         t.updatePositiveChain(data);
-        expect_true(t.getPositiveChain() == data.getChain(1));
+        expect_true(t.getPositiveChain() == data.getPositiveChain(1));
         expect_true(t.getPrefixChain().empty());
 
         t.getMutableConditionIterator().putCurrentToSoFar(); // 1
         t.getMutableConditionIterator().next();
         t.updatePositiveChain(data);
-        expect_true(t.getPositiveChain() == data.getChain(2));
+        expect_true(t.getPositiveChain() == data.getPositiveChain(2));
         expect_true(t.getPrefixChain().empty());
 
         t = t.createChild(); // prefix: 2 current: 0
         expect_true(t.getPositiveChain().empty());
-        expect_true(t.getPrefixChain() == data.getChain(2));
+        expect_true(t.getPrefixChain() == data.getPositiveChain(2));
 
         t.updatePositiveChain(data);
-        DualChainType newChain = data.getChain(0);
+        DualChainType newChain = data.getPositiveChain(0);
         newChain.toNumeric();
-        newChain.conjunctWith(data.getChain(2));
+        newChain.conjunctWith(data.getPositiveChain(2));
         expect_true(t.getPositiveChain() == newChain);
-        expect_true(t.getPrefixChain() == data.getChain(2));
+        expect_true(t.getPrefixChain() == data.getPositiveChain(2));
     }
 }

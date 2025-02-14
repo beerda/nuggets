@@ -11,39 +11,11 @@ public:
 
     /**
      * Create iterator representing an empty condition (condition of length 0) that may be extended
-     * with 0..n-1 predicates stored in the soFar vector
-     * @param n The number of predicates to store into soFar
-     */
-    Iterator(size_t n)
-        : current(0)
-    {
-        soFar.reserve(n);
-        for (size_t i = 0; i < n; i++) {
-            soFar.push_back(i);
-        }
-    }
-
-    /**
-     * Create iterator representing an empty condition (condition of length 0) that may be extended
      * @param soFar predicates for further search in sub iterators
      */
     Iterator(vector<int> soFar)
         : current(0), soFar(soFar)
     { }
-
-    /**
-     * Create an iterator
-     * @param prefix the prefix of the condition (constant predicates)
-     * @param n The number of predicates to store into soFar
-     */
-    Iterator(vector<int> prefix, size_t n)
-        : current(0), prefix(prefix)
-    {
-        available.reserve(n);
-        for (size_t i = 0; i < n; i++) {
-            available.push_back(i);
-        }
-    }
 
     /**
      * Create an iterator

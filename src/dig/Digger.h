@@ -22,8 +22,8 @@ public:
     Digger(DataType& data, const Config& config)
         : config(config),
           data(data),
-          initialTask(Iterator(data.size()),          // condition predicates to "soFar"
-                      Iterator({}, data.fociSize())), // focus predicates to "available"
+          initialTask(Iterator(data.getCondition()), // condition predicates to "soFar"
+                      Iterator({}, data.getFoci())), // focus predicates to "available"
           sequence(),
           allThreads(config.getThreads())
     { }

@@ -11,17 +11,17 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // dig_
-List dig_(List logData, List numData, List logFoci, List numFoci, List confList);
-RcppExport SEXP _nuggets_dig_(SEXP logDataSEXP, SEXP numDataSEXP, SEXP logFociSEXP, SEXP numFociSEXP, SEXP confListSEXP) {
+List dig_(List chains, CharacterVector namesVector, LogicalVector isCondition, LogicalVector isFocus, List confList);
+RcppExport SEXP _nuggets_dig_(SEXP chainsSEXP, SEXP namesVectorSEXP, SEXP isConditionSEXP, SEXP isFocusSEXP, SEXP confListSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type logData(logDataSEXP);
-    Rcpp::traits::input_parameter< List >::type numData(numDataSEXP);
-    Rcpp::traits::input_parameter< List >::type logFoci(logFociSEXP);
-    Rcpp::traits::input_parameter< List >::type numFoci(numFociSEXP);
+    Rcpp::traits::input_parameter< List >::type chains(chainsSEXP);
+    Rcpp::traits::input_parameter< CharacterVector >::type namesVector(namesVectorSEXP);
+    Rcpp::traits::input_parameter< LogicalVector >::type isCondition(isConditionSEXP);
+    Rcpp::traits::input_parameter< LogicalVector >::type isFocus(isFocusSEXP);
     Rcpp::traits::input_parameter< List >::type confList(confListSEXP);
-    rcpp_result_gen = Rcpp::wrap(dig_(logData, numData, logFoci, numFoci, confList));
+    rcpp_result_gen = Rcpp::wrap(dig_(chains, namesVector, isCondition, isFocus, confList));
     return rcpp_result_gen;
 END_RCPP
 }

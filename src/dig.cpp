@@ -12,10 +12,10 @@
 
 // [[Rcpp::plugins(openmp)]]
 // [[Rcpp::export]]
-List dig_(List logData,
-          List numData,
-          List logFoci,
-          List numFoci,
+List dig_(List chains,
+          CharacterVector namesVector,
+          LogicalVector isCondition,
+          LogicalVector isFocus,
           List confList)
 {
     LogStartEnd l("dig_");
@@ -24,15 +24,15 @@ List dig_(List logData,
 
     if (config.getTNorm() == TNorm::GOEDEL) {
         Executor<BCH, NCH<GOEDEL>> exec(config);
-        result = exec.execute(logData, numData, logFoci, numFoci);
+        result = exec.execute(chains, namesVector, isCondition, isFocus);
     }
     else if (config.getTNorm() == TNorm::GOGUEN) {
         Executor<BCH, NCH<GOGUEN>> exec(config);
-        result = exec.execute(logData, numData, logFoci, numFoci);
+        result = exec.execute(chains, namesVector, isCondition, isFocus);
     }
     else if (config.getTNorm() == TNorm::LUKASIEWICZ) {
         Executor<BCH, NCH<LUKASIEWICZ>> exec(config);
-        result = exec.execute(logData, numData, logFoci, numFoci);
+        result = exec.execute(chains, namesVector, isCondition, isFocus);
     }
     else
         throw runtime_error("Unknown t-norm in C++ dig_()");
