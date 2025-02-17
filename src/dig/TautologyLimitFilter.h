@@ -8,13 +8,9 @@ template <typename TASK>
 class TautologyLimitFilter : public Filter<TASK> {
 public:
     TautologyLimitFilter(ExcludedSubsets& excluded,
-                         const vector<int>& predicateIndices,
-                         const vector<int>& fociIndices,
                          const double limit,
                          const size_t dataLength)
         : excluded(excluded),
-          predicateIndices(predicateIndices),
-          fociIndices(fociIndices),
           limit(limit),
           dataLength(dataLength)
     { }
@@ -39,14 +35,14 @@ public:
         vector<int> conditionVec;
         conditionVec.reserve(conditionSet.size() + 1);
         for (int p : conditionSet) {
-            conditionVec.push_back(predicateIndices[p]);
+            conditionVec.push_back(p);
         }
         conditionVec.push_back(-1); // placeholder
 
         for (int focus : task.getFocusIterator().getStored()) {
             float focusSum = task.getPpFocusChain(focus).getSum();
             if (focusSum / conditionSum >= limit) {
-                conditionVec.back() = fociIndices[focus];
+                conditionVec.back() = focus;
                 excluded.addExcludedSubset(conditionVec);
             }
         }
@@ -54,8 +50,6 @@ public:
 
 private:
     ExcludedSubsets& excluded;
-    const vector<int> predicateIndices;
-    const vector<int> fociIndices;
     const double limit;
     const size_t dataLength;
 };

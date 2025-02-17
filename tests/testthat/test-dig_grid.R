@@ -237,13 +237,13 @@ test_that("dig_grid with NULL results", {
     expect_equal(colnames(res),
                  c("condition", "support", "xvar", "yvar", "value"))
     expect_equal(res$condition,
-                 c(rep("{}", 2), rep("{b}", 2), rep("{a}", 2), rep("{a,b}", 2)))
+                 c(rep("{}", 2), rep("{a}", 2), rep("{b}", 2), rep("{a,b}", 2)))
     expect_equal(res$xvar,
                  rep(c("x", "y"), 4))
     expect_equal(res$yvar,
                  rep(c("z", "z"), 4))
     expect_equal(res$support,
-                 c(1, 1, 2/3, 2/3, 1/2, 1/2, 1/3, 1/3), tolerance = 1e-3)
+                 c(1, 1, 1/2, 1/2, 2/3, 2/3, 1/3, 1/3), tolerance = 1e-3)
     expect_equal(res$value,
                  rep(1, 8))
 
@@ -267,13 +267,13 @@ test_that("dig_grid with NULL results", {
     expect_equal(colnames(res),
                  c("condition", "support", "xvar", "yvar", "value"))
     expect_equal(res$condition,
-                 c(rep("{}", 2), rep("{b}", 2), rep("{a}", 2), rep("{a,b}", 2)))
+                 c(rep("{}", 2), rep("{a}", 2), rep("{b}", 2), rep("{a,b}", 2)))
     expect_equal(res$xvar,
                  rep(c("x", "y"), 4))
     expect_equal(res$yvar,
                  rep(c("z", "z"), 4))
     expect_equal(res$support,
-                 c(1, 1, 2/3, 2/3, 1/2, 1/2, 1/3, 1/3), tolerance = 1e-3)
+                 c(1, 1, 1/2, 1/2, 2/3, 2/3, 1/3, 1/3), tolerance = 1e-3)
     expect_equal(res$value,
                  rep(1, 8))
 
@@ -297,13 +297,13 @@ test_that("dig_grid with NULL results", {
     expect_equal(colnames(res),
                  c("condition", "support", "xvar", "yvar", "value"))
     expect_equal(res$condition,
-                 c(rep("{}", 2), rep("{b}", 2), rep("{a}", 2), rep("{a,b}", 2)))
+                 c(rep("{}", 2), rep("{a}", 2), rep("{b}", 2), rep("{a,b}", 2)))
     expect_equal(res$xvar,
                  rep(c("x", "y"), 4))
     expect_equal(res$yvar,
                  rep(c("z", "z"), 4))
     expect_equal(res$support,
-                 c(1, 1, 2/3, 2/3, 1/2, 1/2, 1/3, 1/3), tolerance = 1e-3)
+                 c(1, 1, 1/2, 1/2, 2/3, 2/3, 1/3, 1/3), tolerance = 1e-3)
     expect_equal(res$value,
                  rep(1, 8))
 })

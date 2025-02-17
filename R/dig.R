@@ -334,12 +334,10 @@ dig <- function(x,
                   call = error_context$call)
     }
 
-    disjoint_predicates <- integer(0L)
-    disjoint_foci <- integer(0L)
     if (length(disjoint) > 0) {
         disjoint <- as.integer(as.factor(disjoint))
-        disjoint_predicates <- disjoint[condition_cols$indices]
-        disjoint_foci <- disjoint[foci_cols$indices]
+    } else {
+        disjoint <- seq_along(cols)
     }
 
     .must_be_list_of_characters(excluded,
@@ -464,10 +462,7 @@ dig <- function(x,
 
     config <- list(nrow = nrow(x),
                    arguments = arguments,
-                   predicates = condition_cols$indices,
-                   foci = foci_cols$indices,
-                   disjoint_predicates = disjoint_predicates,
-                   disjoint_foci = disjoint_foci,
+                   disjoint = disjoint,
                    excluded = excluded,
                    minLength = min_length,
                    maxLength = max_length,
@@ -482,10 +477,11 @@ dig <- function(x,
                    verbose = verbose,
                    threads = threads)
 
-    res <- dig_(condition_cols$logicals,
-                condition_cols$doubles,
-                foci_cols$logicals,
-                foci_cols$doubles, config)
+    res <- dig_(cols,
+                names(cols),
+                condition_cols$selected,
+                foci_cols$selected,
+                config)
 
     .msg(verbose, "dig: executing callback function on the results")
     lapply(res, do.call, what = f)

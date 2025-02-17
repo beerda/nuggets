@@ -7,7 +7,8 @@ test_that(".extract_cols", {
                                allow_empty = FALSE),
                  list(logicals = list(a = c(T,T,F)),
                       doubles = list(b = 1:3 / 3),
-                      indices = c(a = 1, b = 2)))
+                      indices = c(a = 1, b = 2),
+                      selected = c(T, T, F, F)))
 
     expect_equal(.extract_cols(x,
                                where(is.factor),
@@ -15,7 +16,8 @@ test_that(".extract_cols", {
                                allow_empty = TRUE),
                  list(logicals = structure(list(), names = character()),
                       doubles = structure(list(), names = character()),
-                      indices = integer()))
+                      indices = integer(),
+                      selected = c(F, F, F, F)))
 
     expect_error(.extract_cols(x,
                                a:b,

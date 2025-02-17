@@ -10,12 +10,8 @@
 template <typename TASK>
 class ContiNnArgumentator : public Argumentator<TASK> {
 public:
-    using DataType = typename TASK::DataType;
-    using DualChainType = typename TASK::DualChainType;
-
-    ContiNnArgumentator(const vector<string>& fociNames)
-        : fociNames(fociNames)
-    { }
+    // Inherit constructors
+    using Argumentator<TASK>::Argumentator;
 
     void prepare(ArgumentValues& arguments, const TASK& task) const override
     {
@@ -24,12 +20,9 @@ public:
         ArgumentValue arg("nn", ArgumentType::ARG_NUMERIC);
 
         for (int i : task.getFocusIterator().getStored()) {
-            arg.push_back(task.getNnFocusChain(i).getSum(), fociNames[i]);
+            arg.push_back(task.getNnFocusChain(i).getSum(), this->data.getName(i));
         }
 
         arguments.push_back(arg);
     }
-
-private:
-    vector<string> fociNames;
 };

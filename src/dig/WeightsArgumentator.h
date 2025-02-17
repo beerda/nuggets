@@ -11,9 +11,8 @@
 template <typename TASK>
 class WeightsArgumentator : public Argumentator<TASK> {
 public:
-    WeightsArgumentator(size_t dataSize)
-        : dataSize(dataSize)
-    { }
+    // Inherit constructors
+    using Argumentator<TASK>::Argumentator;
 
     void prepare(ArgumentValues& arguments, const TASK& task) const override
     {
@@ -22,7 +21,7 @@ public:
         ArgumentValue arg("weights", ArgumentType::ARG_NUMERIC);
 
         if (task.getPositiveChain().empty()) {
-            for (size_t i = 0; i < dataSize; i++) {
+            for (size_t i = 0; i < this->data.nrow(); i++) {
                 arg.push_back(1.0);
             }
         }
@@ -34,7 +33,4 @@ public:
 
         arguments.push_back(arg);
     }
-
-private:
-    size_t dataSize;
 };

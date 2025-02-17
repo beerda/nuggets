@@ -10,9 +10,8 @@
 template <typename TASK>
 class ConditionArgumentator : public Argumentator<TASK> {
 public:
-    ConditionArgumentator(const vector<int>& predicateIndices, const vector<string>& predicateNames)
-        : predicateIndices(predicateIndices), predicateNames(predicateNames)
-    { }
+    // Inherit constructors
+    using Argumentator<TASK>::Argumentator;
 
     void prepare(ArgumentValues& arguments, const TASK& task) const override
     {
@@ -21,13 +20,9 @@ public:
         ArgumentValue arg("condition", ArgumentType::ARG_INTEGER);
 
         for (int p : task.getConditionIterator().getCurrentCondition()) {
-            arg.push_back(predicateIndices[p], predicateNames[p]);
+            arg.push_back(p, this->data.getName(p));
         }
 
         arguments.push_back(arg);
     }
-
-private:
-    vector<int> predicateIndices;
-    vector<string> predicateNames;
 };

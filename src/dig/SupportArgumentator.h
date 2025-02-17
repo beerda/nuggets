@@ -10,8 +10,8 @@
 template <typename TASK>
 class SupportArgumentator : public Argumentator<TASK> {
 public:
-    SupportArgumentator()
-    { }
+    // Inherit constructors
+    using Argumentator<TASK>::Argumentator;
 
     void prepare(ArgumentValues& arguments, const TASK& task) const override
     {

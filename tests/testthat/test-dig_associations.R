@@ -20,15 +20,15 @@ test_that("dig_associations without contingency table", {
     expect_true(is.double(res$support))
     expect_true(is.double(res$confidence))
     expect_equal(res$antecedent,
-                 c("{}", "{}", "{}", "{b}", "{b}", "{a}", "{c}"))
+                 c("{}", "{}", "{}", "{a}", "{b}", "{b}", "{c}"))
     expect_equal(res$consequent,
-                 c("{a}", "{b}", "{c}", "{a}", "{c}", "{b}", "{b}"))
+                 c("{a}", "{b}", "{c}", "{b}", "{a}", "{c}", "{b}"))
     expect_equal(round(res$support, 6),
-                 c(0.4, 0.8, 0.4, 0.4, 0.2, 0.4, 0.2))
+                 c(0.4, 0.8, 0.4, 0.4, 0.4, 0.2, 0.2))
     expect_equal(round(res$conseq_support, 6),
-                 c(0.4, 0.8, 0.4, 0.4, 0.4, 0.8, 0.8))
+                 c(0.4, 0.8, 0.4, 0.8, 0.4, 0.4, 0.8))
     expect_equal(round(res$confidence, 6),
-                 c(0.4, 0.8, 0.4, 0.5, 0.25, 1.0, 0.5))
+                 c(0.4, 0.8, 0.4, 1.0, 0.50, 0.25, 0.5))
     expect_equal(res$antecedent_length,
                  c(0, 0, 0, 1, 1, 1, 1))
 })
@@ -57,25 +57,25 @@ test_that("dig_associations with contingency table", {
     expect_true(is.double(res$support))
     expect_true(is.double(res$confidence))
     expect_equal(res$antecedent,
-                 c( "{}",  "{}",  "{}", "{b}", "{b}", "{a}", "{c}"))
+                 c( "{}",  "{}",  "{}", "{a}", "{b}", "{b}", "{c}"))
     expect_equal(res$consequent,
-                 c("{a}", "{b}", "{c}", "{a}", "{c}", "{b}", "{b}"))
+                 c("{a}", "{b}", "{c}", "{b}", "{a}", "{c}", "{b}"))
     expect_equal(round(res$support, 6),
-                 c(0.4, 0.8, 0.4, 0.4, 0.2, 0.4, 0.2))
+                 c(0.4, 0.8, 0.4, 0.4, 0.4, 0.2, 0.2))
     expect_equal(round(res$conseq_support, 6),
-                 c(0.4, 0.8, 0.4, 0.4, 0.4, 0.8, 0.8))
+                 c(0.4, 0.8, 0.4, 0.8, 0.4, 0.4, 0.8))
     expect_equal(round(res$confidence, 6),
-                 c(0.4, 0.8, 0.4, 0.5, 0.25, 1.0, 0.5))
+                 c(0.4, 0.8, 0.4, 1.0, 0.5, 0.25, 0.5))
     expect_equal(res$antecedent_length,
                  c(0, 0, 0, 1, 1, 1, 1))
     expect_equal(res$pp,
-                 c(2, 4, 2, 2, 1, 2, 1))
+                 c(2, 4, 2, 2, 2, 1, 1))
     expect_equal(res$np,
-                 c(2, 4, 2, 0, 1, 2, 3))
+                 c(2, 4, 2, 2, 0, 1, 3))
     expect_equal(res$pn,
-                 c(3, 1, 3, 2, 3, 0, 1))
+                 c(3, 1, 3, 0, 2, 3, 1))
     expect_equal(res$nn,
-                 c(3, 1, 3, 1, 0, 1, 0))
+                 c(3, 1, 3, 1, 1, 0, 0))
 })
 
 
@@ -101,15 +101,15 @@ test_that("dig_associations with disjoint", {
     expect_true(is.double(res$support))
     expect_true(is.double(res$confidence))
     expect_equal(res$antecedent,
-                 c("{}", "{}", "{}", "{b}", "{a}"))
+                 c("{}", "{}", "{}", "{a}", "{b}"))
     expect_equal(res$consequent,
-                 c("{a}", "{b}", "{c}", "{a}", "{b}"))
+                 c("{a}", "{b}", "{c}", "{b}", "{a}"))
     expect_equal(res$support,
                  c(0.4, 0.8, 0.4, 0.4, 0.4))
     expect_equal(round(res$conseq_support, 6),
-                 c(0.4, 0.8, 0.4, 0.4, 0.8))
+                 c(0.4, 0.8, 0.4, 0.8, 0.4))
     expect_equal(res$confidence,
-                 c(0.4, 0.8, 0.4, 0.5, 1.0))
+                 c(0.4, 0.8, 0.4, 1.0, 0.5))
     expect_equal(res$antecedent_length,
                  c(0, 0, 0, 1, 1))
 })

@@ -13,9 +13,8 @@
 template <typename TASK>
 class SumArgumentator : public Argumentator<TASK> {
 public:
-    SumArgumentator(size_t dataLength)
-        : dataLength(1.0 * dataLength)
-    { }
+    // Inherit constructors
+    using Argumentator<TASK>::Argumentator;
 
     void prepare(ArgumentValues& arguments, const TASK& task) const override
     {
@@ -24,13 +23,10 @@ public:
         ArgumentValue arg("sum", ArgumentType::ARG_NUMERIC);
 
         if (task.getPositiveChain().empty())
-            arg.push_back(dataLength);
+            arg.push_back(float(this->data.nrow()));
         else
             arg.push_back(task.getPositiveChain().getSum());
 
         arguments.push_back(arg);
     }
-
-private:
-    double dataLength;
 };

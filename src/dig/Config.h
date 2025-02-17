@@ -13,17 +13,9 @@ public:
 
         parseArguments(configuration["arguments"]);
 
-        IntegerVector predicates = configuration["predicates"];
-        copy(predicates, predicateIndices, predicateNames);
-
-        IntegerVector foci = configuration["foci"];
-        copy(foci, fociIndices, fociNames);
-
-        IntegerVector disjPred = configuration["disjoint_predicates"];
-        copy(disjPred, disjointPredicates);
-
-        IntegerVector disjFoci = configuration["disjoint_foci"];
-        copy(disjFoci, disjointFoci);
+        IntegerVector disjVec = configuration["disjoint"];
+        disjoint.push_back(0); // 0th index is unused, as R uses predicates' indices starting from 1
+        copy(disjVec, disjoint);
 
         excluded = configuration["excluded"];
 
@@ -106,11 +98,8 @@ public:
     bool hasWeightsArgument() const
     { return weightsArgument; }
 
-    bool hasDisjointPredicates() const
-    { return disjointPredicates.size() > 0; }
-
-    bool hasDisjointFoci() const
-    { return disjointFoci.size() > 0; }
+    bool hasDisjoint() const
+    { return disjoint.size() > 1; }
 
     bool hasTautologyLimit() const
     { return tautologyLimitEnabled; }
@@ -118,23 +107,8 @@ public:
     double getTautologyLimit() const
     { return tautologyLimit; }
 
-    const vector<int>& getPredicateIndices() const
-    { return predicateIndices; }
-
-    const vector<string>& getPredicateNames() const
-    { return predicateNames; }
-
-    const vector<int>& getFociIndices() const
-    { return fociIndices; }
-
-    const vector<string>& getFociNames() const
-    { return fociNames; }
-
-    const vector<int>& getDisjointPredicates() const
-    { return disjointPredicates; }
-
-    const vector<int>& getDisjointFoci() const
-    { return disjointFoci; }
+    const vector<int>& getDisjoint() const
+    { return disjoint; }
 
     const List getExcluded() const
     { return excluded; }
@@ -175,21 +149,6 @@ public:
     TNorm getTNorm() const
     { return tNorm; }
 
-    void permuteConditions(const vector<size_t> permutation)
-    {
-        vector<int> newPredicateIndices;
-        permute(predicateIndices, newPredicateIndices, permutation);
-        predicateIndices = newPredicateIndices;
-
-        vector<string> newPredicateNames;
-        permute(predicateNames, newPredicateNames, permutation);
-        predicateNames = newPredicateNames;
-
-        vector<int> newDisjointPredicates;
-        permute(disjointPredicates, newDisjointPredicates, permutation);
-        disjointPredicates = newDisjointPredicates;
-    }
-
 private:
     bool conditionArgument = false;
     bool fociSupportsArgument = false;
@@ -203,15 +162,7 @@ private:
     bool weightsArgument = false;
     bool tautologyLimitEnabled = false;
 
-    vector<int> predicateIndices;
-    vector<string> predicateNames;
-
-    vector<int> fociIndices;
-    vector<string> fociNames;
-
-    vector<int> disjointPredicates;
-    vector<int> disjointFoci;
-
+    vector<int> disjoint;
     List excluded;
 
     int nrow;
@@ -258,28 +209,6 @@ private:
     {
         for (R_xlen_t i = 0; i < source.size(); ++i) {
             values.push_back(source[i]);
-        }
-    }
-
-    void copy(const IntegerVector& source, vector<int>& values, vector<string>& names)
-    {
-        if (!source.hasAttribute("names")) {
-            copy(source, values);
-        } else {
-            CharacterVector sourceNames = source.names();
-            for (R_xlen_t i = 0; i < source.size(); ++i) {
-                names.push_back(as<string>(sourceNames[i]));
-                values.push_back(source[i]);
-            }
-        }
-    }
-
-    template <typename T>
-    void permute(const vector<T>& source, vector<T>& target, const vector<size_t>& permutation)
-    {
-        target.resize(source.size());
-        for (size_t i = 0; i < source.size(); ++i) {
-            target[i] = source[permutation[i]];
         }
     }
 };

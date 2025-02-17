@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Data.h"
 #include "ArgumentValue.h"
 #include "Task.h"
 
@@ -11,9 +12,16 @@
 template <typename TASK>
 class Argumentator {
 public:
+    Argumentator(const typename TASK::DataType& data)
+        : data(data)
+    { }
+
     virtual ~Argumentator()
     { }
 
     virtual void prepare(ArgumentValues& arguments, const TASK& task) const
     { }
+
+protected:
+    const typename TASK::DataType& data;
 };

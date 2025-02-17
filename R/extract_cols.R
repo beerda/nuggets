@@ -36,6 +36,9 @@
                   call = error_context$call)
     }
 
+    selected <- rep(FALSE, length(cols))
+    selected[indices] <- TRUE
+
     cols <- cols[indices]
     logicals <- vapply(cols, is.logical, logical(1))
     doubles <- vapply(cols, is_degree, logical(1))
@@ -59,7 +62,8 @@
 
     list(logicals = cols[logicals],
          doubles = cols[doubles],
-         indices = c(indices[logicals], indices[doubles]))
+         indices = c(indices[logicals], indices[doubles]),
+         selected = selected)
 }
 
 

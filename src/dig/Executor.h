@@ -74,44 +74,43 @@ public:
         Digger<DataType> digger(data, config);
 
         if (config.hasConditionArgument()) {
-            digger.addArgumentator(new ConditionArgumentator<TaskType>(config.getPredicateIndices(),
-                                                                       config.getPredicateNames()));
+            digger.addArgumentator(new ConditionArgumentator<TaskType>(data));
         }
         if (config.hasFociSupportsArgument()) {
             digger.setPpFocusChainsNeeded();
-            digger.addArgumentator(new FociSupportsArgumentator<TaskType>(config.getFociNames()));
+            digger.addArgumentator(new FociSupportsArgumentator<TaskType>(data));
         }
         if (config.hasContiPpArgument()) {
             digger.setPpFocusChainsNeeded();
-            digger.addArgumentator(new ContiPpArgumentator<TaskType>(config.getFociNames()));
+            digger.addArgumentator(new ContiPpArgumentator<TaskType>(data));
         }
         if (config.hasContiNpArgument()) {
             digger.setNpFocusChainsNeeded();
-            digger.addArgumentator(new ContiNpArgumentator<TaskType>(config.getFociNames()));
+            digger.addArgumentator(new ContiNpArgumentator<TaskType>(data));
         }
         if (config.hasContiPnArgument()) {
             digger.setPnFocusChainsNeeded();
-            digger.addArgumentator(new ContiPnArgumentator<TaskType>(config.getFociNames()));
+            digger.addArgumentator(new ContiPnArgumentator<TaskType>(data));
         }
         if (config.hasContiNnArgument()) {
             digger.setNnFocusChainsNeeded();
-            digger.addArgumentator(new ContiNnArgumentator<TaskType>(config.getFociNames()));
+            digger.addArgumentator(new ContiNnArgumentator<TaskType>(data));
         }
         if (config.hasSumArgument()) {
             digger.setPositiveConditionChainsNeeded();
-            digger.addArgumentator(new SumArgumentator<TaskType>(data.nrow()));
+            digger.addArgumentator(new SumArgumentator<TaskType>(data));
         }
         if (config.hasSupportArgument()) {
             digger.setPositiveConditionChainsNeeded();
-            digger.addArgumentator(new SupportArgumentator<TaskType>());
+            digger.addArgumentator(new SupportArgumentator<TaskType>(data));
         }
         if (config.hasIndicesArgument()) {
             digger.setPositiveConditionChainsNeeded();
-            digger.addArgumentator(new IndicesArgumentator<TaskType>(data.nrow()));
+            digger.addArgumentator(new IndicesArgumentator<TaskType>(data));
         }
         if (config.hasWeightsArgument()) {
             digger.setPositiveConditionChainsNeeded();
-            digger.addArgumentator(new WeightsArgumentator<TaskType>(data.nrow()));
+            digger.addArgumentator(new WeightsArgumentator<TaskType>(data));
         }
         if (config.getMinLength() >= 0) {
             digger.addFilter(new MinLengthFilter<TaskType>(config.getMinLength()));
@@ -140,22 +139,16 @@ public:
             digger.addFilter(new EmptyFociFilter<TaskType>());
         }
 
-        digger.addFilter(new DisjointFilter<TaskType>(config.getPredicateIndices(),
-                                                      config.getFociIndices(),
-                                                      config.getDisjointPredicates(),
-                                                      config.getDisjointFoci()));
+        digger.addFilter(new DisjointFilter<TaskType>(config.getDisjoint()));
 
         ExcludedSubsets excluded(config.getExcluded());
         if (!excluded.empty() || config.hasTautologyLimit()) {
-            digger.addFilter(new ExcludedSubsetsFilter<TaskType>(excluded,
-                                                                 config.getPredicateIndices()));
+            digger.addFilter(new ExcludedSubsetsFilter<TaskType>(excluded));
         }
 
         if (config.hasTautologyLimit()) {
             digger.setPpFocusChainsNeeded();
             digger.addFilter(new TautologyLimitFilter<TaskType>(excluded,
-                                                                config.getPredicateIndices(),
-                                                                config.getFociIndices(),
                                                                 config.getTautologyLimit(),
                                                                 data.nrow()));
         }

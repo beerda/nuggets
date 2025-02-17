@@ -10,12 +10,8 @@
 template <typename TASK>
 class FociSupportsArgumentator : public Argumentator<TASK> {
 public:
-    using DataType = typename TASK::DataType;
-    using DualChainType = typename TASK::DualChainType;
-
-    FociSupportsArgumentator(const vector<string>& fociNames)
-        : fociNames(fociNames)
-    { }
+    // Inherit constructors
+    using Argumentator<TASK>::Argumentator;
 
     void prepare(ArgumentValues& arguments, const TASK& task) const override
     {
@@ -24,12 +20,9 @@ public:
         ArgumentValue arg("foci_supports", ArgumentType::ARG_NUMERIC);
 
         for (int i : task.getFocusIterator().getStored()) {
-            arg.push_back(task.getPpFocusChain(i).getSupport(), fociNames[i]);
+            arg.push_back(task.getPpFocusChain(i).getSupport(), this->data.getName(i));
         }
 
         arguments.push_back(arg);
     }
-
-private:
-    vector<string> fociNames;
 };
