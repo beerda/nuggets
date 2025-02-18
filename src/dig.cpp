@@ -4,6 +4,7 @@
 #include "dig/SimdVectorNumChain.h"
 
 #define BCH BitChain
+//#define BCH PackedBitChain
 //#define BCH SparseBitChain
 
 //define NCH VectorNumChain

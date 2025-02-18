@@ -20,6 +20,10 @@ public:
         : data((n + CHUNK_SIZE - 1) / CHUNK_SIZE), n(n)
     { }
 
+    Bitset(const AlignedVector<uintmax_t>& data, size_t n)
+        : data(data), n(n)
+    { }
+
     void clear()
     {
         data.clear();
@@ -42,9 +46,12 @@ public:
     bool empty() const
     { return n == 0; }
 
+    bool isAligned() const
+    { return n % CHUNK_SIZE == 0; }
+
     void push_back(bool value)
     {
-        if (n % CHUNK_SIZE == 0) {
+        if (isAligned()) {
             data.push_back(0);
         }
         data.back() |= (uintmax_t(value) << (n % CHUNK_SIZE));
@@ -53,7 +60,7 @@ public:
 
     void push_back(size_t chunk, size_t count)
     {
-        if (n % CHUNK_SIZE != 0)
+        if (!isAligned())
             throw runtime_error("push_back chunk not implemented if bits are not aligned");
 
         data.push_back(chunk);
@@ -73,6 +80,18 @@ public:
         n += count;
     }
 
+    void popBackChunk()
+    {
+        if (!isAligned())
+            throw runtime_error("popBackChunk chunk not implemented if bits are not aligned");
+
+        if (n < CHUNK_SIZE)
+            throw runtime_error("insufficient number of elements to perform popBackChunk");
+
+        data.pop_back();
+        n -= CHUNK_SIZE;
+    }
+
     bool at(size_t index) const
     {
         if (index >= n) {
@@ -82,12 +101,20 @@ public:
         return (data[index / CHUNK_SIZE] >> (index % CHUNK_SIZE)) & 1;
     }
 
+    uintmax_t atChunk(size_t index) const
+    {
+        if (index >= data.size()) {
+            throw std::out_of_range("Bitset::atChunk");
+        }
+
+        return data[index];
+    }
+
     size_t getSum() const
     {
         size_t result = 0;
         for (size_t i = 0; i < data.size(); i++) {
-            //result += popcount(data[i]);                               // C++20 version
-            result += static_cast<uint8_t>(bitset<64>(data[i]).count()); // C++98 version
+            result += countBits(data[i]);
         }
         return result;
     }
@@ -136,6 +163,12 @@ public:
         }
 
         return res.str();
+    }
+
+    static inline size_t countBits(uintmax_t chunk)
+    {
+        //return popcount(chunk);                               // C++20 version
+        return static_cast<uint8_t>(bitset<64>(chunk).count()); // C++98 version
     }
 
 private:

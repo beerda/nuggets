@@ -9,7 +9,7 @@ context("dig/DataSorter.h") {
         LogicalVector vec2 = {true,  true,  true,  false, false, false};
         LogicalVector vec3 = {false, false, false, false, true,  true};
 
-        DataSorter sorter;
+        DataSorter sorter(6);
         sorter.addColumn(vec1);
         sorter.addColumn(vec2);
         sorter.addColumn(vec3);

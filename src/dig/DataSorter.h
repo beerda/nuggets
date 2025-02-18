@@ -9,7 +9,8 @@
 
 class DataSorter {
 public:
-    DataSorter()
+    DataSorter(size_t nrow)
+        : nrow(nrow)
     { }
 
     void addColumn(const LogicalVector& column)
@@ -17,11 +18,7 @@ public:
 
     vector<size_t> getSortedRowIndices() const
     {
-        if (columns.empty()) {
-            return vector<size_t>();
-        }
-
-        vector<size_t> indices(columns[0].size());
+        vector<size_t> indices(nrow);
         iota(indices.begin(), indices.end(), 0); // fill with 0, 1, 2, ..., nrow - 1
 
         sort(indices.begin(), indices.end(), [&](size_t i, size_t j) {
@@ -39,5 +36,6 @@ public:
     }
 
 private:
+    size_t nrow;
     vector<LogicalVector> columns;
 };

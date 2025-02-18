@@ -3,6 +3,8 @@
 #include "../common.h"
 #include "dig/Digger.h"
 #include "dig/Config.h"
+#include "dig/Data.h"
+#include "dig/DataSorter.h"
 #include "dig/ConditionArgumentator.h"
 #include "dig/FociSupportsArgumentator.h"
 #include "dig/ContiPpArgumentator.h"
@@ -40,6 +42,18 @@ public:
 
         {
             LogStartEnd l("data init");
+            /*
+            DataSorter sorter(config.getNrow());
+            for (R_xlen_t i = 0; i < chainsList.size(); i++) {
+                bool isCondition = isConditionVec[i];
+                if (isCondition && Rf_isLogical(chainsList[i])) {
+                    const LogicalVector vec = chainsList[i];
+                    sorter.addColumn(vec);
+                }
+            }
+            vector<size_t> rowPermutation = sorter.getSortedRowIndices();
+             */
+
             data.reserve(chainsList.size() + 1);
             data.addUnusedChain(); // 0th element is always empty to match C++ indices to R's indices that start from 1
 
@@ -51,11 +65,13 @@ public:
                     String name = namesVec[i];
                     if (Rf_isReal(chainsList[i])) {
                         const NumericVector vec = chainsList[i];
-                        data.addChain(vec, name, isCondition, isFocus);
+                        data.addChain(vec, //permute(vec, rowPermutation),
+                                      name, isCondition, isFocus);
                     }
                     else if (Rf_isLogical(chainsList[i])) {
                         const LogicalVector vec = chainsList[i];
-                        data.addChain(vec, name, isCondition, isFocus);
+                        data.addChain(vec, //permute(vec, rowPermutation),
+                                      name, isCondition, isFocus);
                     }
                     else {
                         throw runtime_error("Data element of unknown type");
@@ -202,4 +218,15 @@ public:
 
 private:
     Config config;
+
+    template <typename T>
+    T permute(T vec, const vector<size_t>& permutation)
+    {
+        T result(vec.size());
+        for (size_t i = 0; i < vec.size(); i++) {
+            result[i] = vec[permutation[i]];
+        }
+        return result;
+    }
+
 };

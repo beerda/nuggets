@@ -19,6 +19,7 @@ SOURCES=RcppExports.cpp \
 	test-dig-DualChain.cpp \
 	test-dig-ExcludedSubsets.cpp \
 	test-dig-Iterator.cpp \
+	test-dig-PackedBitChain.cpp \
 	test-dig-SparseBitChain.cpp \
 	test-dig-Task.cpp \
 	test-dig-TaskSequence.cpp \
