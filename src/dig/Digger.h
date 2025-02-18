@@ -38,7 +38,29 @@ public:
     }
 
     void addFilter(FilterType* filter)
-    { filters.push_back(filter); }
+    {
+        filters.push_back(filter);
+        int cb = filter->getCallbacks();
+
+        if (cb & FilterType::CALLBACK_IS_CONDITION_REDUNDANT)
+            filterIsConditionRedundant.push_back(filter);
+        if (cb & FilterType::CALLBACK_IS_FOCUS_REDUNDANT)
+            filterIsFocusRedundant.push_back(filter);
+        if (cb & FilterType::CALLBACK_IS_CONDITION_PRUNABLE)
+            filterIsConditionPrunable.push_back(filter);
+        if (cb & FilterType::CALLBACK_IS_FOCUS_PRUNABLE)
+            filterIsFocusPrunable.push_back(filter);
+        if (cb & FilterType::CALLBACK_IS_CONDITION_STORABLE)
+            filterIsConditionStorable.push_back(filter);
+        if (cb & FilterType::CALLBACK_IS_FOCUS_STORABLE)
+            filterIsFocusStorable.push_back(filter);
+        if (cb & FilterType::CALLBACK_IS_CONDITION_EXTENDABLE)
+            filterIsConditionExtendable.push_back(filter);
+        if (cb & FilterType::CALLBACK_IS_FOCUS_EXTENDABLE)
+            filterIsFocusExtendable.push_back(filter);
+        if (cb & FilterType::CALLBACK_NOTIFY_CONDITION_STORED)
+            filterNotifyConditionStored.push_back(filter);
+    }
 
     void addArgumentator(ArgumentatorType* argumentator)
     { argumentators.push_back(argumentator); }
@@ -110,7 +132,19 @@ private:
     DataType& data;
     TaskType initialTask;
     TaskSequence<TaskType> sequence;
+
     vector<FilterType*> filters;
+    vector<FilterType*> filterIsConditionRedundant;
+    vector<FilterType*> filterIsFocusRedundant;
+    vector<FilterType*> filterIsConditionPrunable;
+    vector<FilterType*> filterIsFocusPrunable;
+    vector<FilterType*> filterIsConditionStorable;
+    vector<FilterType*> filterIsFocusStorable;
+    vector<FilterType*> filterIsConditionExtendable;
+    vector<FilterType*> filterIsFocusExtendable;
+    vector<FilterType*> filterNotifyConditionStored;
+
+
     vector<ArgumentatorType*> argumentators;
     vector<ArgumentValues> result;
     bool positiveConditionChainsNeeded = false;
@@ -277,7 +311,7 @@ private:
 
     bool isConditionRedundant(const TaskType& task) const
     {
-        for (const FilterType* e : filters)
+        for (const FilterType* e : filterIsConditionRedundant)
             if (e->isConditionRedundant(task))
                 return true;
 
@@ -286,7 +320,7 @@ private:
 
     bool isFocusRedundant(const TaskType& task) const
     {
-        for (const FilterType* e : filters)
+        for (const FilterType* e : filterIsFocusRedundant)
             if (e->isFocusRedundant(task))
                 return true;
 
@@ -295,7 +329,7 @@ private:
 
     bool isConditionPrunable(const TaskType& task) const
     {
-        for (const FilterType* e : filters)
+        for (const FilterType* e : filterIsConditionPrunable)
             if (e->isConditionPrunable(task))
                 return true;
 
@@ -304,7 +338,7 @@ private:
 
     bool isFocusPrunable(const TaskType& task) const
     {
-        for (const FilterType* e : filters)
+        for (const FilterType* e : filterIsFocusPrunable)
             if (e->isFocusPrunable(task))
                 return true;
 
@@ -313,7 +347,7 @@ private:
 
     bool isConditionStorable(const TaskType& task) const
     {
-        for (const FilterType* e : filters)
+        for (const FilterType* e : filterIsConditionStorable)
             if (!e->isConditionStorable(task))
                 return false;
 
@@ -322,7 +356,7 @@ private:
 
     bool isFocusStorable(const TaskType& task) const
     {
-        for (const FilterType* e : filters)
+        for (const FilterType* e : filterIsFocusStorable)
             if (!e->isFocusStorable(task))
                 return false;
 
@@ -331,7 +365,7 @@ private:
 
     bool isConditionExtendable(const TaskType& task) const
     {
-        for (const FilterType* e : filters)
+        for (const FilterType* e : filterIsConditionExtendable)
             if (!e->isConditionExtendable(task))
                 return false;
 
@@ -340,7 +374,7 @@ private:
 
     bool isFocusExtendable(const TaskType& task) const
     {
-        for (const FilterType* e : filters)
+        for (const FilterType* e : filterIsFocusExtendable)
             if (!e->isFocusExtendable(task))
                 return false;
 
@@ -349,7 +383,7 @@ private:
 
     void notifyConditionStored(const TaskType& task) const
     {
-        for (FilterType* e : filters)
+        for (FilterType* e : filterNotifyConditionStored)
             e->notifyConditionStored(task);
     }
 

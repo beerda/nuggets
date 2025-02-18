@@ -11,6 +11,11 @@ public:
           dataLength(dataLength)
     { }
 
+    virtual int getCallbacks() const override
+    {
+        return Filter<TASK>::CALLBACK_IS_FOCUS_STORABLE;
+    }
+
     bool isFocusStorable(const TASK& task) const override
     {
         if (task.getFocusIterator().hasPredicate()) {

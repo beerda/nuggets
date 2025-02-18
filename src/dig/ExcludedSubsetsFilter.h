@@ -11,6 +11,11 @@ public:
         : excluded(excluded)
     { }
 
+    virtual int getCallbacks() const override
+    {
+        return Filter<TASK>::CALLBACK_IS_CONDITION_REDUNDANT;
+    }
+
     bool isConditionRedundant(const TASK& task) const override
     {
         const Iterator& it = task.getConditionIterator();

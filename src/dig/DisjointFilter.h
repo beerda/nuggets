@@ -10,6 +10,12 @@ public:
         : disjoint(disjoint)
     { }
 
+    virtual int getCallbacks() const override
+    {
+        return Filter<TASK>::CALLBACK_IS_CONDITION_REDUNDANT
+             | Filter<TASK>::CALLBACK_IS_FOCUS_REDUNDANT;
+    }
+
     bool isConditionRedundant(const TASK& task) const override
     {
         if (disjoint.size() <= 1)

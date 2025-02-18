@@ -10,6 +10,11 @@ public:
         : maxSupport(maxSupport)
     { }
 
+    virtual int getCallbacks() const override
+    {
+        return Filter<TASK>::CALLBACK_IS_CONDITION_STORABLE;
+    }
+
     bool isConditionStorable(const TASK& task) const override
     { return task.getPositiveChain().getSupport() <= maxSupport; }
 

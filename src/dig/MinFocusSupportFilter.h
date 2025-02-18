@@ -10,6 +10,11 @@ public:
         : minFocusSupport(minFocusSupport)
     { }
 
+    virtual int getCallbacks() const override
+    {
+        return Filter<TASK>::CALLBACK_IS_FOCUS_PRUNABLE;
+    }
+
     bool isFocusPrunable(const TASK& task) const override
     {
         if (task.getFocusIterator().hasPredicate()) {

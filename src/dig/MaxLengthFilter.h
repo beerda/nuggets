@@ -10,6 +10,11 @@ public:
         : maxLength(maxLength)
     { }
 
+    virtual int getCallbacks() const override
+    {
+        return Filter<TASK>::CALLBACK_IS_CONDITION_REDUNDANT;
+    }
+
     bool isConditionRedundant(const TASK& task) const override
     { return ((int) task.getConditionIterator().getLength()) > maxLength; }
 

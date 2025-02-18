@@ -15,6 +15,12 @@ public:
           dataLength(dataLength)
     { }
 
+    virtual int getCallbacks() const override
+    {
+        return Filter<TASK>::CALLBACK_IS_FOCUS_EXTENDABLE
+             | Filter<TASK>::CALLBACK_NOTIFY_CONDITION_STORED;
+    }
+
     bool isFocusExtendable(const TASK& task) const override
     {
         if (task.getFocusIterator().hasPredicate()) {
