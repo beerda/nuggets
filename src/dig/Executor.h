@@ -36,57 +36,12 @@ public:
         : config(config)
     { }
 
-    List execute(List chainsList, CharacterVector namesVec, LogicalVector isConditionVec, LogicalVector isFocusVec)
+    List execute(const List& chainsList,
+                 const CharacterVector& namesVec,
+                 const LogicalVector& isConditionVec,
+                 const LogicalVector& isFocusVec)
     {
-        DataType data(config.getNrow());
-
-        {
-            LogStartEnd l("data init");
-            /*
-            DataSorter sorter(config.getNrow());
-            for (R_xlen_t i = 0; i < chainsList.size(); i++) {
-                bool isCondition = isConditionVec[i];
-                if (isCondition && Rf_isLogical(chainsList[i])) {
-                    const LogicalVector vec = chainsList[i];
-                    sorter.addColumn(vec);
-                }
-            }
-            vector<size_t> rowPermutation = sorter.getSortedRowIndices();
-             */
-
-            data.reserve(chainsList.size() + 1);
-            data.addUnusedChain(); // 0th element is always empty to match C++ indices to R's indices that start from 1
-
-            for (R_xlen_t i = 0; i < chainsList.size(); i++) {
-                bool isCondition = isConditionVec[i];
-                bool isFocus = isFocusVec[i];
-
-                if (isCondition || isFocus) {
-                    String name = namesVec[i];
-                    if (Rf_isReal(chainsList[i])) {
-                        const NumericVector vec = chainsList[i];
-                        data.addChain(vec, //permute(vec, rowPermutation),
-                                      name, isCondition, isFocus);
-                    }
-                    else if (Rf_isLogical(chainsList[i])) {
-                        const LogicalVector vec = chainsList[i];
-                        data.addChain(vec, //permute(vec, rowPermutation),
-                                      name, isCondition, isFocus);
-                    }
-                    else {
-                        throw runtime_error("Data element of unknown type");
-                    }
-                }
-                else {
-                    data.addUnusedChain();
-                }
-            }
-
-            if (config.isVerbose()) {
-                Rcout << "dig: loaded " << data.nrow() << " rows / " << data.size() << " chains" << endl;
-            }
-        }
-
+        DataType data = createData(chainsList, namesVec, isConditionVec, isFocusVec);
         Digger<DataType> digger(data, config);
 
         if (config.hasConditionArgument()) {
@@ -229,4 +184,60 @@ private:
         return result;
     }
 
+    DataType createData(const List& chainsList,
+                        const CharacterVector& namesVec,
+                        const LogicalVector& isConditionVec,
+                        const LogicalVector& isFocusVec)
+    {
+        LogStartEnd l("data init");
+        DataType data(config.getNrow());
+
+        /*
+        DataSorter sorter(config.getNrow());
+        for (R_xlen_t i = 0; i < chainsList.size(); i++) {
+            bool isCondition = isConditionVec[i];
+            if (isCondition && Rf_isLogical(chainsList[i])) {
+                const LogicalVector vec = chainsList[i];
+                sorter.addColumn(vec);
+            }
+        }
+        vector<size_t> rowPermutation = sorter.getSortedRowIndices();
+        */
+
+        data.reserve(chainsList.size() + 1);
+        data.addUnusedChain(); // 0th element is always empty to match C++ indices to R's indices that start from 1
+
+        for (R_xlen_t i = 0; i < chainsList.size(); i++) {
+            bool isCondition = isConditionVec[i];
+            bool isFocus = isFocusVec[i];
+
+            if (isCondition || isFocus) {
+                String name = namesVec[i];
+                if (Rf_isReal(chainsList[i])) {
+                    const NumericVector vec = chainsList[i];
+                    data.addChain(vec, //permute(vec, rowPermutation),
+                                  name, isCondition, isFocus);
+                }
+                else if (Rf_isLogical(chainsList[i])) {
+                    const LogicalVector vec = chainsList[i];
+                    data.addChain(vec, //permute(vec, rowPermutation),
+                                  name, isCondition, isFocus);
+                }
+                else {
+                    throw runtime_error("Data element of unknown type");
+                }
+            }
+            else {
+                data.addUnusedChain();
+            }
+        }
+
+        data.optimizeConditionOrder();
+
+        if (config.isVerbose()) {
+            Rcout << "dig: loaded " << data.nrow() << " rows / " << data.size() << " chains" << endl;
+        }
+
+        return data;
+    }
 };
