@@ -10,6 +10,8 @@ test_that("dig_associations without contingency table", {
                             min_confidence = 0.0001,
                             contingency_table = FALSE)
 
+    res <- res[order(res$antecedent_length, res$antecedent, res$consequent), ]
+
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 7)
     expect_equal(colnames(res),
@@ -45,6 +47,8 @@ test_that("dig_associations with contingency table", {
                             min_support = 0.0001,
                             min_confidence = 0.0001,
                             contingency_table = TRUE)
+
+    res <- res[order(res$antecedent_length, res$antecedent, res$consequent), ]
 
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 7)

@@ -242,7 +242,8 @@ dig_grid <- function(x,
             result <- cbind(condition = rep(cond, nrow(gr)),
                             support = support,
                             gr,
-                            result)
+                            result,
+                            condition_length = rep(length(condition), nrow(gr)))
         }
 
         result

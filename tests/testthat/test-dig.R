@@ -106,6 +106,7 @@ test_that("condition arg with names", {
 test_that("support arg", {
     m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
     res <- dig(m, function(support) list(sup = support))
+    res <- res[order(unlist(res), decreasing = TRUE)]
 
     expect_equal(length(res), 4)
     expect_equal(res, list(list(sup = 1),
@@ -119,6 +120,7 @@ test_that("support arg", {
 test_that("sum arg", {
     m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
     res <- dig(m, function(sum) list(sum = sum))
+    res <- res[order(unlist(res), decreasing = TRUE)]
 
     expect_equal(length(res), 4)
     expect_equal(res, list(list(sum = 6),
@@ -131,6 +133,7 @@ test_that("sum arg", {
 test_that("indices arg", {
     m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
     res <- dig(m, function(indices) list(i = indices))
+    res <- res[order(sapply(res, function(x) sum(x$i)), decreasing = TRUE)]
 
     expect_equal(length(res), 4)
     expect_equal(res, list(list(i = c(T,T,T,T,T,T)),

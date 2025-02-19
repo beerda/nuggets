@@ -11,11 +11,12 @@ test_that("dig_correlations", {
                             condition = where(is.logical),
                             xvars = where(is.numeric),
                             yvars = where(is.numeric))
+    res <- res[order(res$condition_length, res$condition), ]
 
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 12)
     expect_equal(colnames(res),
-                 c("condition", "support", "xvar", "yvar", "estimate", "p_value", "method", "alternative", "rows"))
+                 c("condition", "support", "xvar", "yvar", "estimate", "p_value", "method", "alternative", "rows", "condition_length"))
     expect_equal(res$condition,
                  c(rep("{}", 3), rep("{a}", 3), rep("{b}", 3), rep("{a,b}", 3)))
     expect_equal(res$xvar,
@@ -47,11 +48,12 @@ test_that("dig_correlations with NA", {
                             condition = where(is.logical),
                             xvars = where(is.numeric),
                             yvars = where(is.numeric))
+    res <- res[order(res$condition_length, res$condition), ]
 
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 12)
     expect_equal(colnames(res),
-                 c("condition", "support", "xvar", "yvar", "estimate", "p_value", "method", "alternative", "rows"))
+                 c("condition", "support", "xvar", "yvar", "estimate", "p_value", "method", "alternative", "rows", "condition_length"))
     expect_equal(res$condition,
                  c(rep("{}", 3), rep("{a}", 3), rep("{b}", 3), rep("{a,b}", 3)))
     expect_equal(res$xvar,

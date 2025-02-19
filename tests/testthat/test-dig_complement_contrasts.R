@@ -8,7 +8,7 @@ test_that("dig_complement_contrasts t", {
 
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 7)
-    expect_equal(ncol(res), 16)
+    expect_equal(ncol(res), 17)
     expect_true(is.character(res$condition))
     expect_equal(res$support, c(0.5, 0.5, 0.5, 0.5, 0.25, 0.25, 0.25))
     expect_equal(res$var, rep(c("uptake"), 7))
@@ -21,7 +21,7 @@ test_that("dig_complement_contrasts t", {
 
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 3)
-    expect_equal(ncol(res), 16)
+    expect_equal(ncol(res), 17)
 })
 
 test_that("dig_complement_contrasts wilcox", {
@@ -35,7 +35,7 @@ test_that("dig_complement_contrasts wilcox", {
 
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 7)
-    expect_equal(ncol(res), 13)
+    expect_equal(ncol(res), 14)
     expect_equal(res$support, c(0.5, 0.5, 0.5, 0.5, 0.25, 0.25, 0.25))
     expect_equal(res$var, rep(c("uptake"), 7))
 
@@ -48,7 +48,7 @@ test_that("dig_complement_contrasts wilcox", {
 
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 3)
-    expect_equal(ncol(res), 13)
+    expect_equal(ncol(res), 14)
 })
 
 test_that("dig_paired contrasts errors", {
