@@ -244,7 +244,7 @@ to <code>Inf</code> will generate all possible conditions.</p></dd>
 <span class="r-in"><span>                 condition <span class="op">=</span> <span class="fu">where</span><span class="op">(</span><span class="va">is.logical</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                 xvars <span class="op">=</span> <span class="va">Sepal.Length</span><span class="op">:</span><span class="va">Petal.Width</span>,</span></span>
 <span class="r-in"><span>                 yvars <span class="op">=</span> <span class="va">Sepal.Length</span><span class="op">:</span><span class="va">Petal.Width</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 24 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 24 × 10</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    condition      support xvar  yvar  estimate  p_value method alternative  rows</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> {}               1     Sepa… Sepa…   -<span style="color: #BB0000;">0.118</span> 1.52<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> Pears… two.sided     150</span>
@@ -258,6 +258,7 @@ to <code>Inf</code> will generate all possible conditions.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> {Species=seto…   0.333 Sepa… Peta…    0.278 5.05<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span> Pears… two.sided      50</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> {Species=seto…   0.333 Sepa… Peta…    0.178 2.17<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> Pears… two.sided      50</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 14 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1 more variable: condition_length &lt;int&gt;</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># With `condition = NULL`, dig_correlations() computes correlations between</span></span></span>
 <span class="r-in"><span><span class="co"># all pairs of numeric variables on the whole dataset only, which is an</span></span></span>
@@ -266,7 +267,7 @@ to <code>Inf</code> will generate all possible conditions.</p></dd>
 <span class="r-in"><span>                 condition <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
 <span class="r-in"><span>                 xvars <span class="op">=</span> <span class="va">Sepal.Length</span><span class="op">:</span><span class="va">Petal.Width</span>,</span></span>
 <span class="r-in"><span>                 yvars <span class="op">=</span> <span class="va">Sepal.Length</span><span class="op">:</span><span class="va">Petal.Width</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 10</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   condition support xvar        yvar  estimate  p_value method alternative  rows</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> {}              1 Sepal.Leng… Sepa…   -<span style="color: #BB0000;">0.118</span> 1.52<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> Pears… two.sided     150</span>
@@ -275,6 +276,7 @@ to <code>Inf</code> will generate all possible conditions.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> {}              1 Sepal.Width Peta…   -<span style="color: #BB0000;">0.428</span> 4.51<span style="color: #949494;">e</span><span style="color: #BB0000;">- 8</span> Pears… two.sided     150</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> {}              1 Sepal.Width Peta…   -<span style="color: #BB0000;">0.366</span> 4.07<span style="color: #949494;">e</span><span style="color: #BB0000;">- 6</span> Pears… two.sided     150</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> {}              1 Petal.Leng… Peta…    0.963 4.68<span style="color: #949494;">e</span><span style="color: #BB0000;">-86</span> Pears… two.sided     150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1 more variable: condition_length &lt;int&gt;</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
