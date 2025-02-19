@@ -104,4 +104,49 @@ context("dig/Data.h") {
         expect_error(data.getNegativeChain(4));
         expect_true(!data.getNegativeChain(5).empty());
     }
+
+    test_that("condition order optimization") {
+        LogicalVector data0({false, false, false, false, true});
+        LogicalVector data1({true, true, true, true, true});
+        LogicalVector data2({true, true, true, false, false});
+        NumericVector data3({1, 1, 0, 0, 1});
+        NumericVector data4({1, 0, 0, 0, 1});
+
+        {
+            DataType data(5);
+            data.addChain(data0, "d0", true, false);
+            data.addChain(data1, "d1", true, false);
+            data.addChain(data2, "d2", true, false);
+            data.addChain(data3, "d3", true, false);
+            data.addChain(data4, "d4", true, false);
+
+            data.optimizeConditionOrder();
+            vector<int> res = data.getCondition();
+            expect_true(res.size() == 5);
+            expect_true(data.getName(res[0]) == "d0");
+            expect_true(data.getName(res[1]) == "d2");
+            expect_true(data.getName(res[2]) == "d1");
+            expect_true(data.getName(res[3]) == "d4");
+            expect_true(data.getName(res[4]) == "d3");
+        }
+
+        {
+            DataType data(5);
+            data.addChain(data4, "d4", true, false);
+            data.addChain(data3, "d3", true, false);
+            data.addChain(data2, "d2", true, false);
+            data.addChain(data1, "d1", true, false);
+            data.addChain(data0, "d0", true, false);
+
+            data.optimizeConditionOrder();
+            vector<int> res = data.getCondition();
+            expect_true(res.size() == 5);
+            expect_true(data.getName(res[0]) == "d0");
+            expect_true(data.getName(res[1]) == "d2");
+            expect_true(data.getName(res[2]) == "d1");
+            expect_true(data.getName(res[3]) == "d4");
+            expect_true(data.getName(res[4]) == "d3");
+        }
+
+    }
 }

@@ -102,6 +102,24 @@ public:
     size_t nrow() const
     { return rows; }
 
+    void optimizeConditionOrder()
+    {
+        sort(condition.begin(), condition.end(), [this](int a, int b) {
+            const DualChainType& chainA = positiveChains.at(a);
+            const DualChainType& chainB = positiveChains.at(b);
+
+            if (chainA.isBitwise() > chainB.isBitwise()) {
+                return true; // a goes before b because a is bitwise and b isn't
+            }
+            if (chainA.isBitwise() < chainB.isBitwise()) {
+                return false; // b goes before a
+            }
+
+            // a goes before b if it has less 1s
+            return chainA.getSum() < chainB.getSum();
+        });
+    }
+
 private:
     size_t rows;
     vector<DualChainType> positiveChains;
