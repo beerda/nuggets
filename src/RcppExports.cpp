@@ -10,6 +10,196 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// goedel_tnorm
+double goedel_tnorm(NumericVector vals);
+RcppExport SEXP _nuggets_goedel_tnorm(SEXP valsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type vals(valsSEXP);
+    rcpp_result_gen = Rcpp::wrap(goedel_tnorm(vals));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pgoedel_tnorm
+NumericVector pgoedel_tnorm(List list);
+RcppExport SEXP _nuggets_pgoedel_tnorm(SEXP listSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type list(listSEXP);
+    rcpp_result_gen = Rcpp::wrap(pgoedel_tnorm(list));
+    return rcpp_result_gen;
+END_RCPP
+}
+// lukas_tnorm
+double lukas_tnorm(NumericVector vals);
+RcppExport SEXP _nuggets_lukas_tnorm(SEXP valsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type vals(valsSEXP);
+    rcpp_result_gen = Rcpp::wrap(lukas_tnorm(vals));
+    return rcpp_result_gen;
+END_RCPP
+}
+// plukas_tnorm
+NumericVector plukas_tnorm(List list);
+RcppExport SEXP _nuggets_plukas_tnorm(SEXP listSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type list(listSEXP);
+    rcpp_result_gen = Rcpp::wrap(plukas_tnorm(list));
+    return rcpp_result_gen;
+END_RCPP
+}
+// goguen_tnorm
+double goguen_tnorm(NumericVector vals);
+RcppExport SEXP _nuggets_goguen_tnorm(SEXP valsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type vals(valsSEXP);
+    rcpp_result_gen = Rcpp::wrap(goguen_tnorm(vals));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pgoguen_tnorm
+NumericVector pgoguen_tnorm(List list);
+RcppExport SEXP _nuggets_pgoguen_tnorm(SEXP listSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type list(listSEXP);
+    rcpp_result_gen = Rcpp::wrap(pgoguen_tnorm(list));
+    return rcpp_result_gen;
+END_RCPP
+}
+// goedel_tconorm
+double goedel_tconorm(NumericVector vals);
+RcppExport SEXP _nuggets_goedel_tconorm(SEXP valsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type vals(valsSEXP);
+    rcpp_result_gen = Rcpp::wrap(goedel_tconorm(vals));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pgoedel_tconorm
+NumericVector pgoedel_tconorm(List list);
+RcppExport SEXP _nuggets_pgoedel_tconorm(SEXP listSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type list(listSEXP);
+    rcpp_result_gen = Rcpp::wrap(pgoedel_tconorm(list));
+    return rcpp_result_gen;
+END_RCPP
+}
+// lukas_tconorm
+double lukas_tconorm(NumericVector vals);
+RcppExport SEXP _nuggets_lukas_tconorm(SEXP valsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type vals(valsSEXP);
+    rcpp_result_gen = Rcpp::wrap(lukas_tconorm(vals));
+    return rcpp_result_gen;
+END_RCPP
+}
+// plukas_tconorm
+NumericVector plukas_tconorm(List list);
+RcppExport SEXP _nuggets_plukas_tconorm(SEXP listSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type list(listSEXP);
+    rcpp_result_gen = Rcpp::wrap(plukas_tconorm(list));
+    return rcpp_result_gen;
+END_RCPP
+}
+// goguen_tconorm
+double goguen_tconorm(NumericVector vals);
+RcppExport SEXP _nuggets_goguen_tconorm(SEXP valsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type vals(valsSEXP);
+    rcpp_result_gen = Rcpp::wrap(goguen_tconorm(vals));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pgoguen_tconorm
+NumericVector pgoguen_tconorm(List list);
+RcppExport SEXP _nuggets_pgoguen_tconorm(SEXP listSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type list(listSEXP);
+    rcpp_result_gen = Rcpp::wrap(pgoguen_tconorm(list));
+    return rcpp_result_gen;
+END_RCPP
+}
+// goedel_residuum
+NumericVector goedel_residuum(NumericVector x, NumericVector y);
+RcppExport SEXP _nuggets_goedel_residuum(SEXP xSEXP, SEXP ySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    rcpp_result_gen = Rcpp::wrap(goedel_residuum(x, y));
+    return rcpp_result_gen;
+END_RCPP
+}
+// lukas_residuum
+NumericVector lukas_residuum(NumericVector x, NumericVector y);
+RcppExport SEXP _nuggets_lukas_residuum(SEXP xSEXP, SEXP ySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    rcpp_result_gen = Rcpp::wrap(lukas_residuum(x, y));
+    return rcpp_result_gen;
+END_RCPP
+}
+// goguen_residuum
+NumericVector goguen_residuum(NumericVector x, NumericVector y);
+RcppExport SEXP _nuggets_goguen_residuum(SEXP xSEXP, SEXP ySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    rcpp_result_gen = Rcpp::wrap(goguen_residuum(x, y));
+    return rcpp_result_gen;
+END_RCPP
+}
+// invol_neg
+NumericVector invol_neg(NumericVector x);
+RcppExport SEXP _nuggets_invol_neg(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(invol_neg(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// strict_neg
+NumericVector strict_neg(NumericVector x);
+RcppExport SEXP _nuggets_strict_neg(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(strict_neg(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // dig_
 List dig_(List chains, CharacterVector namesVector, LogicalVector isCondition, LogicalVector isFocus, List confList);
 RcppExport SEXP _nuggets_dig_(SEXP chainsSEXP, SEXP namesVectorSEXP, SEXP isConditionSEXP, SEXP isFocusSEXP, SEXP confListSEXP) {
@@ -65,11 +255,28 @@ END_RCPP
 RcppExport SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_nuggets_goedel_tnorm", (DL_FUNC) &_nuggets_goedel_tnorm, 1},
+    {"_nuggets_pgoedel_tnorm", (DL_FUNC) &_nuggets_pgoedel_tnorm, 1},
+    {"_nuggets_lukas_tnorm", (DL_FUNC) &_nuggets_lukas_tnorm, 1},
+    {"_nuggets_plukas_tnorm", (DL_FUNC) &_nuggets_plukas_tnorm, 1},
+    {"_nuggets_goguen_tnorm", (DL_FUNC) &_nuggets_goguen_tnorm, 1},
+    {"_nuggets_pgoguen_tnorm", (DL_FUNC) &_nuggets_pgoguen_tnorm, 1},
+    {"_nuggets_goedel_tconorm", (DL_FUNC) &_nuggets_goedel_tconorm, 1},
+    {"_nuggets_pgoedel_tconorm", (DL_FUNC) &_nuggets_pgoedel_tconorm, 1},
+    {"_nuggets_lukas_tconorm", (DL_FUNC) &_nuggets_lukas_tconorm, 1},
+    {"_nuggets_plukas_tconorm", (DL_FUNC) &_nuggets_plukas_tconorm, 1},
+    {"_nuggets_goguen_tconorm", (DL_FUNC) &_nuggets_goguen_tconorm, 1},
+    {"_nuggets_pgoguen_tconorm", (DL_FUNC) &_nuggets_pgoguen_tconorm, 1},
+    {"_nuggets_goedel_residuum", (DL_FUNC) &_nuggets_goedel_residuum, 2},
+    {"_nuggets_lukas_residuum", (DL_FUNC) &_nuggets_lukas_residuum, 2},
+    {"_nuggets_goguen_residuum", (DL_FUNC) &_nuggets_goguen_residuum, 2},
+    {"_nuggets_invol_neg", (DL_FUNC) &_nuggets_invol_neg, 1},
+    {"_nuggets_strict_neg", (DL_FUNC) &_nuggets_strict_neg, 1},
     {"_nuggets_dig_", (DL_FUNC) &_nuggets_dig_, 5},
     {"_nuggets_raisedcos_", (DL_FUNC) &_nuggets_raisedcos_, 2},
     {"_nuggets_triangle_", (DL_FUNC) &_nuggets_triangle_, 2},
     {"_nuggets_which_antichain_", (DL_FUNC) &_nuggets_which_antichain_, 2},
-    {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
+    {"run_testthat_tests",       (DL_FUNC) &run_testthat_tests,       1},
     {NULL, NULL, 0}
 };
 
