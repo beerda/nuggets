@@ -4,9 +4,19 @@
 
 
 context("dig/TautologyTree.h") {
+    test_that("empty everything") {
+        TautologyTree tree({}, {});
+        const TautologyTree::Node* root = tree.getRoot();
+        expect_true(root != nullptr);
+        expect_true(root->consequents.size() == 0);
+        expect_true(root->nChildren() == 0);
+        expect_true(root->children.size() == 0);
+    }
+
     test_that("empty tree") {
         vector<int> predicates = {1, 2, 3, 10};
-        TautologyTree tree(predicates);
+        vector<int> consequents = {11, 12, 13, 14, 15, 16};
+        TautologyTree tree(predicates, consequents);
 
         const TautologyTree::Node* root = tree.getRoot();
         expect_true(root != nullptr);
@@ -24,7 +34,8 @@ context("dig/TautologyTree.h") {
 
     test_that("empty antecedent") {
         vector<int> predicates = {1, 2, 3, 10};
-        TautologyTree tree(predicates);
+        vector<int> consequents = {11, 12, 13, 14, 15, 16};
+        TautologyTree tree(predicates, consequents);
         tree.addTautology({}, 11);
 
         const TautologyTree::Node* root = tree.getRoot();
@@ -46,7 +57,8 @@ context("dig/TautologyTree.h") {
 
     test_that("antecedent size 1") {
         vector<int> predicates = {1, 2, 3, 10};
-        TautologyTree tree(predicates);
+        vector<int> consequents = {11, 12, 13, 14, 15, 16};
+        TautologyTree tree(predicates, consequents);
         tree.addTautology({2}, 12);
 
         const TautologyTree::Node* root = tree.getRoot();
@@ -76,7 +88,8 @@ context("dig/TautologyTree.h") {
 
     test_that("antecedent size 2") {
         vector<int> predicates = {1, 2, 3, 10};
-        TautologyTree tree(predicates);
+        vector<int> consequents = {11, 12, 13, 14, 15, 16};
+        TautologyTree tree(predicates, consequents);
         tree.addTautology({1, 3}, 13);
 
         const TautologyTree::Node* root = tree.getRoot();
@@ -116,7 +129,8 @@ context("dig/TautologyTree.h") {
 
     test_that("3 tautologies") {
         vector<int> predicates = {1, 2, 3, 10};
-        TautologyTree tree(predicates);
+        vector<int> consequents = {11, 12, 13, 14, 15, 16};
+        TautologyTree tree(predicates, consequents);
         tree.addTautology({3, 10}, 14);
         tree.addTautology({1, 2, 10}, 15);
         tree.addTautology({10}, 16);

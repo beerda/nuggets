@@ -48,12 +48,16 @@ public:
      * @param antecedents The vector of antecedent predicates in the order they will be
      *     enumerated by the condition generating algorithm.
      */
-    TautologyTree(vector<int> antecedents)
+    TautologyTree(const vector<int>& antecedents, const vector<int>& consequents)
         : root(antecedents.size()),
-          predicateToIndex(*max_element(antecedents.begin(), antecedents.end()) + 1, -1)
+          availableConsequents(consequents)
     {
-        for (size_t i = 0; i < antecedents.size(); ++i) {
-            predicateToIndex[antecedents[i]] = i;
+        if (!antecedents.empty()) {
+            predicateToIndex.resize(*max_element(antecedents.begin(), antecedents.end()) + 1);
+            fill(predicateToIndex.begin(), predicateToIndex.end(), -1);
+            for (size_t i = 0; i < antecedents.size(); ++i) {
+                predicateToIndex[antecedents[i]] = i;
+            }
         }
     }
 
@@ -65,10 +69,28 @@ public:
      */
     void addTautology(const vector<int>& antecedent, const int consequent)
     {
-        vector<int> sortedAntecedent(antecedent);
-        sortAntecedent(sortedAntecedent);
-        put(&root, sortedAntecedent.rbegin(), sortedAntecedent.rend(), consequent);
+        if (isTautologyValid(antecedent, consequent)) {
+            vector<int> sortedAntecedent(antecedent);
+            sortAntecedent(sortedAntecedent);
+            put(&root, sortedAntecedent.rbegin(), sortedAntecedent.rend(), consequent);
+        }
     }
+
+    void addTautologies(List tautologies)
+    {
+        for (R_xlen_t i = 0; i < tautologies.size(); i++) {
+            IntegerVector tautology = tautologies[i];
+            vector<int> antecedent(tautology.size() - 1);
+            for (R_xlen_t j = 0; j < tautology.size() - 1; j++) {
+                antecedent[j] = tautology[j];
+            }
+            int consequent = tautology[tautology.size() - 1];
+            addTautology(antecedent, consequent);
+        }
+    }
+
+    bool empty() const
+    { return root.nChildren() == 0 && root.consequents.empty(); }
 
     /**
      * Returns the root node of the tree.
@@ -100,6 +122,29 @@ public:
 private:
     Node root;
     vector<size_t> predicateToIndex; // mapping of predicate -> index
+    vector<int> availableConsequents;
+
+    bool isTautologyValid(const vector<int>& antecedent, const int consequent) const
+    {
+        for (int a : antecedent) {
+            if (a >= predicateToIndex.size() || predicateToIndex[a] == -1) {
+                return false;
+            }
+        }
+
+        bool foundConseq = false;
+        for (int c : availableConsequents) {
+            if (c == consequent) {
+                foundConseq = true;
+                break;
+            }
+        }
+        if (!foundConseq) {
+            return false;
+        }
+
+        return true;
+    }
 
     void sortAntecedent(vector<int>& antecedent)
     {
