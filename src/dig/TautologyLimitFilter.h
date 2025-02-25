@@ -1,16 +1,16 @@
 #pragma once
 
 #include "Filter.h"
-#include "ExcludedSubsets.h"
+#include "TautologyTree.h"
 
 
 template <typename TASK>
 class TautologyLimitFilter : public Filter<TASK> {
 public:
-    TautologyLimitFilter(ExcludedSubsets& excluded,
+    TautologyLimitFilter(TautologyTree& tree,
                          const double limit,
                          const size_t dataLength)
-        : excluded(excluded),
+        : tree(tree),
           limit(limit),
           dataLength(dataLength)
     { }
@@ -40,25 +40,23 @@ public:
     void notifyConditionStored(TASK& task) override
     {
         float conditionSum = task.getPositiveChain().empty() ? dataLength : task.getPositiveChain().getSum();
-        set<int> conditionSet = task.getConditionIterator().getCurrentCondition();
-        vector<int> conditionVec;
-        conditionVec.reserve(conditionSet.size() + 1);
-        for (int p : conditionSet) {
-            conditionVec.push_back(p);
+
+        const Iterator& iter = task.getConditionIterator();
+        vector<int> condition = iter.getPrefix();
+        if (iter.hasPredicate()) {
+            condition.push_back(iter.getCurrentPredicate());
         }
-        conditionVec.push_back(-1); // placeholder
 
         for (int focus : task.getFocusIterator().getStored()) {
             float focusSum = task.getPpFocusChain(focus).getSum();
             if (focusSum / conditionSum >= limit) {
-                conditionVec.back() = focus;
-                excluded.addExcludedSubset(conditionVec);
+                tree.addTautology(condition, focus);
             }
         }
     }
 
 private:
-    ExcludedSubsets& excluded;
+    TautologyTree& tree;
     const double limit;
     const size_t dataLength;
 };

@@ -1015,10 +1015,10 @@ test_that("tautology_limit", {
                focus = everything(),
                tautology_limit = 1)
     res <- sort(unlist(res))
-    #expect_equal(res,
-                 #c(" => a", " => b", " => c", " => d",
-                   #"b & d => c",
-                   #"b => c", "b => d",
-                   #"c => b", "c => d", "d => b", "d => c"))
+    expect_equal(res,
+                 c(" => a", " => b", " => c", " => d",
+                   "b & d => c",
+                   "b => c", "b => d",
+                   "c => b", "c => d", "d => b", "d => c"))
 })
 

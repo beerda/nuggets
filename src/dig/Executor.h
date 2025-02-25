@@ -113,23 +113,17 @@ public:
 
         digger.addFilter(new DisjointFilter<TaskType>(config.getDisjoint()));
 
-        /*
-        ExcludedSubsets excluded(config.getExcluded());
-        if (!excluded.empty() || config.hasTautologyLimit()) {
-            digger.addFilter(new ExcludedSubsetsFilter<TaskType>(excluded));
+        TautologyTree tautologies(data.getCondition(), data.getFoci());
+        tautologies.addTautologies(config.getExcluded());
+        if (!tautologies.empty() || config.hasTautologyLimit()) {
+            digger.addFilter(new ExcludedTautologiesFilter<TaskType>(tautologies));
         }
 
         if (config.hasTautologyLimit()) {
             digger.setPpFocusChainsNeeded();
-            digger.addFilter(new TautologyLimitFilter<TaskType>(excluded,
+            digger.addFilter(new TautologyLimitFilter<TaskType>(tautologies,
                                                                 config.getTautologyLimit(),
                                                                 data.nrow()));
-        }
-        */
-        TautologyTree tautologies(data.getCondition(), data.getFoci());
-        tautologies.addTautologies(config.getExcluded());
-        if (!tautologies.empty()) {
-            digger.addFilter(new ExcludedTautologiesFilter<TaskType>(tautologies));
         }
 
         if (digger.isNegativeFociChainsNeeded()) {

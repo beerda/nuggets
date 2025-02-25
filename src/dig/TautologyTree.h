@@ -95,11 +95,20 @@ public:
      */
     void addTautology(const vector<int>& antecedent, const int consequent)
     {
+        //cout << "adding tautology: ";
+        //for (int a : antecedent) {
+            //cout << a << " ";
+        //}
+        //cout << " -> " << consequent;
+
         if (isTautologyValid(antecedent, consequent)) {
+            //cout << " (added)";
             vector<int> sortedAntecedent(antecedent);
             sortAntecedent(sortedAntecedent);
             put(&root, sortedAntecedent.rbegin(), sortedAntecedent.rend(), consequent);
         }
+
+        //cout << endl;
     }
 
     void addTautologies(List tautologies)
@@ -148,6 +157,12 @@ public:
         if (node != nullptr) {
             get(node, prefix.begin(), prefix.end(), result);
         }
+
+        //cout << "deduced: ";
+        //for (int c : result) {
+            //cout << c << " ";
+        //}
+        //cout << endl;
 
         return result;
     }

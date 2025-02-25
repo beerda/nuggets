@@ -23,6 +23,9 @@ public:
         if (it.hasPredicate()) {
             vector<int> deduced = tree.deduceConsequentsByRevSorted(it.getPrefix(), it.getCurrentPredicate());
             for (int d : deduced) {
+                if (it.getCurrentPredicate() == d) {
+                    return true;
+                }
                 for (int p : it.getPrefix()) {
                     if (d == p) {
                         return true;
