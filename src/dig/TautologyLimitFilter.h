@@ -21,7 +21,7 @@ public:
              | Filter<TASK>::CALLBACK_NOTIFY_CONDITION_STORED;
     }
 
-    bool isFocusExtendable(const TASK& task) const override
+    bool isFocusExtendable(TASK& task) const override
     {
         bool result = false;
         if (task.getFocusIterator().hasPredicate()) {
@@ -37,7 +37,7 @@ public:
         return result;
     }
 
-    void notifyConditionStored(const TASK& task) override
+    void notifyConditionStored(TASK& task) override
     {
         float conditionSum = task.getPositiveChain().empty() ? dataLength : task.getPositiveChain().getSum();
         set<int> conditionSet = task.getConditionIterator().getCurrentCondition();

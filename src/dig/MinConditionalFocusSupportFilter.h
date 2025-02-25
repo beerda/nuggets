@@ -16,7 +16,7 @@ public:
         return Filter<TASK>::CALLBACK_IS_FOCUS_STORABLE;
     }
 
-    bool isFocusStorable(const TASK& task) const override
+    bool isFocusStorable(TASK& task) const override
     {
         if (task.getFocusIterator().hasPredicate()) {
             int curr = task.getFocusIterator().getCurrentPredicate();

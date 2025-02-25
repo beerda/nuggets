@@ -16,7 +16,7 @@ public:
              | Filter<TASK>::CALLBACK_IS_FOCUS_REDUNDANT;
     }
 
-    bool isConditionRedundant(const TASK& task) const override
+    bool isConditionRedundant(TASK& task) const override
     {
         if (disjoint.size() <= 1)
             return false;
@@ -37,7 +37,7 @@ public:
         return false;
     }
 
-    bool isFocusRedundant(const TASK& task) const override
+    bool isFocusRedundant(TASK& task) const override
     {
         if (task.getFocusIterator().hasPredicate()) {
             int curr = task.getFocusIterator().getCurrentPredicate();

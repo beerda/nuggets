@@ -16,7 +16,7 @@ public:
         return Filter<TASK>::CALLBACK_IS_CONDITION_REDUNDANT;
     }
 
-    bool isConditionRedundant(const TASK& task) const override
+    bool isConditionRedundant(TASK& task) const override
     {
         const Iterator& it = task.getConditionIterator();
         if (it.hasPredicate()) {

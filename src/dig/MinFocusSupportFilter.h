@@ -15,7 +15,7 @@ public:
         return Filter<TASK>::CALLBACK_IS_FOCUS_PRUNABLE;
     }
 
-    bool isFocusPrunable(const TASK& task) const override
+    bool isFocusPrunable(TASK& task) const override
     {
         if (task.getFocusIterator().hasPredicate()) {
             int curr = task.getFocusIterator().getCurrentPredicate();
