@@ -122,15 +122,15 @@
 # bi-residua
 
 .goedel_biresiduum <- function(x, y) {
-    pgoedel_tnorm(goedel.residuum(x, y), goedel.residuum(y, x))
+    .pgoedel_tnorm(.goedel_residuum(x, y), .goedel_residuum(y, x))
 }
 
 .lukas_biresiduum <- function(x, y) {
-    pgoedel_tnorm(lukas.residuum(x, y), lukas.residuum(y, x))
+    .pgoedel_tnorm(.lukas_residuum(x, y), .lukas_residuum(y, x))
 }
 
 .goguen_biresiduum <- function(x, y) {
-    pgoedel_tnorm(goguen.residuum(x, y), goguen.residuum(y, x))
+    .pgoedel_tnorm(.goguen_residuum(x, y), .goguen_residuum(y, x))
 }
 
 
