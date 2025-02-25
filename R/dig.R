@@ -83,8 +83,15 @@
 #'      [partition()], using the [var_names()] function on `x`'s column names
 #'      is a convenient way to create the `disjoint` vector.
 #' @param excluded NULL or a list of character vectors, where each character vector
-#'      contains the names of columns that must not appear together in a single
-#'      condition.
+#'      represents a formula in the form of implication, where the all but the
+#'      last element are the antecedent and the last element is the consequent.
+#'      These formulae will be treated as *tautologies* and will serve the purpose
+#'      of filtering out the generated conditions. If the generated condition
+#'      contains both the antecedent and the consequent of any of the formulae,
+#'      the condition is not passed to the callback function `f`. Similarly, if
+#'      the generated condition contains the antecedent of any of the formulae,
+#'      the focus, which is the consequent of the formula, is not passed to the
+#'      callback function `f`.
 #' @param min_length the minimum size (the minimum number of predicates) of the
 #'      condition to trigger the callback function `f`. The value of this argument must be
 #'      greater or equal to 0. If 0, also the empty condition triggers the callback.
@@ -350,11 +357,6 @@ dig <- function(x,
         excluded <- lapply(excluded,
                            fmatch,
                            colnames(x))
-        #excluded <- lapply(excluded,
-                           #function(x) {
-                               #i <- fmatch(x, names(condition_cols$indices))
-                               #condition_cols$indices[i]
-                           #})
     }
 
     .must_be_integerish_scalar(min_length,

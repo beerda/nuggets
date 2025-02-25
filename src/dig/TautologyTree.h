@@ -37,6 +37,32 @@ public:
         void storeConsequentsTo(vector<int>& vec) const
         { vec.insert(vec.end(), consequents.begin(), consequents.end()); }
 
+        string toString(int padding) const
+        {
+            string res;
+            string pad;
+            for (int i = 0; i < padding; i++) {
+                pad += " ";
+            }
+
+            res += pad + "consequents: ";
+            for (int c : consequents) {
+                res += to_string(c) + " ";
+            }
+            res += "\n";
+
+            for (size_t i = 0; i < children.size(); ++i) {
+                res += pad + "child " + to_string(i) + ":";
+                if (children[i] == nullptr) {
+                    res += "null\n";
+                } else {
+                    res += "\n" + children[i]->toString(padding + 2);
+                }
+            }
+
+            return res;
+        }
+
         vector<Node*> children;
         vector<int> consequents;
     };
@@ -109,6 +135,13 @@ public:
      */
     vector<int> deduceConsequentsByRevSorted(const vector<int>& prefix, int predicate) const
     {
+        //cout << "\n" << toString();
+        //cout << "deducing: prefix ";
+        //for (int p : prefix) {
+            //cout << p << " ";
+        //}
+        //cout << " predicate " << predicate << endl;
+
         vector<int> result;
         root.storeConsequentsTo(result);
         const Node* node = root.children[predicateToIndex[predicate]];
@@ -119,9 +152,23 @@ public:
         return result;
     }
 
+    string toString() const
+    {
+        string res;
+        res += "predicateToIndex: ";
+        for (size_t i = 0; i < predicateToIndex.size(); ++i) {
+            res += to_string(i) + "=" + to_string(predicateToIndex[i]) + " ";
+        }
+        res += "\n";
+        res += "root:\n";
+        res += root.toString(2);
+
+        return res;
+    }
+
 private:
     Node root;
-    vector<size_t> predicateToIndex; // mapping of predicate -> index
+    vector<int> predicateToIndex; // mapping of predicate -> index
     vector<int> availableConsequents;
 
     bool isTautologyValid(const vector<int>& antecedent, const int consequent) const
@@ -176,9 +223,11 @@ private:
         while (b != e) {
             int predicate = *b;
             size_t index = predicateToIndex[predicate];
-            Node* child = node->children[index];
-            if (child != nullptr) {
-                get(child, b + 1, e, result);
+            if (index < node->children.size()) {
+                const Node* child = node->children[index];
+                if (child != nullptr) {
+                    get(child, b + 1, e, result);
+                }
             }
             b++;
         }

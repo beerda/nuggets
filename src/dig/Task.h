@@ -59,6 +59,12 @@ public:
         return result;
     }
 
+    void setDeducedPredicates(const vector<int>& deduced)
+    { deducedPredicates = deduced; }
+
+    const vector<int>& getDeducedPredicates() const
+    { return deducedPredicates; }
+
     const DualChainType& getPositiveChain() const
     { return positiveChain; }
 
@@ -189,6 +195,7 @@ public:
 private:
     Iterator conditionIterator;
     Iterator focusIterator;
+    vector<int> deducedPredicates;
 
     DualChainType prefixChain;
     DualChainType positiveChain;

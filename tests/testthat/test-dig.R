@@ -689,9 +689,7 @@ test_that("data frame select & disjoint", {
 })
 
 
-test_that("excluded nothing", {
-    set.seed(32344)
-
+test_that("exclude tautology 1", {
     d <- data.frame(a = c(T,    T, T, F, F),
                     b = c(T,    F, T, T, T),
                     c = c(T,    T, F, F, F),
@@ -701,181 +699,68 @@ test_that("excluded nothing", {
                     z = c(1.0,  0.8, 0.6, 0.4, 0.2),
                     w = c(1.0,  0, 0, 0, 0))
 
-    comb <- function(what, n) {
-        res <- combn(what, n)
+    comb <- function(ante, n) {
+        res <- combn(ante, n)
         apply(res, 2, function(w) {
             w <- sort(w)
             paste(w, collapse = " & ")
         })
     }
 
-    f <- function(condition, support) {
-        paste(sort(names(condition)), collapse = " & ")
+    comb2 <- function(ante, n, conseq) {
+        result <- lapply(conseq, function(cc) {
+            a <- setdiff(ante, cc)
+            res <- comb(a, n)
+            paste(res, "|", cc)
+        })
+
+        unlist(result)
+    }
+
+    f <- function(condition, foci_supports) {
+        paste(paste(sort(names(condition)), collapse = " & "),
+              "|",
+              sort(names(foci_supports)))
     }
 
     sel <- c("a", "b", "c", "x", "y", "z")
-    expected <- c(comb(sel, 1), comb(sel, 2), comb(sel, 3))
+    selnoX <- c("a", "b", "c", "y", "z")
+    selnoC <- c("a", "b", "x", "y", "z")
 
-    # permutation 1
-    perm <- seq_along(d)
-    res <- dig(d[, perm],
+    # no exclude
+    expected <- c(comb2(sel, 1, sel),
+                  comb2(sel, 2, sel),
+                  comb2(sel, 3, sel))
+    res <- dig(d,
                f,
                condition = c(a, b, c, x, y, z),
-               excluded = list(),
+               focus = c(a, b, c, x, y, z),
                min_length = 1,
                max_length = 3)
+
     expect_equal(sort(unlist(res)), sort(expected))
 
-    # permutation 2
-    perm <- sample(perm)
-    res <- dig(d[, perm],
+    # exclude "c -> x"
+    expected <- c(setdiff(comb2(sel, 1, sel),
+                          c("c | x")),
+                  setdiff(comb2(sel, 2, sel),
+                          c("a & c | x", "b & c | x", "c & y | x", "c & z | x",
+                            "c & x | a", "c & x | b", "c & x | y", "c & x | z")),
+                  setdiff(comb2(sel, 3, sel),
+                          c("a & b & c | x", "a & c & y | x", "a & c & z | x", "b & c & y | x", "b & c & z | x", "c & y & z | x",
+                            "a & c & x | b", "a & c & x | y", "a & c & x | z",
+                            "b & c & x | a", "b & c & x | y", "b & c & x | z",
+                            "c & x & y | a", "c & x & y | b", "c & x & y | z",
+                            "c & x & z | a", "c & x & z | b", "c & x & z | y")))
+
+    res <- dig(d,
                f,
                condition = c(a, b, c, x, y, z),
-               excluded = list(),
+               focus = c(a, b, c, x, y, z),
+               excluded = list(c("c", "x")),
                min_length = 1,
                max_length = 3)
-    expect_equal(sort(unlist(res)), sort(expected))
 
-    # permutation 3
-    perm <- sample(perm)
-    res <- dig(d[, perm],
-               f,
-               condition = c(a, b, c, x, y, z),
-               excluded = list(),
-               min_length = 1,
-               max_length = 3)
-    expect_equal(sort(unlist(res)), sort(expected))
-})
-
-
-test_that("excluded single", {
-    set.seed(32344)
-
-    d <- data.frame(a = c(T,    T, T, F, F),
-                    b = c(T,    F, T, T, T),
-                    c = c(T,    T, F, F, F),
-                    d = c(T,    F, F, F, F),
-                    x = c(1.0,  0.1, 0.2, 0.3, 0.4),
-                    y = c(1.0,  0.9, 0.8, 0.7, 0.6),
-                    z = c(1.0,  0.8, 0.6, 0.4, 0.2),
-                    w = c(1.0,  0, 0, 0, 0))
-
-    comb <- function(what, n) {
-        res <- combn(what, n)
-        apply(res, 2, function(w) {
-            w <- sort(w)
-            paste(w, collapse = " & ")
-        })
-    }
-
-    f <- function(condition, support) {
-        paste(sort(names(condition)), collapse = " & ")
-    }
-
-    excl <- list("c", "x")
-    sel <- c("a", "b", "y", "z")
-    expected <- c(comb(sel, 1), comb(sel, 2), comb(sel, 3))
-
-    # permutation 1
-    perm <- seq_along(d)
-    res <- dig(d[, perm],
-               f,
-               condition = c(a, b, c, x, y, z),
-               excluded = excl,
-               min_length = 1,
-               max_length = 3)
-    expect_equal(length(unlist(res)), 14)
-    expect_equal(sort(unlist(res)), sort(expected))
-
-    # permutation 2
-    perm <- sample(perm)
-    res <- dig(d[, perm],
-               f,
-               condition = c(a, b, c, x, y, z),
-               excluded = excl,
-               min_length = 1,
-               max_length = 3)
-    expect_equal(length(unlist(res)), 14)
-    expect_equal(sort(unlist(res)), sort(expected))
-
-    # permutation 3
-    perm <- sample(perm)
-    res <- dig(d[, perm],
-               f,
-               condition = c(a, b, c, x, y, z),
-               excluded = excl,
-               min_length = 1,
-               max_length = 3)
-    expect_equal(length(unlist(res)), 14)
-    expect_equal(sort(unlist(res)), sort(expected))
-})
-
-
-test_that("excluded complex", {
-    set.seed(32344)
-
-    d <- data.frame(a = c(T,    T, T, F, F),
-                    b = c(T,    F, T, T, T),
-                    c = c(T,    T, F, F, F),
-                    d = c(T,    F, F, F, F),
-                    x = c(1.0,  0.1, 0.2, 0.3, 0.4),
-                    y = c(1.0,  0.9, 0.8, 0.7, 0.6),
-                    z = c(1.0,  0.8, 0.6, 0.4, 0.2),
-                    w = c(1.0,  0, 0, 0, 0))
-
-    comb <- function(what, n) {
-        res <- combn(what, n)
-        apply(res, 2, function(w) {
-            w <- sort(w)
-            paste(w, collapse = " & ")
-        })
-    }
-
-    f <- function(condition, support) {
-        paste(sort(names(condition)), collapse = " & ")
-    }
-
-    excl <- list("c",
-                 "x",
-                 c("b", "z"),
-                 c("a", "y", "z"))
-
-    sel <- c("a", "b", "y", "z")
-    expected <- c(comb(sel, 1), comb(sel, 2), comb(sel, 3))
-    expected <- grep("b.*z", expected, invert = TRUE, value = TRUE)
-    expected <- grep("a.*y.*z", expected, invert = TRUE, value = TRUE)
-
-    # permutation 1
-    perm <- seq_along(d)
-    res <- dig(d[, perm],
-               f,
-               condition = c(a, b, c, x, y, z),
-               excluded = excl,
-               min_length = 1,
-               max_length = 3)
-    expect_equal(length(unlist(res)), 10)
-    expect_equal(sort(unlist(res)), sort(expected))
-
-    # permutation 2
-    perm <- sample(perm)
-    res <- dig(d[, perm],
-               f,
-               condition = c(a, b, c, x, y, z),
-               excluded = excl,
-               min_length = 1,
-               max_length = 3)
-    expect_equal(length(unlist(res)), 10)
-    expect_equal(sort(unlist(res)), sort(expected))
-
-    # permutation 3
-    perm <- sample(perm)
-    res <- dig(d[, perm],
-               f,
-               condition = c(a, b, c, x, y, z),
-               excluded = excl,
-               min_length = 1,
-               max_length = 3)
-    expect_equal(length(unlist(res)), 10)
     expect_equal(sort(unlist(res)), sort(expected))
 })
 
@@ -1136,3 +1021,4 @@ test_that("tautology_limit", {
                    #"b => c", "b => d",
                    #"c => b", "c => d", "d => b", "d => c"))
 })
+

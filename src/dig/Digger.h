@@ -309,7 +309,7 @@ private:
             task.computeNnFocusChain(data);
     }
 
-    bool isConditionRedundant(const TaskType& task) const
+    bool isConditionRedundant(TaskType& task) const
     {
         for (const FilterType* e : filterIsConditionRedundant)
             if (e->isConditionRedundant(task))
@@ -318,7 +318,7 @@ private:
         return false;
     }
 
-    bool isFocusRedundant(const TaskType& task) const
+    bool isFocusRedundant(TaskType& task) const
     {
         for (const FilterType* e : filterIsFocusRedundant)
             if (e->isFocusRedundant(task))
@@ -327,7 +327,7 @@ private:
         return false;
     }
 
-    bool isConditionPrunable(const TaskType& task) const
+    bool isConditionPrunable(TaskType& task) const
     {
         for (const FilterType* e : filterIsConditionPrunable)
             if (e->isConditionPrunable(task))
@@ -336,7 +336,7 @@ private:
         return false;
     }
 
-    bool isFocusPrunable(const TaskType& task) const
+    bool isFocusPrunable(TaskType& task) const
     {
         for (const FilterType* e : filterIsFocusPrunable)
             if (e->isFocusPrunable(task))
@@ -345,7 +345,7 @@ private:
         return false;
     }
 
-    bool isConditionStorable(const TaskType& task) const
+    bool isConditionStorable(TaskType& task) const
     {
         for (const FilterType* e : filterIsConditionStorable)
             if (!e->isConditionStorable(task))
@@ -354,7 +354,7 @@ private:
         return true;
     }
 
-    bool isFocusStorable(const TaskType& task) const
+    bool isFocusStorable(TaskType& task) const
     {
         for (const FilterType* e : filterIsFocusStorable)
             if (!e->isFocusStorable(task))
@@ -363,7 +363,7 @@ private:
         return true;
     }
 
-    bool isConditionExtendable(const TaskType& task) const
+    bool isConditionExtendable(TaskType& task) const
     {
         for (const FilterType* e : filterIsConditionExtendable)
             if (!e->isConditionExtendable(task))
@@ -372,7 +372,7 @@ private:
         return true;
     }
 
-    bool isFocusExtendable(const TaskType& task) const
+    bool isFocusExtendable(TaskType& task) const
     {
         for (const FilterType* e : filterIsFocusExtendable)
             if (!e->isFocusExtendable(task))
@@ -381,7 +381,7 @@ private:
         return true;
     }
 
-    void notifyConditionStored(const TaskType& task) const
+    void notifyConditionStored(TaskType& task) const
     {
         for (FilterType* e : filterNotifyConditionStored)
             e->notifyConditionStored(task);

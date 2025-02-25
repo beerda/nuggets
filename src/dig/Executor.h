@@ -23,8 +23,9 @@
 #include "dig/MaxSupportFilter.h"
 #include "dig/DisjointFilter.h"
 #include "dig/EmptyFociFilter.h"
-#include "dig/ExcludedSubsetsFilter.h"
+#include "dig/ExcludedTautologiesFilter.h"
 #include "dig/TautologyLimitFilter.h"
+#include "dig/TautologyTree.h"
 
 template <typename BITCHAIN, typename NUMCHAIN>
 class Executor {
@@ -112,6 +113,7 @@ public:
 
         digger.addFilter(new DisjointFilter<TaskType>(config.getDisjoint()));
 
+        /*
         ExcludedSubsets excluded(config.getExcluded());
         if (!excluded.empty() || config.hasTautologyLimit()) {
             digger.addFilter(new ExcludedSubsetsFilter<TaskType>(excluded));
@@ -122,6 +124,12 @@ public:
             digger.addFilter(new TautologyLimitFilter<TaskType>(excluded,
                                                                 config.getTautologyLimit(),
                                                                 data.nrow()));
+        }
+        */
+        TautologyTree tautologies(data.getCondition(), data.getFoci());
+        tautologies.addTautologies(config.getExcluded());
+        if (!tautologies.empty()) {
+            digger.addFilter(new ExcludedTautologiesFilter<TaskType>(tautologies));
         }
 
         if (digger.isNegativeFociChainsNeeded()) {
