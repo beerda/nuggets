@@ -121,11 +121,12 @@
 .must_be_logical_scalar <- ..must_be_type(is_scalar_logical, "a logical scalar")
 
 .is_just_vector <- function(x) {
-    is.vector(x) && !is.matrix(x) && !is.list(x) && !is.array(x)
+    (is.character(x) || is.logical(x) || is.integer(x) || is.numeric(x)) &&
+        !is.matrix(x) && !is.list(x) && !is.array(x)
 }
 
 .is_just_vector_or_factor <- function(x) {
-    is.vector(x) && !is.matrix(x) && !is.list(x) && !is.array(x) || is.factor(x)
+    .is_just_vector(x) || is.factor(x)
 }
 
 .must_be_vector <- ..must_be_type(.is_just_vector, "a plain vector (not a matrix, list, or array)")
