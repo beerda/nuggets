@@ -23,15 +23,18 @@ public:
 
     bool isFocusExtendable(const TASK& task) const override
     {
+        bool result = false;
         if (task.getFocusIterator().hasPredicate()) {
             int curr = task.getFocusIterator().getCurrentPredicate();
             float focusSum = task.getPpFocusChain(curr).getSum();
             float conditionSum = task.getPositiveChain().empty() ? dataLength : task.getPositiveChain().getSum();
 
-            return (focusSum / conditionSum) < limit;
+            result = (focusSum / conditionSum) < limit;
         }
 
-        return false;
+        //cout << "isFocusExtendable: " << task.toString() << " : " << result << endl;
+
+        return result;
     }
 
     void notifyConditionStored(const TASK& task) override

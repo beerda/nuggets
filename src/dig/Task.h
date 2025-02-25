@@ -184,7 +184,7 @@ public:
     { return !(*this == other); }
 
     string toString() const
-    { return conditionIterator.toString(); }
+    { return "(condition: " + conditionIterator.toString() + ")(focus: " + focusIterator.toString() + ")"; }
 
 private:
     Iterator conditionIterator;

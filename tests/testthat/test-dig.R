@@ -1101,6 +1101,15 @@ test_that("tautology_limit", {
         })
     }
 
+#    f <- function(condition, support, foci_supports) {
+#        ante <- paste(sort(names(condition)), collapse = " & ")
+#        r <- lapply(names(foci_supports), function(f) {
+#            paste(ante, "=>", f)
+#        })
+#
+#        data.frame(rule=unlist(r), sup = rep(support, length(foci_supports)), pp = foci_supports)
+#    }
+
     res <- dig(d,
                f,
                condition = everything(),
@@ -1115,15 +1124,15 @@ test_that("tautology_limit", {
                    "b => d", "c & d => a", "c & d => b", "c => a", "c => b",
                    "c => d", "d => a", "d => b", "d => c"))
 
-#    res <- dig(d,
-#               f,
-#               condition = everything(),
-#               focus = everything(),
-#               tautology_limit = 1)
-#    res <- sort(unlist(res))
-#    expect_equal(res,
-#                 c(" => a", " => b", " => c", " => d",
-#                   "b & d => c",
-#                   "b => c", "b => d",
-#                   "c => b", "c => d", "d => b", "d => c"))
+    res <- dig(d,
+               f,
+               condition = everything(),
+               focus = everything(),
+               tautology_limit = 1)
+    res <- sort(unlist(res))
+    #expect_equal(res,
+                 #c(" => a", " => b", " => c", " => d",
+                   #"b & d => c",
+                   #"b => c", "b => d",
+                   #"c => b", "c => d", "d => b", "d => c"))
 })
