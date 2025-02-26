@@ -1,7 +1,7 @@
 # nuggets 1.5.0
 - released: ???
 - added is_almost_constant(), remove_almost_constant(), parse_condition(),
-  fire()
+  fire(), is_condition()
 - added .span and .inc arguments to partition()
 - added exclude argument to dig() and other dig_*() functions
 

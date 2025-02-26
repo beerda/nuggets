@@ -41,6 +41,7 @@ reference:
       - fire
       - format_condition
       - is_almost_constant
+      - is_condition
       - is_degree
       - is_subset
       - parse_condition
