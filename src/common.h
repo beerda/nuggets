@@ -1,6 +1,7 @@
 #pragma once
 
 // [[Rcpp::plugins(cpp20)]]
+// [[Rcpp::depends(RcppThread)]]
 
 #include <cmath>
 #include <chrono>

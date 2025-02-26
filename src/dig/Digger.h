@@ -1,8 +1,10 @@
 #pragma once
 
 //#include <omp.h>
+#include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <RcppThread.h>
 
 #include "Data.h"
 #include "Config.h"
@@ -25,7 +27,8 @@ public:
           initialTask(Iterator(data.getCondition()), // condition predicates to "soFar"
                       Iterator({}, data.getFoci())), // focus predicates to "available"
           sequence(),
-          allThreads(config.getThreads())
+          allThreads(config.getThreads()),
+          mainThreadId(std::this_thread::get_id())
     { }
 
     virtual ~Digger()
@@ -71,21 +74,29 @@ public:
 
         #if defined(_OPENMP)
             //#pragma omp parallel num_threads(allThreads) default(shared)
-            #pragma omp parallel num_threads(allThreads) shared(data, initialTask, sequence, filters, argumentators, result, workingThreads, allThreads, sequenceMutex, resultMutex, condVar)
+            #pragma omp parallel num_threads(allThreads) shared(data, initialTask, sequence, filters, argumentators, result, workingThreads, allThreads, sequenceMutex, resultMutex, condVar, endImmediately)
         #endif
         {
-            while (!workDone()) {
-                TaskType task;
-                if (receiveTask(task)) {
-                    if (!isStorageFull()) {
-                        processTask(task);
+            try {
+                while (!workDone()) {
+                    TaskType task;
+                    if (receiveTask(task)) {
+                        if (!isStorageFull()) {
+                            processTask(task);
+                        }
+                        taskFinished(task);
                     }
-                    taskFinished(task);
+                    RcppThread::checkUserInterrupt();
                 }
+            }
+            catch (const std::exception& e) {
+                processError(e);
             }
             //cout << omp_get_thread_num() << "exit" << endl;
             condVar.notify_all();
         }
+
+        finalizeRun();
     }
 
     void setPositiveConditionChainsNeeded()
@@ -144,7 +155,6 @@ private:
     vector<FilterType*> filterIsFocusExtendable;
     vector<FilterType*> filterNotifyConditionStored;
 
-
     vector<ArgumentatorType*> argumentators;
     vector<ArgumentValues> result;
     bool positiveConditionChainsNeeded = false;
@@ -154,25 +164,46 @@ private:
     bool pnFocusChainsNeeded = false;
     bool nnFocusChainsNeeded = false;
 
+    bool endImmediately;
+    std::exception caughtException;
+
     int workingThreads;
     int allThreads;
     mutex sequenceMutex;
     mutex resultMutex;
     condition_variable condVar;
+    std::thread::id mainThreadId;
 
+    bool isMainThread() const
+    { return std::this_thread::get_id() == mainThreadId; }
 
     void initializeRun()
     {
         sequence.clear();
         sequence.add(initialTask);
         workingThreads = 0;
+        endImmediately = false;
+    }
+
+    void finalizeRun()
+    {
+        if (endImmediately)
+            throw caughtException;
     }
 
     bool workDone()
     {
         unique_lock lock(sequenceMutex);
         //cout << omp_get_thread_num() << "workDone" << endl;
-        return sequence.empty() && workingThreads <= 0;
+        return endImmediately || (sequence.empty() && workingThreads <= 0);
+    }
+
+    void processError(const std::exception& e)
+    {
+        RcppThread::Rcout << "Error: " << e.what() << endl;
+        unique_lock lock(sequenceMutex);
+        endImmediately = true;
+        caughtException = e;
     }
 
     bool receiveTask(TaskType& task)

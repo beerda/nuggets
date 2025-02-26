@@ -42,6 +42,7 @@ Imports:
     tidyselect
 LinkingTo: 
     Rcpp,
+    RcppThread,
     testthat
 SystemRequirements: C++17
 Suggests: 
