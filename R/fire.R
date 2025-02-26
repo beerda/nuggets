@@ -53,7 +53,7 @@ fire <- function(x,
     undefined <- setdiff(predicates, colnames(x))
     if (length(undefined) > 0) {
         details <- paste0("Column {.var ", undefined, "} can't be found.")
-        cli_abort(c("Can't find all column names in {.arg x} that correspond to predicates in {.arg condition}.",
+        cli_abort(c("Can't find some column names in {.arg x} that correspond to all predicates in {.arg condition}.",
                     ..error_details(details)))
     }
 

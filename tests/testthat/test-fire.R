@@ -93,7 +93,7 @@ test_that("fire errors", {
                  "`condition` must be a character vector")
 
     expect_error(fire(d, "{z}"),
-                 "Can't find all column names in `x` that correspond to predicates in `condition`.")
+                 "Can't find some column names in `x` that correspond to all predicates in `condition`.")
 
     expect_error(fire(d, "{a}", t_norm = "foo"),
                  "`t_norm` must be equal to one of")
