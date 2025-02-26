@@ -354,6 +354,13 @@ dig <- function(x,
     if (is.null(excluded)) {
         excluded <- list()
     } else {
+        excluded_predicates <- unique(unlist(excluded))
+        excluded_undefined <- setdiff(excluded_predicates, colnames(x))
+        if (length(excluded_undefined) > 0) {
+            details <- paste0("Column {.var ", excluded_undefined, "} can't be found.")
+            cli_abort(c("Can't find some column names in {.arg {error_context$arg_x}} that correspond to all predicates in {.arg {error_context$arg_excluded}}.",
+                        ..error_details(details)))
+        }
         excluded <- lapply(excluded,
                            fmatch,
                            colnames(x))
