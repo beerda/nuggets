@@ -17,6 +17,7 @@ dig_associations(
   min_confidence = 0,
   contingency_table = FALSE,
   measures = NULL,
+  tautology_limit = NULL,
   t_norm = "goguen",
   max_results = Inf,
   verbose = FALSE,
@@ -76,6 +77,8 @@ If \code{NULL}, no additional measures are computed. Possible values are \code{"
 \code{"conviction"}, \code{"added_value"}.
 See \url{https://mhahsler.github.io/arules/docs/measures}
 for a description of the measures.}
+
+\item{tautology_limit}{a numeric scalar (experimental feature)}
 
 \item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
 \code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}
