@@ -19,7 +19,7 @@
 #' @examples
 #' d <- data.frame(foo = 1:5, bar = 1:5, blah = 1:5)
 #' is_condition(list("foo"), d)
-#' is_condition(list(c("bar", "blah"), NULL, c("foo", "bzz")))
+#' is_condition(list(c("bar", "blah"), NULL, c("foo", "bzz")), d)
 #' @export
 is_condition <- function(x, data) {
     .must_be_list_of_characters(x, null_elements = TRUE)
