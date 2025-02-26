@@ -31,11 +31,13 @@
 ..must_be_list_of <- function(f, msg) {
     function(x,
              null = FALSE,
+             null_elements = FALSE,
              arg = caller_arg(x),
              call = caller_env()) {
         .must_be_list(x, null = null, arg = arg, call = call)
         if (!is.null(x)) {
-            test <- sapply(x, f)
+            f2 <- function(i) f(i) | (isTRUE(null_elements) && is.null(i))
+            test <- sapply(x, f2)
             if (!isTRUE(all(test))) {
                 types <- sapply(x, function(i) class(i)[1])
                 details <- paste0("Element ", seq_along(types), " is a {.cls ", types, "}.")
@@ -140,6 +142,8 @@
 .must_be_list <- ..must_be_type(is.list, "a list")
 .must_be_data_frame <- ..must_be_type(is.data.frame, "a data frame")
 
+.must_be_matrix_or_data_frame <- ..must_be_type(function(x) is.matrix(x) || is.data.frame(x),
+                                                "a matrix or a data frame")
 
 ..must_be_function <- ..must_be_type(is.function, "a function")
 
