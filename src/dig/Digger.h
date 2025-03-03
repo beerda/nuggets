@@ -21,9 +21,10 @@ public:
     using FilterType = Filter<TaskType>;
     using ArgumentatorType = Argumentator<TaskType>;
 
-    Digger(DataType& data, const Config& config)
+    Digger(DataType& data, const Config& config, const Function callback)
         : config(config),
           data(data),
+          callback(callback),
           initialTask(Iterator(data.getCondition()), // condition predicates to "soFar"
                       Iterator({}, data.getFoci())), // focus predicates to "available"
           sequence(),
@@ -73,7 +74,7 @@ public:
         initializeRun();
 
         #if defined(_OPENMP)
-            //#pragma omp parallel num_threads(allThreads) shared(data, initialTask, sequence, filters, argumentators, result, workingThreads, allThreads, sequenceMutex, resultMutex, condVar, endImmediately)
+            //#pragma omp parallel num_threads(allThreads) shared(data, initialTask, sequence, filters, argumentators, result, workingThreads, allThreads, sequenceMutex, callQueueMutex, condVar, endImmediately)
             #pragma omp parallel num_threads(allThreads) default(shared)
         #endif
         {
@@ -87,6 +88,7 @@ public:
                         taskFinished(task);
                     }
                     RcppThread::checkUserInterrupt();
+                    processAvailableCalls();
                 }
             }
             catch (const std::exception& e) {
@@ -96,6 +98,7 @@ public:
             condVar.notify_all();
         }
 
+        processAvailableCalls();
         finalizeRun();
     }
 
@@ -135,11 +138,12 @@ public:
     bool isNegativeFociChainsNeeded() const
     { return npFocusChainsNeeded || pnFocusChainsNeeded || nnFocusChainsNeeded; }
 
-    vector<ArgumentValues> getResult() const
+    Rcpp::List getResult() const
     { return result; }
 
 private:
     const Config& config;
+    const Function callback;
     DataType& data;
     TaskType initialTask;
     TaskSequence<TaskType> sequence;
@@ -156,7 +160,10 @@ private:
     vector<FilterType*> filterNotifyConditionStored;
 
     vector<ArgumentatorType*> argumentators;
-    vector<ArgumentValues> result;
+    queue<ArgumentValues> callQueue;
+    Rcpp::List result;
+    size_t nResult = 0;
+
     bool positiveConditionChainsNeeded = false;
     bool negativeConditionChainsNeeded = false;
     bool ppFocusChainsNeeded = false;
@@ -170,7 +177,7 @@ private:
     int workingThreads;
     int allThreads;
     mutex sequenceMutex;
-    mutex resultMutex;
+    mutex callQueueMutex;
     condition_variable condVar;
     std::thread::id mainThreadId;
 
@@ -216,16 +223,15 @@ private:
         }
 
         //cout << omp_get_thread_num() << "continue" << endl;
-        bool received = false;
         if (!sequence.empty()) {
             task = sequence.pop();
             //cout << "receiving: " + task.toString() << endl;
             workingThreads++;
-            received = true;
             //cout << "received task - working: " << workingThreads << " queue size: " << queue.size() << endl;
+            return true;
         }
 
-        return received;
+        return false;
     }
 
     void sendTask(const TaskType& task)
@@ -299,10 +305,52 @@ private:
         for (const ArgumentatorType* a : argumentators) {
             a->prepare(args, task);
         }
-        unique_lock lock(resultMutex);
+        unique_lock lock(callQueueMutex);
         //cout << omp_get_thread_num() << "store" << endl;
         if (!isStorageFull()) {
-            result.push_back(args);
+            callQueue.push(args);
+            nResult++;
+        }
+    }
+
+    bool receiveCall(ArgumentValues& args)
+    {
+        unique_lock lock(callQueueMutex);
+        if (!callQueue.empty()) {
+            args = callQueue.front();
+            callQueue.pop();
+            return true;
+        }
+
+        return false;
+    }
+
+    void processAvailableCalls()
+    {
+        if (isMainThread()) {
+            ArgumentValues args;
+            while (receiveCall(args)) {
+                List rArgs(args.size());
+                CharacterVector rArgNames(args.size());
+                for (size_t j = 0; j < args.size(); ++j) {
+                    ArgumentValue a = args[j];
+                    rArgNames[j] = a.getArgumentName();
+
+                    if (a.getType() == ArgumentType::ARG_LOGICAL) {
+                        rArgs[j] = a.asLogicalVector();
+                    }
+                    else if (a.getType() == ArgumentType::ARG_INTEGER) {
+                        rArgs[j] = a.asIntegerVector();
+                    }
+                    else if (a.getType() == ArgumentType::ARG_NUMERIC) {
+                        rArgs[j] = a.asNumericVector();
+                    } else {
+                        throw runtime_error("Unhandled ArgumentType");
+                    }
+                }
+                rArgs.names() = rArgNames;
+                result.push_back(callback(rArgs));
+            }
         }
     }
 
@@ -310,7 +358,7 @@ private:
         if (config.getMaxResults() < 0)
             return false;
 
-        return result.size() >= config.getMaxResults();
+        return nResult >= config.getMaxResults();
     }
 
     void updateConditionChain(TaskType& task) const

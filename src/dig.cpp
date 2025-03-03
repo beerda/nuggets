@@ -17,6 +17,7 @@ List dig_(List chains,
           CharacterVector namesVector,
           LogicalVector isCondition,
           LogicalVector isFocus,
+          Function callback,
           List confList)
 {
     LogStartEnd l("dig_");
@@ -25,15 +26,15 @@ List dig_(List chains,
 
     if (config.getTNorm() == TNorm::GOEDEL) {
         Executor<BCH, NCH<GOEDEL>> exec(config);
-        result = exec.execute(chains, namesVector, isCondition, isFocus);
+        result = exec.execute(chains, namesVector, isCondition, isFocus, callback);
     }
     else if (config.getTNorm() == TNorm::GOGUEN) {
         Executor<BCH, NCH<GOGUEN>> exec(config);
-        result = exec.execute(chains, namesVector, isCondition, isFocus);
+        result = exec.execute(chains, namesVector, isCondition, isFocus, callback);
     }
     else if (config.getTNorm() == TNorm::LUKASIEWICZ) {
         Executor<BCH, NCH<LUKASIEWICZ>> exec(config);
-        result = exec.execute(chains, namesVector, isCondition, isFocus);
+        result = exec.execute(chains, namesVector, isCondition, isFocus, callback);
     }
     else
         throw runtime_error("Unknown t-norm in C++ dig_()");
