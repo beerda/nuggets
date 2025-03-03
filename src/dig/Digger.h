@@ -1,7 +1,6 @@
 #pragma once
 
 //#include <omp.h>
-#include <thread>
 #include <mutex>
 #include <condition_variable>
 #include <RcppThread.h>
@@ -10,7 +9,7 @@
 #include "Config.h"
 #include "TaskSequence.h"
 #include "FilterManager.h"
-#include "Argumentator.h"
+#include "CallbackCaller.h"
 
 
 template <typename DATA>
@@ -24,24 +23,16 @@ public:
     Digger(DataType& data,
            const Config& config,
            const Function callback)
-        : config(config),
-          data(data),
-          callback(callback),
+        : data(data),
+          callbackCaller(config.getMaxResults(), callback),
           initialTask(Iterator(data.getCondition()), // condition predicates to "soFar"
                       Iterator({}, data.getFoci())), // focus predicates to "available"
           sequence(),
-          allThreads(config.getThreads()),
-          mainThreadId(std::this_thread::get_id())
+          allThreads(config.getThreads())
     { }
 
-    virtual ~Digger()
-    {
-        for (ArgumentatorType* a : argumentators)
-            delete a;
-    }
-
     void addArgumentator(ArgumentatorType* argumentator)
-    { argumentators.push_back(argumentator); }
+    { callbackCaller.addArgumentator(argumentator); }
 
     void addFilter(FilterType* filter)
     { filterManager.addFilter(filter); }
@@ -51,7 +42,7 @@ public:
         initializeRun();
 
         #if defined(_OPENMP)
-            //#pragma omp parallel num_threads(allThreads) shared(data, initialTask, sequence, filters, argumentators, result, workingThreads, allThreads, sequenceMutex, callQueueMutex, condVar, endImmediately)
+            //#pragma omp parallel num_threads(allThreads) shared(data, initialTask, sequence, filters, argumentators, result, workingThreads, allThreads, sequenceMutex, condVar, endImmediately)
             #pragma omp parallel num_threads(allThreads) default(shared)
         #endif
         {
@@ -59,12 +50,12 @@ public:
                 while (!workDone()) {
                     TaskType task;
                     if (receiveTask(task)) {
-                        if (!isStorageFull()) {
+                        if (!callbackCaller.isStorageFull()) {
                             processTask(task);
                         }
                         taskFinished(task);
                     }
-                    processAvailableCalls();
+                    callbackCaller.processAvailableCalls();
                 }
             }
             catch (const std::exception& e) {
@@ -74,7 +65,7 @@ public:
             condVar.notify_all();
         }
 
-        processAvailableCalls();
+        callbackCaller.processAvailableCalls();
         finalizeRun();
     }
 
@@ -115,20 +106,15 @@ public:
     { return npFocusChainsNeeded || pnFocusChainsNeeded || nnFocusChainsNeeded; }
 
     Rcpp::List getResult() const
-    { return result; }
+    { return callbackCaller.getResult(); }
 
 private:
-    const Config& config;
-    const Function callback;
     DataType& data;
     TaskType initialTask;
     TaskSequence<TaskType> sequence;
 
     FilterManager<TaskType> filterManager;
-    vector<ArgumentatorType*> argumentators;
-    queue<ArgumentValues> callQueue;
-    Rcpp::List result;
-    size_t nResult = 0;
+    CallbackCaller<TaskType> callbackCaller;
 
     bool positiveConditionChainsNeeded = false;
     bool negativeConditionChainsNeeded = false;
@@ -143,12 +129,7 @@ private:
     int workingThreads;
     int allThreads;
     mutex sequenceMutex;
-    mutex callQueueMutex;
     condition_variable condVar;
-    std::thread::id mainThreadId;
-
-    bool isMainThread() const
-    { return std::this_thread::get_id() == mainThreadId; }
 
     void initializeRun()
     {
@@ -237,7 +218,7 @@ private:
 
                     if (filterManager.isConditionStorable(task)) {
                         filterManager.notifyConditionStored(task);
-                        store(task);
+                        callbackCaller.enqueueCall(task);
                     }
                     if (filterManager.isConditionExtendable(task)) {
                         if (task.getConditionIterator().hasSoFar()) {
@@ -262,70 +243,6 @@ private:
         //cout << omp_get_thread_num() << "taskFinished" << endl;
         //cout << "finished: " + task.toString() << endl;
         workingThreads--;
-    }
-
-    void store(const TaskType& task)
-    {
-        //cout << "storing: " + task.toString() << endl;
-        ArgumentValues args;
-        for (const ArgumentatorType* a : argumentators) {
-            a->prepare(args, task);
-        }
-        unique_lock lock(callQueueMutex);
-        //cout << omp_get_thread_num() << "store" << endl;
-        if (!isStorageFull()) {
-            callQueue.push(args);
-            nResult++;
-        }
-    }
-
-    bool receiveCall(ArgumentValues& args)
-    {
-        unique_lock lock(callQueueMutex);
-        if (!callQueue.empty()) {
-            args = callQueue.front();
-            callQueue.pop();
-            return true;
-        }
-
-        return false;
-    }
-
-    void processAvailableCalls()
-    {
-        if (isMainThread()) {
-            ArgumentValues args;
-            while (receiveCall(args)) {
-                RcppThread::checkUserInterrupt();
-                List rArgs(args.size());
-                CharacterVector rArgNames(args.size());
-                for (size_t j = 0; j < args.size(); ++j) {
-                    ArgumentValue a = args[j];
-                    rArgNames[j] = a.getArgumentName();
-
-                    if (a.getType() == ArgumentType::ARG_LOGICAL) {
-                        rArgs[j] = a.asLogicalVector();
-                    }
-                    else if (a.getType() == ArgumentType::ARG_INTEGER) {
-                        rArgs[j] = a.asIntegerVector();
-                    }
-                    else if (a.getType() == ArgumentType::ARG_NUMERIC) {
-                        rArgs[j] = a.asNumericVector();
-                    } else {
-                        throw runtime_error("Unhandled ArgumentType");
-                    }
-                }
-                rArgs.names() = rArgNames;
-                result.push_back(callback(rArgs));
-            }
-        }
-    }
-
-    bool isStorageFull() {
-        if (config.getMaxResults() < 0)
-            return false;
-
-        return nResult >= config.getMaxResults();
     }
 
     void updateConditionChain(TaskType& task) const
