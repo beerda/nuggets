@@ -146,6 +146,7 @@ of truth degrees of the formula <code>i_1 AND i_2 AND ... AND i_n</code>, where
 <span>  min_confidence <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  contingency_table <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  measures <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tautology_limit <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  t_norm <span class="op">=</span> <span class="st">"goguen"</span>,</span>
 <span>  max_results <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -232,6 +233,10 @@ If <code>NULL</code>, no additional measures are computed. Possible values are <
 <code>"conviction"</code>, <code>"added_value"</code>.
 See <a href="https://mhahsler.github.io/arules/docs/measures" class="external-link">https://mhahsler.github.io/arules/docs/measures</a>
 for a description of the measures.</p></dd>
+
+
+<dt id="arg-tautology-limit">tautology_limit<a class="anchor" aria-label="anchor" href="#arg-tautology-limit"></a></dt>
+<dd><p>a numeric scalar (experimental feature)</p></dd>
 
 
 <dt id="arg-t-norm">t_norm<a class="anchor" aria-label="anchor" href="#arg-t-norm"></a></dt>
