@@ -40,10 +40,11 @@ public:
     List execute(const List& chainsList,
                  const CharacterVector& namesVec,
                  const LogicalVector& isConditionVec,
-                 const LogicalVector& isFocusVec)
+                 const LogicalVector& isFocusVec,
+                 const Function callback)
     {
         DataType data = createData(chainsList, namesVec, isConditionVec, isFocusVec);
-        Digger<DataType> digger(data, config);
+        Digger<DataType> digger(data, config, callback);
 
         if (config.hasConditionArgument()) {
             digger.addArgumentator(new ConditionArgumentator<TaskType>(data));
@@ -138,39 +139,7 @@ public:
             digger.run();
         }
 
-        {
-            LogStartEnd l("collecting arguments");
-            vector<ArgumentValues> diggerResult = digger.getResult();
-            Rcpp::List result(diggerResult.size());
-
-            if (config.isVerbose()) {
-                Rcout << "dig: collecting " << diggerResult.size() << " arguments" << endl;
-            }
-            for (size_t i = 0; i < diggerResult.size(); ++i) {
-                List item(diggerResult[i].size());
-                CharacterVector itemNames(diggerResult[i].size());
-                for (size_t j = 0; j < diggerResult[i].size(); ++j) {
-                    ArgumentValue a = diggerResult[i][j];
-                    itemNames[j] = a.getArgumentName();
-
-                    if (a.getType() == ArgumentType::ARG_LOGICAL) {
-                        item[j] = a.asLogicalVector();
-                    }
-                    else if (a.getType() == ArgumentType::ARG_INTEGER) {
-                        item[j] = a.asIntegerVector();
-                    }
-                    else if (a.getType() == ArgumentType::ARG_NUMERIC) {
-                        item[j] = a.asNumericVector();
-                    } else {
-                        throw runtime_error("Unhandled ArgumentType");
-                    }
-                }
-                item.names() = itemNames;
-                result[i] = item;
-            }
-
-            return result;
-        }
+        return digger.getResult();
     }
 
 private:

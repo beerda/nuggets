@@ -330,6 +330,10 @@ dig <- function(x,
         arguments <- ""
     }
 
+    fun <- function(l) {
+        do.call(f, l)
+    }
+
     .must_be_vector_or_factor(disjoint,
                               null = TRUE,
                               arg = error_context$arg_disjoint,
@@ -493,12 +497,10 @@ dig <- function(x,
                    verbose = verbose,
                    threads = threads)
 
-    res <- dig_(cols,
-                names(cols),
-                condition_cols$selected,
-                foci_cols$selected,
-                config)
-
-    .msg(verbose, "dig: executing callback function on the results")
-    lapply(res, do.call, what = f)
+    dig_(cols,
+         names(cols),
+         condition_cols$selected,
+         foci_cols$selected,
+         fun,
+         config)
 }
