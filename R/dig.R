@@ -470,6 +470,12 @@ dig <- function(x,
                         call = error_context$call)
     threads <- as.integer(threads)
 
+    if (!is.null(tautology_limit) && threads > 1) {
+        cli_abort(c("The {.arg {error_context$arg_tautology_limit}} argument is not supported in the parallel mode.",
+                    "i" = "Either set {.arg {error_context$arg_threads}} to 1 or {.arg {error_context$arg_tautology_limit}} to NULL."),
+                  call = error_context$call)
+    }
+
     config <- list(nrow = nrow(x),
                    arguments = arguments,
                    disjoint = disjoint,
