@@ -9,7 +9,7 @@
 #include "Data.h"
 #include "Config.h"
 #include "TaskSequence.h"
-#include "Filter.h"
+#include "FilterManager.h"
 #include "Argumentator.h"
 
 
@@ -21,7 +21,9 @@ public:
     using FilterType = Filter<TaskType>;
     using ArgumentatorType = Argumentator<TaskType>;
 
-    Digger(DataType& data, const Config& config, const Function callback)
+    Digger(DataType& data,
+           const Config& config,
+           const Function callback)
         : config(config),
           data(data),
           callback(callback),
@@ -34,40 +36,15 @@ public:
 
     virtual ~Digger()
     {
-        for (FilterType* f : filters)
-            delete f;
-
         for (ArgumentatorType* a : argumentators)
             delete a;
     }
 
-    void addFilter(FilterType* filter)
-    {
-        filters.push_back(filter);
-        int cb = filter->getCallbacks();
-
-        if (cb & FilterType::CALLBACK_IS_CONDITION_REDUNDANT)
-            filterIsConditionRedundant.push_back(filter);
-        if (cb & FilterType::CALLBACK_IS_FOCUS_REDUNDANT)
-            filterIsFocusRedundant.push_back(filter);
-        if (cb & FilterType::CALLBACK_IS_CONDITION_PRUNABLE)
-            filterIsConditionPrunable.push_back(filter);
-        if (cb & FilterType::CALLBACK_IS_FOCUS_PRUNABLE)
-            filterIsFocusPrunable.push_back(filter);
-        if (cb & FilterType::CALLBACK_IS_CONDITION_STORABLE)
-            filterIsConditionStorable.push_back(filter);
-        if (cb & FilterType::CALLBACK_IS_FOCUS_STORABLE)
-            filterIsFocusStorable.push_back(filter);
-        if (cb & FilterType::CALLBACK_IS_CONDITION_EXTENDABLE)
-            filterIsConditionExtendable.push_back(filter);
-        if (cb & FilterType::CALLBACK_IS_FOCUS_EXTENDABLE)
-            filterIsFocusExtendable.push_back(filter);
-        if (cb & FilterType::CALLBACK_NOTIFY_CONDITION_STORED)
-            filterNotifyConditionStored.push_back(filter);
-    }
-
     void addArgumentator(ArgumentatorType* argumentator)
     { argumentators.push_back(argumentator); }
+
+    void addFilter(FilterType* filter)
+    { filterManager.addFilter(filter); }
 
     void run()
     {
@@ -87,7 +64,6 @@ public:
                         }
                         taskFinished(task);
                     }
-                    RcppThread::checkUserInterrupt();
                     processAvailableCalls();
                 }
             }
@@ -148,17 +124,7 @@ private:
     TaskType initialTask;
     TaskSequence<TaskType> sequence;
 
-    vector<FilterType*> filters;
-    vector<FilterType*> filterIsConditionRedundant;
-    vector<FilterType*> filterIsFocusRedundant;
-    vector<FilterType*> filterIsConditionPrunable;
-    vector<FilterType*> filterIsFocusPrunable;
-    vector<FilterType*> filterIsConditionStorable;
-    vector<FilterType*> filterIsFocusStorable;
-    vector<FilterType*> filterIsConditionExtendable;
-    vector<FilterType*> filterIsFocusExtendable;
-    vector<FilterType*> filterNotifyConditionStored;
-
+    FilterManager<TaskType> filterManager;
     vector<ArgumentatorType*> argumentators;
     queue<ArgumentValues> callQueue;
     Rcpp::List result;
@@ -248,20 +214,20 @@ private:
     {
         //cout << "processing: " + task.toString() << endl;
         do {
-            if (!isConditionRedundant(task)) {
+            if (!filterManager.isConditionRedundant(task)) {
                 updateConditionChain(task);
-                if (!isConditionPrunable(task)) {
+                if (!filterManager.isConditionPrunable(task)) {
 
                     task.resetFoci();
                     Iterator& iter = task.getMutableFocusIterator();
                     while (iter.hasPredicate()) {
-                        if (!isFocusRedundant(task)) {
+                        if (!filterManager.isFocusRedundant(task)) {
                             computeFocusChain(task);
-                            if (!isFocusPrunable(task)) {
-                                if (isFocusStorable(task)) {
+                            if (!filterManager.isFocusPrunable(task)) {
+                                if (filterManager.isFocusStorable(task)) {
                                     iter.storeCurrent();
                                 }
-                                if (isFocusExtendable(task)) {
+                                if (filterManager.isFocusExtendable(task)) {
                                     iter.putCurrentToSoFar();
                                 }
                             }
@@ -269,11 +235,11 @@ private:
                         iter.next();
                     }
 
-                    if (isConditionStorable(task)) {
-                        notifyConditionStored(task);
+                    if (filterManager.isConditionStorable(task)) {
+                        filterManager.notifyConditionStored(task);
                         store(task);
                     }
-                    if (isConditionExtendable(task)) {
+                    if (filterManager.isConditionExtendable(task)) {
                         if (task.getConditionIterator().hasSoFar()) {
                             TaskType child = task.createChild();
                             sendTask(child);
@@ -330,6 +296,7 @@ private:
         if (isMainThread()) {
             ArgumentValues args;
             while (receiveCall(args)) {
+                RcppThread::checkUserInterrupt();
                 List rArgs(args.size());
                 CharacterVector rArgNames(args.size());
                 for (size_t j = 0; j < args.size(); ++j) {
@@ -387,83 +354,4 @@ private:
         if (nnFocusChainsNeeded)
             task.computeNnFocusChain(data);
     }
-
-    bool isConditionRedundant(TaskType& task) const
-    {
-        for (const FilterType* e : filterIsConditionRedundant)
-            if (e->isConditionRedundant(task))
-                return true;
-
-        return false;
-    }
-
-    bool isFocusRedundant(TaskType& task) const
-    {
-        for (const FilterType* e : filterIsFocusRedundant)
-            if (e->isFocusRedundant(task))
-                return true;
-
-        return false;
-    }
-
-    bool isConditionPrunable(TaskType& task) const
-    {
-        for (const FilterType* e : filterIsConditionPrunable)
-            if (e->isConditionPrunable(task))
-                return true;
-
-        return false;
-    }
-
-    bool isFocusPrunable(TaskType& task) const
-    {
-        for (const FilterType* e : filterIsFocusPrunable)
-            if (e->isFocusPrunable(task))
-                return true;
-
-        return false;
-    }
-
-    bool isConditionStorable(TaskType& task) const
-    {
-        for (const FilterType* e : filterIsConditionStorable)
-            if (!e->isConditionStorable(task))
-                return false;
-
-        return true;
-    }
-
-    bool isFocusStorable(TaskType& task) const
-    {
-        for (const FilterType* e : filterIsFocusStorable)
-            if (!e->isFocusStorable(task))
-                return false;
-
-        return true;
-    }
-
-    bool isConditionExtendable(TaskType& task) const
-    {
-        for (const FilterType* e : filterIsConditionExtendable)
-            if (!e->isConditionExtendable(task))
-                return false;
-
-        return true;
-    }
-
-    bool isFocusExtendable(TaskType& task) const
-    {
-        for (const FilterType* e : filterIsFocusExtendable)
-            if (!e->isFocusExtendable(task))
-                return false;
-
-        return true;
-    }
-
-    void notifyConditionStored(TaskType& task) const
-    {
-        for (FilterType* e : filterNotifyConditionStored)
-            e->notifyConditionStored(task);
-    }
-
 };
