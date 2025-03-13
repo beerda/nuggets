@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   nuggets: nuggets.html
-last_built: 2025-03-13T07:19Z
+last_built: 2025-03-13T07:23Z
 urls:
   reference: https://beerda.github.io/nuggets/reference
   article: https://beerda.github.io/nuggets/articles
