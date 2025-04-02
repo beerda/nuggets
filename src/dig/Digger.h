@@ -37,38 +37,6 @@ public:
     void addFilter(FilterType* filter)
     { filterManager.addFilter(filter); }
 
-    void run()
-    {
-        initializeRun();
-
-        #if defined(_OPENMP)
-            //#pragma omp parallel num_threads(allThreads) shared(data, initialTask, sequence, filters, argumentators, result, workingThreads, allThreads, sequenceMutex, condVar, endImmediately)
-            #pragma omp parallel num_threads(allThreads) default(shared)
-        #endif
-        {
-            try {
-                while (!workDone()) {
-                    TaskType task;
-                    if (receiveTask(task)) {
-                        if (!callbackCaller.isStorageFull()) {
-                            processTask(task);
-                        }
-                        taskFinished(task);
-                    }
-                    callbackCaller.processAvailableCalls();
-                }
-            }
-            catch (const std::exception& e) {
-                processError(e);
-            }
-            //cout << omp_get_thread_num() << "exit" << endl;
-            condVar.notify_all();
-        }
-
-        callbackCaller.processAvailableCalls();
-        finalizeRun();
-    }
-
     void setPositiveConditionChainsNeeded()
     { positiveConditionChainsNeeded = true; }
 
@@ -107,6 +75,41 @@ public:
 
     Rcpp::List getResult() const
     { return callbackCaller.getResult(); }
+
+    void run()
+    {
+        initializeRun();
+
+        #if defined(_OPENMP)
+            //#pragma omp parallel num_threads(allThreads) shared(data, initialTask, sequence, filters, argumentators, result, workingThreads, allThreads, sequenceMutex, condVar, endImmediately)
+            #pragma omp parallel num_threads(allThreads) default(shared)
+        #endif
+        {
+            try {
+                TaskSequence<TaskType> localSequence;
+                while (!workDone()) {
+                    if (receiveTasks(localSequence)) {
+                        while (!localSequence.empty()) {
+                            TaskType task = localSequence.pop();
+                            if (!callbackCaller.isStorageFull()) {
+                                processTask(task);
+                            }
+                        }
+                        tasksFinished();
+                    }
+                    callbackCaller.processAvailableCalls();
+                }
+            }
+            catch (const std::exception& e) {
+                processError(e);
+            }
+            //cout << omp_get_thread_num() << "exit" << endl;
+            condVar.notify_all();
+        }
+
+        callbackCaller.processAvailableCalls();
+        finalizeRun();
+    }
 
 private:
     DataType& data;
@@ -160,7 +163,7 @@ private:
         caughtException = e;
     }
 
-    bool receiveTask(TaskType& task)
+    bool receiveTasks(TaskSequence<TaskType>& localSequence)
     {
         unique_lock lock(sequenceMutex);
         //cout << omp_get_thread_num() << "receiveTask" << endl;
@@ -171,10 +174,13 @@ private:
 
         //cout << omp_get_thread_num() << "continue" << endl;
         if (!sequence.empty()) {
-            task = sequence.pop();
-            //cout << "receiving: " + task.toString() << endl;
+            size_t receiveN = max(1.0, ceil(1.0 * sequence.size() / allThreads));
+            //cout << "receiveN: " << receiveN << endl;
+            while (receiveN > 0 && !sequence.empty()) {
+                localSequence.add(sequence.pop());
+                receiveN--;
+            }
             workingThreads++;
-            //cout << "received task - working: " << workingThreads << " queue size: " << queue.size() << endl;
             return true;
         }
 
@@ -237,7 +243,7 @@ private:
         while (task.getConditionIterator().hasPredicate());
     }
 
-    void taskFinished(TaskType& task)
+    void tasksFinished()
     {
         unique_lock lock(sequenceMutex);
         //cout << omp_get_thread_num() << "taskFinished" << endl;
