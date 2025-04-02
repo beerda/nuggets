@@ -116,11 +116,7 @@ public:
             int focus = focusIterator.getCurrentPredicate();
             ppFocusChains[focus] = data.getPositiveChain(focus); // always either numeric or bitwise+numeric
             if (conditionIterator.getLength() > 0) {
-                if (ppFocusChains[focus].isBitwise() != positiveChain.isBitwise() && ppFocusChains[focus].isNumeric() != positiveChain.isNumeric()) {
-                    if (positiveChain.isBitwise()) {
-                        positiveChain.toNumeric();
-                    }
-                }
+                positiveChain.toNumericIfOtherIsNumericOnly(ppFocusChains[focus]);
                 ppFocusChains[focus].conjunctWith(positiveChain);
             }
         }
@@ -132,11 +128,7 @@ public:
             int focus = focusIterator.getCurrentPredicate();
             pnFocusChains[focus] = data.getNegativeChain(focus); // always either numeric or bitwise+numeric
             if (conditionIterator.getLength() > 0) {
-                if (pnFocusChains[focus].isBitwise() != positiveChain.isBitwise() && pnFocusChains[focus].isNumeric() != positiveChain.isNumeric()) {
-                    if (positiveChain.isBitwise()) {
-                        positiveChain.toNumeric();
-                    }
-                }
+                positiveChain.toNumericIfOtherIsNumericOnly(pnFocusChains[focus]);
                 pnFocusChains[focus].conjunctWith(positiveChain);
             }
         }
@@ -148,11 +140,7 @@ public:
             int focus = focusIterator.getCurrentPredicate();
             npFocusChains[focus] = data.getPositiveChain(focus); // always either numeric or bitwise+numeric
             if (conditionIterator.getLength() > 0) {
-                if (npFocusChains[focus].isBitwise() != negativeChain.isBitwise() && npFocusChains[focus].isNumeric() != negativeChain.isNumeric()) {
-                    if (negativeChain.isBitwise()) {
-                        negativeChain.toNumeric();
-                    }
-                }
+                negativeChain.toNumericIfOtherIsNumericOnly(npFocusChains[focus]);
                 npFocusChains[focus].conjunctWith(negativeChain);
             }
         }
@@ -164,11 +152,7 @@ public:
             int focus = focusIterator.getCurrentPredicate();
             nnFocusChains[focus] = data.getNegativeChain(focus); // always either numeric or bitwise+numeric
             if (conditionIterator.getLength() > 0) {
-                if (nnFocusChains[focus].isBitwise() != negativeChain.isBitwise() && nnFocusChains[focus].isNumeric() != negativeChain.isNumeric()) {
-                    if (negativeChain.isBitwise()) {
-                        negativeChain.toNumeric();
-                    }
-                }
+                negativeChain.toNumericIfOtherIsNumericOnly(nnFocusChains[focus]);
                 nnFocusChains[focus].conjunctWith(negativeChain);
             }
         }
