@@ -14,7 +14,7 @@ dig(
   min_length = 0,
   max_length = Inf,
   min_support = 0,
-  min_focus_support = min_support,
+  min_focus_support = 0,
   min_conditional_focus_support = 0,
   max_support = 1,
   filter_empty_foci = FALSE,
