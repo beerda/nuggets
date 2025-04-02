@@ -29,6 +29,9 @@ public:
 
     void toNumeric()
     {
+        if (isNumeric())
+            return;
+
         if (isBitwise()) {
             numData.clear();
             numData.reserve(size());
