@@ -171,7 +171,6 @@ dig_associations <- function(x,
 
     basic_callback <- function(condition, sum, pp) {
         conf <- pp / sum
-        conf <- conf
         supp <- pp / n
         ante <- format_condition(names(condition))
         cons <- unlist(lapply(names(conf), format_condition))
