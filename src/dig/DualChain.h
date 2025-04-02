@@ -41,6 +41,12 @@ public:
         }
     }
 
+    void toNumericIfOtherIsNumericOnly(const DualChain<BITCHAIN, NUMCHAIN>& other)
+    {
+        if (other.isNumeric() && !other.isBitwise())
+            toNumeric();
+    }
+
     void negate()
     {
         if (isBitwise()) {
