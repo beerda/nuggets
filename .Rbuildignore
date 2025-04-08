@@ -7,6 +7,7 @@
 ^index\.md$
 ^\.github$
 ^misc$
+^performance$
 ^RELEASE_HOWTO\.md$
 ^ERROR_CONTEXT_HOWTO\.md$
 ^IDEAS\.md$
