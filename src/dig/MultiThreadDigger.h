@@ -5,78 +5,27 @@
 #include <condition_variable>
 #include <RcppThread.h>
 
-#include "Data.h"
-#include "Config.h"
 #include "TaskSequence.h"
-#include "FilterManager.h"
-#include "CallbackCaller.h"
+#include "AbstractDigger.h"
 
 
 template <typename DATA>
-class Digger {
+class MultiThreadDigger : public AbstractDigger<DATA> {
 public:
     using DataType = DATA;
     using TaskType = Task<DATA>;
     using FilterType = Filter<TaskType>;
     using ArgumentatorType = Argumentator<TaskType>;
 
-    Digger(DataType& data,
-           const Config& config,
-           const Function callback)
-        : data(data),
-          callbackCaller(config.getMaxResults(), callback),
-          initialTask(Iterator(data.getCondition()), // condition predicates to "soFar"
-                      Iterator({}, data.getFoci())), // focus predicates to "available"
+    MultiThreadDigger(DataType& data,
+                      const Config& config,
+                      const Function callback)
+        : AbstractDigger<DATA>(data, config, callback),
           sequence(),
           allThreads(config.getThreads())
     { }
 
-    void addArgumentator(ArgumentatorType* argumentator)
-    { callbackCaller.addArgumentator(argumentator); }
-
-    void addFilter(FilterType* filter)
-    { filterManager.addFilter(filter); }
-
-    void setPositiveConditionChainsNeeded()
-    { positiveConditionChainsNeeded = true; }
-
-    void setNegativeConditionChainsNeeded()
-    {
-        setPositiveConditionChainsNeeded(); // cannot compute negative condition chains without positive condition chains
-        negativeConditionChainsNeeded = true;
-    }
-
-    void setPpFocusChainsNeeded()
-    {
-        setPositiveConditionChainsNeeded(); // cannot compute focus chains without condition chains
-        ppFocusChainsNeeded = true;
-    }
-
-    void setNpFocusChainsNeeded()
-    {
-        setNegativeConditionChainsNeeded();
-        npFocusChainsNeeded = true;
-    }
-
-    void setPnFocusChainsNeeded()
-    {
-        setPositiveConditionChainsNeeded();
-        pnFocusChainsNeeded = true;
-    }
-
-    void setNnFocusChainsNeeded()
-    {
-        setNegativeConditionChainsNeeded();
-        nnFocusChainsNeeded = true;
-    }
-
-    bool isNegativeFociChainsNeeded() const
-    { return npFocusChainsNeeded || pnFocusChainsNeeded || nnFocusChainsNeeded; }
-
-    Rcpp::List getResult() const
-    { return callbackCaller.getResult(); }
-
-    void run()
+    virtual void run()
     {
         initializeRun();
 
@@ -91,13 +40,13 @@ public:
                     if (receiveTasks(localSequence)) {
                         while (!localSequence.empty()) {
                             TaskType task = localSequence.pop();
-                            if (!callbackCaller.isStorageFull()) {
+                            if (!this->callbackCaller.isStorageFull()) {
                                 processTask(task);
                             }
                         }
                         tasksFinished();
                     }
-                    callbackCaller.processAvailableCalls();
+                    this->callbackCaller.processAvailableCalls();
                 }
             }
             catch (const std::exception& e) {
@@ -107,28 +56,14 @@ public:
             condVar.notify_all();
         }
 
-        callbackCaller.processAvailableCalls();
+        this->callbackCaller.processAvailableCalls();
         finalizeRun();
     }
 
 private:
-    DataType& data;
-    TaskType initialTask;
     TaskSequence<TaskType> sequence;
-
-    FilterManager<TaskType> filterManager;
-    CallbackCaller<TaskType> callbackCaller;
-
-    bool positiveConditionChainsNeeded = false;
-    bool negativeConditionChainsNeeded = false;
-    bool ppFocusChainsNeeded = false;
-    bool npFocusChainsNeeded = false;
-    bool pnFocusChainsNeeded = false;
-    bool nnFocusChainsNeeded = false;
-
     bool endImmediately;
     std::exception caughtException;
-
     int workingThreads;
     int allThreads;
     mutex sequenceMutex;
@@ -137,7 +72,7 @@ private:
     void initializeRun()
     {
         sequence.clear();
-        sequence.add(initialTask);
+        sequence.add(this->initialTask);
         workingThreads = 0;
         endImmediately = false;
     }
@@ -201,20 +136,20 @@ private:
     {
         //cout << "processing: " + task.toString() << endl;
         do {
-            if (!filterManager.isConditionRedundant(task)) {
-                updateConditionChain(task);
-                if (!filterManager.isConditionPrunable(task)) {
+            if (!this->filterManager.isConditionRedundant(task)) {
+                this->updateConditionChain(task);
+                if (!this->filterManager.isConditionPrunable(task)) {
 
                     task.resetFoci();
                     Iterator& iter = task.getMutableFocusIterator();
                     while (iter.hasPredicate()) {
-                        if (!filterManager.isFocusRedundant(task)) {
-                            computeFocusChain(task);
-                            if (!filterManager.isFocusPrunable(task)) {
-                                if (filterManager.isFocusStorable(task)) {
+                        if (!this->filterManager.isFocusRedundant(task)) {
+                            this->computeFocusChain(task);
+                            if (!this->filterManager.isFocusPrunable(task)) {
+                                if (this->filterManager.isFocusStorable(task)) {
                                     iter.storeCurrent();
                                 }
-                                if (filterManager.isFocusExtendable(task)) {
+                                if (this->filterManager.isFocusExtendable(task)) {
                                     iter.putCurrentToSoFar();
                                 }
                             }
@@ -222,11 +157,11 @@ private:
                         iter.next();
                     }
 
-                    if (filterManager.isConditionStorable(task)) {
-                        filterManager.notifyConditionStored(task);
-                        callbackCaller.enqueueCall(task);
+                    if (this->filterManager.isConditionStorable(task)) {
+                        this->filterManager.notifyConditionStored(task);
+                        this->callbackCaller.enqueueCall(task);
                     }
-                    if (filterManager.isConditionExtendable(task)) {
+                    if (this->filterManager.isConditionExtendable(task)) {
                         if (task.getConditionIterator().hasSoFar()) {
                             TaskType child = task.createChild();
                             sendTask(child);
@@ -249,32 +184,5 @@ private:
         //cout << omp_get_thread_num() << "taskFinished" << endl;
         //cout << "finished: " + task.toString() << endl;
         workingThreads--;
-    }
-
-    void updateConditionChain(TaskType& task) const
-    {
-        if (positiveConditionChainsNeeded) {
-            task.updatePositiveChain(data);
-
-            if (negativeConditionChainsNeeded) {
-                task.updateNegativeChain(data);
-            }
-        }
-
-    }
-
-    void computeFocusChain(TaskType& task) const
-    {
-        if (ppFocusChainsNeeded)
-            task.computePpFocusChain(data);
-
-        if (npFocusChainsNeeded)
-            task.computeNpFocusChain(data);
-
-        if (pnFocusChainsNeeded)
-            task.computePnFocusChain(data);
-
-        if (nnFocusChainsNeeded)
-            task.computeNnFocusChain(data);
     }
 };

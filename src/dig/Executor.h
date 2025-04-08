@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../common.h"
-#include "dig/Digger.h"
+#include "dig/MultiThreadDigger.h"
 #include "dig/Config.h"
 #include "dig/Data.h"
 #include "dig/DataSorter.h"
@@ -44,7 +44,7 @@ public:
                  const Function callback)
     {
         DataType data = createData(chainsList, namesVec, isConditionVec, isFocusVec);
-        Digger<DataType> digger(data, config, callback);
+        MultiThreadDigger<DataType> digger(data, config, callback);
 
         if (config.hasConditionArgument()) {
             digger.addArgumentator(new ConditionArgumentator<TaskType>(data));
