@@ -1,14 +1,12 @@
 #include "dig/Executor.h"
 #include "dig/BitChain.h"
-#include "dig/BitwiseFuzzyChain.h"
 #include "dig/SimdVectorNumChain.h"
+//#include "dig/BitwiseFuzzyChain.h"
+//#include "dig/VectorNumChain.h"
 
 #define BCH BitChain
-//#define BCH PackedBitChain
-//#define BCH SparseBitChain
-
-//define NCH VectorNumChain
 #define NCH SimdVectorNumChain
+//define NCH VectorNumChain
 //define NCH BitwiseFuzzyChain8
 
 // [[Rcpp::plugins(openmp)]]

@@ -18,13 +18,46 @@ class VectorNumChain : public AbstractVectorNumChain {
 public:
     friend struct VNChHelper<TNORM>;
 
+    /**
+     * Default constructor.
+     */
     VectorNumChain()
         : AbstractVectorNumChain()
     { }
 
+    /**
+     * Constructor with a specified size.
+     */
+    VectorNumChain(size_t n)
+        : AbstractVectorNumChain(n)
+    { }
+
+    /**
+     * Constructor with specified data from Rcpp.
+     */
     VectorNumChain(const NumericVector& vals)
         : AbstractVectorNumChain(vals)
     { }
+
+    /**
+     * Copy constructor.
+     */
+    VectorNumChain(const VectorNumChain& other) = default;
+    VectorNumChain& operator=(const VectorNumChain& other) = default;
+    VectorNumChain(VectorNumChain&& other) = default;
+    VectorNumChain& operator=(VectorNumChain&& other) = default;
+
+    /**
+     * Comparison (equality) operator.
+     */
+    bool operator == (const VectorNumChain& other) const
+    { return AbstractVectorNumChain::operator==(other); }
+
+    /**
+     * Comparison (inequality) operator.
+     */
+    bool operator != (const VectorNumChain& other) const
+    { return !(*this == other); }
 
     void negate()
     {
@@ -34,12 +67,6 @@ public:
 
     void conjunctWith(const VectorNumChain<TNORM>& other)
     { VNChHelper<TNORM>::conjunctWith(*this, other); }
-
-    bool operator == (const VectorNumChain& other) const
-    { return values == other.values; }
-
-    bool operator != (const VectorNumChain& other) const
-    { return !(*this == other); }
 };
 
 

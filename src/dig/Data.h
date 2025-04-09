@@ -8,9 +8,25 @@ class Data {
 public:
     using DualChainType = DualChain<BITCHAIN, NUMCHAIN>;
 
+    /**
+     * Default constructor.
+     */
     Data(size_t rows)
-        : rows(rows)
+        : rows(rows),
+          positiveChains(),
+          negativeChains(),
+          names(),
+          condition(),
+          foci()
     { }
+
+    // Disable copy
+    Data(const Data& other) = delete;
+    Data& operator=(const Data& other) = delete;
+
+    // Allow move
+    Data(Data&& other) = default;
+    Data& operator=(Data&& other) = default;
 
     void reserve(size_t size)
     {

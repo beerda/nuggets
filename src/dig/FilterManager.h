@@ -8,9 +8,33 @@ class FilterManager {
 public:
     using FilterType = Filter<TaskType>;
 
+    /**
+     * Default constructor.
+     */
     FilterManager()
+        : filters(),
+          filterIsConditionRedundant(),
+          filterIsFocusRedundant(),
+          filterIsConditionPrunable(),
+          filterIsFocusPrunable(),
+          filterIsConditionStorable(),
+          filterIsFocusStorable(),
+          filterIsConditionExtendable(),
+          filterIsFocusExtendable(),
+          filterNotifyConditionStored()
     { }
 
+    // Disable copy
+    FilterManager(const FilterManager&) = delete;
+    FilterManager& operator=(const FilterManager&) = delete;
+
+    // Allow move
+    FilterManager(FilterManager&& other) = default;
+    FilterManager& operator=(FilterManager&& other) = default;
+
+    /**
+     * Destructor.
+     */
     virtual ~FilterManager()
     {
         for (FilterType* filter : filters) {

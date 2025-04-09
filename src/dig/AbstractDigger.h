@@ -23,6 +23,13 @@ public:
                       Iterator({}, data.getFoci()))  // focus predicates to "available"
     { }
 
+    // Disable copy
+    AbstractDigger(const AbstractDigger&) = delete;
+    AbstractDigger& operator=(const AbstractDigger&) = delete;
+
+    // Allow move
+    AbstractDigger(AbstractDigger&&) = default;
+    AbstractDigger& operator=(AbstractDigger&&) = default;
     void addArgumentator(ArgumentatorType* argumentator)
     { callbackCaller.addArgumentator(argumentator); }
 

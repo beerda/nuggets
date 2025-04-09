@@ -6,17 +6,103 @@
 template <typename BITCHAIN, typename NUMCHAIN>
 class DualChain {
 public:
+    /**
+     * Default constructor.
+     */
     DualChain()
-        : null(true)
+        : null(true),
+          bitData(),
+          numData()
     { }
 
+    /**
+     * Constructor with a specified size.
+     */
+    DualChain(size_t n)
+        : null(false),
+          bitData(n),
+          numData(n)
+    { }
+
+    /**
+     * Constructor with specified numeric data from Rcpp.
+     */
     DualChain(const NumericVector& values)
-        : null(false), numData(values)
+        : null(false),
+          bitData(),
+          numData(values)
     { }
 
+    /**
+     * Constructor with specified bitwise data from Rcpp.
+     */
     DualChain(const LogicalVector& values)
-        : null(false), bitData(values)
+        : null(false),
+          bitData(values),
+          numData()
     { }
+
+    /**
+     * Copy constructor.
+     */
+    DualChain(const DualChain& other)
+        : null(other.null),
+          bitData(other.bitData),
+          numData(other.numData)
+    { }
+
+    /**
+     * Move constructor.
+     */
+    DualChain(DualChain&& other) noexcept
+        : null(other.null),
+          bitData(std::move(other.bitData)),
+          numData(std::move(other.numData))
+    { }
+
+    /**
+     * Copy assignment operator.
+     */
+    DualChain& operator=(const DualChain& other)
+    {
+        if (this != &other) {
+            null = other.null;
+            bitData = other.bitData;
+            numData = other.numData;
+        }
+        return *this;
+    }
+
+    /**
+     * Move assignment operator.
+     */
+    DualChain& operator=(DualChain&& other) noexcept
+    {
+        if (this != &other) {
+            null = other.null;
+            bitData = std::move(other.bitData);
+            numData = std::move(other.numData);
+        }
+        return *this;
+    }
+
+    /**
+     * Comparison (equality) operator.
+     */
+    bool operator == (const DualChain& other) const
+    { return (null == other.null) && (numData == other.numData) && (bitData == other.bitData); }
+
+    /**
+     * Comparison (inequality) operator.
+     */
+    bool operator != (const DualChain& other) const
+    { return !(*this == other); }
+
+    bool empty() const
+    { return null || (numData.empty() && bitData.empty()); }
+
+    bool isNull() const
+    { return null; }
 
     size_t size() const
     { return isBitwise() ? bitData.size() : numData.size(); }
@@ -96,12 +182,6 @@ public:
             return NAN;
     }
 
-    bool empty() const
-    { return numData.empty() && bitData.empty(); }
-
-    bool isNull() const
-    { return null; }
-
     void print() const
     {
         printf("\n");
@@ -117,14 +197,8 @@ public:
         printf("\n");
     }
 
-    bool operator == (const DualChain& other) const
-    { return numData == other.numData && bitData == other.bitData; }
-
-    bool operator != (const DualChain& other) const
-    { return !(*this == other); }
-
 private:
-    bool null = true;
+    bool null;
     BITCHAIN bitData;
     NUMCHAIN numData;
 };

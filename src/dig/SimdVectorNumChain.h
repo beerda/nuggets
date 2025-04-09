@@ -6,11 +6,9 @@
 
 
 // Forward declaration
-template <TNorm TNORM>
-class SimdVectorNumChain;
+template <TNorm TNORM> class SimdVectorNumChain;
+template <TNorm TNORM> struct SVNChHelper;
 
-template <TNorm TNORM>
-struct SVNChHelper;
 
 /**
 * Implementation of chain of numbers based on a vector with operations
@@ -22,20 +20,50 @@ public:
     using batchType = xsimd::batch<float>;
     friend struct SVNChHelper<TNORM>;
 
+    /**
+     * Default constructor.
+     */
     SimdVectorNumChain()
         : AbstractVectorNumChain()
     { }
 
+    /**
+     * Constructor with a specified size.
+     */
+    SimdVectorNumChain(size_t n)
+        : AbstractVectorNumChain(n)
+    { }
+
+    /**
+     * Constructor with specified data from Rcpp.
+     */
     SimdVectorNumChain(const NumericVector& vals)
         : AbstractVectorNumChain(vals)
     { }
 
+    SimdVectorNumChain(const SimdVectorNumChain& other) = default;
+    SimdVectorNumChain& operator=(const SimdVectorNumChain& other) = default;
+    SimdVectorNumChain(SimdVectorNumChain&& other) = default;
+    SimdVectorNumChain& operator=(SimdVectorNumChain&& other) = default;
+
+    /**
+     * Comparison (equality) operator.
+     */
+    bool operator == (const SimdVectorNumChain& other) const
+    {  return AbstractVectorNumChain::operator==(other); }
+
+    /**
+     * Comparison (inequality) operator.
+     */
+    bool operator != (const SimdVectorNumChain& other) const
+    { return !(*this == other); }
+
     void negate()
     {
         cachedSum = 0;
-        size_t simdSize = values.size() - values.size() % batchSize;
+        size_t simdSize = values.size() - values.size() % batchType::size;
 
-        for (size_t i = 0; i < simdSize; i += batchSize) {
+        for (size_t i = 0; i < simdSize; i += batchType::size) {
             batchType a = batchType::load_unaligned(&values[i]);
             batchType res = 1 - a;
             res.store_unaligned(&values[i]);
@@ -51,15 +79,7 @@ public:
     void conjunctWith(const SimdVectorNumChain<TNORM>& other)
     { SVNChHelper<TNORM>::conjunctWith(*this, other); }
 
-    bool operator == (const SimdVectorNumChain& other) const
-    { return values == other.values; }
-
-    bool operator != (const SimdVectorNumChain& other) const
-    { return !(*this == other); }
-
 private:
-    size_t batchSize = batchType::size;
-
     void batchConjunct(const vector<float> otherValues,
                        const std::function<void (const batchType&, const batchType&, batchType&)>& batchOp,
                        const std::function<float (float, float)>& seqOp)
@@ -69,9 +89,9 @@ private:
         }
 
         cachedSum = 0;
-        size_t simdSize = values.size() - values.size() % batchSize;
+        size_t simdSize = values.size() - values.size() % batchType::size;
 
-        for (size_t i = 0; i < simdSize; i += batchSize) {
+        for (size_t i = 0; i < simdSize; i += batchType::size) {
             batchType a = batchType::load_unaligned(&values[i]);
             batchType b = batchType::load_unaligned(&otherValues[i]);
             batchType res;
@@ -106,9 +126,9 @@ struct SVNChHelper<TNorm::GOEDEL> {
         }
 
         self.cachedSum = 0;
-        size_t simdSize = self.values.size() - self.values.size() % self.batchSize;
+        size_t simdSize = self.values.size() - self.values.size() % SimdVectorNumChain<TNorm::GOEDEL>::batchType::size;
 
-        for (size_t i = 0; i < simdSize; i += self.batchSize) {
+        for (size_t i = 0; i < simdSize; i += SimdVectorNumChain<TNorm::GOEDEL>::batchType::size) {
             batchType a = batchType::load_unaligned(&self.values[i]);
             batchType b = batchType::load_unaligned(&other.values[i]);
             batchType res = fmin(a, b);
@@ -135,9 +155,9 @@ struct SVNChHelper<TNorm::GOGUEN> {
         }
 
         self.cachedSum = 0;
-        size_t simdSize = self.values.size() - self.values.size() % self.batchSize;
+        size_t simdSize = self.values.size() - self.values.size() % SimdVectorNumChain<TNorm::GOGUEN>::batchType::size;
 
-        for (size_t i = 0; i < simdSize; i += self.batchSize) {
+        for (size_t i = 0; i < simdSize; i += SimdVectorNumChain<TNorm::GOGUEN>::batchType::size) {
             batchType a = batchType::load_unaligned(&self.values[i]);
             batchType b = batchType::load_unaligned(&other.values[i]);
             batchType res  = a * b;
@@ -166,9 +186,9 @@ struct SVNChHelper<TNorm::LUKASIEWICZ> {
         const batchType zero(0.0f);
         const batchType one(1.0f);
         self.cachedSum = 0;
-        size_t simdSize = self.values.size() - self.values.size() % self.batchSize;
+        size_t simdSize = self.values.size() - self.values.size() % SimdVectorNumChain<TNorm::LUKASIEWICZ>::batchType::size;
 
-        for (size_t i = 0; i < simdSize; i += self.batchSize) {
+        for (size_t i = 0; i < simdSize; i += SimdVectorNumChain<TNorm::LUKASIEWICZ>::batchType::size) {
             batchType a = batchType::load_unaligned(&self.values[i]);
             batchType b = batchType::load_unaligned(&other.values[i]);
             batchType res = fmax(zero, a + b - one);

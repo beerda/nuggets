@@ -9,17 +9,51 @@
  */
 class AbstractVectorNumChain {
 public:
+    /**
+     * Default constructor.
+     */
     AbstractVectorNumChain()
-        : cachedSum(0)
+        : values(),
+          cachedSum(0.0)
     { }
 
+    /**
+     * Constructor with a specified size.
+     */
+    AbstractVectorNumChain(size_t n)
+        : values(n),
+          cachedSum(0.0)
+    { }
+
+    /**
+     * Constructor with specified data from Rcpp.
+     */
     AbstractVectorNumChain(const NumericVector& vals)
-        : cachedSum(0)
+        : values(vals.size()),
+          cachedSum(0.0)
     {
-        reserve(vals.size());
-        for (R_xlen_t i = 0; i < vals.size(); i++)
-            pushBack(vals.at(i));
+        for (R_xlen_t i = 0; i < vals.size(); i++) {
+            values[i] = vals[i];
+            cachedSum += vals[i];
+        }
     }
+
+    AbstractVectorNumChain(const AbstractVectorNumChain& other) = default;
+    AbstractVectorNumChain& operator=(const AbstractVectorNumChain& other) = default;
+    AbstractVectorNumChain(AbstractVectorNumChain&& other) = default;
+    AbstractVectorNumChain& operator=(AbstractVectorNumChain&& other) = default;
+
+    /**
+     * Comparison (equality) operator.
+     */
+    bool operator==(const AbstractVectorNumChain& other) const
+    { return (cachedSum == other.cachedSum) && (values == other.values); }
+
+    /**
+     * Comparison (inequality) operator.
+     */
+    bool operator!=(const AbstractVectorNumChain& other) const
+    { return !(*this == other); }
 
     void clear()
     {

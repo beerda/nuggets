@@ -37,6 +37,14 @@ public:
         : config(config)
     { }
 
+    // Disable copy
+    Executor(const Executor&) = delete;
+    Executor& operator=(const Executor&) = delete;
+
+    // Allow move
+    Executor(Executor&&) = default;
+    Executor& operator=(Executor&&) = default;
+
     List execute(const List& chainsList,
                  const CharacterVector& namesVec,
                  const LogicalVector& isConditionVec,

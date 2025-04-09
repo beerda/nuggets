@@ -46,51 +46,10 @@ public:
         }
     }
 
-    /**
-     * Copy constructor.
-     */
-    BitChain(const BitChain& other)
-        : data(other.data),
-          n(other.n),
-          cachedSum(other.cachedSum)
-    { }
-
-    /**
-     * Move constructor.
-     */
-    BitChain(BitChain&& other) noexcept
-        : data(std::move(other.data)),
-          n(other.n),
-          cachedSum(other.cachedSum)
-    { }
-
-    /**
-     * Copy assignment operator.
-     */
-    BitChain& operator=(const BitChain& other)
-    {
-        if (this != &other) {
-            data = other.data;
-            n = other.n;
-            cachedSum = other.cachedSum;
-        }
-
-        return *this;
-    }
-
-    /**
-     * Move assignment operator.
-     */
-    BitChain& operator=(BitChain&& other) noexcept
-    {
-        if (this != &other) {
-            data = std::move(other.data);
-            n = other.n;
-            cachedSum = other.cachedSum;
-        }
-
-        return *this;
-    }
+    BitChain(const BitChain& other) = default;
+    BitChain& operator=(const BitChain& other) = default;
+    BitChain(BitChain&& other) = default;
+    BitChain& operator=(BitChain&& other) = default;
 
     /**
      * Comparison (equality) operator.
