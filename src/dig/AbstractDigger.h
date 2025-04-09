@@ -72,9 +72,9 @@ public:
 
 protected:
     DataType& data;
-    TaskType initialTask;
-    FilterManager<TaskType> filterManager;
     CallbackCaller<TaskType> callbackCaller;
+    FilterManager<TaskType> filterManager;
+    TaskType initialTask;
 
     bool positiveConditionChainsNeeded = false;
     bool negativeConditionChainsNeeded = false;
