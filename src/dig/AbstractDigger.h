@@ -83,6 +83,56 @@ protected:
     bool pnFocusChainsNeeded = false;
     bool nnFocusChainsNeeded = false;
 
+    virtual void processCall(const TaskType& task) = 0;
+
+    virtual void processChild(TaskType& task) = 0;
+
+    void processTask(TaskType& task)
+    {
+        //cout << "processing: " + task.toString() << endl;
+        do {
+            if (!this->filterManager.isConditionRedundant(task)) {
+                this->updateConditionChain(task);
+                if (!this->filterManager.isConditionPrunable(task)) {
+
+                    task.resetFoci();
+                    Iterator& iter = task.getMutableFocusIterator();
+                    while (iter.hasPredicate()) {
+                        if (!this->filterManager.isFocusRedundant(task)) {
+                            this->computeFocusChain(task);
+                            if (!this->filterManager.isFocusPrunable(task)) {
+                                if (this->filterManager.isFocusStorable(task)) {
+                                    iter.storeCurrent();
+                                }
+                                if (this->filterManager.isFocusExtendable(task)) {
+                                    iter.putCurrentToSoFar();
+                                }
+                            }
+                        }
+                        iter.next();
+                    }
+
+                    if (this->filterManager.isConditionStorable(task)) {
+                        this->filterManager.notifyConditionStored(task);
+                        this->processCall(task);
+                    }
+                    if (this->filterManager.isConditionExtendable(task)) {
+                        if (task.getConditionIterator().hasSoFar()) {
+                            TaskType child = task.createChild();
+                            processChild(child);
+                        }
+                        if (task.getConditionIterator().hasPredicate()) {
+                            task.getMutableConditionIterator().putCurrentToSoFar();
+                        }
+                    }
+                }
+            }
+
+            task.getMutableConditionIterator().next();
+        }
+        while (task.getConditionIterator().hasPredicate());
+    }
+
     void updateConditionChain(TaskType& task) const
     {
         if (positiveConditionChainsNeeded) {

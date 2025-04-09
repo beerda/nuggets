@@ -25,7 +25,7 @@ public:
           allThreads(config.getThreads())
     { }
 
-    virtual void run()
+    virtual void run() override
     {
         initializeRun();
 
@@ -41,7 +41,7 @@ public:
                         while (!localSequence.empty()) {
                             TaskType task = localSequence.pop();
                             if (!this->callbackCaller.isStorageFull()) {
-                                processTask(task);
+                                this->processTask(task);
                             }
                         }
                         tasksFinished();
@@ -59,6 +59,13 @@ public:
         this->callbackCaller.processAvailableCalls();
         finalizeRun();
     }
+
+protected:
+    virtual void processCall(const TaskType& task) override
+    { this->callbackCaller.enqueueCall(task); }
+
+    virtual void processChild(TaskType& task) override
+    { sendTask(task); }
 
 private:
     TaskSequence<TaskType> sequence;
@@ -130,52 +137,6 @@ private:
         sequence.add(task);
         lock.unlock();
         condVar.notify_one();
-    }
-
-    void processTask(TaskType& task)
-    {
-        //cout << "processing: " + task.toString() << endl;
-        do {
-            if (!this->filterManager.isConditionRedundant(task)) {
-                this->updateConditionChain(task);
-                if (!this->filterManager.isConditionPrunable(task)) {
-
-                    task.resetFoci();
-                    Iterator& iter = task.getMutableFocusIterator();
-                    while (iter.hasPredicate()) {
-                        if (!this->filterManager.isFocusRedundant(task)) {
-                            this->computeFocusChain(task);
-                            if (!this->filterManager.isFocusPrunable(task)) {
-                                if (this->filterManager.isFocusStorable(task)) {
-                                    iter.storeCurrent();
-                                }
-                                if (this->filterManager.isFocusExtendable(task)) {
-                                    iter.putCurrentToSoFar();
-                                }
-                            }
-                        }
-                        iter.next();
-                    }
-
-                    if (this->filterManager.isConditionStorable(task)) {
-                        this->filterManager.notifyConditionStored(task);
-                        this->callbackCaller.enqueueCall(task);
-                    }
-                    if (this->filterManager.isConditionExtendable(task)) {
-                        if (task.getConditionIterator().hasSoFar()) {
-                            TaskType child = task.createChild();
-                            sendTask(child);
-                        }
-                        if (task.getConditionIterator().hasPredicate()) {
-                            task.getMutableConditionIterator().putCurrentToSoFar();
-                        }
-                    }
-                }
-            }
-
-            task.getMutableConditionIterator().next();
-        }
-        while (task.getConditionIterator().hasPredicate());
     }
 
     void tasksFinished()
