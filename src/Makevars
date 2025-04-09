@@ -13,14 +13,11 @@ SOURCES=RcppExports.cpp \
 	test-antichain-Condition.cpp \
 	test-antichain-Node.cpp \
 	test-antichain-Tree.cpp \
-	test-dig-Bitset.cpp \
 	test-dig-BitChain.cpp \
 	test-dig-Data.cpp \
 	test-dig-DataSorter.cpp \
 	test-dig-DualChain.cpp \
 	test-dig-Iterator.cpp \
-	test-dig-PackedBitChain.cpp \
-	test-dig-SparseBitChain.cpp \
 	test-dig-Task.cpp \
 	test-dig-TaskSequence.cpp \
 	test-dig-TautologyTree.cpp \
