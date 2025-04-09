@@ -24,9 +24,7 @@ SOURCES=RcppExports.cpp \
 	test-dig-Task.cpp \
 	test-dig-TaskSequence.cpp \
 	test-dig-TautologyTree.cpp \
-	test-dig-VectorNumChain.cpp \
-	dig/SimdVectorNumChain.cpp \
-	dig/VectorNumChain.cpp
+	test-dig-VectorNumChain.cpp
 
 # Obtain the object files
 OBJECTS=$(SOURCES:.cpp=.o)

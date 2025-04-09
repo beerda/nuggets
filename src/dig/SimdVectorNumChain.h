@@ -5,6 +5,13 @@
 #include "AbstractVectorNumChain.h"
 
 
+// Forward declaration
+template <TNorm TNORM>
+class SimdVectorNumChain;
+
+template <TNorm TNORM>
+struct SVNChHelper;
+
 /**
 * Implementation of chain of numbers based on a vector with operations
 * implemented using SIMD instructions.
@@ -13,6 +20,7 @@ template <TNorm TNORM>
 class SimdVectorNumChain : public AbstractVectorNumChain {
 public:
     using batchType = xsimd::batch<float>;
+    friend struct SVNChHelper<TNORM>;
 
     SimdVectorNumChain()
         : AbstractVectorNumChain()
@@ -40,7 +48,8 @@ public:
         }
     }
 
-    void conjunctWith(const SimdVectorNumChain<TNORM>& other);
+    void conjunctWith(const SimdVectorNumChain<TNORM>& other)
+    { SVNChHelper<TNORM>::conjunctWith(*this, other); }
 
     bool operator == (const SimdVectorNumChain& other) const
     { return values == other.values; }
@@ -74,6 +83,102 @@ private:
         for (size_t i = simdSize; i < values.size(); ++i) {
             values[i] = seqOp(values[i], otherValues[i]);
             cachedSum += values[i];
+        }
+    }
+};
+
+template <TNorm TNORM>
+struct SVNChHelper {
+    static void conjunctWith(SimdVectorNumChain<TNORM>& self,
+                             const SimdVectorNumChain<TNORM>& other)
+    { }
+};
+
+template <>
+struct SVNChHelper<TNorm::GOEDEL> {
+    using batchType = SimdVectorNumChain<TNorm::GOEDEL>::batchType;
+
+    static void conjunctWith(SimdVectorNumChain<TNorm::GOEDEL>& self,
+                             const SimdVectorNumChain<TNorm::GOEDEL>& other)
+    {
+        if (self.values.size() != other.values.size()) {
+            throw std::invalid_argument("SimdVectorNumChain::conjunctWith: incompatible sizes");
+        }
+
+        self.cachedSum = 0;
+        size_t simdSize = self.values.size() - self.values.size() % self.batchSize;
+
+        for (size_t i = 0; i < simdSize; i += self.batchSize) {
+            batchType a = batchType::load_unaligned(&self.values[i]);
+            batchType b = batchType::load_unaligned(&other.values[i]);
+            batchType res = fmin(a, b);
+            res.store_unaligned(&self.values[i]);
+            self.cachedSum += xsimd::reduce_add(res);
+        }
+
+        for (size_t i = simdSize; i < self.values.size(); ++i) {
+            self.values[i] = fmin(self.values[i], other.values[i]);
+            self.cachedSum += self.values[i];
+        }
+    }
+};
+
+template <>
+struct SVNChHelper<TNorm::GOGUEN> {
+    using batchType = SimdVectorNumChain<TNorm::GOGUEN>::batchType;
+
+    static void conjunctWith(SimdVectorNumChain<TNorm::GOGUEN>& self,
+                             const SimdVectorNumChain<TNorm::GOGUEN>& other)
+    {
+        if (self.values.size() != other.values.size()) {
+            throw std::invalid_argument("SimdVectorNumChain::conjunctWith: incompatible sizes");
+        }
+
+        self.cachedSum = 0;
+        size_t simdSize = self.values.size() - self.values.size() % self.batchSize;
+
+        for (size_t i = 0; i < simdSize; i += self.batchSize) {
+            batchType a = batchType::load_unaligned(&self.values[i]);
+            batchType b = batchType::load_unaligned(&other.values[i]);
+            batchType res  = a * b;
+            res.store_unaligned(&self.values[i]);
+            self.cachedSum += xsimd::reduce_add(res);
+        }
+
+        for (size_t i = simdSize; i < self.values.size(); ++i) {
+            self.values[i] = self.values[i] * other.values[i];
+            self.cachedSum += self.values[i];
+        }
+    }
+};
+
+template <>
+struct SVNChHelper<TNorm::LUKASIEWICZ> {
+    using batchType = SimdVectorNumChain<TNorm::LUKASIEWICZ>::batchType;
+
+    static void conjunctWith(SimdVectorNumChain<TNorm::LUKASIEWICZ>& self,
+                             const SimdVectorNumChain<TNorm::LUKASIEWICZ>& other)
+    {
+        if (self.values.size() != other.values.size()) {
+            throw std::invalid_argument("SimdVectorNumChain::conjunctWith: incompatible sizes");
+        }
+
+        const batchType zero(0.0f);
+        const batchType one(1.0f);
+        self.cachedSum = 0;
+        size_t simdSize = self.values.size() - self.values.size() % self.batchSize;
+
+        for (size_t i = 0; i < simdSize; i += self.batchSize) {
+            batchType a = batchType::load_unaligned(&self.values[i]);
+            batchType b = batchType::load_unaligned(&other.values[i]);
+            batchType res = fmax(zero, a + b - one);
+            res.store_unaligned(&self.values[i]);
+            self.cachedSum += xsimd::reduce_add(res);
+        }
+
+        for (size_t i = simdSize; i < self.values.size(); ++i) {
+            self.values[i] = fmax(0.0f, self.values[i] + other.values[i] - 1);
+            self.cachedSum += self.values[i];
         }
     }
 };
