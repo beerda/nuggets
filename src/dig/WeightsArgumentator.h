@@ -14,20 +14,20 @@ public:
     // Inherit constructors
     using Argumentator<TASK>::Argumentator;
 
-    void prepare(ArgumentValues& arguments, const TASK& task) const override
+    void prepare(ArgumentValues& arguments, const TASK* task) const override
     {
         Argumentator<TASK>::prepare(arguments, task);
 
         ArgumentValue arg("weights", ArgumentType::ARG_NUMERIC);
 
-        if (task.getPositiveChain().empty()) {
+        if (task->getPositiveChain().empty()) {
             for (size_t i = 0; i < this->data.nrow(); i++) {
                 arg.push_back(1.0);
             }
         }
         else {
-            for (size_t i = 0; i < task.getPositiveChain().size(); i++) {
-                arg.push_back(task.getPositiveChain().getValue(i));
+            for (size_t i = 0; i < task->getPositiveChain().size(); i++) {
+                arg.push_back(task->getPositiveChain().getValue(i));
             }
         }
 

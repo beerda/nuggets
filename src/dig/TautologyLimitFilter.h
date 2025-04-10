@@ -21,34 +21,34 @@ public:
              | Filter<TASK>::CALLBACK_NOTIFY_CONDITION_STORED;
     }
 
-    bool isFocusExtendable(TASK& task) const override
+    bool isFocusExtendable(TASK* task) const override
     {
         bool result = false;
-        if (task.getFocusIterator().hasPredicate()) {
-            int curr = task.getFocusIterator().getCurrentPredicate();
-            float focusSum = task.getPpFocusChain(curr).getSum();
-            float conditionSum = task.getPositiveChain().empty() ? dataLength : task.getPositiveChain().getSum();
+        if (task->getFocusIterator().hasPredicate()) {
+            int curr = task->getFocusIterator().getCurrentPredicate();
+            float focusSum = task->getPpFocusChain(curr).getSum();
+            float conditionSum = task->getPositiveChain().empty() ? dataLength : task->getPositiveChain().getSum();
 
             result = (focusSum / conditionSum) < limit;
         }
 
-        //cout << "isFocusExtendable: " << task.toString() << " : " << result << endl;
+        //cout << "isFocusExtendable: " << task->toString() << " : " << result << endl;
 
         return result;
     }
 
-    void notifyConditionStored(TASK& task) override
+    void notifyConditionStored(TASK* task) override
     {
-        float conditionSum = task.getPositiveChain().empty() ? dataLength : task.getPositiveChain().getSum();
+        float conditionSum = task->getPositiveChain().empty() ? dataLength : task->getPositiveChain().getSum();
 
-        const Iterator& iter = task.getConditionIterator();
+        const Iterator& iter = task->getConditionIterator();
         vector<int> condition = iter.getPrefix();
         if (iter.hasPredicate()) {
             condition.push_back(iter.getCurrentPredicate());
         }
 
-        for (int focus : task.getFocusIterator().getStored()) {
-            float focusSum = task.getPpFocusChain(focus).getSum();
+        for (int focus : task->getFocusIterator().getStored()) {
+            float focusSum = task->getPpFocusChain(focus).getSum();
             if (focusSum / conditionSum >= limit) {
                 tree.addTautology(condition, focus);
             }

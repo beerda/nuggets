@@ -15,19 +15,19 @@ public:
     // Inherit constructors
     using Argumentator<TASK>::Argumentator;
 
-    void prepare(ArgumentValues& arguments, const TASK& task) const override
+    void prepare(ArgumentValues& arguments, const TASK* task) const override
     {
         Argumentator<TASK>::prepare(arguments, task);
 
         ArgumentValue arg("indices", ArgumentType::ARG_LOGICAL);
-        if (task.getPositiveChain().empty()) {
+        if (task->getPositiveChain().empty()) {
             for (size_t i = 0; i < this->data.nrow(); i++) {
                 arg.push_back(true);
             }
         }
         else {
-            for (size_t i = 0; i < task.getPositiveChain().size(); i++) {
-                arg.push_back(task.getPositiveChain().getValue(i) > 0);
+            for (size_t i = 0; i < task->getPositiveChain().size(); i++) {
+                arg.push_back(task->getPositiveChain().getValue(i) > 0);
             }
         }
 

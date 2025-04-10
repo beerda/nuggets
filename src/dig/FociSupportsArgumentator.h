@@ -13,14 +13,14 @@ public:
     // Inherit constructors
     using Argumentator<TASK>::Argumentator;
 
-    void prepare(ArgumentValues& arguments, const TASK& task) const override
+    void prepare(ArgumentValues& arguments, const TASK* task) const override
     {
         Argumentator<TASK>::prepare(arguments, task);
 
         ArgumentValue arg("foci_supports", ArgumentType::ARG_NUMERIC);
 
-        for (int i : task.getFocusIterator().getStored()) {
-            arg.push_back(task.getPpFocusChain(i).getSupport(), this->data.getName(i));
+        for (int i : task->getFocusIterator().getStored()) {
+            arg.push_back(task->getPpFocusChain(i).getSupport(), this->data.getName(i));
         }
 
         arguments.push_back(arg);

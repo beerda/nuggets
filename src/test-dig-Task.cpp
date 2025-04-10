@@ -11,18 +11,22 @@ using DualChainType = DataType::DualChainType;
 
 context("dig/Task.h") {
     test_that("createChild") {
-        TaskType t(Iterator({0, 1, 2}, {10, 11, 12}, {5, 6}), Iterator());
+        TaskType* t = new TaskType(Iterator({0, 1, 2}, {10, 11, 12}, {5, 6}), Iterator());
 
-        TaskType ch = t.createChild();
-        expect_true(ch.getConditionIterator().getPrefix() == vector<int>({0, 1, 2, 10}));
-        expect_true(ch.getConditionIterator().getAvailable() == vector<int>({5, 6}));
+        TaskType* ch = t->createChild();
+        expect_true(ch->getConditionIterator().getPrefix() == vector<int>({0, 1, 2, 10}));
+        expect_true(ch->getConditionIterator().getAvailable() == vector<int>({5, 6}));
+        delete ch;
 
-        t.getMutableConditionIterator().next();
-        t.getMutableConditionIterator().next();
-        t.getMutableConditionIterator().next();
-        ch = t.createChild();
-        expect_true(ch.getConditionIterator().getPrefix() == vector<int>({0, 1, 2}));
-        expect_true(ch.getConditionIterator().getAvailable() == vector<int>({5, 6}));
+        t->getMutableConditionIterator().next();
+        t->getMutableConditionIterator().next();
+        t->getMutableConditionIterator().next();
+
+        ch = t->createChild();
+        expect_true(ch->getConditionIterator().getPrefix() == vector<int>({0, 1, 2}));
+        expect_true(ch->getConditionIterator().getAvailable() == vector<int>({5, 6}));
+        delete ch;
+        delete t;
     }
 
     test_that("updatePositiveChain") {
@@ -40,43 +44,49 @@ context("dig/Task.h") {
         data.addChain(data2, "d2", true, true);
         data.addChain(data3, "d3", true, true);
 
-        TaskType t(Iterator({0, 1, 2}), Iterator()); // empty task with soFar: 0,1,2
-        expect_true(t.getPositiveChain().empty());
-        expect_true(t.getPrefixChain().empty());
+        TaskType* t = new TaskType(Iterator({0, 1, 2}), Iterator()); // empty task with soFar: 0,1,2
+        expect_true(t->getPositiveChain().empty());
+        expect_true(t->getPrefixChain().empty());
 
-        t.updatePositiveChain(data); // chain not changed
-        expect_true(t.getPositiveChain().empty());
-        expect_true(t.getPrefixChain().empty());
+        t->updatePositiveChain(data); // chain not changed
+        expect_true(t->getPositiveChain().empty());
+        expect_true(t->getPrefixChain().empty());
 
-        t = t.createChild();
-        expect_true(t.getPositiveChain().empty());
-        expect_true(t.getPrefixChain().empty());
+        TaskType* ch = t->createChild();
+        delete t;
+        t = ch;
+        expect_true(t->getPositiveChain().empty());
+        expect_true(t->getPrefixChain().empty());
 
-        t.updatePositiveChain(data);
-        expect_true(t.getPositiveChain() == data.getPositiveChain(0));
-        expect_true(t.getPrefixChain().empty());
+        t->updatePositiveChain(data);
+        expect_true(t->getPositiveChain() == data.getPositiveChain(0));
+        expect_true(t->getPrefixChain().empty());
 
-        t.getMutableConditionIterator().putCurrentToSoFar(); // 0
-        t.getMutableConditionIterator().next();
-        t.updatePositiveChain(data);
-        expect_true(t.getPositiveChain() == data.getPositiveChain(1));
-        expect_true(t.getPrefixChain().empty());
+        t->getMutableConditionIterator().putCurrentToSoFar(); // 0
+        t->getMutableConditionIterator().next();
+        t->updatePositiveChain(data);
+        expect_true(t->getPositiveChain() == data.getPositiveChain(1));
+        expect_true(t->getPrefixChain().empty());
 
-        t.getMutableConditionIterator().putCurrentToSoFar(); // 1
-        t.getMutableConditionIterator().next();
-        t.updatePositiveChain(data);
-        expect_true(t.getPositiveChain() == data.getPositiveChain(2));
-        expect_true(t.getPrefixChain().empty());
+        t->getMutableConditionIterator().putCurrentToSoFar(); // 1
+        t->getMutableConditionIterator().next();
+        t->updatePositiveChain(data);
+        expect_true(t->getPositiveChain() == data.getPositiveChain(2));
+        expect_true(t->getPrefixChain().empty());
 
-        t = t.createChild(); // prefix: 2 current: 0
-        expect_true(t.getPositiveChain().empty());
-        expect_true(t.getPrefixChain() == data.getPositiveChain(2));
+        ch = t->createChild(); // prefix: 2 current: 0
+        delete t;
+        t = ch;
+        expect_true(t->getPositiveChain().empty());
+        expect_true(t->getPrefixChain() == data.getPositiveChain(2));
 
-        t.updatePositiveChain(data);
+        t->updatePositiveChain(data);
         DualChainType newChain = data.getPositiveChain(0);
         newChain.toNumeric();
         newChain.conjunctWith(data.getPositiveChain(2));
-        expect_true(t.getPositiveChain() == newChain);
-        expect_true(t.getPrefixChain() == data.getPositiveChain(2));
+        expect_true(t->getPositiveChain() == newChain);
+        expect_true(t->getPrefixChain() == data.getPositiveChain(2));
+
+        delete t;
     }
 }

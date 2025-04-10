@@ -16,18 +16,18 @@ public:
              | Filter<TASK>::CALLBACK_IS_FOCUS_REDUNDANT;
     }
 
-    bool isConditionRedundant(TASK& task) const override
+    bool isConditionRedundant(TASK* task) const override
     {
         if (disjoint.size() <= 1)
             return false;
 
-        if (task.getConditionIterator().hasPredicate()) {
-            int curr = task.getConditionIterator().getCurrentPredicate();
+        if (task->getConditionIterator().hasPredicate()) {
+            int curr = task->getConditionIterator().getCurrentPredicate();
 
-            if (task.getConditionIterator().hasPrefix()) {
+            if (task->getConditionIterator().hasPrefix()) {
                 // It is enough to check the last element of the prefix because
                 // previous elements were already checked in parent tasks
-                int pref = task.getConditionIterator().getPrefix().back();
+                int pref = task->getConditionIterator().getPrefix().back();
                 if (disjoint[pref] == disjoint[curr]) {
                     return true;
                 }
@@ -37,15 +37,15 @@ public:
         return false;
     }
 
-    bool isFocusRedundant(TASK& task) const override
+    bool isFocusRedundant(TASK* task) const override
     {
-        if (task.getFocusIterator().hasPredicate()) {
-            int curr = task.getFocusIterator().getCurrentPredicate();
+        if (task->getFocusIterator().hasPredicate()) {
+            int curr = task->getFocusIterator().getCurrentPredicate();
 
             // test if focus is present in condition
             // (no need to compare with prefix, since that is done in parent task)
-            if (task.getConditionIterator().hasPredicate()) {
-                if (curr == task.getConditionIterator().getCurrentPredicate())
+            if (task->getConditionIterator().hasPredicate()) {
+                if (curr == task->getConditionIterator().getCurrentPredicate())
                     return true;
             }
 
@@ -54,8 +54,8 @@ public:
 
             // test if focus is disjoint with condition
             // (no need to compare with prefix, since that is done in parent task)
-            if (task.getConditionIterator().hasPredicate()) {
-                if (disjoint[curr] == disjoint[task.getConditionIterator().getCurrentPredicate()])
+            if (task->getConditionIterator().hasPredicate()) {
+                if (disjoint[curr] == disjoint[task->getConditionIterator().getCurrentPredicate()])
                     return true;
             }
         }

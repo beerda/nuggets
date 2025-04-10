@@ -15,9 +15,9 @@ public:
              | Filter<TASK>::CALLBACK_IS_CONDITION_EXTENDABLE;
     }
 
-    bool isConditionStorable(TASK& task) const override
-    { return task.getFocusIterator().hasStored(); }
+    bool isConditionStorable(TASK* task) const override
+    { return task->getFocusIterator().hasStored(); }
 
-    bool isConditionExtendable(TASK& task) const override
-    { return task.getFocusIterator().hasSoFar(); }
+    bool isConditionExtendable(TASK* task) const override
+    { return task->getFocusIterator().hasSoFar(); }
 };

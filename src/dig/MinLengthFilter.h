@@ -15,8 +15,8 @@ public:
         return Filter<TASK>::CALLBACK_IS_CONDITION_STORABLE;
     }
 
-    bool isConditionStorable(TASK& task) const override
-    { return ((int) task.getConditionIterator().getLength()) >= minLength; }
+    bool isConditionStorable(TASK* task) const override
+    { return ((int) task->getConditionIterator().getLength()) >= minLength; }
 
 private:
     int minLength;

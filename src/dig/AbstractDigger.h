@@ -112,26 +112,26 @@ protected:
     bool pnFocusChainsNeeded = false;
     bool nnFocusChainsNeeded = false;
 
-    TaskType createInitialTask()
+    TaskType* createInitialTask() const
     {
-        return TaskType(Iterator(data.getCondition()), // condition predicates to "soFar"
-                        Iterator({}, data.getFoci())); // focus predicates to "available"
+        return new TaskType(Iterator(data.getCondition()), // condition predicates to "soFar"
+                            Iterator({}, data.getFoci())); // focus predicates to "available"
     }
 
-    virtual void processCall(const TaskType& task) = 0;
+    virtual void processCall(const TaskType* task) = 0;
 
-    virtual void processChild(TaskType& task) = 0;
+    virtual void processChild(TaskType* task) = 0;
 
-    void processTask(TaskType& task)
+    void processTask(TaskType* task)
     {
-        //cout << "processing: " + task.toString() << endl;
+        //cout << "processing: " + task->toString() << endl;
         do {
             if (!this->filterManager.isConditionRedundant(task)) {
                 this->updateConditionChain(task);
                 if (!this->filterManager.isConditionPrunable(task)) {
 
-                    task.resetFoci();
-                    Iterator& iter = task.getMutableFocusIterator();
+                    task->resetFoci();
+                    Iterator& iter = task->getMutableFocusIterator();
                     while (iter.hasPredicate()) {
                         if (!this->filterManager.isFocusRedundant(task)) {
                             this->computeFocusChain(task);
@@ -152,45 +152,45 @@ protected:
                         this->processCall(task);
                     }
                     if (this->filterManager.isConditionExtendable(task)) {
-                        if (task.getConditionIterator().hasSoFar()) {
-                            TaskType child = task.createChild();
+                        if (task->getConditionIterator().hasSoFar()) {
+                            TaskType* child = task->createChild();
                             processChild(child);
                         }
-                        if (task.getConditionIterator().hasPredicate()) {
-                            task.getMutableConditionIterator().putCurrentToSoFar();
+                        if (task->getConditionIterator().hasPredicate()) {
+                            task->getMutableConditionIterator().putCurrentToSoFar();
                         }
                     }
                 }
             }
 
-            task.getMutableConditionIterator().next();
+            task->getMutableConditionIterator().next();
         }
-        while (task.getConditionIterator().hasPredicate());
+        while (task->getConditionIterator().hasPredicate());
     }
 
-    void updateConditionChain(TaskType& task) const
+    void updateConditionChain(TaskType* task) const
     {
         if (positiveConditionChainsNeeded) {
-            task.updatePositiveChain(data);
+            task->updatePositiveChain(data);
 
             if (negativeConditionChainsNeeded) {
-                task.updateNegativeChain(data);
+                task->updateNegativeChain(data);
             }
         }
     }
 
-    void computeFocusChain(TaskType& task) const
+    void computeFocusChain(TaskType* task) const
     {
         if (ppFocusChainsNeeded)
-            task.computePpFocusChain(data);
+            task->computePpFocusChain(data);
 
         if (npFocusChainsNeeded)
-            task.computeNpFocusChain(data);
+            task->computeNpFocusChain(data);
 
         if (pnFocusChainsNeeded)
-            task.computePnFocusChain(data);
+            task->computePnFocusChain(data);
 
         if (nnFocusChainsNeeded)
-            task.computeNnFocusChain(data);
+            task->computeNnFocusChain(data);
     }
 };

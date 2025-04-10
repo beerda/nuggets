@@ -15,8 +15,8 @@ public:
         return Filter<TASK>::CALLBACK_IS_CONDITION_REDUNDANT;
     }
 
-    bool isConditionRedundant(TASK& task) const override
-    { return ((int) task.getConditionIterator().getLength()) > maxLength; }
+    bool isConditionRedundant(TASK* task) const override
+    { return ((int) task->getConditionIterator().getLength()) > maxLength; }
 
 private:
     int maxLength;

@@ -24,30 +24,30 @@ public:
 
     virtual int getCallbacks() const = 0;
 
-    virtual bool isConditionRedundant(TASK& task) const
+    virtual bool isConditionRedundant(TASK* task) const
     { return false; }
 
-    virtual bool isFocusRedundant(TASK& task) const
+    virtual bool isFocusRedundant(TASK* task) const
     { return false; }
 
-    virtual bool isConditionPrunable(TASK& task) const
+    virtual bool isConditionPrunable(TASK* task) const
     { return false; }
 
-    virtual bool isFocusPrunable(TASK& task) const
+    virtual bool isFocusPrunable(TASK* task) const
     { return false; }
 
-    virtual bool isConditionStorable(TASK& task) const
+    virtual bool isConditionStorable(TASK* task) const
     { return true; }
 
-    virtual bool isFocusStorable(TASK& task) const
+    virtual bool isFocusStorable(TASK* task) const
     { return true; }
 
-    virtual bool isConditionExtendable(TASK& task) const
+    virtual bool isConditionExtendable(TASK* task) const
     { return true; }
 
-    virtual bool isFocusExtendable(TASK& task) const
+    virtual bool isFocusExtendable(TASK* task) const
     { return true; }
 
-    virtual void notifyConditionStored(TASK& task)
+    virtual void notifyConditionStored(TASK* task)
     { }
 };

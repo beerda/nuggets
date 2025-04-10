@@ -34,17 +34,17 @@ public:
             #pragma omp parallel num_threads(allThreads) default(shared)
         #endif
         {
+            TaskType* task = nullptr;
             try {
-                TaskSequence<TaskType> localSequence;
                 while (!workDone()) {
-                    if (receiveTasks(localSequence)) {
-                        while (!localSequence.empty()) {
-                            TaskType task = localSequence.pop();
-                            if (!this->callbackCaller.isStorageFull()) {
-                                this->processTask(task);
-                            }
+                    if (receiveTask(task)) {
+                        if (!this->callbackCaller.isStorageFull()) {
+                            this->processTask(task);
                         }
-                        tasksFinished();
+                        taskFinished(task);
+
+                        delete task;
+                        task = nullptr;
                     }
                     this->callbackCaller.processAvailableCalls();
                 }
@@ -54,6 +54,9 @@ public:
             }
             //cout << omp_get_thread_num() << "exit" << endl;
             condVar.notify_all();
+
+            if (task)
+                delete task;
         }
 
         this->callbackCaller.processAvailableCalls();
@@ -61,14 +64,14 @@ public:
     }
 
 protected:
-    virtual void processCall(const TaskType& task) override
+    virtual void processCall(const TaskType* task) override
     { this->callbackCaller.enqueueCall(task); }
 
-    virtual void processChild(TaskType& task) override
+    virtual void processChild(TaskType* task) override
     { sendTask(task); }
 
 private:
-    TaskSequence<TaskType> sequence;
+    TaskSequence<TaskType*> sequence;
     bool endImmediately;
     std::exception caughtException;
     int workingThreads;
@@ -86,6 +89,11 @@ private:
 
     void finalizeRun()
     {
+        while (!sequence.empty()) {
+            TaskType* task = sequence.pop();
+            delete task;
+        }
+
         if (endImmediately)
             throw caughtException;
     }
@@ -105,7 +113,7 @@ private:
         caughtException = e;
     }
 
-    bool receiveTasks(TaskSequence<TaskType>& localSequence)
+    bool receiveTask(TaskType*& task)
     {
         unique_lock lock(sequenceMutex);
         //cout << omp_get_thread_num() << "receiveTask" << endl;
@@ -116,12 +124,7 @@ private:
 
         //cout << omp_get_thread_num() << "continue" << endl;
         if (!sequence.empty()) {
-            size_t receiveN = max(1.0, ceil(1.0 * sequence.size() / allThreads));
-            //cout << "receiveN: " << receiveN << endl;
-            while (receiveN > 0 && !sequence.empty()) {
-                localSequence.add(sequence.pop());
-                receiveN--;
-            }
+            task = sequence.pop();
             workingThreads++;
             return true;
         }
@@ -129,7 +132,7 @@ private:
         return false;
     }
 
-    void sendTask(const TaskType& task)
+    void sendTask(TaskType* task)
     {
         unique_lock lock(sequenceMutex);
         //cout << omp_get_thread_num() << "sendTask" << endl;
@@ -139,7 +142,7 @@ private:
         condVar.notify_one();
     }
 
-    void tasksFinished()
+    void taskFinished(TaskType* task)
     {
         unique_lock lock(sequenceMutex);
         //cout << omp_get_thread_num() << "taskFinished" << endl;

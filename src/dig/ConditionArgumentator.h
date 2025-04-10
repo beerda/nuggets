@@ -13,13 +13,13 @@ public:
     // Inherit constructors
     using Argumentator<TASK>::Argumentator;
 
-    void prepare(ArgumentValues& arguments, const TASK& task) const override
+    void prepare(ArgumentValues& arguments, const TASK* task) const override
     {
         Argumentator<TASK>::prepare(arguments, task);
 
         ArgumentValue arg("condition", ArgumentType::ARG_INTEGER);
 
-        for (int p : task.getConditionIterator().getCurrentCondition()) {
+        for (int p : task->getConditionIterator().getCurrentCondition()) {
             arg.push_back(p, this->data.getName(p));
         }
 

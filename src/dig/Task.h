@@ -17,12 +17,29 @@ public:
     using DataType = DATA;
     using DualChainType = typename DataType::DualChainType;
 
+    /**
+     * Default constructor.
+     */
     Task()
     { }
 
+    /**
+     * Constructor with condition and focus iterators.
+     *
+     * @param conditionIterator The iterator for the condition predicates.
+     * @param focusIterator The iterator for the focus predicates.
+     */
     Task(Iterator conditionIterator, Iterator focusIterator)
         : conditionIterator(conditionIterator), focusIterator(focusIterator)
     { }
+
+    // Disable copy
+    Task(const Task&) = delete;
+    Task& operator=(const Task&) = delete;
+
+    // Allow move
+    Task(Task&&) = default;
+    Task& operator=(Task&&) = default;
 
     const Iterator& getConditionIterator() const
     { return conditionIterator; }
@@ -36,7 +53,7 @@ public:
     Iterator& getMutableFocusIterator()
     { return focusIterator; }
 
-    Task createChild() const
+    Task* createChild() const
     {
         Iterator newConditionIterator;
 
@@ -50,10 +67,10 @@ public:
         }
 
         Iterator newFocusIterator = Iterator({}, focusIterator.getSoFar()); // prefix is always empty
-        Task result = Task(newConditionIterator, newFocusIterator);
+        Task* result = new Task(newConditionIterator, newFocusIterator);
 
         if (!positiveChain.empty()) {
-            result.prefixChain = positiveChain;
+            result->prefixChain = positiveChain;
         }
 
         return result;

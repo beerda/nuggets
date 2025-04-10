@@ -47,7 +47,7 @@ public:
         return nResult >= maxResults;
     }
 
-    void processCall(const TaskType& task)
+    void processCall(const TaskType* task)
     {
         if (isStorageFull())
             return;
@@ -55,7 +55,7 @@ public:
         processCall(prepareCall(task));
     }
 
-    void enqueueCall(const TaskType& task)
+    void enqueueCall(const TaskType* task)
     {
         unique_lock lock(callQueueMutex);
         if (!isStorageFull()) {
@@ -89,7 +89,7 @@ private:
     Rcpp::List result;
     size_t nResult = 0;
 
-    ArgumentValues prepareCall(const TaskType& task)
+    ArgumentValues prepareCall(const TaskType* task)
     {
         ArgumentValues args;
         for (const ArgumentatorType* a : argumentators) {

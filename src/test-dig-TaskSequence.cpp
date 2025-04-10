@@ -9,10 +9,10 @@ using TaskType = Task<DataType>;
 
 context("dig/TaskSequence.h") {
     test_that("push & pop") {
-        TaskSequence<TaskType> sequence;
-        TaskType t0(Iterator({}, {1, 2, 3}), Iterator());
-        TaskType t1(Iterator({5}, {1, 2, 3}), Iterator());
-        TaskType t2(Iterator({5, 6}, {1, 2, 3}), Iterator());
+        TaskSequence<TaskType*> sequence;
+        TaskType* t0 = new TaskType(Iterator({}, {1, 2, 3}), Iterator());
+        TaskType* t1 = new TaskType(Iterator({5}, {1, 2, 3}), Iterator());
+        TaskType* t2 = new TaskType(Iterator({5, 6}, {1, 2, 3}), Iterator());
 
         expect_true(sequence.empty());
 
@@ -25,7 +25,7 @@ context("dig/TaskSequence.h") {
         sequence.add(t1);
         expect_false(sequence.empty());
 
-        TaskType t = sequence.pop();
+        TaskType* t = sequence.pop();
         expect_false(sequence.empty());
 
         t = sequence.pop();
@@ -33,5 +33,9 @@ context("dig/TaskSequence.h") {
 
         t = sequence.pop();
         expect_true(sequence.empty());
+
+        delete t0;
+        delete t1;
+        delete t2;
     }
 }

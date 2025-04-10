@@ -19,7 +19,7 @@ public:
     virtual ~Argumentator()
     { }
 
-    virtual void prepare(ArgumentValues& arguments, const TASK& task) const
+    virtual void prepare(ArgumentValues& arguments, const TASK* task) const
     { }
 
 protected:

@@ -15,8 +15,8 @@ public:
         return Filter<TASK>::CALLBACK_IS_CONDITION_PRUNABLE;
     }
 
-    bool isConditionPrunable(TASK& task) const override
-    { return task.getPositiveChain().getSupport() < minSupport; }
+    bool isConditionPrunable(TASK* task) const override
+    { return task->getPositiveChain().getSupport() < minSupport; }
 
 private:
     double minSupport;

@@ -16,16 +16,16 @@ public:
     // Inherit constructors
     using Argumentator<TASK>::Argumentator;
 
-    void prepare(ArgumentValues& arguments, const TASK& task) const override
+    void prepare(ArgumentValues& arguments, const TASK* task) const override
     {
         Argumentator<TASK>::prepare(arguments, task);
 
         ArgumentValue arg("sum", ArgumentType::ARG_NUMERIC);
 
-        if (task.getPositiveChain().empty())
+        if (task->getPositiveChain().empty())
             arg.push_back(float(this->data.nrow()));
         else
-            arg.push_back(task.getPositiveChain().getSum());
+            arg.push_back(task->getPositiveChain().getSum());
 
         arguments.push_back(arg);
     }
