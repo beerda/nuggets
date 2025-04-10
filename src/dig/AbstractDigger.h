@@ -31,9 +31,7 @@ public:
                    const Function callback)
         : data(data),
           config(config),
-          callbackCaller(config.getMaxResults(), callback),
-          initialTask(Iterator(data.getCondition()), // condition predicates to "soFar"
-                      Iterator({}, data.getFoci()))  // focus predicates to "available"
+          callbackCaller(config.getMaxResults(), callback)
     { }
 
     // Disable copy
@@ -106,7 +104,6 @@ protected:
     const Config& config;
     CallbackCaller<TaskType> callbackCaller;
     FilterManager<TaskType> filterManager;
-    TaskType initialTask;
 
     bool positiveConditionChainsNeeded = false;
     bool negativeConditionChainsNeeded = false;
@@ -114,6 +111,12 @@ protected:
     bool npFocusChainsNeeded = false;
     bool pnFocusChainsNeeded = false;
     bool nnFocusChainsNeeded = false;
+
+    TaskType createInitialTask()
+    {
+        return TaskType(Iterator(data.getCondition()), // condition predicates to "soFar"
+                        Iterator({}, data.getFoci())); // focus predicates to "available"
+    }
 
     virtual void processCall(const TaskType& task) = 0;
 

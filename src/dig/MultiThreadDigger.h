@@ -79,7 +79,7 @@ private:
     void initializeRun()
     {
         sequence.clear();
-        sequence.add(this->initialTask);
+        sequence.add(this->createInitialTask());
         workingThreads = 0;
         endImmediately = false;
     }
