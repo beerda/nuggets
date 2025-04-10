@@ -27,12 +27,23 @@
 #include "dig/TautologyLimitFilter.h"
 #include "dig/TautologyTree.h"
 
+/**
+ * Executor class for executing the digger algorithm. It is responsible for
+ * creating the data structure, setting up the digger with the appropriate
+ * filters and argumentators, running the digger, and returning the results.
+ */
 template <typename BITCHAIN, typename NUMCHAIN>
 class Executor {
 public:
     using DataType = Data<BITCHAIN, NUMCHAIN>;
     using TaskType = Task<DataType>;
 
+    /**
+     * Constructor for the Executor class.
+     *
+     * @param config Configuration object containing parameters for the digger.
+     *      Only the reference is stored, so the object must outlive the Executor.
+     */
     Executor(const Config& config)
         : config(config)
     { }
@@ -45,11 +56,21 @@ public:
     Executor(Executor&&) = default;
     Executor& operator=(Executor&&) = default;
 
+    /**
+     * Executes the digger algorithm.
+     *
+     * @param chainsList List of chains to be processed.
+     * @param namesVec Vector of names for the chains.
+     * @param isConditionVec Vector indicating if each chain is a condition.
+     * @param isFocusVec Vector indicating if each chain is a focus.
+     * @param callback Callback function to be called with the frequent condition.
+     * @return List of results from the calls of the callback function.
+     */
     List execute(const List& chainsList,
                  const CharacterVector& namesVec,
                  const LogicalVector& isConditionVec,
                  const LogicalVector& isFocusVec,
-                 const Function callback)
+                 const Function& callback)
     {
         DataType data = createData(chainsList, namesVec, isConditionVec, isFocusVec);
         MultiThreadDigger<DataType> digger(data, config, callback);
@@ -151,11 +172,20 @@ public:
     }
 
 private:
-    Config config;
+    const Config& config;
 
+    /**
+     * Permutes the input vector according to the given permutation indices.
+     *
+     * @param vec The input vector to be permuted.
+     * @param permutation The permutation indices.
+     * @return The permuted vector.
+     */
     template <typename T>
     T permute(T vec, const vector<size_t>& permutation)
     {
+        // TODO: refactor - perform permutations in-place to avoid copying
+        // (perhaps must be done in DualChain::addChain)
         T result(vec.size());
         for (size_t i = 0; i < vec.size(); i++) {
             result[i] = vec[permutation[i]];
@@ -163,10 +193,19 @@ private:
         return result;
     }
 
+    /**
+     * Creates the data structure from the input chains.
+     *
+     * @param chainsList List of chains to be processed.
+     * @param namesVec Vector of names for the chains.
+     * @param isConditionVec Vector indicating if each chain is a condition.
+     * @param isFocusVec Vector indicating if each chain is a focus.
+     * @return DataType object containing the processed data.
+     */
     DataType createData(const List& chainsList,
                         const CharacterVector& namesVec,
                         const LogicalVector& isConditionVec,
-                        const LogicalVector& isFocusVec)
+                        const LogicalVector& isFocusVec) const
     {
         LogStartEnd l("data init");
         DataType data(config.getNrow());
@@ -193,12 +232,12 @@ private:
             if (isCondition || isFocus) {
                 String name = namesVec[i];
                 if (Rf_isReal(chainsList[i])) {
-                    const NumericVector vec = chainsList[i];
+                    const NumericVector& vec = chainsList[i];
                     data.addChain(vec, //permute(vec, rowPermutation),
                                   name, isCondition, isFocus);
                 }
                 else if (Rf_isLogical(chainsList[i])) {
-                    const LogicalVector vec = chainsList[i];
+                    const LogicalVector& vec = chainsList[i];
                     data.addChain(vec, //permute(vec, rowPermutation),
                                   name, isCondition, isFocus);
                 }

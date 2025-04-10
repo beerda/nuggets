@@ -6,6 +6,11 @@
 #include "CallbackCaller.h"
 
 
+/**
+ * Abstract class for a digger, a main algorithm for searching for frequent
+ * conditions and executing the callback function on each generated condition.
+ * This class defines a common functionality for all diggers.
+ */
 template <typename DATA>
 class AbstractDigger {
 public:
@@ -14,10 +19,18 @@ public:
     using FilterType = Filter<TaskType>;
     using ArgumentatorType = Argumentator<TaskType>;
 
+    /**
+     * Constructor.
+     *
+     * @param data The data to be used for the digger.
+     * @param config The configuration object (only the reference is stored).
+     * @param callback The callback function to be called on each generated condition.
+     */
     AbstractDigger(DataType& data,
                    const Config& config,
                    const Function callback)
         : data(data),
+          config(config),
           callbackCaller(config.getMaxResults(), callback),
           initialTask(Iterator(data.getCondition()), // condition predicates to "soFar"
                       Iterator({}, data.getFoci()))  // focus predicates to "available"
@@ -30,9 +43,20 @@ public:
     // Allow move
     AbstractDigger(AbstractDigger&&) = default;
     AbstractDigger& operator=(AbstractDigger&&) = default;
+
+    /**
+     * Adds an argumentator to the digger.
+     *
+     * @param argumentator The argumentator to be added.
+     */
     void addArgumentator(ArgumentatorType* argumentator)
     { callbackCaller.addArgumentator(argumentator); }
 
+    /**
+     * Adds a filter to the digger.
+     *
+     * @param filter The filter to be added.
+     */
     void addFilter(FilterType* filter)
     { filterManager.addFilter(filter); }
 
@@ -79,6 +103,7 @@ public:
 
 protected:
     DataType& data;
+    const Config& config;
     CallbackCaller<TaskType> callbackCaller;
     FilterManager<TaskType> filterManager;
     TaskType initialTask;

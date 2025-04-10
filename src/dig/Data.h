@@ -33,46 +33,45 @@ public:
         positiveChains.reserve(size);
         negativeChains.reserve(size);
         names.reserve(size);
+        condition.reserve(size);
+        foci.reserve(size);
     }
 
     void addUnusedChain()
     {
-        DualChainType emptyChain;
-        positiveChains.push_back(emptyChain);
-        negativeChains.push_back(emptyChain);
-        names.push_back("");
+        positiveChains.emplace_back();
+        negativeChains.emplace_back();
+        names.emplace_back();
     }
 
     template <typename T>
-    void addChain(const T& values, string name, bool isCondition, bool isFocus)
+    void addChain(const T& values, const string& name, bool isCondition, bool isFocus)
     {
         if (size_t(values.size()) != rows) {
-            throw runtime_error("Chain size mismatch in Data::addChain");
+            throw std::out_of_range("Chain size mismatch in Data::addChain");
         }
-
-        names.push_back(name);
 
         if (isCondition) {
-            condition.push_back(positiveChains.size());
+            condition.emplace_back(positiveChains.size());
         }
         if (isFocus) {
-            foci.push_back(positiveChains.size());
+            foci.emplace_back(positiveChains.size());
         }
 
-        DualChainType posChain(values);
-        posChain.toNumeric();
-        positiveChains.push_back(posChain);
+        names.emplace_back(name);
+        positiveChains.emplace_back(values);
+        positiveChains.back().toNumeric();
 
-        DualChainType negChain;
-        negativeChains.push_back(negChain);
+         // just put in an empty chain, which will be initialized later in initializeNegativeFoci() if needed
+        negativeChains.emplace_back();
     }
 
     void initializeNegativeFoci()
     {
         for (size_t i = 0; i < foci.size(); ++i) {
-            DualChainType negChain = positiveChains.at(foci.at(i));
-            negChain.negate();
-            negativeChains[foci.at(i)] = negChain;
+            size_t index = foci.at(i);
+            negativeChains[index] = positiveChains[index]; // copy the chain
+            negativeChains[index].negate();
         }
     }
 
@@ -80,7 +79,7 @@ public:
     {
         const DualChainType& chain = positiveChains.at(i);
         if (chain.isNull()) {
-            throw runtime_error("Attempt to use null chain in Data::getPositiveChain");
+            throw std::out_of_range("Attempt to use null chain in Data::getPositiveChain");
         }
 
         return chain;
@@ -90,7 +89,7 @@ public:
     {
         const DualChainType& chain = negativeChains.at(i);
         if (chain.isNull()) {
-            throw runtime_error("Attempt to use null chain in Data::getNegativeChain");
+            throw std::out_of_range("Attempt to use null chain in Data::getNegativeChain");
         }
 
         return chain;
@@ -100,7 +99,7 @@ public:
     {
         const DualChainType& chain = positiveChains.at(i);
         if (chain.isNull()) {
-            throw runtime_error("Attempt to get name of null chain in Data::getName");
+            throw std::out_of_range("Attempt to get name of null chain in Data::getName");
         }
 
         return names.at(i);
@@ -121,8 +120,8 @@ public:
     void optimizeConditionOrder()
     {
         sort(condition.begin(), condition.end(), [this](int a, int b) {
-            const DualChainType& chainA = positiveChains.at(a);
-            const DualChainType& chainB = positiveChains.at(b);
+            const DualChainType& chainA = positiveChains[a];
+            const DualChainType& chainB = positiveChains[b];
 
             if (chainA.isBitwise() > chainB.isBitwise()) {
                 return true; // a goes before b because a is bitwise and b isn't
