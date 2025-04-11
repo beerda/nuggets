@@ -12,7 +12,8 @@ SOURCES=RcppExports.cpp \
 	test-runner.cpp \
 	test-antichain-Condition.cpp \
 	test-antichain-Node.cpp \
-	test-antichain-Tree.cpp
+	test-antichain-Tree.cpp \
+	test-dig-Config.cpp
 	#test-dig-BitChain.cpp \
 	#test-dig-Data.cpp \
 	#test-dig-DataSorter.cpp \

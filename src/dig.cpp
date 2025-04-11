@@ -1,4 +1,5 @@
 #include "common.h"
+#include "dig/Config.h"
 
 
 // [[Rcpp::plugins(openmp)]]
@@ -11,6 +12,7 @@ List dig_(List chains,
           List confList)
 {
     LogStartEnd l("dig_");
+    Config config(confList);
     List result;
 
     return result;
