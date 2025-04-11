@@ -41,10 +41,11 @@ Imports:
     tidyr,
     tidyselect
 LinkingTo: 
+    BH,
     Rcpp,
     RcppThread,
     testthat
-SystemRequirements: C++17
+SystemRequirements: C++20
 Suggests: 
     arules,
     dplyr,

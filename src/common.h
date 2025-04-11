@@ -1,6 +1,7 @@
 #pragma once
 
 // [[Rcpp::plugins(cpp20)]]
+// [[Rcpp::depends(BH)]]
 // [[Rcpp::depends(RcppThread)]]
 
 #include <cmath>
