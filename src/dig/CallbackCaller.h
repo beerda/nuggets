@@ -120,7 +120,13 @@ private:
             }
         }
         rArgs.names() = rArgNames;
-        result.push_back(callback(rArgs));
+        try {
+            RObject callbackResult = callback(rArgs);
+            result.push_back(callbackResult);
+        }
+        catch (...) {
+            throw runtime_error("Error in callback function");
+        }
     }
 
     bool isMainThread() const

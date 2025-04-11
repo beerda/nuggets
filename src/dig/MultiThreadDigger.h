@@ -59,7 +59,12 @@ public:
                 delete task;
         }
 
-        this->callbackCaller.processAvailableCalls();
+        try {
+            this->callbackCaller.processAvailableCalls();
+        }
+        catch (const std::exception& e) {
+            processError(e);
+        }
         finalizeRun();
     }
 
