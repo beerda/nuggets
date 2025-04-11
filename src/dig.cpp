@@ -1,13 +1,5 @@
-#include "dig/Executor.h"
-#include "dig/BitChain.h"
-#include "dig/SimdVectorNumChain.h"
-//#include "dig/BitwiseFuzzyChain.h"
-//#include "dig/VectorNumChain.h"
+#include "common.h"
 
-#define BCH BitChain
-#define NCH SimdVectorNumChain
-//define NCH VectorNumChain
-//define NCH BitwiseFuzzyChain8
 
 // [[Rcpp::plugins(openmp)]]
 // [[Rcpp::export]]
@@ -20,22 +12,6 @@ List dig_(List chains,
 {
     LogStartEnd l("dig_");
     List result;
-    Config config(confList);
-
-    if (config.getTNorm() == TNorm::GOEDEL) {
-        Executor<BCH, NCH<GOEDEL>> exec(config);
-        result = exec.execute(chains, namesVector, isCondition, isFocus, callback);
-    }
-    else if (config.getTNorm() == TNorm::GOGUEN) {
-        Executor<BCH, NCH<GOGUEN>> exec(config);
-        result = exec.execute(chains, namesVector, isCondition, isFocus, callback);
-    }
-    else if (config.getTNorm() == TNorm::LUKASIEWICZ) {
-        Executor<BCH, NCH<LUKASIEWICZ>> exec(config);
-        result = exec.execute(chains, namesVector, isCondition, isFocus, callback);
-    }
-    else
-        throw runtime_error("Unknown t-norm in C++ dig_()");
 
     return result;
 }

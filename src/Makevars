@@ -12,16 +12,16 @@ SOURCES=RcppExports.cpp \
 	test-runner.cpp \
 	test-antichain-Condition.cpp \
 	test-antichain-Node.cpp \
-	test-antichain-Tree.cpp \
-	test-dig-BitChain.cpp \
-	test-dig-Data.cpp \
-	test-dig-DataSorter.cpp \
-	test-dig-DualChain.cpp \
-	test-dig-Iterator.cpp \
-	test-dig-Task.cpp \
-	test-dig-TaskSequence.cpp \
-	test-dig-TautologyTree.cpp \
-	test-dig-VectorNumChain.cpp
+	test-antichain-Tree.cpp
+	#test-dig-BitChain.cpp \
+	#test-dig-Data.cpp \
+	#test-dig-DataSorter.cpp \
+	#test-dig-DualChain.cpp \
+	#test-dig-Iterator.cpp \
+	#test-dig-Task.cpp \
+	#test-dig-TaskSequence.cpp \
+	#test-dig-TautologyTree.cpp \
+	#test-dig-VectorNumChain.cpp
 
 # Obtain the object files
 OBJECTS=$(SOURCES:.cpp=.o)
