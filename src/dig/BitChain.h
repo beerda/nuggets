@@ -1,53 +1,49 @@
 #pragma once
 
 #include "../common.h"
+#include "BaseChain.h"
 #include <boost/dynamic_bitset.hpp>
 
 
 /**
  * Implementation of chain of bits.
  */
-class BitChain {
+class BitChain : public BaseChain {
 public:
-    constexpr static size_t CHUNK_SIZE = 8 * sizeof(uintmax_t);
-
-    BitChain(size_t n)
-        : data(n), sum(0)
+    BitChain()
+        : BaseChain(0, BaseChain::PredicateType::CONDITION, 0)
     { }
 
-    BitChain(const LogicalVector& vals)
-        : data(vals.size()), sum(0)
+    BitChain(size_t id, PredicateType type, const LogicalVector& vec)
+        : BaseChain(id, type, 0),
+          data(vec.size())
     {
-        for (R_xlen_t i = 0; i < vals.size(); ++i) {
-            if (vals[i]) {
+        for (R_xlen_t i = 0; i < vec.size(); ++i) {
+            if (vec[i]) {
                 data.set(i);
-                sum++;
+                this->sum++;
             }
         }
     }
 
-    // Allow copy
-    BitChain(const BitChain& other) = default;
-    BitChain& operator=(const BitChain& other) = default;
+    BitChain(const BitChain& a, const BitChain& b)
+        : BaseChain(a, b),
+          data(a.data & b.data)
+    { sum = data.count(); }
+
+    // Disable copy
+    BitChain(const BitChain& other) = delete;
+    BitChain& operator=(const BitChain& other) = delete;
 
     // Allow move
     BitChain(BitChain&& other) = default;
     BitChain& operator=(BitChain&& other) = default;
 
     bool operator==(const BitChain& other) const
-    { return (sum == other.sum) && (data == other.data); }
+    { return BaseChain::operator==(other) && (data == other.data); }
 
     bool operator!=(const BitChain& other) const
     { return !(*this == other); }
-
-    void operator&=(const BitChain& other)
-    {
-        if (data.size() != other.data.size()) {
-            throw std::invalid_argument("BitChain::operator&=: incompatible sizes");
-        }
-        data &= other.data;
-        sum = data.count();
-    }
 
     bool operator[](size_t index) const
     { return data[index]; }
@@ -60,9 +56,6 @@ public:
 
     bool empty() const
     { return data.empty(); }
-
-    size_t getSum() const
-    { return sum; }
 
     string toString() const
     {
@@ -77,5 +70,4 @@ public:
 
 private:
     boost::dynamic_bitset<> data;
-    size_t sum;
 };
