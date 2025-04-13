@@ -22,12 +22,12 @@ context("dig/ChainCollection") {
             expect_true(cc.size() == 6);
             expect_true(cc.empty() == false);
 
-            expect_true(cc.at(0).getFormula().back() == 1);
-            expect_true(cc.at(1).getFormula().back() == 3);
-            expect_true(cc.at(2).getFormula().back() == 5);
-            expect_true(cc.at(3).getFormula().back() == 2);
-            expect_true(cc.at(4).getFormula().back() == 4);
-            expect_true(cc.at(5).getFormula().back() == 6);
+            expect_true(cc.at(0).getClause().back() == 1);
+            expect_true(cc.at(1).getClause().back() == 3);
+            expect_true(cc.at(2).getClause().back() == 5);
+            expect_true(cc.at(3).getClause().back() == 2);
+            expect_true(cc.at(4).getClause().back() == 4);
+            expect_true(cc.at(5).getClause().back() == 6);
 
             expect_true(cc.at(0).isCondition());
             expect_true(cc.at(1).isCondition());
@@ -48,13 +48,13 @@ context("dig/ChainCollection") {
 
             vector<size_t> idsCond;
             for (const BitChain& b : cc.conditions()) {
-                idsCond.push_back(b.getFormula().back());
+                idsCond.push_back(b.getClause().back());
             }
             expect_true(idsCond == vector<size_t>({ 1, 3, 5 }));
 
             vector<size_t> idsFoc;
             for (const BitChain& b : cc.foci()) {
-                idsFoc.push_back(b.getFormula().back());
+                idsFoc.push_back(b.getClause().back());
             }
             expect_true(idsFoc == vector<size_t>({ 2, 4, 6 }));
         }
@@ -69,12 +69,12 @@ context("dig/ChainCollection") {
             expect_true(cc.size() == 6);
             expect_true(cc.empty() == false);
 
-            expect_true(cc.at(0).getFormula().back() == 3);
-            expect_true(cc.at(1).getFormula().back() == 5);
-            expect_true(cc.at(2).getFormula().back() == 6);
-            expect_true(cc.at(3).getFormula().back() == 4);
-            expect_true(cc.at(4).getFormula().back() == 1);
-            expect_true(cc.at(5).getFormula().back() == 2);
+            expect_true(cc.at(0).getClause().back() == 3);
+            expect_true(cc.at(1).getClause().back() == 5);
+            expect_true(cc.at(2).getClause().back() == 6);
+            expect_true(cc.at(3).getClause().back() == 4);
+            expect_true(cc.at(4).getClause().back() == 1);
+            expect_true(cc.at(5).getClause().back() == 2);
 
             expect_true(cc.at(0).isCondition());
             expect_true(cc.at(1).isCondition());
@@ -95,13 +95,13 @@ context("dig/ChainCollection") {
 
             vector<size_t> idsCond;
             for (const BitChain& b : cc.conditions()) {
-                idsCond.push_back(b.getFormula().back());
+                idsCond.push_back(b.getClause().back());
             }
             expect_true(idsCond == vector<size_t>({ 3, 5, 6, 4 }));
 
             vector<size_t> idsFoc;
             for (const BitChain& b : cc.foci()) {
-                idsFoc.push_back(b.getFormula().back());
+                idsFoc.push_back(b.getClause().back());
             }
             expect_true(idsFoc == vector<size_t>({ 4, 1, 2 }));
         }

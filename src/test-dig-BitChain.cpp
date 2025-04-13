@@ -13,8 +13,8 @@ context("dig/BitChain.h") {
 
         BitChain b(3, BaseChain::PredicateType::FOCUS, v);
 
-        expect_true(b.getFormula().size() == 1);
-        expect_true(b.getFormula()[0] == 3);
+        expect_true(b.getClause().size() == 1);
+        expect_true(b.getClause()[0] == 3);
         expect_true(!b.empty());
         expect_true(b.size() == 5);
         expect_true(b.getSum() == 3);
@@ -49,9 +49,9 @@ context("dig/BitChain.h") {
             BitChain b(20, BaseChain::PredicateType::BOTH, lb);
 
             BitChain c1(b, a1);
-            expect_true(c1.getFormula().size() == 2);
-            expect_true(c1.getFormula()[0] == 20);
-            expect_true(c1.getFormula()[1] == 10);
+            expect_true(c1.getClause().size() == 2);
+            expect_true(c1.getClause()[0] == 20);
+            expect_true(c1.getClause()[1] == 10);
             expect_true(!c1.empty());
             expect_true(c1.size() == 5);
             expect_true(c1.getSum() == 1);
@@ -65,17 +65,17 @@ context("dig/BitChain.h") {
             expect_true(c1.toString() == "[n=5]00100");
 
             BitChain c2(b, a2);
-            expect_true(c2.getFormula().size() == 2);
-            expect_true(c2.getFormula()[0] == 20);
-            expect_true(c2.getFormula()[1] == 11);
+            expect_true(c2.getClause().size() == 2);
+            expect_true(c2.getClause()[0] == 20);
+            expect_true(c2.getClause()[1] == 11);
             expect_true(c2.getSum() == 1);
             expect_true(c2.toString() == "[n=5]00100");
 
             BitChain d(c1, c2);
-            expect_true(d.getFormula().size() == 3);
-            expect_true(d.getFormula()[0] == 20);
-            expect_true(d.getFormula()[1] == 10);
-            expect_true(d.getFormula()[2] == 11);
+            expect_true(d.getClause().size() == 3);
+            expect_true(d.getClause()[0] == 20);
+            expect_true(d.getClause()[1] == 10);
+            expect_true(d.getClause()[2] == 11);
             expect_true(d.getSum() == 1);
             expect_true(d.toString() == "[n=5]00100");
         }
