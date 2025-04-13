@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../common.h"
+#include "Clause.h"
 
 
 /**
@@ -35,10 +36,10 @@ public:
 
     /**
      * Default constructor that creates an empty chain of type CONDITION with
-     * empty formula.
+     * empty clause.
      */
     BaseChain()
-        : formula(),
+        : clause(),
           predicateType(CONDITION),
           sum(0)
     { }
@@ -53,7 +54,7 @@ public:
      *     (for fuzzy data) of the chain.
      */
     BaseChain(size_t id, PredicateType type, size_t sum)
-        : formula({id}),
+        : clause({ id }),
           predicateType(type),
           sum(sum)
     { }
@@ -66,7 +67,7 @@ public:
      * @param b The second chain.
      */
     BaseChain(const BaseChain& a, const BaseChain& b)
-        : formula(a.formula.size() + 1),
+        : clause(a.clause.size() + 1),
           predicateType(b.predicateType),
           sum(0)
     {
@@ -74,16 +75,16 @@ public:
             if (!a.isCondition())
                 throw invalid_argument("BaseChain: first chain is not a condition");
 
-            if (a.formula.size() != b.formula.size())
-                throw invalid_argument("BaseChain: formula sizes differ");
+            if (a.clause.size() != b.clause.size())
+                throw invalid_argument("BaseChain: clause sizes differ");
 
-            for (size_t i = 0; i < a.formula.size() - 1; ++i) {
-                if (a.formula[i] != b.formula[i])
-                    throw invalid_argument("BaseChain: formula prefixes differ");
+            for (size_t i = 0; i < a.clause.size() - 1; ++i) {
+                if (a.clause[i] != b.clause[i])
+                    throw invalid_argument("BaseChain: clause prefixes differ");
             }
         )
-        formula.assign(a.formula.begin(), a.formula.end());
-        formula.push_back(b.formula.back());
+        clause.assign(a.clause.begin(), a.clause.end());
+        clause.push_back(b.clause.back());
     }
 
     // Allow copy
@@ -101,7 +102,7 @@ public:
     {
         return (sum == other.sum)
             && (predicateType == other.predicateType)
-            && (formula == other.formula);
+            && (clause == other.clause);
     }
 
     /**
@@ -111,10 +112,10 @@ public:
     { return !(*this == other); }
 
     /**
-     * Returns the formula of the chain, i.e., the vector of predicate ids.
+     * Returns the clause of the chain, i.e., the vector of predicate ids.
      */
-    const vector<size_t>& getFormula() const
-    { return formula; }
+    const Clause& getClause() const
+    { return clause; }
 
     /**
      * Returns the sum of TRUEs (for binary data) or membership degrees (for
@@ -145,9 +146,9 @@ public:
 
 protected:
     /**
-     * The formula of the chain, i.e., the vector of predicate ids.
+     * The clause of the chain, i.e., the vector of predicate ids.
      */
-    vector<size_t> formula;
+    Clause clause;
 
     /**
      * The type of the predicate represented by this chain, i.e.,
