@@ -13,6 +13,7 @@ SOURCES=RcppExports.cpp \
 	test-antichain-Node.cpp \
 	test-antichain-Tree.cpp \
 	test-dig-BitChain.cpp \
+	test-dig-ChainCollection.cpp \
 	test-dig-Config.cpp
 	#test-dig-Data.cpp \
 	#test-dig-DataSorter.cpp \
