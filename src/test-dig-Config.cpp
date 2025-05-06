@@ -23,7 +23,9 @@ context("dig/Config.h") {
             Named("arguments") = CharacterVector::create("condition", "pp", "np", "indices")
         );
 
-        Config c(r);
+        CharacterVector n = CharacterVector::create("a", "b", "c");
+
+        Config c(r, n);
 
         expect_true(c.getMaxLength() == 5);
         expect_true(c.getMaxResults() == 6);
@@ -49,7 +51,9 @@ context("dig/Config.h") {
             Named("arguments") = CharacterVector::create("condition", "pp", "np", "indices")
         );
 
-        Config c(r);
+        CharacterVector n = CharacterVector::create("a", "b", "c");
+
+        Config c(r, n);
 
         expect_true(c.getNrow() == 600);
         expect_true(c.getThreads() == 2);
@@ -89,5 +93,10 @@ context("dig/Config.h") {
         expect_true(c.hasSumArgument() == false);
         expect_true(c.hasSupportArgument() == false);
         expect_true(c.hasWeightsArgument() == false);
+
+        expect_true(c.getChainName(0) == "");
+        expect_true(c.getChainName(1) == "a");
+        expect_true(c.getChainName(2) == "b");
+        expect_true(c.getChainName(3) == "c");
     }
 }
