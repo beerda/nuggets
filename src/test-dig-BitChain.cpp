@@ -11,7 +11,7 @@ context("dig/BitChain.h") {
         v[3] = true;
         v[4] = false;
 
-        BitChain b(3, BaseChain::PredicateType::FOCUS, v);
+        BitChain b(3, PredicateType::FOCUS, v);
 
         expect_true(b.getClause().size() == 1);
         expect_true(b.getClause()[0] == 3);
@@ -44,9 +44,9 @@ context("dig/BitChain.h") {
         lb[4] = true;
 
         {
-            BitChain a1(10, BaseChain::PredicateType::BOTH, la);
-            BitChain a2(11, BaseChain::PredicateType::BOTH, la);
-            BitChain b(20, BaseChain::PredicateType::BOTH, lb);
+            BitChain a1(10, PredicateType::BOTH, la);
+            BitChain a2(11, PredicateType::BOTH, la);
+            BitChain b(20, PredicateType::BOTH, lb);
 
             BitChain c1(b, a1);
             expect_true(c1.getClause().size() == 2);
@@ -80,16 +80,16 @@ context("dig/BitChain.h") {
             expect_true(d.toString() == "[n=5]00100");
         }
         {
-            BitChain a(10, BaseChain::PredicateType::BOTH, la);
-            BitChain b(20, BaseChain::PredicateType::CONDITION, lb);
+            BitChain a(10, PredicateType::BOTH, la);
+            BitChain b(20, PredicateType::CONDITION, lb);
             BitChain c(a, b);
             expect_true(c.isCondition());
             expect_true(!c.isFocus());
             expect_true(c.toString() == "[n=5]00100");
         }
         {
-            BitChain a(10, BaseChain::PredicateType::BOTH, la);
-            BitChain b(20, BaseChain::PredicateType::FOCUS, lb);
+            BitChain a(10, PredicateType::BOTH, la);
+            BitChain b(20, PredicateType::FOCUS, lb);
             BitChain c(a, b);
             expect_true(!c.isCondition());
             expect_true(c.isFocus());
