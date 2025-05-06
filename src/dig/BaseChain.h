@@ -42,7 +42,7 @@ public:
      * @param sum The sum of TRUEs (for binary data) or membership degrees
      *     (for fuzzy data) of the chain.
      */
-    BaseChain(size_t id, PredicateType type, size_t sum)
+    BaseChain(size_t id, PredicateType type, float sum)
         : clause({ id }),
           predicateType(type),
           sum(sum)
@@ -110,7 +110,7 @@ public:
      * Returns the sum of TRUEs (for binary data) or membership degrees (for
      * fuzzy data) of the chain.
      */
-    size_t getSum() const
+    float getSum() const
     { return sum; }
 
     /**
@@ -150,5 +150,5 @@ protected:
      * The sum of TRUEs (for binary data) or membership degrees (for
      * fuzzy data) of the chain.
      */
-    size_t sum;
+    float sum;
 };
