@@ -1,5 +1,6 @@
 #include "common.h"
 #include "dig/BitChain.h"
+#include "dig/CallbackCaller.h"
 #include "dig/Config.h"
 #include "dig/ChainCollection.h"
 #include "dig/Digger.h"
@@ -16,11 +17,15 @@ List dig_(List data,
           List confList)
 {
     LogStartEnd l("dig_");
-    List result;
+
+    using CHAIN = BitChain;
+    using STORAGE = CallbackCaller<CHAIN>;
+
     ChainCollection<BitChain> chains(data, isCondition, isFocus);
     Config config(confList, namesVector);
-    Digger<BitChain> digger(config);
+    STORAGE caller(config, callback);
+    Digger<CHAIN, STORAGE> digger(config, caller);
     digger.run(chains);
 
-    return result;
+    return caller.getResult();
 }
