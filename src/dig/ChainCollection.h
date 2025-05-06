@@ -1,40 +1,12 @@
 #pragma once
 
 #include "../common.h"
-#include "BaseChain.h"
 
 
 template <typename CHAIN>
 class ChainCollection {
 public:
     using ChainType = CHAIN;
-
-    class Range {
-    public:
-        Range() = default;
-
-        Range(vector<CHAIN>::const_iterator first,
-              vector<CHAIN>::const_iterator last)
-            : first(first),
-              last(last)
-        { }
-
-        vector<CHAIN>::const_iterator begin() const
-        { return first; }
-
-        vector<CHAIN>::const_iterator end() const
-        { return last; }
-
-        size_t size() const
-        { return std::distance(first, last); }
-
-        bool empty() const
-        { return size() == 0; }
-
-    private:
-        vector<CHAIN>::const_iterator first;
-        vector<CHAIN>::const_iterator last;
-    };
 
     ChainCollection()
         : chains(), nConditions(0), nFoci(0)
@@ -54,15 +26,15 @@ public:
                 if (isCondition) nConditions++;
                 if (isFocus) nFoci++;
                 int id = i + 1;
-                BaseChain::PredicateType type = BaseChain::createPredicateType(isCondition, isFocus);
+                PredicateType type = BaseChain::createPredicateType(isCondition, isFocus);
                 if (Rf_isLogical(data[i])) {
                     const LogicalVector& vec = data[i];
                     chains.emplace_back(id, type, vec);
                 }
-                //else if (Rf_isReal(data[i])) {
-                    //const NumericVector& vec = data[i];
-                    //chains.emplace_back(id, BaseChain::PredicateType(type), vec);
-                //}
+                else if (Rf_isReal(data[i])) {
+                    const NumericVector& vec = data[i];
+                    chains.emplace_back(id, PredicateType(type), vec);
+                }
                 else {
                     throw std::invalid_argument("ChainCollection: unsupported data type");
                 }
@@ -91,6 +63,9 @@ public:
     const CHAIN& at(size_t i) const
     { return chains.at(i); }
 
+    CHAIN& operator[](size_t i)
+    { return chains[i]; }
+
     const CHAIN& operator[](size_t i) const
     { return chains[i]; }
 
@@ -100,21 +75,28 @@ public:
     typename vector<CHAIN>::const_iterator end() const
     { return chains.end(); }
 
-    void append(const CHAIN& a, const CHAIN& b)
+    // append with move
+    void append(CHAIN&& chain)
     {
-        IF_DEBUG(
-            if (a.size() != b.size()) {
-                throw std::invalid_argument("ChainCollection::append: incompatible sizes");
-            }
-        )
-        chains.emplace_back(a, b);
+        chains.push_back(std::move(chain));
+        if (chains.back().isCondition()) nConditions++;
+        if (chains.back().isFocus()) nFoci++;
     }
 
-    Range conditions() const
-    { return Range(chains.begin(), chains.begin() + nConditions); }
+    size_t firstFocusIndex() const
+    { return size() - focusCount(); }
 
-    Range foci() const
-    { return Range(chains.end() - nFoci, chains.end()); }
+    size_t conditionCount() const
+    { return nConditions; }
+
+    size_t focusCount() const
+    { return nFoci; }
+
+    bool hasConditions() const
+    { return nConditions > 0; }
+
+    bool hasFoci() const
+    { return nFoci > 0; }
 
 private:
     vector<CHAIN> chains;

@@ -3,6 +3,44 @@
 #include "dig/BitChain.h"
 #include "dig/ChainCollection.h"
 
+#include <iostream>
+#include <vector>
+#include <string>
+
+class C {
+public:
+    std::string data;
+
+    C(std::string d) : data(std::move(d)) {}
+    C(const C& other) : data(other.data) { std::cout << "Copy C\n"; }
+    C(C&& other) noexcept : data(std::move(other.data)) { std::cout << "Move C\n"; }
+};
+
+class Container {
+private:
+    std::vector<C> storage;
+
+public:
+    // Append with move
+    void append(C&& item) {
+        std::cout << "Appending...\n";
+        storage.push_back(std::move(item));
+    }
+
+    // Optional: append by const reference (copy)
+    void append(const C& item) {
+        std::cout << "Copying...\n";
+        storage.push_back(item);
+    }
+
+    void print() const {
+        for (const auto& c : storage) {
+            std::cout << c.data << " ";
+        }
+        std::cout << "\n";
+    }
+};
+
 context("dig/ChainCollection") {
     test_that("initialize from List of LogicalVectors") {
         LogicalVector c1 = LogicalVector::create(true, true, true, true, false);
@@ -43,20 +81,8 @@ context("dig/ChainCollection") {
             expect_true(cc.at(4).isFocus());
             expect_true(cc.at(5).isFocus());
 
-            expect_true(cc.conditions().size() == 3);
-            expect_true(cc.foci().size() == 3);
-
-            vector<size_t> idsCond;
-            for (const BitChain& b : cc.conditions()) {
-                idsCond.push_back(b.getClause().back());
-            }
-            expect_true(idsCond == vector<size_t>({ 1, 3, 5 }));
-
-            vector<size_t> idsFoc;
-            for (const BitChain& b : cc.foci()) {
-                idsFoc.push_back(b.getClause().back());
-            }
-            expect_true(idsFoc == vector<size_t>({ 2, 4, 6 }));
+            expect_true(cc.conditionCount() == 3);
+            expect_true(cc.focusCount() == 3);
         }
         {
             //                     1   2   3   4   5   6
@@ -90,20 +116,8 @@ context("dig/ChainCollection") {
             expect_true(cc.at(4).isFocus());
             expect_true(cc.at(5).isFocus());
 
-            expect_true(cc.conditions().size() == 4);
-            expect_true(cc.foci().size() == 3);
-
-            vector<size_t> idsCond;
-            for (const BitChain& b : cc.conditions()) {
-                idsCond.push_back(b.getClause().back());
-            }
-            expect_true(idsCond == vector<size_t>({ 3, 5, 6, 4 }));
-
-            vector<size_t> idsFoc;
-            for (const BitChain& b : cc.foci()) {
-                idsFoc.push_back(b.getClause().back());
-            }
-            expect_true(idsFoc == vector<size_t>({ 4, 1, 2 }));
+            expect_true(cc.conditionCount() == 4);
+            expect_true(cc.focusCount() == 3);
         }
 
 

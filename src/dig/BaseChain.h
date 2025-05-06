@@ -10,17 +10,6 @@
  */
 class BaseChain {
 public:
-    /**
-     * The type of the predicate represented by this chain, i.e.,
-     * where the predicate may appear (in condition (antecedent),
-     * in focus (consequent), or in both positions).
-     */
-    enum PredicateType {
-        CONDITION = 1,
-        BOTH = 2, // this is because of sorting order: CONDITION, BOTH, FOCUS
-        FOCUS = 3
-    };
-
     static PredicateType createPredicateType(bool isCondition, bool isFocus)
     {
         if (isCondition && isFocus) {

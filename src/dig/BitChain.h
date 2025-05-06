@@ -11,7 +11,7 @@
 class BitChain : public BaseChain {
 public:
     BitChain()
-        : BaseChain(0, BaseChain::PredicateType::CONDITION, 0)
+        : BaseChain()
     { }
 
     BitChain(size_t id, PredicateType type, const LogicalVector& vec)
@@ -25,6 +25,9 @@ public:
             }
         }
     }
+
+    BitChain(size_t id, PredicateType type, const NumericVector& vec)
+    { throw std::invalid_argument("BitChain: NumericVector constructor not implemented"); }
 
     BitChain(const BitChain& a, const BitChain& b)
         : BaseChain(a, b),
