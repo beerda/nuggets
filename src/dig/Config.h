@@ -6,7 +6,7 @@
 
 class Config {
 public:
-    Config(List configuration)
+    Config(List configuration, CharacterVector namesVector)
         : nrow(IntegerVector(configuration["nrow"])[0]),
           threads(IntegerVector(configuration["threads"])[0]),
           minLength(IntegerVector(configuration["minLength"])[0]),
@@ -28,7 +28,8 @@ public:
 
           tNorm(parseTNorm(configuration["tNorm"])),
           excluded(configuration["excluded"]),
-          disjoint()
+          disjoint(),
+          chainNames()
     {
         if (maxLength < 0) {
             maxLength = INT_MAX;
@@ -41,7 +42,15 @@ public:
         IntegerVector disjVec = configuration["disjoint"];
         disjoint.reserve(disjVec.size() + 1);
         disjoint.push_back(0); // 0th index is unused, as R uses predicates' indices starting from 1
-        copy(disjVec, disjoint);
+        for (R_xlen_t i = 0; i < disjVec.size(); ++i) {
+            disjoint.push_back(disjVec[i]);
+        }
+
+        chainNames.reserve(namesVector.size() + 1);
+        chainNames.push_back(""); // 0th index is unused, as R uses predicates' indices starting from 1
+        for (R_xlen_t i = 0; i < namesVector.size(); ++i) {
+            chainNames.push_back(as<string>(namesVector[i]));
+        }
     }
 
     bool hasConditionArgument() const
@@ -128,6 +137,9 @@ public:
     TNorm getTNorm() const
     { return tNorm; }
 
+    const string& getChainName(size_t i) const
+    { return chainNames[i]; }
+
 private:
     int nrow;
     int threads;
@@ -146,6 +158,7 @@ private:
     TNorm tNorm;
     List excluded;
     vector<int> disjoint;
+    vector<string> chainNames;
 
     bool conditionArgument = false;
     bool fociSupportsArgument = false;
@@ -157,13 +170,6 @@ private:
     bool sumArgument = false;
     bool supportArgument = false;
     bool weightsArgument = false;
-
-    static void copy(const IntegerVector& source, vector<int>& values)
-    {
-        for (R_xlen_t i = 0; i < source.size(); ++i) {
-            values.push_back(source[i]);
-        }
-    }
 
     static TNorm parseTNorm(const CharacterVector& vec)
     {

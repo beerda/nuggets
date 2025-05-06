@@ -69,8 +69,8 @@
     .Call(`_nuggets_strict_neg`, x)
 }
 
-dig_ <- function(chains, namesVector, isCondition, isFocus, callback, confList) {
-    .Call(`_nuggets_dig_`, chains, namesVector, isCondition, isFocus, callback, confList)
+dig_ <- function(data, namesVector, isCondition, isFocus, callback, confList) {
+    .Call(`_nuggets_dig_`, data, namesVector, isCondition, isFocus, callback, confList)
 }
 
 raisedcos_ <- function(x, ctx) {

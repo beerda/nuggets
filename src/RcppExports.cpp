@@ -202,18 +202,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // dig_
-List dig_(List chains, CharacterVector namesVector, LogicalVector isCondition, LogicalVector isFocus, Function callback, List confList);
-RcppExport SEXP _nuggets_dig_(SEXP chainsSEXP, SEXP namesVectorSEXP, SEXP isConditionSEXP, SEXP isFocusSEXP, SEXP callbackSEXP, SEXP confListSEXP) {
+List dig_(List data, CharacterVector namesVector, LogicalVector isCondition, LogicalVector isFocus, Function callback, List confList);
+RcppExport SEXP _nuggets_dig_(SEXP dataSEXP, SEXP namesVectorSEXP, SEXP isConditionSEXP, SEXP isFocusSEXP, SEXP callbackSEXP, SEXP confListSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type chains(chainsSEXP);
+    Rcpp::traits::input_parameter< List >::type data(dataSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type namesVector(namesVectorSEXP);
     Rcpp::traits::input_parameter< LogicalVector >::type isCondition(isConditionSEXP);
     Rcpp::traits::input_parameter< LogicalVector >::type isFocus(isFocusSEXP);
     Rcpp::traits::input_parameter< Function >::type callback(callbackSEXP);
     Rcpp::traits::input_parameter< List >::type confList(confListSEXP);
-    rcpp_result_gen = Rcpp::wrap(dig_(chains, namesVector, isCondition, isFocus, callback, confList));
+    rcpp_result_gen = Rcpp::wrap(dig_(data, namesVector, isCondition, isFocus, callback, confList));
     return rcpp_result_gen;
 END_RCPP
 }
