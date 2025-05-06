@@ -3,12 +3,38 @@
 #include "dig/Config.h"
 
 context("dig/Config.h") {
-    test_that("complex test") {
+    test_that("non-defaults") {
         List r = List::create(
             Named("nrow") = 600,
             Named("threads") = 2,
             Named("minLength") = 3,
-            Named("maxLength") = 4,
+            Named("maxLength") = 5,
+            Named("maxResults") = 6,
+            Named("minSupport") = 0.5,
+            Named("minFocusSupport") = 0.6,
+            Named("minConditionalFocusSupport") = 0.7,
+            Named("maxSupport") = 0.8,
+            Named("tautologyLimit") = 0.9,
+            Named("filterEmptyFoci") = true,
+            Named("verbose") = false,
+            Named("tNorm") = "goedel",
+            Named("excluded") = List::create(),
+            Named("disjoint") = IntegerVector::create(1, 1, 2, 2, 2, 4, 5),
+            Named("arguments") = CharacterVector::create("condition", "pp", "np", "indices")
+        );
+
+        Config c(r);
+
+        expect_true(c.getMaxLength() == 5);
+        expect_true(c.getMaxResults() == 6);
+    }
+
+    test_that("complex test with defaults") {
+        List r = List::create(
+            Named("nrow") = 600,
+            Named("threads") = 2,
+            Named("minLength") = 3,
+            Named("maxLength") = -1,
             Named("maxResults") = -1,
             Named("minSupport") = 0.5,
             Named("minFocusSupport") = 0.6,
@@ -28,10 +54,12 @@ context("dig/Config.h") {
         expect_true(c.getNrow() == 600);
         expect_true(c.getThreads() == 2);
         expect_true(c.getMinLength() == 3);
-        expect_true(c.getMaxLength() == 4);
-        expect_true(c.getMaxResults() == -1);
+        expect_true(c.getMaxLength() == INT_MAX);
+        expect_true(c.getMaxResults() == INT_MAX);
         expect_true(c.getMinSupport() == 0.5);
+        expect_true(c.getMinSum() == 300);
         expect_true(c.getMinFocusSupport() == 0.6);
+        expect_true(c.getMinFocusSum() == 360);
         expect_true(c.getMinConditionalFocusSupport() == 0.7);
         expect_true(c.getMaxSupport() == 0.8);
         expect_true(c.getTautologyLimit() == 0.9);

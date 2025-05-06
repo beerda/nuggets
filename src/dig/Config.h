@@ -14,7 +14,11 @@ public:
           maxResults(IntegerVector(configuration["maxResults"])[0]), // -1 means infinite
 
           minSupport(NumericVector(configuration["minSupport"])[0]),
+          minSum(minSupport * nrow),
+
           minFocusSupport(NumericVector(configuration["minFocusSupport"])[0]),
+          minFocusSum(minFocusSupport * nrow),
+
           minConditionalFocusSupport(NumericVector(configuration["minConditionalFocusSupport"])[0]),
           maxSupport(NumericVector(configuration["maxSupport"])[0]),
           tautologyLimit(NumericVector(configuration["tautologyLimit"])[0]),
@@ -26,21 +30,18 @@ public:
           excluded(configuration["excluded"]),
           disjoint()
     {
+        if (maxLength < 0) {
+            maxLength = INT_MAX;
+        }
+        if (maxResults < 0) {
+            maxResults = INT_MAX;
+        }
         parseArguments(configuration["arguments"]);
 
         IntegerVector disjVec = configuration["disjoint"];
         disjoint.reserve(disjVec.size() + 1);
         disjoint.push_back(0); // 0th index is unused, as R uses predicates' indices starting from 1
         copy(disjVec, disjoint);
-
-        /*
-        if (configuration["tautologyLimit"] == R_NilValue) {
-            tautologyLimitEnabled = false;
-        } else {
-            tautologyLimitEnabled = true;
-            tautologyLimit = NumericVector(configuration["tautologyLimit"])[0];
-        }
-         */
     }
 
     bool hasConditionArgument() const
@@ -109,8 +110,14 @@ public:
     double getMinSupport() const
     { return minSupport; }
 
+    int getMinSum() const
+    { return minSum; }
+
     double getMinFocusSupport() const
     { return minFocusSupport; }
+
+    int getMinFocusSum() const
+    { return minFocusSum; }
 
     double getMinConditionalFocusSupport() const
     { return minConditionalFocusSupport; }
@@ -128,7 +135,9 @@ private:
     int maxLength;
     int maxResults; // -1 means infinite
     double minSupport;
+    int minSum;
     double minFocusSupport;
+    int minFocusSum;
     double minConditionalFocusSupport;
     double maxSupport;
     double tautologyLimit;
