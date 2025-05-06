@@ -1,10 +1,10 @@
-#test_that("numeric matrix", {
-#    m <- matrix(1:12 / 12, ncol = 2)
-#    res <- dig(m, function() 1)
-#
-#    expect_equal(length(res), 4)
-#    expect_equal(res, rep(list(1), 4))
-#})
+test_that("numeric matrix", {
+    m <- matrix(1:12 / 12, ncol = 2)
+    res <- dig(m, function() 1)
+
+    expect_equal(length(res), 4)
+    expect_equal(res, rep(list(1), 4))
+})
 
 
 test_that("logical matrix", {
@@ -16,35 +16,35 @@ test_that("logical matrix", {
 })
 
 
-#test_that("data frame", {
-#    d <- data.frame(a = 1:6 / 10,
-#                    b = c(T, T, T, F, F, F))
-#    res <- dig(d, function() 1)
-#
-#    expect_equal(length(res), 4)
-#    expect_equal(res, rep(list(1), 4))
-#})
-#
-#
-#test_that("max_results limiting", {
-#    d <- data.frame(a = 1:6 / 10,
-#                    b = c(T, T, T, F, F, F))
-#
-#    res <- dig(d, function() 1, max_results = Inf)
-#    expect_equal(length(res), 4)
-#
-#    res <- dig(d, function() 1, max_results = 1)
-#    expect_equal(length(res), 1)
-#
-#    res <- dig(d, function() 1, max_results = 2)
-#    expect_equal(length(res), 2)
-#
-#    res <- dig(d, function() 1, max_results = 4)
-#    expect_equal(length(res), 4)
-#
-#    res <- dig(d, function() 1, max_results = 10)
-#    expect_equal(length(res), 4)
-#})
+test_that("data frame", {
+    d <- data.frame(a = 1:6 / 10,
+                    b = c(T, T, T, F, F, F))
+    res <- dig(d, function() 1)
+
+    expect_equal(length(res), 4)
+    expect_equal(res, rep(list(1), 4))
+})
+
+
+test_that("max_results limiting", {
+    d <- data.frame(a = 1:6 / 10,
+                    b = c(T, T, T, F, F, F))
+
+    res <- dig(d, function() 1, max_results = Inf)
+    expect_equal(length(res), 4)
+
+    res <- dig(d, function() 1, max_results = 1)
+    expect_equal(length(res), 1)
+
+    res <- dig(d, function() 1, max_results = 2)
+    expect_equal(length(res), 2)
+
+    res <- dig(d, function() 1, max_results = 4)
+    expect_equal(length(res), 4)
+
+    res <- dig(d, function() 1, max_results = 10)
+    expect_equal(length(res), 4)
+})
 
 
 test_that("select condition columns", {
@@ -78,31 +78,31 @@ test_that("select condition columns with names", {
 })
 
 
-#test_that("condition arg", {
-#    m <- matrix(1:12 / 12, ncol = 2)
-#    res <- dig(m, function(condition) list(cond = condition))
-#
-#    expect_equal(length(res), 4)
-#    expect_equal(res, list(list(cond = integer(0)),
-#                           list(cond = c("1"=1L)),
-#                           list(cond = c("2"=2L)),
-#                           list(cond = c("1"=1L, "2"=2L))))
-#})
-#
-#
-#test_that("condition arg with names", {
-#    m <- matrix(1:12 / 12, ncol = 2)
-#    colnames(m) <- c("aaah", "blee")
-#    res <- dig(m, function(condition) list(cond = condition))
-#
-#    expect_equal(length(res), 4)
-#    expect_equal(res, list(list(cond = integer(0)),
-#                           list(cond = c("aaah"=1L)),
-#                           list(cond = c("blee"=2L)),
-#                           list(cond = c("aaah"=1L, "blee"=2L))))
-#})
-#
-#
+test_that("condition arg", {
+    m <- matrix(1:12 / 12, ncol = 2)
+    res <- dig(m, function(condition) list(cond = condition))
+
+    expect_equal(length(res), 4)
+    expect_equal(res, list(list(cond = integer(0)),
+                           list(cond = c("1"=1L, "2"=2L)),
+                           list(cond = c("1"=1L)),
+                           list(cond = c("2"=2L))))
+})
+
+
+test_that("condition arg with names", {
+    m <- matrix(1:12 / 12, ncol = 2)
+    colnames(m) <- c("aaah", "blee")
+    res <- dig(m, function(condition) list(cond = condition))
+
+    expect_equal(length(res), 4)
+    expect_equal(res, list(list(cond = integer(0)),
+                           list(cond = c("aaah"=1L, "blee"=2L)),
+                           list(cond = c("aaah"=1L)),
+                           list(cond = c("blee"=2L))))
+})
+
+
 #test_that("support arg", {
 #    m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
 #    res <- dig(m, function(support) list(sup = support))
