@@ -26,19 +26,7 @@ public:
         if (result.size() < config.getMaxResults()) {
             List args;
 
-            if (config.hasConditionArgument()) {
-                IntegerVector vals(chain.getClause().size());
-                CharacterVector valNames(chain.getClause().size());
-                for (size_t i = 0; i < chain.getClause().size(); ++i) {
-                    size_t predicate = chain.getClause()[i];
-                    vals[i] = predicate;
-                    valNames[i] = config.getChainName(predicate);
-                }
-                if (vals.size() > 0) {
-                    vals.names() = valNames;
-                }
-                args.push_back(vals, "condition");
-            }
+            processConditionArgument(args, chain);
 
             try {
                 RObject callbackResult = callback(args);
@@ -57,4 +45,21 @@ private:
     const Config& config;
     const Function& callback;
     List result;
+
+    void processConditionArgument(List& args, const CHAIN& chain)
+    {
+        if (config.hasConditionArgument()) {
+            IntegerVector vals(chain.getClause().size());
+            CharacterVector valNames(chain.getClause().size());
+            for (size_t i = 0; i < chain.getClause().size(); ++i) {
+                size_t predicate = chain.getClause()[i];
+                vals[i] = predicate;
+                valNames[i] = config.getChainName(predicate);
+            }
+            if (vals.size() > 0) {
+                vals.names() = valNames;
+            }
+            args.push_back(vals, "condition");
+        }
+    }
 };
