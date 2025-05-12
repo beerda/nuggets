@@ -24,7 +24,7 @@ public:
     {
         ChainCollection<CHAIN> filteredCollection;
         for (size_t i = 0; i < data.size(); ++i) {
-            if (isFrequent(data[i])) {
+            if (isCandidate(data[i])) {
                 filteredCollection.append(std::move(data[i]));
             }
         }
@@ -49,8 +49,9 @@ private:
     const Config& config;
     STORAGE& storage;
 
-    bool isFrequent(const CHAIN& chain) const
+    bool isCandidate(const CHAIN& chain) const
     {
+        //cout << "chain.getSum() = " << chain.getSum() << " config.getMinSum() = " << config.getMinSum() << endl;
         if (chain.isCondition() && chain.getSum() >= config.getMinSum())
             return true;
 
@@ -77,7 +78,7 @@ private:
         target.reserve(parent.size() - begin);
         for (size_t i = begin; i < parent.size(); ++i) {
             CHAIN newChain(parent[conditionChainIndex], parent[i]);
-            if (isFrequent(newChain)) {
+            if (isCandidate(newChain)) {
                 target.append(std::move(newChain));
             }
         }
@@ -90,19 +91,22 @@ private:
 
             ChainCollection<CHAIN> childCollection;
             if (chain.getClause().size() < config.getMaxLength()) {
-                // would need conjunction with everything
+                // need conjunction with everything
                 combine(childCollection, collection, i, false);
-                processChains(childCollection);
+                storage.store(chain, childCollection);
+                if (!storage.isFull())
+                    processChains(childCollection);
             }
             else if (collection.hasFoci()) {
-                // would need conjunction with foci only
+                // need conjunction with foci only
                 combine(childCollection, collection, i, true);
+                storage.store(chain, childCollection);
             }
             else {
                 // do not need childCollection at all
+                storage.store(chain, childCollection);
             }
 
-            storage.store(chain, childCollection);
         }
     }
 };

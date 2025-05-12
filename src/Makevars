@@ -1,5 +1,5 @@
 PKG_CPPFLAGS=-I.
-PKG_CXXFLAGS=$(SHLIB_OPENMP_CXXFLAGS)
+PKG_CXXFLAGS=$(SHLIB_OPENMP_CXXFLAGS) -O3 -march=native -mtune=native
 PKG_LIBS=$(SHLIB_OPENMP_CXXFLAGS) `"$(R_HOME)/bin/Rscript" -e "RcppThread::LdFlags()"`
 
 SOURCES=RcppExports.cpp \
@@ -15,7 +15,8 @@ SOURCES=RcppExports.cpp \
 	test-dig-BitChain.cpp \
 	test-dig-ChainCollection.cpp \
 	test-dig-Config.cpp \
-	test-dig-FloatChain.cpp
+	test-dig-FloatChain.cpp \
+	test-dig-FubitChain.cpp
 	#test-dig-Data.cpp \
 	#test-dig-DataSorter.cpp \
 	#test-dig-DualChain.cpp \

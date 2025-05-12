@@ -24,7 +24,12 @@ using namespace std;
 
 
 #define EQUAL(a, b) (fabs((a) - (b)) < 1e-6)
+#define EQUAL100(a, b) (fabs((a) - (b)) < 0.019)
+#define EQUAL1(a, b) (fabs((a) - (b)) < 1)
 
+// fast ceiling of positive numbers
+// see: http://stackoverflow.com/questions/2745074/fast-ceiling-of-an-integer-division-in-c-c
+#define UNSIGNED_CEILING(a, b)  ((a) + (b) - 1) / (b)
 
 enum TNorm {
     GOEDEL,

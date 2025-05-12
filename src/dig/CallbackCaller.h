@@ -10,8 +10,11 @@ class CallbackCaller {
 public:
     CallbackCaller(const Config& config, const Function& callback)
         : config(config),
-          callback(callback)
-    { }
+          callback(callback),
+          result()
+    {
+        result.reserve(1000);
+    }
 
     // Disable copy
     CallbackCaller(const CallbackCaller&) = delete;
@@ -21,30 +24,46 @@ public:
     CallbackCaller(CallbackCaller&&) = default;
     CallbackCaller& operator=(CallbackCaller&&) = default;
 
+    bool isFull() const
+    { return result.size() >= config.getMaxResults(); }
+
     void store(const CHAIN& chain, const ChainCollection<CHAIN>& collection)
     {
-        if (result.size() < config.getMaxResults()) {
-            List args;
+        if (isFull())
+            return;
 
-            processConditionArgument(args, chain);
+        List args;
 
-            try {
-                RObject callbackResult = callback(args);
-                result.push_back(callbackResult);
-            }
-            catch (...) {
-                throw runtime_error("Error in callback function");
-            }
+        processConditionArgument(args, chain);
+
+        try {
+            //*
+            RObject callbackResult = callback(args);
+            result.push_back(callbackResult);
+            /*/
+            result.push_back(NumericVector());
+            // */
+        }
+        catch (...) {
+            throw runtime_error("Error in callback function");
         }
     }
 
     List getResult() const
-    { return result; }
+    {
+        // Rcpp:List is tragically slow if the size is not known in advance
+        List res(result.size());
+        for (size_t i = 0; i < result.size(); ++i) {
+            res[i] = result[i];
+        }
+
+        return res;
+    }
 
 private:
     const Config& config;
     const Function& callback;
-    List result;
+    vector<RObject> result;
 
     void processConditionArgument(List& args, const CHAIN& chain)
     {
