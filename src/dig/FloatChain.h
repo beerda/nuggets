@@ -8,8 +8,8 @@
 template <TNorm TNORM>
 class FloatChain : public BaseChain {
 public:
-    FloatChain()
-        : BaseChain()
+    FloatChain(float sum)
+        : BaseChain(sum)
     { }
 
     FloatChain(size_t id, PredicateType type, const LogicalVector& vec)

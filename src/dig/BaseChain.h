@@ -27,10 +27,10 @@ public:
      * Default constructor that creates an empty chain of type CONDITION with
      * empty clause.
      */
-    BaseChain()
+    BaseChain(float sum)
         : clause(),
           predicateType(CONDITION),
-          sum(0)
+          sum(sum)
     { }
 
     /**
