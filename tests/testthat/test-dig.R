@@ -56,8 +56,8 @@ test_that("select condition columns", {
 
     expect_equal(length(res), 4)
     expect_equal(res, list(list(cond = integer(0)),
-                           list(cond = c("1"=1L, "3"=3L)),
                            list(cond = c("1"=1L)),
+                           list(cond = c("1"=1L, "3"=3L)),
                            list(cond = c("3"=3L))))
 })
 
@@ -72,8 +72,8 @@ test_that("select condition columns with names", {
 
     expect_equal(length(res), 4)
     expect_equal(res, list(list(cond = integer(0)),
-                           list(cond = c("aaah"=1L, "ciis"=3L)),
                            list(cond = c("aaah"=1L)),
+                           list(cond = c("aaah"=1L, "ciis"=3L)),
                            list(cond = c("ciis"=3L))))
 })
 
@@ -84,8 +84,8 @@ test_that("condition arg", {
 
     expect_equal(length(res), 4)
     expect_equal(res, list(list(cond = integer(0)),
-                           list(cond = c("1"=1L, "2"=2L)),
                            list(cond = c("1"=1L)),
+                           list(cond = c("1"=1L, "2"=2L)),
                            list(cond = c("2"=2L))))
 })
 
@@ -97,8 +97,8 @@ test_that("condition arg with names", {
 
     expect_equal(length(res), 4)
     expect_equal(res, list(list(cond = integer(0)),
-                           list(cond = c("aaah"=1L, "blee"=2L)),
                            list(cond = c("aaah"=1L)),
+                           list(cond = c("aaah"=1L, "blee"=2L)),
                            list(cond = c("blee"=2L))))
 })
 
