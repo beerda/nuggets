@@ -25,16 +25,16 @@ List runDigger(List data,
 }
 
 //define GOEDEL_CHAIN FloatChain<TNorm::GOEDEL>
-//define GOGUEN_CHAIN FloatChain<TNorm::GOGUEN>
+#define GOGUEN_CHAIN FloatChain<TNorm::GOGUEN>
 //define LUKASIEWICZ_CHAIN FloatChain<TNorm::LUKASIEWICZ>
 
-#define GOEDEL_CHAIN SimdChain<TNorm::GOEDEL>
-#define GOGUEN_CHAIN SimdChain<TNorm::GOGUEN>
-#define LUKASIEWICZ_CHAIN SimdChain<TNorm::LUKASIEWICZ>
+//define GOEDEL_CHAIN SimdChain<TNorm::GOEDEL>
+//define GOGUEN_CHAIN SimdChain<TNorm::GOGUEN>
+//define LUKASIEWICZ_CHAIN SimdChain<TNorm::LUKASIEWICZ>
 
-//define GOEDEL_CHAIN FubitChain<TNorm::GOEDEL, 16>
-//define GOGUEN_CHAIN FubitChain<TNorm::GOGUEN, 16>
-//define LUKASIEWICZ_CHAIN FubitChain<TNorm::LUKASIEWICZ, 16>
+#define GOEDEL_CHAIN FubitChain<TNorm::GOEDEL, 8>
+//define GOGUEN_CHAIN FubitChain<TNorm::GOGUEN, 8>
+#define LUKASIEWICZ_CHAIN FubitChain<TNorm::LUKASIEWICZ, 8>
 
 // [[Rcpp::plugins(openmp)]]
 // [[Rcpp::export]]
@@ -59,26 +59,26 @@ List dig_(List data,
     List result;
 
     if (allLogical) {
-        cout << "BitChain\n";
+        //cout << "BitChain\n";
         using CHAIN = BitChain;
         using STORAGE = CallbackCaller<CHAIN>;
 
         result = runDigger<CHAIN, STORAGE>(data, isCondition, isFocus, callback, config);
     }
     else if (config.getTNorm() == TNorm::GOEDEL) {
-        cout << "Goedel\n";
+        //cout << "Goedel\n";
         using CHAIN = GOEDEL_CHAIN;
         using STORAGE = CallbackCaller<CHAIN>;
         result = runDigger<CHAIN, STORAGE>(data, isCondition, isFocus, callback, config);
     }
     else if (config.getTNorm() == TNorm::GOGUEN) {
-        cout << "Goguen\n";
+        //cout << "Goguen\n";
         using CHAIN = GOGUEN_CHAIN;
         using STORAGE = CallbackCaller<CHAIN>;
         result = runDigger<CHAIN, STORAGE>(data, isCondition, isFocus, callback, config);
     }
     else if (config.getTNorm() == TNorm::LUKASIEWICZ) {
-        cout << "Lukas\n";
+        //cout << "Lukas\n";
         using CHAIN = LUKASIEWICZ_CHAIN;
         using STORAGE = CallbackCaller<CHAIN>;
         result = runDigger<CHAIN, STORAGE>(data, isCondition, isFocus, callback, config);
