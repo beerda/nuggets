@@ -31,7 +31,7 @@ public:
 
         if (config.getMinLength() <= 0) {
             // store empty condition
-            storage.store(CHAIN(), filteredCollection);
+            storage.store(CHAIN(config.getNrow()), filteredCollection);
         }
 
         if (config.getMaxLength() >= 1) {

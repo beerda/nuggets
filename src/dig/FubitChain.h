@@ -53,8 +53,8 @@ public:
         return mask;
     }();
 
-    FubitChain()
-        : BaseChain()
+    FubitChain(float sum)
+        : BaseChain(sum)
     { }
 
     FubitChain(size_t id, PredicateType type, const LogicalVector& vec)
