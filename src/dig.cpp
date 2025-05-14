@@ -16,10 +16,9 @@ List runDigger(List data,
                Function callback,
                const Config& config)
 {
-        ChainCollection<CHAIN> chains(data, isCondition, isFocus);
         STORAGE caller(config, callback);
-        Digger<CHAIN, STORAGE> digger(config, caller);
-        digger.run(chains);
+        Digger<CHAIN, STORAGE> digger(config, data, isCondition, isFocus, caller);
+        digger.run();
 
         return caller.getResult();
 }

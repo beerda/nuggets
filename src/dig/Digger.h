@@ -8,9 +8,21 @@
 template <typename CHAIN, typename STORAGE>
 class Digger {
 public:
-    Digger(const Config& config, STORAGE& storage)
-        : config(config), storage(storage)
-    { }
+    Digger(const Config& config,
+           const List data,
+           const LogicalVector isCondition,
+           const LogicalVector isFocus,
+           STORAGE& storage)
+        : storage(storage),
+          config(config),
+          initialCollection(data, isCondition, isFocus),
+          predicateSums(initialCollection.size() + 1)
+    {
+        for (const CHAIN& chain : initialCollection) {
+            size_t id = chain.getClause().back();
+            predicateSums[id] = chain.getSum();
+        }
+    }
 
     // Disable copy
     Digger(const Digger&) = delete;
@@ -20,18 +32,18 @@ public:
     Digger(Digger&&) = default;
     Digger& operator=(Digger&&) = default;
 
-    void run(ChainCollection<CHAIN>& data)
+    void run()
     {
         ChainCollection<CHAIN> filteredCollection;
-        for (size_t i = 0; i < data.size(); ++i) {
-            if (isCandidate(data[i])) {
-                filteredCollection.append(std::move(data[i]));
+        for (size_t i = 0; i < initialCollection.size(); ++i) {
+            if (isCandidate(initialCollection[i])) {
+                filteredCollection.append(std::move(initialCollection[i]));
             }
         }
 
         if (config.getMinLength() <= 0) {
             // store empty condition
-            storage.store(CHAIN(config.getNrow()), filteredCollection);
+            storage.store(CHAIN(config.getNrow()), filteredCollection, predicateSums);
         }
 
         if (config.getMaxLength() >= 1) {
@@ -41,13 +53,13 @@ public:
     }
 
     List getResult() const
-    {
-        return List();
-    }
+    { return List(); }
 
 private:
-    const Config& config;
     STORAGE& storage;
+    const Config& config;
+    ChainCollection<CHAIN> initialCollection;
+    vector<float> predicateSums;
 
     bool isCandidate(const CHAIN& chain) const
     {
@@ -69,42 +81,45 @@ private:
     void combine(ChainCollection<CHAIN>& target,
                  const ChainCollection<CHAIN>& parent,
                  size_t conditionChainIndex,
-                 bool onlyFoci)
+                 bool onlyFoci) const
     {
         size_t begin = conditionChainIndex + 1;
         if (onlyFoci && begin < parent.firstFocusIndex()) {
             begin = parent.firstFocusIndex();
         }
         target.reserve(parent.size() - begin);
+        const CHAIN& conditionChain = parent[conditionChainIndex];
+
         for (size_t i = begin; i < parent.size(); ++i) {
-            CHAIN newChain(parent[conditionChainIndex], parent[i]);
+            const CHAIN& secondChain = parent[i];
+            CHAIN newChain(conditionChain, secondChain);
             if (isCandidate(newChain)) {
                 target.append(std::move(newChain));
             }
         }
     }
 
-    void processChains(const ChainCollection<CHAIN>& collection)
+    void processChains(const ChainCollection<CHAIN>& collection) const
     {
         for (size_t i = 0; i < collection.conditionCount(); ++i) {
+            ChainCollection<CHAIN> childCollection;
             const CHAIN& chain = collection[i];
 
-            ChainCollection<CHAIN> childCollection;
             if (chain.getClause().size() < config.getMaxLength()) {
                 // need conjunction with everything
                 combine(childCollection, collection, i, false);
-                storage.store(chain, childCollection);
+                storage.store(chain, childCollection, predicateSums);
                 if (!storage.isFull())
                     processChains(childCollection);
             }
             else if (collection.hasFoci()) {
                 // need conjunction with foci only
                 combine(childCollection, collection, i, true);
-                storage.store(chain, childCollection);
+                storage.store(chain, childCollection, predicateSums);
             }
             else {
                 // do not need childCollection at all
-                storage.store(chain, childCollection);
+                storage.store(chain, childCollection, predicateSums);
             }
 
         }

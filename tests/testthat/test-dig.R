@@ -172,134 +172,134 @@ test_that("foci_supports arg", {
 })
 
 
-#test_that("pp arg", {
-#    m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
-#    res <- dig(m,
-#               f = function(pp) list(fs = pp),
-#               condition = "1",
-#               focus = "2")
-#
-#    expect_equal(length(res), 2)
-#    expect_equal(res, list(list(fs = c("2" = 3)),
-#                           list(fs = c("2" = 2))),
-#                 tolerance = 1e-6)
-#})
-#
-#
-#test_that("np arg", {
-#    m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
-#    res <- dig(m,
-#               f = function(np) list(fs = np),
-#               condition = "1",
-#               focus = "2")
-#
-#    expect_equal(length(res), 2)
-#    expect_equal(res, list(list(fs = c("2" = 3)),
-#                           list(fs = c("2" = 1))),
-#                 tolerance = 1e-6)
-#})
-#
-#
-#test_that("pn arg", {
-#    m <- matrix(c(T,T,T,T,F,F, T,F,T,F,F,F), ncol = 2)
-#    res <- dig(m,
-#               f = function(pn) list(fs = pn),
-#               condition = "1",
-#               focus = "2")
-#
-#    expect_equal(length(res), 2)
-#    expect_equal(res, list(list(fs = c("2" = 4)),
-#                           list(fs = c("2" = 2))),
-#                 tolerance = 1e-6)
-#})
-#
-#
-#test_that("nn arg", {
-#    m <- matrix(c(T,T,T,T,F,F, T,F,T,F,F,T), ncol = 2)
-#    res <- dig(m,
-#               f = function(nn) list(fs = nn),
-#               condition = "1",
-#               focus = "2")
-#
-#    expect_equal(length(res), 2)
-#    expect_equal(res, list(list(fs = c("2" = 3)),
-#                           list(fs = c("2" = 1))),
-#                 tolerance = 1e-6)
-#})
-#
-#
-#test_that("complex contingency table test (logical)", {
-#    set.seed(234)
-#    cols <- 5
-#    rows <- 65
-#    m <- matrix(sample(c(T, F), cols * rows, TRUE), nrow = rows)
-#    colnames(m) <- letters[seq_len(cols)]
-#
-#    a <- m[, "a"]
-#    b <- m[, "b"]
-#    c <- m[, "c"]
-#    d <- m[, "d"]
-#    e <- m[, "e"]
-#
-#    res <- dig(m,
-#               f = function(condition, pp, pn, np, nn) {
-#                   list(cond = format_condition(sort(colnames(m)[condition])),
-#                        a_pp = pp[1], a_pn = pn[1], a_np = np[1], a_nn = nn[1],
-#                        b_pp = pp[2], b_pn = pn[2], b_np = np[2], b_nn = nn[2])
-#               },
-#               condition = c:e,
-#               focus = a:b)
-#    res <- lapply(res, as.data.frame)
-#    res <- do.call(rbind, res)
-#    rownames(res) <- res$cond
-#    res$cond <- NULL
-#
-#    expect_true(is.data.frame(res))
-#    expect_equal(nrow(res), 8)
-#    expect_equal(ncol(res), 8)
-#
-#    expect_equal(res["{}", "a_pp"], sum(a), tolerance = 1e-6)
-#    expect_equal(res["{}", "a_pn"], sum(!a), tolerance = 1e-6)
-#    expect_equal(res["{}", "a_np"], sum(a), tolerance = 1e-6)
-#    expect_equal(res["{}", "a_nn"], sum(!a), tolerance = 1e-6)
-#
-#    expect_equal(res["{}", "b_pp"], sum(b), tolerance = 1e-6)
-#    expect_equal(res["{}", "b_pn"], sum(!b), tolerance = 1e-6)
-#    expect_equal(res["{}", "b_np"], sum(b), tolerance = 1e-6)
-#    expect_equal(res["{}", "b_nn"], sum(!b), tolerance = 1e-6)
-#
-#    expect_equal(res["{d}", "a_pp"], sum(d & a), tolerance = 1e-6)
-#    expect_equal(res["{d}", "a_pn"], sum(d & !a), tolerance = 1e-6)
-#    expect_equal(res["{d}", "a_np"], sum(!d & a), tolerance = 1e-6)
-#    expect_equal(res["{d}", "a_nn"], sum(!d & !a), tolerance = 1e-6)
-#
-#    expect_equal(res["{d}", "b_pp"], sum(d & b), tolerance = 1e-6)
-#    expect_equal(res["{d}", "b_pn"], sum(d & !b), tolerance = 1e-6)
-#    expect_equal(res["{d}", "b_np"], sum(!d & b), tolerance = 1e-6)
-#    expect_equal(res["{d}", "b_nn"], sum(!d & !b), tolerance = 1e-6)
-#
-#    expect_equal(res["{d,e}", "a_pp"], sum(e & d & a), tolerance = 1e-6)
-#    expect_equal(res["{d,e}", "a_pn"], sum(e & d & !a), tolerance = 1e-6)
-#    expect_equal(res["{d,e}", "a_np"], sum(!(e & d) & a), tolerance = 1e-6)
-#    expect_equal(res["{d,e}", "a_nn"], sum(!(e & d) & !a), tolerance = 1e-6)
-#
-#    expect_equal(res["{d,e}", "b_pp"], sum(e & d & b), tolerance = 1e-6)
-#    expect_equal(res["{d,e}", "b_pn"], sum(e & d & !b), tolerance = 1e-6)
-#    expect_equal(res["{d,e}", "b_np"], sum(!(e & d) & b), tolerance = 1e-6)
-#    expect_equal(res["{d,e}", "b_nn"], sum(!(e & d) & !b), tolerance = 1e-6)
-#
-#    expect_equal(res["{c,d,e}", "a_pp"], sum(e & c & d & a), tolerance = 1e-6)
-#    expect_equal(res["{c,d,e}", "a_pn"], sum(e & c & d & !a), tolerance = 1e-6)
-#    expect_equal(res["{c,d,e}", "a_np"], sum(!(e & c & d) & a), tolerance = 1e-6)
-#    expect_equal(res["{c,d,e}", "a_nn"], sum(!(e & c & d) & !a), tolerance = 1e-6)
-#
-#    expect_equal(res["{c,d,e}", "b_pp"], sum(e & c & d & b), tolerance = 1e-6)
-#    expect_equal(res["{c,d,e}", "b_pn"], sum(e & c & d & !b), tolerance = 1e-6)
-#    expect_equal(res["{c,d,e}", "b_np"], sum(!(e & c & d) & b), tolerance = 1e-6)
-#    expect_equal(res["{c,d,e}", "b_nn"], sum(!(e & c & d) & !b), tolerance = 1e-6)
-#})
-#
-#
+test_that("pp arg", {
+    m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
+    res <- dig(m,
+               f = function(pp) list(fs = pp),
+               condition = "1",
+               focus = "2")
+
+    expect_equal(length(res), 2)
+    expect_equal(res, list(list(fs = c("2" = 3)),
+                           list(fs = c("2" = 2))),
+                 tolerance = 1e-6)
+})
+
+
+test_that("np arg", {
+    m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
+    res <- dig(m,
+               f = function(np) list(fs = np),
+               condition = "1",
+               focus = "2")
+
+    expect_equal(length(res), 2)
+    expect_equal(res, list(list(fs = c("2" = 0)),
+                           list(fs = c("2" = 1))),
+                 tolerance = 1e-6)
+})
+
+
+test_that("pn arg", {
+    m <- matrix(c(T,T,T,T,F,F, T,F,T,F,F,F), ncol = 2)
+    res <- dig(m,
+               f = function(pn) list(fs = pn),
+               condition = "1",
+               focus = "2")
+
+    expect_equal(length(res), 2)
+    expect_equal(res, list(list(fs = c("2" = 4)),
+                           list(fs = c("2" = 2))),
+                 tolerance = 1e-6)
+})
+
+
+test_that("nn arg", {
+    m <- matrix(c(T,T,T,T,F,F, T,F,T,F,F,T), ncol = 2)
+    res <- dig(m,
+               f = function(nn) list(fs = nn),
+               condition = "1",
+               focus = "2")
+
+    expect_equal(length(res), 2)
+    expect_equal(res, list(list(fs = c("2" = 0)),
+                           list(fs = c("2" = 1))),
+                 tolerance = 1e-6)
+})
+
+
+test_that("complex contingency table test (logical)", {
+    set.seed(234)
+    cols <- 5
+    rows <- 65
+    m <- matrix(sample(c(T, F), cols * rows, TRUE), nrow = rows)
+    colnames(m) <- letters[seq_len(cols)]
+
+    a <- m[, "a"]
+    b <- m[, "b"]
+    c <- m[, "c"]
+    d <- m[, "d"]
+    e <- m[, "e"]
+
+    res <- dig(m,
+               f = function(condition, pp, pn, np, nn) {
+                   list(cond = format_condition(sort(colnames(m)[condition])),
+                        a_pp = pp[1], a_pn = pn[1], a_np = np[1], a_nn = nn[1],
+                        b_pp = pp[2], b_pn = pn[2], b_np = np[2], b_nn = nn[2])
+               },
+               condition = c:e,
+               focus = a:b)
+    res <- lapply(res, as.data.frame)
+    res <- do.call(rbind, res)
+    rownames(res) <- res$cond
+    res$cond <- NULL
+
+    expect_true(is.data.frame(res))
+    expect_equal(nrow(res), 8)
+    expect_equal(ncol(res), 8)
+
+    expect_equal(res["{}", "a_pp"], sum(a), tolerance = 1e-6)
+    expect_equal(res["{}", "a_pn"], sum(!a), tolerance = 1e-6)
+    expect_equal(res["{}", "a_np"], 0, tolerance = 1e-6)
+    expect_equal(res["{}", "a_nn"], 0, tolerance = 1e-6)
+
+    expect_equal(res["{}", "b_pp"], sum(b), tolerance = 1e-6)
+    expect_equal(res["{}", "b_pn"], sum(!b), tolerance = 1e-6)
+    expect_equal(res["{}", "b_np"], 0, tolerance = 1e-6)
+    expect_equal(res["{}", "b_nn"], 0, tolerance = 1e-6)
+
+    expect_equal(res["{d}", "a_pp"], sum(d & a), tolerance = 1e-6)
+    expect_equal(res["{d}", "a_pn"], sum(d & !a), tolerance = 1e-6)
+    expect_equal(res["{d}", "a_np"], sum(!d & a), tolerance = 1e-6)
+    expect_equal(res["{d}", "a_nn"], sum(!d & !a), tolerance = 1e-6)
+
+    expect_equal(res["{d}", "b_pp"], sum(d & b), tolerance = 1e-6)
+    expect_equal(res["{d}", "b_pn"], sum(d & !b), tolerance = 1e-6)
+    expect_equal(res["{d}", "b_np"], sum(!d & b), tolerance = 1e-6)
+    expect_equal(res["{d}", "b_nn"], sum(!d & !b), tolerance = 1e-6)
+
+    expect_equal(res["{d,e}", "a_pp"], sum(e & d & a), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "a_pn"], sum(e & d & !a), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "a_np"], sum(!(e & d) & a), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "a_nn"], sum(!(e & d) & !a), tolerance = 1e-6)
+
+    expect_equal(res["{d,e}", "b_pp"], sum(e & d & b), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "b_pn"], sum(e & d & !b), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "b_np"], sum(!(e & d) & b), tolerance = 1e-6)
+    expect_equal(res["{d,e}", "b_nn"], sum(!(e & d) & !b), tolerance = 1e-6)
+
+    expect_equal(res["{c,d,e}", "a_pp"], sum(e & c & d & a), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "a_pn"], sum(e & c & d & !a), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "a_np"], sum(!(e & c & d) & a), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "a_nn"], sum(!(e & c & d) & !a), tolerance = 1e-6)
+
+    expect_equal(res["{c,d,e}", "b_pp"], sum(e & c & d & b), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "b_pn"], sum(e & c & d & !b), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "b_np"], sum(!(e & c & d) & b), tolerance = 1e-6)
+    expect_equal(res["{c,d,e}", "b_nn"], sum(!(e & c & d) & !b), tolerance = 1e-6)
+})
+
+
 #test_that("complex contingency table test (numeric)", {
 #    set.seed(234)
 #    cols <- 5
