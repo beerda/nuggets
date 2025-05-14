@@ -71,6 +71,9 @@ public:
     bool hasContiNnArgument() const
     { return contiNnArgument; }
 
+    bool hasAnyContiArgument() const
+    { return contiPpArgument || contiNpArgument || contiPnArgument || contiNnArgument; }
+
     bool hasIndicesArgument() const
     { return indicesArgument; }
 
