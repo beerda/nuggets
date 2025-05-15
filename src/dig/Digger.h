@@ -34,22 +34,19 @@ public:
 
     void run()
     {
+        CHAIN emptyChain(config.getNrow());
         ChainCollection<CHAIN> filteredCollection;
         for (size_t i = 0; i < initialCollection.size(); ++i) {
             if (isCandidate(initialCollection[i])) {
                 filteredCollection.append(std::move(initialCollection[i]));
             }
         }
-
-        if (config.getMinLength() <= 0) {
-            // store empty condition
-            storage.store(CHAIN(config.getNrow()), filteredCollection, predicateSums);
+        if (isStorable(emptyChain)) {
+            storage.store(emptyChain, filteredCollection, predicateSums);
         }
-
-        if (config.getMaxLength() >= 1) {
+        if (isExtendable(emptyChain)) {
             processChains(filteredCollection);
         }
-
     }
 
     List getResult() const
@@ -61,6 +58,29 @@ private:
     ChainCollection<CHAIN> initialCollection;
     vector<float> predicateSums;
 
+    bool isNonRedundant(const CHAIN& parent, const CHAIN& chain) const
+    {
+        size_t pref = parent.getClause().back();
+        size_t curr = chain.getClause().back();
+
+        if (pref == curr) {
+            // Filter of focus even if disjoint is not defined
+            // (should never happen as we always have disjoint defined)
+            return false;
+        }
+
+        if (config.hasDisjoint()) {
+            if (config.getDisjoint()[pref] == config.getDisjoint()[curr]) {
+                // It is enough to check the last element of the prefix because
+                // previous elements were already checked in parent tasks
+                //cout << "redundant: " << parent.clauseAsString() << " , " << chain.clauseAsString() << endl;
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     bool isCandidate(const CHAIN& chain) const
     {
         //cout << "chain.getSum() = " << chain.getSum() << " config.getMinSum() = " << config.getMinSum() << endl;
@@ -68,9 +88,6 @@ private:
             return true;
 
         if (chain.isFocus()) {
-            if (!config.hasFilterEmptyFoci())
-                return true;
-
             if (chain.getSum() >= config.getMinFocusSum())
                 return true;
         }
@@ -78,23 +95,52 @@ private:
         return false;
     }
 
+    bool isStorable(const CHAIN& chain) const
+    {
+        return chain.getClause().size() >= config.getMinLength()
+            && chain.getSum() >= config.getMinSum()
+            && chain.getSum() <= config.getMaxSum()
+            && storage.size() < config.getMaxResults();
+    }
+
+    bool isExtendable(const CHAIN& chain) const
+    {
+        return chain.getClause().size() < config.getMaxLength()
+            && chain.getSum() >= config.getMinSum()
+            && storage.size() < config.getMaxResults();
+    }
+
     void combine(ChainCollection<CHAIN>& target,
                  const ChainCollection<CHAIN>& parent,
-                 size_t conditionChainIndex,
+                 const size_t conditionChainIndex,
                  bool onlyFoci) const
     {
+        const CHAIN& conditionChain = parent[conditionChainIndex];
+
         size_t begin = conditionChainIndex + 1;
         if (onlyFoci && begin < parent.firstFocusIndex()) {
             begin = parent.firstFocusIndex();
         }
-        target.reserve(parent.size() - begin);
-        const CHAIN& conditionChain = parent[conditionChainIndex];
 
+        size_t bothLen = (conditionChainIndex > parent.firstFocusIndex()) ? conditionChainIndex - parent.firstFocusIndex() : 0;
+
+        target.reserve(parent.size() - begin + bothLen);
         for (size_t i = begin; i < parent.size(); ++i) {
             const CHAIN& secondChain = parent[i];
-            CHAIN newChain(conditionChain, secondChain);
-            if (isCandidate(newChain)) {
-                target.append(std::move(newChain));
+            if (isNonRedundant(conditionChain, secondChain)) {
+                CHAIN newChain(conditionChain, secondChain, false);
+                if (isCandidate(newChain)) {
+                    target.append(std::move(newChain));
+                }
+            }
+        }
+        for (size_t i = parent.firstFocusIndex(); i < conditionChainIndex; ++i) {
+            const CHAIN& secondChain = parent[i];
+            if (isNonRedundant(conditionChain, secondChain)) {
+                CHAIN newChain(conditionChain, secondChain, true);
+                if (isCandidate(newChain)) {
+                    target.append(std::move(newChain));
+                }
             }
         }
     }
@@ -105,23 +151,26 @@ private:
             ChainCollection<CHAIN> childCollection;
             const CHAIN& chain = collection[i];
 
-            if (chain.getClause().size() < config.getMaxLength()) {
+            if (isExtendable(chain)) {
                 // need conjunction with everything
                 combine(childCollection, collection, i, false);
-                storage.store(chain, childCollection, predicateSums);
-                if (!storage.isFull())
-                    processChains(childCollection);
             }
             else if (collection.hasFoci()) {
                 // need conjunction with foci only
                 combine(childCollection, collection, i, true);
-                storage.store(chain, childCollection, predicateSums);
             }
             else {
                 // do not need childCollection at all
-                storage.store(chain, childCollection, predicateSums);
             }
 
+            if (!config.hasFilterEmptyFoci() || childCollection.hasFoci()) {
+                if (isStorable(chain)) {
+                    storage.store(chain, childCollection, predicateSums);
+                }
+                if (isExtendable(chain)) {
+                    processChains(childCollection);
+                }
+            }
         }
     }
 };

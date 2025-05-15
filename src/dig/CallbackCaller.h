@@ -24,16 +24,10 @@ public:
     CallbackCaller(CallbackCaller&&) = default;
     CallbackCaller& operator=(CallbackCaller&&) = default;
 
-    bool isFull() const
-    { return result.size() >= config.getMaxResults(); }
-
     void store(const CHAIN& chain,
                const ChainCollection<CHAIN>& collection,
                const vector<float>& predicateSums)
     {
-        if (isFull())
-            return;
-
         List args;
 
         processConditionArgument(args, chain);
@@ -52,6 +46,9 @@ public:
             throw runtime_error("Error in callback function");
         }
     }
+
+    size_t size() const
+    { return result.size(); }
 
     List getResult() const
     {
