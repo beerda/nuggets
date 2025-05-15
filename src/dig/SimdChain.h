@@ -40,8 +40,8 @@ public:
         setSum();
     }
 
-    SimdChain(const SimdChain& a, const SimdChain& b)
-        : BaseChain(a, b),
+    SimdChain(const SimdChain& a, const SimdChain& b, const bool toFocus)
+        : BaseChain(a, b, toFocus),
           data(a.data.size())
     {
         IF_DEBUG(
