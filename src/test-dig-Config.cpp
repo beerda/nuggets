@@ -62,11 +62,11 @@ context("dig/Config.h") {
         expect_true(c.getMaxResults() == INT_MAX);
         expect_true(c.getMinSupport() == 0.5);
         expect_true(c.getMinSum() == 300);
-        expect_true(c.getMinFocusSupport() == 0.6);
+        expect_true(c.getMinFocusSupport() == 0.6f);
         expect_true(c.getMinFocusSum() == 360);
-        expect_true(c.getMinConditionalFocusSupport() == 0.7);
-        expect_true(c.getMaxSupport() == 0.8);
-        expect_true(c.getTautologyLimit() == 0.9);
+        expect_true(c.getMinConditionalFocusSupport() == 0.7f);
+        expect_true(c.getMaxSupport() == 0.8f);
+        expect_true(c.getTautologyLimit() == 0.9f);
         expect_true(c.hasFilterEmptyFoci() == true);
         expect_true(c.isVerbose() == false);
 
