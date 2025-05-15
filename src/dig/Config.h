@@ -20,7 +20,10 @@ public:
           minFocusSum(minFocusSupport * nrow),
 
           minConditionalFocusSupport(NumericVector(configuration["minConditionalFocusSupport"])[0]),
+
           maxSupport(NumericVector(configuration["maxSupport"])[0]),
+          maxSum(maxSupport * nrow),
+
           tautologyLimit(NumericVector(configuration["tautologyLimit"])[0]),
 
           filterEmptyFoci(LogicalVector(configuration["filterEmptyFoci"])[0]),
@@ -95,7 +98,7 @@ public:
     bool isVerbose() const
     { return verbose; }
 
-    double getTautologyLimit() const
+    float getTautologyLimit() const
     { return tautologyLimit; }
 
     const vector<int>& getDisjoint() const
@@ -119,23 +122,26 @@ public:
     int getMaxResults() const
     { return maxResults; }
 
-    double getMinSupport() const
+    float getMinSupport() const
     { return minSupport; }
 
-    int getMinSum() const
+    float getMinSum() const
     { return minSum; }
 
-    double getMinFocusSupport() const
+    float getMinFocusSupport() const
     { return minFocusSupport; }
 
-    int getMinFocusSum() const
+    float getMinFocusSum() const
     { return minFocusSum; }
 
-    double getMinConditionalFocusSupport() const
+    float getMinConditionalFocusSupport() const
     { return minConditionalFocusSupport; }
 
-    double getMaxSupport() const
+    float getMaxSupport() const
     { return maxSupport; }
+
+    float getMaxSum() const
+    { return maxSum; }
 
     TNorm getTNorm() const
     { return tNorm; }
@@ -149,13 +155,14 @@ private:
     int minLength;
     int maxLength;
     int maxResults; // -1 means infinite
-    double minSupport;
-    int minSum;
-    double minFocusSupport;
-    int minFocusSum;
-    double minConditionalFocusSupport;
-    double maxSupport;
-    double tautologyLimit;
+    float minSupport;
+    float minSum;
+    float minFocusSupport;
+    float minFocusSum;
+    float minConditionalFocusSupport;
+    float maxSupport;
+    float maxSum;
+    float tautologyLimit;
     bool filterEmptyFoci;
     bool verbose;
     TNorm tNorm;
