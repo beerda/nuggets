@@ -31,8 +31,8 @@ public:
           data(vec.size())
     { throw std::invalid_argument("BitChain: NumericVector constructor not implemented"); }
 
-    BitChain(const BitChain& a, const BitChain& b)
-        : BaseChain(a, b),
+    BitChain(const BitChain& a, const BitChain& b, const bool toFocus)
+        : BaseChain(a, b, toFocus),
           data(a.data & b.data)
     { sum = data.count(); }
 

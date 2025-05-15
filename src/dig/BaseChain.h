@@ -55,14 +55,17 @@ public:
      * @param a The first chain.
      * @param b The second chain.
      */
-    BaseChain(const BaseChain& a, const BaseChain& b)
+    BaseChain(const BaseChain& a, const BaseChain& b, const bool toFocus)
         : clause(a.clause.size() + 1),
-          predicateType(b.predicateType),
+          predicateType(toFocus ? PredicateType::FOCUS : b.predicateType),
           sum(0)
     {
         IF_DEBUG(
             if (!a.isCondition())
                 throw invalid_argument("BaseChain: first chain is not a condition");
+
+            if (toFocus && b.predicateType != PredicateType::BOTH)
+                throw invalid_argument("BaseChain: illegal conversion to FOCUS");
 
             if (a.clause.size() != b.clause.size())
                 throw invalid_argument("BaseChain: clause sizes differ");
@@ -132,6 +135,21 @@ public:
      */
     bool isCondition() const
     { return predicateType != FOCUS; }
+
+    string clauseAsString() const
+    {
+        string res = "";
+        bool first = true;
+        for (size_t p : clause) {
+            if (!first) {
+                res += "&";
+                first = false;
+            }
+            res += std::to_string(p);
+        }
+
+        return res;
+    }
 
 protected:
     /**

@@ -34,8 +34,8 @@ public:
         }
     }
 
-    FloatChain(const FloatChain& a, const FloatChain& b)
-        : BaseChain(a, b),
+    FloatChain(const FloatChain& a, const FloatChain& b, const bool toFocus)
+        : BaseChain(a, b, toFocus),
           data(a.data.size())
     {
         IF_DEBUG(

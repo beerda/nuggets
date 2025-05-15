@@ -71,7 +71,7 @@ context("dig/FloatChain.h") {
             FloatChain<TNorm::GOGUEN> a2(11, PredicateType::BOTH, la);
             FloatChain<TNorm::GOGUEN> b(20, PredicateType::BOTH, lb);
 
-            FloatChain<TNorm::GOGUEN> c1(b, a1);
+            FloatChain<TNorm::GOGUEN> c1(b, a1, false);
             expect_true(c1.getClause().size() == 2);
             expect_true(c1.getClause()[0] == 20);
             expect_true(c1.getClause()[1] == 10);
@@ -86,13 +86,13 @@ context("dig/FloatChain.h") {
             expect_true(c1.at(3) == 0.0);
             expect_true(c1.at(4) == 0.0);
 
-            FloatChain<TNorm::GOGUEN> c2(b, a2);
+            FloatChain<TNorm::GOGUEN> c2(b, a2, false);
             expect_true(c2.getClause().size() == 2);
             expect_true(c2.getClause()[0] == 20);
             expect_true(c2.getClause()[1] == 11);
             expect_true(c2.getSum() == 1);
 
-            FloatChain<TNorm::GOGUEN> d(c1, c2);
+            FloatChain<TNorm::GOGUEN> d(c1, c2, false);
             expect_true(d.getClause().size() == 3);
             expect_true(d.getClause()[0] == 20);
             expect_true(d.getClause()[1] == 10);
@@ -102,14 +102,14 @@ context("dig/FloatChain.h") {
         {
             FloatChain<TNorm::GOGUEN> a(10, PredicateType::BOTH, la);
             FloatChain<TNorm::GOGUEN> b(20, PredicateType::CONDITION, lb);
-            FloatChain<TNorm::GOGUEN> c(a, b);
+            FloatChain<TNorm::GOGUEN> c(a, b, false);
             expect_true(c.isCondition());
             expect_true(!c.isFocus());
         }
         {
             FloatChain<TNorm::GOGUEN> a(10, PredicateType::BOTH, la);
             FloatChain<TNorm::GOGUEN> b(20, PredicateType::FOCUS, lb);
-            FloatChain<TNorm::GOGUEN> c(a, b);
+            FloatChain<TNorm::GOGUEN> c(a, b, false);
             expect_true(!c.isCondition());
             expect_true(c.isFocus());
         }
@@ -132,7 +132,7 @@ context("dig/FloatChain.h") {
 
         FloatChain<TNorm::GOEDEL> a(3, PredicateType::BOTH, v);
         FloatChain<TNorm::GOEDEL> b(4, PredicateType::BOTH, w);
-        FloatChain<TNorm::GOEDEL> c(a, b);
+        FloatChain<TNorm::GOEDEL> c(a, b, false);
 
         expect_true(EQUAL(c.at(0), 0.8));
         expect_true(EQUAL(c.at(1), 0.3));
@@ -159,7 +159,7 @@ context("dig/FloatChain.h") {
 
         FloatChain<TNorm::GOGUEN> a(3, PredicateType::BOTH, v);
         FloatChain<TNorm::GOGUEN> b(4, PredicateType::BOTH, w);
-        FloatChain<TNorm::GOGUEN> c(a, b);
+        FloatChain<TNorm::GOGUEN> c(a, b, false);
 
         expect_true(EQUAL(c.at(0), 0.8 * 0.9));
         expect_true(EQUAL(c.at(1), 0.3 * 0.8));
@@ -186,7 +186,7 @@ context("dig/FloatChain.h") {
 
         FloatChain<TNorm::LUKASIEWICZ> a(3, PredicateType::BOTH, v);
         FloatChain<TNorm::LUKASIEWICZ> b(4, PredicateType::BOTH, w);
-        FloatChain<TNorm::LUKASIEWICZ> c(a, b);
+        FloatChain<TNorm::LUKASIEWICZ> c(a, b, false);
 
         expect_true(EQUAL(c.at(0), 0.7));
         expect_true(EQUAL(c.at(1), 0.1));

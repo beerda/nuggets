@@ -175,9 +175,9 @@ context("dig/FubitChain.h") {
         FubitChain<TNorm::LUKASIEWICZ, 8> lukA(3, PredicateType::BOTH, a);
         FubitChain<TNorm::LUKASIEWICZ, 8> lukB(3, PredicateType::BOTH, b);
 
-        FubitChain<TNorm::GOEDEL, 8> goe(goeA, goeB);
-        FubitChain<TNorm::GOGUEN, 8> gog(gogA, gogB);
-        FubitChain<TNorm::LUKASIEWICZ, 8> luk(lukA, lukB);
+        FubitChain<TNorm::GOEDEL, 8> goe(goeA, goeB, false);
+        FubitChain<TNorm::GOGUEN, 8> gog(gogA, gogB, false);
+        FubitChain<TNorm::LUKASIEWICZ, 8> luk(lukA, lukB, false);
 
         expect_true(goe.size() == 100);
         expect_true(gog.size() == 100);

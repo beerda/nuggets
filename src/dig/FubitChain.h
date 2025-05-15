@@ -81,8 +81,8 @@ public:
         setSum();
     }
 
-    FubitChain(const FubitChain& a, const FubitChain& b)
-        : BaseChain(a, b),
+    FubitChain(const FubitChain& a, const FubitChain& b, const bool toFocus)
+        : BaseChain(a, b, toFocus),
           data(a.data.size()),
           n(a.n)
     {
