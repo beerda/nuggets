@@ -3,6 +3,7 @@
 #include "../common.h"
 #include "Config.h"
 #include "ChainCollection.h"
+#include "Selector.h"
 
 
 template <typename CHAIN, typename STORAGE>
@@ -42,7 +43,10 @@ public:
             }
         }
         if (isStorable(emptyChain)) {
-            storage.store(emptyChain, filteredCollection, predicateSums);
+            Selector selector = createSelector(emptyChain, filteredCollection);
+            if (isStorable(selector)) {
+                storage.store(emptyChain, filteredCollection, selector, predicateSums);
+            }
         }
         if (isExtendable(emptyChain)) {
             processChains(filteredCollection);
@@ -95,6 +99,30 @@ private:
         return false;
     }
 
+    bool isExtendable(const CHAIN& chain) const
+    {
+        return chain.getClause().size() < config.getMaxLength()
+            && chain.getSum() >= config.getMinSum()
+            && storage.size() < config.getMaxResults();
+    }
+
+    Selector createSelector(const CHAIN& chain, const ChainCollection<CHAIN>& collection) const
+    {
+        bool constant = config.getMinConditionalFocusSupport() <= 0.0f;
+        Selector result(collection.focusCount(), constant);
+        if (!constant) {
+            float chainSumReciprocal = 1.0f / chain.getSum();
+            for (size_t i = 0; i < collection.focusCount(); ++i) {
+                const CHAIN& focus = collection[i + collection.firstFocusIndex()];
+                if (focus.getSum() * chainSumReciprocal < config.getMinConditionalFocusSupport()) {
+                    result.unselect(i);
+                }
+            }
+        }
+
+        return result;
+    }
+
     bool isStorable(const CHAIN& chain) const
     {
         return chain.getClause().size() >= config.getMinLength()
@@ -103,12 +131,8 @@ private:
             && storage.size() < config.getMaxResults();
     }
 
-    bool isExtendable(const CHAIN& chain) const
-    {
-        return chain.getClause().size() < config.getMaxLength()
-            && chain.getSum() >= config.getMinSum()
-            && storage.size() < config.getMaxResults();
-    }
+    bool isStorable(const Selector& selector) const
+    { return (!config.hasFilterEmptyFoci() || selector.getSelectedCount() > 0); }
 
     void combine(ChainCollection<CHAIN>& target,
                  const ChainCollection<CHAIN>& parent,
@@ -165,7 +189,10 @@ private:
 
             if (!config.hasFilterEmptyFoci() || childCollection.hasFoci()) {
                 if (isStorable(chain)) {
-                    storage.store(chain, childCollection, predicateSums);
+                    Selector selector = createSelector(chain, childCollection);
+                    if (isStorable(selector)) {
+                        storage.store(chain, childCollection, selector, predicateSums);
+                    }
                 }
                 if (isExtendable(chain)) {
                     processChains(childCollection);

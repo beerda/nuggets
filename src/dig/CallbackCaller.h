@@ -3,6 +3,7 @@
 #include "../common.h"
 #include "Config.h"
 #include "ChainCollection.h"
+#include "Selector.h"
 
 
 template <typename CHAIN>
@@ -26,6 +27,7 @@ public:
 
     void store(const CHAIN& chain,
                const ChainCollection<CHAIN>& collection,
+               const Selector& selector,
                const vector<float>& predicateSums)
     {
         List args;
@@ -35,8 +37,8 @@ public:
         processSupportArgument(args, chain);
         processIndicesArgument(args, chain);
         processWeightsArgument(args, chain);
-        processFociSupportsArgument(args, chain, collection);
-        processContiArguments(args, chain, collection, predicateSums);
+        processFociSupportsArgument(args, chain, collection, selector);
+        processContiArguments(args, chain, collection, selector, predicateSums);
 
         try {
             RObject callbackResult = callback(args);
@@ -133,12 +135,18 @@ private:
         }
     }
 
-    void processFociSupportsArgument(List& args, const CHAIN& chain, const ChainCollection<CHAIN>& collection)
+    void processFociSupportsArgument(List& args,
+                                     const CHAIN& chain,
+                                     const ChainCollection<CHAIN>& collection,
+                                     const Selector& selector)
     {
         if (config.hasFociSupportsArgument()) {
-            NumericVector vals(collection.focusCount());
-            CharacterVector valNames(collection.focusCount());
-            for (size_t i = 0; i < collection.focusCount(); ++i) {
+            NumericVector vals(selector.getSelectedCount());
+            CharacterVector valNames(selector.getSelectedCount());
+            for (size_t i = 0; i < selector.getSelectedCount(); ++i) {
+                if (!selector.isSelected(i))
+                    continue;
+
                 const CHAIN& focus = collection[i + collection.firstFocusIndex()];
                 size_t predicate = focus.getClause().back();
                 vals[i] = focus.getSum() / config.getNrow();
@@ -154,6 +162,7 @@ private:
     void processContiArguments(List& args,
                                const CHAIN& chain,
                                const ChainCollection<CHAIN>& collection,
+                               const Selector& selector,
                                const vector<float>& predicateSums)
     {
         if (config.hasAnyContiArgument()) {
@@ -163,20 +172,23 @@ private:
             NumericVector* nn = nullptr;
 
             if (config.hasContiPpArgument()) {
-                pp = new NumericVector(collection.focusCount());
+                pp = new NumericVector(selector.getSelectedCount());
             }
             if (config.hasContiNpArgument()) {
-                np = new NumericVector(collection.focusCount());
+                np = new NumericVector(selector.getSelectedCount());
             }
             if (config.hasContiPnArgument()) {
-                pn = new NumericVector(collection.focusCount());
+                pn = new NumericVector(selector.getSelectedCount());
             }
             if (config.hasContiNnArgument()) {
-                nn = new NumericVector(collection.focusCount());
+                nn = new NumericVector(selector.getSelectedCount());
             }
 
-            CharacterVector valNames(collection.focusCount());
-            for (size_t i = 0; i < collection.focusCount(); ++i) {
+            CharacterVector valNames(selector.getSelectedCount());
+            for (size_t i = 0; i < selector.getSelectedCount(); ++i) {
+                if (!selector.isSelected(i))
+                    continue;
+
                 const CHAIN& focus = collection[i + collection.firstFocusIndex()];
                 size_t predicate = focus.getClause().back();
                 valNames[i] = config.getChainName(predicate);
