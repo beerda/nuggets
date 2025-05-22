@@ -300,77 +300,83 @@ test_that("complex contingency table test (logical)", {
 })
 
 
-#test_that("complex contingency table test (numeric)", {
-#    set.seed(234)
-#    cols <- 5
-#    rows <- 65
-#    m <- matrix(sample(c(0:10) / 10, cols * rows, TRUE), nrow = rows)
-#    colnames(m) <- letters[seq_len(cols)]
-#
-#    a <- m[, "a"]
-#    b <- m[, "b"]
-#    c <- m[, "c"]
-#    d <- m[, "d"]
-#    e <- m[, "e"]
-#
-#    res <- dig(m,
-#               f = function(condition, pp, pn, np, nn) {
-#                   list(cond = format_condition(sort(colnames(m)[condition])),
-#                        a_pp = pp[1], a_pn = pn[1], a_np = np[1], a_nn = nn[1],
-#                        b_pp = pp[2], b_pn = pn[2], b_np = np[2], b_nn = nn[2])
-#               },
-#               condition = c:e,
-#               focus = a:b,
-#               t_norm = "goedel")
-#    res <- lapply(res, as.data.frame)
-#    res <- do.call(rbind, res)
-#    rownames(res) <- res$cond
-#    res$cond <- NULL
-#
-#    expect_true(is.data.frame(res))
-#    expect_equal(nrow(res), 8)
-#    expect_equal(ncol(res), 8)
-#
-#    expect_equal(res["{}", "a_pp"], sum(a), tolerance = 1e-6)
-#    expect_equal(res["{}", "a_pn"], sum(1 - a), tolerance = 1e-6)
-#    expect_equal(res["{}", "a_np"], sum(a), tolerance = 1e-6)
-#    expect_equal(res["{}", "a_nn"], sum(1 - a), tolerance = 1e-6)
-#
-#    expect_equal(res["{}", "b_pp"], sum(b), tolerance = 1e-6)
-#    expect_equal(res["{}", "b_pn"], sum(1 - b), tolerance = 1e-6)
-#    expect_equal(res["{}", "b_np"], sum(b), tolerance = 1e-6)
-#    expect_equal(res["{}", "b_nn"], sum(1 - b), tolerance = 1e-6)
-#
-#    expect_equal(res["{d}", "a_pp"], sum(pmin(d, a)), tolerance = 1e-6)
-#    expect_equal(res["{d}", "a_pn"], sum(pmin(d, 1 - a)), tolerance = 1e-6)
-#    expect_equal(res["{d}", "a_np"], sum(pmin(1 - d, a)), tolerance = 1e-6)
-#    expect_equal(res["{d}", "a_nn"], sum(pmin(1 - d, 1 - a)), tolerance = 1e-6)
-#
-#    expect_equal(res["{d}", "b_pp"], sum(pmin(d, b)), tolerance = 1e-6)
-#    expect_equal(res["{d}", "b_pn"], sum(pmin(d, 1 - b)), tolerance = 1e-6)
-#    expect_equal(res["{d}", "b_np"], sum(pmin(1 - d, b)), tolerance = 1e-6)
-#    expect_equal(res["{d}", "b_nn"], sum(pmin(1 - d, 1 - b)), tolerance = 1e-6)
-#
-#    expect_equal(res["{d,e}", "a_pp"], sum(pmin(e, d, a)), tolerance = 1e-6)
-#    expect_equal(res["{d,e}", "a_pn"], sum(pmin(e, d, 1 - a)), tolerance = 1e-6)
-#    expect_equal(res["{d,e}", "a_np"], sum(pmin(1 - pmin(e, d), a)), tolerance = 1e-6)
-#    expect_equal(res["{d,e}", "a_nn"], sum(pmin(1 - pmin(e, d), 1 - a)), tolerance = 1e-6)
-#
-#    expect_equal(res["{d,e}", "b_pp"], sum(pmin(e, d, b)), tolerance = 1e-6)
-#    expect_equal(res["{d,e}", "b_pn"], sum(pmin(e, d, 1 - b)), tolerance = 1e-6)
-#    expect_equal(res["{d,e}", "b_np"], sum(pmin(1 - pmin(e, d), b)), tolerance = 1e-6)
-#    expect_equal(res["{d,e}", "b_nn"], sum(pmin(1 - pmin(e, d), 1 - b)), tolerance = 1e-6)
-#
-#    expect_equal(res["{c,d,e}", "a_pp"], sum(pmin(e, c, d, a)), tolerance = 1e-6)
-#    expect_equal(res["{c,d,e}", "a_pn"], sum(pmin(e, c, d, 1 - a)), tolerance = 1e-6)
-#    expect_equal(res["{c,d,e}", "a_np"], sum(pmin(1 - pmin(e, c, d), a)), tolerance = 1e-6)
-#    expect_equal(res["{c,d,e}", "a_nn"], sum(pmin(1 - pmin(e, c, d), 1 - a)), tolerance = 1e-6)
-#
-#    expect_equal(res["{c,d,e}", "b_pp"], sum(pmin(e, c, d, b)), tolerance = 1e-6)
-#    expect_equal(res["{c,d,e}", "b_pn"], sum(pmin(e, c, d, 1 - b)), tolerance = 1e-6)
-#    expect_equal(res["{c,d,e}", "b_np"], sum(pmin(1 - pmin(e, c, d), b)), tolerance = 1e-6)
-#    expect_equal(res["{c,d,e}", "b_nn"], sum(pmin(1 - pmin(e, c, d), 1 - b)), tolerance = 1e-6)
-#})
+test_that("complex contingency table test (numeric)", {
+    set.seed(234)
+    cols <- 5
+    rows <- 65
+    m <- matrix(sample(c(0:10) / 10, cols * rows, TRUE), nrow = rows)
+    colnames(m) <- letters[seq_len(cols)]
+
+    a <- m[, "a"]
+    b <- m[, "b"]
+    c <- m[, "c"]
+    d <- m[, "d"]
+    e <- m[, "e"]
+
+    res <- dig(m,
+               f = function(condition, pp, pn, np, nn) {
+                   list(cond = format_condition(sort(colnames(m)[condition])),
+                        a_pp = pp[1], a_pn = pn[1], a_np = np[1], a_nn = nn[1],
+                        b_pp = pp[2], b_pn = pn[2], b_np = np[2], b_nn = nn[2])
+               },
+               condition = c:e,
+               focus = a:b,
+               t_norm = "goedel")
+    res <- lapply(res, as.data.frame)
+    res <- do.call(rbind, res)
+    rownames(res) <- res$cond
+    res$cond <- NULL
+
+    expect_true(is.data.frame(res))
+    expect_equal(nrow(res), 8)
+    expect_equal(ncol(res), 8)
+
+    expect_equal(res["{}", "a_pp"], sum(a), tolerance = 1e-2)
+    expect_equal(res["{}", "a_pn"], sum(1 - a), tolerance = 1e-2)
+    expect_equal(res["{}", "a_np"], 0, tolerance = 1e-2)
+    expect_equal(res["{}", "a_nn"], 0, tolerance = 1e-2)
+
+    expect_equal(res["{}", "b_pp"], sum(b), tolerance = 1e-2)
+    expect_equal(res["{}", "b_pn"], sum(1 - b), tolerance = 1e-2)
+    expect_equal(res["{}", "b_np"], 0, tolerance = 1e-2)
+    expect_equal(res["{}", "b_nn"], 0, tolerance = 1e-2)
+
+    pp <- sum(pmin(d, a))
+    expect_equal(res["{d}", "a_pp"], pp, tolerance = 1e-2)
+    expect_equal(res["{d}", "a_pn"], sum(d) - pp, tolerance = 1e-2)
+    expect_equal(res["{d}", "a_np"], sum(a) - pp, tolerance = 1e-2)
+    expect_equal(res["{d}", "a_nn"], nrow(m) - sum(d) - sum(a) + pp, tolerance = 1e-1)
+
+    pp <- sum(pmin(d, b))
+    expect_equal(res["{d}", "b_pp"], pp, tolerance = 1e-2)
+    expect_equal(res["{d}", "b_pn"], sum(d) - pp, tolerance = 1e-2)
+    expect_equal(res["{d}", "b_np"], sum(b) - pp, tolerance = 1e-2)
+    expect_equal(res["{d}", "b_nn"], nrow(m) - sum(d) - sum(b) + pp, tolerance = 1e-1)
+
+    pp <- sum(pmin(e, d, a))
+    expect_equal(res["{d,e}", "a_pp"], pp, tolerance = 1e-1)
+    expect_equal(res["{d,e}", "a_pn"], sum(pmin(e, d)) - pp, tolerance = 1e-2)
+    expect_equal(res["{d,e}", "a_np"], sum(a) - pp, tolerance = 1e-2)
+    expect_equal(res["{d,e}", "a_nn"], nrow(m) - sum(pmin(e, d)) - sum(a) + pp, tolerance = 1e-2)
+
+    pp <- sum(pmin(e, d, b))
+    expect_equal(res["{d,e}", "b_pp"], pp, tolerance = 1e-1)
+    expect_equal(res["{d,e}", "b_pn"], sum(pmin(e, d)) - pp, tolerance = 1e-2)
+    expect_equal(res["{d,e}", "b_np"], sum(b) - pp, tolerance = 1e-2)
+    expect_equal(res["{d,e}", "b_nn"], nrow(m) - sum(pmin(e, d)) - sum(b) + pp, tolerance = 1e-2)
+
+    pp <- sum(pmin(e, d, c, a))
+    expect_equal(res["{c,d,e}", "a_pp"], pp, tolerance = 1e-1)
+    expect_equal(res["{c,d,e}", "a_pn"], sum(pmin(e, c, d)) - pp, tolerance = 1e-2)
+    expect_equal(res["{c,d,e}", "a_np"], sum(a) - pp, tolerance = 1e-2)
+    expect_equal(res["{c,d,e}", "a_nn"], nrow(m) - sum(pmin(c, d, e)) - sum(a) + pp, tolerance = 1e-2)
+
+    pp <- sum(pmin(e, d, c, b))
+    expect_equal(res["{c,d,e}", "b_pp"], pp, tolerance = 1e-1)
+    expect_equal(res["{c,d,e}", "b_pn"], sum(pmin(e, c, d)) - pp, tolerance = 1e-2)
+    expect_equal(res["{c,d,e}", "b_np"], sum(b) - pp, tolerance = 1e-2)
+    expect_equal(res["{c,d,e}", "b_nn"], nrow(m) - sum(pmin(c, d, e)) - sum(b) + pp, tolerance = 1e-2)
+})
 
 
 test_that("min_length filter", {
@@ -840,7 +846,8 @@ test_that("min_focus_support & filter_empty_foci", {
                min_focus_support = 0.5,
                filter_empty_foci = FALSE)
 
-    expect_setequal(unlist(res), c(" = 0.7, 0.6", "1 = 0.5", "2 = 0.5", "1 & 2 = "))
+    expect_setequal(unlist(res),
+                    c(" = 0.7, 0.6", "1 = 0.5", "2 = 0.5", "1 & 2 = "))
 
     res <- dig(m,
                f,
@@ -850,45 +857,48 @@ test_that("min_focus_support & filter_empty_foci", {
                min_focus_support = 0.5,
                filter_empty_foci = TRUE)
 
-    expect_setequal(unlist(res), c(" = 0.7, 0.6", "1 = 0.5", "2 = 0.5"))
+    expect_setequal(unlist(res),
+                    c(" = 0.7, 0.6", "1 = 0.5", "2 = 0.5"))
 })
 
 
-#test_that("min_conditional_focus_support & filter_empty_foci", {
-#    m <- matrix(c(c(1,1,1,1,1,1,1,1,0,0),
-#                  c(1,1,1,1,1,1,0,0,1,1),
-#                  c(0,0,0,1,1,1,1,1,1,1),
-#                  c(0,0,0,0,1,1,1,1,1,1)), ncol = 4)
-#
-#    f <- function(condition, support, foci_supports) {
-#       paste(paste(condition, collapse = " & "),
-#             ":", round(support, 1),
-#             "=",
-#             paste0(names(foci_supports), "/", round(foci_supports, 1), collapse = ", "))
-#    }
-#
-#    res <- dig(m,
-#               f,
-#               condition = 1:2,
-#               focus = 3:4,
-#               min_support = 0.1,
-#               min_conditional_focus_support = 0.6,
-#               filter_empty_foci = FALSE)
-#
-#    expect_equal(unlist(res), c(" : 1 = 3/0.7, 4/0.6", "1 : 0.8 = 3/0.5", "2 : 0.8 = 3/0.5", "1 & 2 : 0.6 = /"))
-#
-#    res <- dig(m,
-#               f,
-#               condition = 1:2,
-#               focus = 3:4,
-#               min_support = 0.1,
-#               min_conditional_focus_support = 0.6,
-#               filter_empty_foci = TRUE)
-#
-#    expect_equal(unlist(res), c(" : 1 = 3/0.7, 4/0.6", "1 : 0.8 = 3/0.5", "2 : 0.8 = 3/0.5"))
-#})
-#
-#
+test_that("min_conditional_focus_support & filter_empty_foci", {
+    m <- matrix(c(c(1,1,1,1,1,1,1,1,0,0),
+                  c(1,1,1,1,1,1,0,0,1,1),
+                  c(0,0,0,1,1,1,1,1,1,1),
+                  c(0,0,0,0,1,1,1,1,1,1)), ncol = 4)
+
+    f <- function(condition, support, foci_supports) {
+       paste(paste(condition, collapse = " & "),
+             ":", round(support, 1),
+             "=",
+             paste0(names(foci_supports), "/", round(foci_supports, 1), collapse = ", "))
+    }
+
+    res <- dig(m,
+               f,
+               condition = 1:2,
+               focus = 3:4,
+               min_support = 0.1,
+               min_conditional_focus_support = 0.6,
+               filter_empty_foci = FALSE)
+
+    expect_setequal(unlist(res),
+                    c(" : 1 = 3/0.7, 4/0.6", "1 : 0.8 = 3/0.5", "2 : 0.8 = 3/0.5", "1 & 2 : 0.6 = /"))
+
+    res <- dig(m,
+               f,
+               condition = 1:2,
+               focus = 3:4,
+               min_support = 0.1,
+               min_conditional_focus_support = 0.6,
+               filter_empty_foci = TRUE)
+
+    expect_setequal(unlist(res),
+                    c(" : 1 = 3/0.7, 4/0.6", "1 : 0.8 = 3/0.5", "2 : 0.8 = 3/0.5"))
+})
+
+
 #test_that("tautology_limit", {
 #    d <- data.frame(a = 1,
 #                    b = c(T,T,T,T,T,F,F,F,F,F),
