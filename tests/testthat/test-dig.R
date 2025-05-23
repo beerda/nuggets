@@ -788,255 +788,255 @@ test_that("exclude tautology 1", {
 })
 
 
-#test_that("t-norm goedel", {
-#    c1 <- c(0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
-#    c2 <- c(0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
-#    m <- matrix(c(c1, c2), ncol = 2)
+test_that("t-norm goedel", {
+    c1 <- c(0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
+    c2 <- c(0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
+    m <- matrix(c(c1, c2), ncol = 2)
+
+    res <- dig(m,
+               function(weights) list(w = weights),
+               min_length = 2,
+               t_norm = "goedel")
+    expect_equal(length(res), 1)
+    expect_equal(res, list(list(w = pmin(c1, c2))),
+                 tolerance = 1e-2)
+})
+
+
+test_that("t-norm goguen", {
+    c1 <- c(0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
+    c2 <- c(0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
+    m <- matrix(c(c1, c2), ncol = 2)
+
+    res <- dig(m,
+               function(weights) list(w = weights),
+               min_length = 2,
+               t_norm = "goguen")
+    expect_equal(length(res), 1)
+    expect_equal(res, list(list(w = c1 * c2)),
+                 tolerance = 1e-2)
+})
+
+
+test_that("t-norm lukas", {
+    c1 <- c(0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
+    c2 <- c(0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
+    m <- matrix(c(c1, c2), ncol = 2)
+
+    res <- dig(m,
+               function(weights) list(w = weights),
+               min_length = 2,
+               t_norm = "lukas")
+    expect_equal(length(res), 1)
+    expect_equal(res, list(list(w = pmax(0, c1 + c2 - 1))),
+                 tolerance = 0.018)
+})
+
+
+#test_that("multithread", {
+#    m <- matrix(T, ncol = 10, nrow=100)
 #
-#    res <- dig(m,
-#               function(weights) list(w = weights),
-#               min_length = 2,
-#               t_norm = "goedel")
-#    expect_equal(length(res), 1)
-#    expect_equal(res, list(list(w = pmin(c1, c2))),
-#                 tolerance = 1e-2)
+#    res <- dig(m, function() 1, threads = 24)
+#    expect_equal(length(res), 1024)
 #})
-#
-#
-#test_that("t-norm goguen", {
-#    c1 <- c(0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
-#    c2 <- c(0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
-#    m <- matrix(c(c1, c2), ncol = 2)
-#
-#    res <- dig(m,
-#               function(weights) list(w = weights),
-#               min_length = 2,
-#               t_norm = "goguen")
-#    expect_equal(length(res), 1)
-#    expect_equal(res, list(list(w = c1 * c2)),
-#                 tolerance = 1e-2)
-#})
-#
-#
-#test_that("t-norm lukas", {
-#    c1 <- c(0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
-#    c2 <- c(0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
-#    m <- matrix(c(c1, c2), ncol = 2)
-#
-#    res <- dig(m,
-#               function(weights) list(w = weights),
-#               min_length = 2,
-#               t_norm = "lukas")
-#    expect_equal(length(res), 1)
-#    expect_equal(res, list(list(w = pmax(0, c1 + c2 - 1))),
-#                 tolerance = 0.018)
-#})
-#
-#
-##test_that("multithread", {
-##    m <- matrix(T, ncol = 10, nrow=100)
-##
-##    res <- dig(m, function() 1, threads = 24)
-##    expect_equal(length(res), 1024)
-##})
-#
-#
-#test_that("min_focus_support & filter_empty_foci", {
-#    m <- matrix(c(c(1,1,1,1,1,1,1,1,0,0),
-#                  c(1,1,1,1,1,1,0,0,1,1),
-#                  c(0,0,0,1,1,1,1,1,1,1),
-#                  c(0,0,0,0,1,1,1,1,1,1)), ncol = 4)
+
+
+test_that("min_focus_support & filter_empty_foci", {
+    m <- matrix(c(c(1,1,1,1,1,1,1,1,0,0),
+                  c(1,1,1,1,1,1,0,0,1,1),
+                  c(0,0,0,1,1,1,1,1,1,1),
+                  c(0,0,0,0,1,1,1,1,1,1)), ncol = 4)
+
+    f <- function(condition, foci_supports) {
+       paste(paste(condition, collapse = " & "),
+             "=",
+             paste(round(foci_supports, 1), collapse = ", "))
+    }
+
+    res <- dig(m,
+               f,
+               condition = 1:2,
+               focus = 3:4,
+               min_support = 0.1,
+               min_focus_support = 0.5,
+               filter_empty_foci = FALSE)
+
+    expect_setequal(unlist(res),
+                    c(" = 0.7, 0.6", "1 = 0.5", "2 = 0.5", "1 & 2 = "))
+
+    res <- dig(m,
+               f,
+               condition = 1:2,
+               focus = 3:4,
+               min_support = 0.1,
+               min_focus_support = 0.5,
+               filter_empty_foci = TRUE)
+
+    expect_setequal(unlist(res),
+                    c(" = 0.7, 0.6", "1 = 0.5", "2 = 0.5"))
+})
+
+
+test_that("min_conditional_focus_support & filter_empty_foci", {
+    m <- matrix(c(c(1,1,1,1,1,1,1,1,0,0),
+                  c(1,1,1,1,1,1,0,0,1,1),
+                  c(0,0,0,1,1,1,1,1,1,1),
+                  c(0,0,0,0,1,1,1,1,1,1)), ncol = 4)
+
+    f <- function(condition, support, foci_supports) {
+       paste(paste(condition, collapse = " & "),
+             ":", round(support, 1),
+             "=",
+             paste0(names(foci_supports), "/", round(foci_supports, 1), collapse = ", "))
+    }
+
+    res <- dig(m,
+               f,
+               condition = 1:2,
+               focus = 3:4,
+               min_support = 0.1,
+               min_conditional_focus_support = 0.6,
+               filter_empty_foci = FALSE)
+
+    expect_setequal(unlist(res),
+                    c(" : 1 = 3/0.7, 4/0.6", "1 : 0.8 = 3/0.5", "2 : 0.8 = 3/0.5", "1 & 2 : 0.6 = /"))
+
+    res <- dig(m,
+               f,
+               condition = 1:2,
+               focus = 3:4,
+               min_support = 0.1,
+               min_conditional_focus_support = 0.6,
+               filter_empty_foci = TRUE)
+
+    expect_setequal(unlist(res),
+                    c(" : 1 = 3/0.7, 4/0.6", "1 : 0.8 = 3/0.5", "2 : 0.8 = 3/0.5"))
+})
+
+
+#test_that("tautology_limit", {
+#    d <- data.frame(a = 1,
+#                    b = c(T,T,T,T,T,F,F,F,F,F),
+#                    c = c(T,T,T,T,F,F,F,F,F,F),
+#                    d = c(T,F,T,F,T,F,T,F,T,F))
 #
 #    f <- function(condition, foci_supports) {
-#       paste(paste(condition, collapse = " & "),
-#             "=",
-#             paste(round(foci_supports, 1), collapse = ", "))
+#        ante <- paste(sort(names(condition)), collapse = " & ")
+#        lapply(names(foci_supports), function(f) {
+#            paste(ante, "=>", f)
+#        })
 #    }
 #
-#    res <- dig(m,
-#               f,
-#               condition = 1:2,
-#               focus = 3:4,
-#               min_support = 0.1,
-#               min_focus_support = 0.5,
-#               filter_empty_foci = FALSE)
-#
-#    expect_setequal(unlist(res),
-#                    c(" = 0.7, 0.6", "1 = 0.5", "2 = 0.5", "1 & 2 = "))
-#
-#    res <- dig(m,
-#               f,
-#               condition = 1:2,
-#               focus = 3:4,
-#               min_support = 0.1,
-#               min_focus_support = 0.5,
-#               filter_empty_foci = TRUE)
-#
-#    expect_setequal(unlist(res),
-#                    c(" = 0.7, 0.6", "1 = 0.5", "2 = 0.5"))
-#})
-#
-#
-#test_that("min_conditional_focus_support & filter_empty_foci", {
-#    m <- matrix(c(c(1,1,1,1,1,1,1,1,0,0),
-#                  c(1,1,1,1,1,1,0,0,1,1),
-#                  c(0,0,0,1,1,1,1,1,1,1),
-#                  c(0,0,0,0,1,1,1,1,1,1)), ncol = 4)
-#
-#    f <- function(condition, support, foci_supports) {
-#       paste(paste(condition, collapse = " & "),
-#             ":", round(support, 1),
-#             "=",
-#             paste0(names(foci_supports), "/", round(foci_supports, 1), collapse = ", "))
-#    }
-#
-#    res <- dig(m,
-#               f,
-#               condition = 1:2,
-#               focus = 3:4,
-#               min_support = 0.1,
-#               min_conditional_focus_support = 0.6,
-#               filter_empty_foci = FALSE)
-#
-#    expect_setequal(unlist(res),
-#                    c(" : 1 = 3/0.7, 4/0.6", "1 : 0.8 = 3/0.5", "2 : 0.8 = 3/0.5", "1 & 2 : 0.6 = /"))
-#
-#    res <- dig(m,
-#               f,
-#               condition = 1:2,
-#               focus = 3:4,
-#               min_support = 0.1,
-#               min_conditional_focus_support = 0.6,
-#               filter_empty_foci = TRUE)
-#
-#    expect_setequal(unlist(res),
-#                    c(" : 1 = 3/0.7, 4/0.6", "1 : 0.8 = 3/0.5", "2 : 0.8 = 3/0.5"))
-#})
-#
-#
-##test_that("tautology_limit", {
-##    d <- data.frame(a = 1,
-##                    b = c(T,T,T,T,T,F,F,F,F,F),
-##                    c = c(T,T,T,T,F,F,F,F,F,F),
-##                    d = c(T,F,T,F,T,F,T,F,T,F))
-##
-##    f <- function(condition, foci_supports) {
+##    f <- function(condition, support, foci_supports) {
 ##        ante <- paste(sort(names(condition)), collapse = " & ")
-##        lapply(names(foci_supports), function(f) {
+##        r <- lapply(names(foci_supports), function(f) {
 ##            paste(ante, "=>", f)
 ##        })
+##
+##        data.frame(rule=unlist(r), sup = rep(support, length(foci_supports)), pp = foci_supports)
 ##    }
-##
-###    f <- function(condition, support, foci_supports) {
-###        ante <- paste(sort(names(condition)), collapse = " & ")
-###        r <- lapply(names(foci_supports), function(f) {
-###            paste(ante, "=>", f)
-###        })
-###
-###        data.frame(rule=unlist(r), sup = rep(support, length(foci_supports)), pp = foci_supports)
-###    }
-##
-##    res <- dig(d,
-##               f,
-##               condition = everything(),
-##               focus = everything())
-##    res <- sort(unlist(res))
-##    expect_equal(res,
-##                 c(" => a", " => b", " => c", " => d", "a & b & c => d",
-##                   "a & b & d => c", "a & b => c", "a & b => d", "a & c & d => b",
-##                   "a & c => b", "a & c => d", "a & d => b", "a & d => c",
-##                   "a => b", "a => c", "a => d", "b & c & d => a", "b & c => a",
-##                   "b & c => d", "b & d => a", "b & d => c", "b => a", "b => c",
-##                   "b => d", "c & d => a", "c & d => b", "c => a", "c => b",
-##                   "c => d", "d => a", "d => b", "d => c"))
-##
-##    res <- dig(d,
-##               f,
-##               condition = everything(),
-##               focus = everything(),
-##               tautology_limit = 1)
-##    res <- sort(unlist(res))
-##    expect_equal(res,
-##                 c(" => a", " => b", " => c", " => d",
-##                   "b & d => c",
-##                   "b => c", "b => d",
-##                   "c => b", "c => d", "d => b", "d => c"))
-##})
 #
+#    res <- dig(d,
+#               f,
+#               condition = everything(),
+#               focus = everything())
+#    res <- sort(unlist(res))
+#    expect_equal(res,
+#                 c(" => a", " => b", " => c", " => d", "a & b & c => d",
+#                   "a & b & d => c", "a & b => c", "a & b => d", "a & c & d => b",
+#                   "a & c => b", "a & c => d", "a & d => b", "a & d => c",
+#                   "a => b", "a => c", "a => d", "b & c & d => a", "b & c => a",
+#                   "b & c => d", "b & d => a", "b & d => c", "b => a", "b => c",
+#                   "b => d", "c & d => a", "c & d => b", "c => a", "c => b",
+#                   "c => d", "d => a", "d => b", "d => c"))
 #
-#test_that("errors", {
-#    f <- function(condition) { list() }
-#    d <- data.frame(n = 1:5 / 5, l = TRUE, i = 1:5, s = letters[1:5])
-#
-#    expect_error(dig(list(), f), "`x` must be a matrix or a data frame.")
-#    expect_error(dig(matrix(0, nrow = 5, ncol = 0), f), "`x` must have at least one column.")
-#    expect_error(dig(matrix(0, nrow = 0, ncol = 5), f), "`x` must have at least one row.")
-#
-#    expect_true(is.list(dig(d, f, condition = c(n, l))))
-#    expect_error(dig(d, f, condition = c(n, l, i)),
-#                 "All columns selected by `condition` must be logical or numeric")
-#    expect_error(dig(d, f, condition = c(n, l, s)),
-#                 "All columns selected by `condition` must be logical or numeric")
-#
-#    expect_true(is.list(dig(d, f, condition = c(n, l), focus = c(n, l))))
-#    expect_error(dig(d, f, condition = c(n, l), focus = c(n, l, i)),
-#                 "All columns selected by `focus` must be logical or numeric")
-#    expect_error(dig(d, f, condition = c(n, l), focus = c(n, l, s)),
-#                 "All columns selected by `focus` must be logical or numeric")
-#
-#    expect_error(dig(d, f = "x", condition = n),
-#                 "`f` must be a function.")
-#    expect_error(dig(d, f = function(a) { }, condition = n),
-#                 "Function `f` is allowed to have the following arguments")
-#    expect_error(dig(d, f, condition = n, disjoint = list("x")),
-#                 "`disjoint` must be a plain vector")
-#    expect_error(dig(d, f, condition = n, excluded = 3),
-#                 "`excluded` must be a list or NULL.")
-#    expect_error(dig(d, f, condition = n, excluded = list(3)),
-#                 "`excluded` must be a list of character vectors.")
-#    expect_error(dig(d, f, condition = n, disjoint = "x"),
-#                 "The length of `disjoint` must be 0 or must be equal to the number of columns in `x`.")
-#    expect_error(dig(d, f, condition = n, min_length = "x"),
-#                 "`min_length` must be an integerish scalar.")
-#    expect_error(dig(d, f, condition = n, min_length = Inf),
-#                 "`min_length` must be finite.")
-#    expect_error(dig(d, f, condition = n, min_length = -1),
-#                 "`min_length` must be >= 0.")
-#    expect_error(dig(d, f, condition = n, max_length = "x"),
-#                 "`max_length` must be an integerish scalar.")
-#    expect_error(dig(d, f, condition = n, max_length = -1),
-#                 "`max_length` must be >= 0.")
-#    expect_error(dig(d, f, condition = n, min_length = 5, max_length = 4),
-#                 "`max_length` must be greater or equal to `min_length`.")
-#    expect_error(dig(d, f, condition = n, min_support = "x"),
-#                 "`min_support` must be a double scalar.")
-#    expect_error(dig(d, f, condition = n, min_support = 1.1),
-#                 "`min_support` must be between 0 and 1.")
-#    expect_error(dig(d, f, condition = n, min_focus_support = "x"),
-#                 "`min_focus_support` must be a double scalar.")
-#    expect_error(dig(d, f, condition = n, min_focus_support = 1.1),
-#                 "`min_focus_support` must be between 0 and 1.")
-#    expect_error(dig(d, f, condition = n, filter_empty_foci = "x"),
-#                 "`filter_empty_foci` must be a flag")
-#    expect_error(dig(d, f, condition = n, t_norm = "x"),
-#                 "`t_norm` must be equal to one of:")
-#    expect_error(dig(d, f, condition = n, max_results = -1),
-#                 "`max_results` must be >= 1.")
-#    expect_error(dig(d, f, condition = n, verbose = "x"),
-#                 "`verbose` must be a flag")
-#    expect_error(dig(d, f, condition = n, threads = "x"),
-#                 "`threads` must be an integerish scalar.")
-#    expect_error(dig(d, f, condition = n, threads = 0),
-#                 "`threads` must be >= 1.")
-#    expect_error(dig(d, f, condition = n, excluded = FALSE),
-#                 "`excluded` must be a list or NULL.")
-#    expect_error(dig(d, f, condition = n, excluded = list(c(FALSE, TRUE))),
-#                 "`excluded` must be a list of character vectors.")
-#    expect_error(dig(d, f, condition = n, excluded = list(c("n", "l", "foo"))),
-#                 "Can't find some column names in `x` that correspond to all predicates in `excluded`.")
+#    res <- dig(d,
+#               f,
+#               condition = everything(),
+#               focus = everything(),
+#               tautology_limit = 1)
+#    res <- sort(unlist(res))
+#    expect_equal(res,
+#                 c(" => a", " => b", " => c", " => d",
+#                   "b & d => c",
+#                   "b => c", "b => d",
+#                   "c => b", "c => d", "d => b", "d => c"))
 #})
-#
-#
+
+
+test_that("errors", {
+    f <- function(condition) { list() }
+    d <- data.frame(n = 1:5 / 5, l = TRUE, i = 1:5, s = letters[1:5])
+
+    expect_error(dig(list(), f), "`x` must be a matrix or a data frame.")
+    expect_error(dig(matrix(0, nrow = 5, ncol = 0), f), "`x` must have at least one column.")
+    expect_error(dig(matrix(0, nrow = 0, ncol = 5), f), "`x` must have at least one row.")
+
+    expect_true(is.list(dig(d, f, condition = c(n, l))))
+    expect_error(dig(d, f, condition = c(n, l, i)),
+                 "All columns selected by `condition` must be logical or numeric")
+    expect_error(dig(d, f, condition = c(n, l, s)),
+                 "All columns selected by `condition` must be logical or numeric")
+
+    expect_true(is.list(dig(d, f, condition = c(n, l), focus = c(n, l))))
+    expect_error(dig(d, f, condition = c(n, l), focus = c(n, l, i)),
+                 "All columns selected by `focus` must be logical or numeric")
+    expect_error(dig(d, f, condition = c(n, l), focus = c(n, l, s)),
+                 "All columns selected by `focus` must be logical or numeric")
+
+    expect_error(dig(d, f = "x", condition = n),
+                 "`f` must be a function.")
+    expect_error(dig(d, f = function(a) { }, condition = n),
+                 "Function `f` is allowed to have the following arguments")
+    expect_error(dig(d, f, condition = n, disjoint = list("x")),
+                 "`disjoint` must be a plain vector")
+    expect_error(dig(d, f, condition = n, excluded = 3),
+                 "`excluded` must be a list or NULL.")
+    expect_error(dig(d, f, condition = n, excluded = list(3)),
+                 "`excluded` must be a list of character vectors.")
+    expect_error(dig(d, f, condition = n, disjoint = "x"),
+                 "The length of `disjoint` must be 0 or must be equal to the number of columns in `x`.")
+    expect_error(dig(d, f, condition = n, min_length = "x"),
+                 "`min_length` must be an integerish scalar.")
+    expect_error(dig(d, f, condition = n, min_length = Inf),
+                 "`min_length` must be finite.")
+    expect_error(dig(d, f, condition = n, min_length = -1),
+                 "`min_length` must be >= 0.")
+    expect_error(dig(d, f, condition = n, max_length = "x"),
+                 "`max_length` must be an integerish scalar.")
+    expect_error(dig(d, f, condition = n, max_length = -1),
+                 "`max_length` must be >= 0.")
+    expect_error(dig(d, f, condition = n, min_length = 5, max_length = 4),
+                 "`max_length` must be greater or equal to `min_length`.")
+    expect_error(dig(d, f, condition = n, min_support = "x"),
+                 "`min_support` must be a double scalar.")
+    expect_error(dig(d, f, condition = n, min_support = 1.1),
+                 "`min_support` must be between 0 and 1.")
+    expect_error(dig(d, f, condition = n, min_focus_support = "x"),
+                 "`min_focus_support` must be a double scalar.")
+    expect_error(dig(d, f, condition = n, min_focus_support = 1.1),
+                 "`min_focus_support` must be between 0 and 1.")
+    expect_error(dig(d, f, condition = n, filter_empty_foci = "x"),
+                 "`filter_empty_foci` must be a flag")
+    expect_error(dig(d, f, condition = n, t_norm = "x"),
+                 "`t_norm` must be equal to one of:")
+    expect_error(dig(d, f, condition = n, max_results = -1),
+                 "`max_results` must be >= 1.")
+    expect_error(dig(d, f, condition = n, verbose = "x"),
+                 "`verbose` must be a flag")
+    expect_error(dig(d, f, condition = n, threads = "x"),
+                 "`threads` must be an integerish scalar.")
+    expect_error(dig(d, f, condition = n, threads = 0),
+                 "`threads` must be >= 1.")
+    expect_error(dig(d, f, condition = n, excluded = FALSE),
+                 "`excluded` must be a list or NULL.")
+    expect_error(dig(d, f, condition = n, excluded = list(c(FALSE, TRUE))),
+                 "`excluded` must be a list of character vectors.")
+    expect_error(dig(d, f, condition = n, excluded = list(c("n", "l", "foo"))),
+                 "Can't find some column names in `x` that correspond to all predicates in `excluded`.")
+})
+
+
 #test_that("bug on mixed logical and numeric chains", {
 #    fuzzyCO2 <- CO2 |>
 #        partition(Plant:Treatment) |>

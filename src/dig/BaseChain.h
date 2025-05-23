@@ -122,13 +122,6 @@ public:
     vector<size_t>& getMutableDeduced()
     { return deduced; }
 
-    const vector<size_t>& getDeduced() const
-    { return deduced; }
-
-    // set with move
-    void setDeduced(vector<size_t>&& deduced)
-    { this->deduced = std::move(deduced); }
-
     bool deduces(size_t id) const
     { return std::find(deduced.begin(), deduced.end(), id) != deduced.end(); }
 
