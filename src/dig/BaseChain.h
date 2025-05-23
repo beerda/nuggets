@@ -30,7 +30,8 @@ public:
     BaseChain(float sum)
         : clause(),
           predicateType(CONDITION),
-          sum(sum)
+          sum(sum),
+          deduced()
     { }
 
     /**
@@ -45,7 +46,8 @@ public:
     BaseChain(size_t id, PredicateType type, float sum)
         : clause({ id }),
           predicateType(type),
-          sum(sum)
+          sum(sum),
+          deduced()
     { }
 
     /**
@@ -58,7 +60,8 @@ public:
     BaseChain(const BaseChain& a, const BaseChain& b, const bool toFocus)
         : clause(a.clause.size() + 1),
           predicateType(toFocus ? PredicateType::FOCUS : b.predicateType),
-          sum(0)
+          sum(0),
+          deduced()
     {
         IF_DEBUG(
             if (!a.isCondition())
@@ -116,6 +119,19 @@ public:
     float getSum() const
     { return sum; }
 
+    vector<size_t>& getMutableDeduced()
+    { return deduced; }
+
+    const vector<size_t>& getDeduced() const
+    { return deduced; }
+
+    // set with move
+    void setDeduced(vector<size_t>&& deduced)
+    { this->deduced = std::move(deduced); }
+
+    bool deduces(size_t id) const
+    { return std::find(deduced.begin(), deduced.end(), id) != deduced.end(); }
+
     /**
      * Returns the type of the predicate represented by this chain.
      */
@@ -141,9 +157,11 @@ public:
         string res = "";
         bool first = true;
         for (size_t p : clause) {
-            if (!first) {
-                res += "&";
+            if (first) {
                 first = false;
+            }
+            else {
+                res += "&";
             }
             res += std::to_string(p);
         }
@@ -169,4 +187,6 @@ protected:
      * fuzzy data) of the chain.
      */
     float sum;
+
+    vector<size_t> deduced;
 };

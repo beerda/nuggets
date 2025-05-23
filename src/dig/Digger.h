@@ -1,28 +1,34 @@
 #pragma once
 
+#include <algorithm>
+
 #include "../common.h"
 #include "Config.h"
 #include "ChainCollection.h"
 #include "Selector.h"
+#include "TautologyTree.h"
 
 
 template <typename CHAIN, typename STORAGE>
 class Digger {
 public:
     Digger(const Config& config,
-           const List data,
-           const LogicalVector isCondition,
-           const LogicalVector isFocus,
+           const List& data,
+           const LogicalVector& isCondition,
+           const LogicalVector& isFocus,
            STORAGE& storage)
         : storage(storage),
           config(config),
           initialCollection(data, isCondition, isFocus),
-          predicateSums(initialCollection.size() + 1)
+          predicateSums(initialCollection.size() + 1),
+          tree(initialCollection)
     {
         for (const CHAIN& chain : initialCollection) {
             size_t id = chain.getClause().back();
             predicateSums[id] = chain.getSum();
         }
+
+        tree.addTautologies(config.getExcluded());
     }
 
     // Disable copy
@@ -35,11 +41,17 @@ public:
 
     void run()
     {
-        CHAIN emptyChain(config.getNrow());
         ChainCollection<CHAIN> filteredCollection;
+        CHAIN emptyChain(config.getNrow());
+        tree.deduceConsequentsFromEmptyAntecedent(emptyChain.getMutableDeduced());
+
         for (size_t i = 0; i < initialCollection.size(); ++i) {
-            if (isCandidate(initialCollection[i])) {
-                filteredCollection.append(std::move(initialCollection[i]));
+            CHAIN& chain = initialCollection[i];
+            if (isNotDeduced(emptyChain, chain)) {
+                if (isCandidate(chain)) {
+                    updateChainDeduction(emptyChain, chain);
+                    filteredCollection.append(std::move(chain));
+                }
             }
         }
         if (isStorable(emptyChain)) {
@@ -53,14 +65,108 @@ public:
         }
     }
 
-    List getResult() const
-    { return List(); }
-
 private:
     STORAGE& storage;
     const Config& config;
     ChainCollection<CHAIN> initialCollection;
     vector<float> predicateSums;
+    TautologyTree<CHAIN> tree;
+
+    void processChains(const ChainCollection<CHAIN>& collection) const
+    {
+        for (size_t i = 0; i < collection.conditionCount(); ++i) {
+            ChainCollection<CHAIN> childCollection;
+            const CHAIN& chain = collection[i];
+            bool chainIsExtendable = isExtendable(chain);
+
+            if (chainIsExtendable) {
+                // need conjunction with everything
+                combine(childCollection, collection, i, false);
+            }
+            else if (collection.hasFoci()) {
+                // need conjunction with foci only
+                combine(childCollection, collection, i, true);
+            }
+            else {
+                // do not need childCollection at all
+            }
+
+            if (!config.hasFilterEmptyFoci() || childCollection.hasFoci()) {
+                if (isStorable(chain)) {
+                    Selector selector = createSelector(chain, childCollection);
+                    if (isStorable(selector)) {
+                        storage.store(chain, childCollection, selector, predicateSums);
+                    }
+                }
+                if (chainIsExtendable) {
+                    processChains(childCollection);
+                }
+            }
+        }
+    }
+
+    void combine(ChainCollection<CHAIN>& target,
+                 const ChainCollection<CHAIN>& parent,
+                 const size_t conditionChainIndex,
+                 bool onlyFoci) const
+    {
+        const CHAIN& conditionChain = parent[conditionChainIndex];
+        size_t begin = conditionChainIndex + 1;
+        if (onlyFoci && begin < parent.firstFocusIndex()) {
+            begin = parent.firstFocusIndex();
+        }
+
+        size_t bothLen = (conditionChainIndex > parent.firstFocusIndex()) ? conditionChainIndex - parent.firstFocusIndex() : 0;
+
+        target.reserve(parent.size() - begin + bothLen);
+        for (size_t i = begin; i < parent.size(); ++i) {
+            const CHAIN& secondChain = parent[i];
+            if (isNonRedundant(conditionChain, secondChain)) {
+                if (isNotDeduced(conditionChain, secondChain)) {
+                    CHAIN newChain(conditionChain, secondChain, false);
+                    if (isCandidate(newChain)) {
+                        updateChainDeduction(conditionChain, newChain);
+                        target.append(std::move(newChain));
+                    }
+                }
+            }
+        }
+        for (size_t i = parent.firstFocusIndex(); i < conditionChainIndex; ++i) {
+            const CHAIN& secondChain = parent[i];
+            if (isNonRedundant(conditionChain, secondChain)) {
+                if (isNotDeduced(conditionChain, secondChain)) {
+                    CHAIN newChain(conditionChain, secondChain, true);
+                    if (isCandidate(newChain)) {
+                        updateChainDeduction(conditionChain, newChain);
+                        target.append(std::move(newChain));
+                    }
+                }
+            }
+        }
+    }
+
+    void updateChainDeduction(const CHAIN& parent, CHAIN& chain) const
+    {
+        if (config.hasFilterExcluded()) {
+            tree.deduceConsequentsByRevSorted(parent.getClause(), chain.getClause().back(),
+                                              chain.getMutableDeduced());
+        }
+    }
+
+    bool isNotDeduced(const CHAIN& parent, const CHAIN& chain) const
+    {
+        if (!config.hasFilterExcluded()) {
+            return true;
+        }
+
+        size_t curr = chain.getClause().back();
+        if (parent.deduces(curr)) {
+            return false;
+        }
+
+
+        return true;
+    }
 
     bool isNonRedundant(const CHAIN& parent, const CHAIN& chain) const
     {
@@ -80,6 +186,31 @@ private:
                 //cout << "redundant: " << parent.clauseAsString() << " , " << chain.clauseAsString() << endl;
                 return false;
             }
+        }
+
+        if (config.hasFilterExcluded()) {
+            /*
+            cout << "filtering: parent=" << parent.clauseAsString() << ", chain=" << chain.clauseAsString();
+            vector<size_t> deduced = tree.deduceConsequentsByRevSorted(parent.getClause(), curr);
+            cout << ", deduced=";
+            for (size_t d : deduced) {
+                cout << d << "&";
+            }
+
+            for (size_t d : deduced) {
+                if (d == curr) {
+                    cout << "   filtered\n";
+                    return false;
+                }
+                for (size_t p : parent.getClause()) {
+                    if (d == p) {
+                        cout << "   filtered\n";
+                        return false;
+                    }
+                }
+            }
+            cout << endl;
+             */
         }
 
         return true;
@@ -133,71 +264,4 @@ private:
 
     bool isStorable(const Selector& selector) const
     { return (!config.hasFilterEmptyFoci() || selector.getSelectedCount() > 0); }
-
-    void combine(ChainCollection<CHAIN>& target,
-                 const ChainCollection<CHAIN>& parent,
-                 const size_t conditionChainIndex,
-                 bool onlyFoci) const
-    {
-        const CHAIN& conditionChain = parent[conditionChainIndex];
-
-        size_t begin = conditionChainIndex + 1;
-        if (onlyFoci && begin < parent.firstFocusIndex()) {
-            begin = parent.firstFocusIndex();
-        }
-
-        size_t bothLen = (conditionChainIndex > parent.firstFocusIndex()) ? conditionChainIndex - parent.firstFocusIndex() : 0;
-
-        target.reserve(parent.size() - begin + bothLen);
-        for (size_t i = begin; i < parent.size(); ++i) {
-            const CHAIN& secondChain = parent[i];
-            if (isNonRedundant(conditionChain, secondChain)) {
-                CHAIN newChain(conditionChain, secondChain, false);
-                if (isCandidate(newChain)) {
-                    target.append(std::move(newChain));
-                }
-            }
-        }
-        for (size_t i = parent.firstFocusIndex(); i < conditionChainIndex; ++i) {
-            const CHAIN& secondChain = parent[i];
-            if (isNonRedundant(conditionChain, secondChain)) {
-                CHAIN newChain(conditionChain, secondChain, true);
-                if (isCandidate(newChain)) {
-                    target.append(std::move(newChain));
-                }
-            }
-        }
-    }
-
-    void processChains(const ChainCollection<CHAIN>& collection) const
-    {
-        for (size_t i = 0; i < collection.conditionCount(); ++i) {
-            ChainCollection<CHAIN> childCollection;
-            const CHAIN& chain = collection[i];
-
-            if (isExtendable(chain)) {
-                // need conjunction with everything
-                combine(childCollection, collection, i, false);
-            }
-            else if (collection.hasFoci()) {
-                // need conjunction with foci only
-                combine(childCollection, collection, i, true);
-            }
-            else {
-                // do not need childCollection at all
-            }
-
-            if (!config.hasFilterEmptyFoci() || childCollection.hasFoci()) {
-                if (isStorable(chain)) {
-                    Selector selector = createSelector(chain, childCollection);
-                    if (isStorable(selector)) {
-                        storage.store(chain, childCollection, selector, predicateSums);
-                    }
-                }
-                if (isExtendable(chain)) {
-                    processChains(childCollection);
-                }
-            }
-        }
-    }
 };
