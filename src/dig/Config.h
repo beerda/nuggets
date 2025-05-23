@@ -31,6 +31,7 @@ public:
 
           tNorm(parseTNorm(configuration["tNorm"])),
           excluded(configuration["excluded"]),
+          filterExcluded(excluded.size() > 0 || tautologyLimit >= 0),
           disjoint(),
           chainNames()
     {
@@ -94,6 +95,9 @@ public:
 
     bool hasFilterEmptyFoci() const
     { return filterEmptyFoci; }
+
+    bool hasFilterExcluded() const
+    { return filterExcluded; }
 
     bool isVerbose() const
     { return verbose; }
@@ -167,6 +171,7 @@ private:
     bool verbose;
     TNorm tNorm;
     List excluded;
+    bool filterExcluded;
     vector<int> disjoint;
     vector<string> chainNames;
 
