@@ -7,33 +7,30 @@
 class Config {
 public:
     Config(List configuration, CharacterVector namesVector)
-        : nrow(IntegerVector(configuration["nrow"])[0]),
-          threads(IntegerVector(configuration["threads"])[0]),
-          minLength(IntegerVector(configuration["minLength"])[0]),
-          maxLength(IntegerVector(configuration["maxLength"])[0]),
-          maxResults(IntegerVector(configuration["maxResults"])[0]), // -1 means infinite
+        : nrow(as<IntegerVector>(configuration["nrow"])[0]),
+          threads(as<IntegerVector>(configuration["threads"])[0]),
+          minLength(as<IntegerVector>(configuration["minLength"])[0]),
+          maxLength(as<IntegerVector>(configuration["maxLength"])[0]),
+          maxResults(as<IntegerVector>(configuration["maxResults"])[0]), // -1 means infinite
 
-          minSupport(NumericVector(configuration["minSupport"])[0]),
+          minSupport(as<NumericVector>(configuration["minSupport"])[0]),
           minSum(minSupport * nrow),
 
-          minFocusSupport(NumericVector(configuration["minFocusSupport"])[0]),
+          minFocusSupport(as<NumericVector>(configuration["minFocusSupport"])[0]),
           minFocusSum(minFocusSupport * nrow),
 
-          minConditionalFocusSupport(NumericVector(configuration["minConditionalFocusSupport"])[0]),
+          minConditionalFocusSupport(as<NumericVector>(configuration["minConditionalFocusSupport"])[0]),
 
-          maxSupport(NumericVector(configuration["maxSupport"])[0]),
+          maxSupport(as<NumericVector>(configuration["maxSupport"])[0]),
           maxSum(maxSupport * nrow),
 
-          tautologyLimit(NumericVector(configuration["tautologyLimit"])[0]),
-
-          filterEmptyFoci(LogicalVector(configuration["filterEmptyFoci"])[0]),
-          verbose(LogicalVector(configuration["verbose"])[0]),
-
+          tautologyLimit(as<NumericVector>(configuration["tautologyLimit"])[0]),
           tNorm(parseTNorm(configuration["tNorm"])),
-          excluded(configuration["excluded"]),
-          filterExcluded(excluded.size() > 0 || tautologyLimit >= 0),
+          excluded(as<List>(configuration["excluded"])),
           disjoint(),
-          chainNames()
+          chainNames(),
+          filterEmptyFoci(as<LogicalVector>(configuration["filterEmptyFoci"])[0]),
+          verbose(as<LogicalVector>(configuration["verbose"])[0])
     {
         if (maxLength < 0) {
             maxLength = INT_MAX;
@@ -49,6 +46,8 @@ public:
         for (R_xlen_t i = 0; i < disjVec.size(); ++i) {
             disjoint.push_back(disjVec[i]);
         }
+        disjointDefined = disjoint.size() > 1;
+        filterExcluded = excluded.size() > 0 || tautologyLimit >= 0;
 
         chainNames.reserve(namesVector.size() + 1);
         chainNames.push_back(""); // 0th index is unused, as R uses predicates' indices starting from 1
@@ -76,7 +75,7 @@ public:
     { return contiNnArgument; }
 
     bool hasAnyContiArgument() const
-    { return contiPpArgument || contiNpArgument || contiPnArgument || contiNnArgument; }
+    { return anyContiArgument; }
 
     bool hasIndicesArgument() const
     { return indicesArgument; }
@@ -91,7 +90,7 @@ public:
     { return weightsArgument; }
 
     bool hasDisjoint() const
-    { return disjoint.size() > 1; }
+    { return disjointDefined; }
 
     bool hasFilterEmptyFoci() const
     { return filterEmptyFoci; }
@@ -167,13 +166,15 @@ private:
     float maxSupport;
     float maxSum;
     float tautologyLimit;
-    bool filterEmptyFoci;
-    bool verbose;
     TNorm tNorm;
     List excluded;
-    bool filterExcluded;
     vector<int> disjoint;
     vector<string> chainNames;
+
+    bool filterEmptyFoci;
+    bool verbose;
+    bool filterExcluded;
+    bool disjointDefined;
 
     bool conditionArgument = false;
     bool fociSupportsArgument = false;
@@ -181,6 +182,7 @@ private:
     bool contiNpArgument = false;
     bool contiPnArgument = false;
     bool contiNnArgument = false;
+    bool anyContiArgument = false;
     bool indicesArgument = false;
     bool sumArgument = false;
     bool supportArgument = false;
@@ -220,5 +222,7 @@ private:
             else if (vec[i] == "foci_supports")
                 fociSupportsArgument = true;
         }
+
+        anyContiArgument = contiPpArgument || contiNpArgument || contiPnArgument || contiNnArgument;
     }
 };
