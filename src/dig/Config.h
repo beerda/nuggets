@@ -47,6 +47,7 @@ public:
             disjoint.push_back(disjVec[i]);
         }
         disjointDefined = disjoint.size() > 1;
+        tautologyLimitDefined = tautologyLimit >= 0;
         filterExcluded = excluded.size() > 0 || tautologyLimit >= 0;
 
         chainNames.reserve(namesVector.size() + 1);
@@ -97,6 +98,9 @@ public:
 
     bool hasFilterExcluded() const
     { return filterExcluded; }
+
+    bool hasTautologyLimit() const
+    { return tautologyLimitDefined; }
 
     bool isVerbose() const
     { return verbose; }
@@ -175,6 +179,7 @@ private:
     bool verbose;
     bool filterExcluded;
     bool disjointDefined;
+    bool tautologyLimitDefined;
 
     bool conditionArgument = false;
     bool fociSupportsArgument = false;

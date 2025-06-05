@@ -30,8 +30,7 @@ public:
     BaseChain(float sum)
         : clause(),
           predicateType(CONDITION),
-          sum(sum),
-          deduced()
+          sum(sum)
     { }
 
     /**
@@ -46,8 +45,7 @@ public:
     BaseChain(size_t id, PredicateType type, float sum)
         : clause({ id }),
           predicateType(type),
-          sum(sum),
-          deduced()
+          sum(sum)
     { }
 
     /**
@@ -60,8 +58,7 @@ public:
     BaseChain(const BaseChain& a, const BaseChain& b, const bool toFocus)
         : clause(a.clause.size() + 1),
           predicateType(toFocus ? PredicateType::FOCUS : b.predicateType),
-          sum(0),
-          deduced()
+          sum(0)
     {
         IF_DEBUG(
             if (!a.isCondition())
@@ -145,6 +142,12 @@ public:
     bool isCondition() const
     { return predicateType != FOCUS; }
 
+    void setErased()
+    { erased = true; }
+
+    bool isErased() const
+    { return erased; }
+
     string clauseAsString() const
     {
         string res = "";
@@ -182,4 +185,6 @@ protected:
     float sum;
 
     vector<size_t> deduced;
+
+    bool erased = false;
 };
