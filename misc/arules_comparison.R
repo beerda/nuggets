@@ -39,12 +39,12 @@ testIt <- function(m, n) {
         })
 
         t2 <- system.time({
-            f <- function(condition) list(condition = condition)
+            f <- function(condition) list(condition = format_condition(names(condition)))
             rules2 <- dig(d,
                           f = f,
                           min_support = 0.001,
-                          min_length = 0,
-                          max_length = 5,
+                          min_length = 1,
+                          max_length = 6,
                           min_focus_support = 0.001)
             #rules2 <- dig_associations(d,
                                        #min_support = 0.001,
@@ -77,7 +77,7 @@ result <- NULL
 for (i in 4:6) {
     for (j in c(5, 10, 15, 20, 25)) {
         result <- rbind(result, testIt(10^i, j))
-        saveRDS(result, "comparison_result-2025-04-10.rds")
+        saveRDS(result, "comparison_result-2025-05-26.rds")
         cat("\n---------------------------------------------------------------------\n")
         print(result)
     }
@@ -87,8 +87,8 @@ print(result)
 longResult <- result |>
     pivot_longer(cols = c("apriori_time", "eclat_time", "nuggets_time"),
              names_to = "method",
-             values_to = "time") |>
-    mutate(method = recode(method,
+             values_to = "time")  |>
+    mutate(method = dplyr::recode(method,
                      "apriori_time" = "apriori",
                      "eclat_time" = "eclat",
                      "nuggets_time" = "nuggets"),
