@@ -10,4 +10,4 @@
  * 512bit operations (AVX512) - align by 64
  */
 template <typename TYPE>
-using AlignedVector = std::vector<TYPE, AlignedAllocator<TYPE, 32>>;
+using AlignedVector = std::vector<TYPE, AlignedAllocator<TYPE, 512>>;
