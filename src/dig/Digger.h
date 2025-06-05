@@ -64,11 +64,14 @@ private:
     vector<float> predicateSums;
     TautologyTree<CHAIN> tree;
 
-    void processChains(ChainCollection<CHAIN>& collection) const
+    void processChains(ChainCollection<CHAIN>& collection)
     {
         for (size_t i = 0; i < collection.conditionCount(); ++i) {
             ChainCollection<CHAIN> childCollection;
             const CHAIN& chain = collection[i];
+
+            if (chain.isErased())
+                continue;
 
             if (isExtendable(chain)) {
                 // need conjunction with everything
@@ -86,13 +89,14 @@ private:
         }
     }
 
-    void processChildrenChains(const CHAIN& chain, ChainCollection<CHAIN>& childCollection) const
+    void processChildrenChains(const CHAIN& chain, ChainCollection<CHAIN>& childCollection)
     {
         if (!config.hasFilterEmptyFoci() || childCollection.hasFoci()) {
             if (isStorable(chain)) {
                 Selector selector = createSelectorOfStorable(chain, childCollection);
                 if (isStorable(selector)) {
                     storage.store(chain, childCollection, selector, predicateSums);
+                    processTautologies(chain, childCollection, selector);
                 }
             }
             if (isExtendable(chain)) {
@@ -130,10 +134,12 @@ private:
                          const CHAIN& secondChain,
                          const bool toFocus) const
     {
-        if (isNonRedundant(conditionChain, secondChain)) {
-            CHAIN newChain(conditionChain, secondChain, toFocus);
-            if (isCandidate(newChain)) {
-                target.append(std::move(newChain));
+        if (!secondChain.isErased()) {
+            if (isNonRedundant(conditionChain, secondChain)) {
+                CHAIN newChain(conditionChain, secondChain, toFocus);
+                if (isCandidate(newChain)) {
+                    target.append(std::move(newChain));
+                }
             }
         }
     }
@@ -185,6 +191,17 @@ private:
             && storage.size() < config.getMaxResults();
     }
 
+    bool isStorable(const CHAIN& chain) const
+    {
+        return chain.getClause().size() >= config.getMinLength()
+            && chain.getSum() >= config.getMinSum()
+            && chain.getSum() <= config.getMaxSum()
+            && storage.size() < config.getMaxResults();
+    }
+
+    bool isStorable(const Selector& selector) const
+    { return (!config.hasFilterEmptyFoci() || selector.getSelectedCount() > 0); }
+
     Selector createSelectorOfStorable(const CHAIN& chain, const ChainCollection<CHAIN>& collection) const
     {
         bool constant = config.getMinConditionalFocusSupport() <= 0.0f;
@@ -202,14 +219,19 @@ private:
         return result;
     }
 
-    bool isStorable(const CHAIN& chain) const
+    void processTautologies(const CHAIN& chain,
+                            ChainCollection<CHAIN>& collection,
+                            const Selector& selector)
     {
-        return chain.getClause().size() >= config.getMinLength()
-            && chain.getSum() >= config.getMinSum()
-            && chain.getSum() <= config.getMaxSum()
-            && storage.size() < config.getMaxResults();
+        if (config.hasTautologyLimit()) {
+            float chainSumReciprocal = 1.0f / chain.getSum();
+            for (size_t i = 0; i < collection.focusCount(); ++i) {
+                CHAIN& focus = collection[i + collection.firstFocusIndex()];
+                if (focus.getSum() * chainSumReciprocal >= config.getTautologyLimit()) {
+                    tree.addTautology(chain.getClause(), focus.getClause().back());
+                    focus.setErased();
+                }
+            }
+        }
     }
-
-    bool isStorable(const Selector& selector) const
-    { return (!config.hasFilterEmptyFoci() || selector.getSelectedCount() > 0); }
 };
