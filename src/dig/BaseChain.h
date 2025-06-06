@@ -120,7 +120,23 @@ public:
     { return deduced; }
 
     bool deduces(size_t id) const
-    { return std::find(deduced.begin(), deduced.end(), id) != deduced.end(); }
+    {
+        bool result = std::find(deduced.begin(), deduced.end(), id) != deduced.end();
+        //cout << "deducing: " << clauseAsString() << " -> " << id << ": " << (result ? "TRUE" : "FALSE") << endl;
+
+        return result;
+    }
+
+    bool deducesItself() const
+    {
+        for (size_t predicate : clause) {
+            if (deduces(predicate)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Returns the type of the predicate represented by this chain.

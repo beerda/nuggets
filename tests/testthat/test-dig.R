@@ -152,8 +152,8 @@ test_that("weights arg", {
     expect_equal(length(res), 4)
     expect_equal(res, list(list(w = c(1,1,1,1,1,1)),
                            list(w = c1),
-                           list(w = c1 * c2),
-                           list(w = c2)),
+                           list(w = c2),
+                           list(w = c1 * c2)),
                  tolerance = 1e-6)
 })
 
@@ -914,54 +914,54 @@ test_that("min_conditional_focus_support & filter_empty_foci", {
 })
 
 
-#test_that("tautology_limit", {
-#    d <- data.frame(a = 1,
-#                    b = c(T,T,T,T,T,F,F,F,F,F),
-#                    c = c(T,T,T,T,F,F,F,F,F,F),
-#                    d = c(T,F,T,F,T,F,T,F,T,F))
-#
-#    f <- function(condition, foci_supports) {
+test_that("tautology_limit", {
+    d <- data.frame(a = 1,
+                    b = c(T,T,T,T,T,F,F,F,F,F),
+                    c = c(T,T,T,T,F,F,F,F,F,F),
+                    d = c(T,F,T,F,T,F,T,F,T,F))
+
+    f <- function(condition, foci_supports) {
+        ante <- paste(sort(names(condition)), collapse = " & ")
+        lapply(names(foci_supports), function(f) {
+            paste(ante, "=>", f)
+        })
+    }
+
+#    f <- function(condition, support, foci_supports) {
 #        ante <- paste(sort(names(condition)), collapse = " & ")
-#        lapply(names(foci_supports), function(f) {
+#        r <- lapply(names(foci_supports), function(f) {
 #            paste(ante, "=>", f)
 #        })
+#
+#        data.frame(rule=unlist(r), sup = rep(support, length(foci_supports)), pp = foci_supports)
 #    }
-#
-##    f <- function(condition, support, foci_supports) {
-##        ante <- paste(sort(names(condition)), collapse = " & ")
-##        r <- lapply(names(foci_supports), function(f) {
-##            paste(ante, "=>", f)
-##        })
-##
-##        data.frame(rule=unlist(r), sup = rep(support, length(foci_supports)), pp = foci_supports)
-##    }
-#
-#    res <- dig(d,
-#               f,
-#               condition = everything(),
-#               focus = everything())
-#    res <- sort(unlist(res))
-#    expect_equal(res,
-#                 c(" => a", " => b", " => c", " => d", "a & b & c => d",
-#                   "a & b & d => c", "a & b => c", "a & b => d", "a & c & d => b",
-#                   "a & c => b", "a & c => d", "a & d => b", "a & d => c",
-#                   "a => b", "a => c", "a => d", "b & c & d => a", "b & c => a",
-#                   "b & c => d", "b & d => a", "b & d => c", "b => a", "b => c",
-#                   "b => d", "c & d => a", "c & d => b", "c => a", "c => b",
-#                   "c => d", "d => a", "d => b", "d => c"))
-#
-#    res <- dig(d,
-#               f,
-#               condition = everything(),
-#               focus = everything(),
-#               tautology_limit = 1)
-#    res <- sort(unlist(res))
-#    expect_equal(res,
-#                 c(" => a", " => b", " => c", " => d",
-#                   "b & d => c",
-#                   "b => c", "b => d",
-#                   "c => b", "c => d", "d => b", "d => c"))
-#})
+
+    res <- dig(d,
+               f,
+               condition = everything(),
+               focus = everything())
+    res <- sort(unlist(res))
+    expect_equal(res,
+                 c(" => a", " => b", " => c", " => d", "a & b & c => d",
+                   "a & b & d => c", "a & b => c", "a & b => d", "a & c & d => b",
+                   "a & c => b", "a & c => d", "a & d => b", "a & d => c",
+                   "a => b", "a => c", "a => d", "b & c & d => a", "b & c => a",
+                   "b & c => d", "b & d => a", "b & d => c", "b => a", "b => c",
+                   "b => d", "c & d => a", "c & d => b", "c => a", "c => b",
+                   "c => d", "d => a", "d => b", "d => c"))
+
+    res <- dig(d,
+               f,
+               condition = everything(),
+               focus = everything(),
+               tautology_limit = 1)
+    res <- sort(unlist(res))
+    expect_equal(res,
+                 c(" => a", " => b", " => c", " => d",
+                   "b & d => c",
+                   "b => c", "b => d",
+                   "c => b", "c => d", "d => b", "d => c"))
+})
 
 
 test_that("errors", {

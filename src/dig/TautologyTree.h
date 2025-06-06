@@ -165,18 +165,19 @@ public:
     const Node* getRoot() const
     { return &root; }
 
-    void deduceConsequentsTo(vector<size_t>& result, const vector<size_t>& predicates) const
+    void updateDeduction(CHAIN& chain) const
     {
-        auto beg = predicates.rbegin();
-        auto end = predicates.rend();
+        chain.getMutableDeduced().clear();
+        auto beg = chain.getClause().rbegin();
+        auto end = chain.getClause().rend();
 
         if (beg == end) {
-            root.storeConsequentsTo(result);
+            root.storeConsequentsTo(chain.getMutableDeduced());
         }
         else {
             const Node* node = root.children[predicateToIndex[*beg]];
             if (node != nullptr) {
-                get(node, beg + 1, end, result);
+                get(node, beg + 1, end, chain.getMutableDeduced());
             }
         }
     }
