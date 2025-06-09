@@ -83,9 +83,6 @@ private:
             ChainCollection<CHAIN>* childCollection = new ChainCollection<CHAIN>();
             CHAIN& chain = (*collection)[i];
 
-            if (chain.isErased())
-                continue;
-
             tree.updateDeduction(chain);
             if (chain.deducesItself())
                 continue;
@@ -114,7 +111,6 @@ private:
                 Selector selector = createSelectorOfStorable(chain, *childCollection);
                 if (isStorable(selector)) {
                     storage.store(chain, *childCollection, selector, predicateSums);
-                    processTautologies(chain, *childCollection, selector);
                 }
             }
             if (isExtendable(chain)) {
@@ -158,12 +154,10 @@ private:
                          const CHAIN& secondChain,
                          const bool toFocus) const
     {
-        if (!secondChain.isErased()) {
-            if (isNonRedundant(conditionChain, secondChain)) {
-                CHAIN newChain(conditionChain, secondChain, toFocus);
-                if (isCandidate(newChain)) {
-                    target->append(std::move(newChain));
-                }
+        if (isNonRedundant(conditionChain, secondChain)) {
+            CHAIN newChain(conditionChain, secondChain, toFocus);
+            if (isCandidate(newChain)) {
+                target->append(std::move(newChain));
             }
         }
     }
@@ -241,21 +235,5 @@ private:
         }
 
         return result;
-    }
-
-    void processTautologies(const CHAIN& chain,
-                            ChainCollection<CHAIN>& collection,
-                            const Selector& selector)
-    {
-        if (config.hasTautologyLimit()) {
-            float chainSumReciprocal = 1.0f / chain.getSum();
-            for (size_t i = 0; i < collection.focusCount(); ++i) {
-                CHAIN& focus = collection[i + collection.firstFocusIndex()];
-                if (focus.getSum() * chainSumReciprocal >= config.getTautologyLimit()) {
-                    tree.addTautology(chain.getClause(), focus.getClause().back());
-                    focus.setErased();
-                }
-            }
-        }
     }
 };

@@ -66,7 +66,6 @@ context("dig/Config.h") {
         expect_true(c.getMinFocusSum() == 360);
         expect_true(c.getMinConditionalFocusSupport() == 0.7f);
         expect_true(c.getMaxSupport() == 0.8f);
-        expect_true(c.getTautologyLimit() == 0.9f);
         expect_true(c.hasFilterEmptyFoci() == true);
         expect_true(c.isVerbose() == false);
 

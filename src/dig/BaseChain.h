@@ -158,12 +158,6 @@ public:
     bool isCondition() const
     { return predicateType != FOCUS; }
 
-    void setErased()
-    { erased = true; }
-
-    bool isErased() const
-    { return erased; }
-
     string clauseAsString() const
     {
         string res = "";
@@ -201,6 +195,4 @@ protected:
     float sum;
 
     vector<size_t> deduced;
-
-    bool erased = false;
 };

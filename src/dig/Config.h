@@ -24,7 +24,6 @@ public:
           maxSupport(as<NumericVector>(configuration["maxSupport"])[0]),
           maxSum(maxSupport * nrow),
 
-          tautologyLimit(as<NumericVector>(configuration["tautologyLimit"])[0]),
           tNorm(parseTNorm(configuration["tNorm"])),
           excluded(as<List>(configuration["excluded"])),
           disjoint(),
@@ -47,8 +46,7 @@ public:
             disjoint.push_back(disjVec[i]);
         }
         disjointDefined = disjoint.size() > 1;
-        tautologyLimitDefined = tautologyLimit >= 0;
-        filterExcluded = excluded.size() > 0 || tautologyLimit >= 0;
+        filterExcluded = excluded.size() > 0;
 
         chainNames.reserve(namesVector.size() + 1);
         chainNames.push_back(""); // 0th index is unused, as R uses predicates' indices starting from 1
@@ -99,14 +97,8 @@ public:
     bool hasFilterExcluded() const
     { return filterExcluded; }
 
-    bool hasTautologyLimit() const
-    { return tautologyLimitDefined; }
-
     bool isVerbose() const
     { return verbose; }
-
-    float getTautologyLimit() const
-    { return tautologyLimit; }
 
     const vector<int>& getDisjoint() const
     { return disjoint; }
@@ -169,7 +161,6 @@ private:
     float minConditionalFocusSupport;
     float maxSupport;
     float maxSum;
-    float tautologyLimit;
     TNorm tNorm;
     List excluded;
     vector<int> disjoint;
@@ -179,7 +170,6 @@ private:
     bool verbose;
     bool filterExcluded;
     bool disjointDefined;
-    bool tautologyLimitDefined;
 
     bool conditionArgument = false;
     bool fociSupportsArgument = false;
