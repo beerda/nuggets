@@ -21,8 +21,7 @@ public:
           config(config),
           initialCollection(data, isCondition, isFocus),
           predicateSums(initialCollection.size() + 1),
-          tree(initialCollection),
-          collectionQueue()
+          tree(initialCollection)
     {
         for (const CHAIN& chain : initialCollection) {
             size_t id = chain.getClause().back();
@@ -42,7 +41,7 @@ public:
 
     void run()
     {
-        ChainCollection<CHAIN>* filteredCollection = new ChainCollection<CHAIN>();
+        ChainCollection<CHAIN> filteredCollection;
         CHAIN emptyChain(config.getNrow());
         tree.updateDeduction(emptyChain);
 
@@ -50,13 +49,12 @@ public:
             CHAIN& chain = initialCollection[i];
             if (isNonRedundant(emptyChain, chain)) {
                 if (isCandidate(chain)) {
-                    filteredCollection->append(std::move(chain));
+                    filteredCollection.append(std::move(chain));
                 }
             }
         }
 
         processChildrenChains(emptyChain, filteredCollection);
-        processQueued();
     }
 
 private:
@@ -65,23 +63,12 @@ private:
     ChainCollection<CHAIN> initialCollection;
     vector<float> predicateSums;
     TautologyTree<CHAIN> tree;
-    deque<ChainCollection<CHAIN>*> collectionQueue;
 
-    void processQueued()
+    void processChains(ChainCollection<CHAIN>& collection)
     {
-        while (!collectionQueue.empty()) {
-            ChainCollection<CHAIN>* collection = collectionQueue.front();
-            collectionQueue.pop_front();
-            processChains(collection);
-            delete collection;
-        }
-    }
-
-    void processChains(ChainCollection<CHAIN>* collection)
-    {
-        for (size_t i = 0; i < collection->conditionCount(); ++i) {
-            ChainCollection<CHAIN>* childCollection = new ChainCollection<CHAIN>();
-            CHAIN& chain = (*collection)[i];
+        for (size_t i = 0; i < collection.conditionCount(); ++i) {
+            ChainCollection<CHAIN> childCollection;
+            CHAIN& chain = collection[i];
 
             tree.updateDeduction(chain);
             if (chain.deducesItself())
@@ -91,7 +78,7 @@ private:
                 // need conjunction with everything
                 combine(childCollection, collection, i, false);
             }
-            else if (collection->hasFoci()) {
+            else if (collection.hasFoci()) {
                 // need conjunction with foci only
                 combine(childCollection, collection, i, true);
             }
@@ -103,53 +90,45 @@ private:
         }
     }
 
-    void processChildrenChains(const CHAIN& chain, ChainCollection<CHAIN>* childCollection)
+    void processChildrenChains(const CHAIN& chain, ChainCollection<CHAIN>& childCollection)
     {
-        bool pushed = false;
-        if (!config.hasFilterEmptyFoci() || childCollection->hasFoci()) {
+        if (!config.hasFilterEmptyFoci() || childCollection.hasFoci()) {
             if (isStorable(chain)) {
-                Selector selector = createSelectorOfStorable(chain, *childCollection);
+                Selector selector = createSelectorOfStorable(chain, childCollection);
                 if (isStorable(selector)) {
-                    storage.store(chain, *childCollection, selector, predicateSums);
+                    storage.store(chain, childCollection, selector, predicateSums);
                 }
             }
             if (isExtendable(chain)) {
-                collectionQueue.push_back(childCollection);
-                //processChains(childCollection);
-                //delete childCollection;
-
-                pushed = true;
+                processChains(childCollection);
             }
         }
-
-        if (!pushed)
-            delete childCollection;
     }
 
-    void combine(ChainCollection<CHAIN>* target,
-                 ChainCollection<CHAIN>* parent,
+    void combine(ChainCollection<CHAIN>& target,
+                 ChainCollection<CHAIN>& parent,
                  const size_t conditionChainIndex,
                  bool onlyFoci) const
     {
-        CHAIN& conditionChain = (*parent)[conditionChainIndex];
+        CHAIN& conditionChain = parent[conditionChainIndex];
 
         size_t begin = conditionChainIndex + 1;
-        if (onlyFoci && begin < parent->firstFocusIndex()) {
-            begin = parent->firstFocusIndex();
+        if (onlyFoci && begin < parent.firstFocusIndex()) {
+            begin = parent.firstFocusIndex();
         }
 
-        size_t bothLen = (conditionChainIndex > parent->firstFocusIndex()) ? conditionChainIndex - parent->firstFocusIndex() : 0;
+        size_t bothLen = (conditionChainIndex > parent.firstFocusIndex()) ? conditionChainIndex - parent.firstFocusIndex() : 0;
 
-        target->reserve(parent->size() - begin + bothLen);
-        for (size_t i = begin; i < parent->size(); ++i) {
-            combineInternal(target, conditionChain, (*parent)[i], false);
+        target.reserve(parent.size() - begin + bothLen);
+        for (size_t i = begin; i < parent.size(); ++i) {
+            combineInternal(target, conditionChain, parent[i], false);
         }
-        for (size_t i = parent->firstFocusIndex(); i < conditionChainIndex; ++i) {
-            combineInternal(target, conditionChain, (*parent)[i], true);
+        for (size_t i = parent.firstFocusIndex(); i < conditionChainIndex; ++i) {
+            combineInternal(target, conditionChain, parent[i], true);
         }
     }
 
-    void combineInternal(ChainCollection<CHAIN>* target,
+    void combineInternal(ChainCollection<CHAIN>& target,
                          const CHAIN& conditionChain,
                          const CHAIN& secondChain,
                          const bool toFocus) const
@@ -157,7 +136,7 @@ private:
         if (isNonRedundant(conditionChain, secondChain)) {
             CHAIN newChain(conditionChain, secondChain, toFocus);
             if (isCandidate(newChain)) {
-                target->append(std::move(newChain));
+                target.append(std::move(newChain));
             }
         }
     }

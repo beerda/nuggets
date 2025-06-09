@@ -152,8 +152,8 @@ test_that("weights arg", {
     expect_equal(length(res), 4)
     expect_equal(res, list(list(w = c(1,1,1,1,1,1)),
                            list(w = c1),
-                           list(w = c2),
-                           list(w = c1 * c2)),
+                           list(w = c1 * c2),
+                           list(w = c2)),
                  tolerance = 1e-6)
 })
 
