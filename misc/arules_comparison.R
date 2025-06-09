@@ -22,7 +22,8 @@ testIt <- function(m, n) {
         t1 <- system.time({
             fit <- apriori(d, parameter = list(minlen = 1,
                                                maxlen = 6,
-                                               supp=0.001,
+                                               supp = 0.001,
+                                               maxtime = 0,
                                                target = "frequent itemsets"),
                            control = list(verbose = FALSE))
             rules1 <- DATAFRAME(fit)
@@ -31,7 +32,7 @@ testIt <- function(m, n) {
         t3 <- system.time({
             freq <- eclat(d, parameter = list(minlen = 1,
                                               maxlen = 6,
-                                               target = "frequent itemsets",
+                                              target = "frequent itemsets",
                                               supp=0.001),
                           control = list(verbose = FALSE))
             #fit <- ruleInduction(freq, conf = conf)
@@ -74,10 +75,10 @@ testIt <- function(m, n) {
 #print(c(nrow(rules1), nrow(rules2)))
 
 result <- NULL
-for (i in 4:6) {
+for (i in 4:7) {
     for (j in c(5, 10, 15, 20, 25)) {
         result <- rbind(result, testIt(10^i, j))
-        saveRDS(result, "comparison_result-2025-05-26.rds")
+        saveRDS(result, "comparison_result-2025-06-06.rds")
         cat("\n---------------------------------------------------------------------\n")
         print(result)
     }
