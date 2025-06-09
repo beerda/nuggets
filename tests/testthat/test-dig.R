@@ -85,7 +85,7 @@ test_that("condition arg", {
     expect_equal(length(res), 4)
     expect_setequal(res, list(list(cond = integer(0)),
                               list(cond = c("1"=1L)),
-                              list(cond = c("1"=1L, "2"=2L)),
+                              list(cond = c("2"=2L, "1"=1L)),
                               list(cond = c("2"=2L))))
 })
 
@@ -98,7 +98,7 @@ test_that("condition arg with names", {
     expect_equal(length(res), 4)
     expect_setequal(res, list(list(cond = integer(0)),
                               list(cond = c("aaah"=1L)),
-                              list(cond = c("aaah"=1L, "blee"=2L)),
+                              list(cond = c("blee"=2L, "aaah"=1L)),
                               list(cond = c("blee"=2L))))
 })
 
@@ -151,9 +151,9 @@ test_that("weights arg", {
 
     expect_equal(length(res), 4)
     expect_equal(res, list(list(w = c(1,1,1,1,1,1)),
-                           list(w = c1),
+                           list(w = c2),
                            list(w = c1 * c2),
-                           list(w = c2)),
+                           list(w = c1)),
                  tolerance = 1e-6)
 })
 
