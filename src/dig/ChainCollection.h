@@ -107,6 +107,9 @@ private:
     void sortChains()
     {
         std::sort(chains.begin(), chains.end(), [](const CHAIN& a, const CHAIN& b) {
+            if (a.getPredicateType() == b.getPredicateType()) {
+                return a.getSum() > b.getSum();
+            }
             return a.getPredicateType() < b.getPredicateType();
         });
     }
