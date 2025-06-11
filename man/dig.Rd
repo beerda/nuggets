@@ -18,7 +18,6 @@ dig(
   min_conditional_focus_support = 0,
   max_support = 1,
   filter_empty_foci = FALSE,
-  tautology_limit = NULL,
   t_norm = "goguen",
   max_results = Inf,
   verbose = FALSE,
@@ -28,10 +27,10 @@ dig(
     "min_length", arg_max_length = "max_length", arg_min_support = "min_support",
     arg_min_focus_support = "min_focus_support", arg_min_conditional_focus_support =
     "min_conditional_focus_support", arg_max_support = "max_support",
-    arg_filter_empty_foci = "filter_empty_foci", arg_tautology_limit = "tautology_limit",
-    arg_t_norm = "t_norm", arg_max_results = "max_results", 
-     arg_verbose =
-    "verbose", arg_threads = "threads", call = current_env())
+    arg_filter_empty_foci = "filter_empty_foci", arg_t_norm = "t_norm", arg_max_results =
+    "max_results", arg_verbose = "verbose", 
+     arg_threads = "threads", call =
+    current_env())
 )
 }
 \arguments{
@@ -167,8 +166,6 @@ available after filtering by \code{min_focus_support} or \code{min_conditional_f
 If \code{TRUE}, the callback function \code{f} is triggered only if at least
 one focus remains after filtering. If \code{FALSE}, the callback function \code{f}
 is triggered regardless of the number of remaining foci.}
-
-\item{tautology_limit}{a numeric scalar (experimental feature)}
 
 \item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
 \code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}

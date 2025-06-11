@@ -78,7 +78,6 @@
 #'      `"conviction"`, `"added_value"`.
 #'      See [https://mhahsler.github.io/arules/docs/measures](https://mhahsler.github.io/arules/docs/measures)
 #'      for a description of the measures.
-#' @param tautology_limit a numeric scalar (experimental feature)
 #' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
 #'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
 #'      (Lukasiewicz t-norm).
@@ -114,7 +113,6 @@ dig_associations <- function(x,
                              min_confidence = 0,
                              contingency_table = FALSE,
                              measures = NULL,
-                             tautology_limit = NULL,
                              t_norm = "goguen",
                              max_results = Inf,
                              verbose = FALSE,
@@ -224,7 +222,6 @@ dig_associations <- function(x,
                min_focus_support = min_support,
                min_conditional_focus_support = min_confidence,
                filter_empty_foci = TRUE,
-               tautology_limit = tautology_limit,
                t_norm = t_norm,
                max_results = max_results,
                verbose = verbose,
@@ -239,7 +236,6 @@ dig_associations <- function(x,
                                     arg_min_support = "min_coverage",
                                     arg_min_focus_support = "min_support",
                                     arg_min_conditional_focus_support = "min_confidence",
-                                    arg_tautology_limit = "tautology_limit",
                                     arg_t_norm = "t_norm",
                                     arg_max_results = "max_results",
                                     arg_verbose = "verbose",
