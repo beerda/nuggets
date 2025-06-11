@@ -153,7 +153,6 @@
 #'      If `TRUE`, the callback function `f` is triggered only if at least
 #'      one focus remains after filtering. If `FALSE`, the callback function `f`
 #'      is triggered regardless of the number of remaining foci.
-#' @param tautology_limit a numeric scalar (experimental feature)
 #' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
 #'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
 #'      (Lukasiewicz t-norm).
@@ -276,7 +275,6 @@ dig <- function(x,
                 min_conditional_focus_support = 0.0,
                 max_support = 1.0,
                 filter_empty_foci = FALSE,
-                tautology_limit = NULL,
                 t_norm = "goguen",
                 max_results = Inf,
                 verbose = FALSE,
@@ -294,7 +292,6 @@ dig <- function(x,
                                      arg_min_conditional_focus_support = "min_conditional_focus_support",
                                      arg_max_support = "max_support",
                                      arg_filter_empty_foci = "filter_empty_foci",
-                                     arg_tautology_limit = "tautology_limit",
                                      arg_t_norm = "t_norm",
                                      arg_max_results = "max_results",
                                      arg_verbose = "verbose",
@@ -435,19 +432,6 @@ dig <- function(x,
                   arg = error_context$arg_filter_empty_foci,
                   call = error_context$call)
 
-    .must_be_double_scalar(tautology_limit,
-                           null = TRUE,
-                           arg = error_context$arg_tautology_limit,
-                           call = error_context$call)
-    if (is.null(tautology_limit)) {
-        tautology_limit <- -1.0
-    } else {
-        .must_be_in_range(tautology_limit, c(0, 1),
-                          arg = error_context$arg_tautology_limit,
-                          call = error_context$call)
-        tautology_limit <- as.double(tautology_limit)
-    }
-
     .must_be_enum(t_norm, c("goguen", "goedel", "lukas"),
                   arg = error_context$arg_t_norm,
                   call = error_context$call)
@@ -476,12 +460,6 @@ dig <- function(x,
                         call = error_context$call)
     threads <- as.integer(threads)
 
-    if (tautology_limit >= 0 && threads > 1) {
-        cli_abort(c("The {.arg {error_context$arg_tautology_limit}} argument is not supported in the parallel mode.",
-                    "i" = "Either set {.arg {error_context$arg_threads}} to 1 or {.arg {error_context$arg_tautology_limit}} to NULL."),
-                  call = error_context$call)
-    }
-
     config <- list(nrow = nrow(x),
                    arguments = arguments,
                    disjoint = disjoint,
@@ -493,7 +471,6 @@ dig <- function(x,
                    minConditionalFocusSupport = min_conditional_focus_support,
                    maxSupport = max_support,
                    filterEmptyFoci = filter_empty_foci,
-                   tautologyLimit = tautology_limit,
                    tNorm = t_norm,
                    maxResults = max_results,
                    verbose = verbose,
