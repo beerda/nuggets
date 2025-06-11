@@ -143,14 +143,17 @@ private:
         if (config.hasFociSupportsArgument()) {
             NumericVector vals(selector.getSelectedCount());
             CharacterVector valNames(selector.getSelectedCount());
-            for (size_t i = 0; i < selector.getSelectedCount(); ++i) {
+
+            size_t j = 0;
+            for (size_t i = 0; i < collection.focusCount(); ++i) {
                 if (!selector.isSelected(i))
                     continue;
 
                 const CHAIN& focus = collection[i + collection.firstFocusIndex()];
                 size_t predicate = focus.getClause().back();
-                vals[i] = focus.getSum() / config.getNrow();
-                valNames[i] = config.getChainName(predicate);
+                vals[j] = focus.getSum() / config.getNrow();
+                valNames[j] = config.getChainName(predicate);
+                j++;
             }
             if (vals.size() > 0) {
                 vals.names() = valNames;
@@ -170,6 +173,7 @@ private:
             NumericVector* np = nullptr;
             NumericVector* pn = nullptr;
             NumericVector* nn = nullptr;
+            CharacterVector valNames(selector.getSelectedCount());
 
             if (config.hasContiPpArgument()) {
                 pp = new NumericVector(selector.getSelectedCount());
@@ -184,27 +188,29 @@ private:
                 nn = new NumericVector(selector.getSelectedCount());
             }
 
-            CharacterVector valNames(selector.getSelectedCount());
-            for (size_t i = 0; i < selector.getSelectedCount(); ++i) {
+            size_t j = 0;
+            for (size_t i = 0; i < collection.focusCount(); ++i) {
                 if (!selector.isSelected(i))
                     continue;
 
                 const CHAIN& focus = collection[i + collection.firstFocusIndex()];
                 size_t predicate = focus.getClause().back();
-                valNames[i] = config.getChainName(predicate);
+                valNames[j] = config.getChainName(predicate);
 
                 if (pp) {
-                    (*pp)[i] = focus.getSum();
+                    (*pp)[j] = focus.getSum();
                 }
                 if (pn) {
-                    (*pn)[i] = chain.getSum() - focus.getSum();
+                    (*pn)[j] = chain.getSum() - focus.getSum();
                 }
                 if (np) {
-                    (*np)[i] = predicateSums[predicate] - focus.getSum();
+                    (*np)[j] = predicateSums[predicate] - focus.getSum();
                 }
                 if (nn) {
-                    (*nn)[i] = config.getNrow() - chain.getSum() - predicateSums[predicate] + focus.getSum();
+                    (*nn)[j] = config.getNrow() - chain.getSum() - predicateSums[predicate] + focus.getSum();
                 }
+
+                j++;
             }
 
             if (pp) {
