@@ -20,7 +20,7 @@ public:
         : storage(storage),
           config(config),
           initialCollection(data, isCondition, isFocus),
-          predicateSums(initialCollection.size() + 1),
+          predicateSums(data.size() + 1),
           tree(initialCollection)
     {
         for (const CHAIN& chain : initialCollection) {
