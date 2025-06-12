@@ -231,7 +231,13 @@ partition <- function(.data,
         res <- emptydf
         x <- .data[[colindex]]
 
-        if (is.logical(x)) {
+        if (all(is.na(x))) {
+            cli_abort(c("Unable to partition column {.var {colname}}.",
+                       "i"="Column selected for partitioning must contain some non-NA values.",
+                       "x"="Column {.var {colname}} is empty or all values are NA."),
+                      call = call)
+
+        } else if (is.logical(x)) {
             res <- tibble(a = !is.na(x) & x,
                           b = !is.na(x) & !x)
             colnames(res) <- paste0(colname, "=", c("T", "F"))
