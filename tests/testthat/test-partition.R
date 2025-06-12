@@ -10,6 +10,11 @@ test_that("partition basics", {
                  tibble("a=T" = c(T, T, F, F),
                         "a=F" = c(F, F, T, T)))
 
+    expect_equal(partition(data.frame(`a=b,c{x}` = c(T, T, F, F), check.names = FALSE),
+                           .keep = FALSE),
+                 tibble("a_b_c_x_=T" = c(T, T, F, F),
+                        "a_b_c_x_=F" = c(F, F, T, T)))
+
     expect_equal(partition(data.frame(a = c(T, T, F, NA)),
                            .na = TRUE,
                            .keep = FALSE),
@@ -34,6 +39,12 @@ test_that("partition basics", {
                  tibble("a=a" = c(T, F, F, F),
                         "a=b" = c(F, T, T, F),
                         "a=c" = c(F, F, F, T)))
+
+    expect_equal(partition(data.frame(a = factor(c("a=a", "{b}", "{b}", "c,d"))),
+                           .keep = FALSE),
+                 tibble("a=a_a" = c(T, F, F, F),
+                        "a=c_d" = c(F, F, F, T),
+                        "a=_b_" = c(F, T, T, F)))
 
     expect_equal(partition(data.frame(a = factor(c("a", "b", "b", "c"))),
                            .keep = TRUE),
