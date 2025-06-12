@@ -220,6 +220,7 @@ partition <- function(.data,
                   allow_empty = TRUE,
                   error_call = current_env())
     sel <- unlist(sel)
+    names(sel) <- .sanitize_predicate_name(names(sel))
 
     if (length(sel) <= 0) {
         return(as_tibble(.data))
@@ -293,7 +294,7 @@ partition <- function(.data,
 
 .partition_factor <- function(x, colname) {
     res <- lapply(levels(x), function(lev) !is.na(x) & x == lev)
-    names(res) <- paste0(colname, "=", levels(x))
+    names(res) <- paste0(colname, "=", .sanitize_predicate_name(levels(x)))
 
     as_tibble(res)
 }
@@ -470,4 +471,9 @@ partition <- function(.data,
     }
 
     res
+}
+
+
+.sanitize_predicate_name <- function(x) {
+    gsub("[,={}]+", "_", x)
 }
