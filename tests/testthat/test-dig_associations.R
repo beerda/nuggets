@@ -208,6 +208,7 @@ test_that("dig_associations min_coverage", {
 
 
 test_that("compare dig_associations to arules::apriori", {
+    skip_if_not_installed("arules")
     set.seed(2123)
     rows <- 100
     cols <- 5
