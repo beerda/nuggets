@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <RcppThread.h>
 
 #include "../common.h"
 #include "Config.h"
@@ -46,6 +47,7 @@ public:
         tree.updateDeduction(emptyChain);
 
         for (size_t i = 0; i < initialCollection.size(); ++i) {
+            RcppThread::checkUserInterrupt();
             CHAIN& chain = initialCollection[i];
             if (isNonRedundant(emptyChain, chain)) {
                 if (isCandidate(chain)) {
@@ -67,6 +69,7 @@ private:
     void processChains(ChainCollection<CHAIN>& collection)
     {
         for (size_t i = 0; i < collection.conditionCount(); ++i) {
+            RcppThread::checkUserInterrupt();
             ChainCollection<CHAIN> childCollection;
             CHAIN& chain = collection[i];
 
