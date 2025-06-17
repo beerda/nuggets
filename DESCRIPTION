@@ -47,7 +47,7 @@ LinkingTo:
     testthat
 SystemRequirements: C++20
 Suggests: 
-    arules,
+    arules (>= 4.5.0),
     dplyr,
     testthat (>= 3.0.0),
     xml2,
