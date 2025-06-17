@@ -36,6 +36,11 @@
 #'      \item `"all"` - all columns are allowed to be selected
 #'      \item `"numeric"` - only numeric columns are allowed to be selected
 #'      }
+#' @param disjoint an atomic vector of size equal to the number of columns of `x`
+#'      that specifies the groups of predicates: if some elements of the `disjoint`
+#'      vector are equal, then the corresponding columns of `x` will NOT be
+#'      present together in a single combination of `xvars` and `yvars`. If
+#'      `yvars` is `NULL`, the `disjoint` argument is ignored.
 #' @param xvar_name the name of the first column in the resulting tibble.
 #' @param yvar_name the name of the second column in the resulting tibble.
 #'      The column does not exist if `yvars` is `NULL`.
@@ -71,12 +76,14 @@ var_grid <- function(x,
                      xvars = everything(),
                      yvars = everything(),
                      allow = "all",
+                     disjoint = var_names(colnames(x)),
                      xvar_name = if (quo_is_null(enquo(yvars))) "var" else "xvar",
                      yvar_name = "yvar",
                      error_context = list(arg_x = "x",
                                           arg_xvars = "xvars",
                                           arg_yvars = "yvars",
                                           arg_allow = "allow",
+                                          arg_disjoint = "disjoint",
                                           arg_xvar_name = "xvar_name",
                                           arg_yvar_name = "yvar_name",
                                           call = current_env())) {
@@ -93,6 +100,23 @@ var_grid <- function(x,
     cols <- .convert_data_to_list(x,
                                   error_context = list(arg_x = error_context$arg_x,
                                                        call = error_context$call))
+
+    .must_be_vector_or_factor(disjoint,
+                              null = TRUE,
+                              arg = error_context$arg_disjoint,
+                              call = error_context$call)
+    if (!isTRUE(length(disjoint) == 0 || length(disjoint) == ncol(x))) {
+        cli_abort(c("The length of {.arg {error_context$arg_disjoint}} must be 0 or must be equal to the number of columns in {.arg {error_context$arg_x}}.",
+                    "x" = "The number of columns in {.arg {error_context$arg_x}} is {ncol(x)}.",
+                    "x" = "The length of {.arg {error_context$arg_disjoint}} is {length(disjoint)}."),
+                  call = error_context$call)
+    }
+
+    if (length(disjoint) > 0) {
+        disjoint <- as.integer(as.factor(disjoint))
+    } else {
+        disjoint <- seq_along(cols)
+    }
 
     xvars <- eval_select(expr = enquo(xvars),
                          data = cols,
@@ -147,7 +171,7 @@ var_grid <- function(x,
 
     if (has_yvars) {
         grid <- expand_grid(xvar = xvars, yvar = yvars)
-        grid <- grid[grid$xvar != grid$yvar, ]
+        grid <- grid[disjoint[grid$xvar] != disjoint[grid$yvar], ]
         dup <- apply(grid, 1, function(row) paste(sort(row), collapse = " "))
         grid <- grid[!duplicated(dup), ]
         grid$xvar <- names(cols)[grid$xvar]

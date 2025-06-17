@@ -4,6 +4,7 @@
   fire(), is_condition(), remove_ill_conditions()
 - added .span and .inc arguments to partition()
 - added exclude argument to dig() and other dig_*() functions
+- added support for the disjoint parameter to var_grid() and dig_grid()
 
 # nuggets 1.4.0
 - released: 2025-01-08

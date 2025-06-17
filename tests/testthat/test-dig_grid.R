@@ -450,6 +450,44 @@ test_that("dig_grid number of columns in data frames", {
     expect_equal(res$value, rep(1, 3))
 })
 
+test_that("disjoint is applied on xvars/yvars combinations", {
+    d <- data.frame(a = TRUE,
+                    b = c(TRUE, FALSE),
+                    x = letters[1:10],
+                    y = letters[11:20],
+                    z = LETTERS[1:10])
+
+    f <- function(pd) {
+        return(list(res=1))
+    }
+
+    res <- dig_grid(x = d,
+                    f = f,
+                    type = "crisp",
+                    disjoint = c("a", "b", "xz", "y", "xz"),
+                    condition = where(is.logical),
+                    xvars = where(is.character),
+                    yvars = where(is.character))
+    res <- res[order(res$condition_length, res$condition), ]
+
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 8)
+    expect_equal(colnames(res),
+                 c("condition", "support", "xvar", "yvar", "res", "condition_length"))
+    expect_equal(res$condition,
+                 c(rep("{}", 2), rep("{a}", 2), rep("{b}", 2), rep("{a,b}", 2)))
+    expect_equal(res$xvar,
+                 rep(c("x", "y"), 4))
+    expect_equal(res$yvar,
+                 rep(c("y", "z"), 4))
+    expect_equal(res$support,
+                 c(rep(1, 4), rep(0.5, 4)))
+    expect_equal(res$res,
+                 rep(1, 8))
+    expect_equal(res$condition_length,
+                 c(0, 0, 1, 1, 1, 1, 2, 2))
+})
+
 test_that("errors", {
     d <- data.frame(n = 1:5 / 5, l = TRUE, i = 1:5, s = letters[1:5])
     l <- as.list(d)
@@ -492,4 +530,9 @@ test_that("errors", {
                  "`min_support` must be a double scalar")
     expect_error(dig_grid(d, f = fb, type = "crisp", condition = l, threads = "x"),
                  "`threads` must be an integerish scalar")
+
+    expect_error(dig_grid(d, f = fb, disjoint = list("x")),
+                 "`disjoint` must be a plain vector")
+    expect_error(dig_grid(d, f = fb, disjoint = "x"),
+                 "The length of `disjoint` must be 0 or must be equal to the number of columns in `x`.")
 })

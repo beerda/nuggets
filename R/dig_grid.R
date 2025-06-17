@@ -54,8 +54,9 @@
 #'      combinations use at the second place (yvar)
 #' @param disjoint an atomic vector of size equal to the number of columns of `x`
 #'      that specifies the groups of predicates: if some elements of the `disjoint`
-#'      vector are equal, then the corresponding columns of `x` will NOT be
-#'      present together in a single condition. If `x` is prepared with
+#'      vector are equal, then the corresponding columns of `x` will NEITHER be
+#'      present together in a single condition NOR in a single combination of
+#'      `xvars` and `yvars`. If `x` is prepared with
 #'      [partition()], using the [var_names()] function on `x`'s column names
 #'      is a convenient way to create the `disjoint` vector.
 #' @param excluded NULL or a list of character vectors, where each character vector
@@ -229,6 +230,7 @@ dig_grid <- function(x,
                      !!xvars,
                      !!yvars,
                      allow = allow,
+                     disjoint = disjoint,
                      error_context = error_context)
 
     processF <- function(condition, support, result) {

@@ -76,8 +76,9 @@ combinations use at the second place (yvar)}
 
 \item{disjoint}{an atomic vector of size equal to the number of columns of \code{x}
 that specifies the groups of predicates: if some elements of the \code{disjoint}
-vector are equal, then the corresponding columns of \code{x} will NOT be
-present together in a single condition. If \code{x} is prepared with
+vector are equal, then the corresponding columns of \code{x} will NEITHER be
+present together in a single condition NOR in a single combination of
+\code{xvars} and \code{yvars}. If \code{x} is prepared with
 \code{\link[=partition]{partition()}}, using the \code{\link[=var_names]{var_names()}} function on \code{x}'s column names
 is a convenient way to create the \code{disjoint} vector.}
 

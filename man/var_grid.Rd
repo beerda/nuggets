@@ -9,11 +9,12 @@ var_grid(
   xvars = everything(),
   yvars = everything(),
   allow = "all",
+  disjoint = var_names(colnames(x)),
   xvar_name = if (quo_is_null(enquo(yvars))) "var" else "xvar",
   yvar_name = "yvar",
   error_context = list(arg_x = "x", arg_xvars = "xvars", arg_yvars = "yvars", arg_allow =
-    "allow", arg_xvar_name = "xvar_name", arg_yvar_name = "yvar_name", call =
-    current_env())
+    "allow", arg_disjoint = "disjoint", arg_xvar_name = "xvar_name", arg_yvar_name =
+    "yvar_name", call = current_env())
 )
 }
 \arguments{
@@ -35,6 +36,12 @@ selected by \code{xvars} and \code{yvars} arguments. Possible values are:
 \item \code{"all"} - all columns are allowed to be selected
 \item \code{"numeric"} - only numeric columns are allowed to be selected
 }}
+
+\item{disjoint}{an atomic vector of size equal to the number of columns of \code{x}
+that specifies the groups of predicates: if some elements of the \code{disjoint}
+vector are equal, then the corresponding columns of \code{x} will NOT be
+present together in a single combination of \code{xvars} and \code{yvars}. If
+\code{yvars} is \code{NULL}, the \code{disjoint} argument is ignored.}
 
 \item{xvar_name}{the name of the first column in the resulting tibble.}
 
