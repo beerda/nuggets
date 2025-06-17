@@ -1,5 +1,6 @@
-# nuggets 1.5.0
+# nuggets 2.0.0
 - released: ???
+- completely rewritten core algorithm in dig()
 - added is_almost_constant(), remove_almost_constant(), parse_condition(),
   fire(), is_condition(), remove_ill_conditions()
 - added .span and .inc arguments to partition()
