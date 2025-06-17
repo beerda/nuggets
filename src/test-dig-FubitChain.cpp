@@ -1,6 +1,11 @@
 #include <testthat.h>
 #include "common.h"
+
+#ifndef __arm64__
+// This code works only on Linux or Windows
+
 #include "dig/FubitChain.h"
+
 
 context("dig/FubitChain.h") {
     test_that("initialize GOEDEL from LogicalVector") {
@@ -209,3 +214,5 @@ context("dig/FubitChain.h") {
 
     }
 }
+
+#endif // __arm64__
