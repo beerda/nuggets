@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "AlignedAllocator.h"
+#include <xsimd/memory/xsimd_aligned_allocator.hpp>
 
 
 /*
@@ -10,4 +10,4 @@
  * 512bit operations (AVX512) - align by 64
  */
 template <typename TYPE>
-using AlignedVector = std::vector<TYPE, AlignedAllocator<TYPE, 512>>;
+using AlignedVector = std::vector<TYPE, xsimd::aligned_allocator<TYPE, 64>>;
