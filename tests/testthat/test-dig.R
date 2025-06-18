@@ -8,6 +8,15 @@ test_that("numeric matrix", {
 
 
 test_that("logical matrix", {
+    m <- matrix(T, ncol = 4, nrow = 10)
+    res <- dig(m, function() 1)
+
+    expect_equal(length(res), 16)
+    expect_equal(res, rep(list(1), 16))
+})
+
+
+test_that("logical matrix", {
     m <- matrix(rep(c(T, F), 6), ncol = 2)
     res <- dig(m, function() 1)
 
