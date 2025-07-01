@@ -1,12 +1,13 @@
 # nuggets 2.0.0
 - released: ???
-- completely rewritten core algorithm in dig()
+- completely rewritten the core algorithm in dig()
 - added is_almost_constant(), remove_almost_constant(), parse_condition(),
   fire(), is_condition(), remove_ill_conditions()
+- added dig_tautologies()
 - added .span and .inc arguments to partition()
 - added exclude argument to dig() and other dig_*() functions
 - added support for the disjoint parameter to var_grid() and dig_grid()
-- added progress bar
+- added progress bar to the dig() function
 
 # nuggets 1.4.0
 - released: 2025-01-08
