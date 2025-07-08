@@ -42,7 +42,7 @@
 }
 
 
-.geom_diamond_draw_panel <- function(data, panel_params, coord, ...) {
+.geom_diamond_draw_panel <- function(data, panel_params, coord, na.rm = FALSE, linewidth = 1, linetype = "solid") {
     items <- .condition_to_items(data$condition)
     incidence_matrix <- outer(items, items, Vectorize(function(x, y) {
         length(setdiff(x, y)) == 0
@@ -57,13 +57,11 @@
     edges$xend <- data$x[edges$col]
     edges$y <- data$y[edges$row]
     edges$yend <- data$y[edges$col]
-    edges$linetype <- data$linetype[1]
-    edges$linewidth <- data$linewidth[1]
     edges$alpha <- NA
     edges$colour <- "#000000"
     edges$group <- 1
-    edges$linetype <- 1
-    edges$linewidth <- 0.5
+    edges$linetype <- linetype
+    edges$linewidth <- linewidth
     edges$curvature <- (edges$yend - edges$y - 1) * ifelse(edges$xend > edges$x, 1, -1)
 
     point_data <- transform(data)
@@ -81,29 +79,26 @@
         c1 <- GeomCurve$draw_panel(edges[edges$curvature == 0, ],
                                    panel_params,
                                    coord,
-                                   curvature = 0,
-                                   ...)
+                                   curvature = 0)
     }
     if (sum(edges$curvature > 0) > 0) {
         c2 <- GeomCurve$draw_panel(edges[edges$curvature > 0, ],
                                    panel_params,
                                    coord,
                                    curvature = 0.25,
-                                   angle = 45,
-                                   ...)
+                                   angle = 45)
     }
     if (sum(edges$curvature < 0) > 0) {
         c3 <- GeomCurve$draw_panel(edges[edges$curvature < 0, ],
                                    panel_params,
                                    coord,
                                    curvature = -0.25,
-                                   angle = 45,
-                                   ...)
+                                   angle = 45)
     }
     grid::gList(
         c1, c2, c3,
-        GeomPoint$draw_panel(point_data, panel_params, coord, ...),
-        GeomLabel$draw_panel(label_data, panel_params, coord, ...)
+        GeomPoint$draw_panel(point_data, panel_params, coord),
+        GeomLabel$draw_panel(label_data, panel_params, coord)
     )
 }
 
@@ -115,14 +110,14 @@ GeomDiamond <- ggproto(
     default_aes = aes(
         colour = "black",
         size = 1,
-        shape = 19,
-        fill = NA,
+        shape = 21,
+        fill = "white",
         alpha = NA,
-        stroke = 1,
-        linetype = 1,
-        linewidth = 0.5,
+        stroke = 1
     ),
+    extra_params = c("na.rm", "linewidth", "linetype"),
     setup_data = .geom_diamond_setup_data,
+    draw_key = draw_key_point,
     draw_panel = .geom_diamond_draw_panel
 )
 
@@ -147,9 +142,13 @@ GeomDiamond <- ggproto(
 geom_diamond <- function(mapping = NULL,
                          data = NULL,
                          stat = "identity",
-                         position = "identity", ...,
+                         position = "identity",
+                         na.rm = FALSE,
+                         linewidth = 0.5,
+                         linetype = "solid",
                          show.legend = NA,
-                         inherit.aes = TRUE) {
+                         inherit.aes = TRUE,
+                         ...) {
     layer(
         data = data,
         mapping = mapping,
@@ -158,6 +157,9 @@ geom_diamond <- function(mapping = NULL,
         position = position,
         show.legend = show.legend,
         inherit.aes = inherit.aes,
-        params = list(...)
+        params = list(linewidth = linewidth,
+                      linetype = linetype,
+                      na.rm = na.rm,
+                      ...)
     )
 }
