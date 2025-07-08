@@ -1,9 +1,23 @@
+.condition_to_items <- function(condition) {
+    cond <- parse_condition(condition)
+    pred <- sort(unique(unlist(cond)))
+    if (length(pred) > length(LETTERS)) {
+        cli_abort(c("The number of unique predicates ({length(pred)}) in {.var {condition_name}} exceeds the number of available letters ({length(LETTERS)}).",
+                    "i" = "Consider using a different condition or reducing the number of unique predicates."))
+    }
+    predDict <- setNames(LETTERS[seq_along(pred)], pred)
+
+    lapply(cond, function(cc) as.vector(predDict[cc]))
+}
+
+
 .geom_diamond_setup_data <- function(data, params) {
-    formula_length <- unlist(lapply(data$items, length))
-    formula <- unlist(lapply(data$items, paste, collapse = ""))
+    items <- .condition_to_items(data$condition)
+    formula_length <- unlist(lapply(items, length))
+    formula <- unlist(lapply(items, paste, collapse = ""))
     if (length(unique(formula)) != length(formula)) {
-        cli_abort(c("The {.var items} column contains duplicate entries.",
-                    "i" = "Each item in {.var items} must be unique."))
+        cli_abort(c("The {.var condition} column contains duplicate entries.",
+                    "i" = "Each item in {.var condition} must be unique."))
     }
 
     formula[formula == ""] <- "-"    # empty string does not work well in vector names
@@ -29,7 +43,8 @@
 
 
 .geom_diamond_draw_panel <- function(data, panel_params, coord, ...) {
-    incidence_matrix <- outer(data$items, data$items, Vectorize(function(x, y) {
+    items <- .condition_to_items(data$condition)
+    incidence_matrix <- outer(items, items, Vectorize(function(x, y) {
         length(setdiff(x, y)) == 0
     }))
     diag(incidence_matrix) <- FALSE
@@ -92,10 +107,11 @@
     )
 }
 
+
 GeomDiamond <- ggproto(
     "GeomDiamond",
     Geom,
-    required_aes = c("items"), # items = vector of elements
+    required_aes = c("condition"),
     default_aes = aes(
         colour = "black",
         size = 1,
@@ -109,6 +125,7 @@ GeomDiamond <- ggproto(
     setup_data = .geom_diamond_setup_data,
     draw_panel = .geom_diamond_draw_panel
 )
+
 
 #scale_nodecolour_continuous <- function(name = waiver(),
                                         #...,
@@ -124,6 +141,7 @@ GeomDiamond <- ggproto(
                      #guide = guide_colourbar(available_aes = c("nodecolour")),
                      #...)
 #}
+
 
 #' @export
 geom_diamond <- function(mapping = NULL,
