@@ -1,17 +1,17 @@
 .geom_diamond_setup_data <- function(data, params) {
+    formula_length <- unlist(lapply(data$items, length))
     formula <- unlist(lapply(data$items, paste, collapse = ""))
-    formula_length <- nchar(formula)
-    unique_formula <- sort(unique(formula))
-    unique_formula_length <- nchar(unique_formula)
+    if (length(unique(formula)) != length(formula)) {
+        cli_abort(c("The {.var items} column contains duplicate entries.",
+                    "i" = "Each item in {.var items} must be unique."))
+    }
 
-    # empty string does not work well in vector names
-    formula[formula == ""] <- "-"
-    unique_formula[unique_formula == ""] <- "-"
+    formula[formula == ""] <- "-"    # empty string does not work well in vector names
 
-    xDict <- setNames(rep(0, length(unique_formula)), unique_formula)
-    for (len in unique(unique_formula_length)) {
-        idx <- which(unique_formula_length == len)
-        xDict[unique_formula[idx]] <- seq(from = -1 * (length(idx) - 1) / 2,
+    xDict <- setNames(rep(0, length(formula)), formula)
+    for (len in unique(formula_length)) {
+        idx <- which(formula_length == len)
+        xDict[formula[idx]] <- seq(from = -1 * (length(idx) - 1) / 2,
                                           by = 1,
                                           length.out = length(idx))
     }
@@ -29,7 +29,6 @@
 
 
 .geom_diamond_draw_panel <- function(data, panel_params, coord, ...) {
-    # prepare incidence matrix ----------------
     incidence_matrix <- outer(data$items, data$items, Vectorize(function(x, y) {
         length(setdiff(x, y)) == 0
     }))
@@ -37,7 +36,6 @@
     transitive_edges <- (incidence_matrix %*% incidence_matrix) > 0
     incidence_matrix <- incidence_matrix & !transitive_edges
 
-    # prepare edges ---------------------------
     edges <- which(incidence_matrix, arr.ind = TRUE)
     edges <- as.data.frame(edges)
     edges$x <- data$x[edges$row]
@@ -53,9 +51,7 @@
     edges$linewidth <- 0.5
     edges$curvature <- (edges$yend - edges$y - 1) * ifelse(edges$xend > edges$x, 1, -1)
 
-
-    point_data <- transform(data,
-                            colour = colour)
+    point_data <- transform(data)
     label_data <- transform(data,
                             colour = "black",
                             size = 4,
@@ -67,13 +63,27 @@
     c2 <- NULL
     c3 <- NULL
     if (sum(edges$curvature == 0) > 0) {
-        c1 <- GeomCurve$draw_panel(edges[edges$curvature == 0, ], panel_params, coord, curvature = 0, ...)
+        c1 <- GeomCurve$draw_panel(edges[edges$curvature == 0, ],
+                                   panel_params,
+                                   coord,
+                                   curvature = 0,
+                                   ...)
     }
     if (sum(edges$curvature > 0) > 0) {
-        c2 <- GeomCurve$draw_panel(edges[edges$curvature > 0, ], panel_params, coord, curvature = 0.25, angle = 45, ...)
+        c2 <- GeomCurve$draw_panel(edges[edges$curvature > 0, ],
+                                   panel_params,
+                                   coord,
+                                   curvature = 0.25,
+                                   angle = 45,
+                                   ...)
     }
     if (sum(edges$curvature < 0) > 0) {
-        c3 <- GeomCurve$draw_panel(edges[edges$curvature < 0, ], panel_params, coord, curvature = -0.25, angle = 45, ...)
+        c3 <- GeomCurve$draw_panel(edges[edges$curvature < 0, ],
+                                   panel_params,
+                                   coord,
+                                   curvature = -0.25,
+                                   angle = 45,
+                                   ...)
     }
     grid::gList(
         c1, c2, c3,
@@ -116,9 +126,12 @@ GeomDiamond <- ggproto(
 #}
 
 #' @export
-geom_diamond <- function(mapping = NULL, data = NULL, stat = "identity",
-                   position = "identity", ..., na.rm = FALSE, show.legend = NA,
-                   inherit.aes = TRUE) {
+geom_diamond <- function(mapping = NULL,
+                         data = NULL,
+                         stat = "identity",
+                         position = "identity", ...,
+                         show.legend = NA,
+                         inherit.aes = TRUE) {
     layer(
         data = data,
         mapping = mapping,
@@ -127,7 +140,6 @@ geom_diamond <- function(mapping = NULL, data = NULL, stat = "identity",
         position = position,
         show.legend = show.legend,
         inherit.aes = inherit.aes,
-        params = list(na.rm = na.rm, ...)
+        params = list(...)
     )
 }
-

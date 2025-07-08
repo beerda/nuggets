@@ -30,6 +30,7 @@ Language: en-US
 Imports: 
     cli,
     fastmatch,
+    ggplot2,
     lifecycle,
     methods,
     purrr,
