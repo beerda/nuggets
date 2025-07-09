@@ -20,17 +20,14 @@
         cli_abort(c("The {.var condition} column contains duplicate entries.",
                     "i" = "Each item in {.var condition} must be unique."))
     }
-    ord <- order(formula, formula_length)
-    formula <- formula[ord]
-    formula_length <- formula_length[ord]
     formula[formula == ""] <- "-"    # empty string does not work well in vector names
 
     xDict <- setNames(rep(0, length(formula)), formula)
     for (len in unique(formula_length)) {
         idx <- which(formula_length == len)
-        xDict[formula[idx]] <- seq(from = -1 * (length(idx) - 1) / 2,
-                                          by = 1,
-                                          length.out = length(idx))
+        xDict[sort(formula[idx])] <- seq(from = -1 * (length(idx) - 1) / 2,
+                                         by = 1,
+                                         length.out = length(idx))
     }
 
     longlabel <- formula
@@ -38,7 +35,6 @@
         longlabel <- paste0(longlabel, "\n", data$label)
     }
 
-    data <- data[ord, , drop = FALSE]
     transform(data,
               formula = formula,
               label = longlabel,
