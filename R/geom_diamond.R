@@ -33,10 +33,15 @@
                                           length.out = length(idx))
     }
 
+    longlabel <- formula
+    if (!is.null(data$label)) {
+        longlabel <- paste0(longlabel, "\n", data$label)
+    }
+
     data <- data[ord, , drop = FALSE]
     transform(data,
               formula = formula,
-              label = formula,
+              label = longlabel,
               x = xDict[formula],
               y = formula_length,
               xlabel = xDict[formula],
@@ -132,6 +137,7 @@ GeomDiamond <- ggproto(
     Geom,
     required_aes = c("condition"),
     default_aes = aes(
+        label = NULL,
         colour = "black",
         size = 1,
         shape = 21,
