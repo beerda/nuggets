@@ -13,13 +13,16 @@
 
 .geom_diamond_setup_data <- function(data, params) {
     items <- .condition_to_items(data$condition)
+
     formula_length <- unlist(lapply(items, length))
     formula <- unlist(lapply(items, paste, collapse = ""))
     if (length(unique(formula)) != length(formula)) {
         cli_abort(c("The {.var condition} column contains duplicate entries.",
                     "i" = "Each item in {.var condition} must be unique."))
     }
-
+    ord <- order(formula, formula_length)
+    formula <- formula[ord]
+    formula_length <- formula_length[ord]
     formula[formula == ""] <- "-"    # empty string does not work well in vector names
 
     xDict <- setNames(rep(0, length(formula)), formula)
@@ -30,6 +33,7 @@
                                           length.out = length(idx))
     }
 
+    data <- data[ord, , drop = FALSE]
     transform(data,
               formula = formula,
               label = formula,
@@ -64,6 +68,11 @@
     edges$linewidth <- linewidth
     edges$curvature <- (edges$yend - edges$y - 1) * ifelse(edges$xend > edges$x, 1, -1)
 
+    cond <- parse_condition(data$condition)
+    annot_text <- paste0(unique(unlist(items)), ": ", unique(unlist(cond)))
+    annot_text <- sort(annot_text)
+    annot_text <- paste0(annot_text, collapse = "\n")
+
     point_data <- transform(data)
     label_data <- transform(data,
                             colour = "black",
@@ -71,6 +80,20 @@
                             fill = "white",
                             x = xlabel,
                             y = ylabel)
+    annot_data <- transform(data[1, , drop = FALSE],
+                            x = min(data$x),
+                            y = min(data$y),
+                            label = annot_text,
+                            alpha = 1,
+                            angle = 0,
+                            colour = "black",
+                            family = NA,
+                            fontface = "plain",
+                            group = 1,
+                            hjust = "inward",
+                            vjust = "inward",
+                            lineheight = 0.9,
+                            size = 4)
 
     c1 <- NULL
     c2 <- NULL
@@ -98,7 +121,8 @@
     grid::gList(
         c1, c2, c3,
         GeomPoint$draw_panel(point_data, panel_params, coord),
-        GeomLabel$draw_panel(label_data, panel_params, coord)
+        GeomLabel$draw_panel(label_data, panel_params, coord),
+        GeomText$draw_panel(annot_data, panel_params, coord)
     )
 }
 
@@ -115,7 +139,6 @@ GeomDiamond <- ggproto(
         alpha = NA,
         stroke = 1
     ),
-    extra_params = c("na.rm", "linewidth", "linetype"),
     setup_data = .geom_diamond_setup_data,
     draw_key = draw_key_point,
     draw_panel = .geom_diamond_draw_panel
