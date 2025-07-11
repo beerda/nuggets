@@ -35,19 +35,33 @@
         longlabel <- paste0(longlabel, "\n", data$label)
     }
 
+    xcoord <- xDict[formula]
+    ycoord <- max(formula_length) - formula_length
+    xlabcoord <- xcoord + params$nudge_x
+    ylabcoord <- ycoord + params$nudge_y
+
     transform(data,
               formula = formula,
               label = longlabel,
-              x = xDict[formula],
-              y = formula_length,
-              xlabel = xDict[formula],
-              ylabel = formula_length + 0.125,
-              ymin = formula_length,
-              ymax = formula_length + 0.125)
+              x = xcoord,
+              y = ycoord,
+              xlabel = xlabcoord,
+              ylabel = ylabcoord,
+              xmin = pmin(xcoord, xlabcoord),
+              xmax = pmax(xcoord, xlabcoord),
+              ymin = pmin(ycoord, ylabcoord),
+              ymax = pmax(ycoord, ylabcoord))
 }
 
 
-.geom_diamond_draw_panel <- function(data, panel_params, coord, na.rm = FALSE, linewidth = 1, linetype = "solid") {
+.geom_diamond_draw_panel <- function(data,
+                                     panel_params,
+                                     coord,
+                                     na.rm = FALSE,
+                                     linewidth = 1,
+                                     linetype = "solid",
+                                     nudge_x = 0,
+                                     nudge_y = 0.125) {
     items <- .condition_to_items(data$condition)
     incidence_matrix <- outer(items, items, Vectorize(function(x, y) {
         length(setdiff(x, y)) == 0
@@ -82,8 +96,8 @@
                             x = xlabel,
                             y = ylabel)
     annot_data <- transform(data[1, , drop = FALSE],
-                            x = min(data$x),
-                            y = min(data$y),
+                            x = min(data$x, data$xlabel),
+                            y = max(data$y, data$ylabel),
                             label = annot_text,
                             alpha = 1,
                             angle = 0,
@@ -171,6 +185,8 @@ geom_diamond <- function(mapping = NULL,
                          na.rm = FALSE,
                          linewidth = 0.5,
                          linetype = "solid",
+                         nudge_x = 0,
+                         nudge_y = 0.125,
                          show.legend = NA,
                          inherit.aes = TRUE,
                          ...) {
@@ -184,6 +200,8 @@ geom_diamond <- function(mapping = NULL,
         inherit.aes = inherit.aes,
         params = list(linewidth = linewidth,
                       linetype = linetype,
+                      nudge_x = nudge_x,
+                      nudge_y = nudge_y,
                       na.rm = na.rm,
                       ...)
     )
