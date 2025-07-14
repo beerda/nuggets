@@ -2,7 +2,7 @@
     cond <- parse_condition(condition)
     pred <- sort(unique(unlist(cond)))
     if (length(pred) > length(LETTERS)) {
-        cli_abort(c("The number of unique predicates ({length(pred)}) in {.var {condition_name}} exceeds the number of available letters ({length(LETTERS)}).",
+        cli_abort(c("The number of unique predicates ({length(pred)}) exceeds the number of available letters ({length(LETTERS)}).",
                     "i" = "Consider using a different condition or reducing the number of unique predicates."))
     }
     predDict <- setNames(LETTERS[seq_along(pred)], pred)
@@ -47,8 +47,8 @@
               y = ycoord,
               xlabel = xlabcoord,
               ylabel = ylabcoord,
-              xmin = pmin(xcoord, xlabcoord),
-              xmax = pmax(xcoord, xlabcoord),
+              xmin = pmin(xcoord, xlabcoord, -1),  # -1 = for annotation text
+              xmax = pmax(xcoord, xlabcoord, 1),   # 1 = make graph centered if only 1 node per y coordination
               ymin = pmin(ycoord, ylabcoord),
               ymax = pmax(ycoord, ylabcoord))
 }
@@ -96,7 +96,7 @@
                             x = xlabel,
                             y = ylabel)
     annot_data <- transform(data[1, , drop = FALSE],
-                            x = min(data$x, data$xlabel),
+                            x = min(data$x, data$xlabel, -1),  # -1 for annotation text if only 1 node per y coordination
                             y = max(data$y, data$ylabel),
                             label = annot_text,
                             alpha = 1,
