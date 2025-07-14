@@ -17,6 +17,7 @@ reference:
       - is_almost_constant
       - partition
       - remove_almost_constant
+      - dig_tautologies
 
   - title: "Pre-defined Pattern Extraction"
     desc: >
