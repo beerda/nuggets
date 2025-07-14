@@ -283,3 +283,28 @@
                   call = call)
     }
 }
+
+
+..must_have_column <- function(f, msg) {
+    function(x,
+             column,
+             arg_x = caller_arg(x),
+             arg_column = caller_arg(column),
+             call = caller_env()) {
+        col <- x[[column]]
+        if (is.null(col)) {
+            cli_abort(c("Column {.var {column}} must be present in {.arg {arg_x}}.",
+                        "i" = "{.arg {arg_x}} has the following columns: {.var {names(x)}}."),
+                      call = call)
+        } else {
+            if (!isTRUE(f(col))) {
+                cli_abort(c("Column {.var {column}} must be {msg}.",
+                            "x" = "You've supplied a {.cls {class(col)}}."),
+                          call = call)
+            }
+        }
+    }
+}
+
+.must_have_column <- ..must_have_column(function(x) TRUE, "")
+.must_have_character_column <- ..must_have_column(is.character, "a character vector")
