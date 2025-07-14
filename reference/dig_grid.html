@@ -31,7 +31,7 @@ relationships between pairs of columns, such as in dig_correlations()."></head><
 
     <a class="navbar-brand me-2" href="../index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -163,8 +163,9 @@ combinations use at the second place (yvar)</p></dd>
 <dt id="arg-disjoint">disjoint<a class="anchor" aria-label="anchor" href="#arg-disjoint"></a></dt>
 <dd><p>an atomic vector of size equal to the number of columns of <code>x</code>
 that specifies the groups of predicates: if some elements of the <code>disjoint</code>
-vector are equal, then the corresponding columns of <code>x</code> will NOT be
-present together in a single condition. If <code>x</code> is prepared with
+vector are equal, then the corresponding columns of <code>x</code> will NEITHER be
+present together in a single condition NOR in a single combination of
+<code>xvars</code> and <code>yvars</code>. If <code>x</code> is prepared with
 <code><a href="partition.html">partition()</a></code>, using the <code><a href="var_names.html">var_names()</a></code> function on <code>x</code>'s column names
 is a convenient way to create the <code>disjoint</code> vector.</p></dd>
 

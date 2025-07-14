@@ -41,7 +41,7 @@ and \(xx \neq yy\)."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -99,11 +99,12 @@ and \(xx \neq yy\).</p>
 <span>  xvars <span class="op">=</span> <span class="fu">everything</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  yvars <span class="op">=</span> <span class="fu">everything</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  allow <span class="op">=</span> <span class="st">"all"</span>,</span>
+<span>  disjoint <span class="op">=</span> <span class="fu"><a href="var_names.html">var_names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  xvar_name <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="fu">quo_is_null</span><span class="op">(</span><span class="fu">enquo</span><span class="op">(</span><span class="va">yvars</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="st">"var"</span> <span class="kw">else</span> <span class="st">"xvar"</span>,</span>
 <span>  yvar_name <span class="op">=</span> <span class="st">"yvar"</span>,</span>
 <span>  error_context <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>arg_x <span class="op">=</span> <span class="st">"x"</span>, arg_xvars <span class="op">=</span> <span class="st">"xvars"</span>, arg_yvars <span class="op">=</span> <span class="st">"yvars"</span>, arg_allow <span class="op">=</span></span>
-<span>    <span class="st">"allow"</span>, arg_xvar_name <span class="op">=</span> <span class="st">"xvar_name"</span>, arg_yvar_name <span class="op">=</span> <span class="st">"yvar_name"</span>, call <span class="op">=</span></span>
-<span>    <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="st">"allow"</span>, arg_disjoint <span class="op">=</span> <span class="st">"disjoint"</span>, arg_xvar_name <span class="op">=</span> <span class="st">"xvar_name"</span>, arg_yvar_name <span class="op">=</span></span>
+<span>    <span class="st">"yvar_name"</span>, call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -134,6 +135,14 @@ combinations use at the second place (yvar)</p></dd>
 selected by <code>xvars</code> and <code>yvars</code> arguments. Possible values are:</p><ul><li><p><code>"all"</code> - all columns are allowed to be selected</p></li>
 <li><p><code>"numeric"</code> - only numeric columns are allowed to be selected</p></li>
 </ul></dd>
+
+
+<dt id="arg-disjoint">disjoint<a class="anchor" aria-label="anchor" href="#arg-disjoint"></a></dt>
+<dd><p>an atomic vector of size equal to the number of columns of <code>x</code>
+that specifies the groups of predicates: if some elements of the <code>disjoint</code>
+vector are equal, then the corresponding columns of <code>x</code> will NOT be
+present together in a single combination of <code>xvars</code> and <code>yvars</code>. If
+<code>yvars</code> is <code>NULL</code>, the <code>disjoint</code> argument is ignored.</p></dd>
 
 
 <dt id="arg-xvar-name">xvar_name<a class="anchor" aria-label="anchor" href="#arg-xvar-name"></a></dt>
