@@ -32,7 +32,8 @@ English alphabet, starting with \code{A} for the first predicate;
 \item \code{"abbrev4"}: predicates are abbreviated to 4 characters using
 \code{\link[=abbreviate]{abbreviate()}} function;
 \item \code{"abbrev8"}: predicates are abbreviated to 8 characters using
-\code{\link[=abbreviate]{abbreviate()}} function.
+\code{\link[=abbreviate]{abbreviate()}} function;
+\item \code{"none"}: no shortening is applied, predicates remain unchanged.
 }
 }
 \seealso{

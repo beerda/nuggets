@@ -13,7 +13,8 @@
 #' - `"abbrev4"`: predicates are abbreviated to 4 characters using
 #'   [abbreviate()] function;
 #' - `"abbrev8"`: predicates are abbreviated to 8 characters using
-#'   [abbreviate()] function.
+#'   [abbreviate()] function;
+#' - `"none"`: no shortening is applied, predicates remain unchanged.
 #'
 #' @param x a character vector of conditions, each formatted as a string
 #'    (e.g., `"{a=1,b=100,c=3}"`).
@@ -35,13 +36,16 @@
 shorten_condition <- function(x,
                               method = "letters") {
     .must_be_character_vector(x, null = TRUE)
-    .must_be_enum(method, c("letters", "abbrev4", "abbrev8"))
+    .must_be_enum(method, c("letters", "abbrev4", "abbrev8", "none"))
 
     if (is.null(x)) {
         return(NULL)
     }
     if (length(x) == 0) {
         return(character(0))
+    }
+    if (method == "none") {
+        return(x)
     }
 
     parsed <- parse_condition(x)
