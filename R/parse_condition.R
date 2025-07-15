@@ -28,7 +28,7 @@ parse_condition <- function(...,
     dots <- list(...)
 
     if (length(dots) <= 0) {
-        return(character(0))
+        return(list())
     }
 
     test <- sapply(dots, is.character)
