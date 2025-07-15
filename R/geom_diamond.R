@@ -81,7 +81,7 @@
     edges$group <- 1
     edges$linetype <- linetype
     edges$linewidth <- linewidth
-    edges$curvature <- (edges$yend - edges$y - 1) * ifelse(edges$xend > edges$x, 1, -1)
+    edges$curvature <- (edges$y - edges$yend - 1) * ifelse(edges$xend > edges$x, 1, -1)
 
     cond <- parse_condition(data$condition)
     annot_text <- paste0(unique(unlist(items)), ": ", unique(unlist(cond)))
