@@ -12,10 +12,11 @@
 
 
 .geom_diamond_setup_data <- function(data, params) {
-    items <- .condition_to_items(data$condition)
+    #items <- .condition_to_items(data$condition)
+    items <- parse_condition(data$condition)
 
     formula_length <- unlist(lapply(items, length))
-    formula <- unlist(lapply(items, paste, collapse = ""))
+    formula <- unlist(lapply(items, paste, collapse = ", "))
     if (length(unique(formula)) != length(formula)) {
         cli_abort(c("The {.var condition} column contains duplicate entries.",
                     "i" = "Each item in {.var condition} must be unique."))
@@ -30,9 +31,8 @@
                                          length.out = length(idx))
     }
 
-    longlabel <- formula
-    if (!is.null(data$label)) {
-        longlabel <- paste0(longlabel, "\n", data$label)
+    if (is.null(data$label)) {
+        data$label <- formula
     }
 
     xcoord <- xDict[formula]
@@ -42,13 +42,12 @@
 
     transform(data,
               formula = formula,
-              label = longlabel,
               x = xcoord,
               y = ycoord,
               xlabel = xlabcoord,
               ylabel = ylabcoord,
-              xmin = pmin(xcoord, xlabcoord, -1),  # -1 = for annotation text
-              xmax = pmax(xcoord, xlabcoord, 1),   # 1 = make graph centered if only 1 node per y coordination
+              xmin = pmin(xcoord, xlabcoord),
+              xmax = pmax(xcoord, xlabcoord),
               ymin = pmin(ycoord, ylabcoord),
               ymax = pmax(ycoord, ylabcoord))
 }
@@ -83,11 +82,6 @@
     edges$linewidth <- linewidth
     edges$curvature <- (edges$y - edges$yend - 1) * ifelse(edges$xend > edges$x, 1, -1)
 
-    cond <- parse_condition(data$condition)
-    annot_text <- paste0(unique(unlist(items)), ": ", unique(unlist(cond)))
-    annot_text <- sort(annot_text)
-    annot_text <- paste0(annot_text, collapse = "\n")
-
     point_data <- transform(data)
     label_data <- transform(data,
                             colour = "black",
@@ -95,20 +89,6 @@
                             fill = "white",
                             x = xlabel,
                             y = ylabel)
-    annot_data <- transform(data[1, , drop = FALSE],
-                            x = min(data$x, data$xlabel, -1),  # -1 for annotation text if only 1 node per y coordination
-                            y = max(data$y, data$ylabel),
-                            label = annot_text,
-                            alpha = 1,
-                            angle = 0,
-                            colour = "black",
-                            family = NA,
-                            fontface = "plain",
-                            group = 1,
-                            hjust = "inward",
-                            vjust = "inward",
-                            lineheight = 0.9,
-                            size = 4)
 
     c1 <- NULL
     c2 <- NULL
@@ -136,8 +116,7 @@
     grid::gList(
         c1, c2, c3,
         GeomPoint$draw_panel(point_data, panel_params, coord),
-        GeomLabel$draw_panel(label_data, panel_params, coord),
-        GeomText$draw_panel(annot_data, panel_params, coord)
+        GeomLabel$draw_panel(label_data, panel_params, coord)
     )
 }
 
