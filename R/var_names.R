@@ -8,6 +8,7 @@
 #'
 #' @param x A character vector of predicate names.
 #' @return A `<varname>` part of predicate names in `x`.
+#' @seealso [values()]
 #' @author Michal Burda
 #' @examples
 #' var_names(c("a=1", "a=2", "b=x", "b=y")) # returns c("a", "a", "b", "b")
