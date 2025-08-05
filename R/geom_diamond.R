@@ -44,6 +44,7 @@
               formula = formula,
               x = xcoord,
               y = ycoord,
+              linewidth = data$fill, # store original fill value into linewidth because fill will be transformed to color constants
               xlabel = xlabcoord,
               ylabel = ylabcoord,
               xmin = pmin(xcoord, xlabcoord),
@@ -52,12 +53,10 @@
               ymax = pmax(ycoord, ylabcoord))
 }
 
-
 .geom_diamond_draw_panel <- function(data,
                                      panel_params,
                                      coord,
                                      na.rm = FALSE,
-                                     linewidth = 1,
                                      linetype = "solid",
                                      nudge_x = 0,
                                      nudge_y = 0.125) {
@@ -75,18 +74,23 @@
     edges$xend <- data$x[edges$col]
     edges$y <- data$y[edges$row]
     edges$yend <- data$y[edges$col]
+    edges$curvature <- (edges$y - edges$yend - 1) * ifelse(edges$xend > edges$x, 1, -1)
     edges$alpha <- NA
-    edges$colour <- "#000000"
     edges$group <- 1
     edges$linetype <- linetype
-    edges$linewidth <- linewidth
-    edges$curvature <- (edges$y - edges$yend - 1) * ifelse(edges$xend > edges$x, 1, -1)
+    edges$colour <- "#666666"
+    edges$linewidth <- 0.5
 
-    point_data <- transform(data)
+    lw <- data$linewidth[edges$row] - data$linewidth[edges$col]
+    edges$linewidth <- 0.5 + 4.5 * (abs(lw) - min(abs(lw))) / (max(abs(lw)) - min(abs(lw)))
+    edges$linewidth[!is.finite(edges$linewidth)] <- 0.5
+
+    point_data <- transform(data,
+                            fill = "white")
     label_data <- transform(data,
-                            colour = "black",
+                            colour = "white",
                             size = 4,
-                            fill = "white",
+                            #fill = "white",
                             x = xlabel,
                             y = ylabel)
 
@@ -162,7 +166,6 @@ geom_diamond <- function(mapping = NULL,
                          stat = "identity",
                          position = "identity",
                          na.rm = FALSE,
-                         linewidth = 0.5,
                          linetype = "solid",
                          nudge_x = 0,
                          nudge_y = 0.125,
@@ -177,8 +180,7 @@ geom_diamond <- function(mapping = NULL,
         position = position,
         show.legend = show.legend,
         inherit.aes = inherit.aes,
-        params = list(linewidth = linewidth,
-                      linetype = linetype,
+        params = list(linetype = linetype,
                       nudge_x = nudge_x,
                       nudge_y = nudge_y,
                       na.rm = na.rm,
