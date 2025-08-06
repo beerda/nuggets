@@ -55,6 +55,7 @@ reference:
       - is_degree
       - is_subset
       - parse_condition
+      - shorten_condition
       - values
       - var_grid
       - var_names

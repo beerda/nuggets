@@ -25,11 +25,9 @@
 #' @seealso [format_condition()], [parse_condition()]
 #' @author Michal Burda
 #' @examples
-#' # This command returns c("{A,C,D}", "{B}", "{C,D}")
 #' shorten_condition(c("{a=1,b=100,c=3}", "{a=2}", "{b=100,c=3}"),
 #'                   method = "letters")
 #'
-#' # This command returns c("{hllW=1}", "{hllW=2}", "{c=3,hllW=1}")
 #' shorten_condition(c("{helloWorld=1}", "{helloWorld=2}", "{c=3, helloWorld=1}"),
 #'                   method = "abbrev4")
 #' @export

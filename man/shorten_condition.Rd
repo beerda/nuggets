@@ -36,6 +36,13 @@ English alphabet, starting with \code{A} for the first predicate;
 \item \code{"none"}: no shortening is applied, predicates remain unchanged.
 }
 }
+\examples{
+shorten_condition(c("{a=1,b=100,c=3}", "{a=2}", "{b=100,c=3}"),
+                  method = "letters")
+
+shorten_condition(c("{helloWorld=1}", "{helloWorld=2}", "{c=3, helloWorld=1}"),
+                  method = "abbrev4")
+}
 \seealso{
 \code{\link[=format_condition]{format_condition()}}, \code{\link[=parse_condition]{parse_condition()}}
 }

@@ -2,8 +2,9 @@
 - released: ???
 - completely rewritten the core algorithm in dig()
 - added is_almost_constant(), remove_almost_constant(), parse_condition(),
-  fire(), is_condition(), remove_ill_conditions()
+  fire(), is_condition(), remove_ill_conditions(), shorten_condition()
 - added dig_tautologies()
+- added geom_diamond()
 - added .span and .inc arguments to partition()
 - added exclude argument to dig() and other dig_*() functions
 - added support for the disjoint parameter to var_grid() and dig_grid()
