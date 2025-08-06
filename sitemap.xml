@@ -9,6 +9,7 @@
 <url><loc>https://beerda.github.io/nuggets/authors.html</loc></url>
 <url><loc>https://beerda.github.io/nuggets/index.html</loc></url>
 <url><loc>https://beerda.github.io/nuggets/news/index.html</loc></url>
+<url><loc>https://beerda.github.io/nuggets/reference/bound_range.html</loc></url>
 <url><loc>https://beerda.github.io/nuggets/reference/dichotomize.html</loc></url>
 <url><loc>https://beerda.github.io/nuggets/reference/dig.html</loc></url>
 <url><loc>https://beerda.github.io/nuggets/reference/dig_associations.html</loc></url>
@@ -22,6 +23,7 @@
 <url><loc>https://beerda.github.io/nuggets/reference/dig_tautologies.html</loc></url>
 <url><loc>https://beerda.github.io/nuggets/reference/fire.html</loc></url>
 <url><loc>https://beerda.github.io/nuggets/reference/format_condition.html</loc></url>
+<url><loc>https://beerda.github.io/nuggets/reference/geom_diamond.html</loc></url>
 <url><loc>https://beerda.github.io/nuggets/reference/index.html</loc></url>
 <url><loc>https://beerda.github.io/nuggets/reference/is_almost_constant.html</loc></url>
 <url><loc>https://beerda.github.io/nuggets/reference/is_condition.html</loc></url>
@@ -32,6 +34,8 @@
 <url><loc>https://beerda.github.io/nuggets/reference/partition.html</loc></url>
 <url><loc>https://beerda.github.io/nuggets/reference/remove_almost_constant.html</loc></url>
 <url><loc>https://beerda.github.io/nuggets/reference/remove_ill_conditions.html</loc></url>
+<url><loc>https://beerda.github.io/nuggets/reference/shorten_condition.html</loc></url>
+<url><loc>https://beerda.github.io/nuggets/reference/values.html</loc></url>
 <url><loc>https://beerda.github.io/nuggets/reference/var_grid.html</loc></url>
 <url><loc>https://beerda.github.io/nuggets/reference/var_names.html</loc></url>
 <url><loc>https://beerda.github.io/nuggets/reference/which_antichain.html</loc></url>
