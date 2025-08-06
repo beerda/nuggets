@@ -48,6 +48,7 @@ reference:
     desc: >
       Other functions that can be useful in the pattern extraction process.
     contents:
+      - bound_range
       - fire
       - format_condition
       - is_degree
