@@ -91,8 +91,8 @@
                             colour = "white",
                             size = 4,
                             #fill = "white",
-                            x = xlabel,
-                            y = ylabel)
+                            x = data$xlabel,
+                            y = data$ylabel)
 
     c1 <- NULL
     c2 <- NULL
@@ -117,7 +117,7 @@
                                    curvature = -0.25,
                                    angle = 45)
     }
-    grid::gList(
+    gList(
         c1, c2, c3,
         GeomPoint$draw_panel(point_data, panel_params, coord),
         GeomLabel$draw_panel(label_data, panel_params, coord)
