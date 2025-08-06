@@ -34,6 +34,7 @@
 #' @importFrom rlang warn
 #' @importFrom stats cor.test
 #' @importFrom stats na.omit
+#' @importFrom stats setNames
 #' @importFrom stats t.test
 #' @importFrom stats var.test
 #' @importFrom stats wilcox.test
