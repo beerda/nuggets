@@ -160,6 +160,27 @@ GeomDiamond <- ggproto(
 #}
 
 
+#' Geom for drawing diamond plot representing lattice structures
+#'
+#' This function creates a ggplot2 geom for drawing diamond plots, which are
+#' used to visualize lattice structures in data. This is useful especially for
+#' visualization of rules and its ancestors.
+#'
+#' The diamonds represent items in the lattice, and edges represent
+#' an inclusion relationship between them.
+#'
+#' @param mapping Aesthetic mappings, usually created with `aes()`.
+#' @param data A data frame containing the data to be plotted.
+#' @param stat The statistical transformation to use on the data, default is "identity".
+#' @param position Position adjustment, default is "identity".
+#' @param na.rm A logical value indicating whether to remove missing values.
+#' @param linetype The type of line to use for the edges, default is "solid".
+#' @param nudge_x Horizontal nudge for the x-coordinates of the labels.
+#' @param nudge_y Vertical nudge for the y-coordinates of the labels.
+#' @param show.legend A logical value indicating whether to show the legend.
+#' @param inherit.aes A logical value indicating whether to inherit aesthetics from the plot.
+#' @param ... Other arguments passed to the layer.
+#' @return A ggplot2 layer object that can be added to a ggplot.
 #' @export
 geom_diamond <- function(mapping = NULL,
                          data = NULL,
