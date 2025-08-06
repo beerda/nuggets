@@ -40,6 +40,7 @@ reference:
     desc: >
       Functions for pre- and post-processing of extracted patterns.
     contents:
+      - geom_diamond
       - is_condition
       - remove_ill_conditions
       - which_antichain
