@@ -6,6 +6,7 @@
 #' @param call_args a list of function arguments that were used to create the nugget.
 #' @return A nugget object of the specified flavour, i.e., a tibble object that is
 #'     a subclass of `flavour` and `nugget` classes.
+#' @seealso [is_nugget()]
 #' @author Michal Burda
 #' @export
 nugget <- function(x,

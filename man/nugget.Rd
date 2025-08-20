@@ -22,6 +22,9 @@ a subclass of \code{flavour} and \code{nugget} classes.
 \description{
 Create a nugget object of given flavour
 }
+\seealso{
+\code{\link[=is_nugget]{is_nugget()}}
+}
 \author{
 Michal Burda
 }

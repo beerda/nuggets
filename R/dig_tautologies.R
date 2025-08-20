@@ -53,7 +53,8 @@
 #'      to `Inf` will generate all possible conditions.
 #' @param verbose a logical value indicating whether to print progress messages.
 #' @param threads the number of threads to use for parallel computation.
-#' @returns A tibble with found tautologies in the format equal to
+#' @returns An S3 object which is an instance of `tautologies` and `nugget`
+#'      classes and which is a tibble with found tautologies in the format equal to
 #'      the output of [dig_associations()].
 #' @author Michal Burda
 #' @export

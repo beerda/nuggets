@@ -15,6 +15,8 @@
 #   \item{logicals}{A list of logical columns.}
 #   \item{doubles}{A list of numeric columns from the interval [0,1].}
 #   \item{indices}{A vector of indices of selected columns in `cols`.}
+#   \item{selected}{A logical vector of the same length as `cols` indicating
+#       which columns were selected.}
 # }
 # @author Michal Burda
 .extract_cols <- function(cols,

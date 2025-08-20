@@ -19,6 +19,9 @@ This function returns TRUE if the object is a nugget. If flavour is
 specified, the function returns TRUE only if the object is a nugget of
 the specified flavour.
 }
+\seealso{
+\code{\link[=nugget]{nugget()}}
+}
 \author{
 Michal Burda
 }

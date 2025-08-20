@@ -7,6 +7,7 @@
 #' @param x an object to be tested
 #' @param flavour a character string specifying the flavour of the nugget.
 #' @return A logical value indicating whether the object is a nugget.
+#' @seealso [nugget()]
 #' @author Michal Burda
 #' @export
 is_nugget <- function(x, flavour = NULL) {
