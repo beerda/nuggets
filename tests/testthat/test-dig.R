@@ -2,7 +2,11 @@ test_that("numeric matrix", {
     m <- matrix(1:12 / 12, ncol = 2)
     res <- dig(m, function() 1)
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
     expect_equal(length(res), 4)
+
+    attributes(res) <- NULL
     expect_equal(res, rep(list(1), 4))
 })
 
@@ -11,7 +15,11 @@ test_that("logical matrix", {
     m <- matrix(T, ncol = 4, nrow = 10)
     res <- dig(m, function() 1)
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
     expect_equal(length(res), 16)
+
+    attributes(res) <- NULL
     expect_equal(res, rep(list(1), 16))
 })
 
@@ -20,7 +28,11 @@ test_that("logical matrix", {
     m <- matrix(rep(c(T, F), 6), ncol = 2)
     res <- dig(m, function() 1)
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
     expect_equal(length(res), 4)
+
+    attributes(res) <- NULL
     expect_equal(res, rep(list(1), 4))
 })
 
@@ -30,7 +42,11 @@ test_that("data frame", {
                     b = c(T, T, T, F, F, F))
     res <- dig(d, function() 1)
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
     expect_equal(length(res), 4)
+
+    attributes(res) <- NULL
     expect_equal(res, rep(list(1), 4))
 })
 
@@ -63,7 +79,14 @@ test_that("select condition columns", {
                f = function(condition) list(cond = condition),
                condition = c("1", "3"))
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
     expect_equal(length(res), 4)
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$condition, c("1", "3"))
+
+    attributes(res) <- NULL
     expect_setequal(res, list(list(cond = integer(0)),
                               list(cond = c("1"=1L)),
                               list(cond = c("1"=1L, "3"=3L)),
@@ -79,7 +102,12 @@ test_that("select condition columns with names", {
                f = function(condition) list(cond = condition),
                condition = c("aaah", "ciis"))
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
     expect_equal(length(res), 4)
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$condition, c("aaah", "ciis"))
     expect_setequal(res, list(list(cond = integer(0)),
                               list(cond = c("aaah"=1L)),
                               list(cond = c("aaah"=1L, "ciis"=3L)),
@@ -91,6 +119,8 @@ test_that("condition arg", {
     m <- matrix(1:12 / 12, ncol = 2)
     res <- dig(m, function(condition) list(cond = condition))
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
     expect_equal(length(res), 4)
     expect_setequal(res, list(list(cond = integer(0)),
                               list(cond = c("1"=1L)),
@@ -104,6 +134,8 @@ test_that("condition arg with names", {
     colnames(m) <- c("aaah", "blee")
     res <- dig(m, function(condition) list(cond = condition))
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
     expect_equal(length(res), 4)
     expect_setequal(res, list(list(cond = integer(0)),
                               list(cond = c("aaah"=1L)),
@@ -115,9 +147,12 @@ test_that("condition arg with names", {
 test_that("support arg", {
     m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
     res <- dig(m, function(support) list(sup = support))
-    res <- res[order(unlist(res), decreasing = TRUE)]
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
     expect_equal(length(res), 4)
+
+    res <- res[order(unlist(res), decreasing = TRUE)]
     expect_equal(res, list(list(sup = 1),
                            list(sup = 4/6),
                            list(sup = 3/6),
@@ -129,9 +164,12 @@ test_that("support arg", {
 test_that("sum arg", {
     m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
     res <- dig(m, function(condition, sum) list(sum = sum))
-    res <- res[order(unlist(res), decreasing = TRUE)]
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
     expect_equal(length(res), 4)
+
+    res <- res[order(unlist(res), decreasing = TRUE)]
     expect_setequal(res, list(list(sum = 6),
                               list(sum = 4),
                               list(sum = 3),
@@ -142,9 +180,12 @@ test_that("sum arg", {
 test_that("indices arg", {
     m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
     res <- dig(m, function(indices) list(i = indices))
-    res <- res[order(sapply(res, function(x) sum(x$i)), decreasing = TRUE)]
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
     expect_equal(length(res), 4)
+
+    res <- res[order(sapply(res, function(x) sum(x$i)), decreasing = TRUE)]
     expect_setequal(res, list(list(i = c(T,T,T,T,T,T)),
                               list(i = c(T,T,T,T,F,F)),
                               list(i = c(T,F,T,F,T,F)),
@@ -158,7 +199,11 @@ test_that("weights arg", {
     m <- matrix(c(c1, c2), ncol = 2)
     res <- dig(m, function(weights) list(w = weights))
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
     expect_equal(length(res), 4)
+
+    attributes(res) <- NULL
     expect_equal(res, list(list(w = c(1,1,1,1,1,1)),
                            list(w = c2),
                            list(w = c1 * c2),
@@ -174,6 +219,14 @@ test_that("foci_supports arg", {
                condition = "1",
                focus = "2")
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$condition, "1")
+    expect_equal(attr(res, "call_args")$focus, "2")
+
+    attributes(res) <- NULL
     expect_equal(length(res), 2)
     expect_equal(res, list(list(fs = c("2" = 3/6)),
                            list(fs = c("2" = 2/6))),
@@ -188,6 +241,7 @@ test_that("pp arg", {
                condition = "1",
                focus = "2")
 
+    attributes(res) <- NULL
     expect_equal(length(res), 2)
     expect_equal(res, list(list(fs = c("2" = 3)),
                            list(fs = c("2" = 2))),
@@ -202,6 +256,7 @@ test_that("np arg", {
                condition = "1",
                focus = "2")
 
+    attributes(res) <- NULL
     expect_equal(length(res), 2)
     expect_equal(res, list(list(fs = c("2" = 0)),
                            list(fs = c("2" = 1))),
@@ -216,6 +271,7 @@ test_that("pn arg", {
                condition = "1",
                focus = "2")
 
+    attributes(res) <- NULL
     expect_equal(length(res), 2)
     expect_equal(res, list(list(fs = c("2" = 4)),
                            list(fs = c("2" = 2))),
@@ -230,6 +286,7 @@ test_that("nn arg", {
                condition = "1",
                focus = "2")
 
+    attributes(res) <- NULL
     expect_equal(length(res), 2)
     expect_equal(res, list(list(fs = c("2" = 0)),
                            list(fs = c("2" = 1))),
@@ -392,15 +449,35 @@ test_that("min_length filter", {
     m <- matrix(1:12 / 12, ncol = 2)
 
     res <- dig(m, function() 1, min_length = 0L)
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$min_length, 0L)
     expect_equal(length(res), 4)
 
     res <- dig(m, function() 1, min_length = 1L)
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$min_length, 1L)
     expect_equal(length(res), 3)
 
     res <- dig(m, function() 1, min_length = 2L)
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$min_length, 2L)
     expect_equal(length(res), 1)
 
     res <- dig(m, function() 1, min_length = 3L)
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$min_length, 3L)
     expect_equal(length(res), 0)
 })
 
@@ -409,15 +486,35 @@ test_that("max_length filter", {
     m <- matrix(1:12 / 12, ncol = 2)
 
     res <- dig(m, function() 1, max_length = 0L)
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$max_length, 0L)
     expect_equal(length(res), 1)
 
     res <- dig(m, function() 1, max_length = 1L)
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$max_length, 1L)
     expect_equal(length(res), 3)
 
     res <- dig(m, function() 1, max_length = 2L)
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$max_length, 2L)
     expect_equal(length(res), 4)
 
     res <- dig(m, function() 1, max_length = Inf)
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$max_length, Inf)
     expect_equal(length(res), 4)
 })
 
@@ -426,18 +523,43 @@ test_that("min_support filter", {
     m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
 
     res <- dig(m, function() 1, min_support = 0)
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$min_support, 0)
     expect_equal(length(res), 4)
 
     res <- dig(m, function() 1, min_support = 0.001)
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$min_support, 0.001)
     expect_equal(length(res), 4)
 
     res <- dig(m, function() 1, min_support = 0.5)
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$min_support, 0.5)
     expect_equal(length(res), 3)
 
     res <- dig(m, function() 1, min_support = 0.6)
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$min_support, 0.6)
     expect_equal(length(res), 2)
 
     res <- dig(m, function() 1, min_support = 1)
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$min_support, 1)
     expect_equal(length(res), 1)
 })
 
@@ -446,18 +568,43 @@ test_that("max_support filter", {
     m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
 
     res <- dig(m, function() 1, max_support = 1)
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$max_support, 1)
     expect_equal(length(res), 4)
 
     res <- dig(m, function(condition, support) list(con=condition, sup=support), max_support = 0.7)
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$max_support, 0.7)
     expect_equal(length(res), 3)
 
     res <- dig(m, function() 1, max_support = 0.6)
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$max_support, 0.6)
     expect_equal(length(res), 2)
 
     res <- dig(m, function() 1, max_support = 0.4)
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$max_support, 0.4)
     expect_equal(length(res), 1)
 
     res <- dig(m, function() 1, max_support = 0.3)
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$max_support, 0.3)
     expect_equal(length(res), 0)
 })
 
@@ -473,6 +620,11 @@ test_that("disjoint filter", {
                function(condition) list(cond = condition),
                disjoint = c(1, 2, 3))
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$disjoint, 1:3)
     expect_equal(length(res), 8)
     expect_setequal(res, list(list(cond = integer(0)),
                               list(cond = c("1"=1L)),
@@ -488,6 +640,11 @@ test_that("disjoint filter", {
                function(condition) list(cond = condition),
                disjoint = c(1, 1, 2))
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$disjoint, c(1, 1, 2))
     expect_equal(length(res), 6)
     expect_setequal(res, list(list(cond = integer(0)),
                               list(cond = c("1"=1L)),
@@ -501,6 +658,11 @@ test_that("disjoint filter", {
                function(condition) list(cond = condition),
                disjoint = c(1, 1, 1))
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$disjoint, c(1, 1, 1))
     expect_equal(length(res), 4)
     expect_setequal(res, list(list(cond = integer(0)),
                               list(cond = c("1"=1L)),
@@ -516,6 +678,13 @@ test_that("disjoint filter", {
                condition = 1:3,
                focus = 4:6)
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$disjoint, c(1, 1, 2, 3, 4, 5))
+    expect_equal(attr(res, "call_args")$condition, c("1", "2", "3"))
+    expect_equal(attr(res, "call_args")$focus, c("4", "5", "6"))
     expect_equal(length(res), 6)
     expect_setequal(res, list(list(cond = integer(0)),
                               list(cond = c("1"=1L)),
@@ -537,6 +706,11 @@ test_that("disjoint is factor", {
                function(condition) list(cond = condition),
                disjoint = factor(c(1, 2, 3)))
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$disjoint, factor(c(1, 2, 3)))
     expect_equal(length(res), 8)
     expect_setequal(res, list(list(cond = integer(0)),
                               list(cond = c("1"=1L)),
@@ -552,6 +726,11 @@ test_that("disjoint is factor", {
                function(condition) list(cond = condition),
                disjoint = factor(c(1, 1, 2)))
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$disjoint, factor(c(1, 1, 2)))
     expect_equal(length(res), 6)
     expect_setequal(res, list(list(cond = integer(0)),
                               list(cond = c("1"=1L)),
@@ -755,6 +934,15 @@ test_that("exclude tautology 1", {
                min_length = 1,
                max_length = 3)
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$condition, c("a", "b", "c", "x", "y", "z"))
+    expect_equal(attr(res, "call_args")$focus, c("a", "b", "c", "x", "y", "z"))
+    expect_equal(attr(res, "call_args")$min_length, 1)
+    expect_equal(attr(res, "call_args")$max_length, 3)
+    expect_equal(attr(res, "call_args")$excluded, NULL)
     expect_equal(sort(unlist(res)), sort(expected))
 
 
@@ -770,6 +958,15 @@ test_that("exclude tautology 1", {
                min_length = 1,
                max_length = 3)
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$condition, c("a", "b", "c", "x", "y", "z"))
+    expect_equal(attr(res, "call_args")$focus, c("a", "b", "c", "x", "y", "z"))
+    expect_equal(attr(res, "call_args")$min_length, 1)
+    expect_equal(attr(res, "call_args")$max_length, 3)
+    expect_equal(attr(res, "call_args")$excluded, list("x"))
     expect_equal(sort(unlist(res)), sort(expected))
 
     # exclude "c -> x"
@@ -793,6 +990,15 @@ test_that("exclude tautology 1", {
                min_length = 1,
                max_length = 3)
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$condition, c("a", "b", "c", "x", "y", "z"))
+    expect_equal(attr(res, "call_args")$focus, c("a", "b", "c", "x", "y", "z"))
+    expect_equal(attr(res, "call_args")$min_length, 1)
+    expect_equal(attr(res, "call_args")$max_length, 3)
+    expect_equal(attr(res, "call_args")$excluded, list(c("c", "x")))
     expect_equal(sort(unlist(res)), sort(expected))
 })
 
@@ -806,6 +1012,14 @@ test_that("t-norm goedel", {
                function(weights) list(w = weights),
                min_length = 2,
                t_norm = "goedel")
+
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$t_norm, "goedel")
+
+    attributes(res) <- NULL
     expect_equal(length(res), 1)
     expect_equal(res, list(list(w = pmin(c1, c2))),
                  tolerance = 1e-2)
@@ -821,6 +1035,14 @@ test_that("t-norm goguen", {
                function(weights) list(w = weights),
                min_length = 2,
                t_norm = "goguen")
+
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$t_norm, "goguen")
+
+    attributes(res) <- NULL
     expect_equal(length(res), 1)
     expect_equal(res, list(list(w = c1 * c2)),
                  tolerance = 1e-2)
@@ -836,6 +1058,14 @@ test_that("t-norm lukas", {
                function(weights) list(w = weights),
                min_length = 2,
                t_norm = "lukas")
+
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$t_norm, "lukas")
+
+    attributes(res) <- NULL
     expect_equal(length(res), 1)
     expect_equal(res, list(list(w = pmax(0, c1 + c2 - 1))),
                  tolerance = 0.018)
@@ -870,6 +1100,14 @@ test_that("min_focus_support & filter_empty_foci", {
                min_focus_support = 0.5,
                filter_empty_foci = FALSE)
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$min_support, 0.1)
+    expect_equal(attr(res, "call_args")$min_focus_support, 0.5)
+    expect_equal(attr(res, "call_args")$filter_empty_foci, FALSE)
+
     expect_setequal(unlist(res),
                     c(" = 0.7, 0.6", "1 = 0.5", "2 = 0.5", "1 & 2 = "))
 
@@ -880,6 +1118,14 @@ test_that("min_focus_support & filter_empty_foci", {
                min_support = 0.1,
                min_focus_support = 0.5,
                filter_empty_foci = TRUE)
+
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$min_support, 0.1)
+    expect_equal(attr(res, "call_args")$min_focus_support, 0.5)
+    expect_equal(attr(res, "call_args")$filter_empty_foci, TRUE)
 
     expect_setequal(unlist(res),
                     c(" = 0.7, 0.6", "1 = 0.5", "2 = 0.5"))
@@ -907,6 +1153,14 @@ test_that("min_conditional_focus_support & filter_empty_foci", {
                min_conditional_focus_support = 0.6,
                filter_empty_foci = FALSE)
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$min_support, 0.1)
+    expect_equal(attr(res, "call_args")$min_conditional_focus_support, 0.6)
+    expect_equal(attr(res, "call_args")$filter_empty_foci, FALSE)
+
     expect_setequal(unlist(res),
                     c(" : 1 = 3/0.7, 4/0.6", "1 : 0.8 = 3/0.5", "2 : 0.8 = 3/0.5", "1 & 2 : 0.6 = /"))
 
@@ -918,8 +1172,66 @@ test_that("min_conditional_focus_support & filter_empty_foci", {
                min_conditional_focus_support = 0.6,
                filter_empty_foci = TRUE)
 
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$min_support, 0.1)
+    expect_equal(attr(res, "call_args")$min_conditional_focus_support, 0.6)
+    expect_equal(attr(res, "call_args")$filter_empty_foci, TRUE)
+
     expect_setequal(unlist(res),
                     c(" : 1 = 3/0.7, 4/0.6", "1 : 0.8 = 3/0.5", "2 : 0.8 = 3/0.5"))
+})
+
+
+test_that("dig return object details", {
+    d <- data.frame(a = c(T,    T, T, F, F),
+                    b = c(T,    F, T, T, T),
+                    c = c(T,    T, F, F, F),
+                    d = c(T,    F, F, F, F),
+                    x = c(1.0,  0.1, 0.2, 0.3, 0.4),
+                    y = c(1.0,  0.9, 0.8, 0.7, 0.6),
+                    z = c(1.0,  0.8, 0.6, 0.4, 0.2),
+                    w = c(1.0,  0, 0, 0, 0))
+
+    res <- dig(d,
+               f = function(condition) list(cond = condition),
+               condition = a:d,
+               focus = x:z,
+               disjoint = c(1, 1, 2, 3, 5, 5, 6, 7),
+               excluded = list(c("x")),
+               min_length = 1,
+               max_length = 3,
+               min_support = 0.1,
+               min_focus_support = 0.5,
+               min_conditional_focus_support = 0.6,
+               max_support = 0.99,
+               filter_empty_foci = TRUE,
+               t_norm = "goedel",
+               max_results = 1000,
+               verbose = TRUE,
+               threads = 1)
+
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(attr(res, "call_function"), "dig")
+    expect_true(is.list(attr(res, "call_args")));
+    expect_equal(attr(res, "call_args")$condition, c("a", "b", "c", "d"))
+    expect_equal(attr(res, "call_args")$focus, c("x", "y", "z"))
+    expect_equal(attr(res, "call_args")$disjoint, c(1, 1, 2, 3, 5, 5, 6, 7))
+    expect_equal(attr(res, "call_args")$excluded, list("x"))
+    expect_equal(attr(res, "call_args")$min_length, 1)
+    expect_equal(attr(res, "call_args")$max_length, 3)
+    expect_equal(attr(res, "call_args")$min_support, 0.1)
+    expect_equal(attr(res, "call_args")$min_focus_support, 0.5)
+    expect_equal(attr(res, "call_args")$min_conditional_focus_support, 0.6)
+    expect_equal(attr(res, "call_args")$max_support, 0.99)
+    expect_equal(attr(res, "call_args")$filter_empty_foci, TRUE)
+    expect_equal(attr(res, "call_args")$t_norm, "goedel")
+    expect_equal(attr(res, "call_args")$max_results, 1000)
+    expect_equal(attr(res, "call_args")$verbose, TRUE)
+    expect_equal(attr(res, "call_args")$threads, 1)
 })
 
 

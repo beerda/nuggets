@@ -342,6 +342,7 @@ dig <- function(x,
                   call = error_context$call)
     }
 
+    orig_disjoint <- disjoint
     if (length(disjoint) > 0) {
         disjoint <- as.integer(as.factor(disjoint))
     } else {
@@ -352,6 +353,7 @@ dig <- function(x,
                                 null = TRUE,
                                 arg = error_context$arg_excluded,
                                 call = error_context$call)
+    orig_excluded <- excluded
     if (is.null(excluded)) {
         excluded <- list()
     } else {
@@ -476,10 +478,29 @@ dig <- function(x,
                    verbose = verbose,
                    threads = threads)
 
-    dig_(cols,
-         names(cols),
-         condition_cols$selected,
-         foci_cols$selected,
-         fun,
-         config)
+    res <- dig_(cols,
+                names(cols),
+                condition_cols$selected,
+                foci_cols$selected,
+                fun,
+                config)
+
+    nugget(res,
+           flavour = NULL,
+           call_function = "dig",
+           call_args = list(condition = names(cols)[condition_cols$selected],
+                            focus = names(cols)[foci_cols$selected],
+                            disjoint = orig_disjoint,
+                            excluded = orig_excluded,
+                            min_length = min_length,
+                            max_length = if (max_length < 0) Inf else max_length,
+                            min_support = min_support,
+                            min_focus_support = min_focus_support,
+                            min_conditional_focus_support = min_conditional_focus_support,
+                            max_support = max_support,
+                            filter_empty_foci = filter_empty_foci,
+                            t_norm = t_norm,
+                            max_results = max_results,
+                            verbose = verbose,
+                            threads = threads))
 }
