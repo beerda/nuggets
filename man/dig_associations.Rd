@@ -93,7 +93,8 @@ to \code{Inf} will generate all possible conditions.}
 \item{threads}{the number of threads to use for parallel computation.}
 }
 \value{
-A tibble with found patterns and computed quality measures.
+An S3 object, which is an instance of \code{associations} and \code{nugget}
+classes, and which is a tibble with found patterns and computed quality measures.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}

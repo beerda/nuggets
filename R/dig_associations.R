@@ -89,7 +89,8 @@
 #'      to `Inf` will generate all possible conditions.
 #' @param verbose a logical value indicating whether to print progress messages.
 #' @param threads the number of threads to use for parallel computation.
-#' @returns A tibble with found patterns and computed quality measures.
+#' @returns An S3 object, which is an instance of `associations` and `nugget`
+#'     classes, and which is a tibble with found patterns and computed quality measures.
 #' @author Michal Burda
 #' @seealso [partition()], [var_names()], [dig()]
 #' @examples
@@ -133,6 +134,7 @@ dig_associations <- function(x,
                   null = TRUE,
                   multi = TRUE)
 
+    orig_min_coverage <- min_coverage
     min_coverage <- max(min_coverage, min_support)
     n <- nrow(x)
 
@@ -243,6 +245,7 @@ dig_associations <- function(x,
                                     call = current_env()))
 
     .msg(verbose, "dig_associations: post-processing")
+    digattr <- attributes(res)
     res <- do.call(rbind, res)
 
     if ("lift" %in% measures) {
@@ -263,5 +266,22 @@ dig_associations <- function(x,
         res$nn <- NULL
     }
 
-    as_tibble(res)
+    nugget(res,
+           flavour = "associations",
+           call_function = "dig_associations",
+           call_args = list(antecedent = digattr$call_args$condition,
+                            consequent = digattr$call_args$focus,
+                            disjoint = disjoint,
+                            excluded = excluded,
+                            min_length = min_length,
+                            max_length = max_length,
+                            min_coverage = orig_min_coverage,
+                            min_support = min_support,
+                            min_confidence = min_confidence,
+                            contingency_table = contingency_table,
+                            measures = measures,
+                            t_norm = t_norm,
+                            max_results = max_results,
+                            verbose = verbose,
+                            threads = threads))
 }
