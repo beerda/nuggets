@@ -79,6 +79,7 @@ dig_tautologies <- function(x,
     result <- NULL
     len <- 0
 
+    digattr <- NULL
     while (len <= max_length) {
         res <- dig_associations(x = x,
                                 antecedent = !!antecedent,
@@ -96,6 +97,10 @@ dig_tautologies <- function(x,
                                 verbose = verbose,
                                 threads = threads)
 
+        if (is.null(digattr)) {
+            digattr <- attributes(res)
+        }
+
         if (nrow(res) == 0) {
             break
         }
@@ -105,5 +110,19 @@ dig_tautologies <- function(x,
         len <- len + 1
     }
 
-    result
+    nugget(result,
+           flavour = "tautologies",
+           call_function = "dig_tautologies",
+           call_args = list(antecedent = digattr$call_args$antecedent,
+                            consequent = digattr$call_args$consequent,
+                            disjoint = disjoint,
+                            max_length = max_length,
+                            min_coverage = min_coverage,
+                            min_support = min_support,
+                            min_confidence = min_confidence,
+                            measures = measures,
+                            t_norm = t_norm,
+                            max_results = max_results,
+                            verbose = verbose,
+                            threads = threads))
 }
