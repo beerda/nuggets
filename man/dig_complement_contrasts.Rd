@@ -132,8 +132,9 @@ to \code{Inf} will generate all possible conditions.}
 \item{threads}{the number of threads to use for parallel computation.}
 }
 \value{
-A tibble with found patterns in rows. The following columns are always
-present:
+An S3 object which is an instance of \code{complement_contrasts} and \code{nugget}
+classes and which is a tibble with found patterns in rows. The following
+columns are always present:
 \item{condition}{the condition of the pattern as a character string
 in the form \code{{p1 & p2 & ... & pn}} where \code{p1}, \code{p2}, ..., \code{pn} are
 \code{x}'s column names.}

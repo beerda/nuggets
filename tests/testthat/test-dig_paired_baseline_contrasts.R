@@ -7,6 +7,7 @@ test_that("dig_paired_baseline_contrasts t", {
                          yvars = uptake,
                          min_support = 0.1)
 
+    expect_true(is_nugget(res, flavour = "paired_baseline_contrasts"))
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 9)
     expect_equal(ncol(res), 16)
@@ -22,6 +23,7 @@ test_that("dig_paired_baseline_contrasts t", {
                          min_support = 0.1,
                          max_p_value = 1e-7)
 
+    expect_true(is_nugget(res, flavour = "paired_baseline_contrasts"))
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 5)
     expect_equal(ncol(res), 16)
@@ -37,6 +39,7 @@ test_that("dig_paired_baseline_contrasts wilcox", {
                          method = "wilcox",
                          min_support = 0.1)
 
+    expect_true(is_nugget(res, flavour = "paired_baseline_contrasts"))
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 9)
     expect_equal(ncol(res), 14)
@@ -52,9 +55,75 @@ test_that("dig_paired_baseline_contrasts wilcox", {
                          min_support = 0.1,
                          max_p_value = 1e-5)
 
+    expect_true(is_nugget(res, flavour = "paired_baseline_contrasts"))
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 5)
     expect_equal(ncol(res), 14)
+})
+
+test_that("dig_paired_baseline_contrasts call args", {
+    d <- partition(CO2, Plant:Treatment)
+
+    res <- dig_paired_baseline_contrasts(d,
+                         condition = where(is.logical),
+                         xvars = conc,
+                         yvars = uptake,
+                         disjoint = var_names(colnames(d)),
+                         excluded = list("Plant=Qn1"),
+                         min_length = 1L,
+                         max_length = 2L,
+                         min_support = 0.1,
+                         max_support = 0.9,
+                         method = "wilcox",
+                         alternative = "greater",
+                         h0 = 1,
+                         conf_level = 0.9,
+                         max_p_value = 0.01,
+                         t_var_equal = TRUE,
+                         wilcox_exact = TRUE,
+                         wilcox_correct = FALSE,
+                         wilcox_tol_root = 1e-3,
+                         wilcox_digits_rank = 5,
+                         max_results = 100,
+                         verbose = TRUE,
+                         threads = 1)
+
+    expect_true(is_nugget(res, flavour = "paired_baseline_contrasts"))
+    expect_true(is_tibble(res))
+    expect_equal(attr(res, "call_function"), "dig_paired_baseline_contrasts")
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$condition,
+                 c("Plant=Qn1", "Plant=Qn2", "Plant=Qn3",
+                   "Plant=Qc1", "Plant=Qc3", "Plant=Qc2",
+                   "Plant=Mn3", "Plant=Mn2", "Plant=Mn1",
+                   "Plant=Mc2", "Plant=Mc3", "Plant=Mc1",
+                   "Type=Quebec", "Type=Mississippi",
+                   "Treatment=nonchilled", "Treatment=chilled"))
+    expect_equal(attr(res, "call_args")$xvars, "conc")
+    expect_equal(attr(res, "call_args")$yvars, "uptake")
+    expect_equal(attr(res, "call_args")$disjoint,
+                 c("conc", "uptake", "Plant", "Plant", "Plant",
+                   "Plant", "Plant", "Plant", "Plant", "Plant", "Plant",
+                   "Plant", "Plant", "Plant", "Type", "Type",
+                   "Treatment", "Treatment"))
+    expect_equal(attr(res, "call_args")$excluded, list("Plant=Qn1"))
+    expect_equal(attr(res, "call_args")$min_length, 1L)
+    expect_equal(attr(res, "call_args")$max_length, 2L)
+    expect_equal(attr(res, "call_args")$min_support, 0.1)
+    expect_equal(attr(res, "call_args")$max_support, 0.9)
+    expect_equal(attr(res, "call_args")$method, "wilcox")
+    expect_equal(attr(res, "call_args")$alternative, "greater")
+    expect_equal(attr(res, "call_args")$h0, 1)
+    expect_equal(attr(res, "call_args")$conf_level, 0.9)
+    expect_equal(attr(res, "call_args")$max_p_value, 0.01)
+    expect_true(attr(res, "call_args")$t_var_equal)
+    expect_true(attr(res, "call_args")$wilcox_exact)
+    expect_false(attr(res, "call_args")$wilcox_correct)
+    expect_equal(attr(res, "call_args")$wilcox_tol_root, 1e-3)
+    expect_equal(attr(res, "call_args")$wilcox_digits_rank, 5)
+    expect_equal(attr(res, "call_args")$max_results, 100)
+    expect_equal(attr(res, "call_args")$verbose, TRUE)
+    expect_equal(attr(res, "call_args")$threads, 1L)
 })
 
 test_that("dig_paired contrasts errors", {

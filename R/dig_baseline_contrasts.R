@@ -93,8 +93,9 @@
 #'      to `Inf` will generate all possible conditions.
 #' @param verbose a logical scalar indicating whether to print progress messages.
 #' @param threads the number of threads to use for parallel computation.
-#' @return A tibble with found patterns in rows. The following columns are always
-#'      present:
+#' @return An S3 object which is an instance of `baseline_contrasts` and `nugget`
+#'      classes and which is a tibble with found patterns in rows. The following
+#'      columns are always present:
 #'      \item{condition}{the condition of the pattern as a character string
 #'        in the form `{p1 & p2 & ... & pn}` where `p1`, `p2`, ..., `pn` are
 #'        `x`'s column names.}
@@ -190,35 +191,60 @@ dig_baseline_contrasts <- function(x,
         stop("Internal error - unknown method: ", method)
     }
 
-    dig_grid(x = x,
-             f = f,
-             condition = !!condition,
-             xvars = !!vars,
-             yvars = NULL,
-             disjoint = disjoint,
-             excluded = excluded,
-             allow = "numeric",
-             na_rm = TRUE,
-             type = "crisp",
-             min_length = min_length,
-             max_length = max_length,
-             min_support = min_support,
-             max_support = max_support,
-             max_results = max_results,
-             verbose = verbose,
-             threads = threads,
-             error_context = list(arg_x = "x",
-                                  arg_condition = "condition",
-                                  arg_xvars = "vars",
-                                  arg_yvars = "yvars",
-                                  arg_disjoint = "disjoint",
-                                  arg_excluded = "excluded",
-                                  arg_min_length = "min_length",
-                                  arg_max_length = "max_length",
-                                  arg_min_support = "min_support",
-                                  arg_max_support = "max_support",
-                                  arg_max_results = "max_results",
-                                  arg_verbose = "verbose",
-                                  arg_threads = "threads",
-                                  call = current_env()))
+    res <- dig_grid(x = x,
+                    f = f,
+                    condition = !!condition,
+                    xvars = !!vars,
+                    yvars = NULL,
+                    disjoint = disjoint,
+                    excluded = excluded,
+                    allow = "numeric",
+                    na_rm = TRUE,
+                    type = "crisp",
+                    min_length = min_length,
+                    max_length = max_length,
+                    min_support = min_support,
+                    max_support = max_support,
+                    max_results = max_results,
+                    verbose = verbose,
+                    threads = threads,
+                    error_context = list(arg_x = "x",
+                                         arg_condition = "condition",
+                                         arg_xvars = "vars",
+                                         arg_yvars = "yvars",
+                                         arg_disjoint = "disjoint",
+                                         arg_excluded = "excluded",
+                                         arg_min_length = "min_length",
+                                         arg_max_length = "max_length",
+                                         arg_min_support = "min_support",
+                                         arg_max_support = "max_support",
+                                         arg_max_results = "max_results",
+                                         arg_verbose = "verbose",
+                                         arg_threads = "threads",
+                                         call = current_env()))
+    digattr <- attributes(res)
+
+    nugget(res,
+           flavour = "baseline_contrasts",
+           call_function = "dig_baseline_contrasts",
+           call_args = list(condition = digattr$call_args$condition,
+                            vars = digattr$call_args$xvars,
+                            disjoint = digattr$call_args$disjoint,
+                            excluded = digattr$call_args$excluded,
+                            min_length = digattr$call_args$min_length,
+                            max_length = digattr$call_args$max_length,
+                            min_support = digattr$call_args$min_support,
+                            max_support = digattr$call_args$max_support,
+                            method = method,
+                            alternative = alternative,
+                            h0 = h0,
+                            conf_level = conf_level,
+                            max_p_value = max_p_value,
+                            wilcox_exact = wilcox_exact,
+                            wilcox_correct = wilcox_correct,
+                            wilcox_tol_root = wilcox_tol_root,
+                            wilcox_digits_rank = wilcox_digits_rank,
+                            max_results = digattr$call_args$max_results,
+                            verbose = digattr$call_args$verbose,
+                            threads = digattr$call_args$threads))
 }
