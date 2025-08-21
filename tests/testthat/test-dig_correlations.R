@@ -11,6 +11,8 @@ test_that("dig_correlations", {
                             condition = where(is.logical),
                             xvars = where(is.numeric),
                             yvars = where(is.numeric))
+
+    expect_true(is_nugget(res, flavour = "correlations"))
     res <- res[order(res$condition_length, res$condition), ]
 
     expect_true(is_tibble(res))
@@ -48,6 +50,8 @@ test_that("dig_correlations with NA", {
                             condition = where(is.logical),
                             xvars = where(is.numeric),
                             yvars = where(is.numeric))
+
+    expect_true(is_nugget(res, flavour = "correlations"))
     res <- res[order(res$condition_length, res$condition), ]
 
     expect_true(is_tibble(res))
@@ -78,6 +82,7 @@ test_that("dig_correlations iris", {
     dcor <- partition(iris, Species)
 
     res <- dig_correlations(dcor, max_length = 0)
+    expect_true(is_nugget(res, flavour = "correlations"))
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 6)
 
@@ -85,6 +90,7 @@ test_that("dig_correlations iris", {
                             xvars = Sepal.Length:Petal.Width,
                             yvars = Sepal.Length:Petal.Width,
                             max_length = 0)
+    expect_true(is_nugget(res, flavour = "correlations"))
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 6)
 
@@ -92,8 +98,55 @@ test_that("dig_correlations iris", {
                             xvars = Sepal.Length:Petal.Width,
                             yvars = Sepal.Length:Petal.Width,
                             condition = NULL)
+    expect_true(is_nugget(res, flavour = "correlations"))
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 6)
+})
+
+
+test_that("dig_correlations call args", {
+    set.seed(2123)
+    d <- data.frame(a = TRUE,
+                    b = c(TRUE, FALSE),
+                    x = rnorm(100),
+                    y = rnorm(100),
+                    z = rnorm(100))
+
+    res <- dig_correlations(x = d,
+                            condition = where(is.logical),
+                            xvars = x:y,
+                            yvars = y:z,
+                            disjoint = c("a", "b", "x", "y", "z"),
+                            excluded = list("a"),
+                            method = "spearman",
+                            alternative = "greater",
+                            exact = TRUE,
+                            min_length = 1L,
+                            max_length = 2L,
+                            min_support = 0.1,
+                            max_support = 0.9,
+                            max_results = 100,
+                            verbose = TRUE,
+                            threads = 1)
+    expect_true(is_nugget(res, flavour = "correlations"))
+    expect_true(is_tibble(res))
+    expect_equal(attr(res, "call_function"), "dig_correlations")
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$condition, c("a", "b"))
+    expect_equal(attr(res, "call_args")$xvars, c("x", "y"))
+    expect_equal(attr(res, "call_args")$yvars, c("y", "z"))
+    expect_equal(attr(res, "call_args")$disjoint, c("a", "b", "x", "y", "z"))
+    expect_equal(attr(res, "call_args")$excluded, list("a"))
+    expect_equal(attr(res, "call_args")$method, "spearman")
+    expect_equal(attr(res, "call_args")$alternative, "greater")
+    expect_equal(attr(res, "call_args")$exact, TRUE)
+    expect_equal(attr(res, "call_args")$min_length, 1L)
+    expect_equal(attr(res, "call_args")$max_length, 2L)
+    expect_equal(attr(res, "call_args")$min_support, 0.1)
+    expect_equal(attr(res, "call_args")$max_support, 0.9)
+    expect_equal(attr(res, "call_args")$max_results, 100)
+    expect_equal(attr(res, "call_args")$verbose, TRUE)
+    expect_equal(attr(res, "call_args")$threads, 1)
 })
 
 
