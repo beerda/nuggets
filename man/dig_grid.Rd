@@ -147,7 +147,8 @@ string
 }}
 }
 \value{
-A tibble with found patterns. Each row represents a single call of
+An S3 object, which is an instance of \code{nugget} class, and which is
+a tibble with found patterns. Each row represents a single call of
 the callback function \code{f}.
 }
 \description{

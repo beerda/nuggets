@@ -111,7 +111,8 @@
 #'      \item `arg_yvars` - the name of the argument `yvars` as a character string
 #'      \item `call` - an environment in which to evaluate the error messages.
 #'      }
-#' @return A tibble with found patterns. Each row represents a single call of
+#' @return An S3 object, which is an instance of `nugget` class, and which is
+#'      a tibble with found patterns. Each row represents a single call of
 #'      the callback function `f`.
 #' @author Michal Burda
 #' @seealso [dig()], [var_grid()]; see also [dig_correlations()] and
@@ -232,6 +233,7 @@ dig_grid <- function(x,
                      allow = allow,
                      disjoint = disjoint,
                      error_context = error_context)
+    gridattr <- attributes(grid)
 
     processF <- function(condition, support, result) {
         isnull <- sapply(result, is.null)
@@ -329,9 +331,26 @@ dig_grid <- function(x,
                                     arg_verbose = error_context$arg_verbose,
                                     arg_threads = error_context$arg_threads,
                                     call = error_context$call))
-
+    digattr <- attributes(res)
     res <- do.call(rbind, res)
 
-    as_tibble(res)
+    nugget(res,
+           flavour = NULL,
+           call_function = "dig_grid",
+           call_args = list(condition = digattr$call_args$condition,
+                            xvars = gridattr$xvars,
+                            yvars = gridattr$yvars,
+                            disjoint = digattr$call_args$disjoint,
+                            excluded = digattr$call_args$excluded,
+                            allow = allow,
+                            na_rm = na_rm,
+                            type = type,
+                            min_length = digattr$call_args$min_length,
+                            max_length = digattr$call_args$max_length,
+                            min_support = digattr$call_args$min_support,
+                            max_support = digattr$call_args$max_support,
+                            max_results = digattr$call_args$max_results,
+                            verbose = digattr$call_args$verbose,
+                            threads = digattr$call_args$threads))
 }
 

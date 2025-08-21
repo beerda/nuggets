@@ -184,7 +184,15 @@ var_grid <- function(x,
         colnames(grid) <- xvar_name
     }
 
-    as_tibble(grid)
+    res <- as_tibble(grid)
+    attr(res, "xvars") <- names(cols)[xvars]
+    if (has_yvars) {
+        attr(res, "yvars") <- names(cols)[yvars]
+    } else {
+        attr(res, "yvars") <- NULL
+    }
+
+    res
 }
 
 
