@@ -116,6 +116,22 @@
     }
 }
 
+
+.must_inherit <- function(x,
+                          clazz,
+                          null = FALSE,
+                          arg = caller_arg(x),
+                          call = caller_env()) {
+    if (!isTRUE(inherits(x, clazz) | (isTRUE(null) && is.null(x)))) {
+        na <- if (length(x) == 1 && is.na(x)) " NA" else ""
+        msg <- if (null) " or NULL" else ""
+        cli_abort(c("{.arg {arg}} must be an S3 object that inherits from {.cls {clazz}}{msg}.",
+                    "x" = "You've supplied a {.cls {class(x)}}{na}."),
+                  call = call)
+    }
+}
+
+
 .must_be_atomic_scalar <- ..must_be_type(is_scalar_atomic, "an atomic scalar")
 .must_be_integerish_scalar <- ..must_be_type(is_scalar_integerish, "an integerish scalar")
 .must_be_double_scalar <- ..must_be_type(is_scalar_double, "a double scalar")
