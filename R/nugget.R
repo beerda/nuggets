@@ -21,8 +21,10 @@ nugget <- function(x,
         x <- as_tibble(x)
     }
 
-    class(x) <- c("nugget", class(x))
-    if (!is.null(flavour)) {
+    if (!inherits(x, "nugget")) {
+        class(x) <- c("nugget", class(x))
+    }
+    if (!is.null(flavour) && !inherits(x, flavour)) {
         class(x) <- c(flavour, class(x))
     }
 
