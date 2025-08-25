@@ -20,8 +20,8 @@ Description: Extensible framework for
     them on a dataset and checks the induced sub-data for interesting statistical
     properties. A user-defined function may be defined to evaluate on each generated
     condition to search for custom patterns.
-URL: https://beerda.github.io/nuggets/, https://github.com/beerda/nuggets
-BugReports: https://github.com/beerda/nuggets/issues
+URL: https://beerda.github.io/nuggets/, https://github.com/beerda/nuggets/
+BugReports: https://github.com/beerda/nuggets/issues/
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
