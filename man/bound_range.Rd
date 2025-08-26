@@ -12,7 +12,8 @@ bound_range(x, digits = 0, na_rm = FALSE)
 \item{digits}{integer scalar specifying the number of digits
 to round the bounds to. Positive value determines the number of
 decimal points to round the bounds to. If \code{digits} is negative,
-the bounds are rounded to the nearest 10, 100, etc.}
+the bounds are rounded to the nearest 10, 100, etc. If \code{digits} is
+\code{NULL}, no rounding is performed.}
 
 \item{na_rm}{a flag indicating whether to remove \code{NA} values
 before computing the range. If \code{na_rm} is \code{TRUE}, the function

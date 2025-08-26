@@ -9,7 +9,8 @@
 #' @param digits integer scalar specifying the number of digits
 #'      to round the bounds to. Positive value determines the number of
 #'      decimal points to round the bounds to. If `digits` is negative,
-#'      the bounds are rounded to the nearest 10, 100, etc.
+#'      the bounds are rounded to the nearest 10, 100, etc. If `digits` is
+#'      `NULL`, no rounding is performed.
 #' @param na_rm a flag indicating whether to remove `NA` values
 #'      before computing the range. If `na_rm` is `TRUE`, the function
 #'      computes the range from non-`NA` values only. If `na_rm` is `FALSE`,
@@ -28,11 +29,15 @@ bound_range <- function(x,
                         digits = 0,
                         na_rm = FALSE) {
     .must_be_numeric_vector(x, null = TRUE)
-    .must_be_integerish_scalar(digits)
+    .must_be_integerish_scalar(digits, null = TRUE)
     .must_be_flag(na_rm)
 
     if (is.null(x) || length(x) == 0) {
         return(NULL)
+    }
+
+    if (is.null(digits)) {
+        return(range(x, na.rm = na_rm))
     }
 
     lo <- min(x, na.rm = na_rm)
