@@ -53,7 +53,9 @@ reference:
       - fire
       - format_condition
       - is_degree
+      - is_nugget
       - is_subset
+      - nugget
       - parse_condition
       - shorten_condition
       - values
