@@ -30,19 +30,26 @@ Language: en-US
 Depends: R (>= 4.1.0)
 Imports: 
     cli,
+    DT,
     fastmatch,
+    generics,
     ggplot2,
     grid,
+    htmltools,
     lifecycle,
     methods,
     purrr,
     Rcpp,
     rlang,
+    shiny,
+    shinyjs,
+    shinyWidgets,
     stats,
     stringr,
     tibble,
     tidyr,
-    tidyselect
+    tidyselect,
+    utils
 LinkingTo: 
     BH,
     cli,
