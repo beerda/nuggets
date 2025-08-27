@@ -29,6 +29,8 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
+      CFLAGS: "-w -Wno-stringop-overflow"
+      CXXFLAGS: "-w -Wno-stringop-overflow"
 
     steps:
       - uses: actions/checkout@v4
