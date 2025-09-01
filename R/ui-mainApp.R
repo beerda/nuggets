@@ -11,7 +11,7 @@ mainApp <- function(rules,
     detailPanel <- NULL
     if (!is.null(detailWindow)) {
         detailAction <- list(title = "show detail", icon = "magnifying-glass")
-        detailPanel <- tabPanel("Details", detailWindow$ui())
+        detailPanel <- tabPanel("Rule Detail", detailWindow$ui())
     }
 
     rulesTable <- rulesTableModule("rulesTable",
@@ -105,9 +105,7 @@ mainApp <- function(rules,
 
         if (!is.null(detailWindow)) {
             observeEvent(ruleSelection(), {
-                cat("jetu\n")
-                str(ruleSelection())
-                updateTabsetPanel(session, "mainTabset", selected = "Details")
+                updateTabsetPanel(session, "mainTabset", selected = "Rule Detail")
             })
 
             detailWindow$server(ruleSelection)

@@ -47,7 +47,7 @@ shorten_condition <- function(x,
     }
 
     parsed <- parse_condition(x)
-    predicates <- sort(unique(unlist(parsed)))
+    predicates <- unique(unlist(parsed))
 
     if (method == "letters") {
         if (length(predicates) > length(LETTERS)) {

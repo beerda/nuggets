@@ -1,8 +1,8 @@
-associationsDetailModule <- function(id, data, meta) {
+associationsDetailModule <- function(id, rules, meta, data) {
     for (i in seq_len(nrow(meta))) {
         col <- meta$short_name[i]
         if (meta$type[i] == "condition") {
-            data[[paste0("highlighted-", col)]] <- highlightCondition(data[[col]])
+            rules[[paste0("highlighted-", col)]] <- highlightCondition(rules[[col]])
         }
     }
 
@@ -12,11 +12,18 @@ associationsDetailModule <- function(id, data, meta) {
                     panel(heading = "Selected Rule",
                         uiOutput(NS(id, "selectedRule"))
                     ),
-                    panel(heading = "Settings")
+                    panel(heading = "Settings",
+                        radioButtons(NS(id, "shorteningRadio"),
+                                     "Abbreviation of predicates",
+                                     choices = c("letters", "abbrev4", "abbrev8", "none"),
+                                     selected = "letters",
+                                     inline = TRUE)
+                    )
                 ),
                 column(width = 8,
                     panel(heading = "Ancestors",
-                        tableOutput(NS(id, "ancestorTable")),
+                        dataTableOutput(NS(id, "ancestorTable")),
+                        br(),
                         plotOutput(NS(id, "ancestorPlot"), height = "500px")
                     )
                 )
@@ -25,15 +32,36 @@ associationsDetailModule <- function(id, data, meta) {
 
         server = function(selectionReactive) {
             moduleServer(id, function(input, output, session) {
-                output$selectedRule <- renderUI({
-                    cat("zde1\n")
-                    str(selectionReactive())
-
-                    id <- selectionReactive()
-                    if (is.null(id)) {
+                ancestors <- reactive({
+                    ruleId <- selectionReactive()
+                    if (is.null(ruleId) || is.null(input$shorteningRadio)) {
                         return(NULL)
                     }
-                    res <- data[data$id == id, , drop = FALSE]
+
+                    rule <- rules[rules$id == ruleId, , drop = FALSE]
+                    ante <- parse_condition(rule$antecedent)[[1]]
+                    cons <- parse_condition(rule$consequent)[[1]]
+                    res <- dig_associations(data,
+                                            antecedent = all_of(ante),
+                                            consequent = all_of(cons),
+                                            min_length = 0,
+                                            max_length = Inf,
+                                            min_coverage = 0,
+                                            min_support = 0,
+                                            min_confidence = 0,
+                                            measures = c("lift", "conviction"),
+                                            max_results = Inf)
+                    res <- res[order(res$antecedent_length), , drop = FALSE]
+
+                    res
+                })
+
+                output$selectedRule <- renderUI({
+                    ruleId <- selectionReactive()
+                    if (is.null(ruleId)) {
+                        return(NULL)
+                    }
+                    res <- rules[rules$id == ruleId, , drop = FALSE]
 
                     div(style = 'display: flex; flex-wrap: wrap; align-items: center; gap: 20px',
                         div(HTML(res[["highlighted-antecedent"]])),
@@ -41,16 +69,46 @@ associationsDetailModule <- function(id, data, meta) {
                     )
                 })
 
-                output$ancestorPlot <- renderPlot({
-                    cat("zde1\n")
-                    str(selectionReactive())
-                    id <- selectionReactive()
-                    if (is.null(id)) {
+                output$ancestorTable <- renderDataTable({
+                    res <- ancestors()
+                    if (is.null(res)) {
                         return(NULL)
                     }
 
+                    abbrev <- shorten_condition(res$antecedent, method = input$shorteningRadio)
+                    res <- formatRulesForTable(res, meta)
+                    nn <- colnames(res)
+                    res$abbrev <- highlightCondition(abbrev)
+                    res <- res[, c("abbrev", nn), drop = FALSE]
 
+                    datatable(res,
+                              options = list(paging = FALSE,
+                                             autoWidth = FALSE,
+                                             searching = FALSE,
+                                             scrollX = TRUE,
+                                             info = FALSE),
+                              escape = FALSE,
+                              rownames = FALSE,
+                              selection = "none",
+                              filter = "none")
                 })
+
+                output$ancestorPlot <- renderPlot({
+                    res <- ancestors()
+                    if (is.null(res)) {
+                        return(NULL)
+                    }
+
+                    res$abbrev <- shorten_condition(res$antecedent, method = input$shorteningRadio)
+                    res$label = paste(res$abbrev,
+                                      "\nconf:",
+                                      format(round(res$confidence, 2), nsmall = 2))
+
+                    ggplot(res) +
+                        aes(condition = antecedent, fill = confidence, linewidth = confidence, size = coverage, label = label) +
+                        geom_diamond(nudge_y = 0.25) +
+                        scale_x_continuous(expand = expansion(mult = c(0, 0), add = c(0.5, 0.5)))
+                }, res = 96)
             })
         }
     )

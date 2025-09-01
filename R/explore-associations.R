@@ -8,8 +8,9 @@
 #'     immediately.
 #' @author Michal Burda
 #' @export
-explore.associations <- function(x, ...) {
+explore.associations <- function(x, data = NULL, ...) {
     .must_inherit(x, "associations")
+    .must_be_data_frame(data, null = TRUE)
 
     x$id <- seq_len(nrow(x))
 
@@ -26,8 +27,13 @@ explore.associations <- function(x, ...) {
         "antecedent_length", "len",        "Antecedent Length",  "integer",   NA
     )
 
+    detailModule <- associationsDetailModule(id = "details",
+                                             rules = x,
+                                             meta = meta,
+                                             data = data)
+
     mainApp(x,
             title = "Associations",
             meta = meta,
-            detailWindow = associationsDetailModule("details", x, meta))
+            detailWindow = detailModule)
 }
