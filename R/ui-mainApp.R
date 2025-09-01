@@ -8,7 +8,14 @@ mainApp <- function(data,
 
     title <- paste0(title, " - Nuggets Explorer")
 
-    rulesTable <- rulesTableModule("rulesTable", data, meta)
+    rulesTable <- rulesTableModule("rulesTable",
+                                   data = data,
+                                   meta = meta,
+                                   actions = list(
+                                       list(title = "show detail",
+                                            icon = "magnifying-glass",
+                                            action = "showDetailButton")
+                                   ))
 
     filters <- lapply(seq_len(nrow(meta)), function(i) {
         col <- meta$data_name[i]
@@ -60,10 +67,14 @@ mainApp <- function(data,
                         panel(heading = "Filter", filterTabSet)
                     ),
                     column(width = 8,
-                        panel(heading = "Filtered Rules", rulesTable$ui())
+                        verticalLayout(
+                            panel(heading = "Filtered Rules", rulesTable$ui()),
+                            panel(heading = "Selected Rule Detail", "ased")
+                        )
                     )
                 )
             ),
+            tabPanel("Details"),
             tabPanel("About",
                 fluidRow(
                     column(width = 6, offset = 3,
@@ -85,13 +96,26 @@ mainApp <- function(data,
             lapply(filters, function(f) f$reset(session))
         })
 
-        selection <- reactive({
+        rulesSelection <- reactive({
             sel <- lapply(filters, function(f) f$filter(input))
 
             Reduce(`&`, sel)
         })
 
-        rulesTable$server(selection)
+        selectedId <- rulesTable$server(rulesSelection)
+
+        observeEvent(selectedId(), {
+            cat("jetu\n")
+            str(selectedId())
+            showModal(
+                modalDialog(
+                    title = "My modal window",
+                    "This window was hidden at the beginning and only shown after the button was clicked.",
+                    easyClose = TRUE,
+                    footer = modalButton("Close")
+                )
+            )
+        })
     }
 
     shinyApp(ui = ui, server = server)
