@@ -11,6 +11,8 @@
 explore.associations <- function(x, ...) {
     .must_inherit(x, "associations")
 
+    x$id <- seq_len(nrow(x))
+
     meta <- tribble(
         ~data_name,          ~short_name,  ~long_name,           ~type,       ~round,
         "antecedent",        "antecedent", "Antecedent",         "condition", NA,
@@ -26,5 +28,6 @@ explore.associations <- function(x, ...) {
 
     mainApp(x,
             title = "Associations",
-            meta = meta)
+            meta = meta,
+            detailWindow = associationsDetailModule("details", x, meta))
 }

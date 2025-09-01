@@ -1,32 +1,34 @@
-mainApp <- function(data,
+mainApp <- function(rules,
                     title,
-                    meta) {
+                    meta,
+                    detailWindow = NULL) {
     # to show special numeric values (such as Inf) in DT
     options(htmlwidgets.TOJSON_ARGS = list(na = 'string'))
 
-    data$id <- seq_len(nrow(data))
-
     title <- paste0(title, " - Nuggets Explorer")
 
+    detailAction <- NULL
+    detailPanel <- NULL
+    if (!is.null(detailWindow)) {
+        detailAction <- list(title = "show detail", icon = "magnifying-glass")
+        detailPanel <- tabPanel("Details", detailWindow$ui())
+    }
+
     rulesTable <- rulesTableModule("rulesTable",
-                                   data = data,
+                                   rules = rules,
                                    meta = meta,
-                                   actions = list(
-                                       list(title = "show detail",
-                                            icon = "magnifying-glass",
-                                            action = "showDetailButton")
-                                   ))
+                                   action = detailAction)
 
     filters <- lapply(seq_len(nrow(meta)), function(i) {
         col <- meta$data_name[i]
         if (meta$type[i] == "condition") {
             return(conditionFilterModule(id = paste0(col, "FilterModule"),
-                                         x = data[[col]],
+                                         x = rules[[col]],
                                          meta = meta[i, , drop = FALSE],
                                          resetAllEvent = "resetAllEvent"))
         } else if (meta$type[i] == "numeric" || meta$type[i] == "integer") {
             return(numericFilterModule(id = paste0(col, "FilterModule"),
-                                       x = data[[col]],
+                                       x = rules[[col]],
                                        meta = meta[i, , drop = FALSE],
                                        resetAllEvent = "resetAllEvent"))
         } else {
@@ -67,14 +69,11 @@ mainApp <- function(data,
                         panel(heading = "Filter", filterTabSet)
                     ),
                     column(width = 8,
-                        verticalLayout(
-                            panel(heading = "Filtered Rules", rulesTable$ui()),
-                            panel(heading = "Selected Rule Detail", "ased")
-                        )
+                        panel(heading = "Filtered Rules", rulesTable$ui())
                     )
                 )
             ),
-            tabPanel("Details"),
+            detailPanel,
             tabPanel("About",
                 fluidRow(
                     column(width = 6, offset = 3,
@@ -96,26 +95,23 @@ mainApp <- function(data,
             lapply(filters, function(f) f$reset(session))
         })
 
-        rulesSelection <- reactive({
+        rulesFiltering <- reactive({
             sel <- lapply(filters, function(f) f$filter(input))
 
             Reduce(`&`, sel)
         })
 
-        selectedId <- rulesTable$server(rulesSelection)
+        ruleSelection <- rulesTable$server(rulesFiltering)
 
-        observeEvent(selectedId(), {
-            cat("jetu\n")
-            str(selectedId())
-            showModal(
-                modalDialog(
-                    title = "My modal window",
-                    "This window was hidden at the beginning and only shown after the button was clicked.",
-                    easyClose = TRUE,
-                    footer = modalButton("Close")
-                )
-            )
-        })
+        if (!is.null(detailWindow)) {
+            observeEvent(ruleSelection(), {
+                cat("jetu\n")
+                str(ruleSelection())
+                updateTabsetPanel(session, "mainTabset", selected = "Details")
+            })
+
+            detailWindow$server(ruleSelection)
+        }
     }
 
     shinyApp(ui = ui, server = server)
