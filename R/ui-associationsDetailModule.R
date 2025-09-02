@@ -69,7 +69,7 @@ associationsDetailModule <- function(id, rules, meta, data) {
                     )
                 })
 
-                output$ancestorTable <- renderDataTable({
+                output$ancestorTable <- renderDT({
                     res <- ancestors()
                     if (is.null(res)) {
                         return(NULL)
