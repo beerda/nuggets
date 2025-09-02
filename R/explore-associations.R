@@ -27,13 +27,29 @@ explore.associations <- function(x, data = NULL, ...) {
         "antecedent_length", "len",        "Antecedent Length",  "integer",   NA
     )
 
-    detailModule <- associationsDetailModule(id = "details",
-                                             rules = x,
-                                             meta = meta,
-                                             data = data)
+    header <- NULL
+    detailModule <- NULL
+    if (is.null(data)) {
+        header <- infoBox(status = "warning",
+                          dismissible = TRUE,
+                          div("You started the explorer with rules only.",
+                              "Some advanced features are disabled.",
+                              "To enable full functionality, run",
+                              br(),
+                              span(style = 'font-family: "Courier New", Courier, monospace;',
+                                "explore(rules, data)"),
+                              br(),
+                              "with the original dataset used to mine the rules."))
+    } else {
+        detailModule <- associationsDetailModule(id = "details",
+                                                 rules = x,
+                                                 meta = meta,
+                                                 data = data)
+    }
 
     mainApp(x,
             title = "Associations",
             meta = meta,
+            header = header,
             detailWindow = detailModule)
 }
