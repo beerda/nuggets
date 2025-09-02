@@ -74,6 +74,7 @@
 #' @importFrom shiny updateRadioButtons
 #' @importFrom shiny updateSliderInput
 #' @importFrom shinyjs useShinyjs
+#' @importFrom shinyWidgets alert
 #' @importFrom shinyWidgets create_tree
 #' @importFrom shinyWidgets panel
 #' @importFrom shinyWidgets treeInput

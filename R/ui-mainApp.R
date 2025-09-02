@@ -51,7 +51,7 @@ mainApp <- function(rules,
             tags$style('div.tab-pane {padding-top: 10px;}'),
 
             # info box
-            tags$style('div.info-box {display: flex; align-items: center; gap: 10px; padding: 10px; background-color: #d9edf7; margin-bottom: 10px; color: #31708f; border-radius: 3px;}'),
+            tags$style('div.info-box {display: flex; align-items: center; gap: 10px;}'),
 
             # info table
             tags$style('table.info-table {border: none;}'),

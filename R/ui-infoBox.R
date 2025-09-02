@@ -1,7 +1,14 @@
-infoBox <- function(...) {
-    text <- paste(..., sep = "")
-    div(class = "info-box",
-        icon("info-circle", class = "info-icon"),
-        span(text, class = "info-text")
-    )
+infoBox <- function(...,
+                    status = c("info", "success", "danger", "warning"),
+                    dismissible = FALSE) {
+    status <- match.arg(status)
+    ico <- switch(status,
+                  info = "info-circle",
+                  success = "check-circle",
+                  danger = "times-circle",
+                  warning = "exclamation-triangle")
+
+    alert(status = match.arg(status),
+          dismissible = dismissible,
+          div(class = "info-box", icon(ico), span(...)))
 }
