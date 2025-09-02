@@ -35,10 +35,8 @@ explore.associations <- function(x, data = NULL, ...) {
                           div("You started the explorer with rules only.",
                               "Some advanced features are disabled.",
                               "To enable full functionality, run",
-                              br(),
-                              span(style = 'font-family: "Courier New", Courier, monospace;',
+                              span(class = "mono",
                                 "explore(rules, data)"),
-                              br(),
                               "with the original dataset used to mine the rules."))
     } else {
         detailModule <- associationsDetailModule(id = "details",

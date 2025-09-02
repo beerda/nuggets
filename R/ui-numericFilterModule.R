@@ -61,8 +61,8 @@ numericFilterModule <- function(id,
             }
 
             tabPanel(meta$long_name,
-                infoBox("Filter the rules by choosing a range of values for ",
-                        tolower(meta$long_name), "."),
+                infoBox(paste0("Filter the rules by choosing a range of values for ",
+                               tolower(meta$long_name), ".")),
                 tableOutput(NS(id, "summaryTable")),
                 plotOutput(NS(id, "histogramPlot")),
                 sliderInput(NS(id, "slider"),

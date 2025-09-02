@@ -51,6 +51,8 @@ mainApp <- function(rules,
             tags$style('span.pred_n {color: darkblue;}'),
             tags$style('span.pred_v {color: green;}'),
 
+            tags$style('.mono {font-family: "Courier New", Courier, monospace;}'),
+
             # padding for tab content
             tags$style('div.tab-pane {padding-top: 10px;}'),
 
