@@ -1,6 +1,8 @@
 mainApp <- function(rules,
                     title,
                     meta,
+                    header = NULL,
+                    footer = NULL,
                     detailWindow = NULL) {
     # to show special numeric values (such as Inf) in DT
     options(htmlwidgets.TOJSON_ARGS = list(na = 'string'))
@@ -11,7 +13,9 @@ mainApp <- function(rules,
     detailPanel <- NULL
     if (!is.null(detailWindow)) {
         detailAction <- list(title = "show detail", icon = "magnifying-glass")
-        detailPanel <- tabPanel("Rule Detail", detailWindow$ui())
+        detailPanel <- tabPanel("Rule Detail",
+                                icon = icon("magnifying-glass"),
+                                detailWindow$ui())
     }
 
     rulesTable <- rulesTableModule("rulesTable",
@@ -63,7 +67,9 @@ mainApp <- function(rules,
         navbarPage(title = span(icon("gem"), title),
                    id = "mainTabset",
                    windowTitle = title,
-            tabPanel("Rules",
+                   header = header,
+                   footer = footer,
+            tabPanel("Rules", icon = icon("table"),
                 fluidRow(
                     column(width = 4,
                         panel(heading = "Filter", filterTabSet)
@@ -74,7 +80,7 @@ mainApp <- function(rules,
                 )
             ),
             detailPanel,
-            tabPanel("About",
+            tabPanel("About", icon = icon("circle-info"),
                 fluidRow(
                     column(width = 6, offset = 3,
                         panel(heading = "About the app",
