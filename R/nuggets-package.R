@@ -8,6 +8,7 @@
 #' @importFrom DT renderDT
 #' @importFrom fastmatch fmatch
 #' @importFrom generics explore
+#' @importFrom ggplot2 .data
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 draw_key_point
 #' @importFrom ggplot2 expansion
