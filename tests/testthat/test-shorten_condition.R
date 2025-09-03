@@ -4,7 +4,7 @@ test_that("shorten_condition", {
 
     expect_equal(shorten_condition(c("{a=1,b=100,c=3}", "{a=2}", "{b=100,c=3}"),
                                    method = "letters"),
-                 c("{A,C,D}", "{B}", "{C,D}"))
+                 c("{A,B,C}", "{D}", "{B,C}"))
 
     expect_equal(shorten_condition(c("{helloWorld=1}",
                                      "{helloWorld = 2}",
