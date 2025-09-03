@@ -53,7 +53,7 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'associations'</span></span>
-<span><span class="fu"><a href="https://generics.r-lib.org/reference/explore.html" class="external-link">explore</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://generics.r-lib.org/reference/explore.html" class="external-link">explore</a></span><span class="op">(</span><span class="va">x</span>, data <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -63,6 +63,12 @@
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>An object of class <code>associations</code>, typically created with
 <code><a href="dig_associations.html">dig_associations()</a></code>.</p></dd>
+
+
+<dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
+<dd><p>An optional data frame containing the original dataset used to
+mine the rules. Providing this dataset enables additional features in the
+explorer.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
