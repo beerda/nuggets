@@ -4,7 +4,7 @@
 
 #include "../common.h"
 #include "Config.h"
-//#include "CombinatorialProgress.h"
+#include "CombinatorialProgress.h"
 #include "ChainCollection.h"
 #include "Selector.h"
 #include "TautologyTree.h"
@@ -22,8 +22,8 @@ public:
           config(config),
           initialCollection(data, isCondition, isFocus),
           predicateSums(data.size() + 1),
-          tree(initialCollection)
-          //progress(nullptr)
+          tree(initialCollection),
+          progress(nullptr)
     {
         for (const CHAIN& chain : initialCollection) {
             size_t id = chain.getClause().back();
@@ -56,13 +56,13 @@ public:
             }
         }
 
-        //progress = new CombinatorialProgress(config.getMaxLength(),
-                                             //filteredCollection.conditionCount());
+        progress = new CombinatorialProgress(config.getMaxLength(),
+                                             filteredCollection.conditionCount());
         {
-            //auto batch = progress->createBatch(0, filteredCollection.conditionCount());
+            auto batch = progress->createBatch(0, filteredCollection.conditionCount());
             processChildrenChains(emptyChain, filteredCollection);
         }
-        //delete progress;
+        delete progress;
     }
 
 private:
@@ -71,15 +71,15 @@ private:
     ChainCollection<CHAIN> initialCollection;
     vector<float> predicateSums;
     TautologyTree<CHAIN> tree;
-    //CombinatorialProgress* progress;
+    CombinatorialProgress* progress;
 
     void processChains(ChainCollection<CHAIN>& collection)
     {
         for (size_t i = 0; i < collection.conditionCount(); ++i) {
             ChainCollection<CHAIN> childCollection;
             CHAIN& chain = collection[i];
-            //auto batch = progress->createBatch(chain.getClause().size(),
-                                               //collection.conditionCount() - i - 1);
+            auto batch = progress->createBatch(chain.getClause().size(),
+                                               collection.conditionCount() - i - 1);
 
             tree.updateDeduction(chain);
             if (chain.deducesItself())
@@ -110,7 +110,7 @@ private:
                     storage.store(chain, childCollection, selector, predicateSums);
                 }
             }
-            //progress->increment(1);
+            progress->increment(1);
             if (isExtendable(chain)) {
                 processChains(childCollection);
             }
