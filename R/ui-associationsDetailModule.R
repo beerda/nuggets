@@ -105,7 +105,11 @@ associationsDetailModule <- function(id, rules, meta, data) {
                                       format(round(res$confidence, 2), nsmall = 2))
 
                     ggplot(res) +
-                        aes(condition = antecedent, fill = confidence, linewidth = confidence, size = coverage, label = label) +
+                        aes(condition = .data$antecedent,
+                            fill = .data$confidence,
+                            linewidth = .data$confidence,
+                            size = .data$coverage,
+                            label = .data$label) +
                         geom_diamond(nudge_y = 0.25) +
                         scale_x_continuous(expand = expansion(mult = c(0, 0), add = c(0.5, 0.5)))
                 }, res = 96)

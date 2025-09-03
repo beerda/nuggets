@@ -2,6 +2,9 @@
 #'
 #' @param x An object of class `associations`, typically created with
 #'     [dig_associations()].
+#' @param data An optional data frame containing the original dataset used to
+#'     mine the rules. Providing this dataset enables additional features in the
+#'     explorer.
 #' @param ... Currently ignored.
 #' @return An object of class `shiny.appobj` representing the Shiny application.
 #'     If printed in an interactive R session, the application will be run

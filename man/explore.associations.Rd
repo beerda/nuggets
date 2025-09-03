@@ -4,11 +4,15 @@
 \alias{explore.associations}
 \title{Show interactive application to explore association rules}
 \usage{
-\method{explore}{associations}(x, ...)
+\method{explore}{associations}(x, data = NULL, ...)
 }
 \arguments{
 \item{x}{An object of class \code{associations}, typically created with
 \code{\link[=dig_associations]{dig_associations()}}.}
+
+\item{data}{An optional data frame containing the original dataset used to
+mine the rules. Providing this dataset enables additional features in the
+explorer.}
 
 \item{...}{Currently ignored.}
 }
