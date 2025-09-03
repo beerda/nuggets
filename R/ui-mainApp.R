@@ -82,6 +82,14 @@ mainApp <- function(rules,
                 )
             ),
             detailPanel,
+            tabPanel("Metadata", icon = icon("gear"),
+                fluidRow(
+                    column(width = 8, offset = 2,
+                        panel(heading = "Rulebase", rulebaseTable(rules)),
+                        panel(heading = "Creation Details", creationParamsTable(rules))
+                    )
+                )
+            ),
             tabPanel("About", icon = icon("circle-info"),
                 fluidRow(
                     column(width = 6, offset = 3,
