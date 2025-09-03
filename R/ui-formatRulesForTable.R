@@ -10,13 +10,12 @@ formatRulesForTable <- function(rules, meta) {
         }
     }
 
-    if (is.null(rules$id)) {
-        rules <- rules[, meta$data_name, drop = FALSE]
-        colnames(rules) <- meta$short_name
-    } else {
+    if ("id" %in% colnames(rules)) {
         rules <- rules[, c("id", meta$data_name), drop = FALSE]
         colnames(rules) <- c("id", meta$short_name)
-
+    } else {
+        rules <- rules[, meta$data_name, drop = FALSE]
+        colnames(rules) <- meta$short_name
     }
 
     rules

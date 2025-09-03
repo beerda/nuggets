@@ -1,10 +1,10 @@
 creationParamsTable <- function(rules) {
     aa <- attributes(rules)
-    fun <- paste0("[",
+    fun <- paste0("Generated using the function [",
                   aa$call_function,
                   "()](https://beerda.github.io/nuggets/reference/",
                   aa$call_function,
-                  ".html)")
+                  ".html) with the following parameters:")
     fun <- markdown(fun)
 
     args <- lapply(aa$call_args, function(x) {
