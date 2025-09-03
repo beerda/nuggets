@@ -33,7 +33,7 @@ public:
     // half of the maximum number of additions of MAX_VALUE before it overflows DBL_BLOCK_MASK
     constexpr static BASE_TYPE STEP = DBL_BLOCK_MASK / MAX_VALUE / 2;
 
-    constexpr static float LOG_BASE = pow(1.0 * MAX_VALUE, (-1.0) / (MAX_VALUE - 1));
+    static inline const float LOG_BASE = pow(1.0 * MAX_VALUE, (-1.0) / (MAX_VALUE - 1));
 
     static inline const BASE_TYPE OVERFLOW_MASK = []() {
         BASE_TYPE mask = 1 << (BLOCK_SIZE - 1);
