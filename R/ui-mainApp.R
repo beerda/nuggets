@@ -14,6 +14,7 @@ mainApp <- function(rules,
     if (!is.null(detailWindow)) {
         detailAction <- list(title = "show detail", icon = "magnifying-glass")
         detailPanel <- tabPanel("Rule Detail",
+                                value = "rule-detail-tab",
                                 icon = icon("magnifying-glass"),
                                 detailWindow$ui())
     }
@@ -74,7 +75,12 @@ mainApp <- function(rules,
             tabPanel("Rules", icon = icon("table"),
                 fluidRow(
                     column(width = 4,
-                        panel(heading = "Filter", filterTabSet)
+                        panel(heading = "Filter",
+                            tabsetPanel(
+                                tabPanel("Basic", filterTabSet),
+                                tabPanel("Advanced")
+                            )
+                        )
                     ),
                     column(width = 8,
                         panel(heading = "Filtered Rules", rulesTable$ui())
@@ -121,8 +127,13 @@ mainApp <- function(rules,
 
         if (!is.null(detailWindow)) {
             observeEvent(ruleSelection(), {
-                updateTabsetPanel(session, "mainTabset", selected = "Rule Detail")
-            })
+                if (is.null(ruleSelection())) {
+                    hide(selector = '#mainTabset a[data-value="rule-detail-tab"]')
+                } else {
+                    show(selector = '#mainTabset a[data-value="rule-detail-tab"]')
+                    updateTabsetPanel(session, "mainTabset", selected = "rule-detail-tab")
+                }
+            }, ignoreNULL = FALSE)
 
             detailWindow$server(ruleSelection)
         }
