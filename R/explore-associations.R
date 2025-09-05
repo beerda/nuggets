@@ -18,16 +18,16 @@ explore.associations <- function(x, data = NULL, ...) {
     x$id <- seq_len(nrow(x))
 
     meta <- tribble(
-        ~data_name,          ~short_name,  ~long_name,           ~type,       ~round,
-        "antecedent",        "antecedent", "Antecedent",         "condition", NA,
-        "consequent",        "consequent", "Consequent",         "condition", NA,
-        "coverage",          "asupp",      "Antecedent Support", "numeric",   2,
-        "conseq_support",    "csupp",      "Consequent Support", "numeric",   2,
-        "support",           "supp",       "Rule Support",       "numeric",   2,
-        "confidence",        "conf",       "Confidence",         "numeric",   2,
-        "lift",              "lift",       "Lift",               "numeric",   2,
-        "conviction",        "conv",       "Conviction",         "numeric",   2,
-        "antecedent_length", "len",        "Antecedent Length",  "integer",   NA
+        ~data_name,          ~short_name,  ~long_name,           ~type,       ~round, ~scatter,
+        "antecedent",        "antecedent", "Antecedent",         "condition", NA,     FALSE,
+        "consequent",        "consequent", "Consequent",         "condition", NA,     FALSE,
+        "coverage",          "asupp",      "Antecedent Support", "numeric",   2,      FALSE,
+        "conseq_support",    "csupp",      "Consequent Support", "numeric",   2,      FALSE,
+        "support",           "supp",       "Rule Support",       "numeric",   2,      TRUE,
+        "confidence",        "conf",       "Confidence",         "numeric",   2,      TRUE,
+        "lift",              "lift",       "Lift",               "numeric",   2,      TRUE,
+        "conviction",        "conv",       "Conviction",         "numeric",   2,      TRUE,
+        "antecedent_length", "len",        "Antecedent Length",  "integer",   NA,     FALSE
     )
 
     header <- NULL
