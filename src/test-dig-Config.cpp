@@ -58,8 +58,8 @@ context("dig/Config.h") {
         expect_true(c.getNrow() == 600);
         expect_true(c.getThreads() == 2);
         expect_true(c.getMinLength() == 3);
-        expect_true(c.getMaxLength() == INT_MAX);
-        expect_true(c.getMaxResults() == INT_MAX);
+        expect_true(c.getMaxLength() == SIZE_MAX);
+        expect_true(c.getMaxResults() == SIZE_MAX);
         expect_true(c.getMinSupport() == 0.5);
         expect_true(c.getMinSum() == 300);
         expect_true(c.getMinFocusSupport() == 0.6f);

@@ -7,36 +7,67 @@
 class Config {
 public:
     Config(List configuration, CharacterVector namesVector)
-        : nrow(as<IntegerVector>(configuration["nrow"])[0]),
-          threads(as<IntegerVector>(configuration["threads"])[0]),
-          minLength(as<IntegerVector>(configuration["minLength"])[0]),
-          maxLength(as<IntegerVector>(configuration["maxLength"])[0]),
-          maxResults(as<IntegerVector>(configuration["maxResults"])[0]), // -1 means infinite
-
-          minSupport(as<NumericVector>(configuration["minSupport"])[0]),
-          minSum(minSupport * nrow),
-
-          minFocusSupport(as<NumericVector>(configuration["minFocusSupport"])[0]),
-          minFocusSum(minFocusSupport * nrow),
-
-          minConditionalFocusSupport(as<NumericVector>(configuration["minConditionalFocusSupport"])[0]),
-
-          maxSupport(as<NumericVector>(configuration["maxSupport"])[0]),
-          maxSum(maxSupport * nrow),
-
-          tNorm(parseTNorm(configuration["tNorm"])),
-          excluded(as<List>(configuration["excluded"])),
-          disjoint(),
-          chainNames(),
-          filterEmptyFoci(as<LogicalVector>(configuration["filterEmptyFoci"])[0]),
-          verbose(as<LogicalVector>(configuration["verbose"])[0])
     {
-        if (maxLength < 0) {
-            maxLength = INT_MAX;
-        }
-        if (maxResults < 0) {
-            maxResults = INT_MAX;
-        }
+        int nrow_i = as<IntegerVector>(configuration["nrow"])[0];
+        if (nrow_i < 0)
+            throw invalid_argument("nrow must be non-negative");
+        else
+            nrow = static_cast<size_t>(nrow_i);
+
+        int threads_i = as<IntegerVector>(configuration["threads"])[0];
+        if (threads_i < 0)
+            throw invalid_argument("threads must be non-negative");
+        else
+            threads = static_cast<size_t>(threads_i);
+
+        int minLength_i = as<IntegerVector>(configuration["minLength"])[0];
+        if (minLength_i < 0)
+            throw invalid_argument("minLength must be non-negative");
+        else
+            minLength = static_cast<size_t>(minLength_i);
+
+        int maxLength_i = as<IntegerVector>(configuration["maxLength"])[0];
+        if (maxLength < 0)
+            maxLength = SIZE_MAX;
+        else
+            maxLength = static_cast<size_t>(maxLength_i);
+
+        int maxResults_i = as<IntegerVector>(configuration["maxResults"])[0];
+        if (maxResults < 0)
+            maxResults = SIZE_MAX;
+        else
+            maxResults = static_cast<size_t>(maxResults_i);
+
+        minSupport = as<NumericVector>(configuration["minSupport"])[0];
+        if (minSupport < 0.0f || minSupport > 1.0f)
+            throw invalid_argument("minSupport must be in the range [0, 1]");
+
+        minSum = minSupport * nrow;
+
+        minFocusSupport = as<NumericVector>(configuration["minFocusSupport"])[0];
+        if (minFocusSupport < 0.0f || minFocusSupport > 1.0f)
+            throw invalid_argument("minFocusSupport must be in the range [0, 1]");
+
+        minFocusSum = minFocusSupport * nrow;
+
+        minConditionalFocusSupport = as<NumericVector>(configuration["minConditionalFocusSupport"])[0];
+        if (minConditionalFocusSupport < 0.0f || minConditionalFocusSupport > 1.0f)
+            throw invalid_argument("minConditionalFocusSupport must be in the range [0, 1]");
+
+        maxSupport = as<NumericVector>(configuration["maxSupport"])[0];
+        if (maxSupport < 0.0f || maxSupport > 1.0f)
+            throw invalid_argument("maxSupport must be in the range [0, 1]");
+
+        maxSum = maxSupport * nrow;
+
+        tNorm = parseTNorm(configuration["tNorm"]);
+
+        excluded = as<List>(configuration["excluded"]);
+
+        filterEmptyFoci = as<LogicalVector>(configuration["filterEmptyFoci"])[0];
+
+        verbose = as<LogicalVector>(configuration["verbose"])[0];
+
         parseArguments(configuration["arguments"]);
 
         IntegerVector disjVec = configuration["disjoint"];
@@ -106,19 +137,19 @@ public:
     const List getExcluded() const
     { return excluded; }
 
-    int getNrow() const
+    size_t getNrow() const
     { return nrow; }
 
-    int getThreads() const
+    size_t getThreads() const
     { return threads; }
 
-    int getMinLength() const
+    size_t getMinLength() const
     { return minLength; }
 
-    int getMaxLength() const
+    size_t getMaxLength() const
     { return maxLength; }
 
-    int getMaxResults() const
+    size_t getMaxResults() const
     { return maxResults; }
 
     float getMinSupport() const
@@ -149,11 +180,11 @@ public:
     { return chainNames[i]; }
 
 private:
-    int nrow;
-    int threads;
-    int minLength;
-    int maxLength;
-    int maxResults; // -1 means infinite
+    size_t nrow;
+    size_t threads;
+    size_t minLength;
+    size_t maxLength;
+    size_t maxResults;
     float minSupport;
     float minSum;
     float minFocusSupport;
