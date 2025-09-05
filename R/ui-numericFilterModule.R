@@ -74,6 +74,7 @@ numericFilterModule <- function(id,
                             round = FALSE,
                             width = "100%"),
                 specialCheckboxInput,
+                hr(),
                 actionButton(NS(id, "resetButton"), "Reset"),
                 actionButton(resetAllEvent, "Reset all")
             )

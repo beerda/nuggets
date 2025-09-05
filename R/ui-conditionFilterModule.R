@@ -74,6 +74,7 @@ conditionFilterModule <- function(id,
                              choiceNames = c("all selected predicates", "at least one selected predicate"),
                              choiceValues = c("all", "any"),
                              selected = "all"),
+                hr(),
                 actionButton(NS(id, "resetButton"), "Reset"),
                 actionButton(resetAllEvent, "Reset all")
             )

@@ -12,7 +12,7 @@ mainApp <- function(rules,
     detailAction <- NULL
     detailPanel <- NULL
     if (!is.null(detailWindow)) {
-        detailAction <- list(title = "show detail", icon = "magnifying-glass")
+        detailAction <- list(title = "show detailed analysis of the rule", icon = "magnifying-glass")
         detailPanel <- tabPanel("Rule Detail",
                                 value = "rule-detail-tab",
                                 icon = icon("magnifying-glass"),
@@ -45,6 +45,11 @@ mainApp <- function(rules,
                             c(list(type = "pills", header = tags$hr()),
                               lapply(filters, function(f) f$ui())))
 
+    scatterFilter <- scatterFilterModule(id = "scatterFilterModule",
+                                         rules = rules,
+                                         meta = meta,
+                                         resetAllEvent = "resetAllEvent")
+    filters <- c(filters, list(scatterFilter))
 
     ui <- tagList(
         tags$head(
@@ -75,10 +80,14 @@ mainApp <- function(rules,
             tabPanel("Rules", icon = icon("table"),
                 fluidRow(
                     column(width = 4,
-                        panel(heading = "Filter",
+                        panel(heading = "Filters",
                             tabsetPanel(
                                 tabPanel("Basic", filterTabSet),
-                                tabPanel("Advanced")
+                                tabPanel("Advanced",
+                                    tabsetPanel(type = "pills", header = tags$hr(),
+                                        scatterFilter$ui()
+                                    )
+                                )
                             )
                         )
                     ),
