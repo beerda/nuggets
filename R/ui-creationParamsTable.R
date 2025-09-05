@@ -11,20 +11,6 @@ creationParamsTable <- function(rules) {
         markdown(paste0("```r\n",
                         paste(deparse(x), collapse = ""),
                         "\n```"))
-        #if (is.character(x)) {
-            #x <- paste0('"', x, '"')
-        #} else if (is.numeric(x)) {
-            #x <- format(x, scientific = FALSE)
-        #} else if (is.logical(x)) {
-            #x <- if (x) "TRUE" else "FALSE"
-        #} else if (is.null(x)) {
-            #x <- "NULL"
-        #} else if (is.symbol(x)) {
-            #x <- as.character(x)
-        #} else {
-            #x <- paste0("`", class(x)[1], "`")
-        #}
-        #paste(x, collapse = ", ")
     })
     names(args) <- names(aa$call_args)
 
