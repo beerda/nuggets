@@ -8,27 +8,24 @@ associationsDetailModule <- function(id, rules, meta, data) {
 
     list(ui = function() {
             tagList(
-                shinyjs::hidden(textInput(NS(id, "selectedRule"), NULL, value = -1)),
-                conditionalPanel(condition = paste0('input["', NS(id, "selectedRule"), '"] != -1'),
-                    fluidRow(
-                        column(width = 4,
-                            panel(heading = "Selected Rule",
-                                uiOutput(NS(id, "selectedRule"))
-                            ),
-                            panel(heading = "Settings",
-                                radioButtons(NS(id, "shorteningRadio"),
-                                             "Abbreviation of predicates",
-                                             choices = c("letters", "abbrev4", "abbrev8", "none"),
-                                             selected = "letters",
-                                             inline = TRUE)
-                            )
+                fluidRow(
+                    column(width = 4,
+                        panel(heading = "Selected Rule",
+                            uiOutput(NS(id, "selectedRule"))
                         ),
-                        column(width = 8,
-                            panel(heading = "Ancestors",
-                                dataTableOutput(NS(id, "ancestorTable")),
-                                br(),
-                                plotOutput(NS(id, "ancestorPlot"), height = "500px")
-                            )
+                        panel(heading = "Settings",
+                            radioButtons(NS(id, "shorteningRadio"),
+                                         "Abbreviation of predicates",
+                                         choices = c("letters", "abbrev4", "abbrev8", "none"),
+                                         selected = "letters",
+                                         inline = TRUE)
+                        )
+                    ),
+                    column(width = 8,
+                        panel(heading = "Ancestors",
+                            dataTableOutput(NS(id, "ancestorTable")),
+                            br(),
+                            plotOutput(NS(id, "ancestorPlot"), height = "500px")
                         )
                     )
                 )
@@ -37,11 +34,6 @@ associationsDetailModule <- function(id, rules, meta, data) {
 
         server = function(selectionReactive) {
             moduleServer(id, function(input, output, session) {
-                observeEvent(selectionReactive(), {
-                    ruleId <- selectionReactive()
-                    updateTextInput(session, "selectedRule", value = ruleId)
-                })
-
                 ancestors <- reactive({
                     ruleId <- selectionReactive()
                     if (is.null(ruleId) || is.null(input$shorteningRadio)) {
