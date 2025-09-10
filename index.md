@@ -83,11 +83,7 @@ rules <- dig_associations(cars,
                           max_length = 4,
                           min_support = 0.1,
                           measures = c("lift", "conviction"))
-```
 
-Discovered rules can be inspected interactively:
-
-``` r
 # Explore the found rules interactively
 explore(rules, cars)
 ```

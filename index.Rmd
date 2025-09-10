@@ -80,7 +80,7 @@ library(nuggets)
 The following example demonstrates how to use `nuggets` to find association rules
 in the built-in `mtcars` dataset:
 
-```{r}
+```{r, eval=FALSE}
 # Preprocess: dichotomize and fuzzify numeric variables
 cars <- mtcars |>
     partition(cyl, vs:gear, .method = "dummy") |>
@@ -94,11 +94,7 @@ rules <- dig_associations(cars,
                           max_length = 4,
                           min_support = 0.1,
                           measures = c("lift", "conviction"))
-```
 
-Discovered rules can be inspected interactively:
-
-```{r, eval=FALSE}
 # Explore the found rules interactively
 explore(rules, cars)
 ```
