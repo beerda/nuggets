@@ -74,7 +74,7 @@ mainApp <- function(rules,
             tags$style('table.info-table td:first-child {font-weight: bold; text-align: left; padding-right: 10px}'),
         ),
         useShinyjs(),
-        navbarPage(title = span(tags$img(src = "pkgimages/logo.png",
+        navbarPage(title = span(tags$img(src = "pkgimages/nugget.png",
                                          style = "filter: grayscale(100%);",
                                          height = "24px"),
                                 title),
@@ -116,7 +116,7 @@ mainApp <- function(rules,
                         panel(heading = "About the app",
                               tags$div(style = "text-align: center; font-size: 40pt; color: gray; padding-bottom: 10px",
                                        width = "100%",
-                                       tags$img(src = "pkgimages/logo.png", width = "100px")),
+                                       tags$img(src = "pkgimages/logo.png", width = "200px")),
                               aboutTable("nuggets")
                         )
                     )
