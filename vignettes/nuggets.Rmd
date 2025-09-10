@@ -22,40 +22,57 @@ library(dplyr)
 
 # Introduction
 
-Package `nuggets` searches for patterns that can be described with formulae in
-the form of elementary conjunctions, which are called **conditions** in this
-text. The conditions are constructed from predicates, which represent data
-columns. The user may select the interpretation of conditions by selecting the
-underlying logic:
+Package `nuggets` searches for patterns that can be expressed as formulae in
+the form of elementary conjunctions, referred to in this text as *conditions*.
+Conditions are constructed from *predicates*, which correspond to data
+columns. The interpretation of conditions depends on the choice of underlying
+logic:
 
-- **crisp (i.e. Boolean, binary) logic**, where each predicate may be either
-  true (1) or false (0), and the truth value of the condition is computed
-  using the laws of classical Boolean algebra; or
-- **fuzzy logic**, where each predicate may have assigned a *truth degree* from
-  the interval $[0, 1]$ and the truth degree of the conjunction is computed
-  with a selected *triangular norm (t-norm)*. Package `nuggets` allows to work
-  with three most common t-norms: *Goedel* (minimum), *Goguen* (product), and
-  *Lukasiewicz*. Let $a, b \in [0, 1]$ be the truth degrees of two predicates.
-  Goedel t-norm is defined as $\min(a, b)$, Goguen t-norm as $a \cdot b$, and
-  Lukasiewicz t-norm as $\max(0, a + b - 1)$.
+- *Crisp (Boolean) logic*: each predicate takes values `TRUE` (1) or `FALSE`
+  (0). The truth value of a condition is computed according to the rules of
+  classical Boolean algebra.
+  
+- *Fuzzy logic*: each predicate is assigned a *truth degree* from the interval
+  $[0, 1]$. The truth degree of a conjunction is then computed using a chosen
+  *triangular norm (t-norm)*. The package supports three common t-norms:
+  
+  - *Gödel* (minimum): $\min(a, b)$
+  - *Goguen* (product): $a \cdot b$
+  - *Łukasiewicz*: $\max(0, a + b - 1)$  
+  
+  where $a, b \in [0, 1]$ are truth degrees of two predicates.
 
-Before analyzed by `nuggets`, the data columns that would serve as predicates in
-conditions have to be either dichotomized or transformed to fuzzy sets. The
-package provides functions for both transformations. See the section
-**Data Preparation** for more details.
-
-`nuggets` provides functions to search for patterns of pre-defined types, such
-as `dig_associations()` for association rules, `dig_paired_baseline_contrasts()`
-for contrast patterns on paired numeric variables, and `dig_correlations()`
-for conditional correlations. See the section **Pre-defined Patterns** for more
+Before applying `nuggets`, data columns intended as predicates must be prepared
+either by *dichotomization* (conversion into *dummy variables*) or by
+transformation into *fuzzy sets*. The package provides functions for both
+transformations. See the section [Data Preparation](#data-preparation) for more
 details.
 
-The user may also define a custom function to evaluate the conditions and
-search for patterns of a different type. `dig()` function is a general function
-that allows to search for patterns of any type. `dig_grid()` function is
-a wrapper around `dig()` that allows to search for patterns defined by
-conditions and a pair of columns, whose combination is evaluated by the
-user-defined function. See the section **Custom Patterns** for more details.
+`nuggets` implements functions to search for pre-defined types of patterns, for
+example:
+
+- `dig_associations()` for association rules,
+- `dig_paired_baseline_contrasts()` for contrast patterns on paired numeric
+  variables,
+- `dig_correlations()` for conditional correlations. 
+
+See [Pre-defined Patterns](#pre-defined-patterns) for further details.
+
+Discovered rules and patterns can be post-processed, visualized, and explored
+interactively. Section
+[Post-processing and Visualization](#post-processing-and-visualization)
+describes these features.
+
+Finally, the package allows users to provide custom evaluation functions for
+conditions and to search for *user-defined* types of patterns:
+
+- `dig()` is a general function for searching arbitrary pattern types.
+- `dig_grid()` is a wrapper around `dig()` for patterns defined by conditions
+  and a pair of columns evaluated by a user-defined function.  
+
+See [Custom Patterns](#custom-patterns) for more information.
+
+
 
 
 # Data Preparation
@@ -268,6 +285,9 @@ TBD (`dig_correlations`)
 TBD (`dig_contrasts`)
 
 
+# Post-processing and Visualization
+
+TBD
 
 # Custom Patterns
 
