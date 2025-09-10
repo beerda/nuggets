@@ -12,6 +12,8 @@ coverage](https://codecov.io/gh/beerda/nuggets/graph/badge.svg)](https://app.cod
 [![test-coverage](https://github.com/beerda/nuggets/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/beerda/nuggets/actions/workflows/test-coverage.yaml)
 <!-- badges: end -->
 
+<img src="man/figures/logo.png" align="right" width="360" />
+
 A framework for systematic exploration of **association rules**
 ([Agrawal (1994)](https://www.vldb.org/conf/1994/P487.PDF)), **contrast
 patterns** ([Chen (2022)](https://doi.org/10.48550/arXiv.2209.13556)),
@@ -92,11 +94,7 @@ Discovered rules can be inspected interactively:
 explore(rules, cars)
 ```
 
-<figure>
-<img src="man/figures/assoc_explorer1.png"
-alt="Assoc Explorer - main tab" />
-<figcaption aria-hidden="true">Assoc Explorer - main tab</figcaption>
-</figure>
+<img src="man/figures/assoc_explorer1.png" width="100%" />
 
 ## Contributing
 
