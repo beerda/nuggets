@@ -78,48 +78,76 @@
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p>Package <code>nuggets</code> searches for patterns that can be
-described with formulae in the form of elementary conjunctions, which
-are called <strong>conditions</strong> in this text. The conditions are
-constructed from predicates, which represent data columns. The user may
-select the interpretation of conditions by selecting the underlying
+expressed as formulae in the form of elementary conjunctions, referred
+to in this text as <em>conditions</em>. Conditions are constructed from
+<em>predicates</em>, which correspond to data columns. The
+interpretation of conditions depends on the choice of underlying
 logic:</p>
 <ul>
+<li><p><em>Crisp (Boolean) logic</em>: each predicate takes values
+<code>TRUE</code> (1) or <code>FALSE</code> (0). The truth value of a
+condition is computed according to the rules of classical Boolean
+algebra.</p></li>
 <li>
-<strong>crisp (i.e. Boolean, binary) logic</strong>, where each
-predicate may be either true (1) or false (0), and the truth value of
-the condition is computed using the laws of classical Boolean algebra;
-or</li>
+<p><em>Fuzzy logic</em>: each predicate is assigned a <em>truth
+degree</em> from the interval <span class="math inline">\([0,
+1]\)</span>. The truth degree of a conjunction is then computed using a
+chosen <em>triangular norm (t-norm)</em>. The package supports three
+common t-norms:</p>
+<ul>
 <li>
-<strong>fuzzy logic</strong>, where each predicate may have assigned
-a <em>truth degree</em> from the interval <span class="math inline">\([0, 1]\)</span> and the truth degree of the
-conjunction is computed with a selected <em>triangular norm
-(t-norm)</em>. Package <code>nuggets</code> allows to work with three
-most common t-norms: <em>Goedel</em> (minimum), <em>Goguen</em>
-(product), and <em>Lukasiewicz</em>. Let <span class="math inline">\(a,
-b \in [0, 1]\)</span> be the truth degrees of two predicates. Goedel
-t-norm is defined as <span class="math inline">\(\min(a, b)\)</span>,
-Goguen t-norm as <span class="math inline">\(a \cdot b\)</span>, and
-Lukasiewicz t-norm as <span class="math inline">\(\max(0, a + b -
-1)\)</span>.</li>
+<em>Gödel</em> (minimum): <span class="math inline">\(\min(a,
+b)\)</span>
+</li>
+<li>
+<em>Goguen</em> (product): <span class="math inline">\(a \cdot
+b\)</span>
+</li>
+<li>
+<em>Łukasiewicz</em>: <span class="math inline">\(\max(0, a + b -
+1)\)</span>
+</li>
 </ul>
-<p>Before analyzed by <code>nuggets</code>, the data columns that would
-serve as predicates in conditions have to be either dichotomized or
-transformed to fuzzy sets. The package provides functions for both
-transformations. See the section <strong>Data Preparation</strong> for
-more details.</p>
-<p><code>nuggets</code> provides functions to search for patterns of
-pre-defined types, such as <code><a href="../reference/dig_associations.html">dig_associations()</a></code> for
-association rules, <code><a href="../reference/dig_paired_baseline_contrasts.html">dig_paired_baseline_contrasts()</a></code> for
-contrast patterns on paired numeric variables, and
-<code><a href="../reference/dig_correlations.html">dig_correlations()</a></code> for conditional correlations. See the
-section <strong>Pre-defined Patterns</strong> for more details.</p>
-<p>The user may also define a custom function to evaluate the conditions
-and search for patterns of a different type. <code><a href="../reference/dig.html">dig()</a></code> function
-is a general function that allows to search for patterns of any type.
-<code><a href="../reference/dig_grid.html">dig_grid()</a></code> function is a wrapper around <code><a href="../reference/dig.html">dig()</a></code>
-that allows to search for patterns defined by conditions and a pair of
-columns, whose combination is evaluated by the user-defined function.
-See the section <strong>Custom Patterns</strong> for more details.</p>
+<p>where <span class="math inline">\(a, b \in [0, 1]\)</span> are truth
+degrees of two predicates.</p>
+</li>
+</ul>
+<p>Before applying <code>nuggets</code>, data columns intended as
+predicates must be prepared either by <em>dichotomization</em>
+(conversion into <em>dummy variables</em>) or by transformation into
+<em>fuzzy sets</em>. The package provides functions for both
+transformations. See the section <a href="#data-preparation">Data
+Preparation</a> for more details.</p>
+<p><code>nuggets</code> implements functions to search for pre-defined
+types of patterns, for example:</p>
+<ul>
+<li>
+<code><a href="../reference/dig_associations.html">dig_associations()</a></code> for association rules,</li>
+<li>
+<code><a href="../reference/dig_paired_baseline_contrasts.html">dig_paired_baseline_contrasts()</a></code> for contrast patterns
+on paired numeric variables,</li>
+<li>
+<code><a href="../reference/dig_correlations.html">dig_correlations()</a></code> for conditional correlations.</li>
+</ul>
+<p>See <a href="#pre-defined-patterns">Pre-defined Patterns</a> for
+further details.</p>
+<p>Discovered rules and patterns can be post-processed, visualized, and
+explored interactively. Section <a href="#post-processing-and-visualization">Post-processing and
+Visualization</a> describes these features.</p>
+<p>Finally, the package allows users to provide custom evaluation
+functions for conditions and to search for <em>user-defined</em> types
+of patterns:</p>
+<ul>
+<li>
+<code><a href="../reference/dig.html">dig()</a></code> is a general function for searching arbitrary
+pattern types.</li>
+<li>
+<code><a href="../reference/dig_grid.html">dig_grid()</a></code> is a wrapper around <code><a href="../reference/dig.html">dig()</a></code> for
+patterns defined by conditions and a pair of columns evaluated by a
+user-defined function.</li>
+</ul>
+<p>See <a href="#custom-patterns">Custom Patterns</a> for more
+information.</p>
 </div>
 <div class="section level2">
 <h2 id="data-preparation">Data Preparation<a class="anchor" aria-label="anchor" href="#data-preparation"></a>
@@ -429,6 +457,11 @@ in descending order:</p>
 </h3>
 <p>TBD (<code>dig_contrasts</code>)</p>
 </div>
+</div>
+<div class="section level2">
+<h2 id="post-processing-and-visualization">Post-processing and Visualization<a class="anchor" aria-label="anchor" href="#post-processing-and-visualization"></a>
+</h2>
+<p>TBD</p>
 </div>
 <div class="section level2">
 <h2 id="custom-patterns">Custom Patterns<a class="anchor" aria-label="anchor" href="#custom-patterns"></a>
