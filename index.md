@@ -93,7 +93,7 @@ explore(rules, cars)
 ```
 
 <figure>
-<img src="vignettes/assoc_explorer1.png"
+<img src="man/figures/assoc_explorer1.png"
 alt="Assoc Explorer - main tab" />
 <figcaption aria-hidden="true">Assoc Explorer - main tab</figcaption>
 </figure>

@@ -103,7 +103,7 @@ Discovered rules can be inspected interactively:
 explore(rules, cars)
 ```
 
-![Assoc Explorer - main tab](vignettes/assoc_explorer1.png)
+![Assoc Explorer - main tab](man/figures/assoc_explorer1.png)
 
 
 ## Contributing
