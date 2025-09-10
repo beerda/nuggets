@@ -92,23 +92,19 @@ algebra.</p></li>
 degree</em> from the interval <span class="math inline">\([0,
 1]\)</span>. The truth degree of a conjunction is then computed using a
 chosen <em>triangular norm (t-norm)</em>. The package supports three
-common t-norms:</p>
+common t-norms, which are defined for predicates’ truth degrees <span class="math inline">\(a, b \in [0, 1]\)</span> as follows:</p>
 <ul>
 <li>
-<em>Gödel</em> (minimum): <span class="math inline">\(\min(a,
-b)\)</span>
-</li>
+<em>Gödel</em> (minimum) t-norm: <span class="math inline">\(\min(a,
+b)\)</span> ;</li>
 <li>
-<em>Goguen</em> (product): <span class="math inline">\(a \cdot
-b\)</span>
-</li>
+<em>Goguen</em> (product) t-norm: <span class="math inline">\(a
+\cdot b\)</span> ;</li>
 <li>
-<em>Łukasiewicz</em>: <span class="math inline">\(\max(0, a + b -
-1)\)</span>
+<em>Łukasiewicz</em> t-norm: <span class="math inline">\(\max(0, a +
+b - 1)\)</span>
 </li>
 </ul>
-<p>where <span class="math inline">\(a, b \in [0, 1]\)</span> are truth
-degrees of two predicates.</p>
 </li>
 </ul>
 <p>Before applying <code>nuggets</code>, data columns intended as
@@ -116,20 +112,22 @@ predicates must be prepared either by <em>dichotomization</em>
 (conversion into <em>dummy variables</em>) or by transformation into
 <em>fuzzy sets</em>. The package provides functions for both
 transformations. See the section <a href="#data-preparation">Data
-Preparation</a> for more details.</p>
+Preparation</a> below for more details.</p>
 <p><code>nuggets</code> implements functions to search for pre-defined
 types of patterns, for example:</p>
 <ul>
 <li>
 <code><a href="../reference/dig_associations.html">dig_associations()</a></code> for association rules,</li>
 <li>
-<code><a href="../reference/dig_paired_baseline_contrasts.html">dig_paired_baseline_contrasts()</a></code> for contrast patterns
-on paired numeric variables,</li>
+<code><a href="../reference/dig_baseline_contrasts.html">dig_baseline_contrasts()</a></code>,
+<code><a href="../reference/dig_complement_contrasts.html">dig_complement_contrasts()</a></code>, and
+<code><a href="../reference/dig_paired_baseline_contrasts.html">dig_paired_baseline_contrasts()</a></code> for various contrast
+patterns on numeric variables,</li>
 <li>
 <code><a href="../reference/dig_correlations.html">dig_correlations()</a></code> for conditional correlations.</li>
 </ul>
-<p>See <a href="#pre-defined-patterns">Pre-defined Patterns</a> for
-further details.</p>
+<p>See <a href="#pre-defined-patterns">Pre-defined Patterns</a> below
+for further details.</p>
 <p>Discovered rules and patterns can be post-processed, visualized, and
 explored interactively. Section <a href="#post-processing-and-visualization">Post-processing and
 Visualization</a> describes these features.</p>
@@ -151,220 +149,431 @@ information.</p>
 <div class="section level2">
 <h2 id="data-preparation">Data Preparation<a class="anchor" aria-label="anchor" href="#data-preparation"></a>
 </h2>
+<p>For patterns based on crisp conditions, the data columns that serve
+as predicates in conditions must be transformed either to logical
+(<code>TRUE</code>/<code>FALSE</code>) columns, or to fuzzy sets with
+values from the interval <span class="math inline">\([0, 1]\)</span>.
+The first option is simpler and faster, and it is the recommended option
+for most applications. The second option is more flexible and allows to
+model uncertainty in data, but it is more computationally demanding.</p>
 <div class="section level3">
 <h3 id="preparations-of-crisp-boolean-predicates">Preparations of Crisp (Boolean) Predicates<a class="anchor" aria-label="anchor" href="#preparations-of-crisp-boolean-predicates"></a>
 </h3>
 <p>For patterns based on crisp conditions, the data columns that would
 serve as predicates in conditions have to be transformed to logical
-(<code>TRUE</code>/<code>FALSE</code>) data:</p>
+(<code>TRUE</code>/<code>FALSE</code>) columns. That can be done in two
+ways:</p>
 <ul>
-<li>numeric columns have to be transformed to factors with a selected
-number of levels;</li>
-<li>factors have to be transformed to dummy logical columns.</li>
+<li>numeric columns can be transformed to factors with a selected number
+of levels, and then</li>
+<li>factors can be transformed to dummy logical columns.</li>
 </ul>
 <p>Both operations can be done with the help of the
 <code><a href="../reference/partition.html">partition()</a></code> function. The <code><a href="../reference/partition.html">partition()</a></code> function
 requires the dataset as its first argument and a <em>tidyselect</em>
-selection expression to select the columns to be transformed. Factors
-and logical columns are transformed to dummy logical columns.</p>
-<p>For numeric columns, the <code><a href="../reference/partition.html">partition()</a></code> function requires
-the <code>.method</code> argument to specify the method of partitioning.
-The <code>"crisp"</code> method divides the range of values of the
-selected columns into intervals specified by the <code>.breaks</code>
-argument and codes the values into dummy logical columns. The
-<code>.breaks</code> argument is a numeric vector that specifies the
-border values of the intervals.</p>
-<p>For example, consider the <code>CO2</code> dataset from the
-<code>datasets</code> package:</p>
+selection expression to select the columns to be transformed.</p>
+<p>Factors and logical columns are automatically transformed to dummy
+logical columns by the <code><a href="../reference/partition.html">partition()</a></code> function. For numeric
+columns, the <code><a href="../reference/partition.html">partition()</a></code> function requires the
+<code>.method</code> argument to specify the method of partitioning:</p>
+<ul>
+<li>
+<code>.method = "dummy"</code> transforms numeric columns to factors
+and then to dummy logical columns. That effectively creates a separate
+logical column for each distinct value of the numeric column.</li>
+<li>
+<code>.method = "crisp"</code> transforms numeric columns to crisp
+predicates by dividing the range of values into intervals and coding the
+values into dummy logical columns according to the intervals.</li>
+<li>there exist other methods of partitioning of numeric columns. These
+methods create fuzzy predicates and are described in the next
+section.</li>
+</ul>
+<p>For example, consider the built-in <code>mtcars</code> dataset. This
+dataset contains information about various car models. For the sake of
+illustration, let us transform the <code>cyl</code> column into factor
+first:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">CO2</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   Plant   Type  Treatment conc uptake</span></span>
-<span><span class="co">#&gt; 1   Qn1 Quebec nonchilled   95   16.0</span></span>
-<span><span class="co">#&gt; 2   Qn1 Quebec nonchilled  175   30.4</span></span>
-<span><span class="co">#&gt; 3   Qn1 Quebec nonchilled  250   34.8</span></span>
-<span><span class="co">#&gt; 4   Qn1 Quebec nonchilled  350   37.2</span></span>
-<span><span class="co">#&gt; 5   Qn1 Quebec nonchilled  500   35.3</span></span>
-<span><span class="co">#&gt; 6   Qn1 Quebec nonchilled  675   39.2</span></span></code></pre></div>
-<p>The <code>Plant</code>, <code>Type</code>, and <code>Treatment</code>
-columns are factors and they will be transformed to dummy logical
-columns without any special arguments added to the
-<code><a href="../reference/partition.html">partition()</a></code> function:</p>
+<code class="sourceCode R"><span><span class="va">mtcars</span><span class="op">$</span><span class="va">cyl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">cyl</span>,</span>
+<span>                     levels<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">6</span>, <span class="fl">8</span><span class="op">)</span>,</span>
+<span>                     labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"four"</span>, <span class="st">"six"</span>, <span class="st">"eight"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                    mpg   cyl disp  hp drat    wt  qsec vs am gear carb</span></span>
+<span><span class="co">#&gt; Mazda RX4         21.0   six  160 110 3.90 2.620 16.46  0  1    4    4</span></span>
+<span><span class="co">#&gt; Mazda RX4 Wag     21.0   six  160 110 3.90 2.875 17.02  0  1    4    4</span></span>
+<span><span class="co">#&gt; Datsun 710        22.8  four  108  93 3.85 2.320 18.61  1  1    4    1</span></span>
+<span><span class="co">#&gt; Hornet 4 Drive    21.4   six  258 110 3.08 3.215 19.44  1  0    3    1</span></span>
+<span><span class="co">#&gt; Hornet Sportabout 18.7 eight  360 175 3.15 3.440 17.02  0  0    3    2</span></span>
+<span><span class="co">#&gt; Valiant           18.1   six  225 105 2.76 3.460 20.22  1  0    3    1</span></span></code></pre></div>
+<p>Factors are transformed to dummy logical columns by the
+<code><a href="../reference/partition.html">partition()</a></code> function automatically:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">CO2</span>, <span class="va">Plant</span><span class="op">:</span><span class="va">Treatment</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 84 × 18</span></span></span>
-<span><span class="co">#&gt;     conc uptake `Plant=Qn1` `Plant=Qn2` `Plant=Qn3` `Plant=Qc1` `Plant=Qc3`</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>    95   16   TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>   175   30.4 TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>   250   34.8 TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>   350   37.2 TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>   500   35.3 TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>   675   39.2 TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  <span style="text-decoration: underline;">1</span>000   39.7 TRUE        FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>    95   13.6 FALSE       TRUE        FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>   175   27.3 FALSE       TRUE        FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>   250   37.1 FALSE       TRUE        FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 74 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 11 more variables: `Plant=Qc2` &lt;lgl&gt;, `Plant=Mn3` &lt;lgl&gt;, `Plant=Mn2` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `Plant=Mn1` &lt;lgl&gt;, `Plant=Mc2` &lt;lgl&gt;, `Plant=Mc3` &lt;lgl&gt;, `Plant=Mc1` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `Type=Quebec` &lt;lgl&gt;, `Type=Mississippi` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `Treatment=nonchilled` &lt;lgl&gt;, `Treatment=chilled` &lt;lgl&gt;</span></span></span></code></pre></div>
-<p>The <code>conc</code> and <code>uptake</code> columns are numeric.
-For instance, we can split the <code>conc</code> column into four
-intervals: (-Inf, 175], (175, 350], (350, 675], and (675, Inf). The
-breaks are thus <code>c(-Inf, 175, 350, 675, Inf)</code>.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="va">cyl</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 13</span></span></span>
+<span><span class="co">#&gt;      mpg  disp    hp  drat    wt  qsec    vs    am  gear  carb `cyl=four`</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  21    160    110  3.9   2.62  16.5     0     1     4     4 FALSE     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  21    160    110  3.9   2.88  17.0     0     1     4     4 FALSE     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  22.8  108     93  3.85  2.32  18.6     1     1     4     1 TRUE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  21.4  258    110  3.08  3.22  19.4     1     0     3     1 FALSE     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  18.7  360    175  3.15  3.44  17.0     0     0     3     2 FALSE     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  18.1  225    105  2.76  3.46  20.2     1     0     3     1 FALSE     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  14.3  360    245  3.21  3.57  15.8     0     0     3     4 FALSE     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  24.4  147.    62  3.69  3.19  20       1     0     4     2 TRUE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  22.8  141.    95  3.92  3.15  22.9     1     0     4     2 TRUE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  19.2  168.   123  3.92  3.44  18.3     1     0     4     4 FALSE     </span></span>
+<span><span class="co">#&gt;    `cyl=six` `cyl=eight`</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> TRUE      FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> TRUE      FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> FALSE     FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TRUE      FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> FALSE     TRUE       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TRUE      FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> FALSE     TRUE       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> FALSE     FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> FALSE     FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> TRUE      FALSE      </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 22 more rows</span></span></span></code></pre></div>
+<p>The <code>vs</code>, <code>am</code>, and <code>gear</code> columns
+are numeric but actually represent categories. To transform them to
+dummy logical columns in the same way as factors, we can use the
+<code><a href="../reference/partition.html">partition()</a></code> function with the <code>.method</code> argument
+set to <code>"dummy"</code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">CO2</span>, <span class="va">conc</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">175</span>, <span class="fl">350</span>, <span class="fl">675</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 84 × 8</span></span></span>
-<span><span class="co">#&gt;    Plant Type   Treatment  uptake `conc=(-Inf;175]` `conc=(175;350]`</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Qn1   Quebec nonchilled   16   TRUE              FALSE           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Qn1   Quebec nonchilled   30.4 TRUE              FALSE           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Qn1   Quebec nonchilled   34.8 FALSE             TRUE            </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Qn1   Quebec nonchilled   37.2 FALSE             TRUE            </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Qn1   Quebec nonchilled   35.3 FALSE             FALSE           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> Qn1   Quebec nonchilled   39.2 FALSE             FALSE           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Qn1   Quebec nonchilled   39.7 FALSE             FALSE           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> Qn2   Quebec nonchilled   13.6 TRUE              FALSE           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Qn2   Quebec nonchilled   27.3 TRUE              FALSE           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Qn2   Quebec nonchilled   37.1 FALSE             TRUE            </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 74 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 2 more variables: `conc=(350;675]` &lt;lgl&gt;, `conc=(675;Inf]` &lt;lgl&gt;</span></span></span></code></pre></div>
-<p>Similarly, we can split the <code>uptake</code> column into three
-intervals: (-Inf, 10], (10, 20], and (20, Inf) by specifying the breaks
-<code>c(-Inf, 10, 20, Inf)</code>.</p>
-<p>The transformation of the whole <code>CO2</code> dataset to crisp
-predicates can be done as follows:</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="va">vs</span><span class="op">:</span><span class="va">gear</span>, .method <span class="op">=</span> <span class="st">"dummy"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 15</span></span></span>
+<span><span class="co">#&gt;      mpg cyl    disp    hp  drat    wt  qsec  carb `vs=0` `vs=1` `am=0` `am=1`</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  21   six    160    110  3.9   2.62  16.5     4 TRUE   FALSE  FALSE  TRUE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  21   six    160    110  3.9   2.88  17.0     4 TRUE   FALSE  FALSE  TRUE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  22.8 four   108     93  3.85  2.32  18.6     1 FALSE  TRUE   FALSE  TRUE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  21.4 six    258    110  3.08  3.22  19.4     1 FALSE  TRUE   TRUE   FALSE </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  18.7 eight  360    175  3.15  3.44  17.0     2 TRUE   FALSE  TRUE   FALSE </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  18.1 six    225    105  2.76  3.46  20.2     1 FALSE  TRUE   TRUE   FALSE </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  14.3 eight  360    245  3.21  3.57  15.8     4 TRUE   FALSE  TRUE   FALSE </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  24.4 four   147.    62  3.69  3.19  20       2 FALSE  TRUE   TRUE   FALSE </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  22.8 four   141.    95  3.92  3.15  22.9     2 FALSE  TRUE   TRUE   FALSE </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  19.2 six    168.   123  3.92  3.44  18.3     4 FALSE  TRUE   TRUE   FALSE </span></span>
+<span><span class="co">#&gt;    `gear=3` `gear=4` `gear=5`</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> FALSE    TRUE     FALSE   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> FALSE    TRUE     FALSE   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> FALSE    TRUE     FALSE   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TRUE     FALSE    FALSE   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> TRUE     FALSE    FALSE   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TRUE     FALSE    FALSE   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> TRUE     FALSE    FALSE   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> FALSE    TRUE     FALSE   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> FALSE    TRUE     FALSE   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> FALSE    TRUE     FALSE   </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 22 more rows</span></span></span></code></pre></div>
+<p>The <code>mpg</code> column is numeric and therefore cannot be
+transformed directly into dummy logical columns. A better approach is to
+use the <code>"crisp"</code> method of partitioning.</p>
+<p>The <code>"crisp"</code> method divides the range of values of the
+selected columns into intervals specified by the <code>.breaks</code>
+argument and then encodes the values into dummy logical columns
+corresponding to the intervals. The <code>.breaks</code> argument is a
+numeric vector that specifies the interval boundaries.</p>
+<p>For example, the <code>mpg</code> values can be divided into four
+intervals: (-Inf, 15], (15, 20], (20, 30], and (30, Inf). The
+<code>.breaks</code> argument is then the vector
+<code>c(-Inf, 15, 20, 30, Inf)</code>, which defines the boundaries of
+these intervals.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">crispCO2</span> <span class="op">&lt;-</span> <span class="va">CO2</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">Plant</span><span class="op">:</span><span class="va">Treatment</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">conc</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">175</span>, <span class="fl">350</span>, <span class="fl">675</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">uptake</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">10</span>, <span class="fl">20</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">crispCO2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 23</span></span></span>
-<span><span class="co">#&gt;   `Plant=Qn1` `Plant=Qn2` `Plant=Qn3` `Plant=Qc1` `Plant=Qc3` `Plant=Qc2`</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 17 more variables: `Plant=Mn3` &lt;lgl&gt;, `Plant=Mn2` &lt;lgl&gt;, `Plant=Mn1` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `Plant=Mc2` &lt;lgl&gt;, `Plant=Mc3` &lt;lgl&gt;, `Plant=Mc1` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `Type=Quebec` &lt;lgl&gt;, `Type=Mississippi` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `Treatment=nonchilled` &lt;lgl&gt;, `Treatment=chilled` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `conc=(-Inf;175]` &lt;lgl&gt;, `conc=(175;350]` &lt;lgl&gt;, `conc=(350;675]` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `conc=(675;Inf]` &lt;lgl&gt;, `uptake=(-Inf;10]` &lt;lgl&gt;, `uptake=(10;20]` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `uptake=(20;Inf]` &lt;lgl&gt;</span></span></span></code></pre></div>
-<p>Each call to the <code><a href="../reference/partition.html">partition()</a></code> function returns a tibble
-data frame with the selected columns transformed to dummy logical
-columns while the other columns remain unchanged.</p>
-<p>Each original factor column became replaced by a set of logical
-columns, all of which start with the original column name and are
-followed by the factor level name. For example, the <code>Type</code>
-column, which is a factor with two levels <code>Quebec</code> and
-<code>Mississippi</code>, was replaced by two logical columns:
-<code>Type=Quebec</code> and <code>Type=Mississippi</code>. Numeric
-columns were replaced by logical columns with names that indicate the
-interval to which the original value belongs. For example, the
-<code>conc</code> column was replaced by four logical columns:
-<code>conc=(-Inf,175]</code>, <code>conc=(175,350]</code>,
-<code>conc=(350,675]</code>, and <code>conc=(675,Inf)</code>. Other
-columns were transformed similarly:</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="va">mpg</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">15</span>, <span class="fl">20</span>, <span class="fl">30</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 14</span></span></span>
+<span><span class="co">#&gt;    cyl    disp    hp  drat    wt  qsec    vs    am  gear  carb `mpg=(-Inf;15]`</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>          </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> six    160    110  3.9   2.62  16.5     0     1     4     4 FALSE          </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> six    160    110  3.9   2.88  17.0     0     1     4     4 FALSE          </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> four   108     93  3.85  2.32  18.6     1     1     4     1 FALSE          </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> six    258    110  3.08  3.22  19.4     1     0     3     1 FALSE          </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> eight  360    175  3.15  3.44  17.0     0     0     3     2 FALSE          </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> six    225    105  2.76  3.46  20.2     1     0     3     1 FALSE          </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> eight  360    245  3.21  3.57  15.8     0     0     3     4 TRUE           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> four   147.    62  3.69  3.19  20       1     0     4     2 FALSE          </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> four   141.    95  3.92  3.15  22.9     1     0     4     2 FALSE          </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> six    168.   123  3.92  3.44  18.3     1     0     4     4 FALSE          </span></span>
+<span><span class="co">#&gt;    `mpg=(15;20]` `mpg=(20;30]` `mpg=(30;Inf]`</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> FALSE         TRUE          FALSE         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> FALSE         TRUE          FALSE         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> FALSE         TRUE          FALSE         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> FALSE         TRUE          FALSE         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> TRUE          FALSE         FALSE         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TRUE          FALSE         FALSE         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> FALSE         FALSE         FALSE         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> FALSE         TRUE          FALSE         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> FALSE         TRUE          FALSE         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> TRUE          FALSE         FALSE         </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 22 more rows</span></span></span></code></pre></div>
+<p>If we want the breaks to be evenly spaced across the range of values,
+we can set <code>.breaks</code> to a single integer. This value
+specifies the number of intervals to create. For example, the following
+command divides the <code>disp</code> values into three intervals of
+equal width:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">crispCO2</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "Plant=Qn1"            "Plant=Qn2"            "Plant=Qn3"           </span></span>
-<span><span class="co">#&gt;  [4] "Plant=Qc1"            "Plant=Qc3"            "Plant=Qc2"           </span></span>
-<span><span class="co">#&gt;  [7] "Plant=Mn3"            "Plant=Mn2"            "Plant=Mn1"           </span></span>
-<span><span class="co">#&gt; [10] "Plant=Mc2"            "Plant=Mc3"            "Plant=Mc1"           </span></span>
-<span><span class="co">#&gt; [13] "Type=Quebec"          "Type=Mississippi"     "Treatment=nonchilled"</span></span>
-<span><span class="co">#&gt; [16] "Treatment=chilled"    "conc=(-Inf;175]"      "conc=(175;350]"      </span></span>
-<span><span class="co">#&gt; [19] "conc=(350;675]"       "conc=(675;Inf]"       "uptake=(-Inf;10]"    </span></span>
-<span><span class="co">#&gt; [22] "uptake=(10;20]"       "uptake=(20;Inf]"</span></span></code></pre></div>
-<p>Now all the columns are logical and can be used as predicates in
-crisp conditions.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="va">disp</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 13</span></span></span>
+<span><span class="co">#&gt;      mpg cyl      hp  drat    wt  qsec    vs    am  gear  carb `disp=(-Inf;205]`</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>            </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  21   six     110  3.9   2.62  16.5     0     1     4     4 TRUE             </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  21   six     110  3.9   2.88  17.0     0     1     4     4 TRUE             </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  22.8 four     93  3.85  2.32  18.6     1     1     4     1 TRUE             </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  21.4 six     110  3.08  3.22  19.4     1     0     3     1 FALSE            </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  18.7 eight   175  3.15  3.44  17.0     0     0     3     2 FALSE            </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  18.1 six     105  2.76  3.46  20.2     1     0     3     1 FALSE            </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  14.3 eight   245  3.21  3.57  15.8     0     0     3     4 FALSE            </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  24.4 four     62  3.69  3.19  20       1     0     4     2 TRUE             </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  22.8 four     95  3.92  3.15  22.9     1     0     4     2 TRUE             </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  19.2 six     123  3.92  3.44  18.3     1     0     4     4 TRUE             </span></span>
+<span><span class="co">#&gt;    `disp=(205;338]` `disp=(338;Inf]`</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> FALSE            FALSE           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> FALSE            FALSE           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> FALSE            FALSE           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TRUE             FALSE           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> FALSE            TRUE            </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TRUE             FALSE           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> FALSE            TRUE            </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> FALSE            FALSE           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> FALSE            FALSE           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> FALSE            FALSE           </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 22 more rows</span></span></span></code></pre></div>
+<p>Each call to <code><a href="../reference/partition.html">partition()</a></code> returns a tibble with the
+selected columns transformed to dummy logical columns, while the other
+columns remain unchanged.</p>
+<p>The transformation of the whole <code>mtcars</code> dataset to crisp
+predicates can be done as follows:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">crispMtcars</span> <span class="op">&lt;-</span> <span class="va">mtcars</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">cyl</span>, <span class="va">vs</span><span class="op">:</span><span class="va">gear</span>, .method <span class="op">=</span> <span class="st">"dummy"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">mpg</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">15</span>, <span class="fl">20</span>, <span class="fl">30</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">disp</span><span class="op">:</span><span class="va">carb</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">crispMtcars</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 32</span></span></span>
+<span><span class="co">#&gt;   `cyl=four` `cyl=six` `cyl=eight` `vs=0` `vs=1` `am=0` `am=1` `gear=3` `gear=4`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> FALSE      TRUE      FALSE       TRUE   FALSE  FALSE  TRUE   FALSE    TRUE    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> FALSE      TRUE      FALSE       TRUE   FALSE  FALSE  TRUE   FALSE    TRUE    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> TRUE       FALSE     FALSE       FALSE  TRUE   FALSE  TRUE   FALSE    TRUE    </span></span>
+<span><span class="co">#&gt;   `gear=5` `mpg=(-Inf;15]` `mpg=(15;20]` `mpg=(20;30]` `mpg=(30;Inf]`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> FALSE    FALSE           FALSE         TRUE          FALSE         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> FALSE    FALSE           FALSE         TRUE          FALSE         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> FALSE    FALSE           FALSE         TRUE          FALSE         </span></span>
+<span><span class="co">#&gt;   `disp=(-Inf;205]` `disp=(205;338]` `disp=(338;Inf]` `hp=(-Inf;146]`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>          </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> TRUE              FALSE            FALSE            TRUE           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> TRUE              FALSE            FALSE            TRUE           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> TRUE              FALSE            FALSE            TRUE           </span></span>
+<span><span class="co">#&gt;   `hp=(146;241]` `hp=(241;Inf]` `drat=(-Inf;3.48]` `drat=(3.48;4.21]`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> FALSE          FALSE          FALSE              TRUE              </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> FALSE          FALSE          FALSE              TRUE              </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> FALSE          FALSE          FALSE              TRUE              </span></span>
+<span><span class="co">#&gt;   `drat=(4.21;Inf]` `wt=(-Inf;2.82]` `wt=(2.82;4.12]` `wt=(4.12;Inf]`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>          </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> FALSE             TRUE             FALSE            FALSE          </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> FALSE             FALSE            TRUE             FALSE          </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> FALSE             TRUE             FALSE            FALSE          </span></span>
+<span><span class="co">#&gt;   `qsec=(-Inf;17.3]` `qsec=(17.3;20.1]` `qsec=(20.1;Inf]` `carb=(-Inf;3.33]`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> TRUE               FALSE              FALSE             FALSE             </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> TRUE               FALSE              FALSE             FALSE             </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> FALSE              TRUE               FALSE             TRUE              </span></span>
+<span><span class="co">#&gt;   `carb=(3.33;5.67]` `carb=(5.67;Inf]`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>            </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> TRUE               FALSE            </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> TRUE               FALSE            </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> FALSE              FALSE</span></span></code></pre></div>
+<p>Now all columns are logical and can be used as predicates in crisp
+conditions.</p>
 </div>
 <div class="section level3">
 <h3 id="preparations-of-fuzzy-predicates">Preparations of Fuzzy Predicates<a class="anchor" aria-label="anchor" href="#preparations-of-fuzzy-predicates"></a>
 </h3>
-<p>For patterns based on fuzzy conditions, the data columns that would
-serve as predicates in conditions have to be transformed to fuzzy
-predicates. The fuzzy predicate is represented by a vector of truth
-degrees from the interval <span class="math inline">\([0, 1]\)</span>.
-The truth degree of a predicate is the degree to which the predicate is
-true with 0 meaning that the predicate is false and 1 meaning that the
-predicate is true. A value between 0 and 1 indicates a partial
-truthfulness.</p>
-<p>In order to search for fuzzy patterns, the numeric input data columns
-have to be transformed to fuzzy predicates, i.e., to vectors of truth
-degrees from the interval <span class="math inline">\([0, 1]\)</span>.
-(Fuzzy methods allow to be used with logical columns too.)</p>
-<p>The transformation to fuzzy predicates can be done again with the
-help of the <code><a href="../reference/partition.html">partition()</a></code> function. Again, factors will be
-transformed to dummy logical columns. On the other hand, numeric columns
-will be transformed to fuzzy predicates. For that, the
+<p>In many real-world datasets, numeric attributes do not lend
+themselves to clear-cut, crisp boundaries. For example, deciding whether
+a car has “low mileage” or “high mileage” is often subjective. A vehicle
+with 19 miles per gallon may be considered “low” in one context but
+“medium” in another. Crisp intervals force a strict separation between
+categories, which can be too rigid and may lose information about
+gradual changes in the data.</p>
+<p>To address this, <strong>fuzzy predicates</strong> are used. A fuzzy
+predicate expresses the degree to which a condition is satisfied.
+Instead of being strictly <code>TRUE</code> or <code>FALSE</code>, each
+predicate is represented by a number in the interval <span class="math inline">\([0,1]\)</span>. A truth degree of 0 means the
+predicate is entirely false, 1 means it is fully true, and values in
+between indicate partial membership. This allows us to model smooth
+transitions between categories and capture more nuanced patterns.</p>
+<p>For example, a fuzzy predicate could represent “medium horsepower” in
+the <code>mtcars</code> dataset. A car with 120 hp may belong to this
+category to a degree of 0.8, while a car with 150 hp may belong to it
+only to a degree of 0.2. Such representations are more faithful to human
+reasoning and often yield patterns that are both more robust and more
+interpretable.</p>
+<p>The transformation of numeric columns to fuzzy predicates can be done
+with the <code><a href="../reference/partition.html">partition()</a></code> function. As with crisp partitioning,
+factors are transformed to dummy logical columns. Numeric columns,
+however, are transformed into <em>fuzzy truth values</em>. The
 <code><a href="../reference/partition.html">partition()</a></code> function provides two fuzzy partitioning
-methods: <code>"triangle"</code> and <code>"raisedcos"</code>. The
-<code>"triangle"</code> method creates fuzzy sets with triangular
-membership functions, while the <code>"raisedcos"</code> method creates
-fuzzy sets with raised cosine membership functions.</p>
-<p>More advanced fuzzy partitioning of numeric columns may be achieved
-with the help of the <a href="https://cran.r-project.org/package=lfl" class="external-link">lfl</a> package, which
-provides tools for definition of fuzzy sets of many types including
-fuzzy sets that model linguistic terms such as “very small”, “extremely
-big” and so on. See the <a href="https://github.com/beerda/lfl/blob/master/vignettes/main.pdf" class="external-link"><code>lfl</code>
+methods:</p>
+<ul>
+<li>
+<code>.method = "triangle"</code> creates fuzzy sets with triangular
+membership functions.<br>
+</li>
+<li>
+<code>.method = "raisedcos"</code> creates fuzzy sets with raised
+cosine membership functions.</li>
+</ul>
+<p>These membership functions specify how strongly a value belongs to a
+fuzzy set. The choice of function depends on the desired smoothness of
+the transition between sets.</p>
+<div class="figure" style="text-align: center">
+<img src="nuggets_files/figure-html/unnamed-chunk-9-1.png" alt="Comparison of triangular and raised cosine membership functions
+" width="80%"><p class="caption">
+Comparison of triangular and raised cosine membership functions
+</p>
+</div>
+<p>More advanced fuzzy partitioning of numeric columns can be achieved
+with the <a href="https://cran.r-project.org/package=lfl" class="external-link">lfl</a>
+package, which provides tools for defining fuzzy sets of many types,
+including linguistic terms such as “very small” or “extremely big”. See
+the <a href="https://github.com/beerda/lfl/blob/master/vignettes/main.pdf" class="external-link"><code>lfl</code>
 documentation</a> for more information.</p>
-<p>In the following example, both the <code>conc</code> and
-<code>uptake</code> columns are transformed to fuzzy sets with
-triangular membership functions. For that, the <code><a href="../reference/partition.html">partition()</a></code>
-function requires the <code>.breaks</code> argument to specify the shape
-of fuzzy sets. For <code>.method = "triangle"</code>, each consecutive
-triplet of values in the <code>.breaks</code> vector specifies a single
-triangular fuzzy set: the first and the last value of the triplet are
-the borders of the triangle, and the middle value is the peak of the
-triangle.</p>
-<p>For instance, the <code>conc</code> column’s <code>.breaks</code> may
-be specified as <code>c(-Inf, 175, 350, 675, Inf)</code>, which creates
-three triangular fuzzy sets: <code>conc=(-Inf,175,350)</code>,
-<code>conc=(175,350,675)</code>, and <code>conc=(350,675,Inf)</code>.
-Similarly, the <code>uptake</code> column’s <code>.breaks</code> may be
-specified as <code>c(-Inf, 18, 28, 37, Inf)</code>.</p>
-<p>The transformation of the whole <code>CO2</code> dataset to fuzzy
-predicates can be done as follows:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fuzzyCO2</span> <span class="op">&lt;-</span> <span class="va">CO2</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">Plant</span><span class="op">:</span><span class="va">Treatment</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">conc</span>, .method <span class="op">=</span> <span class="st">"triangle"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">175</span>, <span class="fl">350</span>, <span class="fl">675</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">uptake</span>, .method <span class="op">=</span> <span class="st">"triangle"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">18</span>, <span class="fl">28</span>, <span class="fl">37</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span></span>
+<p>In the following example, the <code>mpg</code> and <code>hp</code>
+columns from the <code>mtcars</code> dataset are transformed to fuzzy
+sets with triangular membership functions. The <code>.breaks</code>
+argument specifies the fuzzy set definitions. For
+<code>.method = "triangle"</code>, each consecutive triplet of values in
+<code>.breaks</code> defines one triangular fuzzy set: the first and
+last values are the borders of the triangle, and the middle value is its
+peak.</p>
+<p>For instance, <code>.breaks = c(-Inf, 15, 20, 30, Inf)</code> creates
+three triangular fuzzy sets defined with triplets (-Inf,15,20),
+(15,20,30), and (20,30,Inf):</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="va">mpg</span>, .method <span class="op">=</span> <span class="st">"triangle"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">15</span>, <span class="fl">20</span>, <span class="fl">30</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 13</span></span></span>
+<span><span class="co">#&gt;    cyl    disp    hp  drat    wt  qsec    vs    am  gear  carb</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> six    160    110  3.9   2.62  16.5     0     1     4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> six    160    110  3.9   2.88  17.0     0     1     4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> four   108     93  3.85  2.32  18.6     1     1     4     1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> six    258    110  3.08  3.22  19.4     1     0     3     1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> eight  360    175  3.15  3.44  17.0     0     0     3     2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> six    225    105  2.76  3.46  20.2     1     0     3     1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> eight  360    245  3.21  3.57  15.8     0     0     3     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> four   147.    62  3.69  3.19  20       1     0     4     2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> four   141.    95  3.92  3.15  22.9     1     0     4     2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> six    168.   123  3.92  3.44  18.3     1     0     4     4</span></span>
+<span><span class="co">#&gt;    `mpg=(-Inf;15;20)` `mpg=(15;20;30)` `mpg=(20;30;Inf)`</span></span>
+<span><span class="co">#&gt;                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>              0                0.9               0.1  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>              0                0.9               0.1  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>              0                0.72              0.28 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>              0                0.86              0.140</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>              0.26             0.74              0    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>              0.380            0.620             0    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>              1                0                 0    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>              0                0.56              0.44 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>              0                0.72              0.28 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>              0.160            0.84              0    </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 22 more rows</span></span></span></code></pre></div>
+<p>If a regular partitioning of the range of values is desired,
+<code>.breaks</code> can be set to a single integer, which specifies the
+number of fuzzy sets to create. For example, the following command
+divides the <code>disp</code> values into three overlapping triangular
+fuzzy sets:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="va">disp</span>, .method <span class="op">=</span> <span class="st">"triangle"</span>, .breaks <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 13</span></span></span>
+<span><span class="co">#&gt;      mpg cyl      hp  drat    wt  qsec    vs    am  gear  carb</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  21   six     110  3.9   2.62  16.5     0     1     4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  21   six     110  3.9   2.88  17.0     0     1     4     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  22.8 four     93  3.85  2.32  18.6     1     1     4     1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  21.4 six     110  3.08  3.22  19.4     1     0     3     1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  18.7 eight   175  3.15  3.44  17.0     0     0     3     2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  18.1 six     105  2.76  3.46  20.2     1     0     3     1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  14.3 eight   245  3.21  3.57  15.8     0     0     3     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  24.4 four     62  3.69  3.19  20       1     0     4     2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  22.8 four     95  3.92  3.15  22.9     1     0     4     2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  19.2 six     123  3.92  3.44  18.3     1     0     4     4</span></span>
+<span><span class="co">#&gt;    `disp=(-Inf;71.1;272)` `disp=(71.1;272;472)` `disp=(272;472;Inf)`</span></span>
+<span><span class="co">#&gt;                     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>                 0.557                  0.443                 0   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>                 0.557                  0.443                 0   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>                 0.816                  0.184                 0   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>                 0.069<span style="text-decoration: underline;">7</span>                 0.930                 0   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>                 0                      0.56                  0.44</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>                 0.234                  0.766                 0   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>                 0                      0.56                  0.44</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>                 0.624                  0.376                 0   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>                 0.653                  0.347                 0   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>                 0.520                  0.480                 0   </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 22 more rows</span></span></span></code></pre></div>
+<p>The fuzzy transformation of the whole <code>mtcars</code> dataset is
+shown below:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fuzzyMtcars</span> <span class="op">&lt;-</span> <span class="va">mtcars</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">cyl</span>, <span class="va">vs</span><span class="op">:</span><span class="va">gear</span>, .method <span class="op">=</span> <span class="st">"dummy"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">mpg</span>, .method <span class="op">=</span> <span class="st">"triangle"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">15</span>, <span class="fl">20</span>, <span class="fl">30</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">disp</span><span class="op">:</span><span class="va">carb</span>, .method <span class="op">=</span> <span class="st">"triangle"</span>, .breaks <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> </span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">fuzzyCO2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 22</span></span></span>
-<span><span class="co">#&gt;   `Plant=Qn1` `Plant=Qn2` `Plant=Qn3` `Plant=Qc1` `Plant=Qc3` `Plant=Qc2`</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 16 more variables: `Plant=Mn3` &lt;lgl&gt;, `Plant=Mn2` &lt;lgl&gt;, `Plant=Mn1` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `Plant=Mc2` &lt;lgl&gt;, `Plant=Mc3` &lt;lgl&gt;, `Plant=Mc1` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `Type=Quebec` &lt;lgl&gt;, `Type=Mississippi` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `Treatment=nonchilled` &lt;lgl&gt;, `Treatment=chilled` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `conc=(-Inf;175;350)` &lt;dbl&gt;, `conc=(175;350;675)` &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `conc=(350;675;Inf)` &lt;dbl&gt;, `uptake=(-Inf;18;28)` &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `uptake=(18;28;37)` &lt;dbl&gt;, `uptake=(28;37;Inf)` &lt;dbl&gt;</span></span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">fuzzyCO2</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "Plant=Qn1"            "Plant=Qn2"            "Plant=Qn3"           </span></span>
-<span><span class="co">#&gt;  [4] "Plant=Qc1"            "Plant=Qc3"            "Plant=Qc2"           </span></span>
-<span><span class="co">#&gt;  [7] "Plant=Mn3"            "Plant=Mn2"            "Plant=Mn1"           </span></span>
-<span><span class="co">#&gt; [10] "Plant=Mc2"            "Plant=Mc3"            "Plant=Mc1"           </span></span>
-<span><span class="co">#&gt; [13] "Type=Quebec"          "Type=Mississippi"     "Treatment=nonchilled"</span></span>
-<span><span class="co">#&gt; [16] "Treatment=chilled"    "conc=(-Inf;175;350)"  "conc=(175;350;675)"  </span></span>
-<span><span class="co">#&gt; [19] "conc=(350;675;Inf)"   "uptake=(-Inf;18;28)"  "uptake=(18;28;37)"   </span></span>
-<span><span class="co">#&gt; [22] "uptake=(28;37;Inf)"</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">fuzzyMtcars</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 31</span></span></span>
+<span><span class="co">#&gt;   `cyl=four` `cyl=six` `cyl=eight` `vs=0` `vs=1` `am=0` `am=1` `gear=3` `gear=4`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> FALSE      TRUE      FALSE       TRUE   FALSE  FALSE  TRUE   FALSE    TRUE    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> FALSE      TRUE      FALSE       TRUE   FALSE  FALSE  TRUE   FALSE    TRUE    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> TRUE       FALSE     FALSE       FALSE  TRUE   FALSE  TRUE   FALSE    TRUE    </span></span>
+<span><span class="co">#&gt;   `gear=5` `mpg=(-Inf;15;20)` `mpg=(15;20;30)` `mpg=(20;30;Inf)`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> FALSE                     0             0.9               0.1 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> FALSE                     0             0.9               0.1 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> FALSE                     0             0.72              0.28</span></span>
+<span><span class="co">#&gt;   `disp=(-Inf;71.1;272)` `disp=(71.1;272;472)` `disp=(272;472;Inf)`</span></span>
+<span><span class="co">#&gt;                    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>                  0.557                 0.443                    0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>                  0.557                 0.443                    0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>                  0.816                 0.184                    0</span></span>
+<span><span class="co">#&gt;   `hp=(-Inf;52;194)` `hp=(52;194;335)` `hp=(194;335;Inf)`</span></span>
+<span><span class="co">#&gt;                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>              0.592             0.408                  0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>              0.592             0.408                  0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>              0.711             0.289                  0</span></span>
+<span><span class="co">#&gt;   `drat=(-Inf;2.76;3.84)` `drat=(2.76;3.84;4.93)` `drat=(3.84;4.93;Inf)`</span></span>
+<span><span class="co">#&gt;                     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>                       0                   0.945                0.055<span style="text-decoration: underline;">0</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>                       0                   0.945                0.055<span style="text-decoration: underline;">0</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>                       0                   0.991                0.009<span style="text-decoration: underline;">17</span></span></span>
+<span><span class="co">#&gt;   `wt=(-Inf;1.51;3.47)` `wt=(1.51;3.47;5.42)` `wt=(3.47;5.42;Inf)`</span></span>
+<span><span class="co">#&gt;                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>                 0.434                 0.566                    0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>                 0.304                 0.696                    0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>                 0.587                 0.413                    0</span></span>
+<span><span class="co">#&gt;   `qsec=(-Inf;14.5;18.7)` `qsec=(14.5;18.7;22.9)` `qsec=(18.7;22.9;Inf)`</span></span>
+<span><span class="co">#&gt;                     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>                  0.533                    0.467                      0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>                  0.4                      0.6                        0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>                  0.021<span style="text-decoration: underline;">4</span>                   0.979                      0</span></span>
+<span><span class="co">#&gt;   `carb=(-Inf;1;4.5)` `carb=(1;4.5;8)` `carb=(4.5;8;Inf)`</span></span>
+<span><span class="co">#&gt;                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>               0.143            0.857                  0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>               0.143            0.857                  0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>               1                0                      0</span></span></code></pre></div>
+<p>Note that the <code>cyl</code>, <code>vs</code>, <code>am</code>, and
+<code>gear</code> columns are still represented by dummy logical
+columns, while the <code>mpg</code>, <code>disp</code>, and other
+columns are now represented by fuzzy sets. This combination allows both
+crisp and fuzzy predicates to be used together in pattern discovery,
+offering more flexibility and interpretability.</p>
 </div>
 </div>
 <div class="section level2">
@@ -397,13 +606,9 @@ any data row.</p>
 of the dataset, e.g., by obtaining the first part of column names before
 the equal sign, which is neatly provided by the <code><a href="../reference/var_names.html">var_names()</a></code>
 function as follows:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">disj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/var_names.html">var_names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">fuzzyCO2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">disj</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    </span></span>
-<span><span class="co">#&gt;  [7] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    </span></span>
-<span><span class="co">#&gt; [13] "Type"      "Type"      "Treatment" "Treatment" "conc"      "conc"     </span></span>
-<span><span class="co">#&gt; [19] "conc"      "uptake"    "uptake"    "uptake"</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#disj &lt;- var_names(colnames(fuzzyCO2))</span></span>
+<span><span class="co">#print(disj)</span></span></code></pre></div>
 <p>The function <code>dig_associations</code> takes the analyzed dataset
 as its first parameter and a pair of <code>tidyselect</code> expressions
 to select the column names to appear in the left-hand (antecedent) and
@@ -418,33 +623,18 @@ satisfy the antecedent AND consequent));</li>
 <li>the minimum confidence is 0.8 (confidence is the proportion of rows
 satisfying the consequent GIVEN the antecedent is true).</li>
 </ul>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">fuzzyCO2</span>,</span>
-<span>                           antecedent <span class="op">=</span> <span class="op">!</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"Treatment"</span><span class="op">)</span>,</span>
-<span>                           consequent <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"Treatment"</span><span class="op">)</span>,</span>
-<span>                           disjoint <span class="op">=</span> <span class="va">disj</span>,</span>
-<span>                           min_support <span class="op">=</span> <span class="fl">0.02</span>,</span>
-<span>                           min_confidence <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#result &lt;- dig_associations(fuzzyCO2,</span></span>
+<span>                           <span class="co">#antecedent = !starts_with("Treatment"),</span></span>
+<span>                           <span class="co">#consequent = starts_with("Treatment"),</span></span>
+<span>                           <span class="co">#disjoint = disj,</span></span>
+<span>                           <span class="co">#min_support = 0.02,</span></span>
+<span>                           <span class="co">#min_confidence = 0.8)</span></span></code></pre></div>
 <p>The result is a tibble with found rules. We may arrange it by support
 in descending order:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">arrange</span><span class="op">(</span><span class="va">result</span>, <span class="fu">desc</span><span class="op">(</span><span class="va">support</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 120 × 8</span></span></span>
-<span><span class="co">#&gt;    antecedent        consequent support confidence coverage conseq_support count</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> {Type=Mississipp… {Treatmen…  0.135       0.895   0.151             0.5  11.4</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> {Plant=Mc2,Type=… {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> {Plant=Mc1,Type=… {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> {Plant=Mc3,Type=… {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> {Plant=Mc2,Type=… {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> {Plant=Mn1,Type=… {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> {Plant=Mn2,Type=… {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> {Plant=Mn3,Type=… {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> {Plant=Qn1,Type=… {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> {Plant=Qc2,Type=… {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1       0.083<span style="text-decoration: underline;">3</span>            0.5   7  </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 110 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1 more variable: antecedent_length &lt;int&gt;</span></span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#result &lt;- arrange(result, desc(support))</span></span>
+<span><span class="co">#print(result)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="conditional-correlations">Conditional Correlations<a class="anchor" aria-label="anchor" href="#conditional-correlations"></a>
@@ -472,35 +662,15 @@ replicates the search for associations rules with the custom callback
 function. For that, a dataset has to be dichotomized and the disjoint
 vector created as in the <strong>Data Preparation</strong> section
 above:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">fuzzyCO2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 22</span></span></span>
-<span><span class="co">#&gt;   `Plant=Qn1` `Plant=Qn2` `Plant=Qn3` `Plant=Qc1` `Plant=Qc3` `Plant=Qc2`</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> TRUE        FALSE       FALSE       FALSE       FALSE       FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 16 more variables: `Plant=Mn3` &lt;lgl&gt;, `Plant=Mn2` &lt;lgl&gt;, `Plant=Mn1` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `Plant=Mc2` &lt;lgl&gt;, `Plant=Mc3` &lt;lgl&gt;, `Plant=Mc1` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `Type=Quebec` &lt;lgl&gt;, `Type=Mississippi` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `Treatment=nonchilled` &lt;lgl&gt;, `Treatment=chilled` &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `conc=(-Inf;175;350)` &lt;dbl&gt;, `conc=(175;350;675)` &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `conc=(350;675;Inf)` &lt;dbl&gt;, `uptake=(-Inf;18;28)` &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   `uptake=(18;28;37)` &lt;dbl&gt;, `uptake=(28;37;Inf)` &lt;dbl&gt;</span></span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">disj</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    </span></span>
-<span><span class="co">#&gt;  [7] "Plant"     "Plant"     "Plant"     "Plant"     "Plant"     "Plant"    </span></span>
-<span><span class="co">#&gt; [13] "Type"      "Type"      "Treatment" "Treatment" "conc"      "conc"     </span></span>
-<span><span class="co">#&gt; [19] "conc"      "uptake"    "uptake"    "uptake"</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#head(fuzzyCO2)</span></span>
+<span><span class="co">#print(disj)</span></span></code></pre></div>
 <p>As we want to search for associations rules with some minimum support
 and confidence, we define the variables to hold that thresholds. We also
 need to define a callback function that will be called for each found
 frequent condition. Its purpose is to generate the rules with the
 obtained condition as an antecedent:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">min_support</span> <span class="op">&lt;-</span> <span class="fl">0.02</span></span>
 <span><span class="va">min_confidence</span> <span class="op">&lt;-</span> <span class="fl">0.8</span></span>
 <span></span>
@@ -531,39 +701,25 @@ predicates, which we call “foci” (plural of “focus”), within the rows
 satisfying the condition. For associations rules, foci are potential
 rule consequents.</p>
 <p>Now we can run the digging for rules:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig.html">dig</a></span><span class="op">(</span><span class="va">fuzzyCO2</span>,</span>
-<span>              f <span class="op">=</span> <span class="va">f</span>,</span>
-<span>              condition <span class="op">=</span> <span class="op">!</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"Treatment"</span><span class="op">)</span>,</span>
-<span>              focus <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"Treatment"</span><span class="op">)</span>,</span>
-<span>              disjoint <span class="op">=</span> <span class="va">disj</span>,</span>
-<span>              min_length <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>              min_support <span class="op">=</span> <span class="va">min_support</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#result &lt;- dig(fuzzyCO2,</span></span>
+<span>              <span class="co">#f = f,</span></span>
+<span>              <span class="co">#condition = !starts_with("Treatment"),</span></span>
+<span>              <span class="co">#focus = starts_with("Treatment"),</span></span>
+<span>              <span class="co">#disjoint = disj,</span></span>
+<span>              <span class="co">#min_length = 1,</span></span>
+<span>              <span class="co">#min_support = min_support)</span></span></code></pre></div>
 <p>As we return a list of lists in the callback function, we have to
 flatten the first level of lists in the result and binding it into a
 data frame:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">result</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span>recursive <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">as_tibble</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, args <span class="op">=</span> <span class="va">_</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="va">support</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 120 × 4</span></span></span>
-<span><span class="co">#&gt;    antecedent                                      consequent support confidence</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> {Type=Mississippi,uptake=(18;28;37)}            {Treatmen…  0.135       0.895</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> {Plant=Mc2,Type=Mississippi,uptake=(-Inf;18;28… {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> {Plant=Mc1,Type=Mississippi}                    {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> {Plant=Mc3,Type=Mississippi}                    {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> {Plant=Mc2,Type=Mississippi}                    {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> {Plant=Mn1,Type=Mississippi}                    {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> {Plant=Mn2,Type=Mississippi}                    {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> {Plant=Mn3,Type=Mississippi}                    {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> {Plant=Qn1,Type=Quebec}                         {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> {Plant=Qc2,Type=Quebec}                         {Treatmen…  0.083<span style="text-decoration: underline;">3</span>      1    </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 110 more rows</span></span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#result &lt;- result |&gt;</span></span>
+<span>  <span class="co">#unlist(recursive = FALSE) |&gt;</span></span>
+<span>  <span class="co">#lapply(as_tibble) |&gt;</span></span>
+<span>  <span class="co">#do.call(rbind, args = _) |&gt;</span></span>
+<span>  <span class="co">#arrange(desc(support))</span></span>
+<span><span class="co">#</span></span>
+<span><span class="co">#print(result)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
