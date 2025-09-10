@@ -29,7 +29,8 @@ specifying the columns to be transformed}
 \item{...}{optional other tidyselect expressions selecting additional
 columns to be processed}
 
-\item{.breaks}{for numeric columns, this has to be either an integer scalar
+\item{.breaks}{this argument is ignored if \code{.method="dummy"}. For other
+methods, it has to be either an integer scalar
 or a numeric vector. If \code{.breaks} is an integer scalar, it specifies
 the number of resulting intervals to break the numeric column to
 (for \code{.method="crisp"}) or the number of target fuzzy sets (for
@@ -93,6 +94,10 @@ The transformation of selected columns differ based on the type. Concretely:
 into three logical columns named \code{x=l1}, \code{x=l2}, and \code{x=l3};
 \item \strong{numeric} column\code{x} is transformed accordingly to \code{.method} argument:
 \itemize{
+\item if \code{.method="dummy"}, the numeric column is first transformed into a factor
+by treating each unique value as a separate factor level and then it is
+processed as a factor (see above). That effectively creates a logical column
+for each unique value in the source numeric column;
 \item if \code{.method="crisp"}, the column is first transformed into a factor
 with intervals as factor levels and then it is processed as a factor
 (see above);
@@ -197,7 +202,7 @@ See the examples for more details.
 d <- data.frame(a = c(TRUE, TRUE, FALSE),
                 b = factor(c("A", "B", "A")),
                 c = c(1, 2, 3))
-partition(d, a, b)
+partition(d, a, b, c, .method = "dummy")
 
 # transform numeric columns to logical columns (crisp transformation)
 partition(CO2, conc:uptake, .method = "crisp", .breaks = 3)

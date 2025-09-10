@@ -96,6 +96,31 @@ test_that("partition basics", {
 })
 
 
+test_that("partition dummy", {
+    expect_equal(partition(data.frame(a = 1:3),
+                           .keep = FALSE,
+                           .method = "dummy"),
+                 tibble("a=1" = c(T,F,F),
+                        "a=2" = c(F,T,F),
+                        "a=3" = c(F,F,T)))
+
+    expect_equal(partition(data.frame(a = c(1.0, 1.2, 1.2, 1.0, NA)),
+                           .keep = FALSE,
+                           .na = TRUE,
+                           .method = "dummy"),
+                 tibble("a=1" = c(T,F,F,T,F),
+                        "a=1.2" = c(F,T,T,F,F),
+                        "a=NA"  = c(F,F,F,F,T)))
+
+    expect_equal(partition(data.frame(a = c(1.0, 1.2, 1.2, 1.0, NA)),
+                           .keep = FALSE,
+                           .na = FALSE,
+                           .method = "dummy"),
+                 tibble("a=1" = c(T,F,F,T,F),
+                        "a=1.2" = c(F,T,T,F,F)))
+})
+
+
 test_that("partition crisp", {
     expect_equal(partition(data.frame(a = 0:10),
                            .breaks = 2,
@@ -386,7 +411,7 @@ test_that("partition errors", {
     expect_error(partition(d, a, .right = "TRUE"),
                  "`.right` must be a flag")
     expect_error(partition(d, a, .method = "foo"),
-                 '`.method` must be equal to one of: "crisp", "triangle", "raisedcos".')
+                 '`.method` must be equal to one of: "dummy", "crisp", "triangle", "raisedcos".')
 
 })
 

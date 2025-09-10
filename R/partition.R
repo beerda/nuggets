@@ -17,6 +17,10 @@
 #' - **factor** column `x`, which has levels `l1`, `l2`, and `l3`, is transformed
 #'   into three logical columns named `x=l1`, `x=l2`, and `x=l3`;
 #' - **numeric** column`x` is transformed accordingly to `.method` argument:
+#'   - if `.method="dummy"`, the numeric column is first transformed into a factor
+#'     by treating each unique value as a separate factor level and then it is
+#'     processed as a factor (see above). That effectively creates a logical column
+#'     for each unique value in the source numeric column;
 #'   - if `.method="crisp"`, the column is first transformed into a factor
 #'     with intervals as factor levels and then it is processed as a factor
 #'     (see above);
@@ -117,7 +121,8 @@
 #'      specifying the columns to be transformed
 #' @param ... optional other tidyselect expressions selecting additional
 #'      columns to be processed
-#' @param .breaks for numeric columns, this has to be either an integer scalar
+#' @param .breaks this argument is ignored if `.method="dummy"`. For other
+#'      methods, it has to be either an integer scalar
 #'      or a numeric vector. If `.breaks` is an integer scalar, it specifies
 #'      the number of resulting intervals to break the numeric column to
 #'      (for `.method="crisp"`) or the number of target fuzzy sets (for
@@ -157,7 +162,7 @@
 #' d <- data.frame(a = c(TRUE, TRUE, FALSE),
 #'                 b = factor(c("A", "B", "A")),
 #'                 c = c(1, 2, 3))
-#' partition(d, a, b)
+#' partition(d, a, b, c, .method = "dummy")
 #'
 #' # transform numeric columns to logical columns (crisp transformation)
 #' partition(CO2, conc:uptake, .method = "crisp", .breaks = 3)
@@ -200,7 +205,7 @@ partition <- function(.data,
     .must_be_character_vector(.labels, null = TRUE)
     .must_be_flag(.na)
     .must_be_flag(.keep)
-    .must_be_enum(.method, c("crisp", "triangle", "raisedcos"))
+    .must_be_enum(.method, c("dummy", "crisp", "triangle", "raisedcos"))
     .must_be_flag(.right)
     .must_be_integerish_scalar(.span)
     .must_be_integerish_scalar(.inc)
@@ -247,12 +252,14 @@ partition <- function(.data,
             res <- .partition_factor(x, colname)
 
         } else if (is.numeric(x)) {
-            if (is.null(.breaks)) {
+            if (.method == "dummy") {
+                res <- .partition_factor(as.factor(x), colname)
+
+            } else if (is.null(.breaks)) {
                 cli_abort(c("{.arg .breaks} must not be NULL in order to partition numeric column {.var {colname}}."),
                           call = call)
-            }
 
-            if (.method == "crisp") {
+            } else if (.method == "crisp") {
                 pp <- .prepare_crisp(x, colname, .breaks, .labels, .right, .span, .inc, call)
                 f <- if (.right) {
                     function(x, br)  !is.na(x) & x > br[1] & x <= br[length(br)]

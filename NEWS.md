@@ -10,6 +10,7 @@
 - added exclude argument to dig() and other dig_*() functions
 - added support for the disjoint parameter to var_grid() and dig_grid()
 - added progress bar to the dig() function
+- added "dummy" method to partition()
 
 # nuggets 1.4.0
 - released: 2025-01-08
