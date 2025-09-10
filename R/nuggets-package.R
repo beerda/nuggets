@@ -58,6 +58,7 @@
 #' @importFrom rlang quo_is_null
 #' @importFrom rlang warn
 #' @importFrom shiny actionButton
+#' @importFrom shiny addResourcePath
 #' @importFrom shiny brushedPoints
 #' @importFrom shiny checkboxGroupInput
 #' @importFrom shiny column

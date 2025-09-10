@@ -7,6 +7,8 @@ mainApp <- function(rules,
     # to show special numeric values (such as Inf) in DT
     options(htmlwidgets.TOJSON_ARGS = list(na = 'string'))
 
+    addResourcePath("pkgimages", system.file("man", "figures", package = "nuggets"))
+
     title <- paste0(title, " - Nuggets Explorer")
 
     detailAction <- NULL
@@ -72,7 +74,10 @@ mainApp <- function(rules,
             tags$style('table.info-table td:first-child {font-weight: bold; text-align: left; padding-right: 10px}'),
         ),
         useShinyjs(),
-        navbarPage(title = span(icon("gem"), title),
+        navbarPage(title = span(tags$img(src = "pkgimages/logo.png",
+                                         style = "filter: grayscale(100%);",
+                                         height = "24px"),
+                                title),
                    id = "mainTabset",
                    windowTitle = title,
                    header = header,
@@ -109,7 +114,9 @@ mainApp <- function(rules,
                 fluidRow(
                     column(width = 6, offset = 3,
                         panel(heading = "About the app",
-                              tags$div(style = "text-align: center; font-size: 40pt; color: gray; padding-bottom: 10px", width = "100%", icon("gem")),
+                              tags$div(style = "text-align: center; font-size: 40pt; color: gray; padding-bottom: 10px",
+                                       width = "100%",
+                                       tags$img(src = "pkgimages/logo.png", width = "100px")),
                               aboutTable("nuggets")
                         )
                     )
