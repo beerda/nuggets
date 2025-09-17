@@ -7,7 +7,9 @@ mainApp <- function(rules,
     # to show special numeric values (such as Inf) in DT
     options(htmlwidgets.TOJSON_ARGS = list(na = 'string'))
 
-    addResourcePath("pkgimages", system.file("man", "figures", package = "nuggets"))
+    addResourcePath("pkgimages",
+                    system.file(c("figures"),
+                                package = "nuggets"))
 
     title <- paste0(title, " - Nuggets Explorer")
 
