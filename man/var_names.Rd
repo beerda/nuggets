@@ -2,7 +2,7 @@
 % Please edit documentation in R/var_names.R
 \name{var_names}
 \alias{var_names}
-\title{Extract variable names from predicates}
+\title{Extract variable names from predicate names}
 \usage{
 var_names(x)
 }
@@ -10,17 +10,39 @@ var_names(x)
 \item{x}{A character vector of predicate names.}
 }
 \value{
-A \verb{<varname>} part of predicate names in \code{x}.
+A character vector containing the \verb{<varname>} parts of predicate
+names in \code{x}. If an element does not contain \code{=}, the entire string is
+returned as is. If \code{x} is \code{NULL}, the function returns \code{NULL}. If \code{x} has
+length zero (\code{character(0)}), the function returns \code{character(0)}.
 }
 \description{
-The function assumes that \code{x} is a vector of predicate names, i.e., a character
-vector with elements compatible with pattern \verb{<varname>=<value>}. The function
-returns the \verb{<varname>} part of these elements. If the string does not
-correspond to the pattern \verb{<varname>=<value>}, i.e., if the equal sign (\code{=})
-is missing in the string, the whole string is returned.
+This function extracts the variable part from a character vector of
+predicate names. Each element of \code{x} is expected to follow the pattern
+\verb{<varname>=<value>}, where \verb{<varname>} is a variable name and \verb{<value>} is
+the associated value.
+}
+\details{
+If an element does not contain an equal sign (\code{=}), the entire string is
+returned unchanged.
+
+This function is the counterpart to \code{\link[=values]{values()}}, which extracts the value
+part of predicates. Together, \code{var_names()} and \code{\link[=values]{values()}} provide a
+convenient way to split predicate strings into their variable and value
+components.
 }
 \examples{
-var_names(c("a=1", "a=2", "b=x", "b=y")) # returns c("a", "a", "b", "b")
+var_names(c("a=1", "a=2", "b=x", "b=y"))
+# returns c("a", "a", "b", "b")
+
+var_names(c("a", "b=3"))
+# returns c("a", "b")
+
+var_names(character(0))
+# returns character(0)
+
+var_names(NULL)
+# returns character(0)
+
 }
 \seealso{
 \code{\link[=values]{values()}}

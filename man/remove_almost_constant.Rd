@@ -14,35 +14,34 @@ remove_almost_constant(
 )
 }
 \arguments{
-\item{.data}{a data frame}
+\item{.data}{A data frame.}
 
-\item{.what}{a tidyselect expression (see
+\item{.what}{A tidyselect expression (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
-selecting the columns to be processed}
+specifying the columns to process.}
 
-\item{...}{optional other tidyselect expressions selecting additional
-columns to be processed}
+\item{...}{Additional tidyselect expressions selecting more columns.}
 
-\item{.threshold}{a numeric scalar in the range \eqn{[0, 1]} specifying the
-threshold for the proportion of the most frequent value}
+\item{.threshold}{Numeric scalar in the interval \eqn{[0,1]} giving the
+minimum required proportion of the most frequent value for a column to be
+considered almost constant.}
 
-\item{.na_rm}{a logical scalar indicating whether to remove \code{NA} values
-before computing the proportion of the most frequent value. See
-\code{\link[=is_almost_constant]{is_almost_constant()}} for details of how \code{NA} values are handled.}
+\item{.na_rm}{Logical; if \code{TRUE}, \code{NA} values are removed before computing
+proportions. If \code{FALSE}, \code{NA} is treated as a regular value. See
+\code{\link[=is_almost_constant]{is_almost_constant()}} for details.}
 
-\item{.verbose}{a logical scalar indicating whether to print a message
-about removed columns}
+\item{.verbose}{Logical; if \code{TRUE}, print a message listing the removed
+columns.}
 }
 \value{
-A data frame with removed all columns specified by the \code{.what}
-argument that are also (almost) constant
+A data frame with all selected columns removed that meet the
+definition of being almost constant.
 }
 \description{
-Function tests all columns that are specified by the \code{.what} argument
-and removes those that are almost constant. A column is considered
-almost constant if the proportion of the most frequent value is greater
-than the threshold specified by the \code{.threshold} argument. See
-\code{\link[=is_almost_constant]{is_almost_constant()}} for details.
+Test all columns specified by \code{.what} and remove those that are almost
+constant. A column is considered almost constant if the proportion of its
+most frequent value is greater than or equal to the threshold specified by
+\code{.threshold}. See \code{\link[=is_almost_constant]{is_almost_constant()}} for further details.
 }
 \examples{
 d <- data.frame(a1 = 1:10,
@@ -51,15 +50,22 @@ d <- data.frame(a1 = 1:10,
                 b2 = NA,
                 c1 = rep(c(TRUE, FALSE), 5),
                 c2 = rep(c(TRUE, NA), 5),
-                d = c(rep(TRUE, 4), rep(FALSE, 4), NA, NA))
+                d  = c(rep(TRUE, 4), rep(FALSE, 4), NA, NA))
+
+# Remove columns that are constant (threshold = 1)
 remove_almost_constant(d, .threshold = 1.0, .na_rm = FALSE)
 remove_almost_constant(d, .threshold = 1.0, .na_rm = TRUE)
+
+# Remove columns where the majority value occurs in ≥ 50\% of rows
 remove_almost_constant(d, .threshold = 0.5, .na_rm = FALSE)
 remove_almost_constant(d, .threshold = 0.5, .na_rm = TRUE)
+
+# Restrict check to a subset of columns
 remove_almost_constant(d, a1:b2, .threshold = 0.5, .na_rm = TRUE)
+
 }
 \seealso{
-\code{\link[=is_almost_constant]{is_almost_constant()}}
+\code{\link[=is_almost_constant]{is_almost_constant()}}, \code{\link[=remove_ill_conditions]{remove_ill_conditions()}}
 }
 \author{
 Michal Burda

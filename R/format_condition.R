@@ -1,16 +1,27 @@
-#' Format a vector of predicates into a string with a condition
+#' Format a vector of predicates into a condition string
 #'
-#' Function takes a character vector of predicates and returns a formatted
-#' condition. The format of the condition is a string with predicates
-#' separated by commas and enclosed in curly braces.
+#' Convert a character vector of predicate names into a standardized string
+#' representation of a condition. Predicates are concatenated with commas and
+#' enclosed in curly braces. This formatting ensures consistency when storing
+#' or comparing conditions in other functions.
 #'
-#' @param condition a character vector of predicates to be formatted
-#' @return a character scalar with a formatted condition
+#' @param condition A character vector of predicate names to be formatted. If
+#'   `NULL` or of length zero, the result is `"{}"`, representing an empty
+#'   condition that is always true.
+#'
+#' @return A character scalar containing the formatted condition string.
+#'
+#' @seealso [parse_condition()], [fire()]
+#'
 #' @author Michal Burda
-#' @export
+#'
 #' @examples
-#' format_condition(NULL)              # returns {}
-#' format_condition(c("a", "b", "c"))  # returns {a,b,c}
+#' format_condition(NULL)
+#' format_condition(character(0))
+#' format_condition(c("a", "b", "c"))
+#'
+#' @export
+
 format_condition <- function(condition) {
     .must_be_character_vector(condition, null = TRUE)
 

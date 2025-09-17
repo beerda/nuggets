@@ -18,86 +18,112 @@ var_grid(
 )
 }
 \arguments{
-\item{x}{either a data frame or a matrix}
+\item{x}{A data frame or matrix.}
 
-\item{xvars}{a tidyselect expression (see
-\href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
-specifying the columns of \code{x}, whose names will be used as a domain for
-combinations use at the first place (xvar)}
+\item{xvars}{A tidyselect expression specifying the columns of \code{x} whose
+names will be used in the first position (\code{xvar}) of the combinations.}
 
-\item{yvars}{\code{NULL} or a tidyselect expression (see
-\href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
-specifying the columns of \code{x}, whose names will be used as a domain for
-combinations use at the second place (yvar)}
+\item{yvars}{\code{NULL} or a tidyselect expression specifying the columns of
+\code{x} whose names will be used in the second position (\code{yvar}) of the
+combinations.}
 
-\item{allow}{a character string specifying which columns are allowed to be
-selected by \code{xvars} and \code{yvars} arguments. Possible values are:
+\item{allow}{A character string specifying which columns may be selected by
+\code{xvars} and \code{yvars}. Possible values are:
 \itemize{
-\item \code{"all"} - all columns are allowed to be selected
-\item \code{"numeric"} - only numeric columns are allowed to be selected
+\item \code{"all"} – all columns may be selected;
+\item \code{"numeric"} – only numeric columns may be selected.
 }}
 
-\item{disjoint}{an atomic vector of size equal to the number of columns of \code{x}
-that specifies the groups of predicates: if some elements of the \code{disjoint}
-vector are equal, then the corresponding columns of \code{x} will NOT be
-present together in a single combination of \code{xvars} and \code{yvars}. If
-\code{yvars} is \code{NULL}, the \code{disjoint} argument is ignored.}
+\item{disjoint}{An atomic vector of length equal to the number of columns
+in \code{x} that specifies disjoint groups of predicates. Columns belonging to
+the same group (i.e. having the same value in \code{disjoint}) will not appear
+together in a single combination of \code{xvars} and \code{yvars}. Ignored if
+\code{yvars} is \code{NULL}.}
 
-\item{xvar_name}{the name of the first column in the resulting tibble.}
+\item{xvar_name}{A character string specifying the name of the first column
+(\code{xvar}) in the output tibble.}
 
-\item{yvar_name}{the name of the second column in the resulting tibble.
-The column does not exist if \code{yvars} is \code{NULL}.}
+\item{yvar_name}{A character string specifying the name of the second
+column (\code{yvar}) in the output tibble. This column is omitted if
+\code{yvars} is \code{NULL}.}
 
-\item{error_context}{A list of details to be used in error messages.
-This argument is useful when \code{var_grid()} is called from another
-function to provide error messages, which refer to arguments of the
-calling function. The list must contain the following elements:
+\item{error_context}{A list providing details for error messages. This is
+useful when \code{var_grid()} is called from another function, allowing error
+messages to reference the caller’s argument names. The list must contain:
 \itemize{
-\item \code{arg_x} - the name of the argument \code{x} as a character string
-\item \code{arg_xvars} - the name of the argument \code{xvars} as a character string
-\item \code{arg_yvars} - the name of the argument \code{yvars} as a character string
-\item \code{arg_allow} - the name of the argument \code{allow} as a character string
-\item \code{arg_xvar_name} - the name of the \code{xvar} column in the output tibble
-\item \code{arg_yvar_name} - the name of the \code{yvar} column in the output tibble
-\item \code{call} - an environment in which to evaluate the error messages.
+\item \code{arg_x} – name of the argument \code{x};
+\item \code{arg_xvars} – name of the argument \code{xvars};
+\item \code{arg_yvars} – name of the argument \code{yvars};
+\item \code{arg_allow} – name of the argument \code{allow};
+\item \code{arg_xvar_name} – name of the \code{xvar} column in the output;
+\item \code{arg_yvar_name} – name of the \code{yvar} column in the output;
+\item \code{call} – the calling environment for evaluating error messages.
 }}
 }
 \value{
-if \code{yvars} is \code{NULL}, the function returns a tibble with a single
-column (\code{var}). If \code{yvars} is a non-\code{NULL} expression, the function
-returns two columns (\code{xvar} and \code{yvar}) with rows enumerating
-all combinations of column names specified by tidyselect expressions
-in \code{xvars} and \code{yvars} arguments.
+If \code{yvars} is \code{NULL}, a tibble with a single column (\code{var}).
+If \code{yvars} is not \code{NULL}, a tibble with two columns (\code{xvar}, \code{yvar})
+enumerating all valid combinations of column names selected by \code{xvars}
+and \code{yvars}. The order of variables in the result follows the order in
+which they are selected by \code{xvars} and \code{yvars}.
 }
 \description{
-\code{xvars} and \code{yvars} arguments are tidyselect expressions (see
+The \code{xvars} and \code{yvars} arguments are tidyselect expressions (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax}) that
-specify the columns of \code{x} whose names will be used as a domain for
-combinations.
+specify the columns of \code{x} whose names will be used to form combinations.
 
-If \code{yvars} is \code{NULL}, the function creates a tibble with one column \code{var}
-enumerating all column names specified by the \code{xvars} argument.
+If \code{yvars} is \code{NULL}, the function creates a tibble with one column, \code{var},
+enumerating all column names selected by the \code{xvars} expression.
 
 If \code{yvars} is not \code{NULL}, the function creates a tibble with two columns,
 \code{xvar} and \code{yvar}, whose rows enumerate all combinations of column names
-specified by the \code{xvars} and \code{yvars} argument.
+specified by \code{xvars} and \code{yvars}.
 
-It is allowed to specify the same column in both \code{xvars} and \code{yvars}
-arguments. In such a case, the combinations of the same column with itself
-are removed from the result.
+It is allowed to specify the same column in both \code{xvars} and \code{yvars}. In
+such cases, self-combinations (a column paired with itself) are removed
+from the result.
 
 In other words, the function creates a grid of all possible pairs
-\eqn{(xx, yy)} where \eqn{xx \in xvars}, \eqn{yy \in yvars},
-and \eqn{xx \neq yy}.
+\eqn{(xx, yy)} where \eqn{xx \in xvars}, \eqn{yy \in yvars}, and
+\eqn{xx \neq yy}.
+}
+\details{
+\code{var_grid()} is typically used when a function requires a systematic list
+of variables or variable pairs to analyze. For example, it can be used to
+generate all pairs of variables for correlation, association, or contrast
+analysis. The flexibility of \code{xvars} and \code{yvars} makes it possible to
+restrict the grid to specific subsets of variables while ensuring that
+invalid or redundant combinations (e.g., self-pairs or disjoint groups) are
+excluded automatically.
+
+The \code{allow} argument can be used to restrict the selection of columns to
+numeric columns only. This is useful when the resulting variable combinations
+will be used in analyses that require numeric data, such as correlation or
+contrast tests.
+
+The \code{disjoint} argument allows specifying groups of columns that should not
+appear together in a single combination. This is useful when certain columns
+represent mutually exclusive categories or measurements that should not be
+analyzed together. For example, if \code{disjoint} groups columns by measurement
+type, the function will ensure that no combination includes two columns from
+the same type.
 }
 \examples{
-# Create a grid of combinations of all pairs of columns in the CO2 dataset:
+# Grid of all pairwise column combinations in CO2
 var_grid(CO2)
 
-# Create a grid of combinations of all pairs of columns in the CO2 dataset
-# such that the first, i.e., `xvar` column is `Plant`, `Type`, or
-# `Treatment`, and the second, i.e., `yvar` column is `conc` or `uptake`:
+# Grid of combinations where the first column is Plant, Type, or Treatment,
+# and the second column is conc or uptake
 var_grid(CO2, xvars = Plant:Treatment, yvars = conc:uptake)
+
+# Restrict combinations to numeric variables only
+var_grid(CO2, allow = "numeric")
+
+# Prevent variables from the same disjoint group from being paired together
+d <- data.frame(a = 1:5, b = 6:10, c = 11:15, d = 16:20)
+# Group (a, b) together and (c, d) together
+var_grid(d, xvars = everything(), yvars = everything(),
+         disjoint = c(1, 1, 2, 2))
 }
 \author{
 Michal Burda

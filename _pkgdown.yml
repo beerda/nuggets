@@ -42,7 +42,6 @@ reference:
     contents:
       - explore.associations
       - geom_diamond
-      - is_condition
       - remove_ill_conditions
       - which_antichain
 
@@ -53,6 +52,7 @@ reference:
       - bound_range
       - fire
       - format_condition
+      - is_condition
       - is_degree
       - is_nugget
       - is_subset

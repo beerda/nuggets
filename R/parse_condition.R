@@ -1,24 +1,39 @@
-#' Convert character vector of conditions into a list of vectors of predicates
+#' Convert condition strings into lists of predicate vectors
 #'
-#' Function takes a character vector of conditions and returns a list of vectors
-#' of predicates. Each element of the list corresponds to one condition. The
-#' condition is a string with predicates separated by commas and enclosed in
-#' curly braces, as returned by [format_condition()]. The function splits the
-#' condition string into a vector of predicates.
+#' Parse a character vector of conditions into a list of predicate vectors.
+#' Each element of the list corresponds to one condition. A condition is a
+#' string of predicates separated by commas and enclosed in curly braces, as
+#' produced by [format_condition()]. The function splits each string into its
+#' component predicates.
 #'
-#' If multiple vectors of conditions are passed, each of them is processed
-#' separately and the result is merged into a single list element-wisely. If
-#' the lengths of the vectors are different, the shorter vectors are recycled.
+#' If multiple vectors of conditions are provided via `...`, they are combined
+#' element-wise. The result is a single list where each element is formed by
+#' merging the predicates from the corresponding elements of all input
+#' vectors. If the input vectors differ in length, shorter ones are recycled.
 #'
-#' @param ... character vectors of conditions to be parsed.
-#' @param .sort a flag indicating whether to sort the predicates in the result.
-#' @return a list of vectors of predicates with each element corresponding to one
-#'      condition.
+#' Empty conditions (`"{}"`) are parsed as empty character vectors
+#' (`character(0)`).
+#'
+#' @param ... One or more character vectors of conditions to be parsed.
+#' @param .sort Logical flag indicating whether the predicates in each result
+#'   should be sorted alphabetically. Defaults to `FALSE`.
+#'
+#' @return A list of character vectors, where each element corresponds to one
+#'   condition and contains the parsed predicates.
+#'
+#' @seealso [format_condition()], [is_condition()], [fire()]
+#'
 #' @author Michal Burda
+#'
 #' @examples
 #' parse_condition(c("{a}", "{x=1, z=2, y=3}", "{}"))
+#'
+#' # Merge conditions from multiple vectors element-wise
 #' parse_condition(c("{b}", "{x=1, z=2, y=3}", "{q}", "{}"),
 #'                 c("{a}", "{v=10, w=11}",    "{}",  "{r,s,t}"))
+#'
+#' # Sorting predicates within each condition
+#' parse_condition("{z,y,x}", .sort = TRUE)
 #'
 #' @export
 parse_condition <- function(...,

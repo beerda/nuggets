@@ -2,22 +2,31 @@
 % Please edit documentation in R/is_nugget.R
 \name{is_nugget}
 \alias{is_nugget}
-\title{Test if the object is a nugget}
+\title{Test whether an object is a nugget}
 \usage{
 is_nugget(x, flavour = NULL)
 }
 \arguments{
-\item{x}{an object to be tested}
+\item{x}{An object to be tested.}
 
-\item{flavour}{a character string specifying the flavour of the nugget.}
+\item{flavour}{Optional character string specifying the required flavour of
+the nugget. If \code{NULL} (default), the function checks only whether \code{x} is
+a nugget of any flavour.}
 }
 \value{
-A logical value indicating whether the object is a nugget.
+A logical scalar: \code{TRUE} if \code{x} is a nugget (and of the specified
+flavour, if given), otherwise \code{FALSE}.
 }
 \description{
-This function returns TRUE if the object is a nugget. If flavour is
-specified, the function returns TRUE only if the object is a nugget of
-the specified flavour.
+Check if the given object is a nugget, i.e. an object created by
+\code{\link[=nugget]{nugget()}}. If a \code{flavour} is specified, the function returns \code{TRUE} only
+if the object is a nugget of the given flavour.
+}
+\details{
+Technically, nuggets are implemented as S3 objects. An object is considered
+a nugget if it inherits from the S3 class \code{"nugget"}. It is a nugget of a
+given flavour if it inherits from both the specified \code{flavour} class and
+the \code{"nugget"} class.
 }
 \seealso{
 \code{\link[=nugget]{nugget()}}

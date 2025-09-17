@@ -2,25 +2,60 @@
 % Please edit documentation in R/nugget.R
 \name{nugget}
 \alias{nugget}
-\title{Create a nugget object of given flavour}
+\title{Create a nugget object of a given flavour}
 \usage{
 nugget(x, flavour, call_function, call_args)
 }
 \arguments{
-\item{x}{an object with rules, typically a tibble or a data frame.}
+\item{x}{An object with rules or patterns, typically a tibble or data frame.
+If \code{NULL}, it will be converted to an empty tibble.}
 
-\item{flavour}{a character string specifying the flavour of the nugget or NULL.}
+\item{flavour}{A character string specifying the flavour of the nugget, or
+\code{NULL} if no flavour should be assigned. If given, the returned object
+will inherit from both \code{"nugget"} and the specified flavour class.}
 
-\item{call_function}{a function name that created the nugget.}
+\item{call_function}{A character scalar giving the name of the function that
+created the nugget. Stored as an attribute for provenance.}
 
-\item{call_args}{a list of function arguments that were used to create the nugget.}
+\item{call_args}{A list of arguments that were passed to the function which
+created the nugget. Stored as an attribute for reproducibility.}
 }
 \value{
-A nugget object of the specified flavour, i.e., a tibble object that is
-a subclass of \code{flavour} and \code{nugget} classes.
+A tibble object that is an S3 subclass of \code{"nugget"} and, if
+specified, the given \code{flavour} class. The object also contains attributes
+\code{"call_function"} and \code{"call_args"} describing its provenance.
 }
 \description{
-Create a nugget object of given flavour
+Construct a nugget object, which is an S3 object used to store and
+represent results (e.g., rules or patterns) in the \code{nuggets} framework.
+}
+\details{
+A nugget is technically a tibble (or data frame) that inherits from both
+the \code{"nugget"} class and, optionally, a flavour-specific S3 class. This
+allows distinguishing different types of nuggets (flavours) while still
+supporting generic methods for all nuggets.
+
+Each nugget stores additional provenance information in attributes:
+\itemize{
+\item \code{"call_function"} — the name of the function that created the nugget.
+\item \code{"call_args"} — the list of arguments passed to that function.
+}
+
+These attributes make it possible to reconstruct or track how the nugget
+was created, which supports reproducibility, transparency, and debugging.
+For example, one can inspect \code{attr(n, "call_args")} to recover the original
+parameters used to mine the patterns.
+}
+\examples{
+df <- data.frame(lhs = c("a", "b"), rhs = c("c", "d"))
+n <- nugget(df, flavour = "rules", call_function = "example_function",
+            call_args = list(data = "mydata"))
+
+inherits(n, "nugget")      # TRUE
+inherits(n, "rules")       # TRUE
+attr(n, "call_function")   # "dig_example_function"
+attr(n, "call_args")       # list(data = "mydata")
+
 }
 \seealso{
 \code{\link[=is_nugget]{is_nugget()}}

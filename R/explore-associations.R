@@ -1,15 +1,40 @@
 #' Show interactive application to explore association rules
 #'
-#' @param x An object of class `associations`, typically created with
-#'     [dig_associations()].
-#' @param data An optional data frame containing the original dataset used to
-#'     mine the rules. Providing this dataset enables additional features in the
-#'     explorer.
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
+#' Launches an interactive Shiny application for visual exploration of mined
+#' association rules. The explorer provides tools for inspecting rule quality,
+#' comparing interestingness measures, and interactively filtering subsets of
+#' rules. When the original dataset is supplied, the application also allows
+#' for contextual exploration of rules with respect to the underlying data.
+#'
+#' @param x An object of S3 class `associations`, typically created with
+#'   [dig_associations()].
+#' @param data An optional data frame containing the dataset from which the
+#'   rules were mined. Providing this enables additional contextual features in
+#'   the explorer, such as examining supporting records.
 #' @param ... Currently ignored.
+#'
 #' @return An object of class `shiny.appobj` representing the Shiny application.
-#'     If printed in an interactive R session, the application will be run
-#'     immediately.
+#'   When "printed" in an interactive R session, the application is launched
+#'   immediately in the default web browser.
+#'
+#' @seealso [dig_associations()]
 #' @author Michal Burda
+#'
+#' @examples
+#' \dontrun{
+#' data("iris")
+#' # convert all columns into dummy logical variables
+#' part <- partition(iris, .breaks = 3)
+#'
+#' # find association rules
+#' rules <- dig_associations(part)
+#'
+#' # launch the interactive explorer
+#' explore(rules, data = part)
+#' }
 #' @export
 explore.associations <- function(x, data = NULL, ...) {
     .must_inherit(x, "associations")

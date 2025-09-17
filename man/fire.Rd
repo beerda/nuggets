@@ -7,43 +7,55 @@
 fire(x, condition, t_norm = "goguen")
 }
 \arguments{
-\item{x}{a matrix or data frame. The matrix must be numeric (double) or logical.
-If \code{x} is a data frame then each column must be either numeric (double) or
-logical.}
+\item{x}{A matrix or data frame containing predicate truth values. If \code{x} is
+a matrix, it must be numeric (double) or logical. If \code{x} is a data frame,
+all columns must be numeric (double) or logical.}
 
-\item{condition}{a character vector of conditions, each element as formatted
-by \code{\link[=format_condition]{format_condition()}}. E.g., \code{"{p1,p2,p3}"} is a condition with three
-predicates \code{"p1"}, \code{"p2"}, and \code{"p3"}. All predicates present in the
-condition must exist as column names in \code{x}.}
+\item{condition}{A character vector of conditions, each formatted according
+to \code{\link[=format_condition]{format_condition()}}. For example, \code{"{p1,p2,p3}"} represents a
+condition composed of three predicates \code{"p1"}, \code{"p2"}, and \code{"p3"}. Every
+predicate mentioned in \code{condition} must be present as a column in \code{x}.}
 
-\item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
-\code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}
-(Lukasiewicz t-norm).}
+\item{t_norm}{A string specifying the triangular norm (t-norm) used to
+compute conjunctions of predicate values. Must be one of \code{"goedel"}
+(minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"} (Lukasiewicz
+t-norm).}
 }
 \value{
-A numeric matrix with values from the interval \eqn{[0,1]} indicating
-the truth values. The resulting matrix has \code{nrow(x)} rows and
-\code{length(condition)} columns. That is, a value on \emph{i}-th row and \emph{j}-th
-column corresponds to a truth value of \emph{j}-th condition evaluated at
-\emph{i}-th data row.
+A numeric matrix with entries in the interval \eqn{[0, 1]} giving
+the truth degrees of the conditions. The matrix has \code{nrow(x)} rows and
+\code{length(condition)} columns. The element in row \emph{i} and column \emph{j}
+corresponds to the truth degree of the \emph{j}-th condition evaluated on the
+\emph{i}-th row of \code{x}.
 }
 \description{
-Given a data frame or a matrix of truth values of predicates, compute
-truth values of given vector of conditions.
+Given a data frame or matrix of truth values for predicates, compute the
+truth values of a set of conditions expressed as elementary conjunctions.
 }
 \details{
-Each element of \code{condition} is a character string of the format \code{"{p1,p2,p3}"},
-where \code{"p1"}, \code{"p2"}, and \code{"p3"} are predicates. Data \code{x} must contain columns
-whose names correspond to all predicates used in conditions. Each condition
-is evaluated on all data rows as an elementary conjunction, where the conjunction
-operation is specified by the \code{t_norm} argument. An empty condition, \code{{}},
-is always evaluated as 1.
+Each element of \code{condition} must be a character string of the format
+\code{"{p1,p2,p3}"}, where \code{"p1"}, \code{"p2"}, and \code{"p3"} are predicate names. The
+data object \code{x} must contain columns whose names correspond exactly to all
+predicates referenced in the conditions. Each condition is evaluated for
+every row of \code{x} as a conjunction of its predicates, with the conjunction
+operation determined by the \code{t_norm} argument. An empty condition (\code{"{}"})
+is always evaluated as 1 (i.e., fully true).
 }
 \examples{
-d <- data.frame(a = c(  1, 0.8, 0.5, 0.2,   0),
-                b = c(0.5,   1, 0.5,   0,   1),
-                c = c(0.9, 0.9, 0.1, 0.8, 0.7))
-fire(d, c("{a,c}", "{}", "{a,b,c}"))
+d <- data.frame(
+  a = c(1, 0.8, 0.5, 0.2, 0),
+  b = c(0.5, 1, 0.5, 0, 1),
+  c = c(0.9, 0.9, 0.1, 0.8, 0.7)
+)
+
+# Evaluate conditions with different t-norms
+fire(d, c("{a,c}", "{}", "{a,b,c}"), t_norm = "goguen")
+fire(d, c("{a,c}", "{a,b}"), t_norm = "goedel")
+fire(d, c("{b,c}"), t_norm = "lukas")
+
+}
+\seealso{
+\code{\link[=format_condition]{format_condition()}}, \code{\link[=partition]{partition()}}
 }
 \author{
 Michal Burda

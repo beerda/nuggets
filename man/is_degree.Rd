@@ -2,25 +2,44 @@
 % Please edit documentation in R/is_degree.R
 \name{is_degree}
 \alias{is_degree}
-\title{Tests whether the given argument is a numeric value from the interval
-\eqn{[0,1]}}
+\title{Test whether an object contains numeric values from the interval \eqn{[0,1]}}
 \usage{
 is_degree(x, na_rm = FALSE)
 }
 \arguments{
-\item{x}{the value to be tested}
+\item{x}{The object to be tested. Can be a numeric vector, matrix, or array.}
 
-\item{na_rm}{whether to ignore \code{NA} values}
+\item{na_rm}{Logical; whether to ignore \code{NA} values. If \code{TRUE}, \code{NA}s are
+treated as valid values. If \code{FALSE} and \code{x} contains any \code{NA}s, the
+function immediately returns \code{FALSE}.}
 }
 \value{
-\code{TRUE} if \code{x} is a numeric vector, matrix or array with values
-between 0 and 1, otherwise, \code{FALSE} is returned. If \code{na_rm} is \code{TRUE},
-\code{NA} values are treated as valid values. If \code{na_rm} is \code{FALSE} and \code{x}
-contains \code{NA} values, \code{FALSE} is returned.
+A logical scalar. Returns \code{TRUE} if all (non-\code{NA}) elements of \code{x}
+are numeric and lie within the closed interval \eqn{[0,1]}. Returns
+\code{FALSE} if:
+\itemize{
+\item \code{x} contains any \code{NA} values and \code{na_rm = FALSE}
+\item any element is outside the interval \eqn{[0,1]}
+\item \code{x} is not numeric
+\item \code{x} is empty (\code{length(x) == 0})
+}
 }
 \description{
-Tests whether the given argument is a numeric value from the interval
-\eqn{[0,1]}
+Check if the input consists only of numeric values between 0 and 1,
+inclusive. This is often useful when validating truth degrees, membership
+values in fuzzy sets, or probabilities.
+}
+\examples{
+is_degree(0.5)
+is_degree(c(0, 0.2, 1))
+is_degree(c(0.5, NA), na_rm = TRUE)   # TRUE
+is_degree(c(0.5, NA), na_rm = FALSE)  # FALSE
+is_degree(c(-0.1, 0.5))               # FALSE
+is_degree(numeric(0))                 # FALSE
+
+}
+\seealso{
+\code{\link[=is.numeric]{is.numeric()}}
 }
 \author{
 Michal Burda

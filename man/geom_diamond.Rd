@@ -2,7 +2,7 @@
 % Please edit documentation in R/geom_diamond.R
 \name{geom_diamond}
 \alias{geom_diamond}
-\title{Geom for drawing diamond plot representing lattice structures}
+\title{Geom for drawing diamond plots of lattice structures}
 \usage{
 geom_diamond(
   mapping = NULL,
@@ -19,37 +19,92 @@ geom_diamond(
 )
 }
 \arguments{
-\item{mapping}{Aesthetic mappings, usually created with \code{aes()}.}
+\item{mapping}{Aesthetic mappings, usually created with \code{\link[ggplot2:aes]{ggplot2::aes()}}.}
 
-\item{data}{A data frame containing the data to be plotted.}
+\item{data}{A data frame containing the lattice structure to be plotted.}
 
-\item{stat}{The statistical transformation to use on the data, default is "identity".}
+\item{stat}{The statistical transformation to apply, default is \code{"identity"}.}
 
-\item{position}{Position adjustment, default is "identity".}
+\item{position}{Position adjustment for the geom, default is \code{"identity"}.}
 
-\item{na.rm}{A logical value indicating whether to remove missing values.}
+\item{na.rm}{Logical; if \code{TRUE}, missing values are silently removed.}
 
-\item{linetype}{The type of line to use for the edges, default is "solid".}
+\item{linetype}{Line type used for edges. Defaults to \code{"solid"}.}
 
-\item{nudge_x}{Horizontal nudge for the x-coordinates of the labels.}
+\item{nudge_x}{Horizontal nudge applied to label positions.}
 
-\item{nudge_y}{Vertical nudge for the y-coordinates of the labels.}
+\item{nudge_y}{Vertical nudge applied to label positions.}
 
-\item{show.legend}{A logical value indicating whether to show the legend.}
+\item{show.legend}{Logical; should a legend be drawn? Defaults to \code{FALSE}.}
 
-\item{inherit.aes}{A logical value indicating whether to inherit aesthetics from the plot.}
+\item{inherit.aes}{Logical; if \code{TRUE}, inherit default aesthetics from the
+plot. Defaults to \code{TRUE}.}
 
-\item{...}{Other arguments passed to the layer.}
+\item{...}{Additional arguments passed on to \code{\link[ggplot2:layer]{ggplot2::layer()}}.}
 }
 \value{
-A ggplot2 layer object that can be added to a ggplot.
+A \code{ggplot2} layer object representing a diamond plot. This layer can
+be added to an existing \code{ggplot} object.
 }
 \description{
-This function creates a ggplot2 geom for drawing diamond plots, which are
-used to visualize lattice structures in data. This is useful especially for
-visualization of rules and its ancestors.
+Create a custom \code{ggplot2} geom for drawing diamond plots, which are used to
+visualize lattice structures. This is particularly useful for representing
+association rules and their ancestor–descendant relationships in a concise
+graphical form.
 }
 \details{
-The diamonds represent items in the lattice, and edges represent
-an inclusion relationship between them.
+In a diamond plot, nodes (diamonds) represent items or conditions in the
+lattice, while edges represent inclusion (subset) relationships between
+them. The geom combines node and edge rendering with flexible aesthetic
+options for labels and positioning.
+}
+\examples{
+\dontrun{
+library(ggplot2)
+data("iris")
+rules <- dig_associations(part)
+
+# select some rule to visualize the ancestors
+rule <- rules[1000, , drop = FALSE]
+
+# prepare data for visualization of rule ancestors
+ante <- parse_condition(rule$antecedent)[[1]]
+cons <- parse_condition(rule$consequent)[[1]]
+res <- dig_associations(part,
+                       antecedent = all_of(ante),
+                       consequent = all_of(cons),
+                       min_length = 0,
+                       max_length = Inf,
+                       min_coverage = 0,
+                       min_support = 0,
+                       min_confidence = 0,
+                       measures = c("lift", "conviction"),
+                       max_results = Inf)
+
+# convert all columns into dummy logical variables
+part <- partition(iris, .breaks = 3)
+
+# find all antecedents with Sepal for rules with consequent Species=setosa
+rules <- dig_associations(part,
+                         antecedent = starts_with("Sepal"),
+                         consequent = `Species=setosa`,
+                         min_length = 0,
+                         max_length = Inf,
+                         min_coverage = 0,
+                         min_support = 0,
+                         min_confidence = 0,
+                         measures = c("lift", "conviction"),
+                         max_results = Inf)
+
+# add abbreviated condition for labeling
+rules$abbrev <- shorten_condition(rules$antecedent)
+
+# plot the lattice of rules
+ggplot(rules) +
+    aes(condition = antecedent, fill = confidence,
+       linewidth = confidence, size = coverage,
+       label = abbrev) +
+   geom_diamond()
+}
+
 }

@@ -1,76 +1,105 @@
 #' Create a tibble of combinations of selected column names
 #'
 #' @description
-#' `xvars` and `yvars` arguments are tidyselect expressions (see
+#' The `xvars` and `yvars` arguments are tidyselect expressions (see
 #' [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html)) that
-#' specify the columns of `x` whose names will be used as a domain for
-#' combinations.
+#' specify the columns of `x` whose names will be used to form combinations.
 #'
-#' If `yvars` is `NULL`, the function creates a tibble with one column `var`
-#' enumerating all column names specified by the `xvars` argument.
+#' If `yvars` is `NULL`, the function creates a tibble with one column, `var`,
+#' enumerating all column names selected by the `xvars` expression.
 #'
 #' If `yvars` is not `NULL`, the function creates a tibble with two columns,
 #' `xvar` and `yvar`, whose rows enumerate all combinations of column names
-#' specified by the `xvars` and `yvars` argument.
+#' specified by `xvars` and `yvars`.
 #'
-#' It is allowed to specify the same column in both `xvars` and `yvars`
-#' arguments. In such a case, the combinations of the same column with itself
-#' are removed from the result.
+#' It is allowed to specify the same column in both `xvars` and `yvars`. In
+#' such cases, self-combinations (a column paired with itself) are removed
+#' from the result.
 #'
 #' In other words, the function creates a grid of all possible pairs
-#' \eqn{(xx, yy)} where \eqn{xx \in xvars}, \eqn{yy \in yvars},
-#' and \eqn{xx \neq yy}.
+#' \eqn{(xx, yy)} where \eqn{xx \in xvars}, \eqn{yy \in yvars}, and
+#' \eqn{xx \neq yy}.
 #'
-#' @param x either a data frame or a matrix
-#' @param xvars a tidyselect expression (see
-#'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
-#'      specifying the columns of `x`, whose names will be used as a domain for
-#'      combinations use at the first place (xvar)
-#' @param yvars `NULL` or a tidyselect expression (see
-#'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
-#'      specifying the columns of `x`, whose names will be used as a domain for
-#'      combinations use at the second place (yvar)
-#' @param allow a character string specifying which columns are allowed to be
-#'      selected by `xvars` and `yvars` arguments. Possible values are:
-#'      \itemize{
-#'      \item `"all"` - all columns are allowed to be selected
-#'      \item `"numeric"` - only numeric columns are allowed to be selected
-#'      }
-#' @param disjoint an atomic vector of size equal to the number of columns of `x`
-#'      that specifies the groups of predicates: if some elements of the `disjoint`
-#'      vector are equal, then the corresponding columns of `x` will NOT be
-#'      present together in a single combination of `xvars` and `yvars`. If
-#'      `yvars` is `NULL`, the `disjoint` argument is ignored.
-#' @param xvar_name the name of the first column in the resulting tibble.
-#' @param yvar_name the name of the second column in the resulting tibble.
-#'      The column does not exist if `yvars` is `NULL`.
-#' @param error_context A list of details to be used in error messages.
-#'      This argument is useful when `var_grid()` is called from another
-#'      function to provide error messages, which refer to arguments of the
-#'      calling function. The list must contain the following elements:
-#'      \itemize{
-#'      \item `arg_x` - the name of the argument `x` as a character string
-#'      \item `arg_xvars` - the name of the argument `xvars` as a character string
-#'      \item `arg_yvars` - the name of the argument `yvars` as a character string
-#'      \item `arg_allow` - the name of the argument `allow` as a character string
-#'      \item `arg_xvar_name` - the name of the `xvar` column in the output tibble
-#'      \item `arg_yvar_name` - the name of the `yvar` column in the output tibble
-#'      \item `call` - an environment in which to evaluate the error messages.
-#'      }
-#' @return if `yvars` is `NULL`, the function returns a tibble with a single
-#'      column (`var`). If `yvars` is a non-`NULL` expression, the function
-#'      returns two columns (`xvar` and `yvar`) with rows enumerating
-#'      all combinations of column names specified by tidyselect expressions
-#'      in `xvars` and `yvars` arguments.
+#' @details
+#' `var_grid()` is typically used when a function requires a systematic list
+#' of variables or variable pairs to analyze. For example, it can be used to
+#' generate all pairs of variables for correlation, association, or contrast
+#' analysis. The flexibility of `xvars` and `yvars` makes it possible to
+#' restrict the grid to specific subsets of variables while ensuring that
+#' invalid or redundant combinations (e.g., self-pairs or disjoint groups) are
+#' excluded automatically.
+#'
+#' The `allow` argument can be used to restrict the selection of columns to
+#' numeric columns only. This is useful when the resulting variable combinations
+#' will be used in analyses that require numeric data, such as correlation or
+#' contrast tests.
+#'
+#' The `disjoint` argument allows specifying groups of columns that should not
+#' appear together in a single combination. This is useful when certain columns
+#' represent mutually exclusive categories or measurements that should not be
+#' analyzed together. For example, if `disjoint` groups columns by measurement
+#' type, the function will ensure that no combination includes two columns from
+#' the same type.
+#'
+#' @param x A data frame or matrix.
+#' @param xvars A tidyselect expression specifying the columns of `x` whose
+#'   names will be used in the first position (`xvar`) of the combinations.
+#' @param yvars `NULL` or a tidyselect expression specifying the columns of
+#'   `x` whose names will be used in the second position (`yvar`) of the
+#'   combinations.
+#' @param allow A character string specifying which columns may be selected by
+#'   `xvars` and `yvars`. Possible values are:
+#'   \itemize{
+#'     \item `"all"` – all columns may be selected;
+#'     \item `"numeric"` – only numeric columns may be selected.
+#'   }
+#' @param disjoint An atomic vector of length equal to the number of columns
+#'   in `x` that specifies disjoint groups of predicates. Columns belonging to
+#'   the same group (i.e. having the same value in `disjoint`) will not appear
+#'   together in a single combination of `xvars` and `yvars`. Ignored if
+#'   `yvars` is `NULL`.
+#' @param xvar_name A character string specifying the name of the first column
+#'   (`xvar`) in the output tibble.
+#' @param yvar_name A character string specifying the name of the second
+#'   column (`yvar`) in the output tibble. This column is omitted if
+#'   `yvars` is `NULL`.
+#' @param error_context A list providing details for error messages. This is
+#'   useful when `var_grid()` is called from another function, allowing error
+#'   messages to reference the caller’s argument names. The list must contain:
+#'   \itemize{
+#'     \item `arg_x` – name of the argument `x`;
+#'     \item `arg_xvars` – name of the argument `xvars`;
+#'     \item `arg_yvars` – name of the argument `yvars`;
+#'     \item `arg_allow` – name of the argument `allow`;
+#'     \item `arg_xvar_name` – name of the `xvar` column in the output;
+#'     \item `arg_yvar_name` – name of the `yvar` column in the output;
+#'     \item `call` – the calling environment for evaluating error messages.
+#'   }
+#'
+#' @return If `yvars` is `NULL`, a tibble with a single column (`var`).
+#'   If `yvars` is not `NULL`, a tibble with two columns (`xvar`, `yvar`)
+#'   enumerating all valid combinations of column names selected by `xvars`
+#'   and `yvars`. The order of variables in the result follows the order in
+#'   which they are selected by `xvars` and `yvars`.
+#'
 #' @author Michal Burda
+#'
 #' @examples
-#' # Create a grid of combinations of all pairs of columns in the CO2 dataset:
+#' # Grid of all pairwise column combinations in CO2
 #' var_grid(CO2)
 #'
-#' # Create a grid of combinations of all pairs of columns in the CO2 dataset
-#' # such that the first, i.e., `xvar` column is `Plant`, `Type`, or
-#' # `Treatment`, and the second, i.e., `yvar` column is `conc` or `uptake`:
+#' # Grid of combinations where the first column is Plant, Type, or Treatment,
+#' # and the second column is conc or uptake
 #' var_grid(CO2, xvars = Plant:Treatment, yvars = conc:uptake)
+#'
+#' # Restrict combinations to numeric variables only
+#' var_grid(CO2, allow = "numeric")
+#'
+#' # Prevent variables from the same disjoint group from being paired together
+#' d <- data.frame(a = 1:5, b = 6:10, c = 11:15, d = 16:20)
+#' # Group (a, b) together and (c, d) together
+#' var_grid(d, xvars = everything(), yvars = everything(),
+#'          disjoint = c(1, 1, 2, 2))
 #' @export
 var_grid <- function(x,
                      xvars = everything(),

@@ -2,7 +2,7 @@
 % Please edit documentation in R/dig.R
 \name{dig}
 \alias{dig}
-\title{Search for patterns of custom type}
+\title{Search for patterns of a custom type}
 \usage{
 dig(
   x,
@@ -34,248 +34,216 @@ dig(
 )
 }
 \arguments{
-\item{x}{a matrix or data frame. The matrix must be numeric (double) or logical.
-If \code{x} is a data frame then each column must be either numeric (double) or
-logical.}
+\item{x}{A matrix or data frame. If a matrix, it must be numeric (double) or
+logical. If a data frame, all columns must be numeric (double) or logical.}
 
-\item{f}{the callback function executed for each generated condition. This
-function may have some of the following arguments. Based on the present
-arguments, the algorithm would provide information about the generated
-condition:
-\itemize{
-\item \code{condition} - a named integer vector of column indices that represent
-the predicates of the condition. Names of the vector correspond to
-column names;
-\item \code{support} - a numeric scalar value of the current condition's support;
-\item \code{indices} - a logical vector indicating the rows satisfying the condition;
-\item \code{weights} - (similar to indices) weights of rows to which they satisfy
-the current condition;
-\item \code{pp} - a value of a contingency table, \code{condition & focus}.
-\code{pp} is a named numeric vector where each value is a support of conjunction
-of the condition with a foci column (see the \code{focus} argument to specify,
-which columns). Names of the vector are foci column names.
-\item \code{pn} - a value of a contingency table, \verb{condition & neg focus}.
-\code{pn} is a named numeric vector where each value is a support of conjunction
-of the condition with a negated foci column (see the \code{focus} argument to
-specify, which columns are foci) - names of the vector are foci column names.
-\item \code{np} - a value of a contingency table, \verb{neg condition & focus}.
-\code{np} is a named numeric vector where each value is a support of conjunction
-of the negated condition with a foci column (see the \code{focus} argument to
-specify, which columns are foci) - names of the vector are foci column names.
-\item \code{nn} - a value of a contingency table, \verb{neg condition & neg focus}.
-\code{nn} is a named numeric vector where each value is a support of conjunction
-of the negated condition with a negated foci column (see the \code{focus}
-argument to specify, which columns are foci) - names of the vector are foci
-column names.
-\item \code{foci_supports} - (deprecated, use \code{pp} instead)
-a named numeric vector of supports of foci columns
-(see \code{focus} argument to specify, which columns are foci) - names of the
-vector are foci column names.
-}}
+\item{f}{A callback function executed for each generated condition. It may
+declare any subset of the arguments listed below. The algorithm detects
+which arguments are present and provides only those values to \code{f}. This
+design allows the user to control both the amount of information received
+and the computational cost, as some arguments are more expensive to
+compute than others. The function \code{f} is expected to return an object
+(typically a list) representing a pattern or patterns related to the
+condition. The results of all calls of \code{f} are collected and returned as
+a list. Possible arguments are: \code{condition}, \code{sum}, \code{support}, \code{indices},
+\code{weights}, \code{pp}, \code{pn}, \code{np}, \code{nn}, or \code{foci_supports} (deprecated), which
+are thoroughly described below in the "Details" section.}
 
-\item{condition}{a tidyselect expression (see
+\item{condition}{Tidyselect expression (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
-specifying the columns to use as condition predicates}
+specifying columns of \code{x} to use as condition predicates}
 
-\item{focus}{a tidyselect expression (see
+\item{focus}{Tidyselect expression (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
-specifying the columns to use as focus predicates}
+specifying columns of \code{x} to use as focus predicates}
 
-\item{disjoint}{an atomic vector of size equal to the number of columns of \code{x}
-that specifies the groups of predicates: if some elements of the \code{disjoint}
-vector are equal, then the corresponding columns of \code{x} will NOT be
-present together in a single condition. If \code{x} is prepared with
-\code{\link[=partition]{partition()}}, using the \code{\link[=var_names]{var_names()}} function on \code{x}'s column names
-is a convenient way to create the \code{disjoint} vector.}
+\item{disjoint}{An atomic vector (length = number of columns in \code{x}) defining
+groups of predicates. Columns in the same group cannot appear together in
+a condition. With data from \code{\link[=partition]{partition()}}, use \code{\link[=var_names]{var_names()}} on column
+names to construct \code{disjoint}.}
 
-\item{excluded}{NULL or a list of character vectors, where each character vector
-represents a formula in the form of implication, where the all but the
-last element are the antecedent and the last element is the consequent.
-These formulae will be treated as \emph{tautologies} and will serve the purpose
-of filtering out the generated conditions. If the generated condition
-contains both the antecedent and the consequent of any of the formulae,
-the condition is not passed to the callback function \code{f}. Similarly, if
-the generated condition contains the antecedent of any of the formulae,
-the focus, which is the consequent of the formula, is not passed to the
-callback function \code{f}.}
+\item{excluded}{\code{NULL} or a list of character vectors, each representing an
+implication formula. In each vector, all but the last element form the
+antecedent and the last element is the consequent. These formulae are
+treated as \emph{tautologies} and used to filter out generated conditions. If
+a condition contains both the antecedent and the consequent of any such
+formula, it is not passed to the callback function \code{f}. Likewise, if a
+condition contains the antecedent, the corresponding focus (the consequent)
+is not passed to \code{f}.}
 
-\item{min_length}{the minimum size (the minimum number of predicates) of the
-condition to trigger the callback function \code{f}. The value of this argument must be
-greater or equal to 0. If 0, also the empty condition triggers the callback.}
+\item{min_length}{Minimum number of predicates in a condition required to
+trigger the callback \code{f}. Must be \eqn{\ge 0}. If set to 0, the empty
+condition also triggers the callback.}
 
-\item{max_length}{The maximum allowed size (the maximum number of predicates)
-of the condition. Conditions longer than \code{max_length} are not generated.
-If equal to Inf, the maximum length of conditions is limited only by the
-number of available predicates. The value of this argument must be greater
-or equal to 0 and also greater or equal to \code{min_length}. This argument
-effectively affects the speed of the search process and the number of
-triggered calls of the callback function \code{f}.}
+\item{max_length}{Maximum number of predicates allowed in a condition.
+Conditions longer than \code{max_length} are not generated. If \code{Inf}, the only
+limit is the total number of available predicates. Must be \eqn{\ge 0} and
+\eqn{\ge min_length}. This setting strongly influences both the number of
+generated conditions and the speed of the search.}
 
-\item{min_support}{the minimum support of a condition to trigger the callback
-function \code{f}. The support of the condition is the relative frequency
-of the condition in the dataset \code{x}. For logical data, it equals to the
-relative frequency of rows such that all condition predicates are TRUE on it.
-For numerical (double) input, the support is computed as the mean (over all
-rows) of multiplications of predicate values. The value of this argument
-must be in the range \eqn{[0, 1]}. If the support of the condition is
-lower than \code{min_support}, the recursive search for conditions containing
-the current condition is stopped. Therefore, the value of \code{min_support}
-effectively affects the speed of the search process and the number of
-triggered calls of the callback function \code{f}.}
+\item{min_support}{Minimum support of a condition required to trigger \code{f}.
+Support is the relative frequency of the condition in \code{x}. For logical
+data, this is the proportion of rows where all condition predicates are
+\code{TRUE}. For numeric (double) data, support is the mean (over all rows) of
+the products of predicate values. Must be in \eqn{[0,1]}. If a condition’s
+support falls below \code{min_support}, recursive generation of its extensions
+is stopped. Thus, \code{min_support} directly affects search speed and the
+number of callback calls.}
 
-\item{min_focus_support}{the minimum required support of a focus, for it to be
-passed to the callback function \code{f}. The support of the focus is the
-relative frequency of rows such that all condition predicates AND the
-focus are TRUE on it. For logical data, it equals to the relative frequency
-of rows, for which all condition predicates AND the focus are TRUE. The
-numerical (double) input is treated as membership degrees to fuzzy sets
-and the support is computed as the mean (over all rows) of a t-norm
-of predicate values. (The applied t-norm is selected by the \code{t_norm}
-argument, see below.) The value of this argument must be in the range \eqn{[0, 1]}.
-If the support of the focus is lower than \code{min_focus_support}, the focus
-is not passed to the callback function \code{f}. See also the \code{filter_empty_foci}
-argument which, together with \code{min_focus_support}, effectively affects
-the speed of the search process and the number of triggered calls of the
-callback function \code{f}.}
+\item{min_focus_support}{Minimum support of a focus required for it to be
+passed to \code{f}. For logical data, this is the proportion of rows where both
+the condition and the focus are \code{TRUE}. For numeric (double) data, support
+is computed as the mean (over all rows) of a t-norm of predicate values
+(the t-norm is selected by \code{t_norm}). Must be in \eqn{[0,1]}. Foci with
+support below this threshold are excluded. Together with
+\code{filter_empty_foci}, this parameter influences both search speed and the
+number of triggered calls of \code{f}.}
 
-\item{min_conditional_focus_support}{the minimum relative support of a focus
-within a condition. The conditional support of the focus is the relative
-frequency of rows with focus being TRUE within rows where the condition is
-TRUE. If \eqn{s(C)} represents the relative frequency of the condition
-being TRUE within the dataset and \eqn{s(C \cup F)} represents the relative
-frequency of the condition and the focus being both TRUE within the dataset,
-(computed as t-norm if the input is numerical), then the conditional support
-of the focus is \eqn{s(C \cup F) / s(C)}. The value of this argument must
-be in the range \eqn{[0, 1]}. If the conditional support of the focus is
-lower than \code{min_conditional_focus_support}, the focus is not passed to the
-callback function \code{f}. See also the \code{filter_empty_foci} argument which,
-together with \code{min_conditional_focus_support}, effectively affects the
-speed of the search process and the number of triggered calls of the
-callback function \code{f}.}
+\item{min_conditional_focus_support}{Minimum conditional support of a focus
+within a condition. Defined as the relative frequency of rows where the
+focus is \code{TRUE} among those where the condition is \code{TRUE}. If \eqn{sum}
+(see \code{support} in \emph{Details}) is the number of rows (or sum of truth
+degrees for fuzzy data) satisfying the condition, and \eqn{pp} (see
+\code{pp[i]} in \emph{Details}) is the sum of truth degrees where both the condition
+and the focus hold, then conditional support is \eqn{pp / sum}. Must be in
+\eqn{[0,1]}. Foci below this threshold are not passed to \code{f}. Together with
+\code{filter_empty_foci}, this parameter influences search speed and the number
+of callback calls.}
 
-\item{max_support}{the maximum support of a condition to trigger the callback
-function \code{f}. If the support of the condition is greater than
-\code{max_support}, the condition is not passed to the callback function.
-\code{max_support} does not stop the recursive generation of conditions
-containing the current condition, but only the execution of the callback
-function. The value of this argument must be in the range \eqn{[0, 1]}.}
+\item{max_support}{Maximum support of a condition to trigger \code{f}. Conditions
+with support above this threshold are skipped, but recursive generation of
+their supersets continues. Must be in \eqn{[0,1]}.}
 
-\item{filter_empty_foci}{a logical scalar indicating whether to skip triggering
-the callback function \code{f} on conditions, for which no focus remains
-available after filtering by \code{min_focus_support} or \code{min_conditional_focus_support}.
-If \code{TRUE}, the callback function \code{f} is triggered only if at least
-one focus remains after filtering. If \code{FALSE}, the callback function \code{f}
-is triggered regardless of the number of remaining foci.}
+\item{filter_empty_foci}{Logical; controls whether \code{f} is triggered for
+conditions with no remaining foci after filtering by \code{min_focus_support}
+or \code{min_conditional_focus_support}. If \code{TRUE}, \code{f} is called only when at
+least one focus remains. If \code{FALSE}, \code{f} is called regardless.}
 
-\item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
-\code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}
-(Lukasiewicz t-norm).}
+\item{t_norm}{T-norm used for conjunction of weights: \code{"goedel"} (minimum),
+\code{"goguen"} (product), or \code{"lukas"} (Lukasiewicz).}
 
-\item{max_results}{the maximum number of generated conditions to execute the
-callback function on. If the number of found conditions exceeds
-\code{max_results}, the function stops generating new conditions and returns
-the results. To avoid long computations during the search, it is recommended
-to set \code{max_results} to a reasonable positive value. Setting \code{max_results}
-to \code{Inf} will generate all possible conditions.}
+\item{max_results}{Maximum number of results (objects returned by the
+callback \code{f}) to store and return in the output list. When this limit
+is reached, generation of further conditions stops. Use a positive
+integer to enable early stopping; set to \code{Inf} to remove the cap.}
 
-\item{verbose}{a logical scalar indicating whether to print progress messages.}
+\item{verbose}{Logical; if \code{TRUE}, print progress messages.}
 
-\item{threads}{the number of threads to use for parallel computation.}
+\item{threads}{Number of threads for parallel computation.}
 
-\item{error_context}{a list of details to be used in error messages.
-This argument is useful when \code{dig()} is called from another
-function to provide error messages, which refer to arguments of the
-calling function. The list must contain the following elements:
+\item{error_context}{A list of details to be used when constructing error
+messages. This is mainly useful when \code{dig()} is called from another
+function and errors should refer to the caller’s argument names rather
+than those of \code{dig()}. The list must contain:
 \itemize{
-\item \code{arg_x} - the name of the argument \code{x} as a character string
-\item \code{arg_f} - the name of the argument \code{f} as a character string
-\item \code{arg_condition} - the name of the argument \code{condition} as a character
-string
-\item \code{arg_focus} - the name of the argument \code{focus} as a character string
-\item \code{arg_disjoint} - the name of the argument \code{disjoint} as a character
-string
-\item \code{arg_excluded} - the name of the argument \code{excluded} as a character
-string
-\item \code{arg_min_length} - the name of the argument \code{min_length} as a character
-string
-\item \code{arg_max_length} - the name of the argument \code{max_length} as a character
-string
-\item \code{arg_min_support} - the name of the argument \code{min_support} as a character
-string
-\item \code{arg_min_focus_support} - the name of the argument \code{min_focus_support}
-as a character string
-\item \code{arg_min_conditional_focus_support} - the name of the argument
-\code{min_conditional_focus_support} as a character string
-\item \code{arg_max_support} - the name of the argument \code{max_support} as a character
-\item \code{arg_filter_empty_foci} - the name of the argument \code{filter_empty_foci}
-as a character string
-\item \code{arg_t_norm} - the name of the argument \code{t_norm} as a character string
-\item \code{arg_threads} - the name of the argument \code{threads} as a character string
-\item \code{call} - an environment in which to evaluate the error messages.
+\item \code{arg_x} – name of the argument \code{x} as a character string
+\item \code{arg_f} – name of the argument \code{f} as a character string
+\item \code{arg_condition} – name of the argument \code{condition}
+\item \code{arg_focus} – name of the argument \code{focus}
+\item \code{arg_disjoint} – name of the argument \code{disjoint}
+\item \code{arg_excluded} – name of the argument \code{excluded}
+\item \code{arg_min_length} – name of the argument \code{min_length}
+\item \code{arg_max_length} – name of the argument \code{max_length}
+\item \code{arg_min_support} – name of the argument \code{min_support}
+\item \code{arg_min_focus_support} – name of the argument
+\code{min_focus_support}
+\item \code{arg_min_conditional_focus_support} – name of the argument
+\code{min_conditional_focus_support}
+\item \code{arg_max_support} – name of the argument \code{max_support}
+\item \code{arg_filter_empty_foci} – name of the argument \code{filter_empty_foci}
+\item \code{arg_t_norm} – name of the argument \code{t_norm}
+\item \code{arg_threads} – name of the argument \code{threads}
+\item \code{call} – environment in which to evaluate error messages
 }}
 }
 \value{
-A list of results provided by the callback function \code{f}.
+A list of results returned by the callback function \code{f}.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+A general function for searching for patterns of a custom type. The function
+allows selection of columns of \code{x} to be used as condition predicates. It
+enumerates all possible conditions in the form of elementary conjunctions of
+selected predicates, and for each condition executes a user-defined callback
+function \code{f}. The callback is expected to perform some analysis and return an
+object (often a list) representing a pattern or patterns related to the
+condition. The results of all calls are returned as a list.
+}
+\details{
+The callback function \code{f} may accept a number of arguments (see \code{f} argument
+description). The algorithm automatically provides condition-related
+information to \code{f} based on which arguments are present.
 
-A general function for searching for patterns of custom type. The function
-allows for the selection of columns of \code{x} to be used as condition
-predicates. The function enumerates all possible conditions in the form of
-elementary conjunctions of selected predicates, and for each condition,
-a user-defined callback function \code{f} is executed. The callback function is
-intended to perform some analysis and return an object representing a pattern
-or patterns related to the condition. \code{\link[=dig]{dig()}} returns a list of these
-returned objects.
+In addition to conditions, the function can evaluate \emph{focus} predicates
+(foci). Foci are specified separately and are tested within each generated
+condition. Extra information about them is then passed to \code{f}.
 
-The callback function \code{f} may have some arguments that are listed in the
-\code{f} argument description. The algorithm provides information about the
-generated condition based on the present arguments.
-
-Additionally to \code{condition}, the function allows for the selection of
-the so-called \emph{focus} predicates. The focus predicates, a.k.a. \emph{foci}, are
-predicates that are evaluated within each condition and some additional
-information is provided to the callback function about them.
-
-\code{dig()} allows to specify some restrictions on the generated conditions,
-such as:
+Restrictions may be imposed on generated conditions, such as:
 \itemize{
-\item the minimum and maximum length of the condition (\code{min_length} and
-\code{max_length} arguments).
-\item the minimum support of the condition (\code{min_support} argument). Support
-of the condition is the relative frequency of the condition in the dataset
-\code{x}.
-\item the minimum support of the focus (\code{min_focus_support} argument). Support
-of the focus is the relative frequency of rows such that all condition
-predicates AND the focus are TRUE on it. Foci with support lower than
-\code{min_focus_support} are filtered out.
+\item minimum and maximum condition length (\code{min_length}, \code{max_length});
+\item minimum condition support (\code{min_support});
+\item minimum focus support (\code{min_focus_support}), i.e. support of rows where
+both the condition and the focus hold.
+}
+
+Let \eqn{P} be the set of condition predicates selected by \code{condition} and
+\eqn{E} be the set of focus predicates selected by \code{focus}. The function
+generates all possible conditions as elementary conjunctions of distinct
+predicates from \eqn{P}. These conditions are filtered using \code{disjoint},
+\code{excluded}, \code{min_length}, \code{max_length}, \code{min_support}, and \code{max_support}.
+
+For each remaining condition, all foci from \eqn{E} are tested and filtered
+using \code{min_focus_support} and \code{min_conditional_focus_support}. If at least
+one focus remains (or if \code{filter_empty_foci = FALSE}), the callback \code{f} is
+executed with details of the condition and foci. Results of all calls are
+collected and returned as a list.
+
+Let \eqn{C} be a condition (\eqn{C \subseteq P}), \eqn{F} the set of
+filtered foci (\eqn{F \subseteq E}), \eqn{R} the set of rows of \code{x}, and
+\eqn{\mu_C(r)} the truth degree of condition \eqn{C} on row \eqn{r}. The
+parameters passed to \code{f} are defined as:
+\itemize{
+\item \code{condition}: a named integer vector of column indices representing the
+predicates of \eqn{C}. Names correspond to column names.
+\item \code{sum}: a numeric scalar value of the number of rows satisfying \eqn{C} for
+logical data, or the sum of truth degrees for fuzzy data,
+\eqn{sum = \sum_{r \in R} \mu_C(r)}.
+\item \code{support}: a numeric scalar value of relative frequency of rows satisfying \eqn{C},
+\eqn{supp = sum / |R|}.
+\item \code{pp}, \code{pn}, \code{np}, \code{nn}: a numeric vector of entries of a contingency table
+for \eqn{C} and \eqn{F}, satisfying the Ruspini condition
+\eqn{pp + pn + np + nn = |R|}.
+The \eqn{i}-th elements of these vectors correspond to the \eqn{i}-th focus
+\eqn{F_i} from \eqn{F} and are defined as:
+\itemize{
+\item \code{pp[i]}: rows satisfying both \eqn{C} and \eqn{F_i},
+\eqn{pp_i = \sum_{r \in R} \mu_{C \land F_i}(r)}.
+\item \code{pn[i]}: rows satisfying \eqn{C} but not \eqn{F_i},
+\eqn{pn_i = \sum_{r \in R} \mu_C(r) - pp_i}.
+\item \code{np[i]}: rows satisfying \eqn{F_i} but not \eqn{C},
+\eqn{np_i = \sum_{r \in R} \mu_{F_i}(r) - pp_i}.
+\item \code{nn[i]}: rows satisfying neither \eqn{C} nor \eqn{F_i},
+\eqn{nn_i = |R| - (pp_i + pn_i + np_i)}.
+}
 }
 }
 \examples{
 library(tibble)
 
-# Prepare iris data for use with dig()
+# Prepare iris data
 d <- partition(iris, .breaks = 2)
 
-# Call f() for each condition with support >= 0.5. The result is a list
-# of strings representing the conditions.
+# Simple callback: return formatted condition names
 dig(x = d,
-    f = function(condition) {
-        format_condition(names(condition))
-    },
+    f = function(condition) format_condition(names(condition)),
     min_support = 0.5)
 
-# Create a more complex pattern object - a list with some statistics
+# Callback returning condition and support
 res <- dig(x = d,
            f = function(condition, support) {
                list(condition = format_condition(names(condition)),
                     support = support)
            },
            min_support = 0.5)
-print(res)
-
-# Format the result as a data frame
 do.call(rbind, lapply(res, as_tibble))
 
 # Within each condition, evaluate also supports of columns starting with
@@ -290,11 +258,9 @@ res <- dig(x = d,
            focus = starts_with("Species"),
            min_support = 0.5,
            min_focus_support = 0)
-
-# Format the result as a tibble
 do.call(rbind, lapply(res, as_tibble))
 
-# For each condition, create multiple patterns based on the focus columns
+# Multiple patterns per condition based on foci
 res <- dig(x = d,
            f = function(condition, support, pp) {
                lapply(seq_along(pp), function(i) {
@@ -309,12 +275,10 @@ res <- dig(x = d,
            min_support = 0.5,
            min_focus_support = 0)
 
-# As res is now a list of lists, we need to flatten it before converting to
-# a tibble
+# Flatten result and convert to tibble
 res <- unlist(res, recursive = FALSE)
-
-# Format the result as a tibble
 do.call(rbind, lapply(res, as_tibble))
+
 }
 \seealso{
 \code{\link[=partition]{partition()}}, \code{\link[=var_names]{var_names()}}, \code{\link[=dig_grid]{dig_grid()}}

@@ -2,34 +2,38 @@
 % Please edit documentation in R/is_almost_constant.R
 \name{is_almost_constant}
 \alias{is_almost_constant}
-\title{Tests if almost all values in a vector are the same.}
+\title{Test whether a vector is almost constant}
 \usage{
 is_almost_constant(x, threshold = 1, na_rm = FALSE)
 }
 \arguments{
-\item{x}{a vector to be tested}
+\item{x}{A vector to be tested.}
 
-\item{threshold}{a double scalar in the interval \eqn{[0,1]} that specifies
-the threshold for the proportion of the most frequent value}
+\item{threshold}{A numeric scalar in the interval \eqn{[0,1]} specifying the
+minimum required proportion of the most frequent value. Defaults to 1.}
 
-\item{na_rm}{a flag indicating whether to remove \code{NA} values before testing
-the proportion of the most frequent value. That is, if \code{na_rm} is \code{TRUE},
-the proportion is calculated from non-\code{NA} values only. If \code{na_rm} is
-\code{FALSE}, the proportion is calculated from all values and the value \code{NA}
-is considered as a normal value (i.e., too much \code{NA}s can make the vector
-almost constant too).}
+\item{na_rm}{Logical; if \code{TRUE}, \code{NA} values are removed before computing
+proportions. If \code{FALSE}, \code{NA} is treated as an ordinary value, so a large
+number of \code{NA}s can cause the function to return \code{TRUE}.}
 }
 \value{
-If \code{x} is empty or has only one value, the function returns \code{TRUE}.
-If \code{x} contains only \code{NA} values, the function returns \code{TRUE}.
-If the proportion of the most frequent value is greater or equal to the
-\code{threshold} argument, the function returns \code{TRUE}. Otherwise, the function
-returns \code{FALSE}.
+A logical scalar. Returns \code{TRUE} in the following cases:
+\itemize{
+\item \code{x} is empty or has length one.
+\item \code{x} contains only \code{NA} values.
+\item The proportion of the most frequent value in \code{x} is greater than or
+equal to \code{threshold}.
+Otherwise, returns \code{FALSE}.
+}
 }
 \description{
-Function tests if almost all values in a vector are the same. The function
-returns \code{TRUE} if the proportion of the most frequent value is greater or
-equal to the \code{threshold} argument.
+Check if a vector contains (almost) the same value in the majority of its
+elements. The function returns \code{TRUE} if the proportion of the most frequent
+value in \code{x} is greater than or equal to the specified \code{threshold}.
+}
+\details{
+This is useful for detecting low-variability or degenerate variables, which
+may be uninformative in modeling or analysis.
 }
 \examples{
 is_almost_constant(1)
@@ -38,6 +42,10 @@ is_almost_constant(c(NA, NA, NA), na_rm = TRUE)
 is_almost_constant(c(NA, NA, NA), na_rm = FALSE)
 is_almost_constant(c(NA, NA, NA, 1, 2), threshold = 0.5, na_rm = FALSE)
 is_almost_constant(c(NA, NA, NA, 1, 2), threshold = 0.5, na_rm = TRUE)
+
+}
+\seealso{
+\code{\link[=remove_almost_constant]{remove_almost_constant()}}, \code{\link[=unique]{unique()}}, \code{\link[=table]{table()}}
 }
 \author{
 Michal Burda

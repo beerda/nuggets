@@ -1,24 +1,30 @@
-#' Tests if almost all values in a vector are the same.
+#' Test whether a vector is almost constant
 #'
-#' Function tests if almost all values in a vector are the same. The function
-#' returns `TRUE` if the proportion of the most frequent value is greater or
-#' equal to the `threshold` argument.
+#' Check if a vector contains (almost) the same value in the majority of its
+#' elements. The function returns `TRUE` if the proportion of the most frequent
+#' value in `x` is greater than or equal to the specified `threshold`.
 #'
-#' @param x a vector to be tested
-#' @param threshold a double scalar in the interval \eqn{[0,1]} that specifies
-#'      the threshold for the proportion of the most frequent value
-#' @param na_rm a flag indicating whether to remove `NA` values before testing
-#'      the proportion of the most frequent value. That is, if `na_rm` is `TRUE`,
-#'      the proportion is calculated from non-`NA` values only. If `na_rm` is
-#'      `FALSE`, the proportion is calculated from all values and the value `NA`
-#'      is considered as a normal value (i.e., too much `NA`s can make the vector
-#'      almost constant too).
-#' @return If `x` is empty or has only one value, the function returns `TRUE`.
-#'      If `x` contains only `NA` values, the function returns `TRUE`.
-#'      If the proportion of the most frequent value is greater or equal to the
-#'      `threshold` argument, the function returns `TRUE`. Otherwise, the function
-#'      returns `FALSE`.
+#' This is useful for detecting low-variability or degenerate variables, which
+#' may be uninformative in modeling or analysis.
+#'
+#' @param x A vector to be tested.
+#' @param threshold A numeric scalar in the interval \eqn{[0,1]} specifying the
+#'   minimum required proportion of the most frequent value. Defaults to 1.
+#' @param na_rm Logical; if `TRUE`, `NA` values are removed before computing
+#'   proportions. If `FALSE`, `NA` is treated as an ordinary value, so a large
+#'   number of `NA`s can cause the function to return `TRUE`.
+#'
+#' @return A logical scalar. Returns `TRUE` in the following cases:
+#'   * `x` is empty or has length one.
+#'   * `x` contains only `NA` values.
+#'   * The proportion of the most frequent value in `x` is greater than or
+#'     equal to `threshold`.
+#'   Otherwise, returns `FALSE`.
+#'
+#' @seealso [remove_almost_constant()], [unique()], [table()]
+#'
 #' @author Michal Burda
+#'
 #' @examples
 #' is_almost_constant(1)
 #' is_almost_constant(1:10)
@@ -26,6 +32,7 @@
 #' is_almost_constant(c(NA, NA, NA), na_rm = FALSE)
 #' is_almost_constant(c(NA, NA, NA, 1, 2), threshold = 0.5, na_rm = FALSE)
 #' is_almost_constant(c(NA, NA, NA, 1, 2), threshold = 0.5, na_rm = TRUE)
+#'
 #' @export
 is_almost_constant <- function(x,
                                threshold = 1.0,

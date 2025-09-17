@@ -1,12 +1,22 @@
-#' Test if the object is a nugget
+#' Test whether an object is a nugget
 #'
-#' This function returns TRUE if the object is a nugget. If flavour is
-#' specified, the function returns TRUE only if the object is a nugget of
-#' the specified flavour.
+#' Check if the given object is a nugget, i.e. an object created by
+#' [nugget()]. If a `flavour` is specified, the function returns `TRUE` only
+#' if the object is a nugget of the given flavour.
 #'
-#' @param x an object to be tested
-#' @param flavour a character string specifying the flavour of the nugget.
-#' @return A logical value indicating whether the object is a nugget.
+#' Technically, nuggets are implemented as S3 objects. An object is considered
+#' a nugget if it inherits from the S3 class `"nugget"`. It is a nugget of a
+#' given flavour if it inherits from both the specified `flavour` class and
+#' the `"nugget"` class.
+#'
+#' @param x An object to be tested.
+#' @param flavour Optional character string specifying the required flavour of
+#'   the nugget. If `NULL` (default), the function checks only whether `x` is
+#'   a nugget of any flavour.
+#'
+#' @return A logical scalar: `TRUE` if `x` is a nugget (and of the specified
+#'   flavour, if given), otherwise `FALSE`.
+#'
 #' @seealso [nugget()]
 #' @author Michal Burda
 #' @export

@@ -1,13 +1,51 @@
-#' Create a nugget object of given flavour
+#' Create a nugget object of a given flavour
 #'
-#' @param x an object with rules, typically a tibble or a data frame.
-#' @param flavour a character string specifying the flavour of the nugget or NULL.
-#' @param call_function a function name that created the nugget.
-#' @param call_args a list of function arguments that were used to create the nugget.
-#' @return A nugget object of the specified flavour, i.e., a tibble object that is
-#'     a subclass of `flavour` and `nugget` classes.
+#' Construct a nugget object, which is an S3 object used to store and
+#' represent results (e.g., rules or patterns) in the `nuggets` framework.
+#'
+#' A nugget is technically a tibble (or data frame) that inherits from both
+#' the `"nugget"` class and, optionally, a flavour-specific S3 class. This
+#' allows distinguishing different types of nuggets (flavours) while still
+#' supporting generic methods for all nuggets.
+#'
+#' @details
+#' Each nugget stores additional provenance information in attributes:
+#' * `"call_function"` — the name of the function that created the nugget.
+#' * `"call_args"` — the list of arguments passed to that function.
+#'
+#' These attributes make it possible to reconstruct or track how the nugget
+#' was created, which supports reproducibility, transparency, and debugging.
+#' For example, one can inspect `attr(n, "call_args")` to recover the original
+#' parameters used to mine the patterns.
+#'
+#' @param x An object with rules or patterns, typically a tibble or data frame.
+#'   If `NULL`, it will be converted to an empty tibble.
+#' @param flavour A character string specifying the flavour of the nugget, or
+#'   `NULL` if no flavour should be assigned. If given, the returned object
+#'   will inherit from both `"nugget"` and the specified flavour class.
+#' @param call_function A character scalar giving the name of the function that
+#'   created the nugget. Stored as an attribute for provenance.
+#' @param call_args A list of arguments that were passed to the function which
+#'   created the nugget. Stored as an attribute for reproducibility.
+#'
+#' @return A tibble object that is an S3 subclass of `"nugget"` and, if
+#'   specified, the given `flavour` class. The object also contains attributes
+#'   `"call_function"` and `"call_args"` describing its provenance.
+#'
 #' @seealso [is_nugget()]
+#'
 #' @author Michal Burda
+#'
+#' @examples
+#' df <- data.frame(lhs = c("a", "b"), rhs = c("c", "d"))
+#' n <- nugget(df, flavour = "rules", call_function = "example_function",
+#'             call_args = list(data = "mydata"))
+#'
+#' inherits(n, "nugget")      # TRUE
+#' inherits(n, "rules")       # TRUE
+#' attr(n, "call_function")   # "dig_example_function"
+#' attr(n, "call_args")       # list(data = "mydata")
+#'
 #' @export
 nugget <- function(x,
                    flavour,

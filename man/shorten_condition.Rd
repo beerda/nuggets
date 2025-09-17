@@ -2,49 +2,61 @@
 % Please edit documentation in R/shorten_condition.R
 \name{shorten_condition}
 \alias{shorten_condition}
-\title{Shorten the predicates within a condition}
+\title{Shorten predicates within conditions}
 \usage{
 shorten_condition(x, method = "letters")
 }
 \arguments{
-\item{x}{a character vector of conditions, each formatted as a string
+\item{x}{A character vector of conditions, each formatted as a string
 (e.g., \code{"{a=1,b=100,c=3}"}).}
 
-\item{method}{a character scalar specifying the method to use for
-shortening the predicates. It must be one of \code{"letters"}, \code{"abbrev4"},
-or \code{"abbrev8"}. Default is \code{"letters"}.}
+\item{method}{A character scalar specifying the shortening method. Must be
+one of \code{"letters"}, \code{"abbrev4"}, \code{"abbrev8"}, or \code{"none"}. Defaults to
+\code{"letters"}.}
 }
 \value{
-A character vector of conditions with shortened predicates.
+A character vector of conditions with predicates shortened
+according to the specified method.
 }
 \description{
 This function takes a character vector of conditions and shortens the
-predicates within each condition using a specified method.
+predicates within each condition according to a specified method.
 }
 \details{
-Each value in \code{x} is a condition formatted as a string, e.g.,
-\code{"{a=1,b=100,c=3}"} (see \code{\link[=format_condition]{format_condition()}}). The function
-shortens the predicates in each condition according to the specified
-\code{method}. The available methods are:
+Each element of \code{x} must be a condition formatted as a string, e.g.
+\code{"{a=1,b=100,c=3}"} (see \code{\link[=format_condition]{format_condition()}}). The function then
+shortens the predicates in each condition based on the selected \code{method}:
 \itemize{
 \item \code{"letters"}: predicates are replaced with single letters from the
-English alphabet, starting with \code{A} for the first predicate;
-\item \code{"abbrev4"}: predicates are abbreviated to 4 characters using
-\code{\link[=abbreviate]{abbreviate()}} function;
-\item \code{"abbrev8"}: predicates are abbreviated to 8 characters using
-\code{\link[=abbreviate]{abbreviate()}} function;
-\item \code{"none"}: no shortening is applied, predicates remain unchanged.
+English alphabet, starting with \code{A} for the first distinct predicate;
+\item \code{"abbrev4"}: predicates are abbreviated to at most 4 characters using
+\code{\link[=abbreviate]{abbreviate()}};
+\item \code{"abbrev8"}: predicates are abbreviated to at most 8 characters using
+\code{\link[=abbreviate]{abbreviate()}};
+\item \code{"none"}: no shortening is applied; predicates remain unchanged.
 }
+
+Predicate shortening is useful for visualization or reporting, especially
+when original predicate names are long or complex. Note that shortening is
+applied consistently across all conditions in \code{x}.
 }
 \examples{
 shorten_condition(c("{a=1,b=100,c=3}", "{a=2}", "{b=100,c=3}"),
                   method = "letters")
 
-shorten_condition(c("{helloWorld=1}", "{helloWorld=2}", "{c=3, helloWorld=1}"),
+shorten_condition(c("{helloWorld=1}", "{helloWorld=2}", "{c=3,helloWorld=1}"),
                   method = "abbrev4")
+
+shorten_condition(c("{helloWorld=1}", "{helloWorld=2}", "{c=3,helloWorld=1}"),
+                  method = "abbrev8")
+
+shorten_condition(c("{helloWorld=1}", "{helloWorld=2}"),
+                  method = "none")
+
 }
 \seealso{
-\code{\link[=format_condition]{format_condition()}}, \code{\link[=parse_condition]{parse_condition()}}
+\code{\link[=format_condition]{format_condition()}}, \code{\link[=parse_condition]{parse_condition()}}, \code{\link[=is_condition]{is_condition()}},
+\code{\link[=remove_ill_conditions]{remove_ill_conditions()}}, \code{\link[=abbreviate]{abbreviate()}}
 }
 \author{
 Michal Burda

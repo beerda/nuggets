@@ -1,193 +1,159 @@
-#' Convert columns of data frame to Boolean or fuzzy sets (of triangular,
-#' trapezoidal, or raised-cosinal shape)
+#' Convert columns of a data frame to Boolean or fuzzy sets
+#' (triangular, trapezoidal, or raised-cosine)
 #'
-#' Convert the selected columns of the data frame into either dummy
-#' logical columns, or into membership degrees of fuzzy sets, while leaving
-#' the remaining columns untouched. Each column selected for transformation
-#' typically results in multiple columns in the output.
+#' Transform selected columns of a data frame into either dummy logical
+#' variables or membership degrees of fuzzy sets, while leaving all remaining
+#' columns unchanged. Each transformed column typically produces multiple new
+#' columns in the output.
 #'
-#' Transformations performed by this function are typically useful as a
-#' preprocessing step before using the [dig()] function or some of its
-#' derivatives ([dig_correlations()], [dig_paired_baseline_contrasts()],
-#' [dig_associations()]).
+#' These transformations are most often used as a preprocessing step before
+#' calling [dig()] or one of its derivatives, such as
+#' [dig_correlations()], [dig_paired_baseline_contrasts()],
+#' or [dig_associations()].
 #'
-#' The transformation of selected columns differ based on the type. Concretely:
-#' - **logical** column `x` is transformed into pair of logical columns,
-#'   `x=TRUE` and`x=FALSE`;
-#' - **factor** column `x`, which has levels `l1`, `l2`, and `l3`, is transformed
-#'   into three logical columns named `x=l1`, `x=l2`, and `x=l3`;
-#' - **numeric** column`x` is transformed accordingly to `.method` argument:
-#'   - if `.method="dummy"`, the numeric column is first transformed into a factor
-#'     by treating each unique value as a separate factor level and then it is
-#'     processed as a factor (see above). That effectively creates a logical column
-#'     for each unique value in the source numeric column;
-#'   - if `.method="crisp"`, the column is first transformed into a factor
-#'     with intervals as factor levels and then it is processed as a factor
-#'     (see above);
-#'   - for other `.method` (`triangle` or `raisedcos`), several new columns
-#'     are created, where each column has numeric values from the interval
-#'     \eqn{[0,1]} and represents a certain fuzzy set (either triangular or
-#'     raised-cosinal).
-#'   Details of transformation of numeric columns can be specified with
-#'   additional arguments (`.breaks`, `.labels`, `.right`).
+#' The transformation depends on the column type:
+#' - **logical** column `x` is expanded into two logical columns:
+#'   `x=TRUE` and `x=FALSE`;
+#' - **factor** column `x` with levels `l1`, `l2`, `l3` becomes three
+#'   logical columns: `x=l1`, `x=l2`, and `x=l3`;
+#' - **numeric** column `x` is transformed according to `.method`:
+#'   - `.method = "dummy"`: the column is treated as a factor with one level
+#'     for each unique value, then expanded to dummy columns. This produces
+#'     one logical column per unique value;
+#'   - `.method = "crisp"`: the column is discretized into intervals (defined
+#'     by `.breaks`) and then expanded to dummy columns representing these
+#'     intervals;
+#'   - `.method = "triangle"` or `.method = "raisedcos"`: the column is
+#'     converted into one or more fuzzy sets. Each new column contains values
+#'     in \eqn{[0,1]} representing degrees of membership to the fuzzy set
+#'     (triangular or raised-cosine shaped).
 #'
-#' The processing of source **numeric** columns is quite complex and depends
-#' on the following arguments: `.method`, `.breaks`, `.right`, `.span`, and
-#' `.inc`.
+#' Details of numeric transformations are controlled by `.breaks`, `.labels`,
+#' `.right`, `.span`, and `.inc`.
+#'
+#' @details
+#' * Crisp partitioning is recommended for efficiency and works best when
+#'   sharp category boundaries are meaningful for the analysis.
+#' * Fuzzy partitioning is useful when attributes change gradually or when
+#'   uncertainty should be modeled explicitly. It allows smooth transitions
+#'   between categories and may yield more interpretable patterns, but is
+#'   more computationally demanding.
 #'
 #' @section Crisp transformation of numeric data:
 #'
-#' For `.method = "crisp"`, the numeric column is transformed into a set of
-#' logical columns where each column represents a certain interval of values.
-#' The intervals are determined by the `.breaks` argument.
+#' For `.method = "crisp"`, numeric columns are converted into sets of dummy
+#' logical variables, each representing one interval of values defined by
+#' `.breaks`.
 #'
-#' If `.breaks` is an integer scalar, it specifies the number of resulting
-#' intervals to break the numeric column to. The intervals are obtained
-#' automatically from the source column by splitting the range of the source
-#' values into `.breaks` intervals of equal length. The first and the last
-#' interval are defined from the minimum infinity to the first break and from
-#' the last break to the maximum infinity, respectively.
+#' * If `.breaks` is an integer, it specifies the number of equal-width
+#'   intervals into which the column range is divided. The first and last
+#'   intervals extend to infinity.
+#' * If `.breaks` is a numeric vector, it specifies interval boundaries
+#'   directly. Infinite values are allowed.
 #'
-#' If `.breaks` is a vector, the values specify the manual borders of intervals.
-#' (Infinite values are allowed.)
+#' With `.span = 1` and `.inc = 1`, the intervals are consecutive and
+#' non-overlapping. For example, with
+#' `.breaks = c(1, 3, 5, 7, 9, 11)` and `.right = TRUE`,
+#' the intervals are \eqn{(1;3]}, \eqn{(3;5]}, \eqn{(5;7]}, \eqn{(7;9]},
+#' and \eqn{(9;11]}. If `.right = FALSE`, the intervals are left-closed:
+#' \eqn{[1;3)}, \eqn{[3;5)}, etc.
 #'
-#' For `.span = 1` and `.inc = 1`, the intervals are consecutive and
-#' non-overlapping. If `.breaks = c(1, 3, 5, 7, 9, 11)` and `.right = TRUE`,
-#' for example, the following intervals are considered: \eqn{(1;3]}, \eqn{(3;5]},
-#' \eqn{(5;7]}, \eqn{(7;9]}, and \eqn{(9;11]}. (If `.right = FALSE`, the intervals are:
-#' \eqn{[1;3)}, \eqn{[3;5)}, \eqn{[5;7)}, \eqn{[7;9)}, and \eqn{[9;11)}.)
+#' Larger `.span` values make intervals overlap. For example, with
+#' `.span = 2`, `.inc = 1`, and `.right = TRUE`, the intervals are
+#' \eqn{(1;5]}, \eqn{(3;7]}, \eqn{(5;9]}, and \eqn{(7;11]}.
 #'
-#' For `.span` > 1, the intervals overlap in `.span` breaks. For
-#' `.span = 2`, `.inc = 1`, and `.right = TRUE`, the intervals are: \eqn{(1;5]},
-#' \eqn{(3;7]}, \eqn{(5;9]}, and \eqn{(7;11]}.
-#'
-#' As can be seen, so far the next interval was created by shifting in 1
-#' position in `.breaks`. The `.inc` argument modifies that shift. If `.inc = 2`
-#' and `.span = 1`, the intervals are: \eqn{(1;3]}, \eqn{(5;7]}, and \eqn{(9;11]}.
-#' For `.span = 2` and `.inc = 3`, the intervals are: \eqn{(1;5]}, and \eqn{(9;11]}.
-#'
+#' The `.inc` argument modifies how far the window shifts along `.breaks`.
+#' For example:
+#' * `.span = 1`, `.inc = 2` → \eqn{(1;3]}, \eqn{(5;7]}, \eqn{(9;11]}.
+#' * `.span = 2`, `.inc = 3` → \eqn{(1;5]}, \eqn{(9;11]}.
 #'
 #' @section Fuzzy transformation of numeric data:
 #'
-#' For `.method = "triangle"` or `.method = "raisedcos"`, the numeric column is
-#' transformed into a set of columns where each column represents membership
-#' degrees to a certain fuzzy set. The shape of the underlying fuzzy sets
-#' is again determined by the `.breaks` argument.
+#' For `.method = "triangle"` or `.method = "raisedcos"`, numeric columns are
+#' converted into fuzzy membership degrees \eqn{[0,1]}.
 #'
-#' If `.breaks` is an integer scalar, it specifies the number of target fuzzy
-#' sets. The breaks are determined automatically from the source data column
-#' similarly as in the crisp transformation described above.
+#' * If `.breaks` is an integer, it specifies the number of fuzzy sets to
+#'   generate (breakpoints are chosen automatically).
+#' * If `.breaks` is a numeric vector, it directly defines the fuzzy set
+#'   boundaries. Infinite values are allowed, which produces fuzzy sets with
+#'   open ends.
 #'
-#' If `.breaks` is a vector, the values specify the breaking points of fuzzy sets.
-#' Infinite values as breaks produce fuzzy sets with open borders.
-#'
-#' For `.span = 1`, each underlying fuzzy set is determined by three consecutive
-#' breaks. Outside of these breaks, the membership degree is 0. In the interval
-#' between the first two breaks, the membership degree is increasing and
-#' in the interval between the last two breaks, the membership degree is
-#' decreasing. Hence the membership degree 1 is obtained for values equal to
-#' the middle break. This practically forms fuzzy sets of triangular or
-#' raised-cosinal shape.
-#'
-#' For `.span` > 1, the fuzzy set is determined by four breaks. Outside of
-#' these breaks, the membership degree is 0. In the interval between the first
-#' and the second break, the membership degree is increasing, in the interval
-#' between the third and the fourth break, the membership degree is decreasing,
-#' and in the interval between the second and the third break, the membership
-#' degree is 1. This practically forms fuzzy sets of trapezoidal shape.
-#'
-#' Similar to the crisp transformation, the `.inc` argument determines the
-#' shift of breaks when creating the next underlying fuzzy set.
-#'
-#' Let `.breaks = c(1, 3, 5, 7, 9, 11)`. For `.span = 1` and `.inc = 1`, the
-#' fuzzy sets are determined by the following triplets having effectively the
-#' triangular or raised-cosinal shape: \eqn{(1;3;5)},
-#' \eqn{(3;5;7)}, \eqn{(5;7;9)}, and \eqn{(7;9;11)}.
-#'
-#' For `.span = 2` and `.inc = 1`, the fuzzy sets are determined by the following
-#' quadruplets: \eqn{(1;3;5;7)}, \eqn{(3;5;7;9)}, and \eqn{(5;7;9;11)}. These
-#' fuzzy sets have the trapezoidal shape with linear (if `.method = "triangle"`)
-#' or cosine (if `.method = "raisedcos"`) increasing and decreasing border-parts.
-#'
-#' For `.span = 1` and `.inc = 3`, the fuzzy sets are determined by the following
-#' triplets: \eqn{(1;3;5)}, and \eqn{(7;9;11)} while skipping 2nd and 3rd fuzzy
+#' With `.span = 1`, each fuzzy set is defined by three consecutive breaks:
+#' membership is 0 outside the outer breaks, increases to 1 at the middle
+#' break, and then decreases back to 0. This yields triangular or raised-cosine
 #' sets.
 #'
-#' See the examples for more details.
+#' With `.span > 1`, fuzzy sets are defined by four breaks: the degree
+#' increases between the first two, stays 1 between the middle two, and
+#' decreases between the last two. This produces trapezoidal fuzzy sets, with
+#' linear borders if `.method = "triangle"`, or cosine-shaped borders if
+#' `.method = "raisedcos"`.
 #'
-#' @param .data the data frame to be processed
-#' @param .what a tidyselect expression (see
-#'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
-#'      specifying the columns to be transformed
-#' @param ... optional other tidyselect expressions selecting additional
-#'      columns to be processed
-#' @param .breaks this argument is ignored if `.method="dummy"`. For other
-#'      methods, it has to be either an integer scalar
-#'      or a numeric vector. If `.breaks` is an integer scalar, it specifies
-#'      the number of resulting intervals to break the numeric column to
-#'      (for `.method="crisp"`) or the number of target fuzzy sets (for
-#'      `.method="triangle"` or `.method="raisedcos`). If `.breaks` is a vector,
-#'      the values specify the borders of intervals (for `.method="crisp"`)
-#'      or the breaking points of fuzzy sets.
-#' @param .labels character vector specifying the names used to construct
-#'      the newly created column names. If `NULL`, the labels are generated
-#'      automatically.
-#' @param .na if `TRUE`, an additional logical column is created for each
-#'      source column that contains `NA` values. For column named `x`, the
-#'      newly created column's name will be `x=NA`.
-#' @param .keep if `TRUE`, the original columns being transformed remain
-#'      present in the resulting data frame.
-#' @param .method The method of transformation for numeric columns. Either
-#'      `"crisp"`, `"triangle"`, or `"raisedcos"` is required.
-#' @param .right If `.method="crisp"`, this argument specifies if the
-#'      intervals should be closed on the right (and open on the left) or
-#'      vice versa.
-#' @param .span The span of the intervals for numeric columns. If `.method="crisp"`,
-#'      this argument specifies the number of consecutive breaks in a single
-#'      resulting interval. If `.method="triangle"` or `.method="raisedcos"`,
-#'      this argument specifies the number of breaks that should form the
-#'      core of the fuzzy set, (i.e. where the membership degrees are 1). For
-#'      `.span = 1`, the fuzzy set has a triangular shape with only a single
-#'      value with membership equal to 1, for `.span = 2`, the fuzzy set has
-#'      a trapezoidal shape.
-#' @param .inc how many breaks to move on to the right when creating the next
-#'      column from a numeric column in `x`. In other words, if `.inc = 1`,
-#'      all resulting columns are created (by shifting breaks by 1), if
-#'      `.inc = 2`, the first, third, fifth, etc. columns are created, i.e.,
-#'      every second resulting column is skipped.
-#' @return A tibble created by transforming `.data`.
+#' As with crisp sets, `.inc` determines how far the break window shifts when
+#' creating the next fuzzy set. For example:
+#' * `.span = 1`, `.inc = 1` → \eqn{(1;3;5)}, \eqn{(3;5;7)}, \eqn{(5;7;9)}, \eqn{(7;9;11)}.
+#' * `.span = 2`, `.inc = 1` → \eqn{(1;3;5;7)}, \eqn{(3;5;7;9)}, \eqn{(5;7;9;11)}.
+#' * `.span = 1`, `.inc = 3` → \eqn{(1;3;5)}, \eqn{(7;9;11)}.
+#'
+#' See the examples for further details.
+#'
+#' @param .data A data frame to be processed.
+#' @param .what A tidyselect expression (see
+#'   [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
+#'   selecting the columns to transform.
+#' @param ... Additional tidyselect expressions selecting more columns.
+#' @param .breaks Ignored if `.method = "dummy"`. For other methods, either
+#'   an integer scalar (number of intervals/sets) or a numeric vector of
+#'   breakpoints.
+#' @param .labels Optional character vector with labels used for new column
+#'   names. If `NULL`, labels are generated automatically.
+#' @param .na If `TRUE`, an extra logical column is created for each source
+#'   column that contains `NA` values (e.g. `x=NA`).
+#' @param .keep If `TRUE`, keep the original columns in the output.
+#' @param .method Transformation method for numeric columns: `"dummy"`,
+#'   `"crisp"`, `"triangle"`, or `"raisedcos"`.
+#' @param .right For `"crisp"`, whether intervals are right-closed and
+#'   left-open (`TRUE`), or left-closed and right-open (`FALSE`).
+#' @param .span Number of consecutive breaks forming a set. For `"crisp"`,
+#'   controls interval width. For `"triangle"`/`"raisedcos"`, `.span = 1`
+#'   produces triangular sets, `.span = 2` trapezoidal sets.
+#' @param .inc Step size for shifting breaks when generating successive sets.
+#'   With `.inc = 1`, all possible sets are created; larger values skip sets.
+#'
+#' @return A tibble with `.data` transformed into Boolean or fuzzy predicates.
 #' @author Michal Burda
+#'
 #' @examples
-#' # transform logical columns and factors
+#' # Transform logical columns and factors
 #' d <- data.frame(a = c(TRUE, TRUE, FALSE),
 #'                 b = factor(c("A", "B", "A")),
 #'                 c = c(1, 2, 3))
 #' partition(d, a, b, c, .method = "dummy")
 #'
-#' # transform numeric columns to logical columns (crisp transformation)
+#' # Crisp transformation of numeric data
 #' partition(CO2, conc:uptake, .method = "crisp", .breaks = 3)
 #'
-#' # transform numeric columns to triangular fuzzy sets:
+#' # Triangular fuzzy sets
 #' partition(CO2, conc:uptake, .method = "triangle", .breaks = 3)
 #'
-#' # transform numeric columns to raised-cosinal fuzzy sets
+#' # Raised-cosine fuzzy sets
 #' partition(CO2, conc:uptake, .method = "raisedcos", .breaks = 3)
 #'
-#' # transform numeric columns to trapezoidal fuzzy sets overlapping in non-core
-#' # regions so that the membership degrees sum to 1 along the consecutive fuzzy sets
-#' # (i.e., the so-called Ruspini condition is met)
-#' partition(CO2, conc:uptake, .method = "triangle", .breaks = 3, .span = 2, .inc = 2)
+#' # Trapezoidal fuzzy sets, overlapping to satisfy the Ruspini condition
+#' partition(CO2, conc:uptake, .method = "triangle", .breaks = 3,
+#'           .span = 2, .inc = 2)
 #'
-#' # complex transformation with different settings for each column
+#' # Complex transformation with different settings per column
 #' CO2 |>
-#'     partition(Plant:Treatment) |>
-#'     partition(conc,
-#'               .method = "raisedcos",
-#'               .breaks = c(-Inf, 95, 175, 350, 675, 1000, Inf)) |>
-#'     partition(uptake,
-#'               .method = "triangle",
-#'               .breaks = c(-Inf, 7.7, 28.3, 45.5, Inf),
-#'               .labels = c("low", "medium", "high"))
+#'   partition(Plant:Treatment) |>
+#'   partition(conc,
+#'             .method = "raisedcos",
+#'             .breaks = c(-Inf, 95, 175, 350, 675, 1000, Inf)) |>
+#'   partition(uptake,
+#'             .method = "triangle",
+#'             .breaks = c(-Inf, 7.7, 28.3, 45.5, Inf),
+#'             .labels = c("low", "medium", "high"))
+#'
 #' @export
 partition <- function(.data,
                       .what = everything(),

@@ -2,38 +2,45 @@
 % Please edit documentation in R/is_condition.R
 \name{is_condition}
 \alias{is_condition}
-\title{Check whether the given list of character vectors contains a list of valid
-conditions.}
+\title{Check whether a list of character vectors contains valid conditions}
 \usage{
 is_condition(x, data)
 }
 \arguments{
-\item{x}{a list of character vector}
+\item{x}{A list of character vectors, each representing a condition.}
 
-\item{data}{a matrix or a data frame}
+\item{data}{A matrix or data frame whose column names define valid
+predicates.}
 }
 \value{
-a logical vector indicating whether each element of the list \code{x}
-contains a character vector such that all elements of that vector
-are column names of \code{data}
+A logical vector with one element for each condition in \code{x}. An
+element is \code{TRUE} if the corresponding condition is valid, i.e. all of its
+predicates are column names of \code{data}. Otherwise, it is \code{FALSE}.
 }
 \description{
-A valid condition is a character vector of predicates, where each predicate
-corresponds to some column name of the related data frame. This function
-checks whether the given list of character vectors \code{x}
-contains only such predicates that can be found in column names of given
-data frame \code{data}.
+A valid condition is a character vector of predicate names, where each
+predicate corresponds to a column name in a given data frame or matrix.
+This function verifies that each element of a list \code{x} contains only valid
+predicates that match column names of \code{data}.
 }
 \details{
-Note that empty character vector is considered as a valid condition too.
+Special cases:
+\itemize{
+\item An empty character vector (\code{character(0)}) is considered a valid condition
+and always passes the check.
+\item A \code{NULL} element is treated the same as an empty character vector, i.e.,
+it is also a valid condition.
+}
 }
 \examples{
 d <- data.frame(foo = 1:5, bar = 1:5, blah = 1:5)
+
 is_condition(list("foo"), d)
 is_condition(list(c("bar", "blah"), NULL, c("foo", "bzz")), d)
+
 }
 \seealso{
-\code{\link[=remove_ill_conditions]{remove_ill_conditions()}}
+\code{\link[=remove_ill_conditions]{remove_ill_conditions()}}, \code{\link[=format_condition]{format_condition()}}
 }
 \author{
 Michal Burda

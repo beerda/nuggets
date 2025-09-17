@@ -1,37 +1,51 @@
 #' Obtain truth-degrees of conditions
 #'
-#' Given a data frame or a matrix of truth values of predicates, compute
-#' truth values of given vector of conditions.
+#' Given a data frame or matrix of truth values for predicates, compute the
+#' truth values of a set of conditions expressed as elementary conjunctions.
 #'
-#' Each element of `condition` is a character string of the format `"{p1,p2,p3}"`,
-#' where `"p1"`, `"p2"`, and `"p3"` are predicates. Data `x` must contain columns
-#' whose names correspond to all predicates used in conditions. Each condition
-#' is evaluated on all data rows as an elementary conjunction, where the conjunction
-#' operation is specified by the `t_norm` argument. An empty condition, `{}`,
-#' is always evaluated as 1.
+#' Each element of `condition` must be a character string of the format
+#' `"{p1,p2,p3}"`, where `"p1"`, `"p2"`, and `"p3"` are predicate names. The
+#' data object `x` must contain columns whose names correspond exactly to all
+#' predicates referenced in the conditions. Each condition is evaluated for
+#' every row of `x` as a conjunction of its predicates, with the conjunction
+#' operation determined by the `t_norm` argument. An empty condition (`"{}"`)
+#' is always evaluated as 1 (i.e., fully true).
 #'
-#' @param x a matrix or data frame. The matrix must be numeric (double) or logical.
-#'      If `x` is a data frame then each column must be either numeric (double) or
-#'      logical.
-#' @param condition a character vector of conditions, each element as formatted
-#'      by [format_condition()]. E.g., `"{p1,p2,p3}"` is a condition with three
-#'      predicates `"p1"`, `"p2"`, and `"p3"`. All predicates present in the
-#'      condition must exist as column names in `x`.
-#' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
-#'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
-#'      (Lukasiewicz t-norm).
-#' @return A numeric matrix with values from the interval \eqn{[0,1]} indicating
-#'      the truth values. The resulting matrix has `nrow(x)` rows and
-#'      `length(condition)` columns. That is, a value on *i*-th row and *j*-th
-#'      column corresponds to a truth value of *j*-th condition evaluated at
-#'      *i*-th data row.
+#' @param x A matrix or data frame containing predicate truth values. If `x` is
+#'   a matrix, it must be numeric (double) or logical. If `x` is a data frame,
+#'   all columns must be numeric (double) or logical.
+#' @param condition A character vector of conditions, each formatted according
+#'   to [format_condition()]. For example, `"{p1,p2,p3}"` represents a
+#'   condition composed of three predicates `"p1"`, `"p2"`, and `"p3"`. Every
+#'   predicate mentioned in `condition` must be present as a column in `x`.
+#' @param t_norm A string specifying the triangular norm (t-norm) used to
+#'   compute conjunctions of predicate values. Must be one of `"goedel"`
+#'   (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"` (Lukasiewicz
+#'   t-norm).
+#'
+#' @return A numeric matrix with entries in the interval \eqn{[0, 1]} giving
+#'   the truth degrees of the conditions. The matrix has `nrow(x)` rows and
+#'   `length(condition)` columns. The element in row *i* and column *j*
+#'   corresponds to the truth degree of the *j*-th condition evaluated on the
+#'   *i*-th row of `x`.
+#'
+#' @seealso [format_condition()], [partition()]
+#'
 #' @author Michal Burda
-#' @export
+#'
 #' @examples
-#' d <- data.frame(a = c(  1, 0.8, 0.5, 0.2,   0),
-#'                 b = c(0.5,   1, 0.5,   0,   1),
-#'                 c = c(0.9, 0.9, 0.1, 0.8, 0.7))
-#' fire(d, c("{a,c}", "{}", "{a,b,c}"))
+#' d <- data.frame(
+#'   a = c(1, 0.8, 0.5, 0.2, 0),
+#'   b = c(0.5, 1, 0.5, 0, 1),
+#'   c = c(0.9, 0.9, 0.1, 0.8, 0.7)
+#' )
+#'
+#' # Evaluate conditions with different t-norms
+#' fire(d, c("{a,c}", "{}", "{a,b,c}"), t_norm = "goguen")
+#' fire(d, c("{a,c}", "{a,b}"), t_norm = "goedel")
+#' fire(d, c("{b,c}"), t_norm = "lukas")
+#'
+#' @export
 fire <- function(x,
                  condition,
                  t_norm = "goguen") {

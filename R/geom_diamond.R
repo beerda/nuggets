@@ -160,27 +160,83 @@ GeomDiamond <- ggproto(
 #}
 
 
-#' Geom for drawing diamond plot representing lattice structures
+#' Geom for drawing diamond plots of lattice structures
 #'
-#' This function creates a ggplot2 geom for drawing diamond plots, which are
-#' used to visualize lattice structures in data. This is useful especially for
-#' visualization of rules and its ancestors.
+#' Create a custom `ggplot2` geom for drawing diamond plots, which are used to
+#' visualize lattice structures. This is particularly useful for representing
+#' association rules and their ancestor–descendant relationships in a concise
+#' graphical form.
 #'
-#' The diamonds represent items in the lattice, and edges represent
-#' an inclusion relationship between them.
+#' In a diamond plot, nodes (diamonds) represent items or conditions in the
+#' lattice, while edges represent inclusion (subset) relationships between
+#' them. The geom combines node and edge rendering with flexible aesthetic
+#' options for labels and positioning.
 #'
-#' @param mapping Aesthetic mappings, usually created with `aes()`.
-#' @param data A data frame containing the data to be plotted.
-#' @param stat The statistical transformation to use on the data, default is "identity".
-#' @param position Position adjustment, default is "identity".
-#' @param na.rm A logical value indicating whether to remove missing values.
-#' @param linetype The type of line to use for the edges, default is "solid".
-#' @param nudge_x Horizontal nudge for the x-coordinates of the labels.
-#' @param nudge_y Vertical nudge for the y-coordinates of the labels.
-#' @param show.legend A logical value indicating whether to show the legend.
-#' @param inherit.aes A logical value indicating whether to inherit aesthetics from the plot.
-#' @param ... Other arguments passed to the layer.
-#' @return A ggplot2 layer object that can be added to a ggplot.
+#' @param mapping Aesthetic mappings, usually created with [ggplot2::aes()].
+#' @param data A data frame containing the lattice structure to be plotted.
+#' @param stat The statistical transformation to apply, default is `"identity"`.
+#' @param position Position adjustment for the geom, default is `"identity"`.
+#' @param na.rm Logical; if `TRUE`, missing values are silently removed.
+#' @param linetype Line type used for edges. Defaults to `"solid"`.
+#' @param nudge_x Horizontal nudge applied to label positions.
+#' @param nudge_y Vertical nudge applied to label positions.
+#' @param show.legend Logical; should a legend be drawn? Defaults to `FALSE`.
+#' @param inherit.aes Logical; if `TRUE`, inherit default aesthetics from the
+#'   plot. Defaults to `TRUE`.
+#' @param ... Additional arguments passed on to [ggplot2::layer()].
+#'
+#' @return A `ggplot2` layer object representing a diamond plot. This layer can
+#'   be added to an existing `ggplot` object.
+#'
+#' @examples
+#' \dontrun{
+#' library(ggplot2)
+#' data("iris")
+#' rules <- dig_associations(part)
+#'
+#' # select some rule to visualize the ancestors
+#' rule <- rules[1000, , drop = FALSE]
+#'
+#' # prepare data for visualization of rule ancestors
+#' ante <- parse_condition(rule$antecedent)[[1]]
+#' cons <- parse_condition(rule$consequent)[[1]]
+#' res <- dig_associations(part,
+#'                        antecedent = all_of(ante),
+#'                        consequent = all_of(cons),
+#'                        min_length = 0,
+#'                        max_length = Inf,
+#'                        min_coverage = 0,
+#'                        min_support = 0,
+#'                        min_confidence = 0,
+#'                        measures = c("lift", "conviction"),
+#'                        max_results = Inf)
+#'
+#' # convert all columns into dummy logical variables
+#' part <- partition(iris, .breaks = 3)
+#'
+#' # find all antecedents with Sepal for rules with consequent Species=setosa
+#' rules <- dig_associations(part,
+#'                          antecedent = starts_with("Sepal"),
+#'                          consequent = `Species=setosa`,
+#'                          min_length = 0,
+#'                          max_length = Inf,
+#'                          min_coverage = 0,
+#'                          min_support = 0,
+#'                          min_confidence = 0,
+#'                          measures = c("lift", "conviction"),
+#'                          max_results = Inf)
+#'
+#' # add abbreviated condition for labeling
+#' rules$abbrev <- shorten_condition(rules$antecedent)
+#'
+#' # plot the lattice of rules
+#' ggplot(rules) +
+#'     aes(condition = antecedent, fill = confidence,
+#'        linewidth = confidence, size = coverage,
+#'        label = abbrev) +
+#'    geom_diamond()
+#' }
+#'
 #' @export
 geom_diamond <- function(mapping = NULL,
                          data = NULL,

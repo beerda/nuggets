@@ -2,7 +2,7 @@
 % Please edit documentation in R/values.R
 \name{values}
 \alias{values}
-\title{Extract values from predicates}
+\title{Extract values from predicate names}
 \usage{
 values(x)
 }
@@ -10,17 +10,34 @@ values(x)
 \item{x}{A character vector of predicate names.}
 }
 \value{
-A \verb{<value>} part of predicate names in \code{x}.
+A character vector containing the \verb{<value>} parts of predicate
+names in \code{x}. Elements without an equal sign return an empty string.
+If \code{x} is \code{NULL}, the function returns \code{NULL}. If \code{x} is an empty
+vector (\code{character(0)}), the function returns an empty vector
+(\code{character(0)}).
 }
 \description{
-The function assumes that \code{x} is a vector of predicate names, i.e., a character
-vector with elements compatible with pattern \verb{<varname>=<value>}. The function
-returns the \verb{<value>} part of these elements. If the string does not
-correspond to the pattern \verb{<varname>=<value>}, i.e., if the equal sign (\code{=})
-is missing in the string, an empty string is returned.
+This function extracts the value part from a character vector of predicate
+names. Each element of \code{x} is expected to follow the pattern
+\verb{<varname>=<value>}, where \verb{<varname>} is a variable name and \verb{<value>} is
+the associated value.
+}
+\details{
+If an element does not contain an equal sign (\code{=}), the function returns an
+empty string for that element.
+
+This function is the counterpart to \code{\link[=var_names]{var_names()}}, which extracts the
+variable part of predicates. Together, \code{\link[=var_names]{var_names()}} and \code{values()} provide
+a convenient way to split predicate strings into their variable and value
+components.
 }
 \examples{
-values(c("a=1", "a=2", "b=x", "b=y")) # returns c("1", "2", "x", "y")
+values(c("a=1", "a=2", "b=x", "b=y"))
+# returns c("1", "2", "x", "y")
+
+values(c("a", "b=3"))
+# returns c("", "3")
+
 }
 \seealso{
 \code{\link[=var_names]{var_names()}}

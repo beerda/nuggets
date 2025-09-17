@@ -7,34 +7,37 @@
 bound_range(x, digits = 0, na_rm = FALSE)
 }
 \arguments{
-\item{x}{a numeric vector to be bounded}
+\item{x}{A numeric vector to be bounded.}
 
-\item{digits}{integer scalar specifying the number of digits
-to round the bounds to. Positive value determines the number of
-decimal points to round the bounds to. If \code{digits} is negative,
-the bounds are rounded to the nearest 10, 100, etc. If \code{digits} is
-\code{NULL}, no rounding is performed.}
+\item{digits}{An integer scalar specifying the number of digits to round the
+bounds to. A positive value determines the number of decimal places used.
+A negative value rounds to the nearest 10, 100, etc. If \code{digits} is
+\code{NULL}, no rounding is performed and the exact range is returned.}
 
-\item{na_rm}{a flag indicating whether to remove \code{NA} values
-before computing the range. If \code{na_rm} is \code{TRUE}, the function
-computes the range from non-\code{NA} values only. If \code{na_rm} is \code{FALSE},
-and \code{x} contains \code{NA} values, the function returns \code{c(NA, NA)}.}
+\item{na_rm}{A logical flag indicating whether \code{NA} values should be removed
+before computing the range. If \code{TRUE}, the range is computed from non-\code{NA}
+values only. If \code{FALSE} and \code{x} contains any \code{NA} values, the function
+returns \code{c(NA, NA)}.}
 }
 \value{
-a numeric vector of length 2 with the lower and upper bounds
-of the range of \code{x} rounded to the specified number of digits.
-The lower bound is rounded down and the upper bound is rounded up.
-If \code{x} is \code{NULL} or has length 0, the function returns \code{NULL}.
+A numeric vector of length two with the rounded lower and upper
+bounds of the range of \code{x}. The lower bound is always rounded down, and
+the upper bound is always rounded up. If \code{x} is \code{NULL} or has length zero,
+the function returns \code{NULL}.
 }
 \description{
-Function computes a range of numeric values and rounds the lower bound down
-(like \code{\link[=floor]{floor()}} and the upper bound up (like \code{\link[=ceiling]{ceiling()}}) to the specified
-number of digits. The function returns a numeric vector of length 2
-with the lower and upper bounds of the range.
+This function computes the range of numeric values in a vector and adjusts
+the bounds to "nice" rounded numbers. Specifically, it rounds the lower
+bound downwards (similar to \code{\link[=floor]{floor()}}) and the upper bound upwards (similar
+to \code{\link[=ceiling]{ceiling()}}) to the specified number of digits. This can be useful when
+preparing data ranges for axis labels, plotting, or reporting. The function
+returns a numeric vector of length two, containing the adjusted lower and
+upper bounds.
 }
 \examples{
-bound_range(c(1.9, 2, 3.1), digits = 0)     # returns c(1, 4)
-bound_range(c(190, 200, 301, digits = -2))  # returns c(100, 400)
+bound_range(c(1.9, 2, 3.1), digits = 0)      # returns c(1, 4)
+bound_range(c(190, 200, 301), digits = -2)   # returns c(100, 400)
+
 }
 \seealso{
 \code{\link[=floor]{floor()}}, \code{\link[=ceiling]{ceiling()}}

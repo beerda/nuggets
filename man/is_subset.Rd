@@ -2,22 +2,44 @@
 % Please edit documentation in R/is_subset.R
 \name{is_subset}
 \alias{is_subset}
-\title{Determine whether the first vector is a subset of the second vector}
+\title{Determine whether one vector is a subset of another}
 \usage{
 is_subset(x, y)
 }
 \arguments{
-\item{x}{the first vector}
+\item{x}{The first vector.}
 
-\item{y}{the second vector}
+\item{y}{The second vector.}
 }
 \value{
-\code{TRUE} if \code{x} is a subset of \code{y}, or \code{FALSE} otherwise. \code{x} is
-considered a subset of \code{y} if all elements of \code{x} are also in \code{y},
-i.e., if \code{setdiff(x, y)} is a vector of length 0.
+A logical scalar. Returns \code{TRUE} if \code{x} is a subset of \code{y}, i.e. all
+elements of \code{x} are also elements of \code{y}. Returns \code{FALSE} otherwise.
 }
 \description{
-Determine whether the first vector is a subset of the second vector
+Check if all elements of \code{x} are also contained in \code{y}. This is equivalent
+to testing whether \code{setdiff(x, y)} is empty.
+}
+\details{
+\itemize{
+\item If \code{x} is empty, the result is always \code{TRUE} (the empty set is a subset of
+any set).
+\item If \code{y} is empty and \code{x} is not, the result is \code{FALSE}.
+\item Duplicates in \code{x} are ignored; only set membership is tested.
+\item \code{NA} values are treated as ordinary elements. In particular, \code{NA} in \code{x}
+is considered a subset element only if \code{NA} is also present in \code{y}.
+}
+}
+\examples{
+is_subset(1:3, 1:5)               # TRUE
+is_subset(c(2, 5), 1:4)           # FALSE
+is_subset(numeric(0), 1:5)        # TRUE
+is_subset(1:3, numeric(0))        # FALSE
+is_subset(c(1, NA), c(1, 2, NA))  # TRUE
+is_subset(c(NA), 1:5)             # FALSE
+
+}
+\seealso{
+\code{\link[=setdiff]{setdiff()}}, \code{\link[=intersect]{intersect()}}, \code{\link[=union]{union()}}
 }
 \author{
 Michal Burda

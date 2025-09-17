@@ -2,24 +2,32 @@
 % Please edit documentation in R/format_condition.R
 \name{format_condition}
 \alias{format_condition}
-\title{Format a vector of predicates into a string with a condition}
+\title{Format a vector of predicates into a condition string}
 \usage{
 format_condition(condition)
 }
 \arguments{
-\item{condition}{a character vector of predicates to be formatted}
+\item{condition}{A character vector of predicate names to be formatted. If
+\code{NULL} or of length zero, the result is \code{"{}"}, representing an empty
+condition that is always true.}
 }
 \value{
-a character scalar with a formatted condition
+A character scalar containing the formatted condition string.
 }
 \description{
-Function takes a character vector of predicates and returns a formatted
-condition. The format of the condition is a string with predicates
-separated by commas and enclosed in curly braces.
+Convert a character vector of predicate names into a standardized string
+representation of a condition. Predicates are concatenated with commas and
+enclosed in curly braces. This formatting ensures consistency when storing
+or comparing conditions in other functions.
 }
 \examples{
-format_condition(NULL)              # returns {}
-format_condition(c("a", "b", "c"))  # returns {a,b,c}
+format_condition(NULL)
+format_condition(character(0))
+format_condition(c("a", "b", "c"))
+
+}
+\seealso{
+\code{\link[=parse_condition]{parse_condition()}}, \code{\link[=fire]{fire()}}
 }
 \author{
 Michal Burda

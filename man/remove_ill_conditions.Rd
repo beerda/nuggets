@@ -2,22 +2,41 @@
 % Please edit documentation in R/remove_ill_conditions.R
 \name{remove_ill_conditions}
 \alias{remove_ill_conditions}
-\title{From a given list remove those elements that are not valid conditions.}
+\title{Remove invalid conditions from a list}
 \usage{
 remove_ill_conditions(x, data)
 }
 \arguments{
-\item{x}{a list of character vector}
+\item{x}{A list of character vectors, each representing a condition.}
 
-\item{data}{a matrix or a data frame}
+\item{data}{A matrix or data frame whose column names define valid
+predicates.}
 }
 \value{
-a list of elements of \code{x} that are valid conditions.
+A list containing only those elements of \code{x} that are valid
+conditions.
 }
 \description{
+From a given list of character vectors, remove those elements that are not
+valid conditions.
+}
+\details{
 A valid condition is a character vector of predicates, where each predicate
-corresponds to some column name of the related data frame.
-(An empty character vector is considered as a valid condition too.)
+corresponds to a column name in the supplied data frame or matrix. Empty
+character vectors and \code{NULL} elements are also considered valid conditions.
+
+This function acts as a simple filter around \code{\link[=is_condition]{is_condition()}}. It checks
+each element of \code{x} against the column names of \code{data} and removes those
+that contain invalid predicates. The result preserves only valid conditions
+and discards the invalid ones.
+}
+\examples{
+d <- data.frame(foo = 1:5, bar = 1:5, blah = 1:5)
+
+conds <- list(c("foo", "bar"), "blah", "invalid", character(0), NULL)
+remove_ill_conditions(conds, d)
+# keeps "foo","bar"; "blah"; empty; NULL
+
 }
 \seealso{
 \code{\link[=is_condition]{is_condition()}}

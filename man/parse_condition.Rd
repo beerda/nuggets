@@ -2,36 +2,49 @@
 % Please edit documentation in R/parse_condition.R
 \name{parse_condition}
 \alias{parse_condition}
-\title{Convert character vector of conditions into a list of vectors of predicates}
+\title{Convert condition strings into lists of predicate vectors}
 \usage{
 parse_condition(..., .sort = FALSE)
 }
 \arguments{
-\item{...}{character vectors of conditions to be parsed.}
+\item{...}{One or more character vectors of conditions to be parsed.}
 
-\item{.sort}{a flag indicating whether to sort the predicates in the result.}
+\item{.sort}{Logical flag indicating whether the predicates in each result
+should be sorted alphabetically. Defaults to \code{FALSE}.}
 }
 \value{
-a list of vectors of predicates with each element corresponding to one
-condition.
+A list of character vectors, where each element corresponds to one
+condition and contains the parsed predicates.
 }
 \description{
-Function takes a character vector of conditions and returns a list of vectors
-of predicates. Each element of the list corresponds to one condition. The
-condition is a string with predicates separated by commas and enclosed in
-curly braces, as returned by \code{\link[=format_condition]{format_condition()}}. The function splits the
-condition string into a vector of predicates.
+Parse a character vector of conditions into a list of predicate vectors.
+Each element of the list corresponds to one condition. A condition is a
+string of predicates separated by commas and enclosed in curly braces, as
+produced by \code{\link[=format_condition]{format_condition()}}. The function splits each string into its
+component predicates.
 }
 \details{
-If multiple vectors of conditions are passed, each of them is processed
-separately and the result is merged into a single list element-wisely. If
-the lengths of the vectors are different, the shorter vectors are recycled.
+If multiple vectors of conditions are provided via \code{...}, they are combined
+element-wise. The result is a single list where each element is formed by
+merging the predicates from the corresponding elements of all input
+vectors. If the input vectors differ in length, shorter ones are recycled.
+
+Empty conditions (\code{"{}"}) are parsed as empty character vectors
+(\code{character(0)}).
 }
 \examples{
 parse_condition(c("{a}", "{x=1, z=2, y=3}", "{}"))
+
+# Merge conditions from multiple vectors element-wise
 parse_condition(c("{b}", "{x=1, z=2, y=3}", "{q}", "{}"),
                 c("{a}", "{v=10, w=11}",    "{}",  "{r,s,t}"))
 
+# Sorting predicates within each condition
+parse_condition("{z,y,x}", .sort = TRUE)
+
+}
+\seealso{
+\code{\link[=format_condition]{format_condition()}}, \code{\link[=is_condition]{is_condition()}}, \code{\link[=fire]{fire()}}
 }
 \author{
 Michal Burda

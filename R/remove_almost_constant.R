@@ -1,28 +1,31 @@
 #' Remove almost constant columns from a data frame
 #'
-#' Function tests all columns that are specified by the `.what` argument
-#' and removes those that are almost constant. A column is considered
-#' almost constant if the proportion of the most frequent value is greater
-#' than the threshold specified by the `.threshold` argument. See
-#' [is_almost_constant()] for details.
+#' Test all columns specified by `.what` and remove those that are almost
+#' constant. A column is considered almost constant if the proportion of its
+#' most frequent value is greater than or equal to the threshold specified by
+#' `.threshold`. See [is_almost_constant()] for further details.
 #'
-#' @param .data a data frame
-#' @param .what a tidyselect expression (see
-#'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
-#'      selecting the columns to be processed
-#' @param ... optional other tidyselect expressions selecting additional
-#'      columns to be processed
-#' @param .threshold a numeric scalar in the range \eqn{[0, 1]} specifying the
-#'      threshold for the proportion of the most frequent value
-#' @param .na_rm a logical scalar indicating whether to remove `NA` values
-#'      before computing the proportion of the most frequent value. See
-#'      [is_almost_constant()] for details of how `NA` values are handled.
-#' @param .verbose a logical scalar indicating whether to print a message
-#'      about removed columns
-#' @return A data frame with removed all columns specified by the `.what`
-#'      argument that are also (almost) constant
+#' @param .data A data frame.
+#' @param .what A tidyselect expression (see
+#'   [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
+#'   specifying the columns to process.
+#' @param ... Additional tidyselect expressions selecting more columns.
+#' @param .threshold Numeric scalar in the interval \eqn{[0,1]} giving the
+#'   minimum required proportion of the most frequent value for a column to be
+#'   considered almost constant.
+#' @param .na_rm Logical; if `TRUE`, `NA` values are removed before computing
+#'   proportions. If `FALSE`, `NA` is treated as a regular value. See
+#'   [is_almost_constant()] for details.
+#' @param .verbose Logical; if `TRUE`, print a message listing the removed
+#'   columns.
+#'
+#' @return A data frame with all selected columns removed that meet the
+#'   definition of being almost constant.
+#'
+#' @seealso [is_almost_constant()], [remove_ill_conditions()]
+#'
 #' @author Michal Burda
-#' @seealso [is_almost_constant()]
+#'
 #' @examples
 #' d <- data.frame(a1 = 1:10,
 #'                 a2 = c(1:9, NA),
@@ -30,12 +33,19 @@
 #'                 b2 = NA,
 #'                 c1 = rep(c(TRUE, FALSE), 5),
 #'                 c2 = rep(c(TRUE, NA), 5),
-#'                 d = c(rep(TRUE, 4), rep(FALSE, 4), NA, NA))
+#'                 d  = c(rep(TRUE, 4), rep(FALSE, 4), NA, NA))
+#'
+#' # Remove columns that are constant (threshold = 1)
 #' remove_almost_constant(d, .threshold = 1.0, .na_rm = FALSE)
 #' remove_almost_constant(d, .threshold = 1.0, .na_rm = TRUE)
+#'
+#' # Remove columns where the majority value occurs in ≥ 50% of rows
 #' remove_almost_constant(d, .threshold = 0.5, .na_rm = FALSE)
 #' remove_almost_constant(d, .threshold = 0.5, .na_rm = TRUE)
+#'
+#' # Restrict check to a subset of columns
 #' remove_almost_constant(d, a1:b2, .threshold = 0.5, .na_rm = TRUE)
+#'
 #' @export
 remove_almost_constant <- function(.data,
                                    .what = everything(),
