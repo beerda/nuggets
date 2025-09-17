@@ -15,8 +15,6 @@ explore.associations <- function(x, data = NULL, ...) {
     .must_inherit(x, "associations")
     .must_be_data_frame(data, null = TRUE)
 
-    x$id <- seq_len(nrow(x))
-
     meta <- tribble(
         ~data_name,          ~short_name,  ~long_name,           ~type,       ~round, ~scatter,
         "antecedent",        "antecedent", "Antecedent",         "condition", NA,     FALSE,
@@ -27,8 +25,11 @@ explore.associations <- function(x, data = NULL, ...) {
         "confidence",        "conf",       "Confidence",         "numeric",   2,      TRUE,
         "lift",              "lift",       "Lift",               "numeric",   2,      TRUE,
         "conviction",        "conv",       "Conviction",         "numeric",   2,      TRUE,
-        "antecedent_length", "len",        "Antecedent Length",  "integer",   NA,     FALSE
+        "antecedent_length", "len",        "Antecedent Length",  "integer",   NA,     TRUE
     )
+
+    x$id <- seq_len(nrow(x))
+    meta <- meta[meta$data_name %in% colnames(x), , drop = FALSE]
 
     header <- NULL
     detailModule <- NULL

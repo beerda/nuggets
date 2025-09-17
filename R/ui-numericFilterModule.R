@@ -36,7 +36,7 @@ numericFilterModule <- function(id,
                        digits = digits,
                        na_rm = TRUE)
 
-    summaryTable <- quantile(x, probs = seq(0, 1, 0.25), names = FALSE)
+    summaryTable <- quantile(finx, probs = seq(0, 1, 0.25), names = FALSE)
     summaryTable <- as.data.frame(t(summaryTable))
     colnames(summaryTable) <- c("min", "Q1", "median", "Q3", "max")
 
