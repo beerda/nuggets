@@ -88,7 +88,7 @@ rules <- dig_associations(cars,
 explore(rules, cars)
 ```
 
-<img src="man/figures/assoc_explorer1.png" width="100%" />
+<img src="man/figures/assoc_explorer1.png" width="100%" alt="Interactive rules explorer" />
 
 ## Contributing
 
