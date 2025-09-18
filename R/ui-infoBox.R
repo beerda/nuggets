@@ -3,10 +3,10 @@ infoBox <- function(...,
                     dismissible = FALSE) {
     status <- match.arg(status)
     ico <- switch(status,
-                  info = "info-circle",
-                  success = "check-circle",
-                  danger = "times-circle",
-                  warning = "exclamation-triangle")
+                  info = "circle-info",
+                  success = "circle-check",
+                  danger = "circle-xmark",
+                  warning = "triangle-exclamation")
 
     alert(status = match.arg(status),
           dismissible = dismissible,
