@@ -1,5 +1,5 @@
 aboutTable <- function(pkg) {
-    descr <- packageDescription("nuggets")
+    descr <- packageDescription(pkg)
 
     author <- descr[["Authors@R"]]
     author <- eval(parse(text = author))
