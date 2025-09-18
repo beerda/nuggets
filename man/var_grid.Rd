@@ -116,9 +116,6 @@ var_grid(CO2)
 # and the second column is conc or uptake
 var_grid(CO2, xvars = Plant:Treatment, yvars = conc:uptake)
 
-# Restrict combinations to numeric variables only
-var_grid(CO2, allow = "numeric")
-
 # Prevent variables from the same disjoint group from being paired together
 d <- data.frame(a = 1:5, b = 6:10, c = 11:15, d = 16:20)
 # Group (a, b) together and (c, d) together
