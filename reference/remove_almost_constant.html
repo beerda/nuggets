@@ -5,15 +5,13 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Remove almost constant columns from a data frame — remove_almost_constant"><meta name="description" content="Function tests all columns that are specified by the .what argument
-and removes those that are almost constant. A column is considered
-almost constant if the proportion of the most frequent value is greater
-than the threshold specified by the .threshold argument. See
-is_almost_constant() for details."><meta property="og:description" content="Function tests all columns that are specified by the .what argument
-and removes those that are almost constant. A column is considered
-almost constant if the proportion of the most frequent value is greater
-than the threshold specified by the .threshold argument. See
-is_almost_constant() for details."><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
+</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Remove almost constant columns from a data frame — remove_almost_constant"><meta name="description" content="Test all columns specified by .what and remove those that are almost
+constant. A column is considered almost constant if the proportion of its
+most frequent value is greater than or equal to the threshold specified by
+.threshold. See is_almost_constant() for further details."><meta property="og:description" content="Test all columns specified by .what and remove those that are almost
+constant. A column is considered almost constant if the proportion of its
+most frequent value is greater than or equal to the threshold specified by
+.threshold. See is_almost_constant() for further details."><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -54,11 +52,10 @@ is_almost_constant() for details."><meta property="og:image" content="https://be
     </div>
 
     <div class="ref-description section level2">
-    <p>Function tests all columns that are specified by the <code>.what</code> argument
-and removes those that are almost constant. A column is considered
-almost constant if the proportion of the most frequent value is greater
-than the threshold specified by the <code>.threshold</code> argument. See
-<code><a href="is_almost_constant.html">is_almost_constant()</a></code> for details.</p>
+    <p>Test all columns specified by <code>.what</code> and remove those that are almost
+constant. A column is considered almost constant if the proportion of its
+most frequent value is greater than or equal to the threshold specified by
+<code>.threshold</code>. See <code><a href="is_almost_constant.html">is_almost_constant()</a></code> for further details.</p>
     </div>
 
     <div class="section level2">
@@ -78,44 +75,44 @@ than the threshold specified by the <code>.threshold</code> argument. See
 
 
 <dl><dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
-<dd><p>a data frame</p></dd>
+<dd><p>A data frame.</p></dd>
 
 
 <dt id="arg--what">.what<a class="anchor" aria-label="anchor" href="#arg--what"></a></dt>
-<dd><p>a tidyselect expression (see
+<dd><p>A tidyselect expression (see
 <a href="https://tidyselect.r-lib.org/articles/syntax.html" class="external-link">tidyselect syntax</a>)
-selecting the columns to be processed</p></dd>
+specifying the columns to process.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>optional other tidyselect expressions selecting additional
-columns to be processed</p></dd>
+<dd><p>Additional tidyselect expressions selecting more columns.</p></dd>
 
 
 <dt id="arg--threshold">.threshold<a class="anchor" aria-label="anchor" href="#arg--threshold"></a></dt>
-<dd><p>a numeric scalar in the range \([0, 1]\) specifying the
-threshold for the proportion of the most frequent value</p></dd>
+<dd><p>Numeric scalar in the interval \([0,1]\) giving the
+minimum required proportion of the most frequent value for a column to be
+considered almost constant.</p></dd>
 
 
 <dt id="arg--na-rm">.na_rm<a class="anchor" aria-label="anchor" href="#arg--na-rm"></a></dt>
-<dd><p>a logical scalar indicating whether to remove <code>NA</code> values
-before computing the proportion of the most frequent value. See
-<code><a href="is_almost_constant.html">is_almost_constant()</a></code> for details of how <code>NA</code> values are handled.</p></dd>
+<dd><p>Logical; if <code>TRUE</code>, <code>NA</code> values are removed before computing
+proportions. If <code>FALSE</code>, <code>NA</code> is treated as a regular value. See
+<code><a href="is_almost_constant.html">is_almost_constant()</a></code> for details.</p></dd>
 
 
 <dt id="arg--verbose">.verbose<a class="anchor" aria-label="anchor" href="#arg--verbose"></a></dt>
-<dd><p>a logical scalar indicating whether to print a message
-about removed columns</p></dd>
+<dd><p>Logical; if <code>TRUE</code>, print a message listing the removed
+columns.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame with removed all columns specified by the <code>.what</code>
-argument that are also (almost) constant</p>
+    <p>A data frame with all selected columns removed that meet the
+definition of being almost constant.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="is_almost_constant.html">is_almost_constant()</a></code></p></div>
+    <div class="dont-index"><p><code><a href="is_almost_constant.html">is_almost_constant()</a></code>, <code><a href="remove_ill_conditions.html">remove_ill_conditions()</a></code></p></div>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
@@ -130,7 +127,9 @@ argument that are also (almost) constant</p>
 <span class="r-in"><span>                b2 <span class="op">=</span> <span class="cn">NA</span>,</span></span>
 <span class="r-in"><span>                c1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span>, <span class="fl">5</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                c2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">NA</span><span class="op">)</span>, <span class="fl">5</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                d <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="fl">4</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="fl">4</span><span class="op">)</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                d  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="fl">4</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="fl">4</span><span class="op">)</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Remove columns that are constant (threshold = 1)</span></span></span>
 <span class="r-in"><span><span class="fu">remove_almost_constant</span><span class="op">(</span><span class="va">d</span>, .threshold <span class="op">=</span> <span class="fl">1.0</span>, .na_rm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       a1    a2 c1    c2    d    </span>
@@ -159,6 +158,8 @@ argument that are also (almost) constant</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     8     8 FALSE FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     9     9 TRUE  <span style="color: #BB0000;">NA</span>   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>    10    <span style="color: #BB0000;">NA</span> FALSE <span style="color: #BB0000;">NA</span>   </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Remove columns where the majority value occurs in ≥ 50% of rows</span></span></span>
 <span class="r-in"><span><span class="fu">remove_almost_constant</span><span class="op">(</span><span class="va">d</span>, .threshold <span class="op">=</span> <span class="fl">0.5</span>, .na_rm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       a1    a2 d    </span>
@@ -187,6 +188,8 @@ argument that are also (almost) constant</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     8     8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     9     9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>    10    <span style="color: #BB0000;">NA</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Restrict check to a subset of columns</span></span></span>
 <span class="r-in"><span><span class="fu">remove_almost_constant</span><span class="op">(</span><span class="va">d</span>, <span class="va">a1</span><span class="op">:</span><span class="va">b2</span>, .threshold <span class="op">=</span> <span class="fl">0.5</span>, .na_rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       a1    a2 c1    c2    d    </span>
@@ -201,6 +204,7 @@ argument that are also (almost) constant</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     8     8 FALSE <span style="color: #BB0000;">NA</span>    FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     9     9 TRUE  TRUE  <span style="color: #BB0000;">NA</span>   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>    10    <span style="color: #BB0000;">NA</span> FALSE <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>   </span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

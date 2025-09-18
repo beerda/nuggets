@@ -5,35 +5,33 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Create a tibble of combinations of selected column names — var_grid"><meta name="description" content="xvars and yvars arguments are tidyselect expressions (see
+</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Create a tibble of combinations of selected column names — var_grid"><meta name="description" content="The xvars and yvars arguments are tidyselect expressions (see
 tidyselect syntax) that
-specify the columns of x whose names will be used as a domain for
-combinations.
-If yvars is NULL, the function creates a tibble with one column var
-enumerating all column names specified by the xvars argument.
+specify the columns of x whose names will be used to form combinations.
+If yvars is NULL, the function creates a tibble with one column, var,
+enumerating all column names selected by the xvars expression.
 If yvars is not NULL, the function creates a tibble with two columns,
 xvar and yvar, whose rows enumerate all combinations of column names
-specified by the xvars and yvars argument.
-It is allowed to specify the same column in both xvars and yvars
-arguments. In such a case, the combinations of the same column with itself
-are removed from the result.
+specified by xvars and yvars.
+It is allowed to specify the same column in both xvars and yvars. In
+such cases, self-combinations (a column paired with itself) are removed
+from the result.
 In other words, the function creates a grid of all possible pairs
-\((xx, yy)\) where \(xx \in xvars\), \(yy \in yvars\),
-and \(xx \neq yy\)."><meta property="og:description" content="xvars and yvars arguments are tidyselect expressions (see
+\((xx, yy)\) where \(xx \in xvars\), \(yy \in yvars\), and
+\(xx \neq yy\)."><meta property="og:description" content="The xvars and yvars arguments are tidyselect expressions (see
 tidyselect syntax) that
-specify the columns of x whose names will be used as a domain for
-combinations.
-If yvars is NULL, the function creates a tibble with one column var
-enumerating all column names specified by the xvars argument.
+specify the columns of x whose names will be used to form combinations.
+If yvars is NULL, the function creates a tibble with one column, var,
+enumerating all column names selected by the xvars expression.
 If yvars is not NULL, the function creates a tibble with two columns,
 xvar and yvar, whose rows enumerate all combinations of column names
-specified by the xvars and yvars argument.
-It is allowed to specify the same column in both xvars and yvars
-arguments. In such a case, the combinations of the same column with itself
-are removed from the result.
+specified by xvars and yvars.
+It is allowed to specify the same column in both xvars and yvars. In
+such cases, self-combinations (a column paired with itself) are removed
+from the result.
 In other words, the function creates a grid of all possible pairs
-\((xx, yy)\) where \(xx \in xvars\), \(yy \in yvars\),
-and \(xx \neq yy\)."><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
+\((xx, yy)\) where \(xx \in xvars\), \(yy \in yvars\), and
+\(xx \neq yy\)."><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -74,21 +72,20 @@ and \(xx \neq yy\)."><meta property="og:image" content="https://beerda.github.io
     </div>
 
     <div class="ref-description section level2">
-    <p><code>xvars</code> and <code>yvars</code> arguments are tidyselect expressions (see
+    <p>The <code>xvars</code> and <code>yvars</code> arguments are tidyselect expressions (see
 <a href="https://tidyselect.r-lib.org/articles/syntax.html" class="external-link">tidyselect syntax</a>) that
-specify the columns of <code>x</code> whose names will be used as a domain for
-combinations.</p>
-<p>If <code>yvars</code> is <code>NULL</code>, the function creates a tibble with one column <code>var</code>
-enumerating all column names specified by the <code>xvars</code> argument.</p>
+specify the columns of <code>x</code> whose names will be used to form combinations.</p>
+<p>If <code>yvars</code> is <code>NULL</code>, the function creates a tibble with one column, <code>var</code>,
+enumerating all column names selected by the <code>xvars</code> expression.</p>
 <p>If <code>yvars</code> is not <code>NULL</code>, the function creates a tibble with two columns,
 <code>xvar</code> and <code>yvar</code>, whose rows enumerate all combinations of column names
-specified by the <code>xvars</code> and <code>yvars</code> argument.</p>
-<p>It is allowed to specify the same column in both <code>xvars</code> and <code>yvars</code>
-arguments. In such a case, the combinations of the same column with itself
-are removed from the result.</p>
+specified by <code>xvars</code> and <code>yvars</code>.</p>
+<p>It is allowed to specify the same column in both <code>xvars</code> and <code>yvars</code>. In
+such cases, self-combinations (a column paired with itself) are removed
+from the result.</p>
 <p>In other words, the function creates a grid of all possible pairs
-\((xx, yy)\) where \(xx \in xvars\), \(yy \in yvars\),
-and \(xx \neq yy\).</p>
+\((xx, yy)\) where \(xx \in xvars\), \(yy \in yvars\), and
+\(xx \neq yy\).</p>
     </div>
 
     <div class="section level2">
@@ -99,7 +96,7 @@ and \(xx \neq yy\).</p>
 <span>  yvars <span class="op">=</span> <span class="fu">everything</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  allow <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  disjoint <span class="op">=</span> <span class="fu"><a href="var_names.html">var_names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  xvar_name <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="fu">quo_is_null</span><span class="op">(</span><span class="fu">enquo</span><span class="op">(</span><span class="va">yvars</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="st">"var"</span> <span class="kw">else</span> <span class="st">"xvar"</span>,</span>
+<span>  xvar_name <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="fu">quo_is_null</span><span class="op">(</span><span class="fu"><a href="https://rlang.r-lib.org/reference/enquo.html" class="external-link">enquo</a></span><span class="op">(</span><span class="va">yvars</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="st">"var"</span> <span class="kw">else</span> <span class="st">"xvar"</span>,</span>
 <span>  yvar_name <span class="op">=</span> <span class="st">"yvar"</span>,</span>
 <span>  error_context <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>arg_x <span class="op">=</span> <span class="st">"x"</span>, arg_xvars <span class="op">=</span> <span class="st">"xvars"</span>, arg_yvars <span class="op">=</span> <span class="st">"yvars"</span>, arg_allow <span class="op">=</span></span>
 <span>    <span class="st">"allow"</span>, arg_disjoint <span class="op">=</span> <span class="st">"disjoint"</span>, arg_xvar_name <span class="op">=</span> <span class="st">"xvar_name"</span>, arg_yvar_name <span class="op">=</span></span>
@@ -112,68 +109,86 @@ and \(xx \neq yy\).</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>either a data frame or a matrix</p></dd>
+<dd><p>A data frame or matrix.</p></dd>
 
 
 <dt id="arg-xvars">xvars<a class="anchor" aria-label="anchor" href="#arg-xvars"></a></dt>
-<dd><p>a tidyselect expression (see
-<a href="https://tidyselect.r-lib.org/articles/syntax.html" class="external-link">tidyselect syntax</a>)
-specifying the columns of <code>x</code>, whose names will be used as a domain for
-combinations use at the first place (xvar)</p></dd>
+<dd><p>A tidyselect expression specifying the columns of <code>x</code> whose
+names will be used in the first position (<code>xvar</code>) of the combinations.</p></dd>
 
 
 <dt id="arg-yvars">yvars<a class="anchor" aria-label="anchor" href="#arg-yvars"></a></dt>
-<dd><p><code>NULL</code> or a tidyselect expression (see
-<a href="https://tidyselect.r-lib.org/articles/syntax.html" class="external-link">tidyselect syntax</a>)
-specifying the columns of <code>x</code>, whose names will be used as a domain for
-combinations use at the second place (yvar)</p></dd>
+<dd><p><code>NULL</code> or a tidyselect expression specifying the columns of
+<code>x</code> whose names will be used in the second position (<code>yvar</code>) of the
+combinations.</p></dd>
 
 
 <dt id="arg-allow">allow<a class="anchor" aria-label="anchor" href="#arg-allow"></a></dt>
-<dd><p>a character string specifying which columns are allowed to be
-selected by <code>xvars</code> and <code>yvars</code> arguments. Possible values are:</p><ul><li><p><code>"all"</code> - all columns are allowed to be selected</p></li>
-<li><p><code>"numeric"</code> - only numeric columns are allowed to be selected</p></li>
+<dd><p>A character string specifying which columns may be selected by
+<code>xvars</code> and <code>yvars</code>. Possible values are:</p><ul><li><p><code>"all"</code> – all columns may be selected;</p></li>
+<li><p><code>"numeric"</code> – only numeric columns may be selected.</p></li>
 </ul></dd>
 
 
 <dt id="arg-disjoint">disjoint<a class="anchor" aria-label="anchor" href="#arg-disjoint"></a></dt>
-<dd><p>an atomic vector of size equal to the number of columns of <code>x</code>
-that specifies the groups of predicates: if some elements of the <code>disjoint</code>
-vector are equal, then the corresponding columns of <code>x</code> will NOT be
-present together in a single combination of <code>xvars</code> and <code>yvars</code>. If
-<code>yvars</code> is <code>NULL</code>, the <code>disjoint</code> argument is ignored.</p></dd>
+<dd><p>An atomic vector of length equal to the number of columns
+in <code>x</code> that specifies disjoint groups of predicates. Columns belonging to
+the same group (i.e. having the same value in <code>disjoint</code>) will not appear
+together in a single combination of <code>xvars</code> and <code>yvars</code>. Ignored if
+<code>yvars</code> is <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-xvar-name">xvar_name<a class="anchor" aria-label="anchor" href="#arg-xvar-name"></a></dt>
-<dd><p>the name of the first column in the resulting tibble.</p></dd>
+<dd><p>A character string specifying the name of the first column
+(<code>xvar</code>) in the output tibble.</p></dd>
 
 
 <dt id="arg-yvar-name">yvar_name<a class="anchor" aria-label="anchor" href="#arg-yvar-name"></a></dt>
-<dd><p>the name of the second column in the resulting tibble.
-The column does not exist if <code>yvars</code> is <code>NULL</code>.</p></dd>
+<dd><p>A character string specifying the name of the second
+column (<code>yvar</code>) in the output tibble. This column is omitted if
+<code>yvars</code> is <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-error-context">error_context<a class="anchor" aria-label="anchor" href="#arg-error-context"></a></dt>
-<dd><p>A list of details to be used in error messages.
-This argument is useful when <code>var_grid()</code> is called from another
-function to provide error messages, which refer to arguments of the
-calling function. The list must contain the following elements:</p><ul><li><p><code>arg_x</code> - the name of the argument <code>x</code> as a character string</p></li>
-<li><p><code>arg_xvars</code> - the name of the argument <code>xvars</code> as a character string</p></li>
-<li><p><code>arg_yvars</code> - the name of the argument <code>yvars</code> as a character string</p></li>
-<li><p><code>arg_allow</code> - the name of the argument <code>allow</code> as a character string</p></li>
-<li><p><code>arg_xvar_name</code> - the name of the <code>xvar</code> column in the output tibble</p></li>
-<li><p><code>arg_yvar_name</code> - the name of the <code>yvar</code> column in the output tibble</p></li>
-<li><p><code>call</code> - an environment in which to evaluate the error messages.</p></li>
+<dd><p>A list providing details for error messages. This is
+useful when <code>var_grid()</code> is called from another function, allowing error
+messages to reference the caller’s argument names. The list must contain:</p><ul><li><p><code>arg_x</code> – name of the argument <code>x</code>;</p></li>
+<li><p><code>arg_xvars</code> – name of the argument <code>xvars</code>;</p></li>
+<li><p><code>arg_yvars</code> – name of the argument <code>yvars</code>;</p></li>
+<li><p><code>arg_allow</code> – name of the argument <code>allow</code>;</p></li>
+<li><p><code>arg_xvar_name</code> – name of the <code>xvar</code> column in the output;</p></li>
+<li><p><code>arg_yvar_name</code> – name of the <code>yvar</code> column in the output;</p></li>
+<li><p><code>call</code> – the calling environment for evaluating error messages.</p></li>
 </ul></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>if <code>yvars</code> is <code>NULL</code>, the function returns a tibble with a single
-column (<code>var</code>). If <code>yvars</code> is a non-<code>NULL</code> expression, the function
-returns two columns (<code>xvar</code> and <code>yvar</code>) with rows enumerating
-all combinations of column names specified by tidyselect expressions
-in <code>xvars</code> and <code>yvars</code> arguments.</p>
+    <p>If <code>yvars</code> is <code>NULL</code>, a tibble with a single column (<code>var</code>).
+If <code>yvars</code> is not <code>NULL</code>, a tibble with two columns (<code>xvar</code>, <code>yvar</code>)
+enumerating all valid combinations of column names selected by <code>xvars</code>
+and <code>yvars</code>. The order of variables in the result follows the order in
+which they are selected by <code>xvars</code> and <code>yvars</code>.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p><code>var_grid()</code> is typically used when a function requires a systematic list
+of variables or variable pairs to analyze. For example, it can be used to
+generate all pairs of variables for correlation, association, or contrast
+analysis. The flexibility of <code>xvars</code> and <code>yvars</code> makes it possible to
+restrict the grid to specific subsets of variables while ensuring that
+invalid or redundant combinations (e.g., self-pairs or disjoint groups) are
+excluded automatically.</p>
+<p>The <code>allow</code> argument can be used to restrict the selection of columns to
+numeric columns only. This is useful when the resulting variable combinations
+will be used in analyses that require numeric data, such as correlation or
+contrast tests.</p>
+<p>The <code>disjoint</code> argument allows specifying groups of columns that should not
+appear together in a single combination. This is useful when certain columns
+represent mutually exclusive categories or measurements that should not be
+analyzed together. For example, if <code>disjoint</code> groups columns by measurement
+type, the function will ensure that no combination includes two columns from
+the same type.</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
@@ -182,7 +197,7 @@ in <code>xvars</code> and <code>yvars</code> arguments.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create a grid of combinations of all pairs of columns in the CO2 dataset:</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Grid of all pairwise column combinations in CO2</span></span></span>
 <span class="r-in"><span><span class="fu">var_grid</span><span class="op">(</span><span class="va">CO2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    xvar      yvar     </span>
@@ -198,9 +213,8 @@ in <code>xvars</code> and <code>yvars</code> arguments.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Treatment uptake   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> conc      uptake   </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Create a grid of combinations of all pairs of columns in the CO2 dataset</span></span></span>
-<span class="r-in"><span><span class="co"># such that the first, i.e., `xvar` column is `Plant`, `Type`, or</span></span></span>
-<span class="r-in"><span><span class="co"># `Treatment`, and the second, i.e., `yvar` column is `conc` or `uptake`:</span></span></span>
+<span class="r-in"><span><span class="co"># Grid of combinations where the first column is Plant, Type, or Treatment,</span></span></span>
+<span class="r-in"><span><span class="co"># and the second column is conc or uptake</span></span></span>
 <span class="r-in"><span><span class="fu">var_grid</span><span class="op">(</span><span class="va">CO2</span>, xvars <span class="op">=</span> <span class="va">Plant</span><span class="op">:</span><span class="va">Treatment</span>, yvars <span class="op">=</span> <span class="va">conc</span><span class="op">:</span><span class="va">uptake</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   xvar      yvar  </span>
@@ -211,6 +225,26 @@ in <code>xvars</code> and <code>yvars</code> arguments.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Type      uptake</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Treatment conc  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Treatment uptake</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Restrict combinations to numeric variables only</span></span></span>
+<span class="r-in"><span><span class="fu">var_grid</span><span class="op">(</span><span class="va">CO2</span>, allow <span class="op">=</span> <span class="st">"numeric"</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in var_grid(CO2, allow = "numeric"):</span> All columns selected by `xvars` must be numeric.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Column `Plant` is a <span style="color: #0000BB;">&lt;ordered&gt;</span>.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Column `Type` is a <span style="color: #0000BB;">&lt;factor&gt;</span>.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Column `Treatment` is a <span style="color: #0000BB;">&lt;factor&gt;</span>.</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Prevent variables from the same disjoint group from being paired together</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, b <span class="op">=</span> <span class="fl">6</span><span class="op">:</span><span class="fl">10</span>, c <span class="op">=</span> <span class="fl">11</span><span class="op">:</span><span class="fl">15</span>, d <span class="op">=</span> <span class="fl">16</span><span class="op">:</span><span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Group (a, b) together and (c, d) together</span></span></span>
+<span class="r-in"><span><span class="fu">var_grid</span><span class="op">(</span><span class="va">d</span>, xvars <span class="op">=</span> <span class="fu">everything</span><span class="op">(</span><span class="op">)</span>, yvars <span class="op">=</span> <span class="fu">everything</span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>         disjoint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   xvar  yvar </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> a     c    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> a     d    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> b     c    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> b     d    </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

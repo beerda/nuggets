@@ -5,13 +5,19 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Bound a range of numeric values — bound_range"><meta name="description" content="Function computes a range of numeric values and rounds the lower bound down
-(like floor() and the upper bound up (like ceiling()) to the specified
-number of digits. The function returns a numeric vector of length 2
-with the lower and upper bounds of the range."><meta property="og:description" content="Function computes a range of numeric values and rounds the lower bound down
-(like floor() and the upper bound up (like ceiling()) to the specified
-number of digits. The function returns a numeric vector of length 2
-with the lower and upper bounds of the range."><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
+</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Bound a range of numeric values — bound_range"><meta name="description" content='This function computes the range of numeric values in a vector and adjusts
+the bounds to "nice" rounded numbers. Specifically, it rounds the lower
+bound downwards (similar to floor()) and the upper bound upwards (similar
+to ceiling()) to the specified number of digits. This can be useful when
+preparing data ranges for axis labels, plotting, or reporting. The function
+returns a numeric vector of length two, containing the adjusted lower and
+upper bounds.'><meta property="og:description" content='This function computes the range of numeric values in a vector and adjusts
+the bounds to "nice" rounded numbers. Specifically, it rounds the lower
+bound downwards (similar to floor()) and the upper bound upwards (similar
+to ceiling()) to the specified number of digits. This can be useful when
+preparing data ranges for axis labels, plotting, or reporting. The function
+returns a numeric vector of length two, containing the adjusted lower and
+upper bounds.'><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -52,10 +58,13 @@ with the lower and upper bounds of the range."><meta property="og:image" content
     </div>
 
     <div class="ref-description section level2">
-    <p>Function computes a range of numeric values and rounds the lower bound down
-(like <code><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor()</a></code> and the upper bound up (like <code><a href="https://rdrr.io/r/base/Round.html" class="external-link">ceiling()</a></code>) to the specified
-number of digits. The function returns a numeric vector of length 2
-with the lower and upper bounds of the range.</p>
+    <p>This function computes the range of numeric values in a vector and adjusts
+the bounds to "nice" rounded numbers. Specifically, it rounds the lower
+bound downwards (similar to <code><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor()</a></code>) and the upper bound upwards (similar
+to <code><a href="https://rdrr.io/r/base/Round.html" class="external-link">ceiling()</a></code>) to the specified number of digits. This can be useful when
+preparing data ranges for axis labels, plotting, or reporting. The function
+returns a numeric vector of length two, containing the adjusted lower and
+upper bounds.</p>
     </div>
 
     <div class="section level2">
@@ -68,30 +77,29 @@ with the lower and upper bounds of the range.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>a numeric vector to be bounded</p></dd>
+<dd><p>A numeric vector to be bounded.</p></dd>
 
 
 <dt id="arg-digits">digits<a class="anchor" aria-label="anchor" href="#arg-digits"></a></dt>
-<dd><p>integer scalar specifying the number of digits
-to round the bounds to. Positive value determines the number of
-decimal points to round the bounds to. If <code>digits</code> is negative,
-the bounds are rounded to the nearest 10, 100, etc. If <code>digits</code> is
-<code>NULL</code>, no rounding is performed.</p></dd>
+<dd><p>An integer scalar specifying the number of digits to round the
+bounds to. A positive value determines the number of decimal places used.
+A negative value rounds to the nearest 10, 100, etc. If <code>digits</code> is
+<code>NULL</code>, no rounding is performed and the exact range is returned.</p></dd>
 
 
 <dt id="arg-na-rm">na_rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
-<dd><p>a flag indicating whether to remove <code>NA</code> values
-before computing the range. If <code>na_rm</code> is <code>TRUE</code>, the function
-computes the range from non-<code>NA</code> values only. If <code>na_rm</code> is <code>FALSE</code>,
-and <code>x</code> contains <code>NA</code> values, the function returns <code>c(NA, NA)</code>.</p></dd>
+<dd><p>A logical flag indicating whether <code>NA</code> values should be removed
+before computing the range. If <code>TRUE</code>, the range is computed from non-<code>NA</code>
+values only. If <code>FALSE</code> and <code>x</code> contains any <code>NA</code> values, the function
+returns <code>c(NA, NA)</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>a numeric vector of length 2 with the lower and upper bounds
-of the range of <code>x</code> rounded to the specified number of digits.
-The lower bound is rounded down and the upper bound is rounded up.
-If <code>x</code> is <code>NULL</code> or has length 0, the function returns <code>NULL</code>.</p>
+    <p>A numeric vector of length two with the rounded lower and upper
+bounds of the range of <code>x</code>. The lower bound is always rounded down, and
+the upper bound is always rounded up. If <code>x</code> is <code>NULL</code> or has length zero,
+the function returns <code>NULL</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -104,10 +112,11 @@ If <code>x</code> is <code>NULL</code> or has length 0, the function returns <co
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">bound_range</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.9</span>, <span class="fl">2</span>, <span class="fl">3.1</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>     <span class="co"># returns c(1, 4)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">bound_range</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.9</span>, <span class="fl">2</span>, <span class="fl">3.1</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>      <span class="co"># returns c(1, 4)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 4</span>
-<span class="r-in"><span><span class="fu">bound_range</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">190</span>, <span class="fl">200</span>, <span class="fl">301</span>, digits <span class="op">=</span> <span class="op">-</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>  <span class="co"># returns c(100, 400)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  -2 301</span>
+<span class="r-in"><span><span class="fu">bound_range</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">190</span>, <span class="fl">200</span>, <span class="fl">301</span><span class="op">)</span>, digits <span class="op">=</span> <span class="op">-</span><span class="fl">2</span><span class="op">)</span>   <span class="co"># returns c(100, 400)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 100 400</span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

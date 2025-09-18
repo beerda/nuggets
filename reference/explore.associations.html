@@ -5,7 +5,17 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Show interactive application to explore association rules — explore.associations"><meta name="description" content="Show interactive application to explore association rules"><meta property="og:description" content="Show interactive application to explore association rules"><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
+</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Show interactive application to explore association rules — explore.associations"><meta name="description" content="
+Launches an interactive Shiny application for visual exploration of mined
+association rules. The explorer provides tools for inspecting rule quality,
+comparing interestingness measures, and interactively filtering subsets of
+rules. When the original dataset is supplied, the application also allows
+for contextual exploration of rules with respect to the underlying data."><meta property="og:description" content="
+Launches an interactive Shiny application for visual exploration of mined
+association rules. The explorer provides tools for inspecting rule quality,
+comparing interestingness measures, and interactively filtering subsets of
+rules. When the original dataset is supplied, the application also allows
+for contextual exploration of rules with respect to the underlying data."><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -46,7 +56,12 @@
     </div>
 
     <div class="ref-description section level2">
-    <p>Show interactive application to explore association rules</p>
+    <p><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="figures/lifecycle-experimental.svg" alt="[Experimental]"></a></p>
+<p>Launches an interactive Shiny application for visual exploration of mined
+association rules. The explorer provides tools for inspecting rule quality,
+comparing interestingness measures, and interactively filtering subsets of
+rules. When the original dataset is supplied, the application also allows
+for contextual exploration of rules with respect to the underlying data.</p>
     </div>
 
     <div class="section level2">
@@ -60,14 +75,14 @@
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>An object of class <code>associations</code>, typically created with
+<dd><p>An object of S3 class <code>associations</code>, typically created with
 <code><a href="dig_associations.html">dig_associations()</a></code>.</p></dd>
 
 
 <dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>An optional data frame containing the original dataset used to
-mine the rules. Providing this dataset enables additional features in the
-explorer.</p></dd>
+<dd><p>An optional data frame containing the dataset from which the
+rules were mined. Providing this enables additional contextual features in
+the explorer, such as examining supporting records.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -77,14 +92,33 @@ explorer.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>An object of class <code>shiny.appobj</code> representing the Shiny application.
-If printed in an interactive R session, the application will be run
-immediately.</p>
+When "printed" in an interactive R session, the application is launched
+immediately in the default web browser.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="dig_associations.html">dig_associations()</a></code></p></div>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Michal Burda</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"iris"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># convert all columns into dummy logical variables</span></span></span>
+<span class="r-in"><span><span class="va">part</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition.html">partition</a></span><span class="op">(</span><span class="va">iris</span>, .breaks <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># find association rules</span></span></span>
+<span class="r-in"><span><span class="va">rules</span> <span class="op">&lt;-</span> <span class="fu"><a href="dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">part</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># launch the interactive explorer</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://generics.r-lib.org/reference/explore.html" class="external-link">explore</a></span><span class="op">(</span><span class="va">rules</span>, data <span class="op">=</span> <span class="va">part</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
