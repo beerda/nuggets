@@ -304,7 +304,10 @@ test_that("Goguen bi-residuum", {
 test_that('residua borders', {
     .residua <- list(goedel = .goedel_residuum,
                      lukas = .lukas_residuum,
-                     goguen = .goguen_residuum)
+                     goguen = .goguen_residuum,
+                     goedel_bi = .goedel_biresiduum,
+                     lukas_bi = .lukas_biresiduum,
+                     goguen_bi = .goguen_biresiduum)
     for (ttt in names(.residua)) {
         resid <- .residua[[ttt]]
 
