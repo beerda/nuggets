@@ -134,16 +134,16 @@ numericFilterModule <- function(id,
             spec <- input[[NS(id, "special")]]
             if (!is.null(spec)) {
                 if ("NA" %in% spec) {
-                    res <- res | is.na(x)
+                    res <- res | (is.na(x) & !is.nan(x))
                 }
                 if ("NaN" %in% spec) {
                     res <- res | is.nan(x)
                 }
                 if ("-Inf" %in% spec) {
-                    res <- res | (x == -Inf)
+                    res <- res | (is.infinite(x) & x == -Inf)
                 }
                 if ("Inf" %in% spec) {
-                    res <- res | (x == Inf)
+                    res <- res | (is.infinite(x) & x == Inf)
                 }
             }
 

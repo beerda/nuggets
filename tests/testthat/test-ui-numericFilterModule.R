@@ -100,3 +100,40 @@ test_that("numericFilterModule - server", {
         expect_true("src" %in% names(plot))
     })
 })
+
+
+test_that("numericFilterModule - filter", {
+    meta <- tribble(
+        ~data_name,          ~short_name,  ~long_name,           ~type,       ~round,
+        "confidence",        "conf",       "Confidence",         "numeric",   1
+    )
+
+    mod <- numericFilterModule(id = "test",
+                               x = c(1.2, 1.3, 1.5, NA, Inf, -Inf, NaN),
+                               meta = meta,
+                               resetAllEvent = "resetAllEvent")
+
+    input <- list("test-slider" = c(-1, 1.4))
+    res <- mod$filter(input)
+    expect_equal(res, c(TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE))
+
+    input <- list("test-slider" = c(5, 6),
+                  "test-special" = c("NA"))
+    res <- mod$filter(input)
+    expect_equal(res, c(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE))
+
+    input <- list("test-slider" = c(5, 6),
+                  "test-special" = c("Inf"))
+    res <- mod$filter(input)
+    expect_equal(res, c(FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE))
+
+    input <- list("test-slider" = c(5, 6),
+                  "test-special" = c("-Inf"))
+    res <- mod$filter(input)
+    expect_equal(res, c(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE))
+
+    input <- list("test-slider" = c(5, 6),
+                  "test-special" = c("NaN"))
+    res <- mod$filter(input)
+    expect_equal(res, c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE))
+})
