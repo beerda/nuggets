@@ -13,9 +13,8 @@ coverage](https://codecov.io/gh/beerda/nuggets/graph/badge.svg)](https://app.cod
 <!-- badges: end -->
 
 `nuggets` is a package for [R statistical computing
-environment](https://www.r-project.org/) that provides tools for **data
-mining** and **knowledge discovery** in datasets. The package provides a
-framework for systematic exploration of **association rules** ([Agrawal
+environment](https://www.r-project.org/) providing a framework for
+systematic exploration of **association rules** ([Agrawal
 (1994)](https://www.vldb.org/conf/1994/P487.PDF)), **contrast patterns**
 ([Chen (2022)](https://doi.org/10.48550/arXiv.2209.13556)), **emerging
 patterns** ([Dong (1999)](https://doi.org/10.1145/312129.312191)),
