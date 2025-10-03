@@ -61,6 +61,7 @@
 #' @importFrom shiny addResourcePath
 #' @importFrom shiny brushedPoints
 #' @importFrom shiny checkboxGroupInput
+#' @importFrom shiny checkboxInput
 #' @importFrom shiny column
 #' @importFrom shiny fluidRow
 #' @importFrom shiny getDefaultReactiveDomain

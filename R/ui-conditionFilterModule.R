@@ -1,19 +1,36 @@
-.parse_tree_def_from_condition <- function(x, root_name) {
-    pred <- parse_condition(x)
+.parse_tree_def_from_condition <- function(pred, root_name) {
+    if (is.null(pred) || length(pred) == 0) {
+        return(data.frame())
+    }
+
+    empties <- vapply(pred, length, integer(1)) == 0
+    pred <- pred[!empties]
+    if (length(pred) == 0) {
+        return(data.frame())
+    }
+
     pred <- unlist(pred)
     pred <- unique(pred)
     pred <- sort(pred)
     n <- sub("=.*", "", pred)
     v <- sub(".*=", "", pred)
+    hasEq <- grepl("=", pred)
+
     nid_dict <- unique(n)
     nid_dict <- setNames(seq_along(nid_dict), nid_dict)
+    nid <- paste0("n", nid_dict[n])
+    vid <- paste0("v", seq_along(pred))
 
-    res <- data.frame(nid = paste0("n", nid_dict[n]),     # predicate name ID
-                      vid = paste0("v", seq_along(pred)), # value ID
-                      rid = root_name,                    # root node name
+    v <- paste0("= ", v)
+    v[!hasEq] <- NA
+    vid[!hasEq] <- NA
+
+    res <- data.frame(nid = nid,         # predicate name ID
+                      vid = vid,         # value ID
+                      rid = root_name,   # root node name shown
                       predicate = pred,
-                      name = n,
-                      value = v,
+                      name = n,          # node name shown
+                      value = v,         # sub-node name shown
                       stringsAsFactors = FALSE)
 
     if (length(pred) > 50) {
@@ -26,24 +43,19 @@
 }
 
 .create_tree_from_def <- function(def) {
-    lev = c("rid", "name", "value")
-    id = c("rid", "nid", "vid")
-
     if (is.null(def$pid)) {
-        lev = c("rid", "name", "value")
-        id = c("rid", "nid", "vid")
+        lev <- c("rid", "name", "value")
+        id <- c("rid", "nid", "vid")
     } else {
-        lev = c("rid", "pid", "name", "value")
-        id = c("rid", "pid", "nid", "vid")
+        lev <- c("rid", "pid", "name", "value")
+        id <- c("rid", "pid", "nid", "vid")
     }
 
     create_tree(def, levels = lev, levels_id = id)
 }
 
-.create_filtering_table <- function(x, def) {
-    pred <- parse_condition(x)
+.create_filtering_table <- function(x, pred, def) {
     m <- matrix(FALSE, nrow = length(x), ncol = nrow(def))
-    colnames(m) <- def$vid
     for (row in seq_along(x)) {
         m[row, ] <- def$predicate %in% pred[[row]]
     }
@@ -55,9 +67,19 @@ conditionFilterModule <- function(id,
                                   x,
                                   meta,
                                   resetAllEvent) {
-    def <- .parse_tree_def_from_condition(x, root_name = "predicate")
-    tab <- .create_filtering_table(x, def)
+    root_name <- "predicate"
+    pred <- parse_condition(x)
+    def <- .parse_tree_def_from_condition(pred, root_name = root_name)
+    tab <- .create_filtering_table(x, pred, def)
     tree <- .create_tree_from_def(def)
+
+    empty_cond <- vapply(pred, length, integer(1)) == 0
+    showEmptyCheckbox <- NULL
+    if (any(empty_cond)) {
+        showEmptyCheckbox <- checkboxInput(NS(id, "emptyCondition"),
+                                           paste0("show empty ", tolower(meta$long_name)),
+                                           value = TRUE)
+    }
 
     list(ui = function() {
             tabPanel(meta$long_name,
@@ -66,7 +88,7 @@ conditionFilterModule <- function(id,
                 treeInput(NS(id, "tree"),
                           label = tolower(meta$long_name),
                           choices = tree,
-                          selected = def$vid,
+                          selected = root_name,
                           returnValue = "id",
                           closeDepth = 1),
                 radioButtons(NS(id, "radio"),
@@ -74,6 +96,7 @@ conditionFilterModule <- function(id,
                              choiceNames = c("all selected predicates", "at least one selected predicate"),
                              choiceValues = c("all", "any"),
                              selected = "all"),
+                showEmptyCheckbox,
                 hr(),
                 actionButton(NS(id, "resetButton"), "Reset"),
                 actionButton(resetAllEvent, "Reset all")
@@ -92,19 +115,28 @@ conditionFilterModule <- function(id,
         filter = function(input) {
             treeInput <- input[[NS(id, "tree")]]
             radioInput <- input[[NS(id, "radio")]]
+            emptyInput <- input[[NS(id, "emptyCondition")]]
 
             if (is.null(treeInput) || is.null(radioInput)) {
-                return(rep(FALSE, length(x)))
+                res <- rep(FALSE, length(x))
+            } else {
+                ids <- def$rid %in% treeInput |
+                       def$nid %in% treeInput |
+                       !is.na(def$vid) & def$vid %in% treeInput
+                res <- tab[, ids, drop = FALSE]
+                if (radioInput == "all") {
+                    res <- rowSums(res) == rowSums(tab)
+                } else {
+                    res <- rowSums(res) > 0
+                }
             }
 
-            res <- as.character(treeInput)
-            res <- res[startsWith(res, "v")]
-            res <- tab[, res, drop = FALSE]
-
-            if (radioInput == "all") {
-                res <- rowSums(res) == rowSums(tab)
-            } else {
-                res <- rowSums(res) > 0
+            if (!is.null(emptyInput)) {
+                if (emptyInput) {
+                    res <- res | empty_cond
+                } else {
+                    res <- res & !empty_cond
+                }
             }
 
             res
