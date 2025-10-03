@@ -16,13 +16,15 @@ coverage](https://codecov.io/gh/beerda/nuggets/graph/badge.svg)](https://app.cod
 
 <img src="man/figures/logo.png" align="right" width="360" />
 
-A framework for systematic exploration of **association rules**
-([Agrawal (1994)](https://www.vldb.org/conf/1994/P487.PDF)), **contrast
-patterns** ([Chen (2022)](https://doi.org/10.48550/arXiv.2209.13556)),
-**emerging patterns** ([Dong
-(1999)](https://doi.org/10.1145/312129.312191)), **subgroup discovery**
-([Atzmueller (2015)](https://doi.org/10.1002/widm.1144)), and
-**conditional correlations** ([Hájek
+`nuggets` is a package for [R statistical computing
+environment](https://www.r-project.org/) providing a framework for
+systematic exploration of **association rules** ([Agrawal
+(1994)](https://www.vldb.org/conf/1994/P487.PDF)), **contrast patterns**
+([Chen (2022)](https://doi.org/10.48550/arXiv.2209.13556)), **emerging
+patterns** ([Dong (1999)](https://doi.org/10.1145/312129.312191)),
+**subgroup discovery** ([Atzmueller
+(2015)](https://doi.org/10.1002/widm.1144)), and **conditional
+correlations** ([Hájek
 (1978)](https://doi.org/10.1007/978-3-642-66943-9)). User-defined
 functions may also be supplied to guide custom pattern searches.
 
