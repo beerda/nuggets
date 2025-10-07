@@ -1,50 +1,43 @@
-.condition_to_items <- function(condition) {
-    cond <- parse_condition(condition)
-    pred <- sort(unique(unlist(cond)))
-    if (length(pred) > length(LETTERS)) {
-        cli_abort(c("The number of unique predicates ({length(pred)}) exceeds the number of available letters ({length(LETTERS)}).",
-                    "i" = "Consider using a different condition or reducing the number of unique predicates."))
-    }
-    predDict <- setNames(LETTERS[seq_along(pred)], pred)
-
-    lapply(cond, function(cc) as.vector(predDict[cc]))
-}
-
-
 .geom_diamond_setup_data <- function(data, params) {
-    #items <- .condition_to_items(data$condition)
     items <- parse_condition(data$condition)
-
-    formula_length <- unlist(lapply(items, length))
-    formula <- unlist(lapply(items, paste, collapse = ", "))
-    if (length(unique(formula)) != length(formula)) {
-        cli_abort(c("The {.var condition} column contains duplicate entries.",
-                    "i" = "Each item in {.var condition} must be unique."))
-    }
+    formula_length <-vapply(items, length, integer(1))
+    formula <- vapply(items,
+                      function(x) paste(sort(x), collapse = ", "),
+                      character(1))
     formula[formula == ""] <- "-"    # empty string does not work well in vector names
 
-    xDict <- setNames(rep(0, length(formula)), formula)
+    if (length(unique(formula)) != length(formula)) {
+        cli_abort(c("The {.var condition} contains duplicate values.",
+                    "i" = "Each item in {.var condition} must be unique."))
+    }
+
+    x_dict <- rep(0, length(formula))
+    x_dict <- setNames(x_dict, formula)
     for (len in unique(formula_length)) {
         idx <- which(formula_length == len)
-        xDict[sort(formula[idx])] <- seq(from = -1 * (length(idx) - 1) / 2,
-                                         by = 1,
-                                         length.out = length(idx))
+        x_dict[sort(formula[idx])] <- seq(from = -1 * (length(idx) - 1) / 2,
+                                          by = 1,
+                                          length.out = length(idx))
     }
+
+    xcoord <- x_dict[formula]
+    ycoord <- max(formula_length) - formula_length
+    xlabcoord <- xcoord + params$nudge_x
+    ylabcoord <- ycoord + params$nudge_y
 
     if (is.null(data$label)) {
         data$label <- formula
     }
-
-    xcoord <- xDict[formula]
-    ycoord <- max(formula_length) - formula_length
-    xlabcoord <- xcoord + params$nudge_x
-    ylabcoord <- ycoord + params$nudge_y
+    #if (is.null(data$fill)) {
+        #data$linewidth <- 0
+    #} else {
+        #data$linewidth <- data$fill
+    #}
 
     transform(data,
               formula = formula,
               x = xcoord,
               y = ycoord,
-              linewidth = data$fill, # store original fill value into linewidth because fill will be transformed to color constants
               xlabel = xlabcoord,
               ylabel = ylabcoord,
               xmin = pmin(xcoord, xlabcoord),
@@ -53,14 +46,17 @@
               ymax = pmax(ycoord, ylabcoord))
 }
 
-.geom_diamond_draw_panel <- function(data,
-                                     panel_params,
-                                     coord,
-                                     na.rm = FALSE,
-                                     linetype = "solid",
-                                     nudge_x = 0,
-                                     nudge_y = 0.125) {
-    items <- .condition_to_items(data$condition)
+
+.geom_diamond_create_edges <- function(data,
+                                       linetype = "solid") {
+    required_cols <- c("condition", "x", "y", "linewidth")
+    missing_cols <- setdiff(required_cols, colnames(data))
+    if (length(missing_cols) > 0) {
+        stop("Internal error in .geom_diamond_create_edges() - missing data column(s): ",
+             paste(missing_cols, collapse = ", "))
+    }
+
+    items <- parse_condition(data$condition)
     incidence_matrix <- outer(items, items, Vectorize(function(x, y) {
         length(setdiff(x, y)) == 0
     }))
@@ -74,7 +70,7 @@
     edges$xend <- data$x[edges$col]
     edges$y <- data$y[edges$row]
     edges$yend <- data$y[edges$col]
-    edges$curvature <- (edges$y - edges$yend - 1) * ifelse(edges$xend > edges$x, 1, -1)
+    edges$curvature <- (edges$y - edges$yend - 1) * ifelse(edges$xend > edges$x, -1, 1)
     edges$alpha <- NA
     edges$group <- 1
     edges$linetype <- linetype
@@ -85,6 +81,18 @@
     edges$linewidth <- 0.5 + 4.5 * (abs(lw) - min(abs(lw))) / (max(abs(lw)) - min(abs(lw)))
     edges$linewidth[!is.finite(edges$linewidth)] <- 0.5
 
+    edges
+}
+
+
+.geom_diamond_draw_panel <- function(data,
+                                     panel_params,
+                                     coord,
+                                     na.rm = FALSE,
+                                     linetype = "solid",
+                                     nudge_x = 0,
+                                     nudge_y = 0.125) {
+    edges <- .geom_diamond_create_edges(data, linetype)
     point_data <- transform(data,
                             fill = "white")
     label_data <- transform(data,
@@ -132,9 +140,11 @@ GeomDiamond <- ggproto(
     default_aes = aes(
         label = NULL,
         colour = "black",
+        #labelcolour = "black",
         size = 1,
         shape = 21,
         fill = "white",
+        linewidth = 0.5,
         alpha = NA,
         stroke = 1
     ),
@@ -143,6 +153,9 @@ GeomDiamond <- ggproto(
     draw_panel = .geom_diamond_draw_panel
 )
 
+
+#scale_labelcolour_continuous <- ggplot2::scale_colour_continuous
+#scale_labelcolour_discrete   <- ggplot2::scale_colour_discrete
 
 #scale_nodecolour_continuous <- function(name = waiver(),
                                         #...,
@@ -171,6 +184,20 @@ GeomDiamond <- ggproto(
 #' lattice, while edges represent inclusion (subset) relationships between
 #' them. The geom combines node and edge rendering with flexible aesthetic
 #' options for labels and positioning.
+#'
+#' @details
+#' Supported aesthetics:
+#' - condition - character vector with condition in the format as returned by
+#'   [format_condition()]. For each condition, a node is created in the plot.
+#'   All values in this aesthetic must be unique.
+#' - label - a label of the node. If not set, condition is used instead
+#' - colour -
+#' - size
+#' - shape
+#' - fill
+#' - alpha
+#' - stroke
+#'
 #'
 #' @param mapping Aesthetic mappings, usually created with [ggplot2::aes()].
 #' @param data A data frame containing the lattice structure to be plotted.
@@ -231,9 +258,11 @@ GeomDiamond <- ggproto(
 #'
 #' # plot the lattice of rules
 #' ggplot(rules) +
-#'     aes(condition = antecedent, fill = confidence,
-#'        linewidth = confidence, size = coverage,
-#'        label = abbrev) +
+#'     aes(condition = antecedent,
+#'         fill = confidence,
+#'         linewidth = confidence,
+#'         size = coverage,
+#'         label = abbrev) +
 #'    geom_diamond()
 #' }
 #'
