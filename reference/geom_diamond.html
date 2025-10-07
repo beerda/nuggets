@@ -104,6 +104,12 @@ compact graphical form.</p>
 <dd><p>Line type for edges; defaults to <code>"solid"</code>.</p></dd>
 
 
+<dt id="arg-linewidth">linewidth<a class="anchor" aria-label="anchor" href="#arg-linewidth"></a></dt>
+<dd><p>Width of edges connecting parent and child nodes. If set to
+<code>NA</code>, edge widths are determined by the <code>linewidth</code> aesthetic. If no
+aesthetic is provided, a default width of <code>0.5</code> is used.</p></dd>
+
+
 <dt id="arg-nudge-x">nudge_x<a class="anchor" aria-label="anchor" href="#arg-nudge-x"></a></dt>
 <dd><p>Horizontal nudge applied to labels.</p></dd>
 
@@ -136,6 +142,18 @@ to an existing plot.</p>
 the lattice, while edges denote inclusion (subset) relationships between
 them. The geom combines node and edge rendering with flexible control over
 aesthetics such as labels, color, and size.</p>
+<p><strong>Concept overview</strong></p>
+<p>A <em>lattice</em> represents inclusion relationships between conditions. Each
+node corresponds to a condition, and a line connects a condition to its
+direct descendants:</p>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>       {a}          <span class="ot">&lt;-</span> <span class="fu">ancestor</span> (parent)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>      <span class="sc">/</span>   \</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>  {a,b}   {a,c}     <span class="ot">&lt;-</span> direct <span class="fu">descendants</span> (children)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>     \     <span class="sc">/</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>     {a,b,c}        <span class="ot">&lt;-</span> leaf condition</span></code></pre><p></p></div>
+<p>The layout positions broader (more general) conditions above their
+descendants. This helps visualize hierarchical structures such as those
+produced by association rule mining or subset lattices.</p>
 <p><strong>Supported aesthetics</strong></p><ul><li><p><code>condition</code> – character vector of conditions formatted with
 <code><a href="format_condition.html">format_condition()</a></code>. Each condition defines one node in the lattice.
 The hierarchy is determined by subset inclusion: a condition \(X\)

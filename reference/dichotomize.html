@@ -127,9 +127,7 @@ specified for dichotomization in <code>what</code> argument.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">dichotomize</span><span class="op">(</span><span class="va">CO2</span>, <span class="va">Plant</span><span class="op">:</span><span class="va">Treatment</span>, .other <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> `dichotomize()` was deprecated in nuggets 1.4.0 and is now defunct.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please use `partition()` instead.</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># dichotomize(CO2, Plant:Treatment, .other = TRUE)</span></span></span>
 <span class="r-in"><span><span class="co"># -&gt;</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="partition.html">partition</a></span><span class="op">(</span><span class="va">CO2</span>, <span class="va">Plant</span><span class="op">:</span><span class="va">Treatment</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 84 × 18</span></span>
