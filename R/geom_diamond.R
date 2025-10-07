@@ -28,14 +28,18 @@
     if (is.null(data$label)) {
         data$label <- formula
     }
-    #if (is.null(data$fill)) {
-        #data$linewidth <- 0
-    #} else {
-        #data$linewidth <- data$fill
-    #}
+
+    if (is.null(params$linewidth) || all(is.na(params$linewidth))) {
+        if (is.null(data$linewidth)) {
+            data$linewidth <- 0.5
+        }
+    } else {
+            data$linewidth <- params$linewidth
+    }
 
     transform(data,
               formula = formula,
+              linewidth_orig = linewidth,
               x = xcoord,
               y = ycoord,
               xlabel = xlabcoord,
@@ -49,7 +53,7 @@
 
 .geom_diamond_create_edges <- function(data,
                                        linetype = "solid") {
-    required_cols <- c("condition", "x", "y", "linewidth")
+    required_cols <- c("condition", "x", "y", "linewidth_orig")
     missing_cols <- setdiff(required_cols, colnames(data))
     if (length(missing_cols) > 0) {
         stop("Internal error in .geom_diamond_create_edges() - missing data column(s): ",
@@ -74,12 +78,22 @@
     edges$alpha <- NA
     edges$group <- 1
     edges$linetype <- linetype
-    edges$colour <- "#666666"
-    edges$linewidth <- 0.5
 
-    lw <- data$linewidth[edges$row] - data$linewidth[edges$col]
-    edges$linewidth <- 0.5 + 4.5 * (abs(lw) - min(abs(lw))) / (max(abs(lw)) - min(abs(lw)))
-    edges$linewidth[!is.finite(edges$linewidth)] <- 0.5
+    uniq_lw <- unique(data$linewidth_orig)
+    if (length(uniq_lw) == 1) {
+        edges$linewidth_orig <- uniq_lw
+        edges$colour <- "#000000"
+    } else {
+        lw <- data$linewidth_orig[edges$row] - data$linewidth_orig[edges$col]
+        abslw <- abs(lw)
+        edges$linewidth <- 0.5 + 4.5 * (abslw - min(abslw)) / (max(abslw) - min(abslw))
+
+        edges$colour[is.finite(edges$linewidth) & lw < 0] <- "#999999"
+        edges$colour[is.finite(edges$linewidth) & lw > 0] <- "#cc9999"
+        edges$colour[!is.finite(edges$linewidth) | lw == 0] <- "#000000"
+
+        edges$linewidth[!is.finite(edges$linewidth)] <- 0.5
+    }
 
     edges
 }
@@ -90,17 +104,19 @@
                                      coord,
                                      na.rm = FALSE,
                                      linetype = "solid",
+                                     linewidth = 0.5,
                                      nudge_x = 0,
                                      nudge_y = 0.125) {
     edges <- .geom_diamond_create_edges(data, linetype)
-    point_data <- transform(data,
-                            fill = "white")
+    point_data <- transform(data)
     label_data <- transform(data,
-                            colour = "white",
+                            colour = "black",
                             size = 4,
-                            #fill = "white",
+                            linewidth = 0.5,
+                            fill = "white",
                             x = data$xlabel,
                             y = data$ylabel)
+
 
     c1 <- NULL
     c2 <- NULL
@@ -140,37 +156,19 @@ GeomDiamond <- ggproto(
     default_aes = aes(
         label = NULL,
         colour = "black",
-        #labelcolour = "black",
         size = 1,
         shape = 21,
         fill = "white",
-        linewidth = 0.5,
         alpha = NA,
-        stroke = 1
+        stroke = 1,
+        #linewidth = 0.5   # this must be commented out to prevent linewidth
+                           # appear in the legend at all (because the legend is
+                           # broken for it)
     ),
     setup_data = .geom_diamond_setup_data,
     draw_key = draw_key_point,
     draw_panel = .geom_diamond_draw_panel
 )
-
-
-#scale_labelcolour_continuous <- ggplot2::scale_colour_continuous
-#scale_labelcolour_discrete   <- ggplot2::scale_colour_discrete
-
-#scale_nodecolour_continuous <- function(name = waiver(),
-                                        #...,
-                                        #low = "#132B43",
-                                        #high = "#56B1F7",
-                                        #space = "Lab",
-                                        #na.value = "grey50",
-                                        #aesthetics = "nodecolour")  {
-    #continuous_scale(aesthetics,
-                     #name = name,
-                     #palette = scales::pal_seq_gradient(low, high, space),
-                     #na.value = na.value,
-                     #guide = guide_colourbar(available_aes = c("nodecolour")),
-                     #...)
-#}
 
 
 #' Geom for drawing diamond plots of lattice structures
@@ -188,16 +186,20 @@ GeomDiamond <- ggproto(
 #' @details
 #' Supported aesthetics:
 #' - condition - character vector with condition in the format as returned by
-#'   [format_condition()]. For each condition, a node is created in the plot.
+#'   [format_condition()]. For each condition, a node is created in the plot
+#'   with respect to the hierarchy of conditions: ancestor condition is upper than
+#'   a descendant condition; direct descendant is connected to parent with a line.
+#'   A condition X is descendant of Y if Y is a subset of X.
 #'   All values in this aesthetic must be unique.
-#' - label - a label of the node. If not set, condition is used instead
-#' - colour -
-#' - size
-#' - shape
-#' - fill
-#' - alpha
-#' - stroke
-#'
+#' - label - a text for a label of nodes. If not set, condition is used instead
+#' - colour - the border color of nodes
+#' - fill - the fill color of nodes
+#' - size - the size of nodes
+#' - shape - the shape of nodes
+#' - alpha - the alpha channel (transparency) of nodes
+#' - stroke - the width of nodes border
+#' - linewidth - the width of the lines are computed as a difference of this
+#'   aesthetic in parent and in a child
 #'
 #' @param mapping Aesthetic mappings, usually created with [ggplot2::aes()].
 #' @param data A data frame containing the lattice structure to be plotted.
@@ -273,6 +275,7 @@ geom_diamond <- function(mapping = NULL,
                          position = "identity",
                          na.rm = FALSE,
                          linetype = "solid",
+                         linewidth = NA,
                          nudge_x = 0,
                          nudge_y = 0.125,
                          show.legend = NA,
@@ -287,6 +290,7 @@ geom_diamond <- function(mapping = NULL,
         show.legend = show.legend,
         inherit.aes = inherit.aes,
         params = list(linetype = linetype,
+                      linewidth = linewidth,
                       nudge_x = nudge_x,
                       nudge_y = nudge_y,
                       na.rm = na.rm,
