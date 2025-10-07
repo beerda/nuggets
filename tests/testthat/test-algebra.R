@@ -259,6 +259,88 @@ test_that('t-conorm borders', {
     }
 })
 
+test_that("parallel Goedel t-conorm", {
+    expect_equal(
+        .pgoedel_tconorm(
+            c(0.2, 0.4, 0.9, 0, 1),
+            c(0.5, 0.3, 0.8, 0, 1),
+            c(0.6, 0.5, 0.2, 0, 1),
+            c(0.3, 0.7, 0.1, 0, 1)
+        ),
+        c(0.6, 0.7, 0.9, 0, 1)
+    )
+
+    expect_equal(.pgoedel_tconorm(0.2, 0.5), 0.5)
+    expect_equal(.pgoedel_tconorm(0.2, 0.5, 0.0), 0.5)
+    expect_equal(.pgoedel_tconorm(c(0.2, 0.5, 0.0)), c(0.2, 0.5, 0.0))
+
+    # NA / NaN handling
+    expect_equal(.pgoedel_tconorm(0.2, NA, 0.5), NA_real_)
+    expect_equal(.pgoedel_tconorm(0.2, NaN, 0.5), NA_real_)
+
+    # Out-of-range arguments
+    expect_error(.pgoedel_tconorm(0.2, Inf, 0), "argument out of range 0..1")
+    expect_error(.pgoedel_tconorm(0.2, -Inf, 0), "argument out of range 0..1")
+    expect_error(.pgoedel_tconorm(0.2, 3, 0), "argument out of range 0..1")
+    expect_error(.pgoedel_tconorm(0.2, -3, 0), "argument out of range 0..1")
+})
+
+test_that("parallel Lukasiewicz t-conorm", {
+    expect_equal(
+        .plukas_tconorm(
+            c(0.2, 0.8, 0.4, 0, 1),
+            c(0.5, 0.9, 0.8, 0, 1),
+            c(0.6, 0.5, 0.0, 0, 1),
+            c(0.3, 0.9, 0.5, 0, 1)
+        ),
+        c(1, 1, 1, 0, 1)
+    )
+
+    expect_equal(.plukas_tconorm(0.2, 0.5, 0.1), 0.8)
+    expect_equal(.plukas_tconorm(0.4, 0.5, 0.8), 1)
+    expect_equal(.plukas_tconorm(c(0.2, 0.5, 0.0)), c(0.2, 0.5, 0.0))
+
+    # NA / NaN handling
+    expect_equal(.plukas_tconorm(0.2, NA, 0.5), NA_real_)
+    expect_equal(.plukas_tconorm(0.2, NaN, 0.5), NA_real_)
+
+    # Out-of-range arguments
+    expect_error(.plukas_tconorm(0.2, Inf, 0), "argument out of range 0..1")
+    expect_error(.plukas_tconorm(0.2, -Inf, 0), "argument out of range 0..1")
+    expect_error(.plukas_tconorm(0.2, 3, 0), "argument out of range 0..1")
+    expect_error(.plukas_tconorm(0.2, -3, 0), "argument out of range 0..1")
+})
+
+test_that("parallel Goguen t-conorm", {
+    expect_equal(
+        .pgoguen_tconorm(
+            c(0.2, 0.5, 0.4, 0, 1),
+            c(0.5, 0.9, 0.8, 0, 1),
+            c(0.6, 0.4, 0.0, 0, 1),
+            c(0.3, 0.7, 0.5, 0, 1)
+        ),
+        1 - (1 - c(0.2, 0.5, 0.4, 0, 1)) *
+            (1 - c(0.5, 0.9, 0.8, 0, 1)) *
+            (1 - c(0.6, 0.4, 0.0, 0, 1)) *
+            (1 - c(0.3, 0.7, 0.5, 0, 1))
+    )
+
+    expect_equal(.pgoguen_tconorm(0.2, 0.5), 1 - (1 - 0.2) * (1 - 0.5))
+    expect_equal(.pgoguen_tconorm(0.2, 1, 0.0), 1)
+    expect_equal(.pgoguen_tconorm(c(0.2, 0.5, 0.0)), c(0.2, 0.5, 0.0))
+
+    # NA / NaN handling
+    expect_equal(.pgoguen_tconorm(0.2, NA, 0.5), NA_real_)
+    expect_equal(.pgoguen_tconorm(0.2, NaN, 0.5), NA_real_)
+
+    # Out-of-range arguments
+    expect_error(.pgoguen_tconorm(0.2, Inf, 0), "argument out of range 0..1")
+    expect_error(.pgoguen_tconorm(0.2, -Inf, 0), "argument out of range 0..1")
+    expect_error(.pgoguen_tconorm(0.2, 3, 0), "argument out of range 0..1")
+    expect_error(.pgoguen_tconorm(0.2, -3, 0), "argument out of range 0..1")
+})
+
+
 test_that("Goedel residuum", {
     expect_equal(.goedel_residuum(c(0, 0.2, 0.8, 1), 1), c(1, 1, 1, 1))
     expect_equal(.goedel_residuum(c(0, 0.2, 0.8, 1), 0), c(1, 0, 0, 0))
