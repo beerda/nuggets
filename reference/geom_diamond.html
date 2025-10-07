@@ -5,13 +5,13 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Geom for drawing diamond plots of lattice structures — geom_diamond"><meta name="description" content="Create a custom ggplot2 geom for drawing diamond plots, which are used to
-visualize lattice structures. This is particularly useful for representing
-association rules and their ancestor–descendant relationships in a concise
-graphical form."><meta property="og:description" content="Create a custom ggplot2 geom for drawing diamond plots, which are used to
-visualize lattice structures. This is particularly useful for representing
-association rules and their ancestor–descendant relationships in a concise
-graphical form."><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
+</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Geom for drawing diamond plots of lattice structures — geom_diamond"><meta name="description" content="Create a custom ggplot2 geom for visualizing lattice structures as
+diamond plots. This geom is particularly useful for displaying
+association rules and their ancestor–descendant relationships in a clear,
+compact graphical form."><meta property="og:description" content="Create a custom ggplot2 geom for visualizing lattice structures as
+diamond plots. This geom is particularly useful for displaying
+association rules and their ancestor–descendant relationships in a clear,
+compact graphical form."><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -52,10 +52,10 @@ graphical form."><meta property="og:image" content="https://beerda.github.io/nug
     </div>
 
     <div class="ref-description section level2">
-    <p>Create a custom <code>ggplot2</code> geom for drawing diamond plots, which are used to
-visualize lattice structures. This is particularly useful for representing
-association rules and their ancestor–descendant relationships in a concise
-graphical form.</p>
+    <p>Create a custom <code>ggplot2</code> geom for visualizing lattice structures as
+<em>diamond plots</em>. This geom is particularly useful for displaying
+association rules and their ancestor–descendant relationships in a clear,
+compact graphical form.</p>
     </div>
 
     <div class="section level2">
@@ -67,6 +67,7 @@ graphical form.</p>
 <span>  position <span class="op">=</span> <span class="st">"identity"</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  linetype <span class="op">=</span> <span class="st">"solid"</span>,</span>
+<span>  linewidth <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  nudge_x <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  nudge_y <span class="op">=</span> <span class="fl">0.125</span>,</span>
 <span>  show.legend <span class="op">=</span> <span class="cn">NA</span>,</span>
@@ -84,15 +85,15 @@ graphical form.</p>
 
 
 <dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>A data frame containing the lattice structure to be plotted.</p></dd>
+<dd><p>A data frame representing the lattice structure to plot.</p></dd>
 
 
 <dt id="arg-stat">stat<a class="anchor" aria-label="anchor" href="#arg-stat"></a></dt>
-<dd><p>The statistical transformation to apply, default is <code>"identity"</code>.</p></dd>
+<dd><p>Statistical transformation to apply; defaults to <code>"identity"</code>.</p></dd>
 
 
 <dt id="arg-position">position<a class="anchor" aria-label="anchor" href="#arg-position"></a></dt>
-<dd><p>Position adjustment for the geom, default is <code>"identity"</code>.</p></dd>
+<dd><p>Position adjustment for the geom; defaults to <code>"identity"</code>.</p></dd>
 
 
 <dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
@@ -100,91 +101,93 @@ graphical form.</p>
 
 
 <dt id="arg-linetype">linetype<a class="anchor" aria-label="anchor" href="#arg-linetype"></a></dt>
-<dd><p>Line type used for edges. Defaults to <code>"solid"</code>.</p></dd>
+<dd><p>Line type for edges; defaults to <code>"solid"</code>.</p></dd>
 
 
 <dt id="arg-nudge-x">nudge_x<a class="anchor" aria-label="anchor" href="#arg-nudge-x"></a></dt>
-<dd><p>Horizontal nudge applied to label positions.</p></dd>
+<dd><p>Horizontal nudge applied to labels.</p></dd>
 
 
 <dt id="arg-nudge-y">nudge_y<a class="anchor" aria-label="anchor" href="#arg-nudge-y"></a></dt>
-<dd><p>Vertical nudge applied to label positions.</p></dd>
+<dd><p>Vertical nudge applied to labels.</p></dd>
 
 
 <dt id="arg-show-legend">show.legend<a class="anchor" aria-label="anchor" href="#arg-show-legend"></a></dt>
-<dd><p>Logical; should a legend be drawn? Defaults to <code>FALSE</code>.</p></dd>
+<dd><p>Logical; whether to include a legend. Defaults to <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-inherit-aes">inherit.aes<a class="anchor" aria-label="anchor" href="#arg-inherit-aes"></a></dt>
-<dd><p>Logical; if <code>TRUE</code>, inherit default aesthetics from the
-plot. Defaults to <code>TRUE</code>.</p></dd>
+<dd><p>Logical; whether to inherit aesthetics from the plot.
+Defaults to <code>TRUE</code>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments passed on to <code><a href="https://ggplot2.tidyverse.org/reference/layer.html" class="external-link">ggplot2::layer()</a></code>.</p></dd>
+<dd><p>Additional arguments passed to <code><a href="https://ggplot2.tidyverse.org/reference/layer.html" class="external-link">ggplot2::layer()</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A <code>ggplot2</code> layer object representing a diamond plot. This layer can
-be added to an existing <code>ggplot</code> object.</p>
+    <p>A <code>ggplot2</code> layer object that adds a diamond lattice visualization
+to an existing plot.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>In a diamond plot, nodes (diamonds) represent items or conditions in the
-lattice, while edges represent inclusion (subset) relationships between
-them. The geom combines node and edge rendering with flexible aesthetic
-options for labels and positioning.</p>
+    <p>In a diamond plot, nodes (diamonds) represent items or conditions within
+the lattice, while edges denote inclusion (subset) relationships between
+them. The geom combines node and edge rendering with flexible control over
+aesthetics such as labels, color, and size.</p>
+<p><strong>Supported aesthetics</strong></p><ul><li><p><code>condition</code> – character vector of conditions formatted with
+<code><a href="format_condition.html">format_condition()</a></code>. Each condition defines one node in the lattice.
+The hierarchy is determined by subset inclusion: a condition \(X\)
+is a descendant of \(Y\) if \(Y \subset X\). Each condition must
+be unique.</p></li>
+<li><p><code>label</code> – optional text label for each node. If omitted,
+the condition string is used.</p></li>
+<li><p><code>colour</code> – border color of the node.</p></li>
+<li><p><code>fill</code> – interior color of the node.</p></li>
+<li><p><code>size</code> – size of nodes.</p></li>
+<li><p><code>shape</code> – node shape.</p></li>
+<li><p><code>alpha</code> – transparency of nodes.</p></li>
+<li><p><code>stroke</code> – border line width of nodes.</p></li>
+<li><p><code>linewidth</code> – edge width between parent and child nodes,
+computed as the difference of this aesthetic between them.</p></li>
+</ul></div>
+    <div class="section level2">
+    <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
+    <p>Michal Burda</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"iris"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">rules</span> <span class="op">&lt;-</span> <span class="fu"><a href="dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">part</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># select some rule to visualize the ancestors</span></span></span>
-<span class="r-in"><span><span class="va">rule</span> <span class="op">&lt;-</span> <span class="va">rules</span><span class="op">[</span><span class="fl">1000</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># prepare data for visualization of rule ancestors</span></span></span>
-<span class="r-in"><span><span class="va">ante</span> <span class="op">&lt;-</span> <span class="fu"><a href="parse_condition.html">parse_condition</a></span><span class="op">(</span><span class="va">rule</span><span class="op">$</span><span class="va">antecedent</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></span>
-<span class="r-in"><span><span class="va">cons</span> <span class="op">&lt;-</span> <span class="fu"><a href="parse_condition.html">parse_condition</a></span><span class="op">(</span><span class="va">rule</span><span class="op">$</span><span class="va">consequent</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></span>
-<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">part</span>,</span></span>
-<span class="r-in"><span>                       antecedent <span class="op">=</span> <span class="fu">all_of</span><span class="op">(</span><span class="va">ante</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                       consequent <span class="op">=</span> <span class="fu">all_of</span><span class="op">(</span><span class="va">cons</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                       min_length <span class="op">=</span> <span class="fl">0</span>,</span></span>
-<span class="r-in"><span>                       max_length <span class="op">=</span> <span class="cn">Inf</span>,</span></span>
-<span class="r-in"><span>                       min_coverage <span class="op">=</span> <span class="fl">0</span>,</span></span>
-<span class="r-in"><span>                       min_support <span class="op">=</span> <span class="fl">0</span>,</span></span>
-<span class="r-in"><span>                       min_confidence <span class="op">=</span> <span class="fl">0</span>,</span></span>
-<span class="r-in"><span>                       measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lift"</span>, <span class="st">"conviction"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                       max_results <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># convert all columns into dummy logical variables</span></span></span>
+<span class="r-in"><span><span class="co"># Prepare data by partitioning numeric columns into fuzzy or crisp sets</span></span></span>
 <span class="r-in"><span><span class="va">part</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition.html">partition</a></span><span class="op">(</span><span class="va">iris</span>, .breaks <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># find all antecedents with Sepal for rules with consequent Species=setosa</span></span></span>
+<span class="r-in"><span><span class="co"># Find all antecedents with "Sepal" for rules with consequent "Species=setosa"</span></span></span>
 <span class="r-in"><span><span class="va">rules</span> <span class="op">&lt;-</span> <span class="fu"><a href="dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">part</span>,</span></span>
-<span class="r-in"><span>                         antecedent <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"Sepal"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                         consequent <span class="op">=</span> <span class="va">`Species=setosa`</span>,</span></span>
-<span class="r-in"><span>                         min_length <span class="op">=</span> <span class="fl">0</span>,</span></span>
-<span class="r-in"><span>                         max_length <span class="op">=</span> <span class="cn">Inf</span>,</span></span>
-<span class="r-in"><span>                         min_coverage <span class="op">=</span> <span class="fl">0</span>,</span></span>
-<span class="r-in"><span>                         min_support <span class="op">=</span> <span class="fl">0</span>,</span></span>
-<span class="r-in"><span>                         min_confidence <span class="op">=</span> <span class="fl">0</span>,</span></span>
-<span class="r-in"><span>                         measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lift"</span>, <span class="st">"conviction"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                         max_results <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                          antecedent <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"Sepal"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                          consequent <span class="op">=</span> <span class="va">`Species=setosa`</span>,</span></span>
+<span class="r-in"><span>                          min_length <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>                          max_length <span class="op">=</span> <span class="cn">Inf</span>,</span></span>
+<span class="r-in"><span>                          min_coverage <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>                          min_support <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>                          min_confidence <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>                          measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lift"</span>, <span class="st">"conviction"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                          max_results <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># add abbreviated condition for labeling</span></span></span>
+<span class="r-in"><span><span class="co"># Add abbreviated labels for readability</span></span></span>
 <span class="r-in"><span><span class="va">rules</span><span class="op">$</span><span class="va">abbrev</span> <span class="op">&lt;-</span> <span class="fu"><a href="shorten_condition.html">shorten_condition</a></span><span class="op">(</span><span class="va">rules</span><span class="op">$</span><span class="va">antecedent</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># plot the lattice of rules</span></span></span>
+<span class="r-in"><span><span class="co"># Plot the lattice of rules as a diamond diagram</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">rules</span><span class="op">)</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>condition <span class="op">=</span> <span class="va">antecedent</span>, fill <span class="op">=</span> <span class="va">confidence</span>,</span></span>
-<span class="r-in"><span>       linewidth <span class="op">=</span> <span class="va">confidence</span>, size <span class="op">=</span> <span class="va">coverage</span>,</span></span>
-<span class="r-in"><span>       label <span class="op">=</span> <span class="va">abbrev</span><span class="op">)</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>   <span class="fu">geom_diamond</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>condition <span class="op">=</span> <span class="va">antecedent</span>,</span></span>
+<span class="r-in"><span>      fill <span class="op">=</span> <span class="va">confidence</span>,</span></span>
+<span class="r-in"><span>      linewidth <span class="op">=</span> <span class="va">confidence</span>,</span></span>
+<span class="r-in"><span>      size <span class="op">=</span> <span class="va">coverage</span>,</span></span>
+<span class="r-in"><span>      label <span class="op">=</span> <span class="va">abbrev</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu">geom_diamond</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
