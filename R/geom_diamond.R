@@ -39,7 +39,7 @@
 
     transform(data,
               formula = formula,
-              linewidth_orig = linewidth,
+              linewidth_orig = data$linewidth,
               x = xcoord,
               y = ycoord,
               xlabel = xlabcoord,
