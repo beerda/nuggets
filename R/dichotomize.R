@@ -28,7 +28,7 @@
 #'      specified for dichotomization in `what` argument.
 #' @returns A tibble with selected columns replaced with dummy columns.
 #' @examples
-#' dichotomize(CO2, Plant:Treatment, .other = TRUE)
+#' # dichotomize(CO2, Plant:Treatment, .other = TRUE)
 #' # ->
 #' partition(CO2, Plant:Treatment)
 #' @export

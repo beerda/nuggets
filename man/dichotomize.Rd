@@ -43,7 +43,7 @@ to TRUE wherever the original column is equal to \code{l}.
 }
 }
 \examples{
-dichotomize(CO2, Plant:Treatment, .other = TRUE)
+# dichotomize(CO2, Plant:Treatment, .other = TRUE)
 # ->
 partition(CO2, Plant:Treatment)
 }
