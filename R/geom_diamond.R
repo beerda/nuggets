@@ -173,99 +173,81 @@ GeomDiamond <- ggproto(
 
 #' Geom for drawing diamond plots of lattice structures
 #'
-#' Create a custom `ggplot2` geom for drawing diamond plots, which are used to
-#' visualize lattice structures. This is particularly useful for representing
-#' association rules and their ancestor–descendant relationships in a concise
-#' graphical form.
+#' Create a custom `ggplot2` geom for visualizing lattice structures as
+#' *diamond plots*. This geom is particularly useful for displaying
+#' association rules and their ancestor–descendant relationships in a clear,
+#' compact graphical form.
 #'
-#' In a diamond plot, nodes (diamonds) represent items or conditions in the
-#' lattice, while edges represent inclusion (subset) relationships between
-#' them. The geom combines node and edge rendering with flexible aesthetic
-#' options for labels and positioning.
+#' In a diamond plot, nodes (diamonds) represent items or conditions within
+#' the lattice, while edges denote inclusion (subset) relationships between
+#' them. The geom combines node and edge rendering with flexible control over
+#' aesthetics such as labels, color, and size.
 #'
 #' @details
-#' Supported aesthetics:
-#' - condition - character vector with condition in the format as returned by
-#'   [format_condition()]. For each condition, a node is created in the plot
-#'   with respect to the hierarchy of conditions: ancestor condition is upper than
-#'   a descendant condition; direct descendant is connected to parent with a line.
-#'   A condition X is descendant of Y if Y is a subset of X.
-#'   All values in this aesthetic must be unique.
-#' - label - a text for a label of nodes. If not set, condition is used instead
-#' - colour - the border color of nodes
-#' - fill - the fill color of nodes
-#' - size - the size of nodes
-#' - shape - the shape of nodes
-#' - alpha - the alpha channel (transparency) of nodes
-#' - stroke - the width of nodes border
-#' - linewidth - the width of the lines are computed as a difference of this
-#'   aesthetic in parent and in a child
+#' **Supported aesthetics**
+#' \itemize{
+#'   \item `condition` – character vector of conditions formatted with
+#'     [format_condition()]. Each condition defines one node in the lattice.
+#'     The hierarchy is determined by subset inclusion: a condition \eqn{X}
+#'     is a descendant of \eqn{Y} if \eqn{Y \subset X}. Each condition must
+#'     be unique.
+#'   \item `label` – optional text label for each node. If omitted,
+#'     the condition string is used.
+#'   \item `colour` – border color of the node.
+#'   \item `fill` – interior color of the node.
+#'   \item `size` – size of nodes.
+#'   \item `shape` – node shape.
+#'   \item `alpha` – transparency of nodes.
+#'   \item `stroke` – border line width of nodes.
+#'   \item `linewidth` – edge width between parent and child nodes,
+#'     computed as the difference of this aesthetic between them.
+#' }
 #'
 #' @param mapping Aesthetic mappings, usually created with [ggplot2::aes()].
-#' @param data A data frame containing the lattice structure to be plotted.
-#' @param stat The statistical transformation to apply, default is `"identity"`.
-#' @param position Position adjustment for the geom, default is `"identity"`.
+#' @param data A data frame representing the lattice structure to plot.
+#' @param stat Statistical transformation to apply; defaults to `"identity"`.
+#' @param position Position adjustment for the geom; defaults to `"identity"`.
 #' @param na.rm Logical; if `TRUE`, missing values are silently removed.
-#' @param linetype Line type used for edges. Defaults to `"solid"`.
-#' @param nudge_x Horizontal nudge applied to label positions.
-#' @param nudge_y Vertical nudge applied to label positions.
-#' @param show.legend Logical; should a legend be drawn? Defaults to `FALSE`.
-#' @param inherit.aes Logical; if `TRUE`, inherit default aesthetics from the
-#'   plot. Defaults to `TRUE`.
-#' @param ... Additional arguments passed on to [ggplot2::layer()].
-#'
-#' @return A `ggplot2` layer object representing a diamond plot. This layer can
-#'   be added to an existing `ggplot` object.
-#'
+#' @param linetype Line type for edges; defaults to `"solid"`.
+#' @param nudge_x Horizontal nudge applied to labels.
+#' @param nudge_y Vertical nudge applied to labels.
+#' @param show.legend Logical; whether to include a legend. Defaults to `FALSE`.
+#' @param inherit.aes Logical; whether to inherit aesthetics from the plot.
+#'   Defaults to `TRUE`.
+#' @param ... Additional arguments passed to [ggplot2::layer()].
+#' @return A `ggplot2` layer object that adds a diamond lattice visualization
+#'   to an existing plot.
+#' @author Michal Burda
 #' @examples
 #' \dontrun{
 #' library(ggplot2)
-#' data("iris")
-#' rules <- dig_associations(part)
 #'
-#' # select some rule to visualize the ancestors
-#' rule <- rules[1000, , drop = FALSE]
-#'
-#' # prepare data for visualization of rule ancestors
-#' ante <- parse_condition(rule$antecedent)[[1]]
-#' cons <- parse_condition(rule$consequent)[[1]]
-#' res <- dig_associations(part,
-#'                        antecedent = all_of(ante),
-#'                        consequent = all_of(cons),
-#'                        min_length = 0,
-#'                        max_length = Inf,
-#'                        min_coverage = 0,
-#'                        min_support = 0,
-#'                        min_confidence = 0,
-#'                        measures = c("lift", "conviction"),
-#'                        max_results = Inf)
-#'
-#' # convert all columns into dummy logical variables
+#' # Prepare data by partitioning numeric columns into fuzzy or crisp sets
 #' part <- partition(iris, .breaks = 3)
 #'
-#' # find all antecedents with Sepal for rules with consequent Species=setosa
+#' # Find all antecedents with "Sepal" for rules with consequent "Species=setosa"
 #' rules <- dig_associations(part,
-#'                          antecedent = starts_with("Sepal"),
-#'                          consequent = `Species=setosa`,
-#'                          min_length = 0,
-#'                          max_length = Inf,
-#'                          min_coverage = 0,
-#'                          min_support = 0,
-#'                          min_confidence = 0,
-#'                          measures = c("lift", "conviction"),
-#'                          max_results = Inf)
+#'                           antecedent = starts_with("Sepal"),
+#'                           consequent = `Species=setosa`,
+#'                           min_length = 0,
+#'                           max_length = Inf,
+#'                           min_coverage = 0,
+#'                           min_support = 0,
+#'                           min_confidence = 0,
+#'                           measures = c("lift", "conviction"),
+#'                           max_results = Inf)
 #'
-#' # add abbreviated condition for labeling
+#' # Add abbreviated labels for readability
 #' rules$abbrev <- shorten_condition(rules$antecedent)
 #'
-#' # plot the lattice of rules
+#' # Plot the lattice of rules as a diamond diagram
 #' ggplot(rules) +
-#'     aes(condition = antecedent,
-#'         fill = confidence,
-#'         linewidth = confidence,
-#'         size = coverage,
-#'         label = abbrev) +
-#'    geom_diamond()
+#'   aes(condition = antecedent,
+#'       fill = confidence,
+#'       linewidth = confidence,
+#'       size = coverage,
+#'       label = abbrev) +
+#'   geom_diamond()
 #' }
 #'
 #' @export
