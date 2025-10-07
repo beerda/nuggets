@@ -134,6 +134,9 @@ dig_associations <- function(x,
                   null = TRUE,
                   multi = TRUE)
 
+    .must_be_integerish_scalar(max_results)
+    .must_be_greater_eq(max_results, 1)
+
     orig_min_coverage <- min_coverage
     min_coverage <- max(min_coverage, min_support)
     n <- nrow(x)
@@ -253,6 +256,10 @@ dig_associations <- function(x,
     }
 
     if (nrow(res) > 0) {
+        if (is.finite(max_results) && nrow(res) > max_results) {
+            res <- res[seq_len(max_results), , drop = FALSE]
+        }
+
         if ("lift" %in% measures) {
             res$lift <- res$support / (res$coverage * res$conseq_support)
         }

@@ -449,3 +449,31 @@ test_that("dig_associations return nothing", {
     expect_equal(attr(res, "call_function"), "dig_associations")
     expect_true(is.list(attr(res, "call_args")))
 })
+
+test_that("dig_associations limiting max_results", {
+    # dig() limits max_results by antecedent, dig_associations() must limit by itself
+    d <- data.frame(a = c(T, T, F, F, F),
+                    b = c(T, T, T, T, F),
+                    c = c(F, F, F, T, T))
+
+    res <- dig_associations(d,
+                            antecedent = everything(),
+                            consequent = everything(),
+                            min_support = 0.0001,
+                            min_confidence = 0.0001,
+                            max_results = 2,
+                            contingency_table = FALSE)
+
+    expect_true(is_nugget(res, "associations"))
+    expect_true(is_tibble(res))
+    expect_equal(attr(res, "call_function"), "dig_associations")
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$antecedent, c("a", "b", "c"))
+    expect_equal(attr(res, "call_args")$consequent, c("a", "b", "c"))
+    expect_equal(attr(res, "call_args")$min_support, 0.0001)
+    expect_equal(attr(res, "call_args")$min_confidence, 0.0001)
+    expect_equal(attr(res, "call_args")$max_results, 2)
+    expect_equal(attr(res, "call_args")$contingency_table, FALSE)
+    expect_equal(nrow(res), 2)
+})
+
