@@ -248,22 +248,28 @@ dig_associations <- function(x,
     digattr <- attributes(res)
     res <- do.call(rbind, res)
 
-    if ("lift" %in% measures) {
-        res$lift <- res$support / (res$coverage * res$conseq_support)
-    }
-    if ("conviction" %in% measures) {
-        res$conviction <- res$coverage * (1 - res$conseq_support) / (res$pn / n)
+    if (is.null(res)) {
+        res <- tibble()
     }
 
-    if ("added_value" %in% measures) {
-        res$added_value <- res$confidence - res$conseq_support
-    }
+    if (nrow(res) > 0) {
+        if ("lift" %in% measures) {
+            res$lift <- res$support / (res$coverage * res$conseq_support)
+        }
+        if ("conviction" %in% measures) {
+            res$conviction <- res$coverage * (1 - res$conseq_support) / (res$pn / n)
+        }
 
-    if (!contingency_table) {
-        res$pp <- NULL
-        res$pn <- NULL
-        res$np <- NULL
-        res$nn <- NULL
+        if ("added_value" %in% measures) {
+            res$added_value <- res$confidence - res$conseq_support
+        }
+
+        if (!contingency_table) {
+            res$pp <- NULL
+            res$pn <- NULL
+            res$np <- NULL
+            res$nn <- NULL
+        }
     }
 
     nugget(res,

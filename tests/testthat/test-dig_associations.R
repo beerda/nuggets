@@ -13,6 +13,7 @@ test_that("dig_associations without contingency table", {
     res <- res[order(res$antecedent_length, res$antecedent, res$consequent), ]
 
     expect_true(is_nugget(res, "associations"))
+    expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_associations")
     expect_true(is.list(attr(res, "call_args")))
     expect_equal(attr(res, "call_args")$antecedent, c("a", "b", "c"))
@@ -59,6 +60,7 @@ test_that("dig_associations with contingency table", {
     res <- res[order(res$antecedent_length, res$antecedent, res$consequent), ]
 
     expect_true(is_nugget(res, "associations"))
+    expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_associations")
     expect_true(is.list(attr(res, "call_args")))
     expect_equal(attr(res, "call_args")$antecedent, c("a", "b", "c"))
@@ -112,6 +114,7 @@ test_that("dig_associations with disjoint", {
                             min_confidence = 0.0001)
 
     expect_true(is_nugget(res, "associations"))
+    expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_associations")
     expect_true(is.list(attr(res, "call_args")))
     expect_equal(attr(res, "call_args")$antecedent, c("a", "b", "c"))
@@ -165,6 +168,7 @@ test_that("dig_associations min_support", {
                             min_support = 0.3,
                             min_confidence = 0.0001)
     expect_true(is_nugget(res, "associations"))
+    expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_associations")
     expect_true(is.list(attr(res, "call_args")))
     expect_equal(attr(res, "call_args")$antecedent, c("a", "b", "c"))
@@ -182,6 +186,7 @@ test_that("dig_associations min_support", {
                             min_support = 0.8,
                             min_confidence = 0.0001)
     expect_true(is_nugget(res, "associations"))
+    expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_associations")
     expect_true(is.list(attr(res, "call_args")))
     expect_equal(attr(res, "call_args")$antecedent, c("a", "b", "c"))
@@ -199,6 +204,7 @@ test_that("dig_associations min_support", {
                             min_support = 0.81,
                             min_confidence = 0.0001)
     expect_true(is_nugget(res, "associations"))
+    expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_associations")
     expect_true(is.list(attr(res, "call_args")))
     expect_equal(attr(res, "call_args")$antecedent, c("a", "b", "c"))
@@ -224,6 +230,7 @@ test_that("dig_associations min_coverage", {
                             min_coverage = 0.2,
                             min_confidence = 0.0001)
     expect_true(is_nugget(res, "associations"))
+    expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_associations")
     expect_true(is.list(attr(res, "call_args")))
     expect_equal(attr(res, "call_args")$antecedent, c("a", "b", "c"))
@@ -241,6 +248,7 @@ test_that("dig_associations min_coverage", {
                             min_coverage = 0.3,
                             min_confidence = 0.0001)
     expect_true(is_nugget(res, "associations"))
+    expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_associations")
     expect_true(is.list(attr(res, "call_args")))
     expect_equal(attr(res, "call_args")$antecedent, c("a", "b", "c"))
@@ -258,6 +266,7 @@ test_that("dig_associations min_coverage", {
                             min_coverage = 0.8,
                             min_confidence = 0.0001)
     expect_true(is_nugget(res, "associations"))
+    expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_associations")
     expect_true(is.list(attr(res, "call_args")))
     expect_equal(attr(res, "call_args")$antecedent, c("a", "b", "c"))
@@ -275,6 +284,7 @@ test_that("dig_associations min_coverage", {
                             min_coverage = 1,
                             min_confidence = 0.0001)
     expect_true(is_nugget(res, "associations"))
+    expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_associations")
     expect_true(is.list(attr(res, "call_args")))
     expect_equal(attr(res, "call_args")$antecedent, c("a", "b", "c"))
@@ -322,6 +332,7 @@ test_that("compare dig_associations to arules::apriori", {
                                          "conviction",
                                          "added_value"))
     expect_true(is_nugget(res, "associations"))
+    expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_associations")
     expect_true(is.list(attr(res, "call_args")))
     expect_equal(attr(res, "call_args")$min_support, 0.001)
@@ -367,6 +378,7 @@ test_that("dig_associations return object details", {
                             threads = 1)
 
     expect_true(is_nugget(res, "associations"))
+    expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_associations")
     expect_true(is.list(attr(res, "call_args")))
     expect_equal(attr(res, "call_args")$antecedent, c("a", "b"))
@@ -411,4 +423,29 @@ test_that("dig_associations errors", {
                  "`min_support` must be a double scalar.")
     expect_error(dig_associations(d, min_confidence = "x"),
                  "`min_confidence` must be a double scalar.")
+})
+
+test_that("dig_associations return nothing", {
+    d <- data.frame(a = c(T, T, F, F, F),
+                    b = c(T, T, T, T, F))
+
+    res <- dig_associations(d,
+                            antecedent = a,
+                            consequent = b,
+                            min_length = 3,
+                            max_length = 3,
+                            disjoint = c(1, 2),
+                            min_support = 0.1,
+                            min_confidence = 0.2,
+                            measures = "lift",
+                            t_norm = "lukas",
+                            max_results = 5,
+                            verbose = FALSE,
+                            threads = 1)
+
+    expect_true(is_nugget(res, "associations"))
+    expect_true(is_tibble(res))
+    expect_equal(nrow(res), 0)
+    expect_equal(attr(res, "call_function"), "dig_associations")
+    expect_true(is.list(attr(res, "call_args")))
 })
