@@ -65,7 +65,7 @@ test_that(".geom_diamond_create_edges", {
         condition = c("{}", "{a=1}", "{b=2}", "{a=1, b=2}", "{b=2, a=3}", "{b=2, a=4}"),
         x = x,
         y = y,
-        linewidth = rep(0, 6),
+        linewidth_orig = rep(0, 6),
         stringsAsFactors = FALSE
     )
 
@@ -92,9 +92,9 @@ test_that(".geom_diamond_create_edges", {
     expect_equal(res$linetype,
                  rep("foo", 6))
     expect_equal(res$colour,
-                 rep("#666666", 6))
+                 rep("#000000", 6))
     expect_equal(res$linewidth,
-                 rep(0.5, 6))
+                 rep(0.0, 6))
 })
 
 test_that("geom_diamond aes", {
