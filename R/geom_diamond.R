@@ -184,6 +184,24 @@ GeomDiamond <- ggproto(
 #' aesthetics such as labels, color, and size.
 #'
 #' @details
+#' **Concept overview**
+#'
+#' A *lattice* represents inclusion relationships between conditions. Each
+#' node corresponds to a condition, and a line connects a condition to its
+#' direct descendants:
+#'
+#' ```
+#'        {a}          <- ancestor (parent)
+#'       /   \
+#'   {a,b}   {a,c}     <- direct descendants (children)
+#'      \     /
+#'      {a,b,c}        <- leaf condition
+#' ```
+#'
+#' The layout positions broader (more general) conditions above their
+#' descendants. This helps visualize hierarchical structures such as those
+#' produced by association rule mining or subset lattices.
+#'
 #' **Supported aesthetics**
 #' \itemize{
 #'   \item `condition` – character vector of conditions formatted with
@@ -209,6 +227,9 @@ GeomDiamond <- ggproto(
 #' @param position Position adjustment for the geom; defaults to `"identity"`.
 #' @param na.rm Logical; if `TRUE`, missing values are silently removed.
 #' @param linetype Line type for edges; defaults to `"solid"`.
+#' @param linewidth Width of edges connecting parent and child nodes. If set to
+#'   `NA`, edge widths are determined by the `linewidth` aesthetic. If no
+#'   aesthetic is provided, a default width of `0.5` is used.
 #' @param nudge_x Horizontal nudge applied to labels.
 #' @param nudge_y Vertical nudge applied to labels.
 #' @param show.legend Logical; whether to include a legend. Defaults to `FALSE`.

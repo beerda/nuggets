@@ -32,6 +32,10 @@ geom_diamond(
 
 \item{linetype}{Line type for edges; defaults to \code{"solid"}.}
 
+\item{linewidth}{Width of edges connecting parent and child nodes. If set to
+\code{NA}, edge widths are determined by the \code{linewidth} aesthetic. If no
+aesthetic is provided, a default width of \code{0.5} is used.}
+
 \item{nudge_x}{Horizontal nudge applied to labels.}
 
 \item{nudge_y}{Vertical nudge applied to labels.}
@@ -58,6 +62,23 @@ In a diamond plot, nodes (diamonds) represent items or conditions within
 the lattice, while edges denote inclusion (subset) relationships between
 them. The geom combines node and edge rendering with flexible control over
 aesthetics such as labels, color, and size.
+
+\strong{Concept overview}
+
+A \emph{lattice} represents inclusion relationships between conditions. Each
+node corresponds to a condition, and a line connects a condition to its
+direct descendants:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{       \{a\}          <- ancestor (parent)
+      /   \\
+  \{a,b\}   \{a,c\}     <- direct descendants (children)
+     \\     /
+     \{a,b,c\}        <- leaf condition
+}\if{html}{\out{</div>}}
+
+The layout positions broader (more general) conditions above their
+descendants. This helps visualize hierarchical structures such as those
+produced by association rule mining or subset lattices.
 
 \strong{Supported aesthetics}
 \itemize{
