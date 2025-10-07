@@ -109,12 +109,14 @@ test_that("geom_diamond aes", {
     )
 
     expect_error({
+        pdf(NULL); on.exit(dev.off(), add = TRUE)
         g <- ggplot(d) +
             geom_diamond()
         print(g)
     }, "requires the following missing aesthetics: condition")
 
     expect_no_error({
+        pdf(NULL); on.exit(dev.off(), add = TRUE)
         g <- ggplot(d) +
             aes(condition = condition) +
             geom_diamond()
@@ -122,12 +124,14 @@ test_that("geom_diamond aes", {
     })
 
     expect_no_error({
+        pdf(NULL); on.exit(dev.off(), add = TRUE)
         g <- ggplot(d) +
             geom_diamond(aes(condition = condition))
         print(g)
     })
 
     expect_no_error({
+        pdf(NULL); on.exit(dev.off(), add = TRUE)
         g <- ggplot(d) +
             aes(condition = condition, label = condition, colour = aa,
                 size = bb, shape = dd, fill = aa, alpha = bb, stroke = cc) +
@@ -136,6 +140,7 @@ test_that("geom_diamond aes", {
     })
 
     expect_no_error({
+        pdf(NULL); on.exit(dev.off(), add = TRUE)
         g <- ggplot(d) +
             geom_diamond(aes(condition = condition, label = condition, colour = aa,
                              size = bb, shape = dd, fill = aa, alpha = bb, stroke = cc))
@@ -150,6 +155,7 @@ test_that("geom_diamond error on duplicate entries", {
     )
 
     expect_error({
+        pdf(NULL); on.exit(dev.off(), add = TRUE)
         g <- ggplot(d) +
             aes(condition = condition) +
             geom_diamond()
@@ -163,6 +169,7 @@ test_that("geom_diamond error on duplicate entries", {
     )
 
     expect_error({
+        pdf(NULL); on.exit(dev.off(), add = TRUE)
         g <- ggplot(d) +
             aes(condition = condition) +
             geom_diamond()
