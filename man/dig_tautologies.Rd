@@ -75,7 +75,7 @@ to \code{Inf} will generate all possible conditions.}
 \item{threads}{the number of threads to use for parallel computation.}
 }
 \value{
-An S3 object which is an instance of \code{tautologies} and \code{nugget}
+An S3 object which is an instance of \code{associations} and \code{nugget}
 classes and which is a tibble with found tautologies in the format equal to
 the output of \code{\link[=dig_associations]{dig_associations()}}.
 }

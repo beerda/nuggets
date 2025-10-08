@@ -413,6 +413,10 @@ test_that("dig_associations errors", {
                  "All columns selected by `antecedent` must be logical or numeric from the interval")
     expect_error(dig_associations(d2, antecedent = a:b, consequent = c),
                  "All columns selected by `consequent` must be logical or numeric from the interval")
+    expect_error(dig_associations(d, disjoint = "foo"),
+                 "The length of `disjoint` must be 0 or must be equal to the number of columns in `x`")
+    expect_error(dig_associations(d, excluded = "foo"),
+                 "`excluded` must be a list or NULL")
     expect_error(dig_associations(d, min_length = "x"),
                  "`min_length` must be an integerish scalar.")
     expect_error(dig_associations(d, max_length = "x"),
@@ -423,6 +427,18 @@ test_that("dig_associations errors", {
                  "`min_support` must be a double scalar.")
     expect_error(dig_associations(d, min_confidence = "x"),
                  "`min_confidence` must be a double scalar.")
+    expect_error(dig_associations(d, contingency_table = "x"),
+                 "`contingency_table` must be a flag.")
+    expect_error(dig_associations(d, measures = "x"),
+                 "`measures` must be equal to any of:")
+    expect_error(dig_associations(d, t_norm = "x"),
+                 "`t_norm` must be equal to one of")
+    expect_error(dig_associations(d, max_results = "x"),
+                 "`max_results` must be an integerish scalar.")
+    expect_error(dig_associations(d, verbose = "x"),
+                 "`verbose` must be a flag.")
+    expect_error(dig_associations(d, threads = "x"),
+                 "`threads` must be an integerish scalar.")
 })
 
 test_that("dig_associations return nothing", {

@@ -53,7 +53,7 @@
 #'      to `Inf` will generate all possible conditions.
 #' @param verbose a logical value indicating whether to print progress messages.
 #' @param threads the number of threads to use for parallel computation.
-#' @returns An S3 object which is an instance of `tautologies` and `nugget`
+#' @returns An S3 object which is an instance of `associations` and `nugget`
 #'      classes and which is a tibble with found tautologies in the format equal to
 #'      the output of [dig_associations()].
 #' @author Michal Burda
@@ -74,6 +74,9 @@ dig_tautologies <- function(x,
     .must_be_integerish_scalar(max_length)
     .must_be_greater_eq(max_length, 0)
 
+    .must_be_integerish_scalar(max_results)
+    .must_be_greater_eq(max_results, 1)
+
     antecedent <- enquo(antecedent)
     consequent <- enquo(consequent)
     tautologies <- list()
@@ -82,6 +85,11 @@ dig_tautologies <- function(x,
 
     digattr <- NULL
     while (len <= max_length) {
+        maxres <- max_results
+        if (is.finite(max_results) && !is.null(result)) {
+            maxres <- max_results - nrow(result)
+        }
+
         res <- dig_associations(x = x,
                                 antecedent = !!antecedent,
                                 consequent = !!consequent,
@@ -94,15 +102,27 @@ dig_tautologies <- function(x,
                                 min_confidence = min_confidence,
                                 measures = measures,
                                 t_norm = t_norm,
-                                max_results = max_results,
+                                max_results = maxres,
                                 verbose = verbose,
-                                threads = threads)
+                                threads = threads,
+                                error_context = list(arg_x = "x",
+                                                     arg_antecedent = "antecedent",
+                                                     arg_consequent = "consequent",
+                                                     arg_disjoint = "disjoint",
+                                                     arg_min_coverage = "min_coverage",
+                                                     arg_min_support = "min_support",
+                                                     arg_min_confidence = "min_confidence",
+                                                     arg_measures = "measures",
+                                                     arg_t_norm = "t_norm",
+                                                     arg_verbose = "verbose",
+                                                     arg_threads = "threads",
+                                                     call = current_env()))
 
         if (is.null(digattr)) {
             digattr <- attributes(res)
         }
 
-        if (nrow(res) == 0) {
+        if (nrow(res) <= 0) {
             break
         }
 
@@ -111,8 +131,10 @@ dig_tautologies <- function(x,
         len <- len + 1
     }
 
+    rownames(result) <- NULL
+
     nugget(result,
-           flavour = "tautologies",
+           flavour = "associations",
            call_function = "dig_tautologies",
            call_args = list(antecedent = digattr$call_args$antecedent,
                             consequent = digattr$call_args$consequent,

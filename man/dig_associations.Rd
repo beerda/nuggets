@@ -20,7 +20,14 @@ dig_associations(
   t_norm = "goguen",
   max_results = Inf,
   verbose = FALSE,
-  threads = 1
+  threads = 1,
+  error_context = list(arg_x = "x", arg_antecedent = "antecedent", arg_consequent =
+    "consequent", arg_disjoint = "disjoint", arg_excluded = "excluded", arg_min_length =
+    "min_length", arg_max_length = "max_length", arg_min_coverage = "min_coverage",
+    arg_min_support = "min_support", arg_min_confidence = "min_confidence",
+    arg_contingency_table = "contingency_table", arg_measures = "measures", arg_t_norm =
+    "t_norm", arg_max_results = "max_results", arg_verbose = "verbose", arg_threads =
+    "threads", call = current_env())
 )
 }
 \arguments{
