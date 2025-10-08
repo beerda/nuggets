@@ -57,7 +57,7 @@
              call = caller_env()) {
         test <- f(x)
         if (!isTRUE(all(test))) {
-            details <- paste0("Element ", seq_along(x), " equals ", x, ".")
+            details <- paste0("Element ", seq_along(x), " equals {.val ", x, "}.")
             details <- details[!test]
             cli_abort(c("{.arg {arg}} must be {msg}.",
                         ..error_details(details)),
@@ -75,12 +75,12 @@
         test <- f(x, value)
         if (!isTRUE(all(test))) {
             if (length(x) == 1) {
-                details <- paste0("Value ", x, " was provided instead.")
+                details <- paste0("Value {.val ", x, "} was provided instead.")
             } else {
-                details <- paste0("Element ", seq_along(x), " equals ", x, ".")
+                details <- paste0("Element ", seq_along(x), " equals {.val ", x, "}.")
                 details <- details[!test]
             }
-            cli_abort(c("{.arg {arg}} must be {msg} {value}.",
+            cli_abort(c("{.arg {arg}} must be {msg} {.val {value}}.",
                         ..error_details(details)),
                       call = call)
         }
@@ -256,7 +256,7 @@
         single <- if (isTRUE(multi)) "any" else "one"
         vals <- paste0('"', values, '"', collapse = ", ")
         cli_abort(c("{.arg {arg}} must be equal to {single} of: {vals}{msg}.",
-                    "x" = "You've supplied {x}."),
+                    "x" = "You've supplied {.val {x}}."),
                   call = call)
     }
 }
