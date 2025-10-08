@@ -89,6 +89,28 @@
 #'      to `Inf` will generate all possible conditions.
 #' @param verbose a logical value indicating whether to print progress messages.
 #' @param threads the number of threads to use for parallel computation.
+#' @param error_context a named list providing context for error messages.
+#'      This is mainly useful when `dig_associations()` is called from another
+#'      function and you want error messages to refer to the argument names
+#'      of that calling function. The list must contain the following elements:
+#'      \itemize{
+#'          \item `arg_x` - name of the argument `x`
+#'          \item `arg_antecedent` - name of the argument `antecedent`
+#'          \item `arg_consequent` - name of the argument `consequent`
+#'          \item `arg_disjoint` - name of the argument `disjoint`
+#'          \item `arg_excluded` - name of the argument `excluded`
+#'          \item `arg_min_length` - name of the argument `min_length`
+#'          \item `arg_max_length` - name of the argument `max_length`
+#'          \item `arg_min_coverage` - name of the argument `min_coverage`
+#'          \item `arg_min_support` - name of the argument `min_support`
+#'          \item `arg_min_confidence` - name of the argument `min_confidence`
+#'          \item `arg_contingency_table` - name of the argument `contingency_table`
+#'          \item `arg_measures` - name of the argument `measures`
+#'          \item `arg_t_norm` - name of the argument `t_norm`
+#'          \item `arg_max_results` - name of the argument `max_results`
+#'          \item `arg_verbose` - name of the argument `verbose`
+#'          \item `arg_threads` - name of the argument `threads`
+#'      }
 #' @returns An S3 object, which is an instance of `associations` and `nugget`
 #'     classes, and which is a tibble with found patterns and computed quality measures.
 #' @author Michal Burda

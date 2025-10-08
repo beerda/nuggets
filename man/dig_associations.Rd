@@ -98,6 +98,29 @@ to \code{Inf} will generate all possible conditions.}
 \item{verbose}{a logical value indicating whether to print progress messages.}
 
 \item{threads}{the number of threads to use for parallel computation.}
+
+\item{error_context}{a named list providing context for error messages.
+This is mainly useful when \code{dig_associations()} is called from another
+function and you want error messages to refer to the argument names
+of that calling function. The list must contain the following elements:
+\itemize{
+\item \code{arg_x} - name of the argument \code{x}
+\item \code{arg_antecedent} - name of the argument \code{antecedent}
+\item \code{arg_consequent} - name of the argument \code{consequent}
+\item \code{arg_disjoint} - name of the argument \code{disjoint}
+\item \code{arg_excluded} - name of the argument \code{excluded}
+\item \code{arg_min_length} - name of the argument \code{min_length}
+\item \code{arg_max_length} - name of the argument \code{max_length}
+\item \code{arg_min_coverage} - name of the argument \code{min_coverage}
+\item \code{arg_min_support} - name of the argument \code{min_support}
+\item \code{arg_min_confidence} - name of the argument \code{min_confidence}
+\item \code{arg_contingency_table} - name of the argument \code{contingency_table}
+\item \code{arg_measures} - name of the argument \code{measures}
+\item \code{arg_t_norm} - name of the argument \code{t_norm}
+\item \code{arg_max_results} - name of the argument \code{max_results}
+\item \code{arg_verbose} - name of the argument \code{verbose}
+\item \code{arg_threads} - name of the argument \code{threads}
+}}
 }
 \value{
 An S3 object, which is an instance of \code{associations} and \code{nugget}
