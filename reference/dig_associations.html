@@ -154,7 +154,14 @@ of truth degrees of the formula <code>i_1 AND i_2 AND ... AND i_n</code>, where
 <span>  t_norm <span class="op">=</span> <span class="st">"goguen"</span>,</span>
 <span>  max_results <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  threads <span class="op">=</span> <span class="fl">1</span></span>
+<span>  threads <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  error_context <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>arg_x <span class="op">=</span> <span class="st">"x"</span>, arg_antecedent <span class="op">=</span> <span class="st">"antecedent"</span>, arg_consequent <span class="op">=</span></span>
+<span>    <span class="st">"consequent"</span>, arg_disjoint <span class="op">=</span> <span class="st">"disjoint"</span>, arg_excluded <span class="op">=</span> <span class="st">"excluded"</span>, arg_min_length <span class="op">=</span></span>
+<span>    <span class="st">"min_length"</span>, arg_max_length <span class="op">=</span> <span class="st">"max_length"</span>, arg_min_coverage <span class="op">=</span> <span class="st">"min_coverage"</span>,</span>
+<span>    arg_min_support <span class="op">=</span> <span class="st">"min_support"</span>, arg_min_confidence <span class="op">=</span> <span class="st">"min_confidence"</span>,</span>
+<span>    arg_contingency_table <span class="op">=</span> <span class="st">"contingency_table"</span>, arg_measures <span class="op">=</span> <span class="st">"measures"</span>, arg_t_norm <span class="op">=</span></span>
+<span>    <span class="st">"t_norm"</span>, arg_max_results <span class="op">=</span> <span class="st">"max_results"</span>, arg_verbose <span class="op">=</span> <span class="st">"verbose"</span>, arg_threads <span class="op">=</span></span>
+<span>    <span class="st">"threads"</span>, call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -260,6 +267,29 @@ to <code>Inf</code> will generate all possible conditions.</p></dd>
 
 <dt id="arg-threads">threads<a class="anchor" aria-label="anchor" href="#arg-threads"></a></dt>
 <dd><p>the number of threads to use for parallel computation.</p></dd>
+
+
+<dt id="arg-error-context">error_context<a class="anchor" aria-label="anchor" href="#arg-error-context"></a></dt>
+<dd><p>a named list providing context for error messages.
+This is mainly useful when <code>dig_associations()</code> is called from another
+function and you want error messages to refer to the argument names
+of that calling function. The list must contain the following elements:</p><ul><li><p><code>arg_x</code> - name of the argument <code>x</code></p></li>
+<li><p><code>arg_antecedent</code> - name of the argument <code>antecedent</code></p></li>
+<li><p><code>arg_consequent</code> - name of the argument <code>consequent</code></p></li>
+<li><p><code>arg_disjoint</code> - name of the argument <code>disjoint</code></p></li>
+<li><p><code>arg_excluded</code> - name of the argument <code>excluded</code></p></li>
+<li><p><code>arg_min_length</code> - name of the argument <code>min_length</code></p></li>
+<li><p><code>arg_max_length</code> - name of the argument <code>max_length</code></p></li>
+<li><p><code>arg_min_coverage</code> - name of the argument <code>min_coverage</code></p></li>
+<li><p><code>arg_min_support</code> - name of the argument <code>min_support</code></p></li>
+<li><p><code>arg_min_confidence</code> - name of the argument <code>min_confidence</code></p></li>
+<li><p><code>arg_contingency_table</code> - name of the argument <code>contingency_table</code></p></li>
+<li><p><code>arg_measures</code> - name of the argument <code>measures</code></p></li>
+<li><p><code>arg_t_norm</code> - name of the argument <code>t_norm</code></p></li>
+<li><p><code>arg_max_results</code> - name of the argument <code>max_results</code></p></li>
+<li><p><code>arg_verbose</code> - name of the argument <code>verbose</code></p></li>
+<li><p><code>arg_threads</code> - name of the argument <code>threads</code></p></li>
+</ul></dd>
 
 </dl></div>
     <div class="section level2">
