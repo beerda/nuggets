@@ -2,6 +2,7 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @importFrom classInt classIntervals
 #' @importFrom cli cli_abort
 #' @importFrom DT datatable
 #' @importFrom DT dataTableOutput

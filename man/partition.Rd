@@ -14,6 +14,8 @@ partition(
   .na = TRUE,
   .keep = FALSE,
   .method = "crisp",
+  .style = "equal",
+  .style_params = list(),
   .right = TRUE,
   .span = 1,
   .inc = 1
@@ -42,6 +44,30 @@ column that contains \code{NA} values (e.g. \code{x=NA}).}
 
 \item{.method}{Transformation method for numeric columns: \code{"dummy"},
 \code{"crisp"}, \code{"triangle"}, or \code{"raisedcos"}.}
+
+\item{.style}{Specifies how intervals are determined when \code{.breaks} is
+an integer. The determination of breaks is done by the
+\code{\link[classInt:classIntervals]{classInt::classIntervals()}} function from the \code{classInt} package, which
+calls various functions to compute intervals. Additional parameters for
+these functions may be passed via \code{.style_params}. Possible values are:
+\code{"equal"} (equal-width intervals), \code{"quantile"} (equal-frequency
+intervals, see \code{\link[=quantile]{quantile()}}), \code{"kmeans"} (intervals determined by 1D
+k-means clustering, see \code{\link[=kmeans]{kmeans()}}), \code{"sd"} (intervals based on standard
+deviations from the mean), \code{"hclust"} (intervals based on hierarchical
+clustering, see \code{\link[=hclust]{hclust()}}), \code{"bclust"} (intervals based on model-based
+clustering, see \code{\link[e1071:bclust]{e1071::bclust()}}), \code{"fisher"} (Fisher-Jenks optimal
+partitioning), \code{"jenks"} (Jenks natural breaks), \code{"dpih"} (data-precision
+interval halving, see \code{\link[KernSmooth:dpih]{KernSmooth::dpih()}}), \code{"headtails"} (head/tails
+breaks), \code{"maximum"} (maximum breaks), and \code{"box"} (hinges
+of a boxplot). The default is \code{"equal"}. See \code{\link[classInt:classIntervals]{classInt::classIntervals()}}
+for more details. Argument is recognized only if \code{.method = "crisp"} and
+ignored if \code{.breaks} is a vector.}
+
+\item{.style_params}{A list of additional parameters passed to underlying
+function that determines intervals (via \code{\link[classInt:classIntervals]{classInt::classIntervals()}})
+when \code{.method = "crisp"} and \code{.breaks} is an integer. The function called
+is determined by \code{.style}. See the description of \code{.style} and the
+documentation of \code{\link[classInt:classIntervals]{classInt::classIntervals()}} for possible parameters.}
 
 \item{.right}{For \code{"crisp"}, whether intervals are right-closed and
 left-open (\code{TRUE}), or left-closed and right-open (\code{FALSE}).}

@@ -265,6 +265,34 @@ test_that("partition crisp", {
 })
 
 
+test_that("partition crisp styles", {
+    x <- c(1.0, 2.2, 2.4, 2.6, 3, 4, 5, 6, 9)
+    expect_equal(partition(data.frame(a = x),
+                           .breaks = 2,
+                           .keep = FALSE,
+                           .method = "crisp",
+                           .style = "equal"),
+                 tibble("a=(-Inf;5]" = c(T,T,T,T,T,T,T,F,F),
+                        "a=(5;Inf]"  = c(F,F,F,F,F,F,F,T,T)))
+
+    expect_equal(partition(data.frame(a = x),
+                           .breaks = 2,
+                           .keep = FALSE,
+                           .method = "crisp",
+                           .style = "quantile"),
+                 tibble("a=(-Inf;3]" = c(T,T,T,T,T,F,F,F,F),
+                        "a=(3;Inf]"  = c(F,F,F,F,F,T,T,T,T)))
+
+    expect_equal(partition(data.frame(a = x),
+                           .breaks = 2,
+                           .keep = FALSE,
+                           .method = "crisp",
+                           .style = "kmeans"),
+                 tibble("a=(-Inf;4.5]" = c(T,T,T,T,T,T,F,F,F),
+                        "a=(4.5;Inf]"  = c(F,F,F,F,F,F,T,T,T)))
+})
+
+
 test_that("partition triangle", {
     expect_equal(partition(data.frame(a = 0:10),
                            .breaks = 2,

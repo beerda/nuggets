@@ -112,6 +112,28 @@
 #' @param .keep If `TRUE`, keep the original columns in the output.
 #' @param .method Transformation method for numeric columns: `"dummy"`,
 #'   `"crisp"`, `"triangle"`, or `"raisedcos"`.
+#' @param .style Specifies how intervals are determined when `.breaks` is
+#'   an integer. The determination of breaks is done by the
+#'   [classInt::classIntervals()] function from the `classInt` package, which
+#'   calls various functions to compute intervals. Additional parameters for
+#'   these functions may be passed via `.style_params`. Possible values are:
+#'   `"equal"` (equal-width intervals), `"quantile"` (equal-frequency
+#'   intervals, see [quantile()]), `"kmeans"` (intervals determined by 1D
+#'   k-means clustering, see [kmeans()]), `"sd"` (intervals based on standard
+#'   deviations from the mean), `"hclust"` (intervals based on hierarchical
+#'   clustering, see [hclust()]), `"bclust"` (intervals based on model-based
+#'   clustering, see [e1071::bclust()]), `"fisher"` (Fisher-Jenks optimal
+#'   partitioning), `"jenks"` (Jenks natural breaks), `"dpih"` (data-precision
+#'   interval halving, see [KernSmooth::dpih()]), `"headtails"` (head/tails
+#'   breaks), `"maximum"` (maximum breaks), and `"box"` (hinges
+#'   of a boxplot). The default is `"equal"`. See [classInt::classIntervals()]
+#'   for more details. Argument is recognized only if `.method = "crisp"` and
+#'   ignored if `.breaks` is a vector.
+#' @param .style_params A list of additional parameters passed to underlying
+#'   function that determines intervals (via [classInt::classIntervals()])
+#'   when `.method = "crisp"` and `.breaks` is an integer. The function called
+#'   is determined by `.style`. See the description of `.style` and the
+#'   documentation of [classInt::classIntervals()] for possible parameters.
 #' @param .right For `"crisp"`, whether intervals are right-closed and
 #'   left-open (`TRUE`), or left-closed and right-open (`FALSE`).
 #' @param .span Number of consecutive breaks forming a set. For `"crisp"`,
@@ -163,6 +185,8 @@ partition <- function(.data,
                       .na = TRUE,
                       .keep = FALSE,
                       .method = "crisp",
+                      .style = "equal",
+                      .style_params = list(),
                       .right = TRUE,
                       .span = 1,
                       .inc = 1) {
@@ -172,9 +196,20 @@ partition <- function(.data,
     .must_be_flag(.na)
     .must_be_flag(.keep)
     .must_be_enum(.method, c("dummy", "crisp", "triangle", "raisedcos"))
+    .must_be_enum(.style, c("equal", "quantile", "kmeans", "sd", "hclust", "bclust",
+                            "fisher", "jenks", "dpih", "headtails", "maximum", "box"))
+    .must_be_list(.style_params)
     .must_be_flag(.right)
     .must_be_integerish_scalar(.span)
+    .must_be_greater_eq(.span, 1)
     .must_be_integerish_scalar(.inc)
+    .must_be_greater_eq(.inc, 1)
+
+    if (.style != "equal" && .method != "crisp") {
+        cli_abort(c("The {.arg .style} argument is only applicable when {.arg .method} is {.val crisp}.",
+                    "i" = "You've supplied {.arg .style} = {.val {.style}} and {.arg .method} = {.val {.method}}."),
+                  call = current_env())
+    }
 
     emptydf <- as_tibble(data.frame(matrix(NA, nrow = nrow(.data), ncol = 0)))
     call <- current_env()
@@ -226,7 +261,9 @@ partition <- function(.data,
                           call = call)
 
             } else if (.method == "crisp") {
-                pp <- .prepare_crisp(x, colname, .breaks, .labels, .right, .span, .inc, call)
+                pp <- .prepare_crisp(x, colname, .breaks, .labels,
+                                     .style, .style_params,
+                                     .right, .span, .inc, call)
                 f <- if (.right) {
                     function(x, br)  !is.na(x) & x > br[1] & x <= br[length(br)]
                 } else {
@@ -273,10 +310,12 @@ partition <- function(.data,
 }
 
 
-.prepare_crisp <- function(x, colname, breaks, labels, right, span, inc, call) {
+.prepare_crisp <- function(x, colname, breaks, labels,
+                           style, style_params,
+                           right, span, inc, call) {
     if (length(breaks) == 1) {
         .check_scalar_breaks(breaks, call)
-        br <- .determine_crisp_breaks(x, breaks, span, inc)
+        br <- .determine_crisp_breaks(x, breaks, style, style_params, right, span, inc)
     } else {
         n <- (length(breaks) - span - 1) / inc + 1
         req <- span + (ceiling(n) - 1) * inc + 1
@@ -331,10 +370,18 @@ partition <- function(.data,
 }
 
 
-.determine_crisp_breaks <- function(x, n, span, inc) {
-    breaks <- seq(from = min(x, na.rm = TRUE),
-                  to = max(x, na.rm = TRUE),
-                  length.out = span + (n - 1) * inc + 1)
+.determine_crisp_breaks <- function(x, n, style, style_params, right, span, inc) {
+    args <- list(var = x,
+                 n = span + (n - 1) * inc,
+                 style = style,
+                 intervalClosure = if (right) "right" else "left")
+    args <- c(args, style_params)
+    ii <- do.call(classIntervals, args)
+
+    breaks <- ii$brks
+    #breaks <- seq(from = min(x, na.rm = TRUE),
+                  #to = max(x, na.rm = TRUE),
+                  #length.out = span + (n - 1) * inc + 1)
 
     c(-Inf, breaks[c(-1, -length(breaks))], Inf)
 }
