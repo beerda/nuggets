@@ -31,43 +31,29 @@ selecting the columns to transform.}
 \item{...}{Additional tidyselect expressions selecting more columns.}
 
 \item{.breaks}{Ignored if \code{.method = "dummy"}. For other methods, either
-an integer scalar (number of intervals/sets) or a numeric vector of
-breakpoints.}
+an integer (number of intervals/sets) or a numeric vector of breakpoints.}
 
 \item{.labels}{Optional character vector with labels used for new column
 names. If \code{NULL}, labels are generated automatically.}
 
-\item{.na}{If \code{TRUE}, an extra logical column is created for each source
-column that contains \code{NA} values (e.g. \code{x=NA}).}
+\item{.na}{If \code{TRUE}, adds an extra logical column for each source column
+containing \code{NA} values (e.g., \code{x=NA}).}
 
-\item{.keep}{If \code{TRUE}, keep the original columns in the output.}
+\item{.keep}{If \code{TRUE}, keep original columns in the output.}
 
 \item{.method}{Transformation method for numeric columns: \code{"dummy"},
 \code{"crisp"}, \code{"triangle"}, or \code{"raisedcos"}.}
 
-\item{.style}{Specifies how intervals are determined when \code{.breaks} is
-an integer. The determination of breaks is done by the
-\code{\link[classInt:classIntervals]{classInt::classIntervals()}} function from the \code{classInt} package, which
-calls various functions to compute intervals. Additional parameters for
-these functions may be passed via \code{.style_params}. Possible values are:
-\code{"equal"} (equal-width intervals), \code{"quantile"} (equal-frequency
-intervals, see \code{\link[=quantile]{quantile()}}), \code{"kmeans"} (intervals determined by 1D
-k-means clustering, see \code{\link[=kmeans]{kmeans()}}), \code{"sd"} (intervals based on standard
-deviations from the mean), \code{"hclust"} (intervals based on hierarchical
-clustering, see \code{\link[=hclust]{hclust()}}), \code{"bclust"} (intervals based on model-based
-clustering, see \code{\link[e1071:bclust]{e1071::bclust()}}), \code{"fisher"} (Fisher-Jenks optimal
-partitioning), \code{"jenks"} (Jenks natural breaks), \code{"dpih"} (data-precision
-interval halving, see \code{\link[KernSmooth:dpih]{KernSmooth::dpih()}}), \code{"headtails"} (head/tails
-breaks), \code{"maximum"} (maximum breaks), and \code{"box"} (hinges
-of a boxplot). The default is \code{"equal"}. See \code{\link[classInt:classIntervals]{classInt::classIntervals()}}
-for more details. Argument is recognized only if \code{.method = "crisp"} and
-ignored if \code{.breaks} is a vector.}
+\item{.style}{Controls how breakpoints are determined when \code{.breaks} is an
+integer. Values correspond to methods in \code{\link[classInt:classIntervals]{classInt::classIntervals()}},
+e.g., \code{"equal"}, \code{"quantile"}, \code{"kmeans"}, \code{"sd"}, \code{"hclust"}, \code{"bclust"},
+\code{"fisher"}, \code{"jenks"}, \code{"dpih"}, \code{"headtails"}, \code{"maximum"}, \code{"box"}.
+Defaults to \code{"equal"}. Used only if \code{.method = "crisp"} and \code{.breaks} is
+a single integer.}
 
-\item{.style_params}{A list of additional parameters passed to underlying
-function that determines intervals (via \code{\link[classInt:classIntervals]{classInt::classIntervals()}})
-when \code{.method = "crisp"} and \code{.breaks} is an integer. The function called
-is determined by \code{.style}. See the description of \code{.style} and the
-documentation of \code{\link[classInt:classIntervals]{classInt::classIntervals()}} for possible parameters.}
+\item{.style_params}{A named list of parameters passed to the interval
+computation method specified by \code{.style}. Used only if \code{.method = "crisp"}
+and \code{.breaks} is an integer.}
 
 \item{.right}{For \code{"crisp"}, whether intervals are right-closed and
 left-open (\code{TRUE}), or left-closed and right-open (\code{FALSE}).}
@@ -103,56 +89,84 @@ logical columns: \code{x=l1}, \code{x=l2}, and \code{x=l3};
 \item \strong{numeric} column \code{x} is transformed according to \code{.method}:
 \itemize{
 \item \code{.method = "dummy"}: the column is treated as a factor with one level
-for each unique value, then expanded to dummy columns. This produces
-one logical column per unique value;
+per unique value, then expanded into dummy columns;
 \item \code{.method = "crisp"}: the column is discretized into intervals (defined
-by \code{.breaks}) and then expanded to dummy columns representing these
-intervals;
+by \code{.breaks}, \code{.style}, and \code{.style_params}) and expanded into dummy
+columns representing those intervals;
 \item \code{.method = "triangle"} or \code{.method = "raisedcos"}: the column is
-converted into one or more fuzzy sets. Each new column contains values
-in \eqn{[0,1]} representing degrees of membership to the fuzzy set
-(triangular or raised-cosine shaped).
+converted into one or more fuzzy sets, each represented by membership
+degrees in \eqn{[0,1]} (triangular or raised-cosine shaped).
 }
 }
 
 Details of numeric transformations are controlled by \code{.breaks}, \code{.labels},
-\code{.right}, \code{.span}, and \code{.inc}.
+\code{.style}, \code{.style_params}, \code{.right}, \code{.span}, and \code{.inc}.
 \itemize{
-\item Crisp partitioning is recommended for efficiency and works best when
-sharp category boundaries are meaningful for the analysis.
-\item Fuzzy partitioning is useful when attributes change gradually or when
-uncertainty should be modeled explicitly. It allows smooth transitions
-between categories and may yield more interpretable patterns, but is
-more computationally demanding.
+\item Crisp partitioning is efficient and works well when attributes have
+distinct categories or clear boundaries.
+\item Fuzzy partitioning is recommended for modeling gradual changes or
+uncertainty, allowing smooth category transitions at a higher
+computational cost.
 }
 }
 \section{Crisp transformation of numeric data}{
 
 
-For \code{.method = "crisp"}, numeric columns are converted into sets of dummy
-logical variables, each representing one interval of values defined by
-\code{.breaks}.
+For \code{.method = "crisp"}, numeric columns are discretized into a set of
+dummy logical variables, each representing one interval of values.
 \itemize{
-\item If \code{.breaks} is an integer, it specifies the number of equal-width
-intervals into which the column range is divided. The first and last
-intervals extend to infinity.
+\item If \code{.breaks} is an integer, it specifies the number of intervals into
+which the column should be divided. The intervals are determined using
+the \code{.style} and \code{.style_params} arguments, allowing not only equal-width
+but also data-driven breakpoints (e.g., quantile or k-means based).
+The first and last intervals automatically extend to infinity.
 \item If \code{.breaks} is a numeric vector, it specifies interval boundaries
 directly. Infinite values are allowed.
 }
 
-With \code{.span = 1} and \code{.inc = 1}, the intervals are consecutive and
-non-overlapping. For example, with
+The \code{.style} argument defines \emph{how} breakpoints are computed when
+\code{.breaks} is an integer. Supported methods (from
+\code{\link[classInt:classIntervals]{classInt::classIntervals()}}) include:
+\itemize{
+\item \code{"equal"} – equal-width intervals across the column range (default);
+\item \code{"quantile"} – equal-frequency intervals (see \code{\link[=quantile]{quantile()}} for additional
+parameters that may be passed through \code{.style_params}; note that
+the probs parameter is set automatically and should not be included in
+\code{.style_params});
+\item \code{"kmeans"} – intervals found by 1D k-means clustering (see \code{\link[=kmeans]{kmeans()}}
+for additional parameters);
+\item \code{"sd"} – intervals based on standard deviations from the mean;
+\item \code{"hclust"} – hierarchical clustering intervals (see \code{\link[=hclust]{hclust()}} for
+additional parameters);
+\item \code{"bclust"} – model-based clustering intervals (see \code{\link[e1071:bclust]{e1071::bclust()}} for
+additional parameters);
+\item \code{"fisher"} / \code{"jenks"} – Fisher–Jenks optimal partitioning;
+\item \code{"dpih"} – kernel-based density partitioning (see \code{\link[KernSmooth:dpih]{KernSmooth::dpih()}}
+for additional parameters);
+\item \code{"headtails"} – head/tails natural breaks;
+\item \code{"maximum"} – maximization-based partitioning;
+\item \code{"box"} – breaks at boxplot hinges.
+}
+
+Additional parameters for these methods can be passed through
+\code{.style_params}, which should be a named list of arguments accepted by the
+respective algorithm in \code{\link[classInt:classIntervals]{classInt::classIntervals()}}. For example, when
+\code{.style = "kmeans"}, one can specify
+\code{.style_params = list(algorithm = "Lloyd")} to request Lloyd's algorithm
+for k-means clustering.
+
+With \code{.span = 1} and \code{.inc = 1}, the generated intervals are consecutive
+and non-overlapping. For example, with
 \code{.breaks = c(1, 3, 5, 7, 9, 11)} and \code{.right = TRUE},
 the intervals are \eqn{(1;3]}, \eqn{(3;5]}, \eqn{(5;7]}, \eqn{(7;9]},
 and \eqn{(9;11]}. If \code{.right = FALSE}, the intervals are left-closed:
 \eqn{[1;3)}, \eqn{[3;5)}, etc.
 
-Larger \code{.span} values make intervals overlap. For example, with
-\code{.span = 2}, \code{.inc = 1}, and \code{.right = TRUE}, the intervals are
-\eqn{(1;5]}, \eqn{(3;7]}, \eqn{(5;9]}, and \eqn{(7;11]}.
+Larger \code{.span} values produce overlapping intervals. For example, with
+\code{.span = 2}, \code{.inc = 1}, and \code{.right = TRUE}, intervals are
+\eqn{(1;5]}, \eqn{(3;7]}, \eqn{(5;9]}, \eqn{(7;11]}.
 
-The \code{.inc} argument modifies how far the window shifts along \code{.breaks}.
-For example:
+The \code{.inc} argument controls how far the window shifts along \code{.breaks}.
 \itemize{
 \item \code{.span = 1}, \code{.inc = 2} → \eqn{(1;3]}, \eqn{(5;7]}, \eqn{(9;11]}.
 \item \code{.span = 2}, \code{.inc = 3} → \eqn{(1;5]}, \eqn{(9;11]}.
@@ -163,58 +177,55 @@ For example:
 
 
 For \code{.method = "triangle"} or \code{.method = "raisedcos"}, numeric columns are
-converted into fuzzy membership degrees \eqn{[0,1]}.
+converted into fuzzy membership degrees in \eqn{[0,1]}.
 \itemize{
-\item If \code{.breaks} is an integer, it specifies the number of fuzzy sets to
-generate (breakpoints are chosen automatically).
-\item If \code{.breaks} is a numeric vector, it directly defines the fuzzy set
-boundaries. Infinite values are allowed, which produces fuzzy sets with
-open ends.
+\item If \code{.breaks} is an integer, it specifies the number of fuzzy sets.
+\item If \code{.breaks} is a numeric vector, it directly defines fuzzy set
+boundaries. Infinite values produce open-ended sets.
 }
 
 With \code{.span = 1}, each fuzzy set is defined by three consecutive breaks:
-membership is 0 outside the outer breaks, increases to 1 at the middle
-break, and then decreases back to 0. This yields triangular or raised-cosine
-sets.
+membership is 0 outside the outer breaks, rises to 1 at the middle break,
+then decreases back to 0 — yielding triangular or raised-cosine sets.
 
-With \code{.span > 1}, fuzzy sets are defined by four breaks: the degree
-increases between the first two, stays 1 between the middle two, and
-decreases between the last two. This produces trapezoidal fuzzy sets, with
-linear borders if \code{.method = "triangle"}, or cosine-shaped borders if
-\code{.method = "raisedcos"}.
+With \code{.span > 1}, fuzzy sets use four consecutive breaks: membership
+increases between the first two, remains 1 between the middle two, and
+decreases between the last two — creating trapezoidal sets. Border shapes
+are linear for \code{.method = "triangle"} and cosine for \code{.method = "raisedcos"}.
 
-As with crisp sets, \code{.inc} determines how far the break window shifts when
-creating the next fuzzy set. For example:
+The \code{.inc} argument defines the step between break windows:
 \itemize{
 \item \code{.span = 1}, \code{.inc = 1} → \eqn{(1;3;5)}, \eqn{(3;5;7)}, \eqn{(5;7;9)}, \eqn{(7;9;11)}.
 \item \code{.span = 2}, \code{.inc = 1} → \eqn{(1;3;5;7)}, \eqn{(3;5;7;9)}, \eqn{(5;7;9;11)}.
 \item \code{.span = 1}, \code{.inc = 3} → \eqn{(1;3;5)}, \eqn{(7;9;11)}.
 }
-
-See the examples for further details.
 }
 
 \examples{
-# Transform logical columns and factors
-d <- data.frame(a = c(TRUE, TRUE, FALSE),
-                b = factor(c("A", "B", "A")),
-                c = c(1, 2, 3))
-partition(d, a, b, c, .method = "dummy")
+# Crisp transformation using equal-width bins
+partition(CO2, conc, .method = "crisp", .breaks = 4)
 
-# Crisp transformation of numeric data
-partition(CO2, conc:uptake, .method = "crisp", .breaks = 3)
+# Crisp transformation using quantile-based bins
+partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "quantile")
 
-# Triangular fuzzy sets
+# Crisp transformation using k-means clustering for breakpoints
+partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "kmeans")
+
+# Crisp transformation using Lloyd algorithm for k-means clustering for breakpoints
+partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "kmeans",
+          .style_params = list(algorithm = "Lloyd"))
+
+# Fuzzy triangular transformation (default)
 partition(CO2, conc:uptake, .method = "triangle", .breaks = 3)
 
 # Raised-cosine fuzzy sets
 partition(CO2, conc:uptake, .method = "raisedcos", .breaks = 3)
 
-# Trapezoidal fuzzy sets, overlapping to satisfy the Ruspini condition
+# Overlapping trapezoidal fuzzy sets (Ruspini condition)
 partition(CO2, conc:uptake, .method = "triangle", .breaks = 3,
           .span = 2, .inc = 2)
 
-# Complex transformation with different settings per column
+# Different settings per column
 CO2 |>
   partition(Plant:Treatment) |>
   partition(conc,
