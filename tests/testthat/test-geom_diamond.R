@@ -176,3 +176,18 @@ test_that("geom_diamond error on duplicate entries", {
         print(g)
     }, "contains duplicate values")
 })
+
+test_that("geom_diamond of single rule with empty condition", {
+    d <- data.frame(
+        condition = c("{}"),
+        stringsAsFactors = FALSE
+    )
+
+    expect_no_error({
+        pdf(NULL); on.exit(dev.off(), add = TRUE)
+        g <- ggplot(d) +
+            aes(condition = condition) +
+            geom_diamond()
+        print(g)
+    })
+})

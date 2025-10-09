@@ -67,32 +67,34 @@
     diag(incidence_matrix) <- FALSE
     transitive_edges <- (incidence_matrix %*% incidence_matrix) > 0
     incidence_matrix <- incidence_matrix & !transitive_edges
-
     edges <- which(incidence_matrix, arr.ind = TRUE)
     edges <- as.data.frame(edges)
-    edges$x <- data$x[edges$row]
-    edges$xend <- data$x[edges$col]
-    edges$y <- data$y[edges$row]
-    edges$yend <- data$y[edges$col]
-    edges$curvature <- (edges$y - edges$yend - 1) * ifelse(edges$xend > edges$x, -1, 1)
-    edges$alpha <- NA
-    edges$group <- 1
-    edges$linetype <- linetype
 
-    uniq_lw <- unique(data$linewidth_orig)
-    if (length(uniq_lw) == 1) {
-        edges$linewidth_orig <- uniq_lw
-        edges$colour <- "#000000"
-    } else {
-        lw <- data$linewidth_orig[edges$row] - data$linewidth_orig[edges$col]
-        abslw <- abs(lw)
-        edges$linewidth <- 0.5 + 4.5 * (abslw - min(abslw)) / (max(abslw) - min(abslw))
+    if (nrow(edges) > 0) {
+        edges$x <- data$x[edges$row]
+        edges$xend <- data$x[edges$col]
+        edges$y <- data$y[edges$row]
+        edges$yend <- data$y[edges$col]
+        edges$curvature <- (edges$y - edges$yend - 1) * ifelse(edges$xend > edges$x, -1, 1)
+        edges$alpha <- NA
+        edges$group <- 1
+        edges$linetype <- linetype
 
-        edges$colour[is.finite(edges$linewidth) & lw < 0] <- "#999999"
-        edges$colour[is.finite(edges$linewidth) & lw > 0] <- "#cc9999"
-        edges$colour[!is.finite(edges$linewidth) | lw == 0] <- "#000000"
+        uniq_lw <- unique(data$linewidth_orig)
+        if (length(uniq_lw) == 1) {
+            edges$linewidth_orig <- uniq_lw
+            edges$colour <- "#000000"
+        } else {
+            lw <- data$linewidth_orig[edges$row] - data$linewidth_orig[edges$col]
+            abslw <- abs(lw)
+            edges$linewidth <- 0.5 + 4.5 * (abslw - min(abslw)) / (max(abslw) - min(abslw))
 
-        edges$linewidth[!is.finite(edges$linewidth)] <- 0.5
+            edges$colour[is.finite(edges$linewidth) & lw < 0] <- "#999999"
+            edges$colour[is.finite(edges$linewidth) & lw > 0] <- "#cc9999"
+            edges$colour[!is.finite(edges$linewidth) | lw == 0] <- "#000000"
+
+            edges$linewidth[!is.finite(edges$linewidth)] <- 0.5
+        }
     }
 
     edges
@@ -121,25 +123,27 @@
     c1 <- NULL
     c2 <- NULL
     c3 <- NULL
-    if (sum(edges$curvature == 0) > 0) {
-        c1 <- GeomCurve$draw_panel(edges[edges$curvature == 0, ],
-                                   panel_params,
-                                   coord,
-                                   curvature = 0)
-    }
-    if (sum(edges$curvature > 0) > 0) {
-        c2 <- GeomCurve$draw_panel(edges[edges$curvature > 0, ],
-                                   panel_params,
-                                   coord,
-                                   curvature = 0.25,
-                                   angle = 45)
-    }
-    if (sum(edges$curvature < 0) > 0) {
-        c3 <- GeomCurve$draw_panel(edges[edges$curvature < 0, ],
-                                   panel_params,
-                                   coord,
-                                   curvature = -0.25,
-                                   angle = 45)
+    if (nrow(edges) > 0) {
+        if (sum(edges$curvature == 0) > 0) {
+            c1 <- GeomCurve$draw_panel(edges[edges$curvature == 0, ],
+                                       panel_params,
+                                       coord,
+                                       curvature = 0)
+        }
+        if (sum(edges$curvature > 0) > 0) {
+            c2 <- GeomCurve$draw_panel(edges[edges$curvature > 0, ],
+                                       panel_params,
+                                       coord,
+                                       curvature = 0.25,
+                                       angle = 45)
+        }
+        if (sum(edges$curvature < 0) > 0) {
+            c3 <- GeomCurve$draw_panel(edges[edges$curvature < 0, ],
+                                       panel_params,
+                                       coord,
+                                       curvature = -0.25,
+                                       angle = 45)
+        }
     }
     gList(
         c1, c2, c3,
