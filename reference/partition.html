@@ -69,6 +69,8 @@ columns in the output.</p>
 <span>  .na <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  .keep <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  .method <span class="op">=</span> <span class="st">"crisp"</span>,</span>
+<span>  .style <span class="op">=</span> <span class="st">"equal"</span>,</span>
+<span>  .style_params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  .right <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  .span <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  .inc <span class="op">=</span> <span class="fl">1</span></span>
@@ -116,6 +118,34 @@ column that contains <code>NA</code> values (e.g. <code>x=NA</code>).</p></dd>
 <dt id="arg--method">.method<a class="anchor" aria-label="anchor" href="#arg--method"></a></dt>
 <dd><p>Transformation method for numeric columns: <code>"dummy"</code>,
 <code>"crisp"</code>, <code>"triangle"</code>, or <code>"raisedcos"</code>.</p></dd>
+
+
+<dt id="arg--style">.style<a class="anchor" aria-label="anchor" href="#arg--style"></a></dt>
+<dd><p>Specifies how intervals are determined when <code>.breaks</code> is
+an integer. The determination of breaks is done by the
+<code><a href="https://r-spatial.github.io/classInt/reference/classIntervals.html" class="external-link">classInt::classIntervals()</a></code> function from the <code>classInt</code> package, which
+calls various functions to compute intervals. Additional parameters for
+these functions may be passed via <code>.style_params</code>. Possible values are:
+<code>"equal"</code> (equal-width intervals), <code>"quantile"</code> (equal-frequency
+intervals, see <code><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile()</a></code>), <code>"kmeans"</code> (intervals determined by 1D
+k-means clustering, see <code><a href="https://rdrr.io/r/stats/kmeans.html" class="external-link">kmeans()</a></code>), <code>"sd"</code> (intervals based on standard
+deviations from the mean), <code>"hclust"</code> (intervals based on hierarchical
+clustering, see <code><a href="https://rdrr.io/r/stats/hclust.html" class="external-link">hclust()</a></code>), <code>"bclust"</code> (intervals based on model-based
+clustering, see <code><a href="https://rdrr.io/pkg/e1071/man/bclust.html" class="external-link">e1071::bclust()</a></code>), <code>"fisher"</code> (Fisher-Jenks optimal
+partitioning), <code>"jenks"</code> (Jenks natural breaks), <code>"dpih"</code> (data-precision
+interval halving, see <code><a href="https://rdrr.io/pkg/KernSmooth/man/dpih.html" class="external-link">KernSmooth::dpih()</a></code>), <code>"headtails"</code> (head/tails
+breaks), <code>"maximum"</code> (maximum breaks), and <code>"box"</code> (hinges
+of a boxplot). The default is <code>"equal"</code>. See <code><a href="https://r-spatial.github.io/classInt/reference/classIntervals.html" class="external-link">classInt::classIntervals()</a></code>
+for more details. Argument is recognized only if <code>.method = "crisp"</code> and
+ignored if <code>.breaks</code> is a vector.</p></dd>
+
+
+<dt id="arg--style-params">.style_params<a class="anchor" aria-label="anchor" href="#arg--style-params"></a></dt>
+<dd><p>A list of additional parameters passed to underlying
+function that determines intervals (via <code><a href="https://r-spatial.github.io/classInt/reference/classIntervals.html" class="external-link">classInt::classIntervals()</a></code>)
+when <code>.method = "crisp"</code> and <code>.breaks</code> is an integer. The function called
+is determined by <code>.style</code>. See the description of <code>.style</code> and the
+documentation of <code><a href="https://r-spatial.github.io/classInt/reference/classIntervals.html" class="external-link">classInt::classIntervals()</a></code> for possible parameters.</p></dd>
 
 
 <dt id="arg--right">.right<a class="anchor" aria-label="anchor" href="#arg--right"></a></dt>
