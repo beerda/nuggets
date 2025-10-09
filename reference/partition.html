@@ -97,8 +97,7 @@ selecting the columns to transform.</p></dd>
 
 <dt id="arg--breaks">.breaks<a class="anchor" aria-label="anchor" href="#arg--breaks"></a></dt>
 <dd><p>Ignored if <code>.method = "dummy"</code>. For other methods, either
-an integer scalar (number of intervals/sets) or a numeric vector of
-breakpoints.</p></dd>
+an integer (number of intervals/sets) or a numeric vector of breakpoints.</p></dd>
 
 
 <dt id="arg--labels">.labels<a class="anchor" aria-label="anchor" href="#arg--labels"></a></dt>
@@ -107,12 +106,12 @@ names. If <code>NULL</code>, labels are generated automatically.</p></dd>
 
 
 <dt id="arg--na">.na<a class="anchor" aria-label="anchor" href="#arg--na"></a></dt>
-<dd><p>If <code>TRUE</code>, an extra logical column is created for each source
-column that contains <code>NA</code> values (e.g. <code>x=NA</code>).</p></dd>
+<dd><p>If <code>TRUE</code>, adds an extra logical column for each source column
+containing <code>NA</code> values (e.g., <code>x=NA</code>).</p></dd>
 
 
 <dt id="arg--keep">.keep<a class="anchor" aria-label="anchor" href="#arg--keep"></a></dt>
-<dd><p>If <code>TRUE</code>, keep the original columns in the output.</p></dd>
+<dd><p>If <code>TRUE</code>, keep original columns in the output.</p></dd>
 
 
 <dt id="arg--method">.method<a class="anchor" aria-label="anchor" href="#arg--method"></a></dt>
@@ -121,31 +120,18 @@ column that contains <code>NA</code> values (e.g. <code>x=NA</code>).</p></dd>
 
 
 <dt id="arg--style">.style<a class="anchor" aria-label="anchor" href="#arg--style"></a></dt>
-<dd><p>Specifies how intervals are determined when <code>.breaks</code> is
-an integer. The determination of breaks is done by the
-<code><a href="https://r-spatial.github.io/classInt/reference/classIntervals.html" class="external-link">classInt::classIntervals()</a></code> function from the <code>classInt</code> package, which
-calls various functions to compute intervals. Additional parameters for
-these functions may be passed via <code>.style_params</code>. Possible values are:
-<code>"equal"</code> (equal-width intervals), <code>"quantile"</code> (equal-frequency
-intervals, see <code><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile()</a></code>), <code>"kmeans"</code> (intervals determined by 1D
-k-means clustering, see <code><a href="https://rdrr.io/r/stats/kmeans.html" class="external-link">kmeans()</a></code>), <code>"sd"</code> (intervals based on standard
-deviations from the mean), <code>"hclust"</code> (intervals based on hierarchical
-clustering, see <code><a href="https://rdrr.io/r/stats/hclust.html" class="external-link">hclust()</a></code>), <code>"bclust"</code> (intervals based on model-based
-clustering, see <code><a href="https://rdrr.io/pkg/e1071/man/bclust.html" class="external-link">e1071::bclust()</a></code>), <code>"fisher"</code> (Fisher-Jenks optimal
-partitioning), <code>"jenks"</code> (Jenks natural breaks), <code>"dpih"</code> (data-precision
-interval halving, see <code><a href="https://rdrr.io/pkg/KernSmooth/man/dpih.html" class="external-link">KernSmooth::dpih()</a></code>), <code>"headtails"</code> (head/tails
-breaks), <code>"maximum"</code> (maximum breaks), and <code>"box"</code> (hinges
-of a boxplot). The default is <code>"equal"</code>. See <code><a href="https://r-spatial.github.io/classInt/reference/classIntervals.html" class="external-link">classInt::classIntervals()</a></code>
-for more details. Argument is recognized only if <code>.method = "crisp"</code> and
-ignored if <code>.breaks</code> is a vector.</p></dd>
+<dd><p>Controls how breakpoints are determined when <code>.breaks</code> is an
+integer. Values correspond to methods in <code><a href="https://r-spatial.github.io/classInt/reference/classIntervals.html" class="external-link">classInt::classIntervals()</a></code>,
+e.g., <code>"equal"</code>, <code>"quantile"</code>, <code>"kmeans"</code>, <code>"sd"</code>, <code>"hclust"</code>, <code>"bclust"</code>,
+<code>"fisher"</code>, <code>"jenks"</code>, <code>"dpih"</code>, <code>"headtails"</code>, <code>"maximum"</code>, <code>"box"</code>.
+Defaults to <code>"equal"</code>. Used only if <code>.method = "crisp"</code> and <code>.breaks</code> is
+a single integer.</p></dd>
 
 
 <dt id="arg--style-params">.style_params<a class="anchor" aria-label="anchor" href="#arg--style-params"></a></dt>
-<dd><p>A list of additional parameters passed to underlying
-function that determines intervals (via <code><a href="https://r-spatial.github.io/classInt/reference/classIntervals.html" class="external-link">classInt::classIntervals()</a></code>)
-when <code>.method = "crisp"</code> and <code>.breaks</code> is an integer. The function called
-is determined by <code>.style</code>. See the description of <code>.style</code> and the
-documentation of <code><a href="https://r-spatial.github.io/classInt/reference/classIntervals.html" class="external-link">classInt::classIntervals()</a></code> for possible parameters.</p></dd>
+<dd><p>A named list of parameters passed to the interval
+computation method specified by <code>.style</code>. Used only if <code>.method = "crisp"</code>
+and <code>.breaks</code> is an integer.</p></dd>
 
 
 <dt id="arg--right">.right<a class="anchor" aria-label="anchor" href="#arg--right"></a></dt>
@@ -179,47 +165,70 @@ or <code><a href="dig_associations.html">dig_associations()</a></code>.</p>
 <li><p><strong>factor</strong> column <code>x</code> with levels <code>l1</code>, <code>l2</code>, <code>l3</code> becomes three
 logical columns: <code>x=l1</code>, <code>x=l2</code>, and <code>x=l3</code>;</p></li>
 <li><p><strong>numeric</strong> column <code>x</code> is transformed according to <code>.method</code>:</p><ul><li><p><code>.method = "dummy"</code>: the column is treated as a factor with one level
-for each unique value, then expanded to dummy columns. This produces
-one logical column per unique value;</p></li>
+per unique value, then expanded into dummy columns;</p></li>
 <li><p><code>.method = "crisp"</code>: the column is discretized into intervals (defined
-by <code>.breaks</code>) and then expanded to dummy columns representing these
-intervals;</p></li>
+by <code>.breaks</code>, <code>.style</code>, and <code>.style_params</code>) and expanded into dummy
+columns representing those intervals;</p></li>
 <li><p><code>.method = "triangle"</code> or <code>.method = "raisedcos"</code>: the column is
-converted into one or more fuzzy sets. Each new column contains values
-in \([0,1]\) representing degrees of membership to the fuzzy set
-(triangular or raised-cosine shaped).</p></li>
+converted into one or more fuzzy sets, each represented by membership
+degrees in \([0,1]\) (triangular or raised-cosine shaped).</p></li>
 </ul></li>
 </ul><p>Details of numeric transformations are controlled by <code>.breaks</code>, <code>.labels</code>,
-<code>.right</code>, <code>.span</code>, and <code>.inc</code>.</p><ul><li><p>Crisp partitioning is recommended for efficiency and works best when
-sharp category boundaries are meaningful for the analysis.</p></li>
-<li><p>Fuzzy partitioning is useful when attributes change gradually or when
-uncertainty should be modeled explicitly. It allows smooth transitions
-between categories and may yield more interpretable patterns, but is
-more computationally demanding.</p></li>
+<code>.style</code>, <code>.style_params</code>, <code>.right</code>, <code>.span</code>, and <code>.inc</code>.</p><ul><li><p>Crisp partitioning is efficient and works well when attributes have
+distinct categories or clear boundaries.</p></li>
+<li><p>Fuzzy partitioning is recommended for modeling gradual changes or
+uncertainty, allowing smooth category transitions at a higher
+computational cost.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="crisp-transformation-of-numeric-data">Crisp transformation of numeric data<a class="anchor" aria-label="anchor" href="#crisp-transformation-of-numeric-data"></a></h2>
 
 
 
-<p>For <code>.method = "crisp"</code>, numeric columns are converted into sets of dummy
-logical variables, each representing one interval of values defined by
-<code>.breaks</code>.</p><ul><li><p>If <code>.breaks</code> is an integer, it specifies the number of equal-width
-intervals into which the column range is divided. The first and last
-intervals extend to infinity.</p></li>
+<p>For <code>.method = "crisp"</code>, numeric columns are discretized into a set of
+dummy logical variables, each representing one interval of values.</p><ul><li><p>If <code>.breaks</code> is an integer, it specifies the number of intervals into
+which the column should be divided. The intervals are determined using
+the <code>.style</code> and <code>.style_params</code> arguments, allowing not only equal-width
+but also data-driven breakpoints (e.g., quantile or k-means based).
+The first and last intervals automatically extend to infinity.</p></li>
 <li><p>If <code>.breaks</code> is a numeric vector, it specifies interval boundaries
 directly. Infinite values are allowed.</p></li>
-</ul><p>With <code>.span = 1</code> and <code>.inc = 1</code>, the intervals are consecutive and
-non-overlapping. For example, with
+</ul><p>The <code>.style</code> argument defines <em>how</em> breakpoints are computed when
+<code>.breaks</code> is an integer. Supported methods (from
+<code><a href="https://r-spatial.github.io/classInt/reference/classIntervals.html" class="external-link">classInt::classIntervals()</a></code>) include:</p><ul><li><p><code>"equal"</code> – equal-width intervals across the column range (default);</p></li>
+<li><p><code>"quantile"</code> – equal-frequency intervals (see <code><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile()</a></code> for additional
+parameters that may be passed through <code>.style_params</code>; note that
+the probs parameter is set automatically and should not be included in
+<code>.style_params</code>);</p></li>
+<li><p><code>"kmeans"</code> – intervals found by 1D k-means clustering (see <code><a href="https://rdrr.io/r/stats/kmeans.html" class="external-link">kmeans()</a></code>
+for additional parameters);</p></li>
+<li><p><code>"sd"</code> – intervals based on standard deviations from the mean;</p></li>
+<li><p><code>"hclust"</code> – hierarchical clustering intervals (see <code><a href="https://rdrr.io/r/stats/hclust.html" class="external-link">hclust()</a></code> for
+additional parameters);</p></li>
+<li><p><code>"bclust"</code> – model-based clustering intervals (see <code><a href="https://rdrr.io/pkg/e1071/man/bclust.html" class="external-link">e1071::bclust()</a></code> for
+additional parameters);</p></li>
+<li><p><code>"fisher"</code> / <code>"jenks"</code> – Fisher–Jenks optimal partitioning;</p></li>
+<li><p><code>"dpih"</code> – kernel-based density partitioning (see <code><a href="https://rdrr.io/pkg/KernSmooth/man/dpih.html" class="external-link">KernSmooth::dpih()</a></code>
+for additional parameters);</p></li>
+<li><p><code>"headtails"</code> – head/tails natural breaks;</p></li>
+<li><p><code>"maximum"</code> – maximization-based partitioning;</p></li>
+<li><p><code>"box"</code> – breaks at boxplot hinges.</p></li>
+</ul><p>Additional parameters for these methods can be passed through
+<code>.style_params</code>, which should be a named list of arguments accepted by the
+respective algorithm in <code><a href="https://r-spatial.github.io/classInt/reference/classIntervals.html" class="external-link">classInt::classIntervals()</a></code>. For example, when
+<code>.style = "kmeans"</code>, one can specify
+<code>.style_params = list(algorithm = "Lloyd")</code> to request Lloyd's algorithm
+for k-means clustering.</p>
+<p>With <code>.span = 1</code> and <code>.inc = 1</code>, the generated intervals are consecutive
+and non-overlapping. For example, with
 <code>.breaks = c(1, 3, 5, 7, 9, 11)</code> and <code>.right = TRUE</code>,
 the intervals are \((1;3]\), \((3;5]\), \((5;7]\), \((7;9]\),
 and \((9;11]\). If <code>.right = FALSE</code>, the intervals are left-closed:
 \([1;3)\), \([3;5)\), etc.</p>
-<p>Larger <code>.span</code> values make intervals overlap. For example, with
-<code>.span = 2</code>, <code>.inc = 1</code>, and <code>.right = TRUE</code>, the intervals are
-\((1;5]\), \((3;7]\), \((5;9]\), and \((7;11]\).</p>
-<p>The <code>.inc</code> argument modifies how far the window shifts along <code>.breaks</code>.
-For example:</p><ul><li><p><code>.span = 1</code>, <code>.inc = 2</code> → \((1;3]\), \((5;7]\), \((9;11]\).</p></li>
+<p>Larger <code>.span</code> values produce overlapping intervals. For example, with
+<code>.span = 2</code>, <code>.inc = 1</code>, and <code>.right = TRUE</code>, intervals are
+\((1;5]\), \((3;7]\), \((5;9]\), \((7;11]\).</p>
+<p>The <code>.inc</code> argument controls how far the window shifts along <code>.breaks</code>.</p><ul><li><p><code>.span = 1</code>, <code>.inc = 2</code> → \((1;3]\), \((5;7]\), \((9;11]\).</p></li>
 <li><p><code>.span = 2</code>, <code>.inc = 3</code> → \((1;5]\), \((9;11]\).</p></li>
 </ul></div>
     <div class="section level2">
@@ -228,26 +237,20 @@ For example:</p><ul><li><p><code>.span = 1</code>, <code>.inc = 2</code> → \((
 
 
 <p>For <code>.method = "triangle"</code> or <code>.method = "raisedcos"</code>, numeric columns are
-converted into fuzzy membership degrees \([0,1]\).</p><ul><li><p>If <code>.breaks</code> is an integer, it specifies the number of fuzzy sets to
-generate (breakpoints are chosen automatically).</p></li>
-<li><p>If <code>.breaks</code> is a numeric vector, it directly defines the fuzzy set
-boundaries. Infinite values are allowed, which produces fuzzy sets with
-open ends.</p></li>
+converted into fuzzy membership degrees in \([0,1]\).</p><ul><li><p>If <code>.breaks</code> is an integer, it specifies the number of fuzzy sets.</p></li>
+<li><p>If <code>.breaks</code> is a numeric vector, it directly defines fuzzy set
+boundaries. Infinite values produce open-ended sets.</p></li>
 </ul><p>With <code>.span = 1</code>, each fuzzy set is defined by three consecutive breaks:
-membership is 0 outside the outer breaks, increases to 1 at the middle
-break, and then decreases back to 0. This yields triangular or raised-cosine
-sets.</p>
-<p>With <code>.span &gt; 1</code>, fuzzy sets are defined by four breaks: the degree
-increases between the first two, stays 1 between the middle two, and
-decreases between the last two. This produces trapezoidal fuzzy sets, with
-linear borders if <code>.method = "triangle"</code>, or cosine-shaped borders if
-<code>.method = "raisedcos"</code>.</p>
-<p>As with crisp sets, <code>.inc</code> determines how far the break window shifts when
-creating the next fuzzy set. For example:</p><ul><li><p><code>.span = 1</code>, <code>.inc = 1</code> → \((1;3;5)\), \((3;5;7)\), \((5;7;9)\), \((7;9;11)\).</p></li>
+membership is 0 outside the outer breaks, rises to 1 at the middle break,
+then decreases back to 0 — yielding triangular or raised-cosine sets.</p>
+<p>With <code>.span &gt; 1</code>, fuzzy sets use four consecutive breaks: membership
+increases between the first two, remains 1 between the middle two, and
+decreases between the last two — creating trapezoidal sets. Border shapes
+are linear for <code>.method = "triangle"</code> and cosine for <code>.method = "raisedcos"</code>.</p>
+<p>The <code>.inc</code> argument defines the step between break windows:</p><ul><li><p><code>.span = 1</code>, <code>.inc = 1</code> → \((1;3;5)\), \((3;5;7)\), \((5;7;9)\), \((7;9;11)\).</p></li>
 <li><p><code>.span = 2</code>, <code>.inc = 1</code> → \((1;3;5;7)\), \((3;5;7;9)\), \((5;7;9;11)\).</p></li>
 <li><p><code>.span = 1</code>, <code>.inc = 3</code> → \((1;3;5)\), \((7;9;11)\).</p></li>
-</ul><p>See the examples for further details.</p>
-    </div>
+</ul></div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Michal Burda</p>
@@ -255,38 +258,80 @@ creating the next fuzzy set. For example:</p><ul><li><p><code>.span = 1</code>, 
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Transform logical columns and factors</span></span></span>
-<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"A"</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                c <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">partition</span><span class="op">(</span><span class="va">d</span>, <span class="va">a</span>, <span class="va">b</span>, <span class="va">c</span>, .method <span class="op">=</span> <span class="st">"dummy"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 7</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   `a=T` `a=F` `b=A` `b=B` `c=1` `c=2` `c=3`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> TRUE  FALSE TRUE  FALSE TRUE  FALSE FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> TRUE  FALSE FALSE TRUE  FALSE TRUE  FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> FALSE TRUE  TRUE  FALSE FALSE FALSE TRUE </span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Crisp transformation of numeric data</span></span></span>
-<span class="r-in"><span><span class="fu">partition</span><span class="op">(</span><span class="va">CO2</span>, <span class="va">conc</span><span class="op">:</span><span class="va">uptake</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 84 × 9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Plant Type   Treatment  `conc=(-Inf;397]` `conc=(397;698]` `conc=(698;Inf]`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Qn1   Quebec nonchilled TRUE              FALSE            FALSE           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Qn1   Quebec nonchilled TRUE              FALSE            FALSE           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Qn1   Quebec nonchilled TRUE              FALSE            FALSE           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Qn1   Quebec nonchilled TRUE              FALSE            FALSE           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Qn1   Quebec nonchilled FALSE             TRUE             FALSE           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Qn1   Quebec nonchilled FALSE             TRUE             FALSE           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Qn1   Quebec nonchilled FALSE             FALSE            TRUE            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Qn2   Quebec nonchilled TRUE              FALSE            FALSE           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Qn2   Quebec nonchilled TRUE              FALSE            FALSE           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Qn2   Quebec nonchilled TRUE              FALSE            FALSE           </span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Crisp transformation using equal-width bins</span></span></span>
+<span class="r-in"><span><span class="fu">partition</span><span class="op">(</span><span class="va">CO2</span>, <span class="va">conc</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 84 × 8</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Plant Type   Treatment  uptake `conc=(-Inf;321]` `conc=(321;548]`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Qn1   Quebec nonchilled   16   TRUE              FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Qn1   Quebec nonchilled   30.4 TRUE              FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Qn1   Quebec nonchilled   34.8 TRUE              FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Qn1   Quebec nonchilled   37.2 FALSE             TRUE            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Qn1   Quebec nonchilled   35.3 FALSE             TRUE            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Qn1   Quebec nonchilled   39.2 FALSE             FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Qn1   Quebec nonchilled   39.7 FALSE             FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Qn2   Quebec nonchilled   13.6 TRUE              FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Qn2   Quebec nonchilled   27.3 TRUE              FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Qn2   Quebec nonchilled   37.1 TRUE              FALSE           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 74 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 3 more variables: `uptake=(-Inf;20.3]` &lt;lgl&gt;, `uptake=(20.3;32.9]` &lt;lgl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   `uptake=(32.9;Inf]` &lt;lgl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: `conc=(548;774]` &lt;lgl&gt;, `conc=(774;Inf]` &lt;lgl&gt;</span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Triangular fuzzy sets</span></span></span>
+<span class="r-in"><span><span class="co"># Crisp transformation using quantile-based bins</span></span></span>
+<span class="r-in"><span><span class="fu">partition</span><span class="op">(</span><span class="va">CO2</span>, <span class="va">conc</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fl">4</span>, .style <span class="op">=</span> <span class="st">"quantile"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 84 × 8</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Plant Type   Treatment  uptake `conc=(-Inf;175]` `conc=(175;350]`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Qn1   Quebec nonchilled   16   TRUE              FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Qn1   Quebec nonchilled   30.4 TRUE              FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Qn1   Quebec nonchilled   34.8 FALSE             TRUE            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Qn1   Quebec nonchilled   37.2 FALSE             TRUE            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Qn1   Quebec nonchilled   35.3 FALSE             FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Qn1   Quebec nonchilled   39.2 FALSE             FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Qn1   Quebec nonchilled   39.7 FALSE             FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Qn2   Quebec nonchilled   13.6 TRUE              FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Qn2   Quebec nonchilled   27.3 TRUE              FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Qn2   Quebec nonchilled   37.1 FALSE             TRUE            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 74 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: `conc=(350;675]` &lt;lgl&gt;, `conc=(675;Inf]` &lt;lgl&gt;</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Crisp transformation using k-means clustering for breakpoints</span></span></span>
+<span class="r-in"><span><span class="fu">partition</span><span class="op">(</span><span class="va">CO2</span>, <span class="va">conc</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fl">4</span>, .style <span class="op">=</span> <span class="st">"kmeans"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 84 × 8</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Plant Type   Treatment  uptake `conc=(-Inf;135]` `conc=(135;300]`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Qn1   Quebec nonchilled   16   TRUE              FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Qn1   Quebec nonchilled   30.4 FALSE             TRUE            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Qn1   Quebec nonchilled   34.8 FALSE             TRUE            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Qn1   Quebec nonchilled   37.2 FALSE             FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Qn1   Quebec nonchilled   35.3 FALSE             FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Qn1   Quebec nonchilled   39.2 FALSE             FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Qn1   Quebec nonchilled   39.7 FALSE             FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Qn2   Quebec nonchilled   13.6 TRUE              FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Qn2   Quebec nonchilled   27.3 FALSE             TRUE            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Qn2   Quebec nonchilled   37.1 FALSE             TRUE            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 74 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: `conc=(300;588]` &lt;lgl&gt;, `conc=(588;Inf]` &lt;lgl&gt;</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Crisp transformation using Lloyd algorithm for k-means clustering for breakpoints</span></span></span>
+<span class="r-in"><span><span class="fu">partition</span><span class="op">(</span><span class="va">CO2</span>, <span class="va">conc</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fl">4</span>, .style <span class="op">=</span> <span class="st">"kmeans"</span>,</span></span>
+<span class="r-in"><span>          .style_params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>algorithm <span class="op">=</span> <span class="st">"Lloyd"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 84 × 8</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Plant Type   Treatment  uptake `conc=(-Inf;135]` `conc=(135;300]`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Qn1   Quebec nonchilled   16   TRUE              FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Qn1   Quebec nonchilled   30.4 FALSE             TRUE            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Qn1   Quebec nonchilled   34.8 FALSE             TRUE            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Qn1   Quebec nonchilled   37.2 FALSE             FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Qn1   Quebec nonchilled   35.3 FALSE             FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Qn1   Quebec nonchilled   39.2 FALSE             FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Qn1   Quebec nonchilled   39.7 FALSE             FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Qn2   Quebec nonchilled   13.6 TRUE              FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Qn2   Quebec nonchilled   27.3 FALSE             TRUE            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Qn2   Quebec nonchilled   37.1 FALSE             TRUE            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 74 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: `conc=(300;588]` &lt;lgl&gt;, `conc=(588;Inf]` &lt;lgl&gt;</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Fuzzy triangular transformation (default)</span></span></span>
 <span class="r-in"><span><span class="fu">partition</span><span class="op">(</span><span class="va">CO2</span>, <span class="va">conc</span><span class="op">:</span><span class="va">uptake</span>, .method <span class="op">=</span> <span class="st">"triangle"</span>, .breaks <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 84 × 9</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Plant Type   Treatment  `conc=(-Inf;95;548)` `conc=(95;548;1000)`</span>
@@ -326,7 +371,7 @@ creating the next fuzzy set. For example:</p><ul><li><p><code>.span = 1</code>, 
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   `uptake=(-Inf;7.7;26.6)` &lt;dbl&gt;, `uptake=(7.7;26.6;45.5)` &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   `uptake=(26.6;45.5;Inf)` &lt;dbl&gt;</span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Trapezoidal fuzzy sets, overlapping to satisfy the Ruspini condition</span></span></span>
+<span class="r-in"><span><span class="co"># Overlapping trapezoidal fuzzy sets (Ruspini condition)</span></span></span>
 <span class="r-in"><span><span class="fu">partition</span><span class="op">(</span><span class="va">CO2</span>, <span class="va">conc</span><span class="op">:</span><span class="va">uptake</span>, .method <span class="op">=</span> <span class="st">"triangle"</span>, .breaks <span class="op">=</span> <span class="fl">3</span>,</span></span>
 <span class="r-in"><span>          .span <span class="op">=</span> <span class="fl">2</span>, .inc <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 84 × 9</span></span>
@@ -347,7 +392,7 @@ creating the next fuzzy set. For example:</p><ul><li><p><code>.span = 1</code>, 
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   `uptake=(-Inf;7.7;15.3;22.8)` &lt;dbl&gt;, `uptake=(15.3;22.8;30.4;37.9)` &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   `uptake=(30.4;37.9;45.5;Inf)` &lt;dbl&gt;</span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Complex transformation with different settings per column</span></span></span>
+<span class="r-in"><span><span class="co"># Different settings per column</span></span></span>
 <span class="r-in"><span><span class="va">CO2</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">partition</span><span class="op">(</span><span class="va">Plant</span><span class="op">:</span><span class="va">Treatment</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">partition</span><span class="op">(</span><span class="va">conc</span>,</span></span>
