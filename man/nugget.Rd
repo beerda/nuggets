@@ -4,7 +4,7 @@
 \alias{nugget}
 \title{Create a nugget object of a given flavour}
 \usage{
-nugget(x, flavour, call_function, call_args)
+nugget(x, flavour, call_function, call_data, call_args)
 }
 \arguments{
 \item{x}{An object with rules or patterns, typically a tibble or data frame.
@@ -16,6 +16,10 @@ will inherit from both \code{"nugget"} and the specified flavour class.}
 
 \item{call_function}{A character scalar giving the name of the function that
 created the nugget. Stored as an attribute for provenance.}
+
+\item{call_data}{A list containing information about the data that was
+passed to the function which created the nugget. Stored as an attribute
+for reproducibility.}
 
 \item{call_args}{A list of arguments that were passed to the function which
 created the nugget. Stored as an attribute for reproducibility.}

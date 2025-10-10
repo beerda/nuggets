@@ -83,7 +83,14 @@ test_that("select condition columns", {
     expect_true(is.list(res))
     expect_equal(length(res), 4)
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$condition, c("1", "3"))
 
     attributes(res) <- NULL
@@ -106,7 +113,12 @@ test_that("select condition columns with names", {
     expect_true(is.list(res))
     expect_equal(length(res), 4)
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$condition, c("aaah", "ciis"))
     expect_setequal(res, list(list(cond = integer(0)),
                               list(cond = c("aaah"=1L)),
@@ -222,7 +234,12 @@ test_that("foci_supports arg", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$condition, "1")
     expect_equal(attr(res, "call_args")$focus, "2")
 
@@ -452,7 +469,12 @@ test_that("min_length filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$min_length, 0L)
     expect_equal(length(res), 4)
 
@@ -460,7 +482,12 @@ test_that("min_length filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$min_length, 1L)
     expect_equal(length(res), 3)
 
@@ -468,7 +495,12 @@ test_that("min_length filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$min_length, 2L)
     expect_equal(length(res), 1)
 
@@ -476,7 +508,12 @@ test_that("min_length filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$min_length, 3L)
     expect_equal(length(res), 0)
 })
@@ -489,7 +526,12 @@ test_that("max_length filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$max_length, 0L)
     expect_equal(length(res), 1)
 
@@ -497,7 +539,12 @@ test_that("max_length filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$max_length, 1L)
     expect_equal(length(res), 3)
 
@@ -505,7 +552,12 @@ test_that("max_length filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$max_length, 2L)
     expect_equal(length(res), 4)
 
@@ -513,7 +565,12 @@ test_that("max_length filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$max_length, Inf)
     expect_equal(length(res), 4)
 })
@@ -526,7 +583,12 @@ test_that("min_support filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$min_support, 0)
     expect_equal(length(res), 4)
 
@@ -534,7 +596,12 @@ test_that("min_support filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$min_support, 0.001)
     expect_equal(length(res), 4)
 
@@ -542,7 +609,12 @@ test_that("min_support filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$min_support, 0.5)
     expect_equal(length(res), 3)
 
@@ -550,7 +622,12 @@ test_that("min_support filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$min_support, 0.6)
     expect_equal(length(res), 2)
 
@@ -558,7 +635,12 @@ test_that("min_support filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$min_support, 1)
     expect_equal(length(res), 1)
 })
@@ -571,7 +653,12 @@ test_that("max_support filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$max_support, 1)
     expect_equal(length(res), 4)
 
@@ -579,7 +666,12 @@ test_that("max_support filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$max_support, 0.7)
     expect_equal(length(res), 3)
 
@@ -587,7 +679,12 @@ test_that("max_support filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$max_support, 0.6)
     expect_equal(length(res), 2)
 
@@ -595,7 +692,12 @@ test_that("max_support filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$max_support, 0.4)
     expect_equal(length(res), 1)
 
@@ -603,7 +705,12 @@ test_that("max_support filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$max_support, 0.3)
     expect_equal(length(res), 0)
 })
@@ -623,7 +730,12 @@ test_that("disjoint filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$disjoint, 1:3)
     expect_equal(length(res), 8)
     expect_setequal(res, list(list(cond = integer(0)),
@@ -643,7 +755,12 @@ test_that("disjoint filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$disjoint, c(1, 1, 2))
     expect_equal(length(res), 6)
     expect_setequal(res, list(list(cond = integer(0)),
@@ -661,7 +778,12 @@ test_that("disjoint filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$disjoint, c(1, 1, 1))
     expect_equal(length(res), 4)
     expect_setequal(res, list(list(cond = integer(0)),
@@ -681,7 +803,12 @@ test_that("disjoint filter", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$disjoint, c(1, 1, 2, 3, 4, 5))
     expect_equal(attr(res, "call_args")$condition, c("1", "2", "3"))
     expect_equal(attr(res, "call_args")$focus, c("4", "5", "6"))
@@ -709,7 +836,12 @@ test_that("disjoint is factor", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$disjoint, factor(c(1, 2, 3)))
     expect_equal(length(res), 8)
     expect_setequal(res, list(list(cond = integer(0)),
@@ -729,7 +861,12 @@ test_that("disjoint is factor", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$disjoint, factor(c(1, 1, 2)))
     expect_equal(length(res), 6)
     expect_setequal(res, list(list(cond = integer(0)),
@@ -937,7 +1074,12 @@ test_that("exclude tautology 1", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(d))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(d))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(d)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "d")
     expect_equal(attr(res, "call_args")$condition, c("a", "b", "c", "x", "y", "z"))
     expect_equal(attr(res, "call_args")$focus, c("a", "b", "c", "x", "y", "z"))
     expect_equal(attr(res, "call_args")$min_length, 1)
@@ -961,7 +1103,12 @@ test_that("exclude tautology 1", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(d))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(d))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(d)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "d")
     expect_equal(attr(res, "call_args")$condition, c("a", "b", "c", "x", "y", "z"))
     expect_equal(attr(res, "call_args")$focus, c("a", "b", "c", "x", "y", "z"))
     expect_equal(attr(res, "call_args")$min_length, 1)
@@ -993,7 +1140,12 @@ test_that("exclude tautology 1", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(d))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(d))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(d)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "d")
     expect_equal(attr(res, "call_args")$condition, c("a", "b", "c", "x", "y", "z"))
     expect_equal(attr(res, "call_args")$focus, c("a", "b", "c", "x", "y", "z"))
     expect_equal(attr(res, "call_args")$min_length, 1)
@@ -1016,7 +1168,12 @@ test_that("t-norm goedel", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$t_norm, "goedel")
 
     attributes(res) <- NULL
@@ -1039,7 +1196,12 @@ test_that("t-norm goguen", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$t_norm, "goguen")
 
     attributes(res) <- NULL
@@ -1062,7 +1224,12 @@ test_that("t-norm lukas", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$t_norm, "lukas")
 
     attributes(res) <- NULL
@@ -1103,7 +1270,12 @@ test_that("min_focus_support & filter_empty_foci", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$min_support, 0.1)
     expect_equal(attr(res, "call_args")$min_focus_support, 0.5)
     expect_equal(attr(res, "call_args")$filter_empty_foci, FALSE)
@@ -1122,7 +1294,12 @@ test_that("min_focus_support & filter_empty_foci", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$min_support, 0.1)
     expect_equal(attr(res, "call_args")$min_focus_support, 0.5)
     expect_equal(attr(res, "call_args")$filter_empty_foci, TRUE)
@@ -1156,7 +1333,12 @@ test_that("min_conditional_focus_support & filter_empty_foci", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$min_support, 0.1)
     expect_equal(attr(res, "call_args")$min_conditional_focus_support, 0.6)
     expect_equal(attr(res, "call_args")$filter_empty_foci, FALSE)
@@ -1175,7 +1357,12 @@ test_that("min_conditional_focus_support & filter_empty_foci", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(m))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(m))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(m)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "m")
     expect_equal(attr(res, "call_args")$min_support, 0.1)
     expect_equal(attr(res, "call_args")$min_conditional_focus_support, 0.6)
     expect_equal(attr(res, "call_args")$filter_empty_foci, TRUE)
@@ -1216,7 +1403,12 @@ test_that("dig return object details", {
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(attr(res, "call_function"), "dig")
-    expect_true(is.list(attr(res, "call_args")));
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(d))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(d))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(d)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "d")
     expect_equal(attr(res, "call_args")$condition, c("a", "b", "c", "d"))
     expect_equal(attr(res, "call_args")$focus, c("x", "y", "z"))
     expect_equal(attr(res, "call_args")$disjoint, c(1, 1, 2, 3, 5, 5, 6, 7))

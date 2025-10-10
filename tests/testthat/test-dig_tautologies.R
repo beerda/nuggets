@@ -15,8 +15,12 @@ test_that("dig_tautologies max_length 0", {
     expect_true(is_nugget(res, "associations"))
     expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_tautologies")
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(d))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(d))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(d)))
     expect_true(is.list(attr(res, "call_args")))
-
+    expect_equal(attr(res, "call_args")$x, "d")
     args <- attr(res, "call_args")
     expect_equal(args$antecedent, c("a", "b", "c"))
     expect_equal(args$consequent, c("a", "b", "c"))
@@ -39,6 +43,7 @@ test_that("dig_tautologies max_length 0", {
     expect_true(is_tibble(res))
     expect_true(nrow(res) == 1)
     expect_equal(attr(res, "call_function"), "dig_tautologies")
+    expect_true(is.list(attr(res, "call_data")))
     expect_true(is.list(attr(res, "call_args")))
 
     res <- dig_tautologies(d,
@@ -53,6 +58,8 @@ test_that("dig_tautologies max_length 0", {
     expect_true(is_tibble(res))
     expect_true(nrow(res) == 2)
     expect_equal(attr(res, "call_function"), "dig_tautologies")
+    expect_true(is.list(attr(res, "call_data")))
+    expect_true(is.list(attr(res, "call_args")))
     expect_true(is.list(attr(res, "call_args")))
 })
 
@@ -74,7 +81,12 @@ test_that("dig_tautologies max_length 1", {
     expect_true(is_nugget(res, "associations"))
     expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_tautologies")
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(d))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(d))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(d)))
     expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "d")
 
     args <- attr(res, "call_args")
     expect_equal(args$antecedent, c("a", "b", "c"))
@@ -98,8 +110,12 @@ test_that("dig_tautologies max_length 1", {
     expect_true(is_nugget(res, "associations"))
     expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_tautologies")
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(d))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(d))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(d)))
     expect_true(is.list(attr(res, "call_args")))
-
+    expect_equal(attr(res, "call_args")$x, "d")
     args <- attr(res, "call_args")
     expect_equal(args$antecedent, c("a", "b", "c"))
     expect_equal(args$consequent, c("a", "b", "c"))
@@ -152,7 +168,12 @@ test_that("dig_tautologies argument forwarding and attributes", {
 
     expect_true(is_nugget(res, "associations"))
     expect_equal(attr(res, "call_function"), "dig_tautologies")
-
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(d))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(d))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(d)))
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "d")
     args <- attr(res, "call_args")
     expect_equal(args$disjoint, c(1, 2))
     expect_equal(args$max_length, 2)

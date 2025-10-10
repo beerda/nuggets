@@ -91,7 +91,12 @@ test_that("dig_paired_baseline_contrasts call args", {
     expect_true(is_nugget(res, flavour = "paired_baseline_contrasts"))
     expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_paired_baseline_contrasts")
+    expect_true(is.list(attr(res, "call_data")))
+    expect_equal(attr(res, "call_data")$data_nrow, nrow(d))
+    expect_equal(attr(res, "call_data")$data_ncol, ncol(d))
+    expect_equal(attr(res, "call_data")$data_colnames, as.character(colnames(d)))
     expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$x, "d")
     expect_equal(attr(res, "call_args")$condition,
                  c("Plant=Qn1", "Plant=Qn2", "Plant=Qn3",
                    "Plant=Qc1", "Plant=Qc3", "Plant=Qc2",

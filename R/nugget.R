@@ -25,6 +25,9 @@
 #'   will inherit from both `"nugget"` and the specified flavour class.
 #' @param call_function A character scalar giving the name of the function that
 #'   created the nugget. Stored as an attribute for provenance.
+#' @param call_data A list containing information about the data that was
+#'   passed to the function which created the nugget. Stored as an attribute
+#'   for reproducibility.
 #' @param call_args A list of arguments that were passed to the function which
 #'   created the nugget. Stored as an attribute for reproducibility.
 #'
@@ -50,9 +53,11 @@
 nugget <- function(x,
                    flavour,
                    call_function,
+                   call_data,
                    call_args) {
     .must_be_character_scalar(flavour, null = TRUE)
     .must_be_character_scalar(call_function)
+    .must_be_list(call_data)
     .must_be_list(call_args)
 
     if (is.null(x) || is.data.frame(x)) {
@@ -67,6 +72,7 @@ nugget <- function(x,
     }
 
     attr(x, "call_function") <- call_function
+    attr(x, "call_data") <- call_data
     attr(x, "call_args") <- call_args
 
     x
