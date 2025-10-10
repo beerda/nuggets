@@ -12,8 +12,15 @@ creationParamsTable <- function(rules) {
                         paste(deparse(x), collapse = ""),
                         "\n```"))
     })
-    names(args) <- names(aa$call_args)
 
+    # do not present arguments containing variable names as usual values
+    for (x in c("x")) {
+        if (!is.null(args[[x]])) {
+            args[[x]] <- markdown(paste0("```r\n",
+                                         paste(aa$call_args[[x]], collapse = ""),
+                                         "\n```"))
+        }
+    }
 
     htmlrows <- list()
     for (i in seq_along(args)) {
