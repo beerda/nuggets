@@ -22,11 +22,10 @@ creationParamsTable <- function(rules) {
         }
     }
 
-    htmlrows <- list()
-    for (i in seq_along(args)) {
-        htmlrows[[i]] <- tags$tr(tags$td(paste(names(args)[i], "=")),
-                                 tags$td(args[[i]]))
-    }
+    htmlrows <- lapply(seq_along(args), function(i) {
+        tags$tr(tags$td(paste(names(args)[i], "=")),
+                tags$td(args[[i]]))
+    })
 
     tagList(fun,
             br(),
