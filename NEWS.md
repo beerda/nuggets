@@ -1,5 +1,5 @@
 # nuggets 2.0.0
-- released: ???
+- released: 2025-10-13
 - completely rewritten the core algorithm in dig()
 - all dig_*() functions now return nugget S3 objects
 - added is_almost_constant(), remove_almost_constant(), parse_condition(),
