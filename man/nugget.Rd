@@ -55,9 +55,9 @@ df <- data.frame(lhs = c("a", "b"), rhs = c("c", "d"))
 n <- nugget(df,
             flavour = "rules",
             call_function = "example_function",
-            call_data = list(data_ncol = 2,
-                 data_nrow = 2,
-                 data_colnames = c("lhs", "rhs")),
+            call_data = list(ncol = 2,
+                             nrow = 2,
+                             colnames = c("lhs", "rhs")),
             call_args = list(data = "mydata"))
 
 inherits(n, "nugget")      # TRUE
