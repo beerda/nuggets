@@ -13,7 +13,7 @@ using namespace std;
 
 
 #ifndef DEBUG
-#    define DEBUG 1
+//#    define DEBUG 1
 #endif
 
 #ifdef DEBUG
