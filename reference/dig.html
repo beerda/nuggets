@@ -123,13 +123,13 @@ are thoroughly described below in the "Details" section.</p></dd>
 
 
 <dt id="arg-condition">condition<a class="anchor" aria-label="anchor" href="#arg-condition"></a></dt>
-<dd><p>Tidyselect expression (see
+<dd><p>tidyselect expression (see
 <a href="https://tidyselect.r-lib.org/articles/syntax.html" class="external-link">tidyselect syntax</a>)
 specifying columns of <code>x</code> to use as condition predicates</p></dd>
 
 
 <dt id="arg-focus">focus<a class="anchor" aria-label="anchor" href="#arg-focus"></a></dt>
-<dd><p>Tidyselect expression (see
+<dd><p>tidyselect expression (see
 <a href="https://tidyselect.r-lib.org/articles/syntax.html" class="external-link">tidyselect syntax</a>)
 specifying columns of <code>x</code> to use as focus predicates</p></dd>
 
@@ -216,7 +216,7 @@ least one focus remains. If <code>FALSE</code>, <code>f</code> is called regardl
 
 <dt id="arg-t-norm">t_norm<a class="anchor" aria-label="anchor" href="#arg-t-norm"></a></dt>
 <dd><p>T-norm used for conjunction of weights: <code>"goedel"</code> (minimum),
-<code>"goguen"</code> (product), or <code>"lukas"</code> (Lukasiewicz).</p></dd>
+<code>"goguen"</code> (product), or <code>"lukas"</code> (Łukasiewicz).</p></dd>
 
 
 <dt id="arg-max-results">max_results<a class="anchor" aria-label="anchor" href="#arg-max-results"></a></dt>
@@ -352,13 +352,13 @@ The \(i\)-th elements of these vectors correspond to the \(i\)-th focus
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"call_function")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "dig"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"call_data")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"call_data")$data_nrow</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"call_data")$nrow</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 150</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"call_data")$data_ncol</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"call_data")$ncol</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"call_data")$data_colnames</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"call_data")$colnames</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "Sepal.Length=(-Inf;6.1]"  "Sepal.Length=(6.1;Inf]"  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "Sepal.Width=(-Inf;3.2]"   "Sepal.Width=(3.2;Inf]"   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "Petal.Length=(-Inf;3.95]" "Petal.Length=(3.95;Inf]" </span>
