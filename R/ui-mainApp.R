@@ -111,8 +111,13 @@ mainApp <- function(rules,
             tabPanel("Metadata", icon = icon("gear"),
                 fluidRow(
                     column(width = 8, offset = 2,
-                        panel(heading = "Rulebase", rulebaseTable(rules)),
-                        panel(heading = "Creation Details", creationParamsTable(rules))
+                        panel(heading = "Metadata",
+                            tabsetPanel(
+                                tabPanel("Rulebase", rulebaseTable(rules, meta)),
+                                tabPanel("Data", callDataTable(rules, meta)),
+                                tabPanel("Call", creationParamsTable(rules))
+                            )
+                        )
                     )
                 )
             ),
