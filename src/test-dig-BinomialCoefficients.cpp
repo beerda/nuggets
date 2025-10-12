@@ -4,15 +4,11 @@
 
 context("dig/BinomialCoefficients.h") {
     test_that("BinomialCoefficients 0") {
-        BinomialCoefficients table(0);
+        BinomialCoefficients table(0); // treat as 1
         expect_true(table.get(0, 0) == 1);
         expect_true(table.get(0, 1) == 0);
-        try {
-            table.get(1, 0);
-            expect_true(false); // should not reach here
-        } catch (const std::out_of_range& e) {
-            expect_true(true); // expected exception
-        }
+        expect_true(table.get(1, 0) == 1);
+        expect_true(table.get(1, 1) == 1);
     }
 
     test_that("BinomialCoefficients 1") {

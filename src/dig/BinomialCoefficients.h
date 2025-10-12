@@ -16,7 +16,7 @@ public:
      * @param maxN Maximum size of the table (dimension).
      */
     BinomialCoefficients(size_t maxN)
-        : dimension(maxN),
+        : dimension(maxN > 0 ? maxN : 1),
           table(new size_t[dimension * dimension])
     { std::fill_n(table, dimension * dimension, 0); }
 
