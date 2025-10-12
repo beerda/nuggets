@@ -44,7 +44,7 @@
 #'      for a description of the measures.
 #' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
 #'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
-#'      (Lukasiewicz t-norm).
+#'      (Łukasiewicz t-norm).
 #' @param max_results the maximum number of generated conditions to execute the
 #'      callback function on. If the number of found conditions exceeds
 #'      `max_results`, the function stops generating new conditions and returns

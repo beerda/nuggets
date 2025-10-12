@@ -39,7 +39,7 @@
 #' remove_almost_constant(d, .threshold = 1.0, .na_rm = FALSE)
 #' remove_almost_constant(d, .threshold = 1.0, .na_rm = TRUE)
 #'
-#' # Remove columns where the majority value occurs in ≥ 50% of rows
+#' # Remove columns where the majority value occurs in >= 50% of rows
 #' remove_almost_constant(d, .threshold = 0.5, .na_rm = FALSE)
 #' remove_almost_constant(d, .threshold = 0.5, .na_rm = TRUE)
 #'

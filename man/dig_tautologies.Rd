@@ -61,7 +61,7 @@ for a description of the measures.}
 
 \item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
 \code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}
-(Lukasiewicz t-norm).}
+(Łukasiewicz t-norm).}
 
 \item{max_results}{the maximum number of generated conditions to execute the
 callback function on. If the number of found conditions exceeds

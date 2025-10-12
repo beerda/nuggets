@@ -49,11 +49,11 @@ a list. Possible arguments are: \code{condition}, \code{sum}, \code{support}, \c
 \code{weights}, \code{pp}, \code{pn}, \code{np}, \code{nn}, or \code{foci_supports} (deprecated), which
 are thoroughly described below in the "Details" section.}
 
-\item{condition}{Tidyselect expression (see
+\item{condition}{tidyselect expression (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
 specifying columns of \code{x} to use as condition predicates}
 
-\item{focus}{Tidyselect expression (see
+\item{focus}{tidyselect expression (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
 specifying columns of \code{x} to use as focus predicates}
 
@@ -120,7 +120,7 @@ or \code{min_conditional_focus_support}. If \code{TRUE}, \code{f} is called only
 least one focus remains. If \code{FALSE}, \code{f} is called regardless.}
 
 \item{t_norm}{T-norm used for conjunction of weights: \code{"goedel"} (minimum),
-\code{"goguen"} (product), or \code{"lukas"} (Lukasiewicz).}
+\code{"goguen"} (product), or \code{"lukas"} (Łukasiewicz).}
 
 \item{max_results}{Maximum number of results (objects returned by the
 callback \code{f}) to store and return in the output list. When this limit

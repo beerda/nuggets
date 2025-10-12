@@ -20,7 +20,7 @@
 #'   predicate mentioned in `condition` must be present as a column in `x`.
 #' @param t_norm A string specifying the triangular norm (t-norm) used to
 #'   compute conjunctions of predicate values. Must be one of `"goedel"`
-#'   (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"` (Lukasiewicz
+#'   (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"` (Łukasiewicz
 #'   t-norm).
 #'
 #' @return A numeric matrix with entries in the interval \eqn{[0, 1]} giving

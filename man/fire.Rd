@@ -18,7 +18,7 @@ predicate mentioned in \code{condition} must be present as a column in \code{x}.
 
 \item{t_norm}{A string specifying the triangular norm (t-norm) used to
 compute conjunctions of predicate values. Must be one of \code{"goedel"}
-(minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"} (Lukasiewicz
+(minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"} (Łukasiewicz
 t-norm).}
 }
 \value{

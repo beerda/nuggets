@@ -83,10 +83,10 @@
 #'   a list. Possible arguments are: `condition`, `sum`, `support`, `indices`,
 #'   `weights`, `pp`, `pn`, `np`, `nn`, or `foci_supports` (deprecated), which
 #'   are thoroughly described below in the "Details" section.
-#' @param condition Tidyselect expression (see
+#' @param condition tidyselect expression (see
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying columns of `x` to use as condition predicates
-#' @param focus Tidyselect expression (see
+#' @param focus tidyselect expression (see
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying columns of `x` to use as focus predicates
 #' @param disjoint An atomic vector (length = number of columns in `x`) defining
@@ -143,7 +143,7 @@
 #'   or `min_conditional_focus_support`. If `TRUE`, `f` is called only when at
 #'   least one focus remains. If `FALSE`, `f` is called regardless.
 #' @param t_norm T-norm used for conjunction of weights: `"goedel"` (minimum),
-#'   `"goguen"` (product), or `"lukas"` (Lukasiewicz).
+#'   `"goguen"` (product), or `"lukas"` (Łukasiewicz).
 #' @param max_results Maximum number of results (objects returned by the
 #'   callback `f`) to store and return in the output list. When this limit
 #'   is reached, generation of further conditions stops. Use a positive

@@ -7,7 +7,7 @@
 - added dig_tautologies()
 - added geom_diamond()
 - added .span and .inc arguments to partition()
-- added various styles (quantile, kmeans, hclust, bclust, ...) of crisp
+- added various styles (quantile, k-means, hclust, bclust, ...) of crisp
   partitioning to partition()
 - added explore() function for interactive exploration of patterns
 - added exclude argument to dig() and other dig_*() functions
