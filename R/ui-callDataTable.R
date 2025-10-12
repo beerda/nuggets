@@ -7,7 +7,7 @@ callDataTable <- function(rules, meta) {
 
     for (cond in meta$data_name[meta$type == "condition"]) {
         d[[cond]] <- lapply(cn, function(col) {
-            if (col %in% call_args[[cond]]) tags$span(style = "color: limegreen;", "✔") else ""
+            if (col %in% call_args[[cond]]) tags$span(style = "color: limegreen;", "\u2714") else ""
         })
     }
 
