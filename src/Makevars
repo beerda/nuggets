@@ -20,13 +20,6 @@ SOURCES=RcppExports.cpp \
 	test-dig-FloatChain.cpp \
 	test-dig-FubitChain.cpp \
 	test-dig-TautologyTree.cpp
-	#test-dig-Data.cpp \
-	#test-dig-DataSorter.cpp \
-	#test-dig-DualChain.cpp \
-	#test-dig-Iterator.cpp \
-	#test-dig-Task.cpp \
-	#test-dig-TaskSequence.cpp \
-	#test-dig-VectorNumChain.cpp
 
 # Obtain the object files
 OBJECTS=$(SOURCES:.cpp=.o)
