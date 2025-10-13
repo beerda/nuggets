@@ -116,6 +116,7 @@
 #' @importFrom tibble tibble
 #' @importFrom tibble tribble
 #' @importFrom tidyr expand_grid
+#' @importFrom tidyr pivot_wider
 #' @importFrom tidyselect all_of
 #' @importFrom tidyselect eval_select
 #' @importFrom tidyselect everything
