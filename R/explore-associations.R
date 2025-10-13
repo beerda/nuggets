@@ -37,7 +37,7 @@
 #' }
 #' @export
 explore.associations <- function(x, data = NULL, ...) {
-    .must_inherit(x, "associations")
+    .must_be_nugget(x, "associations")
     .must_be_data_frame(data, null = TRUE)
 
     meta <- tribble(
