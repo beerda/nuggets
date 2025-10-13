@@ -331,7 +331,7 @@
                       call = call)
         } else {
             if (!isTRUE(f(col))) {
-                cli_abort(c("Column {.var {column}} must be {msg}.",
+                cli_abort(c("Column {.var {column}} of {.arg {arg_x}} must be {msg}.",
                             "x" = "You've supplied a {.cls {class(col)}}."),
                           call = call)
             }
@@ -341,3 +341,4 @@
 
 .must_have_column <- ..must_have_column(function(x) TRUE, "")
 .must_have_character_column <- ..must_have_column(is.character, "a character vector")
+.must_have_numeric_column <- ..must_have_column(is.numeric, "a numeric vector")
