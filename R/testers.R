@@ -132,6 +132,23 @@
 }
 
 
+.must_be_nugget <- function(x,
+                            flavour = NULL,
+                            null = FALSE,
+                            arg = caller_arg(x),
+                            call = caller_env()) {
+    if (!isTRUE(is_nugget(x, flavour) | (isTRUE(null) && is.null(x)))) {
+        na <- if (length(x) == 1 && is.na(x)) " NA" else ""
+        msg <- if (null) " or NULL" else ""
+        flav <- if (is.null(flavour)) "nugget" else "nugget of flavour {.cls {flavour}}"
+        cli_abort(c(paste0("{.arg {arg}} must be a ", flav, msg, "."),
+                    "x" = "You've supplied a {.cls {class(x)}}{na}."),
+                  call = call)
+    }
+}
+
+
+
 .must_be_atomic_scalar <- ..must_be_type(is_scalar_atomic, "an atomic scalar")
 .must_be_integerish_scalar <- ..must_be_type(is_scalar_integerish, "an integerish scalar")
 .must_be_double_scalar <- ..must_be_type(is_scalar_double, "a double scalar")
