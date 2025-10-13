@@ -59,7 +59,7 @@ LinkingTo:
     Rcpp,
     RcppThread,
     testthat
-SystemRequirements: C++20
+SystemRequirements: C++17
 Suggests: 
     arules,
     dplyr,
