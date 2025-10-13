@@ -1,3 +1,6 @@
+# nuggets 2.0.1
+- released: ???
+
 # nuggets 2.0.0
 - released: 2025-10-13
 - completely rewritten the core algorithm in dig()
