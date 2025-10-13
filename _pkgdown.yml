@@ -36,10 +36,11 @@ reference:
       - dig
       - dig_grid
 
-  - title: "Pattern Pre- and Post-processing"
+  - title: "Pattern Post-processing"
     desc: >
-      Functions for pre- and post-processing of extracted patterns.
+      Functions for post-processing of extracted patterns.
     contents:
+      - association_matrix
       - explore.associations
       - geom_diamond
       - remove_ill_conditions
