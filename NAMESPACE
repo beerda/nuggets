@@ -2,7 +2,6 @@
 
 S3method(explore,associations)
 export(bound_range)
-export(dichotomize)
 export(dig)
 export(dig_associations)
 export(dig_baseline_contrasts)
