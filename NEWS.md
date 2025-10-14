@@ -1,3 +1,6 @@
+# nuggets 2.1.0
+- released: ???
+
 # nuggets 2.0.1
 - released: 2025-10-13
 - fixed problem with C++20 and testthat by downgrading system req. to C++17
