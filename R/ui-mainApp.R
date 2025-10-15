@@ -88,7 +88,7 @@ mainApp <- function(rules,
                    windowTitle = title,
                    header = header,
                    footer = footer,
-            tabPanel("Rules", icon = icon("table"),
+            tabPanel("Rules", icon = icon("circle-nodes"),
                 fluidRow(
                     column(width = 4,
                         panel(heading = "Filters",
@@ -103,12 +103,17 @@ mainApp <- function(rules,
                         )
                     ),
                     column(width = 8,
-                        panel(heading = "Filtered Rules", rulesTable$ui())
+                        panel(heading = "Filtered Rules",
+                            tabsetPanel(
+                                tabPanel("Table",  rulesTable$ui()),
+                                tabPanel("Clusters")
+                            )
+                        )
                     )
                 )
             ),
             detailPanel,
-            tabPanel("Metadata", icon = icon("gear"),
+            tabPanel("Metadata", icon = icon("list"),
                 fluidRow(
                     column(width = 8, offset = 2,
                         panel(heading = "Metadata",
