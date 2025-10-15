@@ -217,6 +217,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// parse_condition
+List parse_condition(CharacterVector x);
+RcppExport SEXP _nuggets_parse_condition(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< CharacterVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(parse_condition(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // raisedcos_
 NumericVector raisedcos_(NumericVector x, NumericVector ctx);
 RcppExport SEXP _nuggets_raisedcos_(SEXP xSEXP, SEXP ctxSEXP) {
@@ -275,6 +286,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_nuggets_invol_neg", (DL_FUNC) &_nuggets_invol_neg, 1},
     {"_nuggets_strict_neg", (DL_FUNC) &_nuggets_strict_neg, 1},
     {"_nuggets_dig_", (DL_FUNC) &_nuggets_dig_, 6},
+    {"_nuggets_parse_condition", (DL_FUNC) &_nuggets_parse_condition, 1},
     {"_nuggets_raisedcos_", (DL_FUNC) &_nuggets_raisedcos_, 2},
     {"_nuggets_triangle_", (DL_FUNC) &_nuggets_triangle_, 2},
     {"_nuggets_which_antichain_", (DL_FUNC) &_nuggets_which_antichain_, 2},

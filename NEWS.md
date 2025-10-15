@@ -1,5 +1,6 @@
 # nuggets 2.1.0
 - released: ???
+- parse_condition() rewritten in C++ for better performance
 
 # nuggets 2.0.1
 - released: 2025-10-13

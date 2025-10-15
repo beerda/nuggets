@@ -73,6 +73,10 @@ dig_ <- function(data, namesVector, isCondition, isFocus, callback, confList) {
     .Call(`_nuggets_dig_`, data, namesVector, isCondition, isFocus, callback, confList)
 }
 
+.parse_condition <- function(x) {
+    .Call(`_nuggets_parse_condition`, x)
+}
+
 raisedcos_ <- function(x, ctx) {
     .Call(`_nuggets_raisedcos_`, x, ctx)
 }

@@ -69,12 +69,3 @@ parse_condition <- function(...,
 
     res
 }
-
-
-.parse_condition <- function(x) {
-    res <- x
-    res <- sub("^\\s*\\{", "", res)
-    res <- sub("\\}\\s*$", "", res)
-
-    strsplit(res, "\\s*,\\s*")
-}

@@ -1,6 +1,12 @@
 test_that("parse_condition", {
     expect_equal(parse_condition(), list())
     expect_equal(parse_condition(character(0)), list())
+    expect_equal(parse_condition("{}"), list(character(0)))
+    expect_equal(parse_condition("{,}"), list(character(0)))
+    expect_equal(parse_condition("{a,b,,c}"), list(c("a", "b", "c")))
+    expect_equal(parse_condition("{a,b,,c,}"), list(c("a", "b", "c")))
+    expect_equal(parse_condition("{,a,b,,c}"), list(c("a", "b", "c")))
+    expect_equal(parse_condition("{,a,b,,c,}"), list(c("a", "b", "c")))
 
     expect_equal(parse_condition(c("{a}", "{x=1, z=2, y=3}", NA, "{}"),
                                  .sort = FALSE),
