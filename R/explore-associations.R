@@ -74,9 +74,9 @@ explore.associations <- function(x, data = NULL, ...) {
                                                  data = data)
     }
 
-    mainApp(x,
-            title = "Associations",
-            meta = meta,
-            header = header,
-            detailWindow = detailModule)
+    exploreApp(x,
+               title = "Associations",
+               meta = meta,
+               header = header,
+               detailWindow = detailModule)
 }

@@ -1,9 +1,9 @@
-mainApp <- function(rules,
-                    title,
-                    meta,
-                    header = NULL,
-                    footer = NULL,
-                    detailWindow = NULL) {
+exploreApp <- function(rules,
+                       title,
+                       meta,
+                       header = NULL,
+                       footer = NULL,
+                       detailWindow = NULL) {
     # to show special numeric values (such as Inf) in DT
     options(htmlwidgets.TOJSON_ARGS = list(na = 'string'))
 
