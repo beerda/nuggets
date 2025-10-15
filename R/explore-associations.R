@@ -56,27 +56,24 @@ explore.associations <- function(x, data = NULL, ...) {
     x$id <- seq_len(nrow(x))
     meta <- meta[meta$data_name %in% colnames(x), , drop = FALSE]
 
-    header <- NULL
-    detailModule <- NULL
+    extensions <- list()
     if (is.null(data)) {
-        header <- infoBox(status = "warning",
-                          dismissible = TRUE,
-                          div("You started the explorer with rules only.",
-                              "Some advanced features are disabled.",
-                              "To enable full functionality, run",
-                              span(class = "mono",
-                                "explore(rules, data)"),
-                              "with the original dataset used to mine the rules."))
+        extensions[["navbarPage.header"]] <- infoBox(status = "warning",
+            dismissible = TRUE,
+            div("You started the explorer with rules only.",
+                "Some advanced features are disabled.",
+                "To enable full functionality, run",
+                span(class = "mono", "explore(rules, data)"),
+                "with the original dataset used to mine the rules."))
     } else {
-        detailModule <- associationsDetailModule(id = "details",
-                                                 rules = x,
-                                                 meta = meta,
-                                                 data = data)
+        extensions[["detailWindow"]] <- associationsDetailModule(id = "details",
+                                                                 rules = x,
+                                                                 meta = meta,
+                                                                 data = data)
     }
 
     exploreApp(x,
                title = "Associations",
                meta = meta,
-               header = header,
-               detailWindow = detailModule)
+               extensions = extensions)
 }

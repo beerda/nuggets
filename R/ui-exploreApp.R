@@ -1,9 +1,7 @@
 exploreApp <- function(rules,
                        title,
                        meta,
-                       header = NULL,
-                       footer = NULL,
-                       detailWindow = NULL) {
+                       extensions) {
     # to show special numeric values (such as Inf) in DT
     options(htmlwidgets.TOJSON_ARGS = list(na = 'string'))
 
@@ -15,6 +13,7 @@ exploreApp <- function(rules,
 
     detailAction <- NULL
     detailPanel <- NULL
+    detailWindow <- callExtension(extensions, "detailWindow")
     if (!is.null(detailWindow)) {
         detailAction <- list(title = "show detailed analysis of the rule", icon = "magnifying-glass")
         detailPanel <- tabPanel("Rule Detail",
@@ -86,8 +85,8 @@ exploreApp <- function(rules,
                                 title),
                    id = "mainTabset",
                    windowTitle = title,
-                   header = header,
-                   footer = footer,
+                   header = callExtension(extensions, "navbarPage.header"),
+                   footer = callExtension(extensions, "navbarPage.footer"),
             tabPanel("Rules", icon = icon("circle-nodes"),
                 fluidRow(
                     column(width = 4,
