@@ -1,10 +1,3 @@
-/*
- * File name: algebra.cpp
- * Date:      2016/01/29 10:49
- * Author:    Michal Burda
- */
-
-
 #include <Rcpp.h>
 
 
