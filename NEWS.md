@@ -1,6 +1,7 @@
 # nuggets 2.1.0
 - released: ???
 - parse_condition() rewritten in C++ for better performance
+- added cluster_associations()
 
 # nuggets 2.0.1
 - released: 2025-10-13
