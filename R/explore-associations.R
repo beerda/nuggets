@@ -41,21 +41,23 @@ explore.associations <- function(x, data = NULL, ...) {
     .must_be_data_frame(data, null = TRUE)
 
     meta <- tribble(
-        ~data_name,          ~short_name,  ~long_name,           ~type,       ~round, ~scatter,
-        "antecedent",        "antecedent", "Antecedent",         "condition", NA,     FALSE,
-        "consequent",        "consequent", "Consequent",         "condition", NA,     FALSE,
-        "coverage",          "asupp",      "Antecedent Support", "numeric",   2,      FALSE,
-        "conseq_support",    "csupp",      "Consequent Support", "numeric",   2,      FALSE,
-        "support",           "supp",       "Rule Support",       "numeric",   2,      TRUE,
-        "confidence",        "conf",       "Confidence",         "numeric",   2,      TRUE,
-        "lift",              "lift",       "Lift",               "numeric",   2,      TRUE,
-        "conviction",        "conv",       "Conviction",         "numeric",   2,      TRUE,
-        "antecedent_length", "len",        "Antecedent Length",  "integer",   NA,     TRUE
+        ~data_name,          ~short_name,  ~long_name,           ~type,       ~round, ~scatter, ~clustering_default,
+        "antecedent",        "antecedent", "Antecedent",         "condition", NA,     FALSE,    0,
+        "consequent",        "consequent", "Consequent",         "condition", NA,     FALSE,    0,
+        "coverage",          "asupp",      "Antecedent Support", "numeric",   2,      FALSE,    0,
+        "conseq_support",    "csupp",      "Consequent Support", "numeric",   2,      FALSE,    0,
+        "support",           "supp",       "Rule Support",       "numeric",   2,      TRUE,     0,
+        "confidence",        "conf",       "Confidence",         "numeric",   2,      TRUE,     9,
+        "lift",              "lift",       "Lift",               "numeric",   2,      TRUE,     10,
+        "conviction",        "conv",       "Conviction",         "numeric",   2,      TRUE,     0,
+        "antecedent_length", "len",        "Antecedent Length",  "integer",   NA,     TRUE,     0
     )
 
     x$id <- seq_len(nrow(x))
     meta <- meta[meta$data_name %in% colnames(x), , drop = FALSE]
 
+    detailWindow <- NULL
+    clusterWindow <- NULL
     extensions <- list()
     if (is.null(data)) {
         extensions[["navbarPage.header"]] <- infoBox(
@@ -80,29 +82,43 @@ explore.associations <- function(x, data = NULL, ...) {
         extensions[["filteredRulesPanel.rulesTable.action"]] <- list(
             title = "show detailed analysis of the rule",
             icon = "magnifying-glass")
+    }
 
-        extensions[["server"]] <- function(input, output, session, ruleSelection) {
-            observeEvent(ruleSelection(), {
-                if (is.null(ruleSelection())) {
-                    hide(selector = '#mainTabset a[data-value="rule-detail-tab"]')
-                } else {
-                    show(selector = '#mainTabset a[data-value="rule-detail-tab"]')
-                    updateTabsetPanel(session, "mainTabset", selected = "rule-detail-tab")
-                }
-            }, ignoreNULL = FALSE)
+    if (nrow(x) > 2) {
+        clusterWindow <- associationsClusterModule(
+            id = "clusters", rules = x, meta = meta, data = data)
 
-            detailWindow$server(ruleSelection)
+        extensions[["filteredRulesPanel"]] <- function(...) {
+            return(
+                tabsetPanel(
+                    tabPanel("Table", ...),
+                    tabPanel("Clusters", clusterWindow$ui())
+                )
+            )
         }
     }
 
-    extensions[["filteredRulesPanel"]] <- function(...) {
-        return(
-            tabsetPanel(
-                tabPanel("Table", ...),
-                tabPanel("Clusters")
-            )
-        )
+    extensions[["server"]] <- function(input,
+                                       output,
+                                       session,
+                                       rulesFiltering,
+                                       ruleSelection) {
+        observeEvent(ruleSelection(), {
+            if (is.null(ruleSelection())) {
+                hide(selector = '#mainTabset a[data-value="rule-detail-tab"]')
+            } else {
+                show(selector = '#mainTabset a[data-value="rule-detail-tab"]')
+                updateTabsetPanel(session, "mainTabset", selected = "rule-detail-tab")
+            }
+        }, ignoreNULL = FALSE)
+
+        if (!is.null(detailWindow))
+            detailWindow$server(ruleSelection)
+
+        if (!is.null(clusterWindow))
+            clusterWindow$server(rulesFiltering)
     }
+
 
     exploreApp(x,
                title = "Associations",

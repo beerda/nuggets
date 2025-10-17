@@ -148,6 +148,7 @@ exploreApp <- function(rules,
                       input = input,
                       output = output,
                       session = session,
+                      rulesFiltering = rulesFiltering,
                       ruleSelection = ruleSelection)
     }
 
