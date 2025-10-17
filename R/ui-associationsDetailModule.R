@@ -7,26 +7,24 @@ associationsDetailModule <- function(id, rules, meta, data) {
     }
 
     list(ui = function() {
-            tagList(
-                fluidRow(
-                    column(width = 4,
-                        panel(heading = "Selected Rule",
-                            uiOutput(NS(id, "selectedRule"))
-                        ),
-                        panel(heading = "Settings",
-                            radioButtons(NS(id, "shorteningRadio"),
-                                         "Abbreviation of predicates",
-                                         choices = c("letters", "abbrev4", "abbrev8", "none"),
-                                         selected = "letters",
-                                         inline = TRUE)
-                        )
+            fluidRow(
+                column(width = 4,
+                    panel(heading = "Selected Rule",
+                        uiOutput(NS(id, "selectedRule"))
                     ),
-                    column(width = 8,
-                        panel(heading = "Ancestors",
-                            dataTableOutput(NS(id, "ancestorTable")),
-                            br(),
-                            plotOutput(NS(id, "ancestorPlot"), height = "500px")
-                        )
+                    panel(heading = "Settings",
+                        radioButtons(NS(id, "shorteningRadio"),
+                                     "Abbreviation of predicates",
+                                     choices = c("letters", "abbrev4", "abbrev8", "none"),
+                                     selected = "letters",
+                                     inline = TRUE)
+                    )
+                ),
+                column(width = 8,
+                    panel(heading = "Ancestors",
+                        dataTableOutput(NS(id, "ancestorTable")),
+                        br(),
+                        plotOutput(NS(id, "ancestorPlot"), height = "500px")
                     )
                 )
             )
