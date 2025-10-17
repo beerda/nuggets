@@ -8,24 +8,12 @@ exploreApp <- function(rules,
     addResourcePath("pkgimages",
                     system.file(c("figures"),
                                 package = "nuggets"))
-
     title <- paste0(title, " - Nuggets Explorer")
-
-    detailAction <- NULL
-    detailPanel <- NULL
-    detailWindow <- callExtension(extensions, "detailWindow")
-    if (!is.null(detailWindow)) {
-        detailAction <- list(title = "show detailed analysis of the rule", icon = "magnifying-glass")
-        detailPanel <- tabPanel("Rule Detail",
-                                value = "rule-detail-tab",
-                                icon = icon("magnifying-glass"),
-                                detailWindow$ui())
-    }
 
     rulesTable <- rulesTableModule("rulesTable",
                                    rules = rules,
                                    meta = meta,
-                                   action = detailAction)
+                                   action = callExtension(extensions, "filteredRulesPanel.rulesTable.action"))
 
     filters <- lapply(seq_len(nrow(meta)), function(i) {
         col <- meta$data_name[i]
@@ -103,15 +91,14 @@ exploreApp <- function(rules,
                     ),
                     column(width = 8,
                         panel(heading = "Filtered Rules",
-                            tabsetPanel(
-                                tabPanel("Table",  rulesTable$ui()),
-                                tabPanel("Clusters")
-                            )
+                            callExtension(extensions,
+                                          "filteredRulesPanel",
+                                          rulesTable$ui())
                         )
                     )
                 )
             ),
-            detailPanel,
+            callExtension(extensions, "navbarPage.RulesTab.after"),
             tabPanel("Metadata", icon = icon("list"),
                 fluidRow(
                     column(width = 8, offset = 2,
@@ -156,18 +143,12 @@ exploreApp <- function(rules,
 
         ruleSelection <- rulesTable$server(rulesFiltering)
 
-        if (!is.null(detailWindow)) {
-            observeEvent(ruleSelection(), {
-                if (is.null(ruleSelection())) {
-                    hide(selector = '#mainTabset a[data-value="rule-detail-tab"]')
-                } else {
-                    show(selector = '#mainTabset a[data-value="rule-detail-tab"]')
-                    updateTabsetPanel(session, "mainTabset", selected = "rule-detail-tab")
-                }
-            }, ignoreNULL = FALSE)
-
-            detailWindow$server(ruleSelection)
-        }
+        callExtension(extensions,
+                      "server",
+                      input = input,
+                      output = output,
+                      session = session,
+                      ruleSelection = ruleSelection)
     }
 
     shinyApp(ui = ui, server = server)

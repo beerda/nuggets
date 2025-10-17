@@ -58,18 +58,50 @@ explore.associations <- function(x, data = NULL, ...) {
 
     extensions <- list()
     if (is.null(data)) {
-        extensions[["navbarPage.header"]] <- infoBox(status = "warning",
+        extensions[["navbarPage.header"]] <- infoBox(
+            status = "warning",
             dismissible = TRUE,
             div("You started the explorer with rules only.",
                 "Some advanced features are disabled.",
                 "To enable full functionality, run",
                 span(class = "mono", "explore(rules, data)"),
                 "with the original dataset used to mine the rules."))
+
     } else {
-        extensions[["detailWindow"]] <- associationsDetailModule(id = "details",
-                                                                 rules = x,
-                                                                 meta = meta,
-                                                                 data = data)
+        detailWindow <- associationsDetailModule(
+            id = "details", rules = x, meta = meta, data = data)
+
+        extensions[["navbarPage.RulesTab.after"]] <- tabPanel(
+            "Rule Detail",
+            value = "rule-detail-tab",
+            icon = icon("magnifying-glass"),
+            detailWindow$ui())
+
+        extensions[["filteredRulesPanel.rulesTable.action"]] <- list(
+            title = "show detailed analysis of the rule",
+            icon = "magnifying-glass")
+
+        extensions[["server"]] <- function(input, output, session, ruleSelection) {
+            observeEvent(ruleSelection(), {
+                if (is.null(ruleSelection())) {
+                    hide(selector = '#mainTabset a[data-value="rule-detail-tab"]')
+                } else {
+                    show(selector = '#mainTabset a[data-value="rule-detail-tab"]')
+                    updateTabsetPanel(session, "mainTabset", selected = "rule-detail-tab")
+                }
+            }, ignoreNULL = FALSE)
+
+            detailWindow$server(ruleSelection)
+        }
+    }
+
+    extensions[["filteredRulesPanel"]] <- function(...) {
+        return(
+            tabsetPanel(
+                tabPanel("Table", ...),
+                tabPanel("Clusters")
+            )
+        )
     }
 
     exploreApp(x,
