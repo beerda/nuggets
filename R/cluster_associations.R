@@ -71,6 +71,8 @@ cluster_associations <- function(x,
     .must_be_enum(algorithm,
                   c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"),
                   arg = "algorithm")
+    .must_be_integerish_scalar(predicates_in_label)
+    .must_be_greater_eq(predicates_in_label, 1)
 
     by <- enquo(by)
 
@@ -79,6 +81,15 @@ cluster_associations <- function(x,
                               error_context = list(arg_x = "x",
                                                    arg_value = "by",
                                                    call = current_env()))
+
+    if (n >= nrow(mat)) {
+        cli_abort(c(
+            "The number of clusters {.arg n} must be less than the number of unique antecedents in {.arg x}.",
+            "i" = "The number of unique antecedents in {.arg x} is {nrow(mat)}.",
+            "x" = "You provided {.arg n} = {n}."
+        ))
+    }
+
     fit <- kmeans(mat, centers = n, algorithm = algorithm)
     matches <- match(x$antecedent, rownames(mat))
     clust_vec <- as.vector(fit$cluster[matches])
@@ -131,14 +142,22 @@ cluster_associations <- function(x,
                              allow_empty = TRUE, # we test for empty selection in association_matrix
                              allow_predicates = TRUE,
                              error_call = current_env())
-    res <- res[order(res[[names(value_col)[1]]], decreasing = TRUE), , drop = FALSE]
+    ord <- order(res[[names(value_col)[1]]], decreasing = TRUE)
+    res <- res[ord, , drop = FALSE]
 
     # ensure factors have levels in the desired order
-    res$cluster_label <- factor(res$cluster_label, levels = unique(res$cluster_label))
-    res$consequent <- factor(res$consequent, levels = unique(res$consequent))
+    uniq_cluster_label <- unique(res$cluster_label)
+    res$cluster_label <- factor(res$cluster_label, levels = uniq_cluster_label)
+    uniq_consequent <- unique(res$consequent)
+    res$consequent <- factor(res$consequent, levels = uniq_consequent)
 
-    attr(res, "cluster_predicates") <- clust_predicates
-    attr(res, "cluster_size") <- clust_size
+    # reassign cluster numbers accordingly to the desired order
+    cluster_order <- unique(res$cluster)
+    res$cluster <- as.integer(factor(res$cluster, levels = cluster_order))
+
+    attr(res, "cluster_predicates") <- clust_predicates[cluster_order]
+    attr(res, "cluster_size") <- clust_size[cluster_order]
+    attr(res, "consequent") <- uniq_consequent
 
     res
 }
