@@ -59,6 +59,18 @@ explore.associations <- function(x, data = NULL, ...) {
     detailWindow <- NULL
     clusterWindow <- NULL
     extensions <- list()
+
+    if (nrow(x) > 2) {
+        clusterWindow <- associationsClusterModule(
+            id = "clustering", rules = x, meta = meta, data = data)
+        extensions[["navbarPage.enableSidebar.for"]] <- "clustering"
+        extensions[["navbarPage.Metadata.before1"]] <- tabPanel(
+            "Clustering",
+            icon = icon("circle-nodes"),
+            value = "clustering",
+            clusterWindow$ui())
+    }
+
     if (is.null(data)) {
         extensions[["navbarPage.header"]] <- infoBox(
             status = "warning",
@@ -73,7 +85,7 @@ explore.associations <- function(x, data = NULL, ...) {
         detailWindow <- associationsDetailModule(
             id = "details", rules = x, meta = meta, data = data)
 
-        extensions[["navbarPage.Metadata.before"]] <- tabPanel(
+        extensions[["navbarPage.Metadata.before3"]] <- tabPanel(
             "Rule Detail",
             value = "rule-detail-tab",
             icon = icon("magnifying-glass"),
@@ -82,20 +94,6 @@ explore.associations <- function(x, data = NULL, ...) {
         extensions[["filteredRulesPanel.rulesTable.action"]] <- list(
             title = "show detailed analysis of the rule",
             icon = "magnifying-glass")
-    }
-
-    if (nrow(x) > 2) {
-        clusterWindow <- associationsClusterModule(
-            id = "clusters", rules = x, meta = meta, data = data)
-
-        extensions[["filteredRulesPanel"]] <- function(...) {
-            return(
-                tabsetPanel(
-                    tabPanel("Table", ...),
-                    tabPanel("Clusters", clusterWindow$ui())
-                )
-            )
-        }
     }
 
     extensions[["server"]] <- function(input,

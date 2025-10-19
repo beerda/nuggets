@@ -4,36 +4,43 @@ associationsClusterModule <- function(id, rules, meta, data) {
     selected_measure <- meta$data_name[which.max(meta$clustering_default)]
 
     list(ui = function() {
-            tagList(
-                fluidRow(
-                    column(width = 6,
-                        sliderInput(NS(id, "k"),
-                                    "Number of clusters",
-                                    min = 2,
-                                    max = max_clusters,
-                                    value = 2,
-                                    step = 1,
-                                    width = "100%"),
-                    ),
-                    column(width = 6,
-                        selectInput(NS(id, "by"),
-                                    "Clustering measure",
-                                    choices = measures,
-                                    selected = selected_measure,
-                                    width = "100%"),
-                        selectInput(NS(id, "algorithm"),
-                                    "K-Means variant",
-                                    choices = c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"),
-                                    selected = 1,
-                                    width = "100%"),
-                    ),
-                ),
-                fluidRow(
-                    column(width = 12,
-                        hr(),
-                        dataTableOutput(NS(id, "clusteringTable")),
-                        br(),
-                        plotOutput(NS(id, "clusteringPlot"), height = "500px")
+            fluidRow(
+                column(width = 12,
+                    panel(heading = "K-Means Clustering of Association Rules",
+                        infoBox(paste0("Cluster the association rules based on a selected numeric measure.",
+                                       "Each cluster is represented by a set of rules with similar measures ",
+                                       "with respect to consequents.")),
+                        fluidRow(
+                            column(width = 6,
+                                sliderInput(NS(id, "k"),
+                                            "Number of clusters",
+                                            min = 2,
+                                            max = max_clusters,
+                                            value = 2,
+                                            step = 1,
+                                            width = "100%"),
+                            ),
+                            column(width = 6,
+                                selectInput(NS(id, "by"),
+                                            "Clustering measure",
+                                            choices = measures,
+                                            selected = selected_measure,
+                                            width = "100%"),
+                                selectInput(NS(id, "algorithm"),
+                                            "K-Means variant",
+                                            choices = c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"),
+                                            selected = 1,
+                                            width = "100%"),
+                            ),
+                        ),
+                        fluidRow(
+                            column(width = 12,
+                                hr(),
+                                dataTableOutput(NS(id, "clusteringTable")),
+                                br(),
+                                plotOutput(NS(id, "clusteringPlot"), height = "500px")
+                            )
+                        )
                     )
                 )
             )
