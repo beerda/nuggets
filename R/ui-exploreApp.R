@@ -65,6 +65,7 @@ exploreApp <- function(rules,
                 table.info-table.hlrows tbody tr:nth-child(odd) {background-color: #f5f5f5;}
 
                 nav.navbar { margin-bottom: 15px; }
+                .grayed { opacity: 0.3; pointer-events: none; }
 
                 /* container for the left sidebar */
                 .shared-sidebar {
@@ -95,6 +96,7 @@ exploreApp <- function(rules,
                 #mainContent > div.container-fluid > div.tab-content {
                     margin-left: max(393px, 25%);
                     padding: 0px 0px 0px 7px;
+                    margin-top: 67px;
                 }
                 /* when 'no-sidebar' class is present we remove the left margin */
                 #mainContent.no-sidebar > div.container-fluid > div.tab-content {
@@ -137,7 +139,7 @@ exploreApp <- function(rules,
                 title = tagList(
                     actionButton("toggle_sidebar",
                                  label = NULL,
-                                 icon = icon("filter"),
+                                 icon = icon("caret-down"),
                                  style = "padding: 0px 10px 0px 10px;"),
                     span(tags$img(src = "pkgimages/nugget.png",
                                          style = "padding-left: 10px; filter: grayscale(100%);",
@@ -145,35 +147,34 @@ exploreApp <- function(rules,
                                 title)),
                 id = "nav",
                 windowTitle = title,
+                fluid = TRUE,
+                position = "fixed-top",
                 footer = callExtension(extensions, "navbarPage.footer"),
                 header = tagList(
                     callExtension(extensions, "navbarPage.header"),
-        # Shared sidebar placed outside navbarPage so it persists across tabs
-        div(id = "sharedSidebar", class = "shared-sidebar",
-            panel(heading = "Filters",
-                tabsetPanel(
-                    tabPanel("Basic", filterTabSet),
-                    tabPanel("Advanced",
-                        tabsetPanel(type = "pills", header = tags$hr(),
-                            scatterFilter$ui()
-                        )
-                    )
-                )
-            )
-        )),
-                tabPanel("Rules", icon = icon("circle-nodes"), value = "rules",
-                    fluidRow(
-                        column(width = 12,
-                            panel(heading = "Filtered Rules",
-                                callExtension(extensions,
-                                              "filteredRulesPanel",
-                                              rulesTable$ui())
+                    div(id = "sharedSidebar", class = "shared-sidebar",
+                        panel(heading = "Filters",
+                            tabsetPanel(
+                                tabPanel("Basic", filterTabSet),
+                                tabPanel("Advanced",
+                                    tabsetPanel(type = "pills", header = tags$hr(),
+                                        scatterFilter$ui()
+                                    )
+                                )
                             )
                         )
                     )
                 ),
-                tabPanel("Clusters", icon = icon("circle-nodes"), value = "clusters"),
-                callExtension(extensions, "navbarPage.Metadata.before"),
+                tabPanel("Rules", icon = icon("chart-simple"), value = "rules",
+                    fluidRow(
+                        column(width = 12,
+                            panel(heading = "Filtered Rules", rulesTable$ui())
+                        )
+                    )
+                ),
+                callExtension(extensions, "navbarPage.Metadata.before1"),
+                callExtension(extensions, "navbarPage.Metadata.before2"),
+                callExtension(extensions, "navbarPage.Metadata.before3"),
                 tabPanel("Metadata", icon = icon("list"), value = "metadata",
                     fluidRow(
                         column(width = 8, offset = 2,
@@ -239,12 +240,12 @@ exploreApp <- function(rules,
             current <- input$nav
             if (is.null(current)) return()
 
-            if (current %in% c("rules", "clusters")) {
+            if (current %in% c("rules", callExtension(extensions, "navbarPage.enableSidebar.for"))) {
                 set_sidebar_collapsed(manual_sidebar_collapsed(), animate = FALSE)
-                removeClass("toggle_sidebar", "hidden")
+                removeClass("toggle_sidebar", "grayed")
             } else {
                 set_sidebar_collapsed(TRUE, animate = FALSE)
-                addClass("toggle_sidebar", "hidden")
+                addClass("toggle_sidebar", "grayed")
             }
         }, ignoreNULL = TRUE)
 
