@@ -73,7 +73,7 @@ explore.associations <- function(x, data = NULL, ...) {
         detailWindow <- associationsDetailModule(
             id = "details", rules = x, meta = meta, data = data)
 
-        extensions[["navbarPage.RulesTab.after"]] <- tabPanel(
+        extensions[["navbarPage.Metadata.before"]] <- tabPanel(
             "Rule Detail",
             value = "rule-detail-tab",
             icon = icon("magnifying-glass"),
@@ -105,10 +105,10 @@ explore.associations <- function(x, data = NULL, ...) {
                                        ruleSelection) {
         observeEvent(ruleSelection(), {
             if (is.null(ruleSelection())) {
-                hide(selector = '#mainTabset a[data-value="rule-detail-tab"]')
+                hide(selector = '#nav a[data-value="rule-detail-tab"]')
             } else {
-                show(selector = '#mainTabset a[data-value="rule-detail-tab"]')
-                updateTabsetPanel(session, "mainTabset", selected = "rule-detail-tab")
+                show(selector = '#nav a[data-value="rule-detail-tab"]')
+                updateTabsetPanel(session, "nav", selected = "rule-detail-tab")
             }
         }, ignoreNULL = FALSE)
 

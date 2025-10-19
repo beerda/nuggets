@@ -8,7 +8,6 @@ exploreApp <- function(rules,
     addResourcePath("pkgimages",
                     system.file(c("figures"),
                                 package = "nuggets"))
-    title <- paste0(title, " - Nuggets Explorer")
 
     rulesTable <- rulesTableModule("rulesTable",
                                    rules = rules,
@@ -52,9 +51,6 @@ exploreApp <- function(rules,
                 span.pred_n {color: darkble;}
                 span.pred_v {color: green;}
 
-                /* padding for tab content */
-                div.tab-pane {padding-top: 10px;}
-
                 /* info box */
                 div.info-box {display: flex; align-items: center; gap: 10px;}
 
@@ -67,71 +63,198 @@ exploreApp <- function(rules,
                 table.info-table td:first-child {font-weight: bold; text-align: left; padding-right: 10px;}
                 table.info-table th:first-child {font-weight: bold; text-align: left; padding-right: 10px;}
                 table.info-table.hlrows tbody tr:nth-child(odd) {background-color: #f5f5f5;}
+
+                nav.navbar { margin-bottom: 15px; }
+
+                /* container for the left sidebar */
+                .shared-sidebar {
+                    position: fixed;
+                    left: 0;
+                    top: 52px;
+                    bottom: 0;
+                    width: max(400px, 25%);
+                    padding: 15px 15px 15px 15px;
+                    background: #f8f9fa;
+                    border-right: 1px solid #ddd;
+                    overflow: auto;
+                    z-index: 1000;
+                }
+                .shared-sidebar.collapsed {
+                    width: 0;
+                    padding-left: 0;
+                    padding-right: 0;
+                    border: none;
+                }
+                .shared-sidebar.collapsed * {
+                    display: none;
+                }
+                .shared-sidebar.animated {
+                    transition: width 0.25s ease, transform 0.25s ease;
+                }
+                /* main content area: single wrapper we toggle via shinyjs */
+                #mainContent > div.container-fluid > div.tab-content {
+                    margin-left: max(393px, 25%);
+                    padding: 0px 0px 0px 7px;
+                }
+                /* when 'no-sidebar' class is present we remove the left margin */
+                #mainContent.no-sidebar > div.container-fluid > div.tab-content {
+                    margin-left: 0;
+                }
+                #mainContent.animated > div.container-fluid > div.tab-content {
+                    transition: margin-left 0.25s ease;
+                }
+
+                @media (max-width: 768px) {
+                    /* full-width overlay for sidebar */
+                    .shared-sidebar {
+                        position: relative;
+                        left: 0;
+                        right: 0;
+                        top: 0;
+                        bottom: 0;
+                        padding 0;
+                        height: 100% !important;
+                        width: 100% !important;
+                        border-right: none;
+                        background: #ffffff;
+                    }
+                    .shared-sidebar.collapsed {
+                        width: 100% !important;
+                    }
+                    #mainContent > div.container-fluid > div.tab-content, #mainContent.no-sidebar > div.container-fluid > div.tab-content {
+                        margin-left: 0;
+                    }
+                    .navbar {
+                        z-index: 1100;
+                    }
+                }
             "))
         ),
         useShinyjs(),
-        navbarPage(title = span(tags$img(src = "pkgimages/nugget.png",
-                                         style = "filter: grayscale(100%);",
+
+        div(id = "mainContent",
+            navbarPage(
+                title = tagList(
+                    actionButton("toggle_sidebar",
+                                 label = NULL,
+                                 icon = icon("filter"),
+                                 style = "padding: 0px 10px 0px 10px;"),
+                    span(tags$img(src = "pkgimages/nugget.png",
+                                         style = "padding-left: 10px; filter: grayscale(100%);",
                                          height = "24px"),
-                                title),
-                   id = "mainTabset",
-                   windowTitle = title,
-                   header = callExtension(extensions, "navbarPage.header"),
-                   footer = callExtension(extensions, "navbarPage.footer"),
-            tabPanel("Rules", icon = icon("circle-nodes"),
-                fluidRow(
-                    column(width = 4,
-                        panel(heading = "Filters",
-                            tabsetPanel(
-                                tabPanel("Basic", filterTabSet),
-                                tabPanel("Advanced",
-                                    tabsetPanel(type = "pills", header = tags$hr(),
-                                        scatterFilter$ui()
-                                    )
-                                )
-                            )
-                        )
-                    ),
-                    column(width = 8,
-                        panel(heading = "Filtered Rules",
-                            callExtension(extensions,
-                                          "filteredRulesPanel",
-                                          rulesTable$ui())
-                        )
-                    )
-                )
-            ),
-            callExtension(extensions, "navbarPage.RulesTab.after"),
-            tabPanel("Metadata", icon = icon("list"),
-                fluidRow(
-                    column(width = 8, offset = 2,
-                        panel(heading = "Metadata",
-                            tabsetPanel(
-                                tabPanel("Rulebase", rulebaseTable(rules, meta)),
-                                tabPanel("Data", callDataTable(rules, meta)),
-                                tabPanel("Call", creationParamsTable(rules))
-                            )
-                        )
-                    )
-                )
-            ),
-            tabPanel("About", icon = icon("circle-info"),
-                fluidRow(
-                    column(width = 6, offset = 3,
-                        panel(heading = "About the app",
-                              tags$div(style = "text-align: center; font-size: 40pt; color: gray; padding-bottom: 10px",
-                                       width = "100%",
-                                       tags$img(src = "pkgimages/logo.png", width = "200px")),
-                              aboutTable("nuggets")
+                                title)),
+                id = "nav",
+                windowTitle = title,
+                footer = callExtension(extensions, "navbarPage.footer"),
+                header = tagList(
+                    callExtension(extensions, "navbarPage.header"),
+        # Shared sidebar placed outside navbarPage so it persists across tabs
+        div(id = "sharedSidebar", class = "shared-sidebar",
+            panel(heading = "Filters",
+                tabsetPanel(
+                    tabPanel("Basic", filterTabSet),
+                    tabPanel("Advanced",
+                        tabsetPanel(type = "pills", header = tags$hr(),
+                            scatterFilter$ui()
                         )
                     )
                 )
             )
-        )
+        )),
+                tabPanel("Rules", icon = icon("circle-nodes"), value = "rules",
+                    fluidRow(
+                        column(width = 12,
+                            panel(heading = "Filtered Rules",
+                                callExtension(extensions,
+                                              "filteredRulesPanel",
+                                              rulesTable$ui())
+                            )
+                        )
+                    )
+                ),
+                tabPanel("Clusters", icon = icon("circle-nodes"), value = "clusters"),
+                callExtension(extensions, "navbarPage.Metadata.before"),
+                tabPanel("Metadata", icon = icon("list"), value = "metadata",
+                    fluidRow(
+                        column(width = 8, offset = 2,
+                            panel(heading = "Metadata",
+                                tabsetPanel(
+                                    tabPanel("Rulebase", rulebaseTable(rules, meta)),
+                                    tabPanel("Data", callDataTable(rules, meta)),
+                                    tabPanel("Call", creationParamsTable(rules))
+                                )
+                            )
+                        )
+                    )
+                ),
+                tabPanel("About", icon = icon("circle-info"), value = "about",
+                    fluidRow(
+                        column(width = 6, offset = 3,
+                            panel(heading = "About the app",
+                                  tags$div(style = "text-align: center; font-size: 40pt; color: gray; padding-bottom: 10px",
+                                           width = "100%",
+                                           tags$img(src = "pkgimages/logo.png", width = "200px")),
+                                  aboutTable("nuggets")
+                            )
+                        )
+                    )
+                )
+            ),
+        ),
+
     )
 
 
     server <- function(input, output, session) {
+        sidebar_collapsed <- reactiveVal(FALSE)
+        manual_sidebar_collapsed <- reactiveVal(FALSE)
+
+        set_sidebar_collapsed <- function(val, animate) {
+            sidebar_collapsed(val)
+
+            if (isTRUE(animate)) {
+                addClass("sharedSidebar", "animated")
+                addClass("mainContent", "animated")
+            } else {
+                removeClass("sharedSidebar", "animated")
+                removeClass("mainContent", "animated")
+            }
+            if (isTRUE(val)) {
+                addClass("sharedSidebar", "collapsed")
+                addClass("mainContent", "no-sidebar")
+            } else {
+                removeClass("sharedSidebar", "collapsed")
+                removeClass("mainContent", "no-sidebar")
+            }
+        }
+
+        # Manual toggle button: flip the current state
+        observeEvent(input$toggle_sidebar, {
+            set_sidebar_collapsed(!isTRUE(sidebar_collapsed()), animate = TRUE)
+            manual_sidebar_collapsed(sidebar_collapsed())
+        })
+
+        # Watch for navbar changes and enforce collapse/expand when needed
+        observeEvent(input$nav, {
+            current <- input$nav
+            if (is.null(current)) return()
+
+            if (current %in% c("rules", "clusters")) {
+                set_sidebar_collapsed(manual_sidebar_collapsed(), animate = FALSE)
+                removeClass("toggle_sidebar", "hidden")
+            } else {
+                set_sidebar_collapsed(TRUE, animate = FALSE)
+                addClass("toggle_sidebar", "hidden")
+            }
+        }, ignoreNULL = TRUE)
+
+        # On initial load, sync UI to reactiveVal (expanded by default)
+        observe({
+            isolate({
+                set_sidebar_collapsed(isTRUE(sidebar_collapsed()), animate = FALSE)
+            })
+        })
+
         lapply(filters, function(f) f$server())
 
         observeEvent(input$resetAllEvent, {
