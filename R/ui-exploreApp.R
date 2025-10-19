@@ -44,27 +44,30 @@ exploreApp <- function(rules,
 
     ui <- tagList(
         tags$head(
-            # predicate syntax highlighting
-            tags$style('span.pred_n {color: darkblue;}'),
-            tags$style('span.pred_v {color: green;}'),
+            tags$style(HTML("
+                /* monospace font for code */
+                .mono {font-family: \"Courier New\", Courier, monospace;}
 
-            tags$style('.mono {font-family: "Courier New", Courier, monospace;}'),
+                /* predicate syntax highlighting */
+                span.pred_n {color: darkble;}
+                span.pred_v {color: green;}
 
-            # padding for tab content
-            tags$style('div.tab-pane {padding-top: 10px;}'),
+                /* padding for tab content */
+                div.tab-pane {padding-top: 10px;}
 
-            # info box
-            tags$style('div.info-box {display: flex; align-items: center; gap: 10px;}'),
+                /* info box */
+                div.info-box {display: flex; align-items: center; gap: 10px;}
 
-            # info table
-            tags$style('table.info-table {border: none;}'),
-            tags$style('table.info-table td {padding-bottom: 5px; padding-left: 5px; text-align: right; vertical-align: top;}'),
-            tags$style('table.info-table th {text-align: center; vertical-align: center; padding-top: 5px; padding-bottom: 5px; padding-left: 5px;}'),
-            tags$style('table.info-table.left td {text-align: left;}'),
-            tags$style('table.info-table.center td {text-align: center;}'),
-            tags$style('table.info-table td:first-child {font-weight: bold; text-align: left; padding-right: 10px;}'),
-            tags$style('table.info-table th:first-child {font-weight: bold; text-align: left; padding-right: 10px;}'),
-            tags$style('table.info-table.hlrows tbody tr:nth-child(odd) {background-color: #f5f5f5;}'),
+                /* info table */
+                table.info-table {border: none;}
+                table.info-table td {padding-bottom: 5px; padding-left: 5px; text-align: right; vertical-align: top;}
+                table.info-table th {text-align: center; vertical-align: center; padding-top: 5px; padding-bottom: 5px; padding-left: 5px;}
+                table.info-table.left td {text-align: left;}
+                table.info-table.center td {text-align: center;}
+                table.info-table td:first-child {font-weight: bold; text-align: left; padding-right: 10px;}
+                table.info-table th:first-child {font-weight: bold; text-align: left; padding-right: 10px;}
+                table.info-table.hlrows tbody tr:nth-child(odd) {background-color: #f5f5f5;}
+            "))
         ),
         useShinyjs(),
         navbarPage(title = span(tags$img(src = "pkgimages/nugget.png",
