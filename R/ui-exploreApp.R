@@ -227,16 +227,14 @@ exploreApp <- function(rules,
             }
         }
 
-        # Manual toggle button: flip the current state
         observeEvent(input$toggle_sidebar, {
             set_sidebar_collapsed(!isTRUE(sidebar_collapsed()), animate = TRUE)
             manual_sidebar_collapsed(sidebar_collapsed())
+            runjs("window.dispatchEvent(new Event('resize'));") # notify any plots of size change
         })
 
-        # Watch for navbar changes and enforce collapse/expand when needed
         observeEvent(input$nav, {
             req(input$nav)
-
             if (input$nav %in% c("rules", callExtension(extensions, "navbarPage.enableSidebar.for"))) {
                 set_sidebar_collapsed(manual_sidebar_collapsed(), animate = FALSE)
                 removeClass("toggle_sidebar", "grayed")

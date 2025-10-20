@@ -104,6 +104,7 @@
 #' @importFrom shinyjs hidden
 #' @importFrom shinyjs hide
 #' @importFrom shinyjs removeClass
+#' @importFrom shinyjs runjs
 #' @importFrom shinyjs show
 #' @importFrom shinyjs useShinyjs
 #' @importFrom shinyWidgets alert
