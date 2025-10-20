@@ -199,9 +199,8 @@ exploreApp <- function(rules,
                         )
                     )
                 )
-            ),
-        ),
-
+            )
+        )
     )
 
 

@@ -2,6 +2,8 @@
 - released: ???
 - parse_condition() rewritten in C++ for better performance
 - added cluster_associations()
+- enhanced UI layout of explore.associations()
+- added "Cluster" tab to explore.associations() 
 
 # nuggets 2.0.1
 - released: 2025-10-13
