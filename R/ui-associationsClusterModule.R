@@ -6,10 +6,9 @@ associationsClusterModule <- function(id, rules, meta, data) {
     list(ui = function() {
             fluidRow(
                 column(width = 12,
-                    panel(heading = "K-Means Clustering of Association Rules",
-                        infoBox(paste0("Cluster the association rules based on a selected numeric measure.",
-                                       "Each cluster is represented by a set of rules with similar measures ",
-                                       "with respect to consequents.")),
+                    panel(heading = "K-Means Clustering",
+                        infoBox(paste("For rules selected by filters, cluster antecedents that have similar relationships to",
+                                      "consequents based on the selected interest measure.")),
                         fluidRow(
                             column(width = 6,
                                 sliderInput(NS(id, "k"),
@@ -33,12 +32,25 @@ associationsClusterModule <- function(id, rules, meta, data) {
                                             width = "100%"),
                             ),
                         ),
+                    ),
+                    panel(heading = "Results",
                         fluidRow(
                             column(width = 12,
-                                hr(),
-                                dataTableOutput(NS(id, "clusteringTable")),
-                                br(),
+                                infoBox(paste("The plot identifies which antecedent groups are strongly",
+                                              "associated with certain consequents.",
+                                              "Each row is an antecedent group, each column is a consequent.",
+                                              "Balloon color shows the aggregated interest measure, size represents support.",
+                                              "Groups with the strongest associations appear in the top-left corner.")),
                                 plotOutput(NS(id, "clusteringPlot"), height = "500px")
+                            )
+                        )
+                    ),
+                    panel(heading = "Cluster Details",
+                        fluidRow(
+                            column(width = 12,
+                                uiOutput(NS(id, "clusterTabs")),
+                                plotOutput(NS(id, "singleClusterPlot")),
+                                dataTableOutput(NS(id, "singleClusterTable"))
                             )
                         )
                     )
@@ -76,7 +88,16 @@ associationsClusterModule <- function(id, rules, meta, data) {
                                          algorithm = input$algorithm)
                 })
 
-                output$clusteringTable <- renderDT({
+                output$clusterTabs <- renderUI({
+                    req(input$k)
+                    tabs <- lapply(seq_len(input$k), function(i) {
+                        tabPanel(
+                            title = paste("Cluster", i),
+                            value = i)
+                    })
+
+                    do.call(tabsetPanel,
+                            c(id = NS(id, "selectedCluster"), tabs))
                 })
 
                 output$clusteringPlot <- renderPlot({
@@ -86,14 +107,64 @@ associationsClusterModule <- function(id, rules, meta, data) {
                     }
 
                     ggplot(clu) +
-                        aes(x = as.factor(.data[["cluster"]]),
-                            y = .data[["consequent"]],
+                        aes(y = as.factor(.data[["cluster_label"]]),
+                            x = .data[["consequent"]],
                             color = .data[[input$by]],
                             size = .data[["support"]]) +
                         geom_point() +
-                        xlab("cluster") +
-                        scale_y_discrete(limits = rev)
+                        xlab("consequent") +
+                        ylab("cluster") +
+                        scale_y_discrete(limits = rev) +
+                        theme(axis.text.x = element_text(angle = 90, hjust = 1))
                 }, res = 96)
+
+                output$singleClusterPlot <- renderPlot({
+                    req(input$selectedCluster)
+
+                    clu <- clustering()
+                    if (is.null(clu)) {
+                        return(NULL)
+                    }
+
+                    d <- attr(clu, "cluster_predicates")[[input$selectedCluster]]
+                    d <- as.data.frame(d)
+
+                    ggplot(d) +
+                        aes(y = .data[["tab"]], x = .data[["Freq"]], label = .data[["Freq"]]) +
+                        geom_col() +
+                        geom_text(hjust = -0.4) +
+                        ylab("antecedent predicate") +
+                        xlab("frequency in cluster") +
+                        scale_y_discrete(limits = rev) +
+                        scale_x_continuous(expand = expansion(mult = c(0, 0.15)))
+                }, res = 96)
+
+                output$singleClusterTable <- renderDT({
+                    req(input$selectedCluster)
+
+                    clu <- clustering()
+                    if (is.null(clu)) {
+                        return(NULL)
+                    }
+
+                    sel <- selectionReactive()
+                    d <- rules[sel, , drop = FALSE]
+                    ante <- attr(clu, "cluster_antecedents")[[input$selectedCluster]]
+                    d <- d[d$antecedent %in% ante, , drop = FALSE]
+                    d$id <- NULL
+                    d <- formatRulesForTable(d, meta)
+
+                    datatable(d,
+                              options = list(pageLength = 10,
+                                             autoWidth = FALSE,
+                                             searching = FALSE,
+                                             scrollX = TRUE),
+                              escape = FALSE,
+                              rownames = FALSE,
+                              selection = "none",
+                              filter = "none")
+                })
+
             })
         }
     )

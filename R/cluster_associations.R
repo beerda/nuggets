@@ -155,8 +155,16 @@ cluster_associations <- function(x,
     cluster_order <- unique(res$cluster)
     res$cluster <- as.integer(factor(res$cluster, levels = cluster_order))
 
-    attr(res, "cluster_predicates") <- clust_predicates[cluster_order]
-    attr(res, "cluster_size") <- clust_size[cluster_order]
+    clust_predicates <- clust_predicates[cluster_order]
+    names(clust_predicates) <- seq_along(clust_predicates)
+    clust_size <- clust_size[cluster_order]
+    names(clust_size) <- seq_along(clust_size)
+    split_ante <- split_ante[cluster_order]
+    names(split_ante) <- seq_along(split_ante)
+
+    attr(res, "cluster_predicates") <- clust_predicates
+    attr(res, "cluster_antecedents") <- split_ante
+    attr(res, "cluster_size") <- clust_size
     attr(res, "consequent") <- uniq_consequent
 
     res
