@@ -351,12 +351,12 @@ columns remain unchanged.</p>
 <p>The transformation of the whole <code>mtcars</code> dataset to crisp
 predicates can be done as follows:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">crispMtcars</span> <span class="op">&lt;-</span> <span class="va">mtcars</span> <span class="op">|&gt;</span></span>
+<code class="sourceCode R"><span><span class="va">crisp_mtcars</span> <span class="op">&lt;-</span> <span class="va">mtcars</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">cyl</span>, <span class="va">vs</span><span class="op">:</span><span class="va">gear</span>, .method <span class="op">=</span> <span class="st">"dummy"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">mpg</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">15</span>, <span class="fl">20</span>, <span class="fl">30</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">disp</span><span class="op">:</span><span class="va">carb</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> </span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">crispMtcars</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">crisp_mtcars</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 32</span></span></span>
 <span><span class="co">#&gt;   `cyl=four` `cyl=six` `cyl=eight` `vs=0` `vs=1` `am=0` `am=1` `gear=3` `gear=4`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>   </span></span>
@@ -506,12 +506,12 @@ Fuzzy sets with raised cosine membership functions for
 <p>A fuzzy transformation of the whole <code>mtcars</code> dataset can
 be done as follows:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fuzzyMtcars</span> <span class="op">&lt;-</span> <span class="va">mtcars</span> <span class="op">|&gt;</span></span>
+<code class="sourceCode R"><span><span class="va">fuzzy_mtcars</span> <span class="op">&lt;-</span> <span class="va">mtcars</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">cyl</span>, <span class="va">vs</span><span class="op">:</span><span class="va">gear</span>, .method <span class="op">=</span> <span class="st">"dummy"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">mpg</span>, .method <span class="op">=</span> <span class="st">"triangle"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">15</span>, <span class="fl">20</span>, <span class="fl">30</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">disp</span><span class="op">:</span><span class="va">carb</span>, .method <span class="op">=</span> <span class="st">"triangle"</span>, .breaks <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> </span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">fuzzyMtcars</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">fuzzy_mtcars</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 31</span></span></span>
 <span><span class="co">#&gt;   `cyl=four` `cyl=six` `cyl=eight` `vs=0` `vs=1` `am=0` `am=1` `gear=3` `gear=4`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>   </span></span>
@@ -625,62 +625,167 @@ Fuzzy sets with triangular membership functions for
 <div class="section level2">
 <h2 id="pre-defined-patterns">Pre-defined Patterns<a class="anchor" aria-label="anchor" href="#pre-defined-patterns"></a>
 </h2>
-<p><code>nuggets</code> provides a set of functions for searching for
-some best-known pattern types. These functions allow to process Boolean
-data, fuzzy data, or both. The result of these functions is always a
-tibble with patterns stored as rows. For more advance usage, which
-allows to search for custom patterns or to compute user-defined measures
-and statistics, see the section <strong>Custom Patterns</strong>.</p>
+<p>The package <code>nuggets</code> provides a set of functions for
+discovering some of the best-known pattern types. These functions can
+process Boolean data, fuzzy data, or both. Each function returns a
+tibble, where every row represents one detected pattern.</p>
+<blockquote>
+<p><strong>Note:</strong> This section assumes that the data have
+already been <strong>preprocessed</strong> — i.e., transformed into a
+binarized or fuzzified form. See the previous section <a href="#data-preparation">Data Preparation</a> for details on how to
+prepare your dataset (for example, <code>crisp_mtcars</code> and
+<code>fuzzy_mtcars</code>).</p>
+</blockquote>
+<p>For more advanced workflows — such as defining custom pattern types
+or computing user-defined measures — see the section <a href="#custom-patterns">Custom Patterns</a>.</p>
 <div class="section level4">
 <h4 id="search-for-association-rules">Search for Association Rules<a class="anchor" aria-label="anchor" href="#search-for-association-rules"></a>
 </h4>
-<p>Association rules are rules of the form <span class="math inline">\(A
-\Rightarrow B\)</span>, where <span class="math inline">\(A\)</span> is
-either Boolean or fuzzy condition in the form of conjunction, and <span class="math inline">\(B\)</span> is a Boolean or fuzzy predicate.</p>
-<p>Before continuing with the search for rules, it is advisable to
-create the so-called <em>vector of disjoints</em>. The vector of
-disjoints is a character vector with the same length as the number of
-columns in the analyzed dataset. It specifies predicates, which are
-mutually exclusive and should not be combined together in a single
-pattern’s condition: columns with equal values in the disjoint vector
-will not appear in a single condition. Providing the vector of disjoints
-to the algorithm will speed-up the search as it makes no sense, e.g., to
-combine <code>Plant=Qn1</code> and <code>Plant=Qn2</code> in a condition
-<code>Plant=Qn1 &amp; Plant=Qn2</code> as such formula is never true for
-any data row.</p>
-<p>The vector of disjoints can be easily created from the column names
-of the dataset, e.g., by obtaining the first part of column names before
-the equal sign, which is neatly provided by the <code><a href="../reference/var_names.html">var_names()</a></code>
-function as follows:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#disj &lt;- var_names(colnames(fuzzyCO2))</span></span>
-<span><span class="co">#print(disj)</span></span></code></pre></div>
-<p>The function <code>dig_associations</code> takes the analyzed dataset
-as its first parameter and a pair of <code>tidyselect</code> expressions
-to select the column names to appear in the left-hand (antecedent) and
-right-hand (consequent) side of the rule. The following command searches
-for associations rules, such that:</p>
+<p><strong>Association rules</strong> identify conditions
+(<em>antecedents</em>) under which a specific feature
+(<em>consequent</em>) is present very often.</p>
+<p><span class="math display">\[
+A \Rightarrow C
+\]</span></p>
+<p>If condition <code>A</code> is satisfied, then the feature
+<code>C</code> tends to be present.</p>
+<p>For example,<br><code>university_edu &amp; middle_age &amp; IT_industry =&gt; high_income</code><br>
+can be read as:<br><em>People in middle age with university education working in IT
+industry are very likely to have a high income.</em></p>
+<p>In practice, the antecedent <code>A</code> is a set of predicates,
+and the consequent <code>C</code> is usually a single predicate.</p>
+<hr>
+</div>
+<div class="section level4">
+<h4 id="rule-quality-measures">Rule Quality Measures<a class="anchor" aria-label="anchor" href="#rule-quality-measures"></a>
+</h4>
+<p>For a set of predicates <span class="math inline">\(I\)</span>, let
+<span class="math inline">\(\text{supp}(I)\)</span> denote the
+<em>support</em> — the relative frequency (for logical data) or the mean
+truth degree (for fuzzy data) of rows satisfying all predicates in <span class="math inline">\(I\)</span>. Using this notation:</p>
 <ul>
-<li>any column except those starting with “Treatment” is in the
-antecedent;</li>
-<li>any column starting with “Treatment” is in the consequent;</li>
-<li>the minimum support is 0.02 (support is the proportion of rows that
-satisfy the antecedent AND consequent));</li>
-<li>the minimum confidence is 0.8 (confidence is the proportion of rows
-satisfying the consequent GIVEN the antecedent is true).</li>
+<li>
+<strong>Length</strong> — number of predicates in the
+antecedent.<br>
+</li>
+<li>
+<strong>Coverage</strong> — <span class="math inline">\(\text{supp}(A)\)</span>.<br>
+</li>
+<li>
+<strong>Consequent support</strong> — <span class="math inline">\(\text{supp}(\{c\})\)</span>.<br>
+</li>
+<li>
+<strong>Support</strong> — <span class="math inline">\(\text{supp}(A
+\cup \{c\})\)</span>.<br>
+</li>
+<li>
+<strong>Confidence</strong> — <span class="math inline">\(\text{supp}(A \cup \{c\}) /
+\text{supp}(A)\)</span>.</li>
 </ul>
+<p>Optional additional measures (<code>"lift"</code>,
+<code>"conviction"</code>, <code>"added_value"</code>) can be computed
+using the <code>measures</code> argument.</p>
+</div>
+<div class="section level4">
+<h4 id="creating-a-disjoint-vector">Creating a Disjoint Vector<a class="anchor" aria-label="anchor" href="#creating-a-disjoint-vector"></a>
+</h4>
+<p>Before searching for rules, it is recommended to create a <em>vector
+of disjoints</em>, which specifies predicates that must not appear
+together in the same condition. This vector should have the same length
+as the number of dataset columns.</p>
+<p>For example, columns representing <code>gear=3</code> and
+<code>gear=4</code> are mutually exclusive, so their shared group label
+in <code>disj</code> prevents meaningless conditions like
+<code>gear=3 &amp; gear=4</code>. You can conveniently generate this
+vector with <code><a href="../reference/var_names.html">var_names()</a></code>:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">disj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/var_names.html">var_names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">fuzzy_mtcars</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">disj</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] "cyl"  "cyl"  "cyl"  "vs"   "vs"   "am"   "am"   "gear" "gear" "gear"</span></span>
+<span><span class="co">#&gt; [11] "mpg"  "mpg"  "mpg"  "disp" "disp" "disp" "hp"   "hp"   "hp"   "drat"</span></span>
+<span><span class="co">#&gt; [21] "drat" "drat" "wt"   "wt"   "wt"   "qsec" "qsec" "qsec" "carb" "carb"</span></span>
+<span><span class="co">#&gt; [31] "carb"</span></span></code></pre></div>
+<p>The <code><a href="../reference/dig_associations.html">dig_associations()</a></code> function searches for association
+rules. Its main arguments are:</p>
+<ul>
+<li>
+<code>x</code>: the data matrix or data frame (logical or
+numeric);</li>
+<li>
+<code>antecedent</code>, <code>consequent</code>: tidyselect
+expressions selecting columns for each side of the rule;</li>
+<li>
+<code>disjoint</code>: a vector defining mutually exclusive
+predicates;</li>
+<li>rule filtering thresholds such as <code>min_support</code>,
+<code>min_confidence</code>, <code>min_coverage</code>, and limits like
+<code>min_length</code>, <code>max_length</code>;</li>
+<li>optional parameters such as <code>measures</code>,
+<code>t_norm</code>, and <code>contingency_table</code>.</li>
+</ul>
+<p>In the following example, we search for fuzzy association rules in
+the dataset <code>fuzzy_mtcars</code>, such that: - any column except
+those starting with <code>"am"</code> may appear in the antecedent; -
+columns starting with <code>"am"</code> may appear in the consequent; -
+minimum support is <code>0.02</code>; - minimum confidence is
+<code>0.8</code>; - additional quality measures <code>"lift"</code> and
+<code>"conviction"</code> are computed.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#result &lt;- dig_associations(fuzzyCO2,</span></span>
-<span>                           <span class="co">#antecedent = !starts_with("Treatment"),</span></span>
-<span>                           <span class="co">#consequent = starts_with("Treatment"),</span></span>
-<span>                           <span class="co">#disjoint = disj,</span></span>
-<span>                           <span class="co">#min_support = 0.02,</span></span>
-<span>                           <span class="co">#min_confidence = 0.8)</span></span></code></pre></div>
-<p>The result is a tibble with found rules. We may arrange it by support
-in descending order:</p>
+<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">fuzzy_mtcars</span>,</span>
+<span>                           antecedent <span class="op">=</span> <span class="op">!</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"am"</span><span class="op">)</span>,</span>
+<span>                           consequent <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"am"</span><span class="op">)</span>,</span>
+<span>                           disjoint <span class="op">=</span> <span class="va">disj</span>,</span>
+<span>                           min_support <span class="op">=</span> <span class="fl">0.02</span>,</span>
+<span>                           min_confidence <span class="op">=</span> <span class="fl">0.8</span>,</span>
+<span>                           measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lift"</span>, <span class="st">"conviction"</span><span class="op">)</span>,</span>
+<span>                           contingency_table <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>The result is a tibble containing the discovered rules and their
+quality metrics. You can arrange them, for example, by decreasing
+support:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#result &lt;- arrange(result, desc(support))</span></span>
-<span><span class="co">#print(result)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">arrange</span><span class="op">(</span><span class="va">result</span>, <span class="fu">desc</span><span class="op">(</span><span class="va">support</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 526 × 14</span></span></span>
+<span><span class="co">#&gt;    antecedent                     consequent support confidence coverage</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> {gear=3}                       {am=0}       0.469      1        0.469</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> {gear=3,vs=0}                  {am=0}       0.375      1        0.375</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> {cyl=eight,gear=3,vs=0}        {am=0}       0.375      1        0.375</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> {cyl=eight,vs=0}               {am=0}       0.375      0.857    0.438</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> {cyl=eight,gear=3}             {am=0}       0.375      1        0.375</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> {cyl=eight}                    {am=0}       0.375      0.857    0.438</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> {mpg=(-Inf;15;20)}             {am=0}       0.327      0.847    0.387</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> {drat=(-Inf;2.76;3.84)}        {am=0}       0.311      0.948    0.328</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> {gear=3,mpg=(-Inf;15;20)}      {am=0}       0.309      1        0.309</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> {drat=(-Inf;2.76;3.84),gear=3} {am=0}       0.307      1        0.307</span></span>
+<span><span class="co">#&gt;    conseq_support count antecedent_length    pp    pn    np    nn  lift</span></span>
+<span><span class="co">#&gt;             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>          0.594 15                    1 15    0      4     13    1.68</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>          0.594 12                    2 12    0      7     13    1.68</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>          0.594 12                    3 12    0      7     13    1.68</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>          0.594 12                    2 12    2      7     11    1.44</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>          0.594 12                    2 12    0      7     13    1.68</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>          0.594 12                    1 12    2      7     11    1.44</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>          0.594 10.5                  1 10.5  1.90   8.52  11.1  1.43</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>          0.594  9.96                 1  9.96 0.546  9.04  12.5  1.60</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>          0.594  9.88                 2  9.88 0      9.12  13.0  1.68</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>          0.594  9.82                 2  9.82 0      9.18  13    1.68</span></span>
+<span><span class="co">#&gt;    conviction</span></span>
+<span><span class="co">#&gt;         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     <span style="color: #BB0000;">Inf</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     <span style="color: #BB0000;">Inf</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     <span style="color: #BB0000;">Inf</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>       2.84</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     <span style="color: #BB0000;">Inf</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>       2.84</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>       2.65</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>       7.82</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     <span style="color: #BB0000;">Inf</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     <span style="color: #BB0000;">Inf</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 516 more rows</span></span></span></code></pre></div>
+<p>This example illustrates the typical workflow for mining association
+rules with <code>nuggets</code>. The same structure and arguments apply
+when analyzing either fuzzy or Boolean datasets.</p>
 </div>
 <div class="section level3">
 <h3 id="conditional-correlations">Conditional Correlations<a class="anchor" aria-label="anchor" href="#conditional-correlations"></a>
