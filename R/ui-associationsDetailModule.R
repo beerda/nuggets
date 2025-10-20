@@ -33,10 +33,9 @@ associationsDetailModule <- function(id, rules, meta, data) {
         server = function(selectionReactive) {
             moduleServer(id, function(input, output, session) {
                 ancestors <- reactive({
+                    req(input$shorteningRadio)
                     ruleId <- selectionReactive()
-                    if (is.null(ruleId) || is.null(input$shorteningRadio)) {
-                        return(NULL)
-                    }
+                    req(ruleId)
 
                     rule <- rules[rules$id == ruleId, , drop = FALSE]
                     ante <- parse_condition(rule$antecedent)[[1]]
@@ -58,9 +57,8 @@ associationsDetailModule <- function(id, rules, meta, data) {
 
                 output$selectedRule <- renderUI({
                     ruleId <- selectionReactive()
-                    if (is.null(ruleId)) {
-                        return(NULL)
-                    }
+                    req(ruleId)
+
                     res <- rules[rules$id == ruleId, , drop = FALSE]
 
                     div(style = 'display: flex; flex-wrap: wrap; align-items: center; gap: 20px',
@@ -70,10 +68,9 @@ associationsDetailModule <- function(id, rules, meta, data) {
                 })
 
                 output$ancestorTable <- renderDT({
+                    req(input$shorteningRadio)
                     res <- ancestors()
-                    if (is.null(res)) {
-                        return(NULL)
-                    }
+                    req(res)
 
                     abbrev <- shorten_condition(res$antecedent, method = input$shorteningRadio)
                     res <- formatRulesForTable(res, meta)
@@ -94,10 +91,9 @@ associationsDetailModule <- function(id, rules, meta, data) {
                 })
 
                 output$ancestorPlot <- renderPlot({
+                    req(input$shorteningRadio)
                     res <- ancestors()
-                    if (is.null(res)) {
-                        return(NULL)
-                    }
+                    req(res)
 
                     res$abbrev <- shorten_condition(res$antecedent, method = input$shorteningRadio)
                     res$label = paste(res$abbrev,

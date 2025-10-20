@@ -9,16 +9,10 @@ infoTable <- function(df, header = FALSE, class = NULL, width = "100%") {
             tags$tr(lapply(colnames(df), function(x) tags$th(x)))
         )
     }
+
     tags$table(class = paste(c("info-table", class), collapse = " "),
                width = width,
                head,
-               do.call(tags$tbody, trs)
-    )
-
-    #do.call(tags$table,
-            #c(list(class = paste(c("info-table", class), collapse = " "),
-                   #width = width),
-              #list(head),
-              #trs))
+               do.call(tags$tbody, trs))
 }
 

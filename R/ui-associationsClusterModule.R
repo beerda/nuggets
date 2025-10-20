@@ -62,10 +62,7 @@ associationsClusterModule <- function(id, rules, meta, data) {
                 })
 
                 clustering <- reactive({
-                    req(input$k)
-                    req(input$by)
-                    req(input$algorithm)
-
+                    req(input$k, input$by, input$algorithm)
                     if (lengthUniqueAnte() <= input$k) {
                         return(NULL)
                     }
@@ -89,10 +86,10 @@ associationsClusterModule <- function(id, rules, meta, data) {
                     }
 
                     ggplot(clu) +
-                        aes(x = as.factor(cluster),
-                            y = consequent,
+                        aes(x = as.factor(.data[["cluster"]]),
+                            y = .data[["consequent"]],
                             color = .data[[input$by]],
-                            size = support) +
+                            size = .data[["support"]]) +
                         geom_point() +
                         xlab("cluster") +
                         scale_y_discrete(limits = rev)

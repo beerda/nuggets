@@ -212,7 +212,6 @@ exploreApp <- function(rules,
 
         set_sidebar_collapsed <- function(val, animate) {
             sidebar_collapsed(val)
-
             if (isTRUE(animate)) {
                 addClass("sharedSidebar", "animated")
                 addClass("mainContent", "animated")
@@ -237,10 +236,9 @@ exploreApp <- function(rules,
 
         # Watch for navbar changes and enforce collapse/expand when needed
         observeEvent(input$nav, {
-            current <- input$nav
-            if (is.null(current)) return()
+            req(input$nav)
 
-            if (current %in% c("rules", callExtension(extensions, "navbarPage.enableSidebar.for"))) {
+            if (input$nav %in% c("rules", callExtension(extensions, "navbarPage.enableSidebar.for"))) {
                 set_sidebar_collapsed(manual_sidebar_collapsed(), animate = FALSE)
                 removeClass("toggle_sidebar", "grayed")
             } else {

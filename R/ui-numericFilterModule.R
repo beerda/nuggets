@@ -87,6 +87,8 @@ numericFilterModule <- function(id,
                 }, width = "100%", bordered = TRUE, striped = TRUE, align = "c", digits = 2)
 
                 output$histogramPlot <- renderPlot({
+                    req(input$slider)
+
                     val <- input$slider
                     border <- val
                     if (int) {
