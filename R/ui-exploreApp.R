@@ -139,7 +139,7 @@ exploreApp <- function(rules,
                 title = tagList(
                     actionButton("toggle_sidebar",
                                  label = NULL,
-                                 icon = icon("caret-down"),
+                                 icon = icon("bars"),
                                  style = "padding: 0px 10px 0px 10px;"),
                     span(tags$img(src = "pkgimages/nugget.png",
                                          style = "padding-left: 10px; filter: grayscale(100%);",
@@ -149,9 +149,7 @@ exploreApp <- function(rules,
                 windowTitle = title,
                 fluid = TRUE,
                 position = "fixed-top",
-                footer = callExtension(extensions, "navbarPage.footer"),
                 header = tagList(
-                    callExtension(extensions, "navbarPage.header"),
                     div(id = "sharedSidebar", class = "shared-sidebar",
                         panel(heading = "Filters",
                             tabsetPanel(
@@ -167,6 +165,7 @@ exploreApp <- function(rules,
                 ),
                 tabPanel("Rules", icon = icon("chart-simple"), value = "rules",
                     fluidRow(
+                        callExtension(extensions, "Rules.top"),
                         column(width = 12,
                             panel(heading = "Filtered Rules", rulesTable$ui())
                         )

@@ -72,7 +72,7 @@ explore.associations <- function(x, data = NULL, ...) {
     }
 
     if (is.null(data)) {
-        extensions[["navbarPage.header"]] <- infoBox(
+        extensions[["Rules.top"]] <- infoBox(
             status = "warning",
             dismissible = TRUE,
             div("You started the explorer with rules only.",
