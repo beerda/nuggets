@@ -88,26 +88,19 @@ associationsClusterModule <- function(id, rules, meta, data) {
                                          algorithm = input$algorithm)
                 })
 
-                output$clusterTabs <- renderUI({
-                    req(input$k)
-                    tabs <- lapply(seq_len(input$k), function(i) {
-                        tabPanel(
-                            title = paste("Cluster", i),
-                            value = i)
-                    })
-
-                    do.call(tabsetPanel,
-                            c(id = NS(id, "selectedCluster"), tabs))
-                })
-
                 output$clusteringPlot <- renderPlot({
                     clu <- clustering()
                     if (is.null(clu)) {
                         return(NULL)
                     }
 
+                    clu$cluster_label <- paste0(clu$cluster_label,
+                                                " #", clu$cluster)
+                    clu$cluster_label <- factor(clu$cluster_label,
+                                                levels = unique(clu$cluster_label))
+
                     ggplot(clu) +
-                        aes(y = as.factor(.data[["cluster_label"]]),
+                        aes(y = factor(.data[["cluster_label"]]),
                             x = .data[["consequent"]],
                             color = .data[[input$by]],
                             size = .data[["support"]]) +
@@ -117,6 +110,18 @@ associationsClusterModule <- function(id, rules, meta, data) {
                         scale_y_discrete(limits = rev) +
                         theme(axis.text.x = element_text(angle = 90, hjust = 1))
                 }, res = 96)
+
+                output$clusterTabs <- renderUI({
+                    req(input$k)
+                    tabs <- lapply(seq_len(input$k), function(i) {
+                        tabPanel(
+                            title = paste("#", i),
+                            value = i)
+                    })
+
+                    do.call(tabsetPanel,
+                            c(id = NS(id, "selectedCluster"), tabs))
+                })
 
                 output$singleClusterPlot <- renderPlot({
                     req(input$selectedCluster)
