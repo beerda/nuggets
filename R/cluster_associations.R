@@ -75,6 +75,12 @@ cluster_associations <- function(x,
     .must_be_greater_eq(predicates_in_label, 1)
 
     by <- enquo(by)
+    value_col <- eval_select(expr = by,
+                             data = x,
+                             allow_rename = FALSE,
+                             allow_empty = TRUE, # we test for empty selection in association_matrix
+                             allow_predicates = TRUE,
+                             error_call = current_env())
 
     mat <- association_matrix(x,
                               !!by,
@@ -90,11 +96,11 @@ cluster_associations <- function(x,
         ))
     }
 
+    # cluster and aggregate measures by clusters
     fit <- kmeans(mat, centers = n, algorithm = algorithm)
     matches <- match(x$antecedent, rownames(mat))
     clust_vec <- as.vector(fit$cluster[matches])
     aggregator <- list(cluster = clust_vec, consequent = x$consequent)
-
     num_cols <- vapply(x, is.numeric, logical(1))
     x_num <- x[, num_cols, drop = FALSE]
     res <- aggregate(x_num,
@@ -102,6 +108,17 @@ cluster_associations <- function(x,
                      FUN = mean,
                      na.rm = TRUE)
 
+    # sort result by the value of "by"
+    res <- as_tibble(res)
+    ord <- order(res[[names(value_col)[1]]], decreasing = TRUE)
+    res <- res[ord, , drop = FALSE]
+
+    # reassign cluster numbers accordingly to the desired order
+    cluster_order <- unique(res$cluster)
+    res$cluster <- match(res$cluster, cluster_order)
+    clust_vec <- match(clust_vec, cluster_order)
+
+    # get cluster sizes and tables of predicates
     split_ante <- split(x$antecedent, clust_vec, drop = TRUE)
     clust_size <- vapply(split_ante, length, integer(1))
     clust_predicates <- lapply(split_ante, function(a) {
@@ -112,8 +129,7 @@ cluster_associations <- function(x,
         sort(tab, decreasing = TRUE)
     })
 
-    res <- as_tibble(res)
-
+    # create cluster labels
     lab <- vapply(clust_predicates, function(tab) {
         k <- length(tab)
         length(tab) <- min(k, predicates_in_label)
@@ -135,32 +151,11 @@ cluster_associations <- function(x,
                       .after = "cluster",
                       .name_repair = "minimal")
 
-    # sort by the value of "by"
-    value_col <- eval_select(expr = by,
-                             data = x,
-                             allow_rename = FALSE,
-                             allow_empty = TRUE, # we test for empty selection in association_matrix
-                             allow_predicates = TRUE,
-                             error_call = current_env())
-    ord <- order(res[[names(value_col)[1]]], decreasing = TRUE)
-    res <- res[ord, , drop = FALSE]
-
     # ensure factors have levels in the desired order
     uniq_cluster_label <- unique(res$cluster_label)
     res$cluster_label <- factor(res$cluster_label, levels = uniq_cluster_label)
     uniq_consequent <- unique(res$consequent)
     res$consequent <- factor(res$consequent, levels = uniq_consequent)
-
-    # reassign cluster numbers accordingly to the desired order
-    cluster_order <- unique(res$cluster)
-    res$cluster <- as.integer(factor(res$cluster, levels = cluster_order))
-
-    clust_predicates <- clust_predicates[cluster_order]
-    names(clust_predicates) <- seq_along(clust_predicates)
-    clust_size <- clust_size[cluster_order]
-    names(clust_size) <- seq_along(clust_size)
-    split_ante <- split_ante[cluster_order]
-    names(split_ante) <- seq_along(split_ante)
 
     attr(res, "cluster_predicates") <- clust_predicates
     attr(res, "cluster_antecedents") <- split_ante
