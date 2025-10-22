@@ -654,11 +654,6 @@ can be read as:<br><em>People in middle age with university education working in
 industry are very likely to have a high income.</em></p>
 <p>In practice, the antecedent <code>A</code> is a set of predicates,
 and the consequent <code>C</code> is usually a single predicate.</p>
-<hr>
-</div>
-<div class="section level4">
-<h4 id="rule-quality-measures">Rule Quality Measures<a class="anchor" aria-label="anchor" href="#rule-quality-measures"></a>
-</h4>
 <p>For a set of predicates <span class="math inline">\(I\)</span>, let
 <span class="math inline">\(\text{supp}(I)\)</span> denote the
 <em>support</em> — the relative frequency (for logical data) or the mean
@@ -685,10 +680,6 @@ antecedent.<br>
 <p>Optional additional measures (<code>"lift"</code>,
 <code>"conviction"</code>, <code>"added_value"</code>) can be computed
 using the <code>measures</code> argument.</p>
-</div>
-<div class="section level4">
-<h4 id="creating-a-disjoint-vector">Creating a Disjoint Vector<a class="anchor" aria-label="anchor" href="#creating-a-disjoint-vector"></a>
-</h4>
 <p>Before searching for rules, it is recommended to create a <em>vector
 of disjoints</em>, which specifies predicates that must not appear
 together in the same condition. This vector should have the same length
