@@ -30,9 +30,9 @@ shortens the predicates in each condition based on the selected \code{method}:
 \item \code{"letters"}: predicates are replaced with single letters from the
 English alphabet, starting with \code{A} for the first distinct predicate;
 \item \code{"abbrev4"}: predicates are abbreviated to at most 4 characters using
-\code{\link[=abbreviate]{abbreviate()}};
+\code{\link[base:abbreviate]{base::abbreviate()}};
 \item \code{"abbrev8"}: predicates are abbreviated to at most 8 characters using
-\code{\link[=abbreviate]{abbreviate()}};
+\code{\link[base:abbreviate]{base::abbreviate()}};
 \item \code{"none"}: no shortening is applied; predicates remain unchanged.
 }
 
@@ -56,7 +56,7 @@ shorten_condition(c("{helloWorld=1}", "{helloWorld=2}"),
 }
 \seealso{
 \code{\link[=format_condition]{format_condition()}}, \code{\link[=parse_condition]{parse_condition()}}, \code{\link[=is_condition]{is_condition()}},
-\code{\link[=remove_ill_conditions]{remove_ill_conditions()}}, \code{\link[=abbreviate]{abbreviate()}}
+\code{\link[=remove_ill_conditions]{remove_ill_conditions()}}, \code{\link[base:abbreviate]{base::abbreviate()}}
 }
 \author{
 Michal Burda

@@ -10,9 +10,9 @@
 #' - `"letters"`: predicates are replaced with single letters from the
 #'   English alphabet, starting with `A` for the first distinct predicate;
 #' - `"abbrev4"`: predicates are abbreviated to at most 4 characters using
-#'   [abbreviate()];
+#'   [base::abbreviate()];
 #' - `"abbrev8"`: predicates are abbreviated to at most 8 characters using
-#'   [abbreviate()];
+#'   [base::abbreviate()];
 #' - `"none"`: no shortening is applied; predicates remain unchanged.
 #'
 #' @param x A character vector of conditions, each formatted as a string
@@ -30,7 +30,7 @@
 #' applied consistently across all conditions in `x`.
 #'
 #' @seealso [format_condition()], [parse_condition()], [is_condition()],
-#'   [remove_ill_conditions()], [abbreviate()]
+#'   [remove_ill_conditions()], [base::abbreviate()]
 #'
 #' @author Michal Burda
 #'
