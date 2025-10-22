@@ -557,10 +557,6 @@ likely to have a high income.*
 In practice, the antecedent `A` is a set of predicates, and the consequent `C`
 is usually a single predicate.
 
----
-
-### Rule Quality Measures
-
 For a set of predicates \(I\), let \(\text{supp}(I)\) denote the *support* —
 the relative frequency (for logical data) or the mean truth degree (for fuzzy
 data) of rows satisfying all predicates in \(I\). Using this notation:
@@ -573,9 +569,6 @@ data) of rows satisfying all predicates in \(I\). Using this notation:
 
 Optional additional measures (`"lift"`, `"conviction"`, `"added_value"`) can be
 computed using the `measures` argument.
-
-
-### Creating a Disjoint Vector
 
 Before searching for rules, it is recommended to create a *vector of disjoints*,
 which specifies predicates that must not appear together in the same condition.
@@ -590,7 +583,6 @@ so their shared group label in `disj` prevents meaningless conditions like
 disj <- var_names(colnames(fuzzy_mtcars))
 print(disj)
 ```
-
 
 The `dig_associations()` function searches for association rules. Its main
 arguments are:
