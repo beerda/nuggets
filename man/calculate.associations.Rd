@@ -4,7 +4,7 @@
 \alias{calculate.associations}
 \title{Calculate additional interest measures for association rules}
 \usage{
-\method{calculate}{associations}(x, measure)
+\method{calculate}{associations}(x, measure, ...)
 }
 \arguments{
 \item{x}{A nugget of flavour \code{associations}, typically created with
@@ -12,6 +12,8 @@
 
 \item{measure}{A character vector specifying which interest measures to
 calculate. See the Details section for the list of supported measures.}
+
+\item{...}{Currently unused.}
 }
 \value{
 An S3 object which is an instance of \code{associations} and \code{nugget}

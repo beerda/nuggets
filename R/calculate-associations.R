@@ -37,6 +37,7 @@
 #'    [dig_associations()] with argument `contingency_table = TRUE`.
 #' @param measure A character vector specifying which interest measures to
 #'    calculate. See the Details section for the list of supported measures.
+#' @param ... Currently unused.
 #' @return An S3 object which is an instance of `associations` and `nugget`
 #'    classes and which is a tibble containing all the columns of the input
 #'    nugget `x`, plus additional columns for each of the requested interest
@@ -54,7 +55,9 @@
 #' rules <- calculate(rules,
 #'                    measure = c("conviction", "leverage", "jaccard"))
 #' @export
-calculate.associations <- function(x, measure) {
+calculate.associations <- function(x,
+                                   measure,
+                                   ...) {
     .must_be_nugget(x, "associations")
     .must_have_numeric_column(x,
                               "pp",
