@@ -23,6 +23,7 @@
 ## usethis namespace: start
 #' @importFrom classInt classIntervals
 #' @importFrom cli cli_abort
+#' @importFrom cli cli_warn
 #' @importFrom dplyr bind_cols
 #' @importFrom DT datatable
 #' @importFrom DT dataTableOutput
@@ -166,3 +167,6 @@ NULL
 
 #' @export
 generics::explore
+
+#' @export
+generics::calculate
