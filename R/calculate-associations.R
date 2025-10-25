@@ -1,6 +1,39 @@
+#' Calculate additional interest measures for association rules
 #'
-#' @return
+#' This function calculates various additional interest measures for
+#' association rules based on their contingency table counts.
+#'
+#' The input nugget object must contain the columns
+#' `pp` (positive antecedent & positive consequent),
+#' `pn` (positive antecedent & negative consequent),
+#' `np` (negative antecedent & positive consequent), and
+#' `nn` (negative antecedent & negative consequent), representing the counts
+#' from the contingency table. These columns are typically produced by
+#' [dig_associations()] when the `contingency_table` argument is set to `TRUE`.
+#'
+#' The supported interest measures that can be calculated include:
+#' `r .create_arules_measures_doc()`
+#'
+#' @param x A nugget of flavour `associations`, typically created with
+#'    [dig_associations()] with argument `contingency_table = TRUE`.
+#' @param measure A character vector specifying which interest measures to
+#'    calculate. See the Details section for the list of supported measures.
+#' @return An S3 object which is an instance of `associations` and `nugget`
+#'    classes and which is a tibble containing all the columns of the input
+#'    nugget `x`, plus additional columns for each of the requested interest
+#'    measures.
 #' @author Michal Burda
+#' @seealso [dig_associations()]
+#' @examples
+#' d <- partition(mtcars, .breaks = 2)
+#' rules <- dig_associations(d,
+#'                           antecedent = !starts_with("mpg"),
+#'                           consequent = starts_with("mpg"),
+#'                           min_support = 0.3,
+#'                           min_confidence = 0.8,
+#'                           contingency_table = TRUE)
+#' rules <- calculate(rules,
+#'                    measure = c("conviction", "leverage", "jaccard"))
 #' @export
 calculate.associations <- function(x, measure) {
     .must_be_nugget(x, "associations")
@@ -20,8 +53,10 @@ calculate.associations <- function(x, measure) {
                               "nn",
                               arg_x = "x",
                               call = current_env())
+
+    supported_measures <- names(.arules_association_measures)
     .must_be_enum(measure,
-                  names(.association_measures),
+                  supported_measures,
                   null = FALSE,
                   multi = TRUE,
                   arg = "measure",
@@ -52,7 +87,7 @@ calculate.associations <- function(x, measure) {
     )
 
     res <- lapply(measure, function(m) {
-        func <- .association_measures[[m]]
+        func <- .arules_association_measures[[m]]
         func(counts)
     })
     names(res) <- measure
@@ -60,125 +95,13 @@ calculate.associations <- function(x, measure) {
     bind_cols(x, res)
 }
 
-# A named list of measure functions, each taking `counts` (a list with n00, n01, n10, n11, n, n1x, n0x, nx1, nx0, etc.)
-# Some measures accept additional arguments (e.g., laplace's k, chiSquared's significance/complement).
-.association_measures <- list(
-    cosine = function(counts) with(counts, n11 / sqrt(n1x * nx1)),
 
-    conviction = function(counts) with(counts, n1x * nx0 / (n * n10)),
+.create_arules_measures_doc <- function() {
+    url_base <- "https://mhahsler.github.io/arules/docs/measures#"
+    measures <- names(.arules_association_measures)
+    measures <- sort(measures)
+    section_names <- gsub("_", "", measures, fixed = TRUE)
 
-    gini = function(counts) with(counts,
-                                 n1x / n * ((n11 / n1x)^2 + (n10 / n1x)^2) - (nx1 / n)^2 +
-                                     n0x / n * ((n01 / n0x)^2 + (n00 / n0x)^2) - (nx0 / n)^2
-    ),
-
-    rule_power_factor = function(counts) with(counts, n11 * n11 / n1x / n),
-
-    odds_ratio = function(counts) with(counts, n11 * n00 / (n10 * n01)),
-
-    relative_risk = function(counts) with(counts, (n11 / n1x) / (n01 / n0x)),
-
-    phi = function(counts) with(counts, (n * n11 - n1x * nx1) / sqrt(n1x * nx1 * n0x * nx0)),
-
-    leverage = function(counts) with(counts, n11 / n - (n1x * nx1 / n^2)),
-
-    collective_strength = function(counts) with(counts,
-                                               n11 * n00 / (n1x * nx1 + n0x + nx0) *
-                                                   (n^2 - n1x * nx1 - n0x * nx0) / (n - n11 - n00)
-    ),
-
-    importance = function(counts) with(counts,
-                                       log(((n11 + 1) * (n0x + 2)) / ((n01 + 1) * (n1x + 2)), base = 10)
-    ),
-
-    imbalance = function(counts) with(counts, abs(n1x - nx1) / (n1x + nx1 - n11)),
-
-    jaccard = function(counts) with(counts, n11 / (n1x + nx1 - n11)),
-
-    kappa = function(counts) with(counts,
-                                  (n * n11 + n * n00 - n1x * nx1 - n0x * nx0) /
-                                      (n^2 - n1x * nx1 - n0x * nx0)
-    ),
-
-    lambda = function(counts) with(counts, {
-        max_x0x1 <- apply(cbind(nx1, nx0), 1, max)
-        (apply(cbind(n11, n10), 1, max) + apply(cbind(n01, n00), 1, max) - max_x0x1) /
-            (n - max_x0x1)
-    }),
-
-    mutual_information = function(counts) with(counts, (
-        n00 / n * log(n * n00 / (n0x * nx0)) +
-            n01 / n * log(n * n01 / (n0x * nx1)) +
-            n10 / n * log(n * n10 / (n1x * nx0)) +
-            n11 / n * log(n * n11 / (n1x * nx1))
-    ) /
-        pmin(
-            -1 * (n0x / n * log(n0x / n) + n1x / n * log(n1x / n)),
-            -1 * (nx0 / n * log(nx0 / n) + nx1 / n * log(nx1 / n))
-        )),
-
-    maxconfidence = function(counts) with(counts, pmax(n11 / n1x, n11 / nx1)),
-
-    j_measure = function(counts) with(counts,
-                                     n11 / n * log(n * n11 / (n1x * nx1)) +
-                                         n10 / n * log(n * n10 / (n1x * nx0))
-    ),
-
-    kulczynski = function(counts) with(counts, (n11 / n1x + n11 / nx1) / 2),
-
-    #laplace = function(counts, k) with(counts, (n11 + 1) / (n1x + k)),
-
-    certainty = function(counts) with(counts, (n11 / n1x - nx1 / n) / (1 - nx1 / n)),
-
-    added_value = function(counts) with(counts, n11 / n1x - nx1 / n),
-
-    ralambondrainy = function(counts) with(counts, n10 / n),
-
-    sebag = function(counts) with(counts, (n1x - n10) / n10),
-
-    counterexample = function(counts) with(counts, (n11 - n10) / n11),
-
-    confirmed_confidence = function(counts) with(counts, (n11 - n10) / n1x),
-
-    casual_support = function(counts) with(counts, (n1x + nx1 - 2 * n10) / n),
-
-    casual_confidence = function(counts) with(counts, 1 - n10 / n * (1 / n1x + 1 / nx1)),
-
-    least_contradiction = function(counts) with(counts, (n1x - n10) / nx1),
-
-    centered_confidence = function(counts) with(counts, nx0 / n - n10 / n1x),
-
-    varying_liaison = function(counts) with(counts, (n1x - n10) / (n1x * nx1 / n) - 1),
-
-    yule_q = function(counts) with(counts, {
-        OR <- n11 * n00 / (n10 * n01)
-        (OR - 1) / (OR + 1)
-    }),
-
-    yule_y = function(counts) with(counts, {
-        OR <- n11 * n00 / (n10 * n01)
-        (sqrt(OR) - 1) / (sqrt(OR) + 1)
-    }),
-
-    lerman = function(counts) with(counts, (n11 - n1x * nx1 / n) / sqrt(n1x * nx1 / n)),
-
-    implication_index = function(counts) with(counts, (n10 - n1x * nx0 / n) / sqrt(n1x * nx0 / n)),
-
-    doc = function(counts) with(counts, (n11 / n1x) - (n01 / n0x))
-
-#    chi_squared = function(counts, significance = FALSE, complement = FALSE) with(counts, {
-#        len <- length(n11)
-#        chi2 <- numeric(len)
-#
-#        for (i in seq_len(len)) {
-#            fo <- matrix(c(n00[i], n01[i], n10[i], n11[i]), ncol = 2)
-#            suppressWarnings(chi2[i] <- stats::chisq.test(fo, correct = FALSE)$statistic)
-#        }
-#
-#        if (!significance) {
-#            chi2
-#        } else {
-#            stats::pchisq(q = chi2, df = 1, lower.tail = !complement)
-#        }
-#    })
-)
+    paste0("- `", measures, "` - see [", url_base, section_names, "](", url_base, section_names, ") for details",
+           collapse = "\n")
+}

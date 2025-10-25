@@ -26,8 +26,8 @@ test_that("compare calculate.associations to arules::interestMeasure", {
         paste0(parts[1], paste0(res, collapse = ""))
     }
 
-    expect_true(length(names(.association_measures)) > 0)
-    for (m in names(.association_measures)) {
+    expect_true(length(names(.arules_association_measures)) > 0)
+    for (m in names(.arules_association_measures)) {
         expected[[m]] <- arules::interestMeasure(afit, to_camel(m))
     }
 
@@ -39,7 +39,7 @@ test_that("compare calculate.associations to arules::interestMeasure", {
                             max_length = 5,
                             min_confidence = 0.5,
                             contingency_table = TRUE)
-    res <- calculate(res, measure = names(.association_measures))
+    res <- calculate(res, measure = names(.arules_association_measures))
 
     expect_true(is_nugget(res, "associations"))
     expect_true(is_tibble(res))
@@ -47,7 +47,7 @@ test_that("compare calculate.associations to arules::interestMeasure", {
 
     expect_equal(res$antecedent, expected$LHS)
     expect_equal(res$consequent, expected$RHS)
-    for (m in names(.association_measures)) {
+    for (m in names(.arules_association_measures)) {
         expect_equal(res[[!!m]], !!(expected[[m]]), tolerance = 1e-7)
     }
 })
