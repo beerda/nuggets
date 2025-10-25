@@ -33,6 +33,7 @@ Depends: R (>= 4.1.0)
 Imports: 
     classInt,
     cli,
+    dplyr,
     DT,
     fastmatch,
     generics,
@@ -62,7 +63,6 @@ LinkingTo:
 SystemRequirements: C++17
 Suggests: 
     arules,
-    dplyr,
     testthat (>= 3.0.0),
     xml2,
     withr,
