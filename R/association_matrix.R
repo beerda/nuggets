@@ -58,7 +58,6 @@ association_matrix <- function(x,
     .must_have_column(x,
                       names(value_col),
                       arg_x = error_context$arg_x,
-                      arg_column = error_context$arg_value,
                       call = error_context$call)
     if (!is.numeric(x[[value_col]])) {
         cli_abort(c("{.arg {error_context$arg_value}} must select a numeric column.",

@@ -322,7 +322,6 @@
     function(x,
              column,
              arg_x = caller_arg(x),
-             arg_column = caller_arg(column),
              call = caller_env()) {
         col <- x[[column]]
         if (is.null(col)) {
