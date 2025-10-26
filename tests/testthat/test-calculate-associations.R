@@ -26,28 +26,53 @@ test_that("compare calculate.associations to arules::interestMeasure", {
         paste0(parts[1], paste0(res, collapse = ""))
     }
 
+    expected_no_smoothing <- expected
+    expected_smooth1 <- expected
+    rm(expected)
+
     expect_true(length(names(.arules_association_measures)) > 0)
     for (m in names(.arules_association_measures)) {
-        expected[[m]] <- arules::interestMeasure(afit, to_camel(m))
+        expected_no_smoothing[[m]] <- arules::interestMeasure(afit, to_camel(m))
+        expected_smooth1[[m]] <- arules::interestMeasure(afit, to_camel(m), smoothCount = 1)
     }
 
-    expected <- expected[order(expected$LHS, expected$RHS), ]
+    expected_no_smoothing <- expected_no_smoothing[order(expected_no_smoothing$LHS, expected_no_smoothing$RHS), ]
+    expected_smooth1 <- expected_smooth1[order(expected_smooth1$LHS, expected_smooth1$RHS), ]
 
-    res <- dig_associations(d,
+    fit <- dig_associations(d,
                             min_support = 0.001,
                             min_length = 0,
                             max_length = 5,
                             min_confidence = 0.5,
                             contingency_table = TRUE)
-    res <- calculate(res, measure = names(.arules_association_measures))
+
+    # no smoothing
+    res <- calculate(fit,
+                     measure = names(.arules_association_measures))
 
     expect_true(is_nugget(res, "associations"))
     expect_true(is_tibble(res))
     res <- res[order(res$antecedent, res$consequent), ]
 
-    expect_equal(res$antecedent, expected$LHS)
-    expect_equal(res$consequent, expected$RHS)
+    expect_equal(res$antecedent, expected_no_smoothing$LHS)
+    expect_equal(res$consequent, expected_no_smoothing$RHS)
     for (m in names(.arules_association_measures)) {
-        expect_equal(res[[!!m]], !!(expected[[m]]), tolerance = 1e-7)
+        expect_equal(res[[!!m]], !!(expected_no_smoothing[[m]]), tolerance = 1e-7)
     }
+
+    # smoothing = 1
+    res <- calculate(fit,
+                     measure = names(.arules_association_measures),
+                     smooth_counts = 1)
+
+    expect_true(is_nugget(res, "associations"))
+    expect_true(is_tibble(res))
+    res <- res[order(res$antecedent, res$consequent), ]
+
+    expect_equal(res$antecedent, expected_smooth1$LHS)
+    expect_equal(res$consequent, expected_smooth1$RHS)
+    for (m in names(.arules_association_measures)) {
+        expect_equal(res[[!!m]], !!(expected_smooth1[[m]]), tolerance = 1e-7)
+    }
+
 })

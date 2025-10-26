@@ -37,10 +37,24 @@
 #' The supported interest measures that can be calculated include:
 #' `r .create_arules_measures_doc()`
 #'
+#' Many measures are based on the contingency table counts, and some may be
+#' undefined for certain combinations of counts (e.g., division by zero).
+#' This issue can be mitigated by applying smoothing using the `smooth_counts`
+#' argument.
+#'
+#'
 #' @param x A nugget of flavour `associations`, typically created with
 #'    [dig_associations()] with argument `contingency_table = TRUE`.
 #' @param measures A character vector specifying which interest measures to
 #'    calculate. See the Details section for the list of supported measures.
+#' @param smooth_counts A non-negative numeric value specifying the amount of
+#'    Laplace smoothing to apply to the contingency table counts before
+#'    calculating the interest measures. Default is `0` (no smoothing).
+#'    Positive values add the specified amount to each of the counts
+#'    (`pp`, `pn`, `np`, `nn`), which can help avoid issues with undefined measures
+#'    due to zero counts. Use `smooth_counts = 1` for standard Laplace smoothing.
+#'    Use `smooth_counts = 0.5` for Haldane-Anscombe smoothing, which is
+#'    often used for odds ratio estimation and in chi-squared tests.
 #' @param ... Currently unused.
 #' @return An S3 object which is an instance of `associations` and `nugget`
 #'    classes and which is a tibble containing all the columns of the input
@@ -61,6 +75,7 @@
 #' @export
 calculate.associations <- function(x,
                                    measures,
+                                   smooth_counts = 0,
                                    ...) {
     .must_be_nugget(x, "associations")
     .must_have_numeric_column(x,
@@ -84,9 +99,10 @@ calculate.associations <- function(x,
     .must_be_enum(measures,
                   supported_measures,
                   null = FALSE,
-                  multi = TRUE,
-                  arg = "measures",
-                  call = current_env())
+                  multi = TRUE)
+
+    .must_be_double_scalar(smooth_counts)
+    .must_be_greater_eq(smooth_counts, 0)
 
     if (any(c(x$pp, x$pn, x$np, x$nn) < 0)) {
         cli_abort(c("{.arg x} contains negative counts in columns {.var pp}, {.var pn}, {.var np}, or {.var nn}.",
@@ -100,14 +116,18 @@ calculate.associations <- function(x,
                  call = current_env())
     }
 
-    n1x <- x$pp + x$pn
-    n0x <- x$np + x$nn
-    nx1 <- x$pp + x$np
-    nx0 <- x$pn + x$nn
+    n11 <- x$pp + smooth_counts
+    n10 <- x$pn + smooth_counts
+    n01 <- x$np + smooth_counts
+    n00 <- x$nn + smooth_counts
+    n1x <- n11 + n10
+    n0x <- n01 + n00
+    nx1 <- n11 + n01
+    nx0 <- n10 + n00
     n <- n1x + n0x
 
     counts <- list(
-        n11 = x$pp, n10 = x$pn, n01 = x$np, n00 = x$nn,
+        n11 = n11, n10 = n10, n01 = n01, n00 = n00,
         n1x = n1x, n0x = n0x, nx1 = nx1, nx0 = nx0,
         n = n
     )

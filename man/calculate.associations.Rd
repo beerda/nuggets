@@ -4,7 +4,7 @@
 \alias{calculate.associations}
 \title{Calculate additional interest measures for association rules}
 \usage{
-\method{calculate}{associations}(x, measures, ...)
+\method{calculate}{associations}(x, measures, smooth_counts = 0, ...)
 }
 \arguments{
 \item{x}{A nugget of flavour \code{associations}, typically created with
@@ -12,6 +12,15 @@
 
 \item{measures}{A character vector specifying which interest measures to
 calculate. See the Details section for the list of supported measures.}
+
+\item{smooth_counts}{A non-negative numeric value specifying the amount of
+Laplace smoothing to apply to the contingency table counts before
+calculating the interest measures. Default is \code{0} (no smoothing).
+Positive values add the specified amount to each of the counts
+(\code{pp}, \code{pn}, \code{np}, \code{nn}), which can help avoid issues with undefined measures
+due to zero counts. Use \code{smooth_counts = 1} for standard Laplace smoothing.
+Use \code{smooth_counts = 0.5} for Haldane-Anscombe smoothing, which is
+often used for odds ratio estimation and in chi-squared tests.}
 
 \item{...}{Currently unused.}
 }
@@ -73,6 +82,11 @@ The supported interest measures that can be calculated include:
 \item \code{yule_q} - see \url{https://mhahsler.github.io/arules/docs/measures#yuleq} for details
 \item \code{yule_y} - see \url{https://mhahsler.github.io/arules/docs/measures#yuley} for details
 }
+
+Many measures are based on the contingency table counts, and some may be
+undefined for certain combinations of counts (e.g., division by zero).
+This issue can be mitigated by applying smoothing using the \code{smooth_counts}
+argument.
 }
 \examples{
 d <- partition(mtcars, .breaks = 2)
