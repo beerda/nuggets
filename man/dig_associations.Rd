@@ -16,7 +16,7 @@ dig_associations(
   min_support = 0,
   min_confidence = 0,
   contingency_table = FALSE,
-  measures = NULL,
+  measures = deprecated(),
   t_norm = "goguen",
   max_results = Inf,
   verbose = FALSE,
@@ -78,7 +78,10 @@ the antecedent and the consequent, the antecedent but not the consequent,
 the consequent but not the antecedent, and neither the antecedent nor the
 consequent, respectively.}
 
-\item{measures}{a character vector specifying the additional quality measures to compute.
+\item{measures}{(Deprecated. Search for associations using
+\code{dig_associations(contingency_table = TRUE)} and use the \code{calculate()}
+function on the result to compute additional measures.)
+A character vector specifying the additional quality measures to compute.
 If \code{NULL}, no additional measures are computed. Possible values are \code{"lift"},
 \code{"conviction"}, \code{"added_value"}.
 See \url{https://mhahsler.github.io/arules/docs/measures}
@@ -169,8 +172,7 @@ dig_associations(d,
                  antecedent = !starts_with("mpg"),
                  consequent = starts_with("mpg"),
                  min_support = 0.3,
-                 min_confidence = 0.8,
-                 measures = c("lift", "conviction"))
+                 min_confidence = 0.8)
 }
 \seealso{
 \code{\link[=partition]{partition()}}, \code{\link[=var_names]{var_names()}}, \code{\link[=dig]{dig()}}

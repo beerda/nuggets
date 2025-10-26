@@ -373,14 +373,17 @@ test_that("compare dig_associations to arules::apriori", {
 
     expected <- expected[order(expected$LHS, expected$RHS), ]
 
-    res <- dig_associations(m,
-                            min_support = 0.001,
-                            min_length = 0,
-                            max_length = 5,
-                            min_confidence = 0.5,
-                            measures = c("lift",
-                                         "conviction",
-                                         "added_value"))
+    expect_warning(
+        regexp = "`measures` argument is deprecated",
+        res <- dig_associations(m,
+                                min_support = 0.001,
+                                min_length = 0,
+                                max_length = 5,
+                                min_confidence = 0.5,
+                                measures = c("lift",
+                                             "conviction",
+                                             "added_value"))
+    )
     expect_true(is_nugget(res, "associations"))
     expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_associations")
@@ -416,21 +419,24 @@ test_that("dig_associations return object details", {
                     b = c(T, T, T, T, F),
                     c = c(T, F, F, T, T))
 
-    res <- dig_associations(d,
-                            antecedent = a:b,
-                            consequent = b:c,
-                            disjoint = c(1, 2, 2),
-                            excluded = list("a"),
-                            min_length = 1L,
-                            max_length = Inf,
-                            min_coverage = 0.2,
-                            min_support = 0.3,
-                            min_confidence = 0.5,
-                            contingency_table = TRUE,
-                            measures = c("lift", "conviction"),
-                            t_norm = "lukas",
-                            max_results = 10,
-                            threads = 1)
+    expect_warning(
+        regexp = "`measures` argument is deprecated",
+        res <- dig_associations(d,
+                                antecedent = a:b,
+                                consequent = b:c,
+                                disjoint = c(1, 2, 2),
+                                excluded = list("a"),
+                                min_length = 1L,
+                                max_length = Inf,
+                                min_coverage = 0.2,
+                                min_support = 0.3,
+                                min_confidence = 0.5,
+                                contingency_table = TRUE,
+                                measures = c("lift", "conviction"),
+                                t_norm = "lukas",
+                                max_results = 10,
+                                threads = 1)
+    )
 
     expect_true(is_nugget(res, "associations"))
     expect_true(is_tibble(res))
@@ -489,8 +495,6 @@ test_that("dig_associations errors", {
                  "`min_confidence` must be a double scalar.")
     expect_error(dig_associations(d, contingency_table = "x"),
                  "`contingency_table` must be a flag.")
-    expect_error(dig_associations(d, measures = "x"),
-                 "`measures` must be equal to any of:")
     expect_error(dig_associations(d, t_norm = "x"),
                  "`t_norm` must be equal to one of")
     expect_error(dig_associations(d, max_results = "x"),
@@ -505,19 +509,22 @@ test_that("dig_associations return nothing", {
     d <- data.frame(a = c(T, T, F, F, F),
                     b = c(T, T, T, T, F))
 
-    res <- dig_associations(d,
-                            antecedent = a,
-                            consequent = b,
-                            min_length = 3,
-                            max_length = 3,
-                            disjoint = c(1, 2),
-                            min_support = 0.1,
-                            min_confidence = 0.2,
-                            measures = "lift",
-                            t_norm = "lukas",
-                            max_results = 5,
-                            verbose = FALSE,
-                            threads = 1)
+    expect_warning(
+        regexp = "`measures` argument is deprecated",
+        res <- dig_associations(d,
+                                antecedent = a,
+                                consequent = b,
+                                min_length = 3,
+                                max_length = 3,
+                                disjoint = c(1, 2),
+                                min_support = 0.1,
+                                min_confidence = 0.2,
+                                measures = "lift",
+                                t_norm = "lukas",
+                                max_results = 5,
+                                verbose = FALSE,
+                                threads = 1)
+    )
 
     expect_true(is_nugget(res, "associations"))
     expect_true(is_tibble(res))

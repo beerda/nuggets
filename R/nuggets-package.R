@@ -67,6 +67,7 @@
 #' @importFrom htmltools htmlEscape
 #' @importFrom htmltools span
 #' @importFrom htmltools tags
+#' @importFrom lifecycle deprecate_warn
 #' @importFrom lifecycle deprecated
 #' @importFrom methods formalArgs
 #' @importFrom purrr quietly
