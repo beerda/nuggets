@@ -4,13 +4,13 @@
 \alias{calculate.associations}
 \title{Calculate additional interest measures for association rules}
 \usage{
-\method{calculate}{associations}(x, measure, ...)
+\method{calculate}{associations}(x, measures, ...)
 }
 \arguments{
 \item{x}{A nugget of flavour \code{associations}, typically created with
 \code{\link[=dig_associations]{dig_associations()}} with argument \code{contingency_table = TRUE}.}
 
-\item{measure}{A character vector specifying which interest measures to
+\item{measures}{A character vector specifying which interest measures to
 calculate. See the Details section for the list of supported measures.}
 
 \item{...}{Currently unused.}
@@ -22,6 +22,8 @@ nugget \code{x}, plus additional columns for each of the requested interest
 measures.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 This function calculates various additional interest measures for
 association rules based on their contingency table counts.
 }
@@ -81,7 +83,7 @@ rules <- dig_associations(d,
                           min_confidence = 0.8,
                           contingency_table = TRUE)
 rules <- calculate(rules,
-                   measure = c("conviction", "leverage", "jaccard"))
+                   measures = c("conviction", "leverage", "jaccard"))
 }
 \seealso{
 \code{\link[=dig_associations]{dig_associations()}}

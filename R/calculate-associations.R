@@ -19,9 +19,13 @@
 
 #' Calculate additional interest measures for association rules
 #'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' This function calculates various additional interest measures for
 #' association rules based on their contingency table counts.
 #'
+#' @details
 #' The input nugget object must contain the columns
 #' `pp` (positive antecedent & positive consequent),
 #' `pn` (positive antecedent & negative consequent),
@@ -35,7 +39,7 @@
 #'
 #' @param x A nugget of flavour `associations`, typically created with
 #'    [dig_associations()] with argument `contingency_table = TRUE`.
-#' @param measure A character vector specifying which interest measures to
+#' @param measures A character vector specifying which interest measures to
 #'    calculate. See the Details section for the list of supported measures.
 #' @param ... Currently unused.
 #' @return An S3 object which is an instance of `associations` and `nugget`
@@ -53,10 +57,10 @@
 #'                           min_confidence = 0.8,
 #'                           contingency_table = TRUE)
 #' rules <- calculate(rules,
-#'                    measure = c("conviction", "leverage", "jaccard"))
+#'                    measures = c("conviction", "leverage", "jaccard"))
 #' @export
 calculate.associations <- function(x,
-                                   measure,
+                                   measures,
                                    ...) {
     .must_be_nugget(x, "associations")
     .must_have_numeric_column(x,
@@ -77,11 +81,11 @@ calculate.associations <- function(x,
                               call = current_env())
 
     supported_measures <- names(.arules_association_measures)
-    .must_be_enum(measure,
+    .must_be_enum(measures,
                   supported_measures,
                   null = FALSE,
                   multi = TRUE,
-                  arg = "measure",
+                  arg = "measures",
                   call = current_env())
 
     if (any(c(x$pp, x$pn, x$np, x$nn) < 0)) {
@@ -90,9 +94,9 @@ calculate.associations <- function(x,
                   call = current_env())
     }
 
-    if (any(measure %in% colnames(x))) {
+    if (any(measures %in% colnames(x))) {
         cli_warn(c("Some of the selected measures are already present in {.arg x} and will be overwritten.",
-                   "i" = "Measures: {.var {intersect(measure, colnames(x))}}."),
+                   "i" = "Measures: {.var {intersect(measures, colnames(x))}}."),
                  call = current_env())
     }
 
@@ -108,11 +112,11 @@ calculate.associations <- function(x,
         n = n
     )
 
-    res <- lapply(measure, function(m) {
+    res <- lapply(measures, function(m) {
         func <- .arules_association_measures[[m]]
         func(counts)
     })
-    names(res) <- measure
+    names(res) <- measures
 
     bind_cols(x, res)
 }
