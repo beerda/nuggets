@@ -46,7 +46,8 @@
 #' @param x A nugget of flavour `associations`, typically created with
 #'    [dig_associations()] with argument `contingency_table = TRUE`.
 #' @param measures A character vector specifying which interest measures to
-#'    calculate. See the Details section for the list of supported measures.
+#'    calculate. If `NULL` (the default), all supported measures are calculated.
+#'    See the Details section for the list of supported measures.
 #' @param smooth_counts A non-negative numeric value specifying the amount of
 #'    Laplace smoothing to apply to the contingency table counts before
 #'    calculating the interest measures. Default is `0` (no smoothing).
@@ -74,7 +75,7 @@
 #'                    measures = c("conviction", "leverage", "jaccard"))
 #' @export
 calculate.associations <- function(x,
-                                   measures,
+                                   measures = NULL,
                                    smooth_counts = 0,
                                    ...) {
     .must_be_nugget(x, "associations")
@@ -98,8 +99,11 @@ calculate.associations <- function(x,
     supported_measures <- names(.arules_association_measures)
     .must_be_enum(measures,
                   supported_measures,
-                  null = FALSE,
+                  null = TRUE,
                   multi = TRUE)
+    if (is.null(measures)) {
+        measures <- supported_measures
+    }
 
     .must_be_double_scalar(smooth_counts)
     .must_be_greater_eq(smooth_counts, 0)

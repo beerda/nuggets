@@ -76,3 +76,26 @@ test_that("compare calculate.associations to arules::interestMeasure", {
     }
 
 })
+
+test_that("calculate.associations(measures = NULL)", {
+    set.seed(2123)
+    rows <- 100
+    cols <- 5
+    d <- matrix(sample(c(T, F), rows * cols, replace = TRUE),
+                nrow = rows,
+                ncol = cols)
+    colnames(d) <- letters[seq_len(cols)]
+
+    fit <- dig_associations(d,
+                            min_support = 0.001,
+                            min_length = 0,
+                            max_length = 5,
+                            min_confidence = 0.5,
+                            contingency_table = TRUE)
+
+    res <- calculate(fit, measures = NULL)
+    expect_true(is_nugget(res, "associations"))
+    expect_true(is_tibble(res))
+    expect_equal(ncol(res),
+                 ncol(fit) + length(names(.arules_association_measures)))
+})
