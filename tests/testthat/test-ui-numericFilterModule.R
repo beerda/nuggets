@@ -6,8 +6,7 @@ test_that("numericFilterModule - ui: numeric, round 2, all specials", {
 
     mod <- numericFilterModule(id = "test",
                                x = c(1.1234, 2, 3.9876, NA, Inf, -Inf, NaN),
-                               meta = meta,
-                               resetAllEvent = "resetAllEvent")
+                               meta = meta)
 
     ui <- mod$ui()
     html <- as.character(ui)
@@ -30,8 +29,7 @@ test_that("numericFilterModule - ui: numeric, round 1, no specials", {
 
     mod <- numericFilterModule(id = "test",
                                x = c(1.1234, 2, 3.9876),
-                               meta = meta,
-                               resetAllEvent = "resetAllEvent")
+                               meta = meta)
 
     ui <- mod$ui()
     html <- as.character(ui)
@@ -54,8 +52,7 @@ test_that("numericFilterModule - ui: integer, NA special", {
 
     mod <- numericFilterModule(id = "test",
                                x = c(1, 2, NA, 3),
-                               meta = meta,
-                               resetAllEvent = "resetAllEvent")
+                               meta = meta)
 
     ui <- mod$ui()
     html <- as.character(ui)
@@ -81,8 +78,7 @@ test_that("numericFilterModule - server", {
 
     mod <- numericFilterModule(id = "test",
                                x = c(1.1234, 2, 3.9876),
-                               meta = meta,
-                               resetAllEvent = "resetAllEvent")
+                               meta = meta)
 
     # Workaround:
     # Accordingly to documentation, the following line should be:
@@ -110,8 +106,7 @@ test_that("numericFilterModule - filter", {
 
     mod <- numericFilterModule(id = "test",
                                x = c(1.2, 1.3, 1.5, NA, Inf, -Inf, NaN),
-                               meta = meta,
-                               resetAllEvent = "resetAllEvent")
+                               meta = meta)
 
     input <- list("test-slider" = c(-1, 1.4))
     res <- mod$filter(input)
