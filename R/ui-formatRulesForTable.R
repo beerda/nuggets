@@ -29,11 +29,10 @@ formatRulesForTable <- function(rules, meta) {
         }
     }
 
+    projection <- meta$data_name
     if ("id" %in% colnames(rules)) {
-        rules <- rules[, c("id", meta$data_name), drop = FALSE]
-    } else {
-        rules <- rules[, meta$data_name, drop = FALSE]
+        projection <- c("id", projection)
     }
 
-    rules
+    rules <- rules[, projection, drop = FALSE]
 }
