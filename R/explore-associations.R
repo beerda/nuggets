@@ -61,20 +61,28 @@ explore.associations <- function(x, data = NULL, ...) {
     .must_be_nugget(x, "associations")
     .must_be_data_frame(data, null = TRUE)
 
-    meta <- tribble(
-        ~data_name,          ~short_name,  ~long_name,           ~type,       ~round, ~scatter, ~clustering_default,
-        "antecedent",        "antecedent", "Antecedent",         "condition", NA,     FALSE,    0,
-        "consequent",        "consequent", "Consequent",         "condition", NA,     FALSE,    0,
-        "coverage",          "asupp",      "Antecedent Support", "numeric",   2,      FALSE,    0,
-        "conseq_support",    "csupp",      "Consequent Support", "numeric",   2,      FALSE,    0,
-        "support",           "supp",       "Rule Support",       "numeric",   2,      TRUE,     0,
-        "confidence",        "conf",       "Confidence",         "numeric",   2,      TRUE,     9,
-        "lift",              "lift",       "Lift",               "numeric",   2,      TRUE,     10,
-        "conviction",        "conv",       "Conviction",         "numeric",   2,      TRUE,     0,
-        "antecedent_length", "len",        "Antecedent Length",  "integer",   NA,     TRUE,     0
+    initial_meta <- tribble(
+        ~data_name,          ~long_name,                      ~type,       ~round, ~scatter, ~clustering_default,
+        "antecedent",        "Antecedent",                    "condition", NA,     FALSE,    0,
+        "consequent",        "Consequent",                    "condition", NA,     FALSE,    0,
+        "coverage",          "Coverage (Antecedent Support)", "numeric",   2,      FALSE,    0,
+        "conseq_support",    "Consequent Support",            "numeric",   2,      FALSE,    0,
+        "support",           "Support",                       "numeric",   2,      TRUE,     0,
+        "confidence",        "Confidence",                    "numeric",   2,      TRUE,     9,
+        "lift",              "Lift",                          "numeric",   2,      TRUE,     10,
+        "antecedent_length", "Antecedent Length",             "integer",   NA,     TRUE,     0
     )
 
+    supported_measures <- names(.get_supported_association_measures())
+    measures_meta <- tibble(data_name = supported_measures,
+                            long_name = .get_supported_association_measure_names()[supported_measures],
+                            type = "numeric",
+                            round = 2,
+                            scatter = TRUE,
+                            clustering_default = 0)
+
     x$id <- seq_len(nrow(x))
+    meta <- bind_rows(initial_meta, measures_meta)
     meta <- meta[meta$data_name %in% colnames(x), , drop = FALSE]
 
     detailWindow <- NULL
