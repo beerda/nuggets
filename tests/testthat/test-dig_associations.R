@@ -30,7 +30,7 @@ test_that("dig_associations without contingency table", {
     expect_equal(nrow(res), 7)
     expect_equal(colnames(res),
                  c("antecedent", "consequent", "support", "confidence",
-                   "coverage", "conseq_support", "count", "antecedent_length"))
+                   "coverage", "conseq_support", "lift", "count", "antecedent_length"))
     expect_true(is.character(res$antecedent))
     expect_true(is.character(res$consequent))
     expect_true(is.double(res$support))
@@ -45,6 +45,8 @@ test_that("dig_associations without contingency table", {
                  c(0.4, 0.8, 0.4, 0.8, 0.4, 0.4, 0.8))
     expect_equal(round(res$confidence, 6),
                  c(0.4, 0.8, 0.4, 1.0, 0.50, 0.25, 0.5))
+    expect_equal(round(res$lift, 6),
+                 c(1.0, 1.0, 1.0, 1.25, 1.25, 0.625, 0.625))
     expect_equal(res$antecedent_length,
                  c(0, 0, 0, 1, 1, 1, 1))
 })
@@ -82,7 +84,7 @@ test_that("dig_associations with contingency table", {
     expect_equal(nrow(res), 7)
     expect_equal(colnames(res),
                  c("antecedent", "consequent", "support", "confidence",
-                   "coverage", "conseq_support", "count", "antecedent_length",
+                   "coverage", "conseq_support", "lift", "count", "antecedent_length",
                    "pp", "pn", "np", "nn"))
     expect_true(is.character(res$antecedent))
     expect_true(is.character(res$consequent))
@@ -141,7 +143,7 @@ test_that("dig_associations with disjoint", {
     expect_equal(nrow(res), 5)
     expect_equal(colnames(res),
                  c("antecedent", "consequent", "support", "confidence",
-                   "coverage", "conseq_support", "count", "antecedent_length"))
+                   "coverage", "conseq_support", "lift", "count", "antecedent_length"))
     expect_true(is.character(res$antecedent))
     expect_true(is.character(res$consequent))
     expect_true(is.double(res$support))

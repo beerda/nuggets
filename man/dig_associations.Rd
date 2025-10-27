@@ -165,6 +165,10 @@ Association rules are characterized with the following quality measures.
 \emph{Support} of a rule is equal to \eqn{supp(A \cup \{c\})}.
 
 \emph{Confidence} of a rule is the fraction \eqn{supp(A) / supp(A \cup \{c\})}.
+
+\emph{Lift} of a rule is the ratio of its support to the expected support
+assuming antecedent and consequent are independent, i.e.,
+\eqn{supp(A \cup \{c\}) / (supp(A) * supp(\{c\}))}.
 }
 \examples{
 d <- partition(mtcars, .breaks = 2)

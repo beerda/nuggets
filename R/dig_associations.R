@@ -56,6 +56,10 @@
 #'
 #' *Confidence* of a rule is the fraction \eqn{supp(A) / supp(A \cup \{c\})}.
 #'
+#' *Lift* of a rule is the ratio of its support to the expected support
+#' assuming antecedent and consequent are independent, i.e.,
+#' \eqn{supp(A \cup \{c\}) / (supp(A) * supp(\{c\}))}.
+#'
 #' @param x a matrix or data frame with data to search in. The matrix must be
 #'      numeric (double) or logical. If `x` is a data frame then each column
 #'      must be either numeric (double) or logical.
@@ -266,6 +270,9 @@ dig_associations <- function(x,
     basic_callback <- function(condition, sum, pp) {
         conf <- pp / sum
         supp <- pp / n
+        covr <- sum / n
+        consupp <- conseq_supports[names(pp)]
+        lift <- supp / (covr * consupp)
         ante <- format_condition(names(condition))
         cons <- unlist(lapply(names(conf), format_condition))
 
@@ -277,8 +284,9 @@ dig_associations <- function(x,
                    consequent = cons,
                    support = supp,
                    confidence = conf,
-                   coverage = sum / n,
-                   conseq_support = conseq_supports[names(pp)],
+                   coverage = covr,
+                   conseq_support = consupp,
+                   lift = lift,
                    count = pp,
                    antecedent_length = length(condition))
     }
@@ -351,9 +359,6 @@ dig_associations <- function(x,
             res <- res[seq_len(max_results), , drop = FALSE]
         }
 
-        if ("lift" %in% measures) {
-            res$lift <- res$support / (res$coverage * res$conseq_support)
-        }
         if ("conviction" %in% measures) {
             res$conviction <- res$coverage * (1 - res$conseq_support) / (res$pn / n)
         }
