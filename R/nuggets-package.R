@@ -143,6 +143,7 @@
 #' @importFrom stats cor.test
 #' @importFrom stats kmeans
 #' @importFrom stats na.omit
+#' @importFrom stats pbinom
 #' @importFrom stats quantile
 #' @importFrom stats setNames
 #' @importFrom stats t.test

@@ -35,13 +35,36 @@
 #' [dig_associations()] when the `contingency_table` argument is set to `TRUE`.
 #'
 #' The supported interest measures that can be calculated include:
-#' `r .create_arules_measures_doc()`
+#' - Founded GUHA (General Unary Hypothesis Automaton) quantifiers:
+#'   - `"fi"` - *Founded Implication*, which equals to the `"confidence"` measure
+#'     calculated automatically by [dig_associations()].
+#'   - `"dfi"` - *Double Founded Implication* computed as \eqn{pp / (pp + pn + np)}
+#'   - `"fe"` - *Founded Equivalence* computed as \eqn{(pp + nn) / (pp + pn + np + nn)}
+#' - GUHA quantifiers based on binomial tests - these measures require the
+#'   additional parameter `p`, which represents the conditional probability of
+#'   the consequent being true given that the antecedent is true under the null
+#'   hypothesis. The measures are computed as one-sided p-values from the
+#'   Clopper-Pearson confidence interval for the binomial proportion:
+#'   - `"lci"` - *Lower Critical Implication* computed as
+#'     \eqn{\sum_{i=pp}^{pp+pn} \frac{(pp+pn)!}{i!(pp+pn-i)!} p^i (1-p)^{pp+pn-i}}
+#'   - `"uci"` - *Upper Critical Implication* computed as
+#'     \eqn{\sum_{i=0}^{pp} \frac{(pp+pn)!}{i!(pp+pn-i)!} p^i (1-p)^{pp+pn-i}}
+#'   - `"dlci"` - *Double Lower Critical Implication* computed as
+#'     \eqn{\sum_{i=pp}^{pp+pn+np} \frac{(pp+pn+np)!}{i!(pp+pn+np-i)!} p^i (1-p)^{pp+pn+np-i}}
+#'   - `"duci"` - *Double Upper Critical Implication* computed as
+#'     \eqn{\sum_{i=0}^{pp} \frac{(pp+pn+np)!}{i!(pp+pn+np-i)!} p^i (1-p)^{pp+pn+np-i}}
+#'   - `"lce"` - *Lower Critical Equivalence* computed as
+#'     \eqn{\sum_{i=pp}^{pp+pn+np+nn} \frac{(pp+pn+np+nn)!}{i!(pp+pn+np+nn-i)!} p^i (1-p)^{pp+pn+np+nn-i}}
+#'   - `"uce"` - *Upper Critical Equivalence* computed as
+#'     \eqn{\sum_{i=0}^{pp} \frac{(pp+pn+np+nn)!}{i!(pp+pn+np+nn-i)!} p^i (1-p)^{pp+pn+np+nn-i}}
+#'
+#' - measures adopted from the `arules` package:
+#'   `r .create_arules_measures_doc()`
 #'
 #' Many measures are based on the contingency table counts, and some may be
 #' undefined for certain combinations of counts (e.g., division by zero).
 #' This issue can be mitigated by applying smoothing using the `smooth_counts`
 #' argument.
-#'
 #'
 #' @param x A nugget of flavour `associations`, typically created with
 #'    [dig_associations()] with argument `contingency_table = TRUE`.
@@ -56,6 +79,11 @@
 #'    due to zero counts. Use `smooth_counts = 1` for standard Laplace smoothing.
 #'    Use `smooth_counts = 0.5` for Haldane-Anscombe smoothing, which is
 #'    often used for odds ratio estimation and in chi-squared tests.
+#' @param p A numeric value in the range `[0, 1]` representing the conditional
+#'    probability of the consequent being true given that the antecedent is
+#'    true. This parameter is used in the calculation of GUHA quantifiers
+#'    `"lci"`, `"uci"`, `"dlci"`, `"duci"`, `"lce"`, and `"uce"`.
+#'    The default value is `0.5`.
 #' @param ... Currently unused.
 #' @return An S3 object which is an instance of `associations` and `nugget`
 #'    classes and which is a tibble containing all the columns of the input
@@ -73,10 +101,13 @@
 #'                           contingency_table = TRUE)
 #' rules <- calculate(rules,
 #'                    measures = c("conviction", "leverage", "jaccard"))
+#' @rdname calculate
+#' @method calculate associations
 #' @export
 calculate.associations <- function(x,
                                    measures = NULL,
                                    smooth_counts = 0,
+                                   p = 0.5,
                                    ...) {
     .must_be_nugget(x, "associations")
     .must_have_numeric_column(x,
@@ -96,17 +127,21 @@ calculate.associations <- function(x,
                               arg_x = "x",
                               call = current_env())
 
-    supported_measures <- names(.arules_association_measures)
+    supported_measures <- c(.arules_association_measures,
+                            .guha_association_measures)
     .must_be_enum(measures,
-                  supported_measures,
+                  names(supported_measures),
                   null = TRUE,
                   multi = TRUE)
     if (is.null(measures)) {
-        measures <- supported_measures
+        measures <- names(supported_measures)
     }
 
     .must_be_double_scalar(smooth_counts)
     .must_be_greater_eq(smooth_counts, 0)
+
+    .must_be_double_scalar(p)
+    .must_be_in_range(p, c(0, 1))
 
     if (any(c(x$pp, x$pn, x$np, x$nn) < 0)) {
         cli_abort(c("{.arg x} contains negative counts in columns {.var pp}, {.var pn}, {.var np}, or {.var nn}.",
@@ -128,17 +163,20 @@ calculate.associations <- function(x,
     n0x <- n01 + n00
     nx1 <- n11 + n01
     nx0 <- n10 + n00
+    n1001 <- n10 + n01
+    n1100 <- n11 + n00
     n <- n1x + n0x
 
     counts <- list(
         n11 = n11, n10 = n10, n01 = n01, n00 = n00,
         n1x = n1x, n0x = n0x, nx1 = nx1, nx0 = nx0,
+        n1001 = n1001, n1100 = n1100,
         n = n
     )
 
     res <- lapply(measures, function(m) {
-        func <- .arules_association_measures[[m]]
-        func(counts)
+        func <- supported_measures[[m]]
+        func(counts, p = p)
     })
     names(res) <- measures
 

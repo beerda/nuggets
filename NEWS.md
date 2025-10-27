@@ -3,8 +3,8 @@
 - parse_condition() rewritten in C++ for better performance
 - added cluster_associations()
 - added calculate() for associations flavour of nugget to compute
-  additional interest measures and deprecated measures argument in
-  dig_associations() and dig_tautologies()
+  additional interest measures (GUHA and arules measures)
+- deprecated measures argument in dig_associations() and dig_tautologies()
 - enhanced UI layout of explore() for associations
 - added "Cluster" tab to explore() for associations
 
