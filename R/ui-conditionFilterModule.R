@@ -101,7 +101,8 @@ conditionFilterModule <- function(id,
     }
 
     list(ui = function() {
-            tabPanel(meta$long_name,
+            tabPanel(title = meta$long_name,
+                     value = paste0(meta$data_name, "-filter-tab"),
                 infoBox(paste0("Filter the rules by choosing predicates that should appear in the ",
                               tolower(meta$long_name), ".")),
                 treeInput(NS(id, "tree"),

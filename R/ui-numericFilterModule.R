@@ -79,7 +79,8 @@ numericFilterModule <- function(id,
                                                           inline = TRUE)
             }
 
-            tabPanel(meta$long_name,
+            tabPanel(title = meta$long_name,
+                     value = paste0(meta$data_name, "-filter-tab"),
                 infoBox(paste0("Filter the rules by choosing a range of values for ",
                                tolower(meta$long_name), ".")),
                 tableOutput(NS(id, "summaryTable")),

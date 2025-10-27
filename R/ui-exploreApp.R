@@ -49,9 +49,14 @@ exploreApp <- function(rules,
             return(NULL)
         }
     })
+    names(filters) <- meta$data_name
     filters <- filters[lengths(filters) != 0]  # drop NULL elements
+    filter_choices <- names(filters)
+    names(filter_choices) <- paste0(filter_choices, " - ",
+                                    meta$long_name[match(filter_choices, meta$data_name)])
+    names(filters) <- NULL # tabsetPanel does not like named lists
     filterTabSet <- do.call(tabsetPanel,
-                            c(list(type = "pills", header = tags$hr()),
+                            c(list(id = "columnFilterTabset", type = "hidden", header = tags$hr()),
                               lapply(filters, function(f) f$ui())))
 
     scatterFilter <- scatterFilterModule(id = "scatterFilterModule",
@@ -172,8 +177,13 @@ exploreApp <- function(rules,
                     div(id = "sharedSidebar", class = "shared-sidebar",
                         panel(heading = "Filters",
                             tabsetPanel(
-                                tabPanel("Basic", filterTabSet),
-                                tabPanel("Advanced",
+                                tabPanel("Filter by Column",
+                                    selectInput("columnFiltersInput",
+                                                label = "Select column to filter by:",
+                                                choices = filter_choices,
+                                                width = "100%"),
+                                    filterTabSet),
+                                tabPanel("Advanced Filters",
                                     tabsetPanel(type = "pills", header = tags$hr(),
                                         scatterFilter$ui()
                                     )
@@ -270,6 +280,11 @@ exploreApp <- function(rules,
         })
 
         lapply(filters, function(f) f$server())
+        observeEvent(input$columnFiltersInput, {
+            updateTabsetPanel(session,
+                              "columnFilterTabset",
+                              selected = paste0(input$columnFiltersInput, "-filter-tab"))
+        })
 
         observeEvent(input$resetAllEvent, {
             lapply(filters, function(f) f$reset(session))
