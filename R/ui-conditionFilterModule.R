@@ -82,10 +82,7 @@
     m
 }
 
-conditionFilterModule <- function(id,
-                                  x,
-                                  meta,
-                                  resetAllEvent) {
+conditionFilterModule <- function(id, x, meta) {
     root_name <- "predicate"
     pred <- parse_condition(x)
     def <- .parse_tree_def_from_condition(pred, root_name = root_name)
@@ -119,15 +116,18 @@ conditionFilterModule <- function(id,
                 showEmptyCheckbox,
                 hr(),
                 actionButton(NS(id, "resetButton"), "Reset"),
-                actionButton(resetAllEvent, "Reset all")
+                actionButton(NS(id, "resetAllButton"), "Reset all")
             )
         },
 
-        server = function() {
+        server = function(reset_all_trigger) {
             moduleServer(id, function(input, output, session) {
                 observeEvent(input$resetButton, {
                     updateTreeInput("tree", selected = def$vid, session = session)
                     updateRadioButtons("radio", selected = "all", session = session)
+
+                observeEvent(input$resetAllButton, {
+                    reset_all_trigger(Sys.time())
                 })
             })
         },

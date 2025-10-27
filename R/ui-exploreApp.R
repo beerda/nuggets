@@ -38,13 +38,11 @@ exploreApp <- function(rules,
         if (meta$type[i] == "condition") {
             return(conditionFilterModule(id = paste0(col, "FilterModule"),
                                          x = rules[[col]],
-                                         meta = meta[i, , drop = FALSE],
-                                         resetAllEvent = "resetAllEvent"))
+                                         meta = meta[i, , drop = FALSE]))
         } else if (meta$type[i] == "numeric" || meta$type[i] == "integer") {
             return(numericFilterModule(id = paste0(col, "FilterModule"),
                                        x = rules[[col]],
-                                       meta = meta[i, , drop = FALSE],
-                                       resetAllEvent = "resetAllEvent"))
+                                       meta = meta[i, , drop = FALSE]))
         } else {
             return(NULL)
         }
@@ -61,8 +59,7 @@ exploreApp <- function(rules,
 
     scatterFilter <- scatterFilterModule(id = "scatterFilterModule",
                                          rules = rules,
-                                         meta = meta,
-                                         resetAllEvent = "resetAllEvent")
+                                         meta = meta)
     filters <- c(filters, list(scatterFilter))
 
     ui <- tagList(
@@ -236,6 +233,7 @@ exploreApp <- function(rules,
     server <- function(input, output, session) {
         sidebar_collapsed <- reactiveVal(FALSE)
         manual_sidebar_collapsed <- reactiveVal(FALSE)
+        reset_all_trigger <- reactiveVal(Sys.time()) # set system time to force reactivity
 
         set_sidebar_collapsed <- function(val, animate) {
             sidebar_collapsed(val)
@@ -279,16 +277,17 @@ exploreApp <- function(rules,
             })
         })
 
-        lapply(filters, function(f) f$server())
         observeEvent(input$columnFiltersInput, {
             updateTabsetPanel(session,
                               "columnFilterTabset",
                               selected = paste0(input$columnFiltersInput, "-filter-tab"))
         })
 
-        observeEvent(input$resetAllEvent, {
+        lapply(filters, function(f) f$server(reset_all_trigger))
+
+        observeEvent(reset_all_trigger(), {
             lapply(filters, function(f) f$reset(session))
-        })
+        }, ignoreInit = TRUE)
 
         rulesFiltering <- reactive({
             sel <- lapply(filters, function(f) f$filter(input))

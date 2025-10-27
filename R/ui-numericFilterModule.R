@@ -17,10 +17,7 @@
 #######################################################################
 
 
-numericFilterModule <- function(id,
-                                x,
-                                meta,
-                                resetAllEvent) {
+numericFilterModule <- function(id, x, meta) {
     int <- meta$type == "integer"
 
     special <- NULL
@@ -96,11 +93,11 @@ numericFilterModule <- function(id,
                 specialCheckboxInput,
                 hr(),
                 actionButton(NS(id, "resetButton"), "Reset"),
-                actionButton(resetAllEvent, "Reset all")
+                actionButton(NS(id, "resetAllButton"), "Reset all")
             )
         },
 
-        server = function() {
+        server = function(reset_all_trigger) {
             moduleServer(id, function(input, output, session) {
                 output$summaryTable <- renderTable({
                     summaryTable
@@ -142,6 +139,10 @@ numericFilterModule <- function(id,
                     if (!is.null(special)) {
                         updateCheckboxGroupInput("special", selected = special, session = session)
                     }
+                })
+
+                observeEvent(input$resetAllButton, {
+                    reset_all_trigger(Sys.time())
                 })
             })
         },

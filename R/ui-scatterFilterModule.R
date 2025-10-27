@@ -17,7 +17,7 @@
 #######################################################################
 
 
-scatterFilterModule <- function(id, rules, meta, resetAllEvent) {
+scatterFilterModule <- function(id, rules, meta) {
     choices <- meta$data_name[meta$scatter]
     if (length(choices) < 3) {
         stop("Need at least three numeric attributes with scatter=TRUE in meta to use scatter filter.")
@@ -33,11 +33,11 @@ scatterFilterModule <- function(id, rules, meta, resetAllEvent) {
                 selectInput(NS(id, "scatterColor"), "Color", choices = choices, selected = choices[3]),
                 hr(),
                 actionButton(NS(id, "resetButton"), "Reset"),
-                actionButton(resetAllEvent, "Reset all")
+                actionButton(NS(id, "resetAllButton"), "Reset all")
             )
         },
 
-        server = function() {
+        server = function(reset_all_trigger) {
             moduleServer(id, function(input, output, session) {
                 output$scatterPlot <- renderPlot({
                     res <- rules
@@ -52,6 +52,10 @@ scatterFilterModule <- function(id, rules, meta, resetAllEvent) {
 
                 observeEvent(input$resetButton, {
                     session$resetBrush(NS(id, "scatterPlotBrush"))
+                })
+
+                observeEvent(input$resetAllButton, {
+                    reset_all_trigger(Sys.time())
                 })
             })
         },
