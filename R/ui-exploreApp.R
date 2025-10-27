@@ -88,6 +88,10 @@ exploreApp <- function(rules,
                 nav.navbar { margin-bottom: 15px; }
                 .grayed { opacity: 0.3; pointer-events: none; }
 
+                ul.nav-tabs {
+                    margin-bottom: 12px;
+                }
+
                 /* container for the left sidebar */
                 .shared-sidebar {
                     position: fixed;
