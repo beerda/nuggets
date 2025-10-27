@@ -33,6 +33,10 @@ exploreApp <- function(rules,
                                    meta = meta,
                                    action = callExtension(extensions, "filteredRulesPanel.rulesTable.action"))
 
+    columnProjector <- columnProjectionModule(id = "columnProjectorModule",
+                                              rules = rules,
+                                              meta = meta)
+
     filters <- lapply(seq_len(nrow(meta)), function(i) {
         col <- meta$data_name[i]
         if (meta$type[i] == "condition") {
@@ -179,9 +183,8 @@ exploreApp <- function(rules,
                     div(id = "sharedSidebar", class = "shared-sidebar",
                         panel(heading = "Filters",
                             tabsetPanel(
-                                tabPanel("Columns",
-                                ),
-                                tabPanel("Filters",
+                                columnProjector$ui(),
+                                tabPanel("Rows",
                                     pickerInput("columnFiltersInput",
                                                 label = "Select column to filter by:",
                                                 choices = filter_choices,
@@ -292,9 +295,12 @@ exploreApp <- function(rules,
                               selected = paste0(input$columnFiltersInput, "-filter-tab"))
         })
 
+        rulesProjection <- columnProjector$server(reset_all_trigger)
+
         lapply(filters, function(f) f$server(reset_all_trigger))
 
         observeEvent(reset_all_trigger(), {
+            columnProjector$reset(session)
             lapply(filters, function(f) f$reset(session))
         }, ignoreInit = TRUE)
 
@@ -304,7 +310,7 @@ exploreApp <- function(rules,
             Reduce(`&`, sel)
         })
 
-        ruleSelection <- rulesTable$server(rulesFiltering)
+        ruleSelection <- rulesTable$server(rulesProjection, rulesFiltering)
 
         callExtension(extensions,
                       "server",

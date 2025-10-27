@@ -27,13 +27,14 @@ rulesTableModule <- function(id, rules, meta, action) {
             DT::dataTableOutput(NS(id, "table"))
         },
 
-        server = function(selectionReactive) {
+        server = function(projectionReactive, selectionReactive) {
             moduleServer(id, function(input, output, session) {
                 ns <- session$ns
 
                 output$table <- renderDT({
                     sel <- selectionReactive()
-                    d <- rules[sel, , drop = FALSE]
+                    proj <- c("id", projectionReactive())
+                    d <- rules[sel, proj, drop = FALSE]
 
                     if (!is.null(action)) {
                         buttons <- vapply(X = d$id,
