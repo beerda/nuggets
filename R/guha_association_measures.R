@@ -21,6 +21,18 @@
 .lower_crit_impl <- function(a, b, p) pbinom(b, size = a + b, prob = 1 - p)
 .upper_crit_impl <- function(a, b, p) pbinom(a, size = a + b, prob = p)
 
+.guha_association_measure_names <- c(
+    fi = "Founded Implication",
+    dfi = "Double Founded Implication",
+    fe = "Founded Equivalence",
+    lci = "Lower Critical Implication",
+    dlci = "Double Lower Critical Implication",
+    lce = "Lower Critical Equivalence",
+    uci = "Upper Critical Implication",
+    duci = "Double Upper Critical Implication",
+    uce = "Upper Critical Equivalence"
+)
+
 .guha_association_measures <- list(
     fi = function(counts, ...)
         with(counts, .founded_impl(n11, n10)),

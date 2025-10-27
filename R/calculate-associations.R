@@ -127,8 +127,7 @@ calculate.associations <- function(x,
                               arg_x = "x",
                               call = current_env())
 
-    supported_measures <- c(.arules_association_measures,
-                            .guha_association_measures)
+    supported_measures <- .get_supported_association_measures()
     .must_be_enum(measures,
                   names(supported_measures),
                   null = TRUE,
@@ -181,6 +180,18 @@ calculate.associations <- function(x,
     names(res) <- measures
 
     bind_cols(x, res)
+}
+
+
+.get_supported_association_measures <- function() {
+    c(.arules_association_measures,
+      .guha_association_measures)
+}
+
+
+.get_supported_association_measure_names <- function() {
+    c(.arules_association_measure_names,
+      .guha_association_measure_names)
 }
 
 
