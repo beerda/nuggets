@@ -125,6 +125,10 @@ conditionFilterModule <- function(id, x, meta) {
                 observeEvent(input$resetButton, {
                     updateTreeInput("tree", selected = def$vid, session = session)
                     updateRadioButtons("radio", selected = "all", session = session)
+                    if (!is.null(showEmptyCheckbox)) {
+                        updateCheckboxInput("emptyCondition", value = TRUE, session = session)
+                    }
+                })
 
                 observeEvent(input$resetAllButton, {
                     reset_all_trigger(Sys.time())
@@ -165,6 +169,9 @@ conditionFilterModule <- function(id, x, meta) {
         reset = function(session) {
             updateTreeInput(NS(id, "tree"), selected = def$vid, session = session)
             updateRadioButtons(NS(id, "radio"), selected = "all", session = session)
+            if (!is.null(showEmptyCheckbox)) {
+                updateCheckboxInput(NS(id, "emptyCondition"), value = TRUE, session = session)
+            }
         }
     )
 }
