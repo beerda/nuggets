@@ -19,7 +19,7 @@
 
 associationsDetailModule <- function(id, rules, meta, data) {
     for (i in seq_len(nrow(meta))) {
-        col <- meta$short_name[i]
+        col <- meta$data_name[i]
         if (meta$type[i] == "condition") {
             rules[[paste0("highlighted-", col)]] <- highlightCondition(rules[[col]])
         }
