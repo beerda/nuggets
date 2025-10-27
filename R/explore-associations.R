@@ -54,6 +54,8 @@
 #' # launch the interactive explorer
 #' explore(rules, data = part)
 #' }
+#' @rdname explore
+#' @method explore associations
 #' @export
 explore.associations <- function(x, data = NULL, ...) {
     .must_be_nugget(x, "associations")
