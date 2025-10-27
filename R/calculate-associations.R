@@ -147,11 +147,15 @@ calculate.associations <- function(x,
 
 
 .create_arules_measures_doc <- function() {
-    url_base <- "https://mhahsler.github.io/arules/docs/measures#"
-    measures <- names(.arules_association_measures)
-    measures <- sort(measures)
-    section_names <- gsub("_", "", measures, fixed = TRUE)
+    measure_ids <- names(.arules_association_measures)
+    measure_ids <- sort(measure_ids)
+    measure_names <- .arules_association_measure_names[measure_ids]
 
-    paste0("- `", measures, "` - see [", url_base, section_names, "](", url_base, section_names, ") for details",
+    url_base <- "https://mhahsler.github.io/arules/docs/measures#"
+    section_names <- gsub("_", "", measure_ids, fixed = TRUE)
+    urls <- paste0(url_base, section_names)
+
+    paste0("  - `\"", measure_ids, "\"` - *", measure_names, "*, ",
+           "see [", urls, "](", urls, ") for details",
            collapse = "\n")
 }
