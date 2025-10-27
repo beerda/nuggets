@@ -50,8 +50,9 @@ exploreApp <- function(rules,
     names(filters) <- meta$data_name
     filters <- filters[lengths(filters) != 0]  # drop NULL elements
     filter_choices <- names(filters)
-    names(filter_choices) <- paste0(filter_choices, " - ",
-                                    meta$long_name[match(filter_choices, meta$data_name)])
+    filter_subtext <- meta$long_name[match(filter_choices, meta$data_name)]
+    indexes <- which(!is.na(filter_subtext))
+    filter_subtext[indexes] <- paste0(" - ", filter_subtext[indexes])
     names(filters) <- NULL # tabsetPanel does not like named lists
     filterTabSet <- do.call(tabsetPanel,
                             c(list(id = "columnFilterTabset", type = "hidden", header = tags$hr()),
@@ -179,9 +180,11 @@ exploreApp <- function(rules,
                         panel(heading = "Filters",
                             tabsetPanel(
                                 tabPanel("Filter by Column",
-                                    selectInput("columnFiltersInput",
+                                    pickerInput("columnFiltersInput",
                                                 label = "Select column to filter by:",
                                                 choices = filter_choices,
+                                                choicesOpt = list(subtext = filter_subtext),
+                                                options = pickerOptions(container = "body"),
                                                 width = "100%"),
                                     filterTabSet),
                                 tabPanel("Advanced Filters",
