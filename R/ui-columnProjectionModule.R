@@ -22,7 +22,7 @@
         return(data.frame())
     }
 
-    group <- meta$type
+    group <- meta$group
     gid <- paste0("g", match(group, unique(group)))
     vid <- paste0("v", seq_along(meta$data_name))
     value <- meta$data_name
@@ -41,11 +41,12 @@
 
 
 columnProjectionModule <- function(id, rules, meta) {
-    root_name <- "column"
+    root_name <- "columns"
     def <- .create_tree_def_from_colnames(meta, root_name)
     tree <- create_tree(def,
                         levels = c("rid", "group", "value"),
                         levels_id = c("rid", "gid", "vid"))
+
 
     list(ui = function() {
             tabPanel(title = "Columns",

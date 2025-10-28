@@ -62,24 +62,30 @@ explore.associations <- function(x, data = NULL, ...) {
     .must_be_data_frame(data, null = TRUE)
 
     initial_meta <- tribble(
-        ~data_name,          ~long_name,                      ~type,       ~round, ~scatter, ~clustering_default,
-        "antecedent",        "Antecedent",                    "condition", NA,     FALSE,    0,
-        "consequent",        "Consequent",                    "condition", NA,     FALSE,    0,
-        "coverage",          "Coverage (Antecedent Support)", "numeric",   2,      FALSE,    0,
-        "conseq_support",    "Consequent Support",            "numeric",   2,      FALSE,    0,
-        "support",           "Support",                       "numeric",   2,      TRUE,     0,
-        "confidence",        "Confidence",                    "numeric",   2,      TRUE,     9,
-        "lift",              "Lift",                          "numeric",   2,      TRUE,     10,
-        "antecedent_length", "Antecedent Length",             "integer",   NA,     TRUE,     0
+        ~data_name,          ~long_name,                          ~type,       ~group,              ~round, ~scatter, ~clustering_default,
+        "antecedent",        "Antecedent",                        "condition", "formula",           NA,     FALSE,    0,
+        "consequent",        "Consequent",                        "condition", "formula",           NA,     FALSE,    0,
+        "coverage",          "Coverage (Antecedent Support)",     "numeric",   "basic measures",    2,      FALSE,    0,
+        "conseq_support",    "Consequent Support",                "numeric",   "basic measures",    2,      FALSE,    0,
+        "support",           "Support",                           "numeric",   "basic measures",    2,      TRUE,     0,
+        "confidence",        "Confidence",                        "numeric",   "basic measures",    2,      TRUE,     9,
+        "lift",              "Lift",                              "numeric",   "basic measures",    2,      TRUE,     10,
+        "antecedent_length", "Antecedent Length",                 "integer",   "basic measures",    NA,     TRUE,     0,
+        "pp",                "Antecedent \u2227 Consequent",           "numeric",   "contingency table", 2,      FALSE,    0,
+        "pn",                "Antecedent \u2227 \u00acConsequent",      "numeric",   "contingency table", 2,      FALSE,    0,
+        "np",                "\u00acAntecedent \u2227 Consequent",      "numeric",   "contingency table", 2,      FALSE,    0,
+        "nn",                "\u00acAntecedent \u2227 \u00acConsequent", "numeric",   "contingency table", 2,      FALSE,    0
     )
 
     supported_measures <- names(.get_supported_association_measures())
     measures_meta <- tibble(data_name = supported_measures,
                             long_name = .get_supported_association_measure_names()[supported_measures],
+                            group = "additional measures",
                             type = "numeric",
                             round = 2,
                             scatter = TRUE,
                             clustering_default = 0)
+   measures_meta$group[measures_meta$data_name %in% names(.guha_association_measures)] <- "GUHA"
 
     x$id <- seq_len(nrow(x))
     meta <- bind_rows(initial_meta, measures_meta)
