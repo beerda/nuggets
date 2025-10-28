@@ -137,14 +137,19 @@ exploreApp <- function(rules,
                 }
 
                 @media (max-width: 768px) {
+                    /* Make navbar non-fixed so it participates in layout */
+                    .navbar-fixed-top { position: static !important; }
+                    /* In case Bootstrap added body padding for fixed navbar, remove it on small screens */
+                    body { padding-top: 0 !important; }
+
                     /* full-width overlay for sidebar */
                     .shared-sidebar {
                         position: relative;
                         left: 0;
                         right: 0;
-                        top: 0;
+                        top: 0 !important;
                         bottom: 0;
-                        padding 0;
+                        padding: 0;
                         height: 100% !important;
                         width: 100% !important;
                         border-right: none;
@@ -153,9 +158,15 @@ exploreApp <- function(rules,
                     .shared-sidebar.collapsed {
                         width: 100% !important;
                     }
-                    #mainContent > div.container-fluid > div.tab-content, #mainContent.no-sidebar > div.container-fluid > div.tab-content {
+
+                    /* cancel left margin; also cancel extra top offset since navbar is static now */
+                    #mainContent > div.container-fluid > div.tab-content,
+                    #mainContent.no-sidebar > div.container-fluid > div.tab-content {
                         margin-left: 0;
+                        margin-top: 0 !important;
                     }
+
+                    /* keep navbar above overlayed elements just in case */
                     .navbar {
                         z-index: 1100;
                     }
