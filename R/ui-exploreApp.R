@@ -56,7 +56,6 @@ exploreApp <- function(rules,
     filter_choices <- names(filters)
     filter_subtext <- meta$long_name[match(filter_choices, meta$data_name)]
     indexes <- which(!is.na(filter_subtext))
-    filter_subtext[indexes] <- paste0(" - ", filter_subtext[indexes])
     names(filters) <- NULL # tabsetPanel does not like named lists
     filterTabSet <- do.call(tabsetPanel,
                             c(list(id = "columnFilterTabset", type = "hidden", header = tags$hr()),
@@ -197,7 +196,7 @@ exploreApp <- function(rules,
                                 columnProjector$ui(),
                                 tabPanel("Rows",
                                     pickerInput("columnFiltersInput",
-                                                label = "Select column to filter by:",
+                                                label = "Show filter:",
                                                 choices = filter_choices,
                                                 choicesOpt = list(subtext = filter_subtext),
                                                 options = pickerOptions(container = "body"),
