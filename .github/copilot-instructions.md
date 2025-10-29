@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-`nuggets` is an R package providing a framework for systematic exploration of association rules, contrast patterns, emerging patterns, subgroup discovery, and conditional correlations. The package supports both crisp (Boolean) and fuzzy data, with performance-critical code implemented in C++.
+`nuggets` is an R package providing a framework for systematic exploration of association rules, contrast patterns, emerging patterns, subgroup discovery, and conditional correlations. The package supports both crisp (Boolean) and fuzzy data, with performance-critical code implemented in C++17/C++20.
 
 ## Repository Structure
 
