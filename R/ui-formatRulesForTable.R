@@ -20,19 +20,18 @@
 formatRulesForTable <- function(rules, meta) {
     for (i in seq_len(nrow(meta))) {
         col <- meta$data_name[i]
-        if (meta$type[i] == "condition") {
-            rules[[col]] <- highlightCondition(rules[[col]])
-        } else if (meta$type[i] == "numeric") {
-            if (!is.na(meta$round[i])) {
-                rules[[col]] <- round(rules[[col]], meta$round[i])
+        if (!is.null(rules[[col]])) {
+            if (meta$type[i] == "condition") {
+                rules[[col]] <- highlightCondition(rules[[col]])
+            } else if (meta$type[i] == "numeric") {
+                if (!is.na(meta$round[i])) {
+                    rules[[col]] <- round(rules[[col]], meta$round[i])
+                }
             }
         }
     }
 
-    projection <- meta$data_name
-    if ("id" %in% colnames(rules)) {
-        projection <- c("id", projection)
-    }
+    projection <- intersect(c("id", meta$data_name), colnames(rules))
 
     rules <- rules[, projection, drop = FALSE]
 }
