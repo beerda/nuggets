@@ -78,7 +78,7 @@ devtools::build()
 
 1. **Standards**:
    - C++20 features used in code (via `// [[Rcpp::plugins(cpp20)]]` in src/common.h)
-   - Note: DESCRIPTION specifies C++17 as SystemRequirements for broader compatibility
+   - DESCRIPTION specifies C++17 as SystemRequirements to maintain broader platform compatibility while leveraging C++20 where available
    - Use Rcpp for R/C++ interface
    - Use RcppThread for parallel processing
    - Use Boost headers (BH package)
