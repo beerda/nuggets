@@ -18,8 +18,13 @@
 
 
 .founded_impl <- function(a, b) a / (a + b)
+
 .lower_crit_impl <- function(a, b, p) pbinom(b, size = a + b, prob = 1 - p)
 .upper_crit_impl <- function(a, b, p) pbinom(a, size = a + b, prob = p)
+
+# pbinom(q, s, p) seems to equal pnbinom(s-q-1, q+1, p, lower.tail = FALSE)
+#.lower_crit_impl <- function(a, b, p) pnbinom(a-1, size = b+1, prob = 1 - p, lower.tail = FALSE)
+#.upper_crit_impl <- function(a, b, p) pnbinom(b-1, size = a+1, prob = p, lower.tail = FALSE)
 
 .guha_association_measure_names <- c(
     fi = "Founded Implication",
