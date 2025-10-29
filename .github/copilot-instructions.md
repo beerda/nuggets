@@ -2,12 +2,12 @@
 
 ## Project Overview
 
-`nuggets` is an R package providing a framework for systematic exploration of association rules, contrast patterns, emerging patterns, subgroup discovery, and conditional correlations. The package supports both crisp (Boolean) and fuzzy data, with performance-critical code implemented in C++17.
+`nuggets` is an R package providing a framework for systematic exploration of association rules, contrast patterns, emerging patterns, subgroup discovery, and conditional correlations. The package supports both crisp (Boolean) and fuzzy data, with performance-critical code implemented in C++.
 
 ## Repository Structure
 
 - `R/` - R source code with roxygen2 documentation
-- `src/` - C++17 source code using Rcpp, RcppThread, and Boost headers
+- `src/` - C++ source code using Rcpp, RcppThread, and Boost headers (C++20 features with C++17 compatibility)
 - `tests/testthat/` - Unit tests using testthat framework
 - `man/` - Generated documentation (auto-generated, do not edit manually)
 - `vignettes/` - Package vignettes
@@ -18,7 +18,7 @@
 
 ### Prerequisites
 - R >= 4.1.0
-- C++17 compatible compiler
+- C++17 or newer compatible compiler (C++20 recommended)
 - Required R packages: devtools, testthat, roxygen2
 
 ### Building and Testing
