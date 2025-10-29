@@ -1,12 +1,13 @@
 # nuggets 2.1.0
 - released: ???
-- parse_condition() rewritten in C++ for better performance
 - added cluster_associations()
 - added calculate() for associations flavour of nugget to compute
   additional interest measures (GUHA and arules measures)
 - deprecated measures argument in dig_associations() and dig_tautologies()
+- parse_condition() rewritten in C++ for better performance
 - enhanced UI layout of explore() for associations
 - added "Cluster" tab to explore() for associations
+- added selection of columns to show in explore() for associations
 
 # nuggets 2.0.1
 - released: 2025-10-13
