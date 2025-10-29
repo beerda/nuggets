@@ -25,6 +25,10 @@
 // [[Rcpp::export]]
 IntegerVector which_antichain_(List x, IntegerVector dist)
 {
+    if (dist.size() == 0) {
+        stop("dist must have at least one element");
+    }
+    
     IntegerVector result;
     AntichainData data(x);
     Tree tree(dist.at(0));

@@ -23,6 +23,10 @@
 // [[Rcpp::export]]
 NumericVector raisedcos_(NumericVector x, NumericVector ctx)
 {
+    if (ctx.size() < 2) {
+        stop("ctx must have at least 2 elements");
+    }
+    
     double low = ctx[0];
     double ctr1 = ctx[1];
     double ctr2 = ctx[ctx.size() - 2];

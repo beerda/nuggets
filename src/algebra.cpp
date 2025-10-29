@@ -192,6 +192,9 @@ NumericVector pgoguen_tconorm(List list)
 // [[Rcpp::export(name=".goedel.residuum")]]
 NumericVector goedel_residuum(NumericVector x, NumericVector y)
 {
+    if (x.size() == 0 || y.size() == 0) {
+        stop("Input vectors must not be empty");
+    }
     int n = x.size() > y.size() ? x.size() : y.size();
     NumericVector res(n);
     for (int i = 0; i < n; ++i) {
@@ -213,6 +216,9 @@ NumericVector goedel_residuum(NumericVector x, NumericVector y)
 // [[Rcpp::export(name=".lukas.residuum")]]
 NumericVector lukas_residuum(NumericVector x, NumericVector y)
 {
+    if (x.size() == 0 || y.size() == 0) {
+        stop("Input vectors must not be empty");
+    }
     int n = x.size() > y.size() ? x.size() : y.size();
     NumericVector res(n);
     for (int i = 0; i < n; ++i) {
@@ -234,6 +240,9 @@ NumericVector lukas_residuum(NumericVector x, NumericVector y)
 // [[Rcpp::export(name=".goguen.residuum")]]
 NumericVector goguen_residuum(NumericVector x, NumericVector y)
 {
+    if (x.size() == 0 || y.size() == 0) {
+        stop("Input vectors must not be empty");
+    }
     int n = x.size() > y.size() ? x.size() : y.size();
     NumericVector res(n);
     for (int i = 0; i < n; ++i) {
@@ -245,6 +254,8 @@ NumericVector goguen_residuum(NumericVector x, NumericVector y)
             res[i] = NA_REAL;
         } else if (x[xi] <= y[yi]) {
             res[i] = 1;
+        } else if (x[xi] == 0) {
+            res[i] = 1;  // By convention, 0/0 = 1 in fuzzy logic residuum
         } else {
             res[i] = y[yi] / x[xi];
         }

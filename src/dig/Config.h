@@ -46,13 +46,13 @@ public:
             minLength = static_cast<size_t>(minLength_i);
 
         int maxLength_i = as<IntegerVector>(configuration["maxLength"])[0];
-        if (maxLength < 0)
+        if (maxLength_i < 0)
             maxLength = SIZE_MAX;
         else
             maxLength = static_cast<size_t>(maxLength_i);
 
         int maxResults_i = as<IntegerVector>(configuration["maxResults"])[0];
-        if (maxResults < 0)
+        if (maxResults_i < 0)
             maxResults = SIZE_MAX;
         else
             maxResults = static_cast<size_t>(maxResults_i);

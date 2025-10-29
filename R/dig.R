@@ -86,12 +86,6 @@
 #' @param x A matrix or data frame. If a matrix, it must be numeric (double) or
 #'   logical. If a data frame, all columns must be numeric (double) or logical.
 #' @param f A callback function executed for each generated condition. It may
-#'   accept arguments such as
-#'   `condition`, `sum`, `support`, `indices`,
-#'   `weights`, `pp`, `pn`, `np`, `nn`, or `foci_supports` (deprecated). The
-#'   algorithm supplies matching values automatically. `f` should return an
-#'   object (typically a list). Results of all calls are collected and returned.
-#' @param f A callback function executed for each generated condition. It may
 #'   declare any subset of the arguments listed below. The algorithm detects
 #'   which arguments are present and provides only those values to `f`. This
 #'   design allows the user to control both the amount of information received
