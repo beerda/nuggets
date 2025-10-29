@@ -57,6 +57,7 @@ devtools::build()
 
 3. **Error Handling**:
    - Use `cli` package for error messages
+   - The `error_context` parameter, when used, must always be the **last** argument
    - Internal functions: last argument may be `error_context` list with:
      - Argument names initialized with `caller_arg()` (e.g., `arg_x = caller_arg(x)`)
      - `call = caller_env()`
@@ -65,6 +66,7 @@ devtools::build()
      - Argument names as string constants (e.g., `arg_x = "x"`)
      - `call = current_env()`
      - See `var_grid()` for example
+   - See `ERROR_CONTEXT_HOWTO.md` for comprehensive documentation on error handling patterns
 
 4. **Style**:
    - Use tidyverse style conventions
@@ -75,7 +77,8 @@ devtools::build()
 ### C++ Code
 
 1. **Standards**:
-   - C++17 required (specified in DESCRIPTION SystemRequirements)
+   - C++20 features used in code (via `// [[Rcpp::plugins(cpp20)]]` in src/common.h)
+   - Note: DESCRIPTION specifies C++17 as SystemRequirements for broader compatibility
    - Use Rcpp for R/C++ interface
    - Use RcppThread for parallel processing
    - Use Boost headers (BH package)
