@@ -67,7 +67,6 @@ associationsDetailModule <- function(id, rules, meta, data) {
                                             min_coverage = 0,
                                             min_support = 0,
                                             min_confidence = 0,
-                                            measures = c("lift", "conviction"),
                                             max_results = Inf)
                     res <- res[order(res$antecedent_length), , drop = FALSE]
 
