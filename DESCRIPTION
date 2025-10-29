@@ -40,6 +40,8 @@ Imports:
     ggplot2,
     grid,
     htmltools,
+    htmlwidgets,
+    jsonlite,
     lifecycle,
     methods,
     purrr,

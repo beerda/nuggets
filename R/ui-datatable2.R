@@ -18,15 +18,30 @@
 
 
 # datatable with tooltips shown over column names
-datatable2 <- function(data, tooltips = colnames(data), options = list(), ...) {
-    nm <- colnames(data)
+datatable2 <- function(data,
+                       tooltips = colnames(data),
+                       escape = FALSE,
+                       rownames = FALSE,
+                       selection = "none",
+                       filter = "none",
+                       options = list(),
+                       ...) {
     js_tips <- toJSON(unname(tooltips), auto_unbox = TRUE)
 
-    datatable(
-        data = data,
-        options = c(options,
-                    list(
-            initComplete = JS(sprintf(
+    if (is.null(options$pageLength)) {
+        options$pageLength <- 10
+    }
+    if (is.null(options$autoWidth)) {
+        options$autoWidth <- FALSE
+    }
+    if (is.null(options$searching)) {
+        options$searching <- FALSE
+    }
+    if (is.null(options$scrollX)) {
+        options$scrollX <- TRUE
+    }
+    if (is.null(options$initComplete)) {
+        options$initComplete <- JS(sprintf(
                 "function(settings, json){
              var api = this.api();
              var tips = %s;
@@ -34,17 +49,24 @@ datatable2 <- function(data, tooltips = colnames(data), options = list(), ...) {
                var th = $(api.column(i).header());
                th.attr('title', tips[i] || th.text().trim());
              });
-           }", js_tips)),
-            drawCallback = JS(
+           }", js_tips))
+    }
+    if (is.null(options$drawCallback)) {
+        options$drawCallback = JS(
                 "function(settings){
              var api = this.api();
              api.columns().every(function(i){
                var th = $(api.column(i).header());
                if (!th.attr('title')) th.attr('title', th.text().trim());
              });
-           }"
-            )
-        )),
-        ...
-    )
+           }")
+    }
+
+    datatable(data = data,
+              options = options,
+              escape = escape,
+              rownames = rownames,
+              selection = selection,
+              filter = filter,
+              ...)
 }

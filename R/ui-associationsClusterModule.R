@@ -179,16 +179,7 @@ associationsClusterModule <- function(id, rules, meta, data) {
                     d <- formatRulesForTable(d, meta)
                     tooltips <- meta$long_name[match(colnames(d), meta$data_name)]
 
-                    datatable2(d,
-                               tooltips = tooltips,
-                               options = list(pageLength = 10,
-                                              autoWidth = FALSE,
-                                              searching = FALSE,
-                                              scrollX = TRUE),
-                               escape = FALSE,
-                               rownames = FALSE,
-                               selection = "none",
-                               filter = "none")
+                    datatable2(d, tooltips = tooltips)
                 })
 
             })
