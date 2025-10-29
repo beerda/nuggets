@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-`nuggets` is an R package providing a framework for systematic exploration of association rules, contrast patterns, emerging patterns, subgroup discovery, and conditional correlations. The package supports both crisp (Boolean) and fuzzy data, with performance-critical code implemented in C++17/C++20.
+`nuggets` is an R package providing a framework for systematic exploration of association rules, contrast patterns, emerging patterns, subgroup discovery, and conditional correlations. The package supports both crisp (Boolean) and fuzzy data, with performance-critical code implemented in C++17.
 
 ## Repository Structure
 
@@ -18,7 +18,7 @@
 
 ### Prerequisites
 - R >= 4.1.0
-- C++17 or newer compatible compiler (C++20 recommended)
+- C++17 or newer compatible compiler
 - Required R packages: devtools, testthat, roxygen2
 
 ### Building and Testing
@@ -47,6 +47,7 @@ devtools::build()
    - `@title` and description
    - `@param` for all parameters
    - `@return` for return values
+   - `@seealso` for references to related functions
    - `@examples` with working examples
    - `@export` for exported functions
 
@@ -54,9 +55,10 @@ devtools::build()
    - Functions: snake_case (e.g., `dig_associations()`, `is_condition()`)
    - Internal functions: prefix with `.` (e.g., `.extract_cols()`)
    - Variables: snake_case
+   - Internal functions related to Shiny UI: camelCase, file name prefix with `ui-` (e.g. `ui-exploreApp.R` for function `exploreApp()`)
 
 3. **Error Handling**:
-   - Use `cli` package for error messages
+   - Use `cli` package for error messages, prefer functions defined in `R/testers.R`
    - The `error_context` parameter, when used, must always be the **last** argument
    - Internal functions: last argument may be `error_context` list with:
      - Argument names initialized with `caller_arg()` (e.g., `arg_x = caller_arg(x)`)
@@ -72,13 +74,13 @@ devtools::build()
    - Use tidyverse style conventions
    - Indent with 4 spaces
    - Use `<-` for assignment
-   - Use pipe operator `|>` (base R) or `%>%` (magrittr) consistently
+   - Use pipe operator `|>` (base R) or `%>%` (magrittr) consistently, prefer base R pipe operator
 
 ### C++ Code
 
 1. **Standards**:
-   - C++20 features used in code (via `// [[Rcpp::plugins(cpp20)]]` in src/common.h)
-   - DESCRIPTION specifies C++17 as SystemRequirements to maintain broader platform compatibility while leveraging C++20 where available
+   - C++17 features used in code (via `// [[Rcpp::plugins(cpp17)]]` in src/common.h)
+   - DESCRIPTION specifies C++17 as SystemRequirements to maintain broader platform compatibility
    - Use Rcpp for R/C++ interface
    - Use RcppThread for parallel processing
    - Use Boost headers (BH package)
@@ -173,19 +175,21 @@ The package includes Shiny applications for interactive exploration:
 
 ### Adding a New Function
 1. Create function in appropriate R/*.R file
-2. Add roxygen2 documentation
-3. Export if public function: `@export`
-4. Add tests in tests/testthat/test-*.R
-5. Run `devtools::document()` to update NAMESPACE and man/
-6. Run `devtools::test()` and `devtools::check()`
+2. Put appropriate copyright header to the file, as present in other source files
+3. Add roxygen2 documentation
+4. Export if public function: `@export`
+5. Add tests in tests/testthat/test-*.R
+6. Run `devtools::document()` to update NAMESPACE and man/
+7. Run `devtools::test()` and `devtools::check()`
 
 ### Adding C++ Code
 1. Add source in src/*.cpp or src/subdirectory/*.cpp
 2. Update src/*.h headers as needed
-3. Use `// [[Rcpp::export]]` for functions exposed to R
-4. Run `Rcpp::compileAttributes()` to update RcppExports.cpp/R
-5. Add tests in src/test-*.cpp or tests/testthat/
-6. Test compilation with `devtools::load_all()`
+3. Put appropriate copyright header to the file, as present in other source files
+4. Use `// [[Rcpp::export]]` for functions exposed to R
+5. Run `Rcpp::compileAttributes()` to update RcppExports.cpp/R
+6. Add tests in src/test-*.cpp or tests/testthat/
+7. Test compilation with `devtools::load_all()`
 
 ### Fixing a Bug
 1. Add a failing test that reproduces the bug
