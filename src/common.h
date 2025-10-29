@@ -19,7 +19,7 @@
 
 #pragma once
 
-// [[Rcpp::plugins(cpp20)]]
+// [[Rcpp::plugins(cpp17)]]
 // [[Rcpp::depends(BH)]]
 // [[Rcpp::depends(RcppThread)]]
 
