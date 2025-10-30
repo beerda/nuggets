@@ -161,6 +161,79 @@ head(crisp_mtcars, n = 3)
 Now all columns are logical and can be used as predicates in crisp conditions.
 
 
+### Data-Driven Breakpoint Selection with `.style`
+
+When `.breaks` is specified as a single integer (the number of intervals), the 
+`partition()` function can use various data-driven methods to determine optimal 
+breakpoints, rather than simply dividing the range into equal-width intervals. 
+This is controlled by the `.style` argument, which leverages methods from the 
+`classInt` package.
+
+The `.style` argument supports the following methods:
+
+- **`"equal"`** (default) – equal-width intervals across the column range
+- **`"quantile"`** – equal-frequency intervals (quantile-based)
+- **`"kmeans"`** – intervals found by 1D k-means clustering
+- **`"sd"`** – intervals based on standard deviations from the mean
+- **`"hclust"`** – hierarchical clustering intervals
+- **`"bclust"`** – model-based clustering intervals
+- **`"fisher"`** / **`"jenks"`** – Fisher–Jenks optimal partitioning
+- **`"dpih"`** – kernel-based density partitioning
+- **`"headtails"`** – head/tails natural breaks
+- **`"maximum"`** – maximization-based partitioning
+- **`"box"`** – breaks at boxplot hinges
+
+These methods are particularly useful when the data distribution is skewed or 
+has natural clusters. For example, quantile-based partitioning ensures that 
+each interval contains approximately the same number of observations, which can 
+be valuable for imbalanced datasets.
+
+```{r}
+# Equal-width intervals (default)
+partition(mtcars, mpg, .method = "crisp", .breaks = 4, .style = "equal")
+```
+
+```{r}
+# Quantile-based intervals (equal frequency in each interval)
+partition(mtcars, mpg, .method = "crisp", .breaks = 4, .style = "quantile")
+```
+
+```{r}
+# K-means clustering to find natural breakpoints
+partition(mtcars, mpg, .method = "crisp", .breaks = 4, .style = "kmeans")
+```
+
+```{r}
+# Standard deviation-based intervals
+partition(mtcars, mpg, .method = "crisp", .breaks = 4, .style = "sd")
+```
+
+The `.style_params` argument allows you to pass additional parameters to the 
+underlying algorithm. This should be a named list of arguments accepted by the 
+respective method in `classInt::classIntervals()`.
+
+For example, when using k-means clustering, you can specify the algorithm:
+
+```{r}
+# Use Lloyd's algorithm for k-means
+partition(mtcars, mpg, .method = "crisp", .breaks = 4, 
+          .style = "kmeans", 
+          .style_params = list(algorithm = "Lloyd"))
+```
+
+When using quantile-based intervals, you can control the quantile type:
+
+```{r}
+# Use different quantile types (see ?quantile for details)
+partition(mtcars, mpg, .method = "crisp", .breaks = 4, 
+          .style = "quantile", 
+          .style_params = list(type = 7))
+```
+
+These data-driven methods can produce more meaningful intervals that better 
+reflect the structure of your data, leading to more interpretable patterns in 
+subsequent analysis.
+
 
 ## Preparation of Triangular and Raised-Cosine Fuzzy Predicates
 
