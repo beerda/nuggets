@@ -1,3 +1,6 @@
+# nuggets 2.0.2 (development version)
+- fixed rchk protection stack imbalance in CombinatorialProgress constructor
+
 # nuggets 2.0.1
 - released: 2025-10-13
 - fixed problem with C++20 and testthat by downgrading system requirements
