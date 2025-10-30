@@ -19,8 +19,8 @@
 
 .founded_impl <- function(a, b) a / (a + b)
 
-.lower_crit_impl <- function(a, b, p) pbinom(b, size = a + b, prob = 1 - p)
-.upper_crit_impl <- function(a, b, p) pbinom(a, size = a + b, prob = p)
+.lower_crit_impl <- function(a, b, p) pbinom(b, size = floor(a + b), prob = 1 - p)
+.upper_crit_impl <- function(a, b, p) pbinom(a, size = floor(a + b), prob = p)
 
 # pbinom(q, s, p) seems to equal pnbinom(s-q-1, q+1, p, lower.tail = FALSE)
 #.lower_crit_impl <- function(a, b, p) pnbinom(a-1, size = b+1, prob = 1 - p, lower.tail = FALSE)
