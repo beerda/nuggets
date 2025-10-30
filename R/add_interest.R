@@ -17,18 +17,7 @@
 #######################################################################
 
 
-#' Add interest measures to nugget objects
-#'
-#' @description
-#' `r lifecycle::badge("experimental")`
-#'
-#' This is a generic function for adding interest measures to nugget objects.
-#'
-#' @param x A nugget object
-#' @param ... Additional arguments passed to methods
-#' @return A modified nugget object with additional interest measures
-#' @author Michal Burda
-#' @seealso [add_interest.associations()]
+#' @rdname add_interest
 #' @export
 add_interest <- function(x, ...) {
     UseMethod("add_interest")
