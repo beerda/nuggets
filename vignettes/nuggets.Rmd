@@ -97,13 +97,10 @@ For crisp patterns, numeric columns are transformed to logical (`TRUE`/`FALSE`)
 columns. Here's a quick example using the built-in `mtcars` dataset:
 
 ```{r}
-# First, convert cyl to a factor for illustration
-mtcars$cyl <- factor(mtcars$cyl,
-                     levels= c(4, 6, 8),
-                     labels = c("four", "six", "eight"))
-
 # Transform the whole dataset to crisp predicates
+# First, convert cyl to a factor for illustration
 crisp_mtcars <- mtcars |>
+    mutate(cyl = factor(cyl, levels = c(4, 6, 8), labels = c("four", "six", "eight"))) |>
     partition(cyl, vs:gear, .method = "dummy") |>
     partition(mpg, .method = "crisp", .breaks = c(-Inf, 15, 20, 30, Inf)) |>
     partition(disp:carb, .method = "crisp", .breaks = 3) 
@@ -121,7 +118,9 @@ values in the interval $[0,1]$. This allows modeling of smooth transitions
 between categories:
 
 ```{r, message=FALSE}
+# Start with fresh mtcars and transform to fuzzy predicates
 fuzzy_mtcars <- mtcars |>
+    mutate(cyl = factor(cyl, levels = c(4, 6, 8), labels = c("four", "six", "eight"))) |>
     partition(cyl, vs:gear, .method = "dummy") |>
     partition(mpg, .method = "triangle", .breaks = c(-Inf, 15, 20, 30, Inf)) |>
     partition(disp:carb, .method = "triangle", .breaks = 3) 

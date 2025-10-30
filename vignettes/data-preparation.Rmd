@@ -90,17 +90,19 @@ information about various car models. For the sake of illustration,
 let us transform the `cyl` column into factor first:
 
 ```{r}
-mtcars$cyl <- factor(mtcars$cyl,
+# Create a copy to avoid modifying the original dataset
+mtcars_example <- mtcars
+mtcars_example$cyl <- factor(mtcars_example$cyl,
                      levels= c(4, 6, 8),
                      labels = c("four", "six", "eight"))
-head(mtcars)
+head(mtcars_example)
 ```
 
 Factors are transformed to dummy logical columns by the `partition()` function
 automatically:
 
 ```{r}
-partition(mtcars, cyl)
+partition(mtcars_example, cyl)
 ```
 
 The `vs`, `am`, and `gear` columns are numeric but actually represent
@@ -109,7 +111,7 @@ factors, we can use the `partition()` function with the `.method` argument set t
 `"dummy"`:
 
 ```{r}
-partition(mtcars, vs:gear, .method = "dummy")
+partition(mtcars_example, vs:gear, .method = "dummy")
 ```
 
 The `mpg` column is numeric and therefore cannot be transformed directly into
@@ -126,7 +128,7 @@ For example, the `mpg` values can be divided into four intervals: (-Inf, 15],
 `c(-Inf, 15, 20, 30, Inf)`, which defines the boundaries of these intervals.
 
 ```{r}
-partition(mtcars, mpg, .method = "crisp", .breaks = c(-Inf, 15, 20, 30, Inf))
+partition(mtcars_example, mpg, .method = "crisp", .breaks = c(-Inf, 15, 20, 30, Inf))
 ```
 
 Note: it is advisable to put `-Inf` and `Inf` as the first and last
@@ -139,7 +141,7 @@ to create. For example, the following command divides the `disp` values into
 three intervals of equal width:
 
 ```{r}
-partition(mtcars, disp, .method = "crisp", .breaks = 3)
+partition(mtcars_example, disp, .method = "crisp", .breaks = 3)
 ```
 
 Each call to `partition()` returns a tibble with the selected columns
@@ -150,7 +152,7 @@ The transformation of the whole `mtcars` dataset to crisp predicates can be done
 as follows:
 
 ```{r}
-crisp_mtcars <- mtcars |>
+crisp_mtcars <- mtcars_example |>
     partition(cyl, vs:gear, .method = "dummy") |>
     partition(mpg, .method = "crisp", .breaks = c(-Inf, 15, 20, 30, Inf)) |>
     partition(disp:carb, .method = "crisp", .breaks = 3) 
@@ -188,24 +190,26 @@ has natural clusters. For example, quantile-based partitioning ensures that
 each interval contains approximately the same number of observations, which can 
 be valuable for imbalanced datasets.
 
+Here are examples using the CO2 dataset:
+
 ```{r}
 # Equal-width intervals (default)
-partition(mtcars, mpg, .method = "crisp", .breaks = 4, .style = "equal")
+partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "equal")
 ```
 
 ```{r}
 # Quantile-based intervals (equal frequency in each interval)
-partition(mtcars, mpg, .method = "crisp", .breaks = 4, .style = "quantile")
+partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "quantile")
 ```
 
 ```{r}
 # K-means clustering to find natural breakpoints
-partition(mtcars, mpg, .method = "crisp", .breaks = 4, .style = "kmeans")
+partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "kmeans")
 ```
 
 ```{r}
 # Standard deviation-based intervals
-partition(mtcars, mpg, .method = "crisp", .breaks = 4, .style = "sd")
+partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "sd")
 ```
 
 The `.style_params` argument allows you to pass additional parameters to the 
@@ -216,7 +220,7 @@ For example, when using k-means clustering, you can specify the algorithm:
 
 ```{r}
 # Use Lloyd's algorithm for k-means
-partition(mtcars, mpg, .method = "crisp", .breaks = 4, 
+partition(CO2, conc, .method = "crisp", .breaks = 4, 
           .style = "kmeans", 
           .style_params = list(algorithm = "Lloyd"))
 ```
@@ -225,7 +229,7 @@ When using quantile-based intervals, you can control the quantile type:
 
 ```{r}
 # Use different quantile types (see ?quantile for details)
-partition(mtcars, mpg, .method = "crisp", .breaks = 4, 
+partition(CO2, conc, .method = "crisp", .breaks = 4, 
           .style = "quantile", 
           .style_params = list(type = 7))
 ```
@@ -432,7 +436,9 @@ data.frame(x = seq(-15, 15, length.out = 1000)) |>
 A fuzzy transformation of the whole `mtcars` dataset can be done as follows:
 
 ```{r, message=FALSE}
+# Start with a fresh copy of mtcars
 fuzzy_mtcars <- mtcars |>
+    mutate(cyl = factor(cyl, levels = c(4, 6, 8), labels = c("four", "six", "eight"))) |>
     partition(cyl, vs:gear, .method = "dummy") |>
     partition(mpg, .method = "triangle", .breaks = c(-Inf, 15, 20, 30, Inf)) |>
     partition(disp:carb, .method = "triangle", .breaks = 3) 
@@ -648,8 +654,9 @@ mining process.
 For example:
 
 ```{r}
-# Prepare mtcars data with partition
+# Prepare mtcars data with partition - use fresh copy
 prepared_data <- mtcars |>
+    mutate(cyl = factor(cyl, levels = c(4, 6, 8), labels = c("four", "six", "eight"))) |>
     partition(cyl, vs:gear, .method = "dummy") |>
     partition(mpg:carb, .method = "crisp", .breaks = 3)
 
@@ -695,8 +702,9 @@ the search space in later iterations.
 Basic usage:
 
 ```{r}
-# Prepare fuzzy data
+# Prepare fuzzy data - use fresh copy of mtcars
 fuzzy_mtcars <- mtcars |>
+    mutate(cyl = factor(cyl, levels = c(4, 6, 8), labels = c("four", "six", "eight"))) |>
     partition(cyl, vs:gear, .method = "dummy") |>
     partition(mpg:carb, .method = "triangle", .breaks = 3)
 
