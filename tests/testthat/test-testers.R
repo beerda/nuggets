@@ -578,6 +578,34 @@ test_that(".must_inherit", {
 })
 
 
+# Test .must_be_nugget
+test_that(".must_be_nugget", {
+    # Valid cases - create a nugget object
+    nug <- structure(list(x = 1), class = c("nugget"))
+    expect_no_error(.must_be_nugget(nug))
+    
+    # Valid cases with flavour
+    nug_flavoured <- structure(list(x = 1), class = c("myflavour", "nugget"))
+    expect_no_error(.must_be_nugget(nug_flavoured))
+    expect_no_error(.must_be_nugget(nug_flavoured, flavour = "myflavour"))
+    
+    # null = TRUE cases
+    expect_no_error(.must_be_nugget(NULL, null = TRUE))
+    expect_error(.must_be_nugget(NULL), "must be a nugget")
+    
+    # Error cases - wrong class
+    expect_error(.must_be_nugget(1:5), "must be a nugget")
+    expect_error(.must_be_nugget(list(x = 1)), "must be a nugget")
+    
+    # Error cases - wrong flavour
+    expect_error(.must_be_nugget(nug, flavour = "wrongflavour"), "must be a nugget of flavour")
+    expect_error(.must_be_nugget(nug_flavoured, flavour = "wrongflavour"), "must be a nugget of flavour")
+    
+    # Check error message format
+    expect_error(.must_be_nugget(1:5), "You've supplied a")
+})
+
+
 # Test .must_be_function
 test_that(".must_be_function", {
     # Valid cases - basic function
