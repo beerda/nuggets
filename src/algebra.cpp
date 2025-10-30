@@ -192,7 +192,10 @@ NumericVector pgoguen_tconorm(List list)
 // [[Rcpp::export(name=".goedel.residuum")]]
 NumericVector goedel_residuum(NumericVector x, NumericVector y)
 {
-    int n = x.size() > y.size() ? x.size() : y.size();
+    int n = 0;
+    if (x.size() > 0 && y.size() > 0) {
+        n = x.size() > y.size() ? x.size() : y.size();
+    }
     NumericVector res(n);
     for (int i = 0; i < n; ++i) {
         int xi = i % x.size();
@@ -213,7 +216,10 @@ NumericVector goedel_residuum(NumericVector x, NumericVector y)
 // [[Rcpp::export(name=".lukas.residuum")]]
 NumericVector lukas_residuum(NumericVector x, NumericVector y)
 {
-    int n = x.size() > y.size() ? x.size() : y.size();
+    int n = 0;
+    if (x.size() > 0 && y.size() > 0) {
+        n = x.size() > y.size() ? x.size() : y.size();
+    }
     NumericVector res(n);
     for (int i = 0; i < n; ++i) {
         int xi = i % x.size();
@@ -234,7 +240,10 @@ NumericVector lukas_residuum(NumericVector x, NumericVector y)
 // [[Rcpp::export(name=".goguen.residuum")]]
 NumericVector goguen_residuum(NumericVector x, NumericVector y)
 {
-    int n = x.size() > y.size() ? x.size() : y.size();
+    int n = 0;
+    if (x.size() > 0 && y.size() > 0) {
+        n = x.size() > y.size() ? x.size() : y.size();
+    }
     NumericVector res(n);
     for (int i = 0; i < n; ++i) {
         int xi = i % x.size();
