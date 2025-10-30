@@ -1,5 +1,8 @@
-# nuggets 2.0.2 (development version)
+# nuggets 2.0.2
+- released: 2025-10-31
 - fixed rchk protection stack imbalance in CombinatorialProgress constructor
+- created vignette "Data Preparation"
+- updated main vignette
 
 # nuggets 2.0.1
 - released: 2025-10-13
