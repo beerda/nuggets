@@ -37,6 +37,12 @@
       <ul class="navbar-nav me-auto">
 <li class="active nav-item"><a class="nav-link" href="../articles/nuggets.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/data-preparation.html">Data Preparation</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -111,8 +117,9 @@ b - 1)\)</span>
 predicates must be prepared either by <em>dichotomization</em>
 (conversion into <em>dummy variables</em>) or by transformation into
 <em>fuzzy sets</em>. The package provides functions for both
-transformations. See the section <a href="#data-preparation">Data
-Preparation</a> below for more details.</p>
+transformations. See the <a href="data-preparation.html">Data
+Preparation</a> vignette for a comprehensive guide, or the section <a href="#data-preparation">Data Preparation</a> below for a quick
+overview.</p>
 <p><code>nuggets</code> implements functions to search for pre-defined
 types of patterns, for example:</p>
 <ul>
@@ -149,209 +156,24 @@ information.</p>
 <div class="section level2">
 <h2 id="data-preparation">Data Preparation<a class="anchor" aria-label="anchor" href="#data-preparation"></a>
 </h2>
-<p>For patterns based on crisp conditions, the data columns that serve
-as predicates in conditions must be transformed either to logical
-(<code>TRUE</code>/<code>FALSE</code>) columns, or to fuzzy sets with
-values from the interval <span class="math inline">\([0, 1]\)</span>.
-The first option is simpler and faster, and it is the recommended option
-for most applications. The second option is more flexible and allows to
-model uncertainty in data, but it is more computationally demanding.</p>
+<p>Before applying <code>nuggets</code>, data columns intended as
+predicates must be prepared either by <em>dichotomization</em>
+(conversion into <em>dummy variables</em>) or by transformation into
+<em>fuzzy sets</em>. The package provides the <code><a href="../reference/partition.html">partition()</a></code>
+function for both transformations.</p>
+<p>For a detailed guide to data preparation, including information about
+all available functions and advanced techniques, please see the <a href="data-preparation.html">Data Preparation</a> vignette.</p>
 <div class="section level3">
-<h3 id="preparation-of-crisp-boolean-predicates">Preparation of Crisp (Boolean) Predicates<a class="anchor" aria-label="anchor" href="#preparation-of-crisp-boolean-predicates"></a>
+<h3 id="crisp-boolean-predicates-example">Crisp (Boolean) Predicates Example<a class="anchor" aria-label="anchor" href="#crisp-boolean-predicates-example"></a>
 </h3>
-<p>For patterns based on crisp conditions, the data columns that would
-serve as predicates in conditions have to be transformed to logical
-(<code>TRUE</code>/<code>FALSE</code>) columns. That can be done in two
-ways:</p>
-<ul>
-<li>numeric columns can be transformed to factors with a selected number
-of levels, and then</li>
-<li>factors can be transformed to dummy logical columns.</li>
-</ul>
-<p>Both operations can be done with the help of the
-<code><a href="../reference/partition.html">partition()</a></code> function. The <code><a href="../reference/partition.html">partition()</a></code> function
-requires the dataset as its first argument and a <em>tidyselect</em>
-selection expression to select the columns to be transformed.</p>
-<p>Factors and logical columns are automatically transformed to dummy
-logical columns by the <code><a href="../reference/partition.html">partition()</a></code> function. For numeric
-columns, the <code><a href="../reference/partition.html">partition()</a></code> function requires the
-<code>.method</code> argument to specify the method of partitioning:</p>
-<ul>
-<li>
-<code>.method = "dummy"</code> transforms numeric columns to factors
-and then to dummy logical columns. That effectively creates a separate
-logical column for each distinct value of the numeric column.</li>
-<li>
-<code>.method = "crisp"</code> transforms numeric columns to crisp
-predicates by dividing the range of values into intervals and coding the
-values into dummy logical columns according to the intervals.</li>
-<li>there exist other methods of partitioning of numeric columns. These
-methods create fuzzy predicates and are described in the next
-section.</li>
-</ul>
-<p>For example, consider the built-in <code>mtcars</code> dataset. This
-dataset contains information about various car models. For the sake of
-illustration, let us transform the <code>cyl</code> column into factor
-first:</p>
+<p>For crisp patterns, numeric columns are transformed to logical
+(<code>TRUE</code>/<code>FALSE</code>) columns. Here’s a quick example
+using the built-in <code>mtcars</code> dataset:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mtcars</span><span class="op">$</span><span class="va">cyl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">cyl</span>,</span>
-<span>                     levels<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">6</span>, <span class="fl">8</span><span class="op">)</span>,</span>
-<span>                     labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"four"</span>, <span class="st">"six"</span>, <span class="st">"eight"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                    mpg   cyl disp  hp drat    wt  qsec vs am gear carb</span></span>
-<span><span class="co">#&gt; Mazda RX4         21.0   six  160 110 3.90 2.620 16.46  0  1    4    4</span></span>
-<span><span class="co">#&gt; Mazda RX4 Wag     21.0   six  160 110 3.90 2.875 17.02  0  1    4    4</span></span>
-<span><span class="co">#&gt; Datsun 710        22.8  four  108  93 3.85 2.320 18.61  1  1    4    1</span></span>
-<span><span class="co">#&gt; Hornet 4 Drive    21.4   six  258 110 3.08 3.215 19.44  1  0    3    1</span></span>
-<span><span class="co">#&gt; Hornet Sportabout 18.7 eight  360 175 3.15 3.440 17.02  0  0    3    2</span></span>
-<span><span class="co">#&gt; Valiant           18.1   six  225 105 2.76 3.460 20.22  1  0    3    1</span></span></code></pre></div>
-<p>Factors are transformed to dummy logical columns by the
-<code><a href="../reference/partition.html">partition()</a></code> function automatically:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="va">cyl</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 13</span></span></span>
-<span><span class="co">#&gt;      mpg  disp    hp  drat    wt  qsec    vs    am  gear  carb `cyl=four`</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  21    160    110  3.9   2.62  16.5     0     1     4     4 FALSE     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  21    160    110  3.9   2.88  17.0     0     1     4     4 FALSE     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  22.8  108     93  3.85  2.32  18.6     1     1     4     1 TRUE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  21.4  258    110  3.08  3.22  19.4     1     0     3     1 FALSE     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  18.7  360    175  3.15  3.44  17.0     0     0     3     2 FALSE     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  18.1  225    105  2.76  3.46  20.2     1     0     3     1 FALSE     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  14.3  360    245  3.21  3.57  15.8     0     0     3     4 FALSE     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  24.4  147.    62  3.69  3.19  20       1     0     4     2 TRUE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  22.8  141.    95  3.92  3.15  22.9     1     0     4     2 TRUE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  19.2  168.   123  3.92  3.44  18.3     1     0     4     4 FALSE     </span></span>
-<span><span class="co">#&gt;    `cyl=six` `cyl=eight`</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> TRUE      FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> TRUE      FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> FALSE     FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TRUE      FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> FALSE     TRUE       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TRUE      FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> FALSE     TRUE       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> FALSE     FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> FALSE     FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> TRUE      FALSE      </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 22 more rows</span></span></span></code></pre></div>
-<p>The <code>vs</code>, <code>am</code>, and <code>gear</code> columns
-are numeric but actually represent categories. To transform them to
-dummy logical columns in the same way as factors, we can use the
-<code><a href="../reference/partition.html">partition()</a></code> function with the <code>.method</code> argument
-set to <code>"dummy"</code>:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="va">vs</span><span class="op">:</span><span class="va">gear</span>, .method <span class="op">=</span> <span class="st">"dummy"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 15</span></span></span>
-<span><span class="co">#&gt;      mpg cyl    disp    hp  drat    wt  qsec  carb `vs=0` `vs=1` `am=0` `am=1`</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  21   six    160    110  3.9   2.62  16.5     4 TRUE   FALSE  FALSE  TRUE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  21   six    160    110  3.9   2.88  17.0     4 TRUE   FALSE  FALSE  TRUE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  22.8 four   108     93  3.85  2.32  18.6     1 FALSE  TRUE   FALSE  TRUE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  21.4 six    258    110  3.08  3.22  19.4     1 FALSE  TRUE   TRUE   FALSE </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  18.7 eight  360    175  3.15  3.44  17.0     2 TRUE   FALSE  TRUE   FALSE </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  18.1 six    225    105  2.76  3.46  20.2     1 FALSE  TRUE   TRUE   FALSE </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  14.3 eight  360    245  3.21  3.57  15.8     4 TRUE   FALSE  TRUE   FALSE </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  24.4 four   147.    62  3.69  3.19  20       2 FALSE  TRUE   TRUE   FALSE </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  22.8 four   141.    95  3.92  3.15  22.9     2 FALSE  TRUE   TRUE   FALSE </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  19.2 six    168.   123  3.92  3.44  18.3     4 FALSE  TRUE   TRUE   FALSE </span></span>
-<span><span class="co">#&gt;    `gear=3` `gear=4` `gear=5`</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> FALSE    TRUE     FALSE   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> FALSE    TRUE     FALSE   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> FALSE    TRUE     FALSE   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TRUE     FALSE    FALSE   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> TRUE     FALSE    FALSE   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TRUE     FALSE    FALSE   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> TRUE     FALSE    FALSE   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> FALSE    TRUE     FALSE   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> FALSE    TRUE     FALSE   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> FALSE    TRUE     FALSE   </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 22 more rows</span></span></span></code></pre></div>
-<p>The <code>mpg</code> column is numeric and therefore cannot be
-transformed directly into dummy logical columns. A better approach is to
-use the <code>"crisp"</code> method of partitioning.</p>
-<p>The <code>"crisp"</code> method divides the range of values of the
-selected columns into intervals specified by the <code>.breaks</code>
-argument and then encodes the values into dummy logical columns
-corresponding to the intervals. The <code>.breaks</code> argument is a
-numeric vector that specifies the interval boundaries.</p>
-<p>For example, the <code>mpg</code> values can be divided into four
-intervals: (-Inf, 15], (15, 20], (20, 30], and (30, Inf). The
-<code>.breaks</code> argument is then the vector
-<code>c(-Inf, 15, 20, 30, Inf)</code>, which defines the boundaries of
-these intervals.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="va">mpg</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">15</span>, <span class="fl">20</span>, <span class="fl">30</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 14</span></span></span>
-<span><span class="co">#&gt;    cyl    disp    hp  drat    wt  qsec    vs    am  gear  carb `mpg=(-Inf;15]`</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>          </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> six    160    110  3.9   2.62  16.5     0     1     4     4 FALSE          </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> six    160    110  3.9   2.88  17.0     0     1     4     4 FALSE          </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> four   108     93  3.85  2.32  18.6     1     1     4     1 FALSE          </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> six    258    110  3.08  3.22  19.4     1     0     3     1 FALSE          </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> eight  360    175  3.15  3.44  17.0     0     0     3     2 FALSE          </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> six    225    105  2.76  3.46  20.2     1     0     3     1 FALSE          </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> eight  360    245  3.21  3.57  15.8     0     0     3     4 TRUE           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> four   147.    62  3.69  3.19  20       1     0     4     2 FALSE          </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> four   141.    95  3.92  3.15  22.9     1     0     4     2 FALSE          </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> six    168.   123  3.92  3.44  18.3     1     0     4     4 FALSE          </span></span>
-<span><span class="co">#&gt;    `mpg=(15;20]` `mpg=(20;30]` `mpg=(30;Inf]`</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> FALSE         TRUE          FALSE         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> FALSE         TRUE          FALSE         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> FALSE         TRUE          FALSE         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> FALSE         TRUE          FALSE         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> TRUE          FALSE         FALSE         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TRUE          FALSE         FALSE         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> FALSE         FALSE         FALSE         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> FALSE         TRUE          FALSE         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> FALSE         TRUE          FALSE         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> TRUE          FALSE         FALSE         </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 22 more rows</span></span></span></code></pre></div>
-<p>Note: it is advisable to put <code>-Inf</code> and <code>Inf</code>
-as the first and last elements of the <code>.breaks</code> vector to
-ensure that all values are covered by the intervals.</p>
-<p>If we want the breaks to be evenly spaced across the range of values,
-we can set <code>.breaks</code> to a single integer. This value
-specifies the number of intervals to create. For example, the following
-command divides the <code>disp</code> values into three intervals of
-equal width:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="va">disp</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 13</span></span></span>
-<span><span class="co">#&gt;      mpg cyl      hp  drat    wt  qsec    vs    am  gear  carb `disp=(-Inf;205]`</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>            </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  21   six     110  3.9   2.62  16.5     0     1     4     4 TRUE             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  21   six     110  3.9   2.88  17.0     0     1     4     4 TRUE             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  22.8 four     93  3.85  2.32  18.6     1     1     4     1 TRUE             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  21.4 six     110  3.08  3.22  19.4     1     0     3     1 FALSE            </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  18.7 eight   175  3.15  3.44  17.0     0     0     3     2 FALSE            </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  18.1 six     105  2.76  3.46  20.2     1     0     3     1 FALSE            </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  14.3 eight   245  3.21  3.57  15.8     0     0     3     4 FALSE            </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  24.4 four     62  3.69  3.19  20       1     0     4     2 TRUE             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  22.8 four     95  3.92  3.15  22.9     1     0     4     2 TRUE             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  19.2 six     123  3.92  3.44  18.3     1     0     4     4 TRUE             </span></span>
-<span><span class="co">#&gt;    `disp=(205;338]` `disp=(338;Inf]`</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> FALSE            FALSE           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> FALSE            FALSE           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> FALSE            FALSE           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TRUE             FALSE           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> FALSE            TRUE            </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TRUE             FALSE           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> FALSE            TRUE            </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> FALSE            FALSE           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> FALSE            FALSE           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> FALSE            FALSE           </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 22 more rows</span></span></span></code></pre></div>
-<p>Each call to <code><a href="../reference/partition.html">partition()</a></code> returns a tibble with the
-selected columns transformed to dummy logical columns, while the other
-columns remain unchanged.</p>
-<p>The transformation of the whole <code>mtcars</code> dataset to crisp
-predicates can be done as follows:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">crisp_mtcars</span> <span class="op">&lt;-</span> <span class="va">mtcars</span> <span class="op">|&gt;</span></span>
+<code class="sourceCode R"><span><span class="co"># Transform the whole dataset to crisp predicates</span></span>
+<span><span class="co"># First, convert cyl to a factor for illustration</span></span>
+<span><span class="va">crisp_mtcars</span> <span class="op">&lt;-</span> <span class="va">mtcars</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">mutate</span><span class="op">(</span>cyl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cyl</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">6</span>, <span class="fl">8</span><span class="op">)</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"four"</span>, <span class="st">"six"</span>, <span class="st">"eight"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">cyl</span>, <span class="va">vs</span><span class="op">:</span><span class="va">gear</span>, .method <span class="op">=</span> <span class="st">"dummy"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">mpg</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">15</span>, <span class="fl">20</span>, <span class="fl">30</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">disp</span><span class="op">:</span><span class="va">carb</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> </span>
@@ -397,116 +219,15 @@ predicates can be done as follows:</p>
 conditions.</p>
 </div>
 <div class="section level3">
-<h3 id="preparation-of-triangular-and-raised-cosine-fuzzy-predicates">Preparation of Triangular and Raised-Cosine Fuzzy Predicates<a class="anchor" aria-label="anchor" href="#preparation-of-triangular-and-raised-cosine-fuzzy-predicates"></a>
+<h3 id="fuzzy-predicates-example">Fuzzy Predicates Example<a class="anchor" aria-label="anchor" href="#fuzzy-predicates-example"></a>
 </h3>
-<p>In many real-world datasets, numeric attributes do not lend
-themselves to clear-cut, crisp boundaries. For example, deciding whether
-a car has “low mileage” or “high mileage” is often subjective. A vehicle
-with 19 miles per gallon may be considered “low” in one context but
-“medium” in another. Crisp intervals force a strict separation between
-categories, which can be too rigid and may lose information about
-gradual changes in the data.</p>
-<p>To address this, <strong>fuzzy predicates</strong> are used. A fuzzy
-predicate expresses the degree to which a condition is satisfied.
-Instead of being strictly <code>TRUE</code> or <code>FALSE</code>
-(although allowed too), each predicate is represented by a number in the
-interval <span class="math inline">\([0,1]\)</span>. A truth degree of 0
-means the predicate is entirely false, 1 means it is fully true, and
-values in between indicate partial membership. This allows us to model
-smooth transitions between categories and capture more nuanced
-patterns.</p>
-<p>For example, a fuzzy predicate could represent “medium horsepower” in
-the <code>mtcars</code> dataset. A car with 120 hp may belong to this
-category to a degree of 0.8, while a car with 150 hp may belong to it
-only to a degree of 0.2. Such representations are more faithful to human
-reasoning and often yield patterns that are both more robust and more
-interpretable.</p>
-<p>The transformation of numeric columns to fuzzy predicates can be done
-with the <code><a href="../reference/partition.html">partition()</a></code> function. As with crisp partitioning,
-factors are transformed to dummy logical columns. Numeric columns,
-however, are transformed into <em>fuzzy truth values</em>. The
-<code><a href="../reference/partition.html">partition()</a></code> function provides two fuzzy partitioning
-methods:</p>
-<ul>
-<li>
-<code>.method = "triangle"</code> creates fuzzy sets with triangular
-or trapezoidal membership functions;</li>
-<li>
-<code>.method = "raisedcos"</code> creates fuzzy sets with raised
-cosine or trapezoidal raised-cosine membership functions.</li>
-</ul>
-<p>These membership functions specify how strongly a value belongs to a
-fuzzy set. The choice of function depends on the desired smoothness of
-the transition between sets.</p>
-<blockquote>
-<p>More advanced fuzzy partitioning of numeric columns can be achieved
-with the <a href="https://cran.r-project.org/package=lfl" class="external-link">lfl</a>
-package, which provides tools for defining fuzzy sets of many types,
-including linguistic terms such as “very small” or “extremely big”. See
-the <a href="https://github.com/beerda/lfl/blob/master/vignettes/main.pdf" class="external-link"><code>lfl</code>
-documentation</a> for more information.</p>
-</blockquote>
-<p>Both triangular and raised cosine shapes are fully defined by three
-points: the left border, the peak, and the right border. The
-<code>.breaks</code> argument in the <code><a href="../reference/partition.html">partition()</a></code> function
-specifies these points. See the following figure for an illustration of
-triangular and raised cosine membership functions for
-<code>.breaks = c(-10, 0, 10)</code>:</p>
-<div class="figure" style="text-align: center">
-<img src="nuggets_files/figure-html/unnamed-chunk-9-1.png" alt="Comparison of triangular and raised cosine membership functions for .breaks = c(-10, 0, 10)
-" width="80%"><p class="caption">
-Comparison of triangular and raised cosine membership functions for
-<code>.breaks = c(-10, 0, 10)</code>
-</p>
-</div>
-<p>Each consecutive triplet of values in <code>.breaks</code> defines
-one fuzzy set. To create e.g. three fuzzy sets, five break points are
-needed. For instance, <code>.breaks = c(-10, -5, 0, 5, 10)</code>
-defines three fuzzy sets with peaks at -5, 0, and 5. See the following
-figure for an illustration of these fuzzy sets:</p>
-<div class="figure" style="text-align: center">
-<img src="nuggets_files/figure-html/unnamed-chunk-10-1.png" alt="Fuzzy sets with triangular membership functions for .breaks = c(-10, -5, 0, 5, 10)
-" width="80%"><p class="caption">
-Fuzzy sets with triangular membership functions for
-<code>partition(x, .method = "triangle", .breaks = c(-10, -5, 0, 5, 10))</code>
-</p>
-</div>
-<p>It is often useful to extend the fuzzy sets on the edges to infinity.
-That ensures that all values are covered by the fuzzy sets. To achieve
-that, <code>-Inf</code> and <code>Inf</code> can be added as the first
-and last elements of the <code>.breaks</code> vector:</p>
-<div class="figure" style="text-align: center">
-<img src="nuggets_files/figure-html/unnamed-chunk-11-1.png" alt="Fuzzy sets with triangular membership functions for .breaks = c(-Inf, -5, 0, 5, Inf)
-" width="80%"><p class="caption">
-Fuzzy sets with triangular membership functions for
-<code>partition(x, .method = "triangle", .breaks = c(-Inf, -5, 0, 5, Inf))</code>
-</p>
-</div>
-<p>If a regular partitioning of the range of values is desired,
-<code>.breaks</code> can be set to a single integer, which specifies the
-number of fuzzy sets to create. For example, <code>.breaks = 4</code>
-creates partitioning with four fuzzy sets:</p>
-<div class="figure" style="text-align: center">
-<img src="nuggets_files/figure-html/unnamed-chunk-12-1.png" alt="Fuzzy sets with triangular membership functions for .breaks = 4
-" width="80%"><p class="caption">
-Fuzzy sets with triangular membership functions for
-<code>partition(x, .method = "triangle", .breaks = 4)</code>
-</p>
-</div>
-<p>The same is valid for raised cosine fuzzy sets. For instance, the
-following figure shows five raised cosine fuzzy sets defined by
-<code>.breaks = c(-Inf, -10, -5, 0, 5, 10, Inf)</code>:</p>
-<div class="figure" style="text-align: center">
-<img src="nuggets_files/figure-html/unnamed-chunk-13-1.png" alt="Fuzzy sets with raised cosine membership functions for .breaks = c(-Inf, -10, -5, 0, 5, 10, Inf)
-" width="80%"><p class="caption">
-Fuzzy sets with raised cosine membership functions for
-<code>partition(x, .method = "raisedcos", .breaks = c(-Inf, -10, -5, 0, 5, 10, Inf))</code>
-</p>
-</div>
-<p>A fuzzy transformation of the whole <code>mtcars</code> dataset can
-be done as follows:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fuzzy_mtcars</span> <span class="op">&lt;-</span> <span class="va">mtcars</span> <span class="op">|&gt;</span></span>
+<p>Fuzzy predicates express the degree to which a condition is
+satisfied, with values in the interval <span class="math inline">\([0,1]\)</span>. This allows modeling of smooth
+transitions between categories:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Start with fresh mtcars and transform to fuzzy predicates</span></span>
+<span><span class="va">fuzzy_mtcars</span> <span class="op">&lt;-</span> <span class="va">mtcars</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">mutate</span><span class="op">(</span>cyl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cyl</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">6</span>, <span class="fl">8</span><span class="op">)</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"four"</span>, <span class="st">"six"</span>, <span class="st">"eight"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">cyl</span>, <span class="va">vs</span><span class="op">:</span><span class="va">gear</span>, .method <span class="op">=</span> <span class="st">"dummy"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">mpg</span>, .method <span class="op">=</span> <span class="st">"triangle"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">15</span>, <span class="fl">20</span>, <span class="fl">30</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">disp</span><span class="op">:</span><span class="va">carb</span>, .method <span class="op">=</span> <span class="st">"triangle"</span>, .breaks <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> </span>
@@ -555,71 +276,61 @@ be done as follows:</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>               1                0                      0</span></span></code></pre></div>
 <p>Note that the <code>cyl</code>, <code>vs</code>, <code>am</code>, and
 <code>gear</code> columns are still represented by dummy logical
-columns, while the <code>mpg</code>, <code>disp</code>, and other
-columns are now represented by fuzzy sets. This combination allows both
-crisp and fuzzy predicates to be used together in pattern discovery,
-offering more flexibility and interpretability.</p>
+columns, while the numeric columns are now represented by fuzzy sets.
+This combination allows both crisp and fuzzy predicates to be used
+together in pattern discovery.</p>
 </div>
 <div class="section level3">
-<h3 id="preparation-of-trapezoidal-fuzzy-predicates">Preparation of Trapezoidal Fuzzy Predicates<a class="anchor" aria-label="anchor" href="#preparation-of-trapezoidal-fuzzy-predicates"></a>
+<h3 id="advanced-data-preparation-capabilities">Advanced Data Preparation Capabilities<a class="anchor" aria-label="anchor" href="#advanced-data-preparation-capabilities"></a>
 </h3>
-<p>The triangular and raised cosine membership functions are often
-sufficient to capture gradual transitions in numeric data. However, in
-some situations it is useful to have fuzzy sets that stay <em>fully true
-(membership = 1)</em> over a wider interval before decreasing again.
-This generalization corresponds to a <em>trapezoidal fuzzy set</em>,
-which can be seen as a triangle or raised cosine with a “flat top”.</p>
-<p>With <code><a href="../reference/partition.html">partition()</a></code>, trapezoids can be defined for both
-<code>"triangle"</code> and <code>"raisedcos"</code> methods by
-controlling how many consecutive break points constitute one fuzzy set
-and how far the window shifts along the breaks. That can be accomplished
-with the <code>.span</code> and <code>.inc</code> arguments:</p>
+<p>The <code>nuggets</code> package provides powerful and flexible data
+preparation tools. The <a href="data-preparation.html">Data
+Preparation</a> vignette covers these capabilities in depth,
+including:</p>
 <ul>
 <li>
-<code>.span</code> - specifies the width of the flat top in terms of
-the number of break intervals that should be merged.</li>
-<li>
-<code>.inc</code> - the shift of the window along
-<code>.breaks</code> when forming the next fuzzy set.</li>
+<strong>Crisp (Boolean) partitioning</strong> with customizable
+interval strategies:
+<ul>
+<li>Equal-width intervals for uniform discretization</li>
+<li>Data-driven methods (quantile, k-means, hierarchical clustering,
+etc.) for optimal breakpoints that respect the data structure</li>
+<li>Custom breakpoints for domain-specific intervals</li>
 </ul>
-<p>By default, <code>.span = 1</code> and <code>.inc = 1</code>, which
-means that each fuzzy set is triangular or raised cosine. Setting
-<code>.span</code> to a value greater than 1 creates trapezoidal fuzzy
-sets. With <code>.span = 2</code>, each fuzzy set is defined by four
-consecutive break points - a flat top spans two break intervals. The
-following figure is the result of setting <code>.span = 2</code> and
-<code>.breaks = c(-10, -5, 5, 10)</code>:</p>
-<div class="figure" style="text-align: center">
-<img src="nuggets_files/figure-html/unnamed-chunk-15-1.png" alt="Fuzzy sets with triangular membership functions for .span = 2, .breaks = c(-10, -5, 5, 10)`
-" width="80%"><p class="caption">
-Fuzzy sets with triangular membership functions for
-<code>partition(x, .method = "triangle", .span = 2, .breaks = c(-10, -5, 5, 10))</code>
-</p>
-</div>
-<p>Additional fuzzy sets are created by shifting the window along the
-break points. The shift is controlled by the <code>.inc</code> argument.
-By default, <code>.inc = 1</code>, which means that the window shifts by
-one break point. Consider the following example that shows the effect of
-setting <code>.inc = 1</code> in addition to <code>.span = 2</code> and
-<code>.breaks = c(-15, -10, -5, 0, 5, 10, 15)</code>:</p>
-<div class="figure" style="text-align: center">
-<img src="nuggets_files/figure-html/unnamed-chunk-16-1.png" alt="Fuzzy sets with triangular membership functions for .inc = 1, .span = 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15)`
-" width="80%"><p class="caption">
-Fuzzy sets with triangular membership functions for
-<code>partition(x, .method = "triangle", .inc = 1, .span = 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15))</code>
-</p>
-</div>
-<p>Setting <code>.inc</code> to a value greater than 1 modifies the
-shift of the window along the break points. For example, with
-<code>.inc = 3</code>, the window shifts by three break points, which
-effectively skips two fuzzy sets after each created fuzzy set:</p>
-<div class="figure" style="text-align: center">
-<img src="nuggets_files/figure-html/unnamed-chunk-17-1.png" alt="Fuzzy sets with triangular membership functions for .inc = 3, .span = 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15)`
-" width="80%"><p class="caption">
-Fuzzy sets with triangular membership functions for
-<code>partition(x, .method = "triangle", .inc = 3, .span = 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15))</code>
-</p>
-</div>
+</li>
+<li>
+<strong>Fuzzy partitioning</strong> for modeling gradual transitions
+and uncertainty:
+<ul>
+<li>Triangular membership functions for basic fuzzy sets</li>
+<li>Raised-cosine membership functions for smoother transitions</li>
+<li>Trapezoidal shapes using <code>.span</code> and <code>.inc</code>
+parameters for overlapping fuzzy sets</li>
+</ul>
+</li>
+<li>
+<strong>Quality control utilities</strong> to improve pattern
+mining:
+<ul>
+<li>
+<code><a href="../reference/is_almost_constant.html">is_almost_constant()</a></code> and
+<code><a href="../reference/remove_almost_constant.html">remove_almost_constant()</a></code> to identify and filter
+uninformative columns</li>
+<li>
+<code><a href="../reference/dig_tautologies.html">dig_tautologies()</a></code> to find always-true rules that can be
+used to prune search spaces</li>
+</ul>
+</li>
+<li>
+<strong>Custom labels</strong> for predicates to make discovered
+patterns more interpretable</li>
+</ul>
+<p>For example, you can use quantile-based partitioning to ensure
+balanced predicates, or use raised-cosine fuzzy sets with custom labels
+to create meaningful linguistic terms like “very_low”, “low”, “medium”,
+“high”, and “very_high”. These preparation choices significantly impact
+the interpretability and usefulness of patterns discovered in subsequent
+analyses.</p>
 </div>
 </div>
 <div class="section level2">
@@ -689,7 +400,7 @@ as the number of dataset columns.</p>
 in <code>disj</code> prevents meaningless conditions like
 <code>gear=3 &amp; gear=4</code>. You can conveniently generate this
 vector with <code><a href="../reference/var_names.html">var_names()</a></code>:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">disj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/var_names.html">var_names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">fuzzy_mtcars</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">disj</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] "cyl"  "cyl"  "cyl"  "vs"   "vs"   "am"   "am"   "gear" "gear" "gear"</span></span>
@@ -721,7 +432,7 @@ columns starting with <code>"am"</code> may appear in the consequent; -
 minimum support is <code>0.02</code>; - minimum confidence is
 <code>0.8</code>; - additional quality measures <code>"lift"</code> and
 <code>"conviction"</code> are computed.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">fuzzy_mtcars</span>,</span>
 <span>                           antecedent <span class="op">=</span> <span class="op">!</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"am"</span><span class="op">)</span>,</span>
 <span>                           consequent <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"am"</span><span class="op">)</span>,</span>
@@ -733,7 +444,7 @@ minimum support is <code>0.02</code>; - minimum confidence is
 <p>The result is a tibble containing the discovered rules and their
 quality metrics. You can arrange them, for example, by decreasing
 support:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">arrange</span><span class="op">(</span><span class="va">result</span>, <span class="fu">desc</span><span class="op">(</span><span class="va">support</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 526 × 14</span></span></span>
@@ -804,7 +515,7 @@ replicates the search for associations rules with the custom callback
 function. For that, a dataset has to be dichotomized and the disjoint
 vector created as in the <strong>Data Preparation</strong> section
 above:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#head(fuzzyCO2)</span></span>
 <span><span class="co">#print(disj)</span></span></code></pre></div>
 <p>As we want to search for associations rules with some minimum support
@@ -812,7 +523,7 @@ and confidence, we define the variables to hold that thresholds. We also
 need to define a callback function that will be called for each found
 frequent condition. Its purpose is to generate the rules with the
 obtained condition as an antecedent:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">min_support</span> <span class="op">&lt;-</span> <span class="fl">0.02</span></span>
 <span><span class="va">min_confidence</span> <span class="op">&lt;-</span> <span class="fl">0.8</span></span>
 <span></span>
@@ -843,7 +554,7 @@ predicates, which we call “foci” (plural of “focus”), within the rows
 satisfying the condition. For associations rules, foci are potential
 rule consequents.</p>
 <p>Now we can run the digging for rules:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#result &lt;- dig(fuzzyCO2,</span></span>
 <span>              <span class="co">#f = f,</span></span>
 <span>              <span class="co">#condition = !starts_with("Treatment"),</span></span>
@@ -854,7 +565,7 @@ rule consequents.</p>
 <p>As we return a list of lists in the callback function, we have to
 flatten the first level of lists in the result and binding it into a
 data frame:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#result &lt;- result |&gt;</span></span>
 <span>  <span class="co">#unlist(recursive = FALSE) |&gt;</span></span>
 <span>  <span class="co">#lapply(as_tibble) |&gt;</span></span>
