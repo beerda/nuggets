@@ -23,7 +23,7 @@
              arg = caller_arg(x),
              call = caller_env()) {
         if (!isTRUE(f(x) | (isTRUE(null) && is.null(x)))) {
-            na <- if (length(x) == 1 && is.na(x)) " NA" else ""
+            na <- if (is.null(dim(x)) && length(x) == 1 && is.na(x)) " NA" else ""
             msg <- if (null) paste(msg, "or NULL") else msg
             cli_abort(c("{.arg {arg}} must be {msg}.",
                         "x" = "You've supplied a {.cls {class(x)}}{na}."),
@@ -114,7 +114,7 @@
                           arg = caller_arg(x),
                           call = caller_env()) {
     if (!is.null(x)) {
-        na <- if (length(x) == 1 && is.na(x)) " NA" else ""
+        na <- if (is.null(dim(x)) && length(x) == 1 && is.na(x)) " NA" else ""
         cli_abort(c("{.arg {arg}} can't be non-NULL when {when}.",
                     "x" = "You've supplied a {.cls {class(x)}}{na}."),
                   call = call)
@@ -142,7 +142,7 @@
                           arg = caller_arg(x),
                           call = caller_env()) {
     if (!isTRUE(inherits(x, clazz) | (isTRUE(null) && is.null(x)))) {
-        na <- if (length(x) == 1 && is.na(x)) " NA" else ""
+        na <- if (is.null(dim(x)) && length(x) == 1 && is.na(x)) " NA" else ""
         msg <- if (null) " or NULL" else ""
         cli_abort(c("{.arg {arg}} must be an S3 object that inherits from {.cls {clazz}}{msg}.",
                     "x" = "You've supplied a {.cls {class(x)}}{na}."),
@@ -157,7 +157,7 @@
                             arg = caller_arg(x),
                             call = caller_env()) {
     if (!isTRUE(is_nugget(x, flavour) | (isTRUE(null) && is.null(x)))) {
-        na <- if (length(x) == 1 && is.na(x)) " NA" else ""
+        na <- if (is.null(dim(x)) && length(x) == 1 && is.na(x)) " NA" else ""
         msg <- if (null) " or NULL" else ""
         flav <- if (is.null(flavour)) "nugget" else "nugget of flavour {.cls {flavour}}"
         cli_abort(c(paste0("{.arg {arg}} must be a ", flav, msg, "."),
@@ -167,12 +167,17 @@
 }
 
 
+..and_has_not_dim <- function(f) {
+    function(x) {
+        f(x) && is.null(dim(x))
+    }
+}
 
-.must_be_atomic_scalar <- ..must_be_type(is_scalar_atomic, "an atomic scalar")
-.must_be_integerish_scalar <- ..must_be_type(is_scalar_integerish, "an integerish scalar")
-.must_be_double_scalar <- ..must_be_type(is_scalar_double, "a double scalar")
-.must_be_character_scalar <- ..must_be_type(is_scalar_character, "a character scalar")
-.must_be_logical_scalar <- ..must_be_type(is_scalar_logical, "a logical scalar")
+.must_be_atomic_scalar <- ..must_be_type(..and_has_not_dim(is_scalar_atomic), "an atomic scalar")
+.must_be_integerish_scalar <- ..must_be_type(..and_has_not_dim(is_scalar_integerish), "an integerish scalar")
+.must_be_double_scalar <- ..must_be_type(..and_has_not_dim(is_scalar_double), "a double scalar")
+.must_be_character_scalar <- ..must_be_type(..and_has_not_dim(is_scalar_character), "a character scalar")
+.must_be_logical_scalar <- ..must_be_type(..and_has_not_dim(is_scalar_logical), "a logical scalar")
 
 .is_just_vector <- function(x) {
     (is.character(x) || is.logical(x) || is.integer(x) || is.numeric(x)) &&
