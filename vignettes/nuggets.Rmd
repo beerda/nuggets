@@ -135,66 +135,37 @@ sets. This combination allows both crisp and fuzzy predicates to be used
 together in pattern discovery.
 
 
-## A More Complex Example: CO2 Dataset
+## Advanced Data Preparation Capabilities
 
-Let's look at a more interesting example using the built-in `CO2` dataset, which 
-contains data from an experiment on the cold tolerance of the grass species 
-*Echinochloa crus-galli*. We'll prepare the data and discover some patterns.
+The `nuggets` package provides powerful and flexible data preparation tools. 
+The [Data Preparation](data-preparation.html) vignette covers these capabilities 
+in depth, including:
 
-```{r}
-# View the original data
-head(CO2)
-```
+- **Crisp (Boolean) partitioning** with customizable interval strategies:
+  - Equal-width intervals for uniform discretization
+  - Data-driven methods (quantile, k-means, hierarchical clustering, etc.) for 
+    optimal breakpoints that respect the data structure
+  - Custom breakpoints for domain-specific intervals
+  
+- **Fuzzy partitioning** for modeling gradual transitions and uncertainty:
+  - Triangular membership functions for basic fuzzy sets
+  - Raised-cosine membership functions for smoother transitions
+  - Trapezoidal shapes using `.span` and `.inc` parameters for overlapping 
+    fuzzy sets
+  
+- **Quality control utilities** to improve pattern mining:
+  - `is_almost_constant()` and `remove_almost_constant()` to identify and 
+    filter uninformative columns
+  - `dig_tautologies()` to find always-true rules that can be used to prune 
+    search spaces
+  
+- **Custom labels** for predicates to make discovered patterns more interpretable
 
-We can prepare this data using different partitioning strategies for different 
-columns. For the concentration (`conc`) variable, we'll use raised-cosine fuzzy 
-sets to model smooth transitions. For the uptake rate, we'll use meaningful 
-labels for the fuzzy sets:
-
-```{r}
-prepared_CO2 <- CO2 |>
-    partition(Plant:Treatment) |>
-    partition(conc,
-              .method = "raisedcos",
-              .breaks = c(-Inf, 95, 175, 350, 675, 1000, Inf),
-              .labels = c("very_low", "low", "medium", "high", "very_high")) |>
-    partition(uptake,
-              .method = "triangle",
-              .breaks = c(-Inf, 10, 20, 30, 40, Inf),
-              .labels = c("minimal", "low", "moderate", "high", "maximal"))
-
-head(prepared_CO2, n = 3)
-```
-
-Now we can search for association rules. For instance, we might want to find 
-which combinations of plant type, treatment, and concentration levels are 
-associated with high uptake rates:
-
-```{r}
-# Create disjoint vector to avoid nonsensical conditions
-disj <- var_names(colnames(prepared_CO2))
-
-# Search for rules predicting high uptake
-rules <- dig_associations(
-    prepared_CO2,
-    antecedent = !starts_with("uptake"),
-    consequent = starts_with("uptake"),
-    disjoint = disj,
-    min_support = 0.05,
-    min_confidence = 0.7,
-    t_norm = "goguen"
-)
-
-# Show the most interesting rules
-rules |>
-    dplyr::arrange(desc(confidence), desc(support)) |>
-    head(10)
-```
-
-This example demonstrates how data preparation choices (using raised-cosine vs 
-triangular fuzzy sets, choosing appropriate breakpoints, using meaningful labels) 
-can make the discovered patterns more interpretable and aligned with domain 
-knowledge.
+For example, you can use quantile-based partitioning to ensure balanced 
+predicates, or use raised-cosine fuzzy sets with custom labels to create 
+meaningful linguistic terms like "very_low", "low", "medium", "high", and 
+"very_high". These preparation choices significantly impact the interpretability 
+and usefulness of patterns discovered in subsequent analyses.
 
 
 
