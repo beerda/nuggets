@@ -43,7 +43,7 @@ reference:
       - association_matrix
       - add_interest
       - cluster_associations
-      - explore
+      - explore.associations
       - geom_diamond
       - remove_ill_conditions
       - which_antichain
