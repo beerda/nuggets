@@ -30,7 +30,6 @@
 #' @importFrom DT dataTableOutput
 #' @importFrom DT renderDT
 #' @importFrom fastmatch fmatch
-#' @importFrom generics calculate
 #' @importFrom generics explore
 #' @importFrom ggplot2 .data
 #' @importFrom ggplot2 aes
@@ -175,6 +174,3 @@ NULL
 
 #' @export
 generics::explore
-
-#' @export
-generics::calculate

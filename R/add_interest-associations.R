@@ -17,7 +17,7 @@
 #######################################################################
 
 
-#' Calculate additional interest measures for association rules
+#' Add additional interest measures for association rules
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
@@ -99,12 +99,12 @@
 #'                           min_support = 0.3,
 #'                           min_confidence = 0.8,
 #'                           contingency_table = TRUE)
-#' rules <- calculate(rules,
+#' rules <- add_interest(rules,
 #'                    measures = c("conviction", "leverage", "jaccard"))
-#' @rdname calculate
-#' @method calculate associations
+#' @rdname add_interest
+#' @method add_interest associations
 #' @export
-calculate.associations <- function(x,
+add_interest.associations <- function(x,
                                    measures = NULL,
                                    smooth_counts = 0,
                                    p = 0.5,

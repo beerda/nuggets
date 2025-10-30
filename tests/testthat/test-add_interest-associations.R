@@ -17,7 +17,7 @@
 #######################################################################
 
 
-test_that("calculate.associations(measures = NULL)", {
+test_that("add_interest.associations(measures = NULL)", {
     set.seed(2123)
     rows <- 100
     cols <- 5
@@ -33,7 +33,7 @@ test_that("calculate.associations(measures = NULL)", {
                             min_confidence = 0.5,
                             contingency_table = TRUE)
 
-    res <- calculate(fit, measures = NULL)
+    res <- add_interest(fit, measures = NULL)
     expect_true(is_nugget(res, "associations"))
     expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_associations")
@@ -46,7 +46,7 @@ test_that("calculate.associations(measures = NULL)", {
 })
 
 
-test_that("calculate.associations() test GUHA quantifiers", {
+test_that("add_interest.associations() test GUHA quantifiers", {
     set.seed(2123)
     rows <- 100
     cols <- 5
@@ -69,7 +69,7 @@ test_that("calculate.associations() test GUHA quantifiers", {
     c <- fit$np
     d <- fit$nn
 
-    res <- calculate(fit, measures = guha, p = p)
+    res <- add_interest(fit, measures = guha, p = p)
 
     expect_true(is_nugget(res, "associations"))
     expect_true(is_tibble(res))
@@ -123,7 +123,7 @@ test_that("calculate.associations() test GUHA quantifiers", {
 })
 
 
-test_that("compare calculate.associations to arules::interestMeasure", {
+test_that("compare add_interest.associations to arules::interestMeasure", {
     skip_if_not_installed("arules")
     set.seed(2123)
     rows <- 100
@@ -172,7 +172,7 @@ test_that("compare calculate.associations to arules::interestMeasure", {
                             contingency_table = TRUE)
 
     # no smoothing
-    res <- calculate(fit,
+    res <- add_interest(fit,
                      measure = names(.arules_association_measures))
 
     expect_true(is_nugget(res, "associations"))
@@ -186,7 +186,7 @@ test_that("compare calculate.associations to arules::interestMeasure", {
     }
 
     # smoothing = 1
-    res <- calculate(fit,
+    res <- add_interest(fit,
                      measure = names(.arules_association_measures),
                      smooth_counts = 1)
 

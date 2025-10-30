@@ -97,7 +97,7 @@
 #'      the consequent but not the antecedent, and neither the antecedent nor the
 #'      consequent, respectively.
 #' @param measures (Deprecated. Search for associations using
-#'      `dig_associations(contingency_table = TRUE)` and use the `calculate()`
+#'      `dig_associations(contingency_table = TRUE)` and use the `add_interest()`
 #'      function on the result to compute additional measures.)
 #'      A character vector specifying the additional quality measures to compute.
 #'      If `NULL`, no additional measures are computed. Possible values are `"lift"`,
@@ -214,7 +214,7 @@ dig_associations <- function(x,
     if (lifecycle::is_present(measures)) {
         deprecate_warn(when = "2.1.0",
                        what = "nuggets::dig_associations(measures)",
-                       details = "The `measures` argument is deprecated and will be removed in future versions. Use the `calculate()` function on the result of `dig_associations(contingency_table = TRUE)` to compute additional measures.")
+                       details = "The `measures` argument is deprecated and will be removed in future versions. Use the `add_interest()` function on the result of `dig_associations(contingency_table = TRUE)` to compute additional measures.")
     } else {
         measures <- NULL
     }
