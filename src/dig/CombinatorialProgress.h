@@ -49,8 +49,9 @@ public:
           maxLevel(min(maxLevel, elements)),
           total(computeSize(maxLevel, elements)),
           actual(0),
-          bar(PROTECT(cli_progress_bar(total, List::create(Named("name") = "searching rules"))))
+          bar(R_NilValue)
     {
+        bar = PROTECT(cli_progress_bar(total, List::create(Named("name") = "searching rules")));
         //RcppThread::Rcout << "creating progress for "
                           //<< this->maxLevel << " levels and "
                           //<< elements << " elements: total = "
