@@ -254,8 +254,6 @@ NumericVector goguen_residuum(NumericVector x, NumericVector y)
             res[i] = NA_REAL;
         } else if (x[xi] <= y[yi]) {
             res[i] = 1;
-        } else if (x[xi] == 0) {
-            res[i] = 1;  // By convention, 0/0 = 1 in fuzzy logic residuum
         } else {
             res[i] = y[yi] / x[xi];
         }
