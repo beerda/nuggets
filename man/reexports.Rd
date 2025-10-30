@@ -4,7 +4,6 @@
 \name{reexports}
 \alias{reexports}
 \alias{explore}
-\alias{calculate}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -12,6 +11,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{generics}{\code{\link[generics]{calculate}}, \code{\link[generics]{explore}}}
+  \item{generics}{\code{\link[generics]{explore}}}
 }}
 

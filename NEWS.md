@@ -1,7 +1,7 @@
 # nuggets 2.1.0
 - released: ???
 - added cluster_associations()
-- added calculate() for associations flavour of nugget to compute
+- added add_interest() for associations flavour of nugget to compute
   additional interest measures (GUHA and arules measures)
 - deprecated measures argument in dig_associations() and dig_tautologies()
 - parse_condition() rewritten in C++ for better performance

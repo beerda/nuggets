@@ -63,7 +63,7 @@
 #'      the consequent but not the antecedent, and neither the antecedent nor the
 #'      consequent, respectively.
 #' @param measures (Deprecated. Search for tautologies using
-#'      `dig_tautologies(contingency_table = TRUE)` and use the `calculate()`
+#'      `dig_tautologies(contingency_table = TRUE)` and use the `add_interest()`
 #'      function on the result to compute additional measures.)
 #'      A character vector specifying the additional quality measures to compute.
 #'      If `NULL`, no additional measures are computed. Possible values are `"lift"`,

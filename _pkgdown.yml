@@ -41,7 +41,7 @@ reference:
       Functions for post-processing of extracted patterns.
     contents:
       - association_matrix
-      - calculate.associations
+      - add_interest
       - cluster_associations
       - explore.associations
       - geom_diamond
