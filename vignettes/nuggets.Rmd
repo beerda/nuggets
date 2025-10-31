@@ -181,7 +181,7 @@ pattern.
 
 For more advanced workflows — such as defining custom pattern types or
 computing user-defined measures — see the section
-[Custom Patterns](#custom-patterns).
+[Advanced Use](#advanced-use).
 
 
 ## Search for Association Rules
