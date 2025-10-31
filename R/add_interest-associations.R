@@ -61,6 +61,11 @@
 #' - measures adopted from the `arules` package:
 #'   `r .create_arules_measures_doc()`
 #'
+#' All the above measures are primarily intended for use with binary (logical)
+#' data. While they can be computed for numerical data as well, their
+#' interpretations may not be meaningful in that context - users should exercise
+#' caution when applying these measures to non-binary data.
+#'
 #' Many measures are based on the contingency table counts, and some may be
 #' undefined for certain combinations of counts (e.g., division by zero).
 #' This issue can be mitigated by applying smoothing using the `smooth_counts`
