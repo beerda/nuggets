@@ -60,12 +60,10 @@ example:
   variables,
 - `dig_correlations()` for conditional correlations. 
 
-See [Pre-defined Patterns](#pre-defined-patterns) below for further details.
+See [Pre-defined Patterns](#pre-defined-patterns) below for examples and details.
 
 Discovered rules and patterns can be post-processed, visualized, and explored
-interactively. Section
-[Post-processing and Visualization](#post-processing-and-visualization)
-describes these features.
+interactively.
 
 Finally, the package allows users to provide custom evaluation functions for
 conditions and to search for *user-defined* types of patterns:
@@ -74,7 +72,7 @@ conditions and to search for *user-defined* types of patterns:
 - `dig_grid()` is a wrapper around `dig()` for patterns defined by conditions
   and a pair of columns evaluated by a user-defined function.  
 
-See [Custom Patterns](#custom-patterns) for more information.
+See [Advanced Use](#advanced-use) for examples of custom pattern discovery.
 
 
 
@@ -186,7 +184,7 @@ computing user-defined measures — see the section
 [Custom Patterns](#custom-patterns).
 
 
-### Search for Association Rules
+## Search for Association Rules
 
 **Association rules** identify conditions (*antecedents*) under which a specific
 feature (*consequent*) is present very often.
@@ -276,86 +274,271 @@ This example illustrates the typical workflow for mining association rules with
 Boolean datasets.
 
 
+#### Visualizing Association Rules with Diamond Plots
+
+The `geom_diamond()` function provides a specialized visualization for association
+rules and their hierarchical structure. It displays rules as a lattice where 
+broader (more general) conditions appear above their descendants:
+
+```{r, fig.width=8, fig.height=5}
+# Search for rules with various confidence levels for visualization
+vis_rules <- dig_associations(fuzzy_mtcars,
+                              antecedent = starts_with("mpg") | starts_with("disp"),
+                              consequent = starts_with("am"),
+                              disjoint = disj,
+                              min_support = 0.01,
+                              min_confidence = 0.6,
+                              min_length = 0,
+                              max_length = 3,
+                              max_results = 50)
+
+# Create diamond plot showing rule hierarchy
+ggplot(vis_rules) +
+    aes(condition = antecedent,
+        fill = confidence,
+        linewidth = confidence,
+        size = support,
+        label = shorten_condition(antecedent)) +
+    geom_diamond(nudge_y = 0.25) +
+    scale_fill_gradient(low = "lightblue", high = "darkblue") +
+    labs(title = "Association Rules Hierarchy",
+         subtitle = "Node size = support, color/edge width = confidence")
+```
+
+The diamond plot helps identify:
+- Simple vs. complex rules (vertical position)
+- Strong vs. weak rules (color intensity)
+- Frequent vs. rare rules (node size)
+
+
 
 ## Conditional Correlations
 
-TBD (`dig_correlations`)
+**Conditional correlations** identify strong relationships between pairs of 
+numeric variables under specific conditions.
+
+The `dig_correlations()` function searches for pairs of variables that are 
+significantly correlated within sub-data satisfying generated conditions. This 
+is useful for discovering context-dependent relationships.
+
+In the following example, we search for correlations between different numeric
+variables in the original `mtcars` data under conditions defined by the prepared
+predicates in `crisp_mtcars`:
+
+```{r}
+# Prepare combined dataset with both condition predicates and numeric variables
+combined_mtcars <- cbind(crisp_mtcars, mtcars[, c("mpg", "disp", "hp", "wt")])
+
+# Search for conditional correlations
+corr_result <- dig_correlations(combined_mtcars,
+                                condition = colnames(crisp_mtcars),
+                                xvars = c("mpg", "hp"),
+                                yvars = c("wt", "disp"),
+                                disjoint = disj,
+                                min_length = 1,
+                                max_length = 2,
+                                min_support = 0.2,
+                                method = "pearson",
+                                min_cor = 0.7)
+
+# Display results
+print(corr_result)
+```
+
+The result shows conditions under which specific pairs of variables exhibit 
+strong correlations, along with correlation coefficients and p-values.
+
 
 ## Contrast Patterns
 
-TBD (`dig_contrasts`)
+Contrast patterns identify conditions under which numeric variables show 
+statistically significant differences. The `nuggets` package provides several 
+functions for different types of contrasts.
 
 
-# Post-processing and Visualization
+### Baseline Contrasts
 
-TBD
-
-# Custom Patterns
-
-The `nuggets` package allows to execute a user-defined callback function on each generated
-frequent condition. That way a custom type of patterns may be searched. The following example
-replicates the search for associations rules with the custom callback function. For that, a dataset
-has to be dichotomized and the disjoint vector created as in the **Data Preparation** section
-above:
+**Baseline contrasts** identify conditions under which a variable is 
+significantly different from a baseline value (typically zero) using a 
+one-sample statistical test.
 
 ```{r}
-#head(fuzzyCO2)
-#print(disj)
+# Prepare combined dataset with predicates and numeric variables
+combined_mtcars2 <- cbind(crisp_mtcars, 
+                          mtcars[, c("mpg", "hp", "wt")])
+
+# Search for baseline contrasts
+baseline_result <- dig_baseline_contrasts(combined_mtcars2,
+                                         condition = colnames(crisp_mtcars),
+                                         vars = c("mpg", "hp", "wt"),
+                                         disjoint = disj,
+                                         min_length = 1,
+                                         max_length = 2,
+                                         min_support = 0.2,
+                                         method = "t.test",
+                                         baseline = 0)
+
+# Show top results
+head(baseline_result)
 ```
 
-As we want to search for associations rules with some minimum support and confidence, we define
-the variables to hold that thresholds. We also need to define a callback function that will be
-called for each found frequent condition. Its purpose is to generate the rules with the
-obtained condition as an antecedent:
+
+### Complement Contrasts
+
+**Complement contrasts** identify conditions under which a variable differs 
+significantly between elements that satisfy the condition and those that don't.
 
 ```{r}
+# Search for complement contrasts
+complement_result <- dig_complement_contrasts(combined_mtcars2,
+                                             condition = colnames(crisp_mtcars),
+                                             vars = c("mpg", "hp", "wt"),
+                                             disjoint = disj,
+                                             min_length = 1,
+                                             max_length = 2,
+                                             min_support = 0.15,
+                                             method = "t.test")
+
+# Show top results
+head(complement_result)
+```
+
+
+### Paired Baseline Contrasts
+
+**Paired baseline contrasts** identify conditions under which there is a 
+significant difference between two paired numeric variables.
+
+```{r}
+# Search for paired baseline contrasts
+paired_result <- dig_paired_baseline_contrasts(combined_mtcars2,
+                                              condition = colnames(crisp_mtcars),
+                                              xvars = c("mpg", "hp"),
+                                              yvars = c("wt", "wt"),
+                                              disjoint = disj,
+                                              min_length = 1,
+                                              max_length = 2,
+                                              min_support = 0.2,
+                                              method = "t.test")
+
+# Show top results
+head(paired_result)
+```
+
+
+# Advanced Use
+
+For advanced workflows, the `nuggets` package allows users to define custom 
+pattern types and evaluation functions. This section demonstrates how to use 
+the general `dig()` function with custom callbacks and the specialized 
+`dig_grid()` wrapper.
+
+
+## Custom Patterns with dig()
+
+The `dig()` function allows you to execute a user-defined callback function on 
+each generated frequent condition. This enables searching for custom pattern 
+types beyond the pre-defined functions.
+
+The following example replicates the search for association rules using a custom 
+callback function with the datasets prepared earlier:
+
+```{r}
+# Define thresholds for custom association rules
 min_support <- 0.02
 min_confidence <- 0.8
 
-f <- function(condition, support, foci_supports) {
-    conf <- foci_supports / support
-    sel <- !is.na(conf) & conf >= min_confidence & !is.na(foci_supports) & foci_supports >= min_support
-    conf <- conf[sel]
-    supp <- foci_supports[sel]
+# Define custom callback function
+f <- function(condition, support, pp, pn) {
+    # Calculate confidence for each focus (consequent)
+    conf <- pp / support
     
+    # Filter rules by confidence and support thresholds
+    sel <- !is.na(conf) & conf >= min_confidence & !is.na(pp) & pp >= min_support
+    conf <- conf[sel]
+    supp <- pp[sel]
+    
+    # Return list of rules meeting criteria
     lapply(seq_along(conf), function(i) { 
       list(antecedent = format_condition(names(condition)),
-           consequent = format_condition(names(conf)[[i]]),
+           consequent = names(conf)[[i]],
            support = supp[[i]],
            confidence = conf[[i]])
     })
 }
+
+# Search using custom callback
+custom_result <- dig(fuzzy_mtcars,
+                    f = f,
+                    condition = !starts_with("am"),
+                    focus = starts_with("am"),
+                    disjoint = disj,
+                    min_length = 1,
+                    min_support = min_support)
+
+# Flatten and format results
+custom_result <- custom_result |>
+  unlist(recursive = FALSE) |>
+  lapply(as_tibble) |>
+  do.call(rbind, args = _) |>
+  arrange(desc(support))
+
+print(custom_result)
 ```
 
-The callback function `f()` defines three arguments: `condition`, `support` and `foci_supports`.
-The names of the arguments are not random. Based on the argument names of the callback function,
-the searching algorithm provides information to the function. Here `condition` is a vector of indices
-representing the conjunction of predicates in a condition. By the predicate we mean the column in the
-source dataset. The `support` argument gets the relative frequency of the condition in the dataset.
-`foci_supports` is a vector of supports of special predicates, which we call "foci" (plural of "focus"),
-within the rows satisfying the condition. For associations rules, foci are potential rule consequents.
+The callback function `f()` receives information based on its argument names:
+- `condition`: vector of column indices forming the condition
+- `support`: relative frequency of the condition
+- `pp`, `pn`: contingency table entries for condition and foci
 
-Now we can run the digging for rules:
+This approach gives you full control over pattern evaluation and filtering logic.
+
+
+## Grid-Based Patterns with dig_grid()
+
+The `dig_grid()` function is useful for patterns based on relationships between 
+pairs of columns. It creates a grid of column combinations and evaluates a 
+user-defined function for each condition and column pair.
+
+Here's an example that computes custom statistics for pairs of numeric variables:
 
 ```{r}
-#result <- dig(fuzzyCO2,
-              #f = f,
-              #condition = !starts_with("Treatment"),
-              #focus = starts_with("Treatment"),
-              #disjoint = disj,
-              #min_length = 1,
-              #min_support = min_support)
+# Define callback for grid-based patterns
+grid_callback <- function(d, weights) {
+    if (nrow(d) < 5) return(NULL)  # Skip if too few observations
+    
+    # Compute weighted correlation
+    wcor <- cov.wt(d, wt = weights, cor = TRUE)$cor[1, 2]
+    
+    list(
+        correlation = wcor,
+        n_obs = sum(weights > 0.1),
+        mean_x = weighted.mean(d[[1]], weights),
+        mean_y = weighted.mean(d[[2]], weights)
+    )
+}
+
+# Prepare combined dataset
+combined_fuzzy <- cbind(fuzzy_mtcars, mtcars[, c("mpg", "hp", "wt")])
+
+# Search using grid approach
+grid_result <- dig_grid(combined_fuzzy,
+                       f = grid_callback,
+                       condition = colnames(fuzzy_mtcars),
+                       xvars = c("mpg", "hp"),
+                       yvars = c("wt"),
+                       disjoint = disj,
+                       type = "fuzzy",
+                       min_length = 1,
+                       max_length = 2,
+                       min_support = 0.15,
+                       max_results = 20)
+
+# Display results
+print(grid_result)
 ```
 
-As we return a list of lists in the callback function, we have to flatten the first level 
-of lists in the result and binding it into a data frame:
-
-```{r}
-#result <- result |>
-  #unlist(recursive = FALSE) |>
-  #lapply(as_tibble) |>
-  #do.call(rbind, args = _) |>
-  #arrange(desc(support))
-#
-#print(result)
-```
+The `dig_grid()` function is particularly useful for:
+- Computing conditional correlations with custom methods
+- Evaluating pairwise relationships under different conditions
+- Implementing specialized statistical tests on variable pairs
