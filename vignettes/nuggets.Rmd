@@ -330,7 +330,8 @@ predicates in `crisp_mtcars`:
 combined_mtcars <- cbind(crisp_mtcars, mtcars[, c("mpg", "disp", "hp", "wt")])
 
 # Extend disjoint vector for the new numeric columns
-disj_combined <- c(disj, rep(NA, 4))  # 4 new columns: mpg, disp, hp, wt
+disj_combined <- c(var_names(colnames(crisp_mtcars)),
+                   c("mpg", "disp", "hp", "wt"))
 
 # Search for conditional correlations
 corr_result <- dig_correlations(combined_mtcars,
@@ -370,7 +371,8 @@ combined_mtcars2 <- cbind(crisp_mtcars,
                           mtcars[, c("mpg", "hp", "wt")])
 
 # Extend disjoint vector for the new numeric columns
-disj_combined2 <- c(disj, rep(NA, 3))  # 3 new columns: mpg, hp, wt
+disj_combined2 <- c(var_names(colnames(crisp_mtcars)),
+                    c("mpg", "hp", "wt"))
 
 # Search for baseline contrasts
 baseline_result <- dig_baseline_contrasts(combined_mtcars2,
@@ -380,8 +382,7 @@ baseline_result <- dig_baseline_contrasts(combined_mtcars2,
                                          min_length = 1,
                                          max_length = 2,
                                          min_support = 0.2,
-                                         method = "t.test",
-                                         baseline = 0)
+                                         method = "t")
 
 # Show top results
 head(baseline_result)
@@ -402,7 +403,7 @@ complement_result <- dig_complement_contrasts(combined_mtcars2,
                                              min_length = 1,
                                              max_length = 2,
                                              min_support = 0.15,
-                                             method = "t.test")
+                                             method = "t")
 
 # Show top results
 head(complement_result)
@@ -424,7 +425,7 @@ paired_result <- dig_paired_baseline_contrasts(combined_mtcars2,
                                               min_length = 1,
                                               max_length = 2,
                                               min_support = 0.2,
-                                              method = "t.test")
+                                              method = "t")
 
 # Show top results
 head(paired_result)
@@ -526,13 +527,17 @@ grid_callback <- function(d, weights) {
 # Prepare combined dataset
 combined_fuzzy <- cbind(fuzzy_mtcars, mtcars[, c("mpg", "hp", "wt")])
 
+# Extend disjoint vector for new numeric columns
+combined_disj3 <- c(var_names(colnames(fuzzy_mtcars)),
+                    c("mpg", "hp", "wt"))
+
 # Search using grid approach
 grid_result <- dig_grid(combined_fuzzy,
                        f = grid_callback,
                        condition = colnames(fuzzy_mtcars),
                        xvars = c("mpg", "hp"),
                        yvars = c("wt"),
-                       disjoint = disj,
+                       disjoint = combined_disj3,
                        type = "fuzzy",
                        min_length = 1,
                        max_length = 2,
