@@ -329,12 +329,15 @@ predicates in `crisp_mtcars`:
 # Prepare combined dataset with both condition predicates and numeric variables
 combined_mtcars <- cbind(crisp_mtcars, mtcars[, c("mpg", "disp", "hp", "wt")])
 
+# Extend disjoint vector for the new numeric columns
+disj_combined <- c(disj, rep(NA, 4))  # 4 new columns: mpg, disp, hp, wt
+
 # Search for conditional correlations
 corr_result <- dig_correlations(combined_mtcars,
                                 condition = colnames(crisp_mtcars),
                                 xvars = c("mpg", "hp"),
                                 yvars = c("wt", "disp"),
-                                disjoint = disj,
+                                disjoint = disj_combined,
                                 min_length = 1,
                                 max_length = 2,
                                 min_support = 0.2,
@@ -366,11 +369,14 @@ one-sample statistical test.
 combined_mtcars2 <- cbind(crisp_mtcars, 
                           mtcars[, c("mpg", "hp", "wt")])
 
+# Extend disjoint vector for the new numeric columns
+disj_combined2 <- c(disj, rep(NA, 3))  # 3 new columns: mpg, hp, wt
+
 # Search for baseline contrasts
 baseline_result <- dig_baseline_contrasts(combined_mtcars2,
                                          condition = colnames(crisp_mtcars),
                                          vars = c("mpg", "hp", "wt"),
-                                         disjoint = disj,
+                                         disjoint = disj_combined2,
                                          min_length = 1,
                                          max_length = 2,
                                          min_support = 0.2,
@@ -392,7 +398,7 @@ significantly between elements that satisfy the condition and those that don't.
 complement_result <- dig_complement_contrasts(combined_mtcars2,
                                              condition = colnames(crisp_mtcars),
                                              vars = c("mpg", "hp", "wt"),
-                                             disjoint = disj,
+                                             disjoint = disj_combined2,
                                              min_length = 1,
                                              max_length = 2,
                                              min_support = 0.15,
@@ -414,7 +420,7 @@ paired_result <- dig_paired_baseline_contrasts(combined_mtcars2,
                                               condition = colnames(crisp_mtcars),
                                               xvars = c("mpg", "hp"),
                                               yvars = c("wt", "wt"),
-                                              disjoint = disj,
+                                              disjoint = disj_combined2,
                                               min_length = 1,
                                               max_length = 2,
                                               min_support = 0.2,
