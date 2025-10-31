@@ -338,10 +338,9 @@ corr_result <- dig_correlations(combined_mtcars,
                                 min_length = 1,
                                 max_length = 2,
                                 min_support = 0.2,
-                                method = "pearson",
-                                min_cor = 0.7)
+                                method = "pearson")
 
-# Display results
+# Display results with strong correlations
 print(corr_result)
 ```
 
