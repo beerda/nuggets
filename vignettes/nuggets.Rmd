@@ -146,6 +146,14 @@ fuzzy_mtcars <- mtcars |>
 head(fuzzy_mtcars, n = 3)
 ```
 
+Similar to the crisp example, the `"dummy"` method creates logical columns for
+categorical variables (`cyl`, `vs`, `am`, `gear`).
+
+The `"triangle"` method creates fuzzy predicates with triangular membership
+functions. For `mpg`, it uses specified breakpoints to define fuzzy intervals.
+For the remaining numeric variables (`disp` through `carb`), it automatically
+creates 3 overlapping fuzzy sets with smooth transitions between intervals.
+
 Note that the `cyl`, `vs`, `am`, and `gear` columns are still represented by
 dummy logical columns, while the numeric columns are now represented by fuzzy
 sets. This combination allows both crisp and fuzzy predicates to be used 
@@ -289,6 +297,17 @@ result <- arrange(result, desc(support))
 print(result)
 ```
 
+The example above searches for association rules where any predicates except
+those related to transmission type (`am`) can form the antecedent, while
+transmission type predicates serve as consequents. The `disjoint` vector
+ensures that mutually exclusive predicates (like `mpg=[low]` and `mpg=[high]`)
+don't appear together in the same condition.
+
+The result is a tibble where each row represents one rule, showing the
+antecedent, consequent, and quality measures such as support, confidence, lift,
+and conviction. Rules are sorted by support to show the most frequently
+occurring patterns first.
+
 This example illustrates the typical workflow for mining association rules with
 `nuggets`. The same structure and arguments apply when analyzing either fuzzy or
 Boolean datasets.
@@ -331,6 +350,12 @@ corr_result <- dig_correlations(combined_mtcars,
 print(corr_result)
 ```
 
+This example combines crisp predicates (from `crisp_mtcars`) with numeric
+variables from the original `mtcars` dataset. The function searches for
+conditions under which pairs of numeric variables show significant Pearson
+correlations. The `disjoint` vector is extended to include the new numeric
+columns, preventing conflicts in the search algorithm.
+
 The result shows conditions under which specific pairs of variables exhibit 
 strong correlations, along with correlation coefficients and p-values.
 
@@ -371,6 +396,11 @@ baseline_result <- dig_baseline_contrasts(combined_mtcars2,
 head(baseline_result)
 ```
 
+This example tests whether the mean of numeric variables (`mpg`, `hp`, `wt`)
+significantly differs from zero under various conditions. The `method = "t"`
+parameter specifies a t-test. The results show which combinations of
+conditions lead to statistically significant deviations from the baseline.
+
 
 ### Complement Contrasts
 
@@ -391,6 +421,11 @@ complement_result <- dig_complement_contrasts(combined_mtcars2,
 # Show top results
 head(complement_result)
 ```
+
+This example uses a two-sample t-test to compare the mean values of numeric
+variables between rows that satisfy a condition and rows that don't. The
+results identify conditions where subgroups have significantly different
+characteristics compared to the rest of the data.
 
 
 ### Paired Baseline Contrasts
@@ -413,6 +448,11 @@ paired_result <- dig_paired_baseline_contrasts(combined_mtcars2,
 # Show top results
 head(paired_result)
 ```
+
+This example performs paired t-tests to compare two variables within the same
+rows under specific conditions. Here, it tests whether `mpg` differs from `wt`
+(and `hp` from `wt`) in various subgroups. This is useful for detecting
+context-dependent relationships between paired measurements.
 
 
 # Post-processing and Visualization
@@ -498,6 +538,13 @@ ggplot(vis_rules) +
     labs(title = "Association Rules Hierarchy",
          subtitle = "Node size = support, color/edge width = confidence")
 ```
+
+This example creates a hierarchical visualization of association rules. The
+`geom_diamond()` function arranges rules in a lattice structure where simpler
+rules (with fewer predicates) appear at the top and more complex rules below.
+The `shorten_condition()` function creates readable labels by abbreviating
+predicate names. Visual properties (fill color, edge width, node size) encode
+rule quality measures, making it easy to identify the most interesting patterns.
 
 The diamond plot helps identify:
 - Simple vs. complex rules (vertical position)
