@@ -45,14 +45,14 @@ logic:
   - *Łukasiewicz* t-norm: $\max(0, a + b - 1)$ 
   
 Before applying `nuggets`, data columns intended as predicates must be prepared
-either by *dichotomization* (conversion into *dummy variables*) or by
+either by *dichotomization* (conversion into *dummy* logical variables) or by
 transformation into *fuzzy sets*. The package provides functions for both
-transformations. See the [Data Preparation](data-preparation.html) vignette 
-for a comprehensive guide, or the section [Data Preparation](#data-preparation) 
-below for a quick overview.
+transformations. See the section [Data Preparation](#data-preparation)  below
+for a quick overview, or the [Data Preparation](data-preparation.html) vignette 
+for a comprehensive guide.
 
-`nuggets` implements functions to search for pre-defined types of patterns, for
-example:
+`nuggets` implements functions to search for pre-defined types of patterns or
+to discover patterns of *user-defined* type. For example, the package provides:
 
 - `dig_associations()` for association rules,
 - `dig_baseline_contrasts()`, `dig_complement_contrasts()`, and
@@ -60,19 +60,22 @@ example:
   variables,
 - `dig_correlations()` for conditional correlations. 
 
-See [Pre-defined Patterns](#pre-defined-patterns) below for examples and details.
-
-Discovered rules and patterns can be post-processed, visualized, and explored
-interactively.
-
-Finally, the package allows users to provide custom evaluation functions for
-conditions and to search for *user-defined* types of patterns:
+To provide custom evaluation functions for conditions and to search for
+*user-defined* types of patterns, the package offers two general functions:
 
 - `dig()` is a general function for searching arbitrary pattern types.
 - `dig_grid()` is a wrapper around `dig()` for patterns defined by conditions
   and a pair of columns evaluated by a user-defined function.  
 
-See [Advanced Use](#advanced-use) for examples of custom pattern discovery.
+See the section [Pre-defined Patterns](#pre-defined-patterns) below for examples
+and details on using the pre-defined pattern discovery functions and the section
+[Advanced Use](#advanced-use) for examples of custom pattern discovery.
+
+Discovered rules and patterns can be post-processed, visualized, and explored
+interactively. That part is covered in the section [Post-processing and
+Visualization](#postprocessing-and-visualization) below.
+
+
 
 
 
@@ -552,3 +555,9 @@ The `dig_grid()` function is particularly useful for:
 - Computing conditional correlations with custom methods
 - Evaluating pairwise relationships under different conditions
 - Implementing specialized statistical tests on variable pairs
+
+
+
+# Post-processing and Visualization
+
+TBD
