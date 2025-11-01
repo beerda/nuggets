@@ -78,30 +78,37 @@ Visualization](#postprocessing-and-visualization) below.
 
 
 
-
-
 # Data Preparation
 
 Before applying `nuggets`, data columns intended as predicates must be prepared
 either by *dichotomization* (conversion into *dummy variables*) or by
 transformation into *fuzzy sets*. The package provides the `partition()` 
-function for both transformations.
+function for both transformations. 
 
-For a detailed guide to data preparation, including information about all
-available functions and advanced techniques, please see the 
-[Data Preparation](data-preparation.html) vignette.
+This section gives a quick overview of data preparation with `nuggets`. For
+a detailed guide, including information about all available functions and
+advanced techniques, please see the  [Data Preparation](data-preparation.html)
+vignette.
 
 
 ## Crisp (Boolean) Predicates Example
 
 For crisp patterns, numeric columns are transformed to logical (`TRUE`/`FALSE`)
-columns. Here's a quick example using the built-in `mtcars` dataset:
+columns. To show the process, we start with the built-in `mtcars` dataset,
+which we first slightly modify by converting the `cyl` column to a factor:
+
+```{r}
+# For demonstration, convert 'cyl' column of the mtcars dataset to a factor
+mtcars <- mtcars |>
+    mutate(cyl = factor(cyl, levels = c(4, 6, 8), labels = c("four", "six", "eight")))
+```
+
+Now we can use the `partition()` function to transform all columns into crisp
+predicates:
 
 ```{r}
 # Transform the whole dataset to crisp predicates
-# First, convert cyl to a factor for illustration
 crisp_mtcars <- mtcars |>
-    mutate(cyl = factor(cyl, levels = c(4, 6, 8), labels = c("four", "six", "eight"))) |>
     partition(cyl, vs:gear, .method = "dummy") |>
     partition(mpg, .method = "crisp", .breaks = c(-Inf, 15, 20, 30, Inf)) |>
     partition(disp:carb, .method = "crisp", .breaks = 3) 
@@ -121,7 +128,6 @@ between categories:
 ```{r, message=FALSE}
 # Start with fresh mtcars and transform to fuzzy predicates
 fuzzy_mtcars <- mtcars |>
-    mutate(cyl = factor(cyl, levels = c(4, 6, 8), labels = c("four", "six", "eight"))) |>
     partition(cyl, vs:gear, .method = "dummy") |>
     partition(mpg, .method = "triangle", .breaks = c(-Inf, 15, 20, 30, Inf)) |>
     partition(disp:carb, .method = "triangle", .breaks = 3) 
