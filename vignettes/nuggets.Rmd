@@ -116,6 +116,17 @@ crisp_mtcars <- mtcars |>
 head(crisp_mtcars, n = 3)
 ```
 
+As seen above, the `"dummy"` method can be used to create logical columns for
+each category of processed variables. Here, it was applied to create dummy
+variables for the factor variable `cyl` as well as for the numeric variables
+`vs`, `am`, and `gear`.
+
+The method `"crisp"` creates logical columns representing intervals for
+numeric variables. In the example, it was used to create intervals for `mpg`
+based on specified breakpoints (`-Inf`, `15`, `20`, `30`, `Inf`), and for
+`disp`, `hp`, `drat`, `wt`, `qsec`, and `carb` using equal-width intervals
+(3 intervals each).
+
 Now all columns are logical and can be used as predicates in crisp conditions.
 
 
