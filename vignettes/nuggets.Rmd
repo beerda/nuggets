@@ -277,43 +277,6 @@ This example illustrates the typical workflow for mining association rules with
 Boolean datasets.
 
 
-#### Visualizing Association Rules with Diamond Plots
-
-The `geom_diamond()` function provides a specialized visualization for association
-rules and their hierarchical structure. It displays rules as a lattice where 
-broader (more general) conditions appear above their descendants:
-
-```{r, fig.width=8, fig.height=5}
-# Search for rules with various confidence levels for visualization
-vis_rules <- dig_associations(fuzzy_mtcars,
-                              antecedent = starts_with("mpg") | starts_with("disp"),
-                              consequent = starts_with("am"),
-                              disjoint = disj,
-                              min_support = 0.01,
-                              min_confidence = 0.6,
-                              min_length = 0,
-                              max_length = 3,
-                              max_results = 50)
-
-# Create diamond plot showing rule hierarchy
-ggplot(vis_rules) +
-    aes(condition = antecedent,
-        fill = confidence,
-        linewidth = confidence,
-        size = support,
-        label = shorten_condition(antecedent)) +
-    geom_diamond(nudge_y = 0.25) +
-    scale_fill_gradient(low = "lightblue", high = "darkblue") +
-    labs(title = "Association Rules Hierarchy",
-         subtitle = "Node size = support, color/edge width = confidence")
-```
-
-The diamond plot helps identify:
-- Simple vs. complex rules (vertical position)
-- Strong vs. weak rules (color intensity)
-- Frequent vs. rare rules (node size)
-
-
 
 ## Conditional Correlations
 
@@ -433,6 +396,121 @@ paired_result <- dig_paired_baseline_contrasts(combined_mtcars2,
 # Show top results
 head(paired_result)
 ```
+
+
+# Post-processing and Visualization
+
+After discovering patterns with `nuggets`, you'll often want to manipulate, format, and visualize the results. The package provides several tools for these tasks.
+
+
+## Working with Conditions
+
+The `nuggets` package provides functions for manipulating condition strings:
+
+### Formatting Conditions
+
+The `format_condition()` function converts a vector of predicate names into a standardized string representation:
+
+```{r, eval=FALSE}
+# Format predicates into condition strings
+format_condition(c("mpg=high", "cyl=4", "am=1"))
+# Returns: "{am=1,cyl=4,mpg=high}"
+
+format_condition(NULL)
+# Returns: "{}" (empty condition, always true)
+```
+
+### Parsing Conditions
+
+The `parse_condition()` function converts condition strings back into lists of predicates:
+
+```{r, eval=FALSE}
+# Parse condition strings
+parse_condition(c("{mpg=high,cyl=4}", "{am=1}", "{}"))
+# Returns a list of character vectors
+
+# Merge conditions from multiple sources
+parse_condition(c("{a,b}", "{x,y}"), c("{c}", "{z}"))
+```
+
+### Shortening Conditions
+
+The `shorten_condition()` function abbreviates long predicate names for better visualization:
+
+```{r, eval=FALSE}
+# Shorten using letters
+shorten_condition(c("{mpg=high,cyl=four,am=automatic}", 
+                    "{mpg=low,hp=high}"),
+                  method = "letters")
+# Returns: "{A,B,C}", "{D,E}"
+
+# Shorten using abbreviations
+shorten_condition(c("{mpg=high,cyl=four}", "{mpg=low}"),
+                  method = "abbrev4")
+# Returns: "{cyl=,mpg=}", "{mpg=}"
+```
+
+
+## Visualizing Association Rules with Diamond Plots
+
+The `geom_diamond()` function provides a specialized visualization for association
+rules and their hierarchical structure. It displays rules as a lattice where 
+broader (more general) conditions appear above their descendants:
+
+```{r, fig.width=8, fig.height=5}
+# Search for rules with various confidence levels for visualization
+vis_rules <- dig_associations(fuzzy_mtcars,
+                              antecedent = starts_with("mpg") | starts_with("disp"),
+                              consequent = starts_with("am"),
+                              disjoint = disj,
+                              min_support = 0.01,
+                              min_confidence = 0.6,
+                              min_length = 0,
+                              max_length = 3,
+                              max_results = 50)
+
+# Create diamond plot showing rule hierarchy
+ggplot(vis_rules) +
+    aes(condition = antecedent,
+        fill = confidence,
+        linewidth = confidence,
+        size = support,
+        label = shorten_condition(antecedent)) +
+    geom_diamond(nudge_y = 0.25) +
+    scale_fill_gradient(low = "lightblue", high = "darkblue") +
+    labs(title = "Association Rules Hierarchy",
+         subtitle = "Node size = support, color/edge width = confidence")
+```
+
+The diamond plot helps identify:
+- Simple vs. complex rules (vertical position)
+- Strong vs. weak rules (color intensity)
+- Frequent vs. rare rules (node size)
+
+
+## Interactive Exploration
+
+The `explore()` function launches an interactive Shiny application for exploring 
+discovered patterns. This is particularly useful for association rules:
+
+```{r, eval=FALSE}
+# Launch interactive explorer for association rules
+rules <- dig_associations(fuzzy_mtcars,
+                         antecedent = everything(),
+                         consequent = everything(),
+                         min_support = 0.05,
+                         min_confidence = 0.7)
+
+# Open interactive explorer
+explore(rules, data = fuzzy_mtcars)
+```
+
+The interactive explorer provides:
+- **Rule filtering**: Filter rules by support, confidence, lift, and other measures
+- **Sorting and searching**: Find specific rules of interest
+- **Visualizations**: Multiple visualization types for rule exploration
+- **Data inspection**: Examine data records that satisfy specific rules
+
 
 
 # Advanced Use
@@ -555,9 +633,3 @@ The `dig_grid()` function is particularly useful for:
 - Computing conditional correlations with custom methods
 - Evaluating pairwise relationships under different conditions
 - Implementing specialized statistical tests on variable pairs
-
-
-
-# Post-processing and Visualization
-
-TBD
