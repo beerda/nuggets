@@ -665,3 +665,48 @@ The `dig_grid()` function is particularly useful for:
 - Computing conditional correlations with custom methods
 - Evaluating pairwise relationships under different conditions
 - Implementing specialized statistical tests on variable pairs
+
+
+
+# Summary
+
+This vignette has introduced the core functionality of the `nuggets` package for discovering patterns in data through systematic exploration of conditions.
+
+## Key Takeaways
+
+**Data Preparation**: Transform your data into predicates using `partition()`:
+- Use `"dummy"` method for categorical variables
+- Use `"crisp"` method for Boolean intervals from numeric data
+- Use `"triangle"` or other fuzzy methods for smooth, overlapping fuzzy sets
+
+**Pre-defined Pattern Discovery**: The package provides specialized functions for common pattern types:
+- `dig_associations()` finds association rules (A → C)
+- `dig_correlations()` discovers conditional correlations between variable pairs
+- `dig_baseline_contrasts()` identifies when variables deviate from baseline under conditions
+- `dig_complement_contrasts()` finds subgroups differing from the rest
+- `dig_paired_baseline_contrasts()` compares paired variables within contexts
+
+**Post-processing**: Manipulate and visualize discovered patterns:
+- Use `format_condition()`, `parse_condition()`, and `shorten_condition()` to work with condition strings
+- Create hierarchical visualizations with `geom_diamond()`
+- Launch interactive explorers with `explore()`
+
+**Advanced Usage**: Define custom pattern types:
+- Use `dig()` with custom callback functions for specialized analyses
+- Use `dig_grid()` for patterns based on variable pairs
+
+**Important Concepts**:
+- **Disjoint vectors** prevent mutually exclusive predicates from appearing together
+- **Support** measures how frequently a condition occurs
+- **Confidence** (for association rules) measures how often the consequent appears when the antecedent is true
+- **Crisp logic** uses Boolean TRUE/FALSE values
+- **Fuzzy logic** uses truth degrees in [0,1] for modeling gradual transitions
+
+## Next Steps
+
+- Explore the [Data Preparation vignette](data-preparation.html) for advanced preprocessing techniques
+- Review function documentation (e.g., `?dig_associations`) for detailed parameter descriptions
+- Experiment with your own datasets to discover meaningful patterns
+- Use interactive exploration (`explore()`) to gain insights into discovered patterns
+
+The `nuggets` package provides a flexible framework for pattern discovery that scales from simple association rule mining to complex custom pattern searches, all while supporting both crisp and fuzzy logic approaches.
