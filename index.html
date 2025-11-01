@@ -78,6 +78,25 @@
 <p><code>nuggets</code> is a package for <a href="https://www.r-project.org/" class="external-link">R statistical computing environment</a> providing a framework for systematic exploration of <strong>association rules</strong> (<a href="https://www.vldb.org/conf/1994/P487.PDF" class="external-link">Agrawal (1994)</a>), <strong>contrast patterns</strong> (<a href="https://doi.org/10.48550/arXiv.2209.13556" class="external-link">Chen (2022)</a>), <strong>emerging patterns</strong> (<a href="https://doi.org/10.1145/312129.312191" class="external-link">Dong (1999)</a>), <strong>subgroup discovery</strong> (<a href="https://doi.org/10.1002/widm.1144" class="external-link">Atzmueller (2015)</a>), and <strong>conditional correlations</strong> (<a href="https://doi.org/10.1007/978-3-642-66943-9" class="external-link">Hájek (1978)</a>). User-defined functions may also be supplied to guide custom pattern searches.</p>
 <p>Supports both <strong>crisp</strong> (Boolean) and <strong>fuzzy</strong> data. Generates candidate conditions expressed as elementary conjunctions, evaluates them on a dataset, and inspects the induced sub-data for statistical, logical, or structural properties such as associations, correlations, or contrasts. Includes methods for <strong>visualization</strong> of logical structures and supports <strong>interactive exploration</strong> through integrated Shiny applications.</p>
 <div class="section level2">
+<h2 id="what-patterns-can-you-discover">What Patterns Can You Discover?<a class="anchor" aria-label="anchor" href="#what-patterns-can-you-discover"></a>
+</h2>
+<ul>
+<li>
+<strong>Association Rules</strong>: <em>“University educated people in middle age working in IT have high income”</em> – identify conditions that strongly predict specific outcomes</li>
+<li>
+<strong>Conditional Correlations</strong>: <em>“Study time correlates with test score on hard exams”</em> – discover relationships between variables that only hold under certain conditions<br>
+</li>
+<li>
+<strong>Complement Contrasts</strong>: <em>“Smokers have lower life expectancy than non-smokers”</em> – find subgroups with significantly different characteristics from the rest</li>
+<li>
+<strong>Baseline Contrasts</strong>: <em>“Measurement error differs from zero when using tool A”</em> – detect when a variable deviates significantly from a baseline under specific conditions</li>
+<li>
+<strong>Paired Contrasts</strong>: <em>“Ice cream sales exceed tea sales on sunny days”</em> – compare paired measurements within specific contexts</li>
+<li>
+<strong>Custom Patterns</strong>: Define your own evaluation functions for specialized pattern mining</li>
+</ul>
+</div>
+<div class="section level2">
 <h2 id="key-features">Key Features<a class="anchor" aria-label="anchor" href="#key-features"></a>
 </h2>
 <ul>

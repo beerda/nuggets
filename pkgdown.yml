@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   data-preparation: data-preparation.html
   nuggets: nuggets.html
-last_built: 2025-10-31T07:02Z
+last_built: 2025-11-01T08:00Z
 urls:
   reference: https://beerda.github.io/nuggets/reference
   article: https://beerda.github.io/nuggets/articles
