@@ -135,7 +135,9 @@ explore.associations <- function(x, data = NULL, ...) {
                                        output,
                                        session,
                                        rulesFiltering,
-                                       ruleSelection) {
+                                       rulesProjection,
+                                       ruleSelection,
+                                       ...) {
         observeEvent(ruleSelection(), {
             if (is.null(ruleSelection())) {
                 hide(selector = '#nav a[data-value="rule-detail-tab"]')
@@ -149,7 +151,7 @@ explore.associations <- function(x, data = NULL, ...) {
             detailWindow$server(ruleSelection)
 
         if (!is.null(clusterWindow))
-            clusterWindow$server(rulesFiltering)
+            clusterWindow$server(rulesProjection, rulesFiltering)
     }
 
 

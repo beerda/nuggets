@@ -77,7 +77,7 @@ associationsClusterModule <- function(id, rules, meta, data) {
             )
         },
 
-        server = function(selectionReactive) {
+        server = function(projectionReactive, selectionReactive) {
             moduleServer(id, function(input, output, session) {
                 lengthUniqueAnte <- reactive({
                     sel <- selectionReactive()
@@ -172,7 +172,8 @@ associationsClusterModule <- function(id, rules, meta, data) {
                     }
 
                     sel <- selectionReactive()
-                    d <- rules[sel, , drop = FALSE]
+                    proj <- c("id", projectionReactive())
+                    d <- rules[sel, proj, drop = FALSE]
                     ante <- attr(clu, "cluster_antecedents")[[input$selectedCluster]]
                     d <- d[d$antecedent %in% ante, , drop = FALSE]
                     d$id <- NULL
