@@ -58,11 +58,19 @@ public:
 
         progress = new CombinatorialProgress(config.getMaxLength(),
                                              filteredCollection.conditionCount());
+
+        // cli progress bar has to be protected from R's garbage collector
+        SEXP bar = PROTECT(cli_progress_bar(progress->getTotal(),
+                                            List::create(Named("name") = "searching rules")));
+        progress->assignBar(bar);
         {
             auto batch = progress->createBatch(0, filteredCollection.conditionCount());
             processChildrenChains(emptyChain, filteredCollection);
         }
         delete progress;
+
+        // free the protection from R's garbage collector
+        UNPROTECT(1);
     }
 
 private:

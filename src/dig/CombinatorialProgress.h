@@ -51,7 +51,6 @@ public:
           actual(0),
           bar(R_NilValue)
     {
-        bar = PROTECT(cli_progress_bar(total, List::create(Named("name") = "searching rules")));
         //RcppThread::Rcout << "creating progress for "
                           //<< this->maxLevel << " levels and "
                           //<< elements << " elements: total = "
@@ -60,9 +59,10 @@ public:
 
     ~CombinatorialProgress()
     {
-        cli_progress_set(bar, total);
-        cli_progress_done(bar);
-        UNPROTECT(1);
+        if (bar) {
+            cli_progress_set(bar, total);
+            cli_progress_done(bar);
+        }
     }
 
     Batch createBatch(size_t currentLevel, size_t currentElements)
@@ -94,6 +94,11 @@ public:
     size_t getTotal() const
     { return total; }
 
+    void assignBar(SEXP bar)
+    {
+        this->bar = bar;
+        updateBar();
+    }
 private:
     /**
      * A table of binomial coefficients
@@ -125,7 +130,9 @@ private:
     {
         if (CLI_SHOULD_TICK) {
             RcppThread::checkUserInterrupt();
-            cli_progress_set(bar, actual);
+            if (bar) {
+                cli_progress_set(bar, actual);
+            }
         }
     }
 
