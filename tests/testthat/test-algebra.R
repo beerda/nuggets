@@ -1,3 +1,22 @@
+#######################################################################
+# nuggets: An R framework for exploration of patterns in data
+# Copyright (C) 2025 Michal Burda
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+#######################################################################
+
+
 set.seed(34523)
 
 test_that("minimum (Goedel) t-norm", {
@@ -139,6 +158,8 @@ test_that("ptnorm borders", {
         tnorm <- .ptnorms[[ttt]]
 
         expect_true(is.null(tnorm()))
+        expect_equal(tnorm(numeric(0)), numeric(0))
+        expect_equal(tnorm(c(), c()), numeric(0))
 
         expect_equal(
             tnorm(c(0.2, NA, 1), c(0.8, 0.6, NA))[2:3],
@@ -260,6 +281,10 @@ test_that('t-conorm borders', {
 })
 
 test_that("parallel Goedel t-conorm", {
+    expect_true(is.null(.pgoedel_tconorm()))
+    expect_equal(.pgoedel_tconorm(numeric(0)), numeric(0))
+    expect_equal(.pgoedel_tconorm(c(), c()), numeric(0))
+
     expect_equal(
         .pgoedel_tconorm(
             c(0.2, 0.4, 0.9, 0, 1),
@@ -286,6 +311,10 @@ test_that("parallel Goedel t-conorm", {
 })
 
 test_that("parallel Lukasiewicz t-conorm", {
+    expect_true(is.null(.plukas_tconorm()))
+    expect_equal(.plukas_tconorm(numeric(0)), numeric(0))
+    expect_equal(.plukas_tconorm(c(), c()), numeric(0))
+
     expect_equal(
         .plukas_tconorm(
             c(0.2, 0.8, 0.4, 0, 1),
@@ -312,6 +341,10 @@ test_that("parallel Lukasiewicz t-conorm", {
 })
 
 test_that("parallel Goguen t-conorm", {
+    expect_true(is.null(.pgoguen_tconorm()))
+    expect_equal(.pgoguen_tconorm(numeric(0)), numeric(0))
+    expect_equal(.pgoguen_tconorm(c(), c()), numeric(0))
+
     expect_equal(
         .pgoguen_tconorm(
             c(0.2, 0.5, 0.4, 0, 1),
@@ -393,6 +426,10 @@ test_that('residua borders', {
     for (ttt in names(.residua)) {
         resid <- .residua[[ttt]]
 
+        expect_equal(resid(numeric(0), 0.5), numeric(0))
+        expect_equal(resid(0.5, numeric(0)), numeric(0))
+        expect_equal(resid(numeric(0), numeric(0)), numeric(0))
+
         expect_equal(resid(0, NA), NA_real_)
         expect_equal(resid(0.4, NA), NA_real_)
         expect_equal(resid(1, NA), NA_real_)
@@ -414,6 +451,9 @@ test_that('residua borders', {
 })
 
 test_that("involutive negation", {
+    expect_equal(.invol_neg(numeric(0)), numeric(0))
+    expect_equal(.invol_neg(c()), numeric(0))
+
     expect_equal(
         .invol_neg(c(0, 0.2, NA, 0.8, 1, NaN)),
         c(1, 0.8, NA, 0.2, 0, NA)
@@ -436,6 +476,9 @@ test_that("involutive negation", {
 })
 
 test_that("strict negation", {
+    expect_equal(.strict_neg(numeric(0)), numeric(0))
+    expect_equal(.strict_neg(c()), numeric(0))
+
     expect_equal(
         .strict_neg(c(0, 0.2, NA, 0.8, 1, NaN)),
         c(1, 0, NA, 0, 0, NA)

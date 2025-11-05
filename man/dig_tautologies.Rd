@@ -13,7 +13,8 @@ dig_tautologies(
   min_coverage = 0,
   min_support = 0,
   min_confidence = 0,
-  measures = NULL,
+  contingency_table = FALSE,
+  measures = deprecated(),
   t_norm = "goguen",
   max_results = Inf,
   verbose = FALSE,
@@ -53,7 +54,17 @@ is limited only by the number of available predicates.}
 \item{min_confidence}{the minimum confidence of a rule in the dataset \code{x}.
 (See Description for the definition of \emph{confidence}.)}
 
-\item{measures}{a character vector specifying the additional quality measures to compute.
+\item{contingency_table}{a logical value indicating whether to provide a contingency
+table for each rule. If \code{TRUE}, the columns \code{pp}, \code{pn}, \code{np}, and \code{nn} are
+added to the output table. These columns contain the number of rows satisfying
+the antecedent and the consequent, the antecedent but not the consequent,
+the consequent but not the antecedent, and neither the antecedent nor the
+consequent, respectively.}
+
+\item{measures}{(Deprecated. Search for tautologies using
+\code{dig_tautologies(contingency_table = TRUE)} and use the \code{add_interest()}
+function on the result to compute additional measures.)
+A character vector specifying the additional quality measures to compute.
 If \code{NULL}, no additional measures are computed. Possible values are \code{"lift"},
 \code{"conviction"}, \code{"added_value"}.
 See \url{https://mhahsler.github.io/arules/docs/measures}

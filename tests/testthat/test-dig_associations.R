@@ -1,3 +1,22 @@
+#######################################################################
+# nuggets: An R framework for exploration of patterns in data
+# Copyright (C) 2025 Michal Burda
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+#######################################################################
+
+
 test_that("dig_associations without contingency table", {
     d <- data.frame(a = c(T, T, F, F, F),
                     b = c(T, T, T, T, F),
@@ -30,7 +49,7 @@ test_that("dig_associations without contingency table", {
     expect_equal(nrow(res), 7)
     expect_equal(colnames(res),
                  c("antecedent", "consequent", "support", "confidence",
-                   "coverage", "conseq_support", "count", "antecedent_length"))
+                   "coverage", "conseq_support", "lift", "count", "antecedent_length"))
     expect_true(is.character(res$antecedent))
     expect_true(is.character(res$consequent))
     expect_true(is.double(res$support))
@@ -45,6 +64,8 @@ test_that("dig_associations without contingency table", {
                  c(0.4, 0.8, 0.4, 0.8, 0.4, 0.4, 0.8))
     expect_equal(round(res$confidence, 6),
                  c(0.4, 0.8, 0.4, 1.0, 0.50, 0.25, 0.5))
+    expect_equal(round(res$lift, 6),
+                 c(1.0, 1.0, 1.0, 1.25, 1.25, 0.625, 0.625))
     expect_equal(res$antecedent_length,
                  c(0, 0, 0, 1, 1, 1, 1))
 })
@@ -82,7 +103,7 @@ test_that("dig_associations with contingency table", {
     expect_equal(nrow(res), 7)
     expect_equal(colnames(res),
                  c("antecedent", "consequent", "support", "confidence",
-                   "coverage", "conseq_support", "count", "antecedent_length",
+                   "coverage", "conseq_support", "lift", "count", "antecedent_length",
                    "pp", "pn", "np", "nn"))
     expect_true(is.character(res$antecedent))
     expect_true(is.character(res$consequent))
@@ -141,7 +162,7 @@ test_that("dig_associations with disjoint", {
     expect_equal(nrow(res), 5)
     expect_equal(colnames(res),
                  c("antecedent", "consequent", "support", "confidence",
-                   "coverage", "conseq_support", "count", "antecedent_length"))
+                   "coverage", "conseq_support", "lift", "count", "antecedent_length"))
     expect_true(is.character(res$antecedent))
     expect_true(is.character(res$consequent))
     expect_true(is.double(res$support))
@@ -373,14 +394,17 @@ test_that("compare dig_associations to arules::apriori", {
 
     expected <- expected[order(expected$LHS, expected$RHS), ]
 
-    res <- dig_associations(m,
-                            min_support = 0.001,
-                            min_length = 0,
-                            max_length = 5,
-                            min_confidence = 0.5,
-                            measures = c("lift",
-                                         "conviction",
-                                         "added_value"))
+    expect_warning(
+        regexp = "`measures` argument is deprecated",
+        res <- dig_associations(m,
+                                min_support = 0.001,
+                                min_length = 0,
+                                max_length = 5,
+                                min_confidence = 0.5,
+                                measures = c("lift",
+                                             "conviction",
+                                             "added_value"))
+    )
     expect_true(is_nugget(res, "associations"))
     expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_associations")
@@ -416,21 +440,24 @@ test_that("dig_associations return object details", {
                     b = c(T, T, T, T, F),
                     c = c(T, F, F, T, T))
 
-    res <- dig_associations(d,
-                            antecedent = a:b,
-                            consequent = b:c,
-                            disjoint = c(1, 2, 2),
-                            excluded = list("a"),
-                            min_length = 1L,
-                            max_length = Inf,
-                            min_coverage = 0.2,
-                            min_support = 0.3,
-                            min_confidence = 0.5,
-                            contingency_table = TRUE,
-                            measures = c("lift", "conviction"),
-                            t_norm = "lukas",
-                            max_results = 10,
-                            threads = 1)
+    expect_warning(
+        regexp = "`measures` argument is deprecated",
+        res <- dig_associations(d,
+                                antecedent = a:b,
+                                consequent = b:c,
+                                disjoint = c(1, 2, 2),
+                                excluded = list("a"),
+                                min_length = 1L,
+                                max_length = Inf,
+                                min_coverage = 0.2,
+                                min_support = 0.3,
+                                min_confidence = 0.5,
+                                contingency_table = TRUE,
+                                measures = c("lift", "conviction"),
+                                t_norm = "lukas",
+                                max_results = 10,
+                                threads = 1)
+    )
 
     expect_true(is_nugget(res, "associations"))
     expect_true(is_tibble(res))
@@ -489,8 +516,6 @@ test_that("dig_associations errors", {
                  "`min_confidence` must be a double scalar.")
     expect_error(dig_associations(d, contingency_table = "x"),
                  "`contingency_table` must be a flag.")
-    expect_error(dig_associations(d, measures = "x"),
-                 "`measures` must be equal to any of:")
     expect_error(dig_associations(d, t_norm = "x"),
                  "`t_norm` must be equal to one of")
     expect_error(dig_associations(d, max_results = "x"),
@@ -505,19 +530,22 @@ test_that("dig_associations return nothing", {
     d <- data.frame(a = c(T, T, F, F, F),
                     b = c(T, T, T, T, F))
 
-    res <- dig_associations(d,
-                            antecedent = a,
-                            consequent = b,
-                            min_length = 3,
-                            max_length = 3,
-                            disjoint = c(1, 2),
-                            min_support = 0.1,
-                            min_confidence = 0.2,
-                            measures = "lift",
-                            t_norm = "lukas",
-                            max_results = 5,
-                            verbose = FALSE,
-                            threads = 1)
+    expect_warning(
+        regexp = "`measures` argument is deprecated",
+        res <- dig_associations(d,
+                                antecedent = a,
+                                consequent = b,
+                                min_length = 3,
+                                max_length = 3,
+                                disjoint = c(1, 2),
+                                min_support = 0.1,
+                                min_confidence = 0.2,
+                                measures = "lift",
+                                t_norm = "lukas",
+                                max_results = 5,
+                                verbose = FALSE,
+                                threads = 1)
+    )
 
     expect_true(is_nugget(res, "associations"))
     expect_true(is_tibble(res))

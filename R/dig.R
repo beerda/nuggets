@@ -1,3 +1,22 @@
+#######################################################################
+# nuggets: An R framework for exploration of patterns in data
+# Copyright (C) 2025 Michal Burda
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+#######################################################################
+
+
 #' Search for patterns of a custom type
 #'
 #' A general function for searching for patterns of a custom type. The function
@@ -66,12 +85,6 @@
 #'
 #' @param x A matrix or data frame. If a matrix, it must be numeric (double) or
 #'   logical. If a data frame, all columns must be numeric (double) or logical.
-#' @param f A callback function executed for each generated condition. It may
-#'   accept arguments such as
-#'   `condition`, `sum`, `support`, `indices`,
-#'   `weights`, `pp`, `pn`, `np`, `nn`, or `foci_supports` (deprecated). The
-#'   algorithm supplies matching values automatically. `f` should return an
-#'   object (typically a list). Results of all calls are collected and returned.
 #' @param f A callback function executed for each generated condition. It may
 #'   declare any subset of the arguments listed below. The algorithm detects
 #'   which arguments are present and provides only those values to `f`. This

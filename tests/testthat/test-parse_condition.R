@@ -1,6 +1,31 @@
+#######################################################################
+# nuggets: An R framework for exploration of patterns in data
+# Copyright (C) 2025 Michal Burda
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+#######################################################################
+
+
 test_that("parse_condition", {
     expect_equal(parse_condition(), list())
     expect_equal(parse_condition(character(0)), list())
+    expect_equal(parse_condition("{}"), list(character(0)))
+    expect_equal(parse_condition("{,}"), list(character(0)))
+    expect_equal(parse_condition("{a,b,,c}"), list(c("a", "b", "c")))
+    expect_equal(parse_condition("{a,b,,c,}"), list(c("a", "b", "c")))
+    expect_equal(parse_condition("{,a,b,,c}"), list(c("a", "b", "c")))
+    expect_equal(parse_condition("{,a,b,,c,}"), list(c("a", "b", "c")))
 
     expect_equal(parse_condition(c("{a}", "{x=1, z=2, y=3}", NA, "{}"),
                                  .sort = FALSE),

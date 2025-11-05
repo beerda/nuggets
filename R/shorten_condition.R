@@ -1,3 +1,22 @@
+#######################################################################
+# nuggets: An R framework for exploration of patterns in data
+# Copyright (C) 2025 Michal Burda
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+#######################################################################
+
+
 #' Shorten predicates within conditions
 #'
 #' This function takes a character vector of conditions and shortens the
@@ -10,9 +29,9 @@
 #' - `"letters"`: predicates are replaced with single letters from the
 #'   English alphabet, starting with `A` for the first distinct predicate;
 #' - `"abbrev4"`: predicates are abbreviated to at most 4 characters using
-#'   [abbreviate()];
+#'   [base::abbreviate()];
 #' - `"abbrev8"`: predicates are abbreviated to at most 8 characters using
-#'   [abbreviate()];
+#'   [base::abbreviate()];
 #' - `"none"`: no shortening is applied; predicates remain unchanged.
 #'
 #' @param x A character vector of conditions, each formatted as a string
@@ -30,7 +49,7 @@
 #' applied consistently across all conditions in `x`.
 #'
 #' @seealso [format_condition()], [parse_condition()], [is_condition()],
-#'   [remove_ill_conditions()], [abbreviate()]
+#'   [remove_ill_conditions()], [base::abbreviate()]
 #'
 #' @author Michal Burda
 #'

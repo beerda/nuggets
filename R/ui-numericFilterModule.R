@@ -1,7 +1,23 @@
-numericFilterModule <- function(id,
-                                x,
-                                meta,
-                                resetAllEvent) {
+#######################################################################
+# nuggets: An R framework for exploration of patterns in data
+# Copyright (C) 2025 Michal Burda
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+#######################################################################
+
+
+numericFilterModule <- function(id, x, meta) {
     int <- meta$type == "integer"
 
     special <- NULL
@@ -60,7 +76,8 @@ numericFilterModule <- function(id,
                                                           inline = TRUE)
             }
 
-            tabPanel(meta$long_name,
+            tabPanel(title = meta$long_name,
+                     value = paste0(meta$data_name, "-filter-tab"),
                 infoBox(paste0("Filter the rules by choosing a range of values for ",
                                tolower(meta$long_name), ".")),
                 tableOutput(NS(id, "summaryTable")),
@@ -76,17 +93,19 @@ numericFilterModule <- function(id,
                 specialCheckboxInput,
                 hr(),
                 actionButton(NS(id, "resetButton"), "Reset"),
-                actionButton(resetAllEvent, "Reset all")
+                actionButton(NS(id, "resetAllButton"), "Reset all")
             )
         },
 
-        server = function() {
+        server = function(reset_all_trigger) {
             moduleServer(id, function(input, output, session) {
                 output$summaryTable <- renderTable({
                     summaryTable
                 }, width = "100%", bordered = TRUE, striped = TRUE, align = "c", digits = 2)
 
                 output$histogramPlot <- renderPlot({
+                    req(input$slider)
+
                     val <- input$slider
                     border <- val
                     if (int) {
@@ -120,6 +139,10 @@ numericFilterModule <- function(id,
                     if (!is.null(special)) {
                         updateCheckboxGroupInput("special", selected = special, session = session)
                     }
+                })
+
+                observeEvent(input$resetAllButton, {
+                    reset_all_trigger(Sys.time())
                 })
             })
         },

@@ -16,7 +16,7 @@ dig_associations(
   min_support = 0,
   min_confidence = 0,
   contingency_table = FALSE,
-  measures = NULL,
+  measures = deprecated(),
   t_norm = "goguen",
   max_results = Inf,
   verbose = FALSE,
@@ -78,7 +78,10 @@ the antecedent and the consequent, the antecedent but not the consequent,
 the consequent but not the antecedent, and neither the antecedent nor the
 consequent, respectively.}
 
-\item{measures}{a character vector specifying the additional quality measures to compute.
+\item{measures}{(Deprecated. Search for associations using
+\code{dig_associations(contingency_table = TRUE)} and use the \code{add_interest()}
+function on the result to compute additional measures.)
+A character vector specifying the additional quality measures to compute.
 If \code{NULL}, no additional measures are computed. Possible values are \code{"lift"},
 \code{"conviction"}, \code{"added_value"}.
 See \url{https://mhahsler.github.io/arules/docs/measures}
@@ -162,6 +165,10 @@ Association rules are characterized with the following quality measures.
 \emph{Support} of a rule is equal to \eqn{supp(A \cup \{c\})}.
 
 \emph{Confidence} of a rule is the fraction \eqn{supp(A) / supp(A \cup \{c\})}.
+
+\emph{Lift} of a rule is the ratio of its support to the expected support
+assuming antecedent and consequent are independent, i.e.,
+\eqn{supp(A \cup \{c\}) / (supp(A) * supp(\{c\}))}.
 }
 \examples{
 d <- partition(mtcars, .breaks = 2)
@@ -169,8 +176,7 @@ dig_associations(d,
                  antecedent = !starts_with("mpg"),
                  consequent = starts_with("mpg"),
                  min_support = 0.3,
-                 min_confidence = 0.8,
-                 measures = c("lift", "conviction"))
+                 min_confidence = 0.8)
 }
 \seealso{
 \code{\link[=partition]{partition()}}, \code{\link[=var_names]{var_names()}}, \code{\link[=dig]{dig()}}

@@ -1,7 +1,7 @@
 Package: nuggets
 Title: Extensible Framework for Data Pattern Exploration
-Version: 2.0.2
-Date: 2025-10-31
+Version: 2.1.0
+Date: 2025-11-05
 Authors@R: 
     person(given = "Michal",
            family = "Burda",
@@ -33,12 +33,15 @@ Depends: R (>= 4.1.0)
 Imports: 
     classInt,
     cli,
+    dplyr,
     DT,
     fastmatch,
     generics,
     ggplot2,
     grid,
     htmltools,
+    htmlwidgets,
+    jsonlite,
     lifecycle,
     methods,
     purrr,
@@ -62,7 +65,6 @@ LinkingTo:
 SystemRequirements: C++17
 Suggests: 
     arules,
-    dplyr,
     testthat (>= 3.0.0),
     xml2,
     withr,

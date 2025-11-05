@@ -1,3 +1,22 @@
+#######################################################################
+# nuggets: An R framework for exploration of patterns in data
+# Copyright (C) 2025 Michal Burda
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+#######################################################################
+
+
 .parse_tree_def_from_condition <- function(pred, root_name) {
     if (is.null(pred) || length(pred) == 0) {
         return(data.frame())
@@ -63,10 +82,7 @@
     m
 }
 
-conditionFilterModule <- function(id,
-                                  x,
-                                  meta,
-                                  resetAllEvent) {
+conditionFilterModule <- function(id, x, meta) {
     root_name <- "predicate"
     pred <- parse_condition(x)
     def <- .parse_tree_def_from_condition(pred, root_name = root_name)
@@ -82,7 +98,8 @@ conditionFilterModule <- function(id,
     }
 
     list(ui = function() {
-            tabPanel(meta$long_name,
+            tabPanel(title = meta$long_name,
+                     value = paste0(meta$data_name, "-filter-tab"),
                 infoBox(paste0("Filter the rules by choosing predicates that should appear in the ",
                               tolower(meta$long_name), ".")),
                 treeInput(NS(id, "tree"),
@@ -99,15 +116,22 @@ conditionFilterModule <- function(id,
                 showEmptyCheckbox,
                 hr(),
                 actionButton(NS(id, "resetButton"), "Reset"),
-                actionButton(resetAllEvent, "Reset all")
+                actionButton(NS(id, "resetAllButton"), "Reset all")
             )
         },
 
-        server = function() {
+        server = function(reset_all_trigger) {
             moduleServer(id, function(input, output, session) {
                 observeEvent(input$resetButton, {
                     updateTreeInput("tree", selected = def$vid, session = session)
                     updateRadioButtons("radio", selected = "all", session = session)
+                    if (!is.null(showEmptyCheckbox)) {
+                        updateCheckboxInput("emptyCondition", value = TRUE, session = session)
+                    }
+                })
+
+                observeEvent(input$resetAllButton, {
+                    reset_all_trigger(Sys.time())
                 })
             })
         },
@@ -145,6 +169,9 @@ conditionFilterModule <- function(id,
         reset = function(session) {
             updateTreeInput(NS(id, "tree"), selected = def$vid, session = session)
             updateRadioButtons(NS(id, "radio"), selected = "all", session = session)
+            if (!is.null(showEmptyCheckbox)) {
+                updateCheckboxInput(NS(id, "emptyCondition"), value = TRUE, session = session)
+            }
         }
     )
 }

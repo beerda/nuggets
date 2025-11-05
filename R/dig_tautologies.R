@@ -1,3 +1,22 @@
+#######################################################################
+# nuggets: An R framework for exploration of patterns in data
+# Copyright (C) 2025 Michal Burda
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+#######################################################################
+
+
 #' Find tautologies or "almost tautologies" in a dataset
 #'
 #' This function finds tautologies in a dataset, i.e., rules of the form
@@ -37,7 +56,16 @@
 #'      (See Description for the definition of *support*.)
 #' @param min_confidence the minimum confidence of a rule in the dataset `x`.
 #'      (See Description for the definition of *confidence*.)
-#' @param measures a character vector specifying the additional quality measures to compute.
+#' @param contingency_table a logical value indicating whether to provide a contingency
+#'      table for each rule. If `TRUE`, the columns `pp`, `pn`, `np`, and `nn` are
+#'      added to the output table. These columns contain the number of rows satisfying
+#'      the antecedent and the consequent, the antecedent but not the consequent,
+#'      the consequent but not the antecedent, and neither the antecedent nor the
+#'      consequent, respectively.
+#' @param measures (Deprecated. Search for tautologies using
+#'      `dig_tautologies(contingency_table = TRUE)` and use the `add_interest()`
+#'      function on the result to compute additional measures.)
+#'      A character vector specifying the additional quality measures to compute.
 #'      If `NULL`, no additional measures are computed. Possible values are `"lift"`,
 #'      `"conviction"`, `"added_value"`.
 #'      See [https://mhahsler.github.io/arules/docs/measures](https://mhahsler.github.io/arules/docs/measures)
@@ -66,7 +94,8 @@ dig_tautologies <- function(x,
                             min_coverage = 0,
                             min_support = 0,
                             min_confidence = 0,
-                            measures = NULL,
+                            contingency_table = FALSE,
+                            measures = deprecated(),
                             t_norm = "goguen",
                             max_results = Inf,
                             verbose = FALSE,
@@ -100,6 +129,7 @@ dig_tautologies <- function(x,
                                 min_coverage = min_coverage,
                                 min_support = min_support,
                                 min_confidence = min_confidence,
+                                contingency_table = contingency_table,
                                 measures = measures,
                                 t_norm = t_norm,
                                 max_results = maxres,
@@ -115,6 +145,7 @@ dig_tautologies <- function(x,
                                                      arg_min_coverage = "min_coverage",
                                                      arg_min_support = "min_support",
                                                      arg_min_confidence = "min_confidence",
+                                                     arg_contingency_table = "contingency_table",
                                                      arg_measures = "measures",
                                                      arg_t_norm = "t_norm",
                                                      arg_max_results = "internal `maxres`",

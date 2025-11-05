@@ -1,3 +1,22 @@
+#######################################################################
+# nuggets: An R framework for exploration of patterns in data
+# Copyright (C) 2025 Michal Burda
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+#######################################################################
+
+
 test_that("numericFilterModule - ui: numeric, round 2, all specials", {
     meta <- tribble(
         ~data_name,          ~short_name,  ~long_name,           ~type,       ~round,
@@ -6,8 +25,7 @@ test_that("numericFilterModule - ui: numeric, round 2, all specials", {
 
     mod <- numericFilterModule(id = "test",
                                x = c(1.1234, 2, 3.9876, NA, Inf, -Inf, NaN),
-                               meta = meta,
-                               resetAllEvent = "resetAllEvent")
+                               meta = meta)
 
     ui <- mod$ui()
     html <- as.character(ui)
@@ -30,8 +48,7 @@ test_that("numericFilterModule - ui: numeric, round 1, no specials", {
 
     mod <- numericFilterModule(id = "test",
                                x = c(1.1234, 2, 3.9876),
-                               meta = meta,
-                               resetAllEvent = "resetAllEvent")
+                               meta = meta)
 
     ui <- mod$ui()
     html <- as.character(ui)
@@ -54,8 +71,7 @@ test_that("numericFilterModule - ui: integer, NA special", {
 
     mod <- numericFilterModule(id = "test",
                                x = c(1, 2, NA, 3),
-                               meta = meta,
-                               resetAllEvent = "resetAllEvent")
+                               meta = meta)
 
     ui <- mod$ui()
     html <- as.character(ui)
@@ -81,8 +97,7 @@ test_that("numericFilterModule - server", {
 
     mod <- numericFilterModule(id = "test",
                                x = c(1.1234, 2, 3.9876),
-                               meta = meta,
-                               resetAllEvent = "resetAllEvent")
+                               meta = meta)
 
     # Workaround:
     # Accordingly to documentation, the following line should be:
@@ -110,8 +125,7 @@ test_that("numericFilterModule - filter", {
 
     mod <- numericFilterModule(id = "test",
                                x = c(1.2, 1.3, 1.5, NA, Inf, -Inf, NaN),
-                               meta = meta,
-                               resetAllEvent = "resetAllEvent")
+                               meta = meta)
 
     input <- list("test-slider" = c(-1, 1.4))
     res <- mod$filter(input)

@@ -1,8 +1,20 @@
-/*
- * File name: algebra.cpp
- * Date:      2016/01/29 10:49
- * Author:    Michal Burda
- */
+/**********************************************************************
+ * nuggets: An R framework for exploration of patterns in data
+ * Copyright (C) 2025 Michal Burda
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ **********************************************************************/
 
 
 #include <Rcpp.h>
@@ -180,7 +192,10 @@ NumericVector pgoguen_tconorm(List list)
 // [[Rcpp::export(name=".goedel.residuum")]]
 NumericVector goedel_residuum(NumericVector x, NumericVector y)
 {
-    int n = x.size() > y.size() ? x.size() : y.size();
+    int n = 0;
+    if (x.size() > 0 && y.size() > 0) {
+        n = x.size() > y.size() ? x.size() : y.size();
+    }
     NumericVector res(n);
     for (int i = 0; i < n; ++i) {
         int xi = i % x.size();
@@ -201,7 +216,10 @@ NumericVector goedel_residuum(NumericVector x, NumericVector y)
 // [[Rcpp::export(name=".lukas.residuum")]]
 NumericVector lukas_residuum(NumericVector x, NumericVector y)
 {
-    int n = x.size() > y.size() ? x.size() : y.size();
+    int n = 0;
+    if (x.size() > 0 && y.size() > 0) {
+        n = x.size() > y.size() ? x.size() : y.size();
+    }
     NumericVector res(n);
     for (int i = 0; i < n; ++i) {
         int xi = i % x.size();
@@ -222,7 +240,10 @@ NumericVector lukas_residuum(NumericVector x, NumericVector y)
 // [[Rcpp::export(name=".goguen.residuum")]]
 NumericVector goguen_residuum(NumericVector x, NumericVector y)
 {
-    int n = x.size() > y.size() ? x.size() : y.size();
+    int n = 0;
+    if (x.size() > 0 && y.size() > 0) {
+        n = x.size() > y.size() ? x.size() : y.size();
+    }
     NumericVector res(n);
     for (int i = 0; i < n; ++i) {
         int xi = i % x.size();

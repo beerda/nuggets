@@ -1,10 +1,29 @@
+#######################################################################
+# nuggets: An R framework for exploration of patterns in data
+# Copyright (C) 2025 Michal Burda
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+#######################################################################
+
+
 ..must_be_type <- function(f, msg) {
     function(x,
              null = FALSE,
              arg = caller_arg(x),
              call = caller_env()) {
         if (!isTRUE(f(x) | (isTRUE(null) && is.null(x)))) {
-            na <- if (length(x) == 1 && is.na(x)) " NA" else ""
+            na <- if (is.null(dim(x)) && length(x) == 1 && is.na(x)) " NA" else ""
             msg <- if (null) paste(msg, "or NULL") else msg
             cli_abort(c("{.arg {arg}} must be {msg}.",
                         "x" = "You've supplied a {.cls {class(x)}}{na}."),
@@ -95,7 +114,7 @@
                           arg = caller_arg(x),
                           call = caller_env()) {
     if (!is.null(x)) {
-        na <- if (length(x) == 1 && is.na(x)) " NA" else ""
+        na <- if (is.null(dim(x)) && length(x) == 1 && is.na(x)) " NA" else ""
         cli_abort(c("{.arg {arg}} can't be non-NULL when {when}.",
                     "x" = "You've supplied a {.cls {class(x)}}{na}."),
                   call = call)
@@ -123,7 +142,7 @@
                           arg = caller_arg(x),
                           call = caller_env()) {
     if (!isTRUE(inherits(x, clazz) | (isTRUE(null) && is.null(x)))) {
-        na <- if (length(x) == 1 && is.na(x)) " NA" else ""
+        na <- if (is.null(dim(x)) && length(x) == 1 && is.na(x)) " NA" else ""
         msg <- if (null) " or NULL" else ""
         cli_abort(c("{.arg {arg}} must be an S3 object that inherits from {.cls {clazz}}{msg}.",
                     "x" = "You've supplied a {.cls {class(x)}}{na}."),
@@ -138,7 +157,7 @@
                             arg = caller_arg(x),
                             call = caller_env()) {
     if (!isTRUE(is_nugget(x, flavour) | (isTRUE(null) && is.null(x)))) {
-        na <- if (length(x) == 1 && is.na(x)) " NA" else ""
+        na <- if (is.null(dim(x)) && length(x) == 1 && is.na(x)) " NA" else ""
         msg <- if (null) " or NULL" else ""
         flav <- if (is.null(flavour)) "nugget" else "nugget of flavour {.cls {flavour}}"
         cli_abort(c(paste0("{.arg {arg}} must be a ", flav, msg, "."),
@@ -148,12 +167,17 @@
 }
 
 
+..and_has_not_dim <- function(f) {
+    function(x) {
+        f(x) && is.null(dim(x))
+    }
+}
 
-.must_be_atomic_scalar <- ..must_be_type(is_scalar_atomic, "an atomic scalar")
-.must_be_integerish_scalar <- ..must_be_type(is_scalar_integerish, "an integerish scalar")
-.must_be_double_scalar <- ..must_be_type(is_scalar_double, "a double scalar")
-.must_be_character_scalar <- ..must_be_type(is_scalar_character, "a character scalar")
-.must_be_logical_scalar <- ..must_be_type(is_scalar_logical, "a logical scalar")
+.must_be_atomic_scalar <- ..must_be_type(..and_has_not_dim(is_scalar_atomic), "an atomic scalar")
+.must_be_integerish_scalar <- ..must_be_type(..and_has_not_dim(is_scalar_integerish), "an integerish scalar")
+.must_be_double_scalar <- ..must_be_type(..and_has_not_dim(is_scalar_double), "a double scalar")
+.must_be_character_scalar <- ..must_be_type(..and_has_not_dim(is_scalar_character), "a character scalar")
+.must_be_logical_scalar <- ..must_be_type(..and_has_not_dim(is_scalar_logical), "a logical scalar")
 
 .is_just_vector <- function(x) {
     (is.character(x) || is.logical(x) || is.integer(x) || is.numeric(x)) &&
@@ -322,7 +346,6 @@
     function(x,
              column,
              arg_x = caller_arg(x),
-             arg_column = caller_arg(column),
              call = caller_env()) {
         col <- x[[column]]
         if (is.null(col)) {

@@ -1,3 +1,22 @@
+#######################################################################
+# nuggets: An R framework for exploration of patterns in data
+# Copyright (C) 2025 Michal Burda
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+#######################################################################
+
+
 test_that(".parse_tree_def_from_condition - border cases", {
     def <- .parse_tree_def_from_condition(parse_condition(character(0)), root_name = "root")
     expect_equal(def, data.frame())
@@ -66,8 +85,7 @@ test_that("ConditionFilterModule - ui: with empty condition", {
 
     mod <- conditionFilterModule(id = "test",
                                  x = c("{A=1,B=2}", "{A=2,B=2,C=3}", "{C=3}", "{}"),
-                                 meta = meta,
-                                 resetAllEvent = "resetAllEvent")
+                                 meta = meta)
 
     ui <- mod$ui()
     html <- as.character(ui)
@@ -84,8 +102,7 @@ test_that("ConditionFilterModule - ui: without empty condition", {
 
     mod <- conditionFilterModule(id = "test",
                                  x = c("{A=1,B=2}", "{A=2,B=2,C=3}", "{C=3}", "{C=3}"),
-                                 meta = meta,
-                                 resetAllEvent = "resetAllEvent")
+                                 meta = meta)
 
     ui <- mod$ui()
     html <- as.character(ui)
@@ -103,16 +120,14 @@ test_that("ConditionFilterModule - filter", {
     # all empty
     mod <- conditionFilterModule(id = "test",
                                  x = c("{A=1,B=2}", "{A=2,B=2,C=3}", "{C=3}", "{}"),
-                                 meta = meta,
-                                 resetAllEvent = "resetAllEvent")
+                                 meta = meta)
     input <- list()
     res <- mod$filter(input)
     expect_equal(res, c(F, F, F, F))
 
     mod <- conditionFilterModule(id = "test",
                                  x = c("{A=1,B=2}", "{A=2,B=2,C}", "{C}", "{}"),
-                                 meta = meta,
-                                 resetAllEvent = "resetAllEvent")
+                                 meta = meta)
     input <- list("test-tree" = c("v1"), # A=1
                   "test-radio" = "any",
                   "test-emptyCondition" = FALSE)
@@ -121,8 +136,7 @@ test_that("ConditionFilterModule - filter", {
 
     mod <- conditionFilterModule(id = "test",
                                  x = c("{A=1,B=2}", "{A=2,B=2,C}", "{C}", "{}"),
-                                 meta = meta,
-                                 resetAllEvent = "resetAllEvent")
+                                 meta = meta)
     input <- list("test-tree" = c("v1"), # A=1
                   "test-radio" = "any",
                   "test-emptyCondition" = TRUE)
@@ -131,8 +145,7 @@ test_that("ConditionFilterModule - filter", {
 
     mod <- conditionFilterModule(id = "test",
                                  x = c("{A=1,B=2}", "{A=2,B=2,C}", "{C}", "{}"),
-                                 meta = meta,
-                                 resetAllEvent = "resetAllEvent")
+                                 meta = meta)
     input <- list("test-tree" = c("v1"), # A=1
                   "test-radio" = "all",
                   "test-emptyCondition" = FALSE)
@@ -141,8 +154,7 @@ test_that("ConditionFilterModule - filter", {
 
     mod <- conditionFilterModule(id = "test",
                                  x = c("{A=1,B=2}", "{A=2,B=2,C}", "{C}", "{}"),
-                                 meta = meta,
-                                 resetAllEvent = "resetAllEvent")
+                                 meta = meta)
     input <- list("test-tree" = c("v1"), # A=1
                   "test-radio" = "all",
                   "test-emptyCondition" = TRUE)
@@ -151,8 +163,7 @@ test_that("ConditionFilterModule - filter", {
 
     mod <- conditionFilterModule(id = "test",
                                  x = c("{A=1,B=2}", "{A=2,B=2,C}", "{C}", "{}"),
-                                 meta = meta,
-                                 resetAllEvent = "resetAllEvent")
+                                 meta = meta)
     input <- list("test-tree" = c("n3"), # C
                   "test-radio" = "any",
                   "test-emptyCondition" = FALSE)
@@ -161,8 +172,7 @@ test_that("ConditionFilterModule - filter", {
 
     mod <- conditionFilterModule(id = "test",
                                  x = c("{A=1,B=2}", "{A=2,B=2,C}", "{C}", "{}"),
-                                 meta = meta,
-                                 resetAllEvent = "resetAllEvent")
+                                 meta = meta)
     input <- list("test-tree" = c("n3"), # C
                   "test-radio" = "any",
                   "test-emptyCondition" = TRUE)
@@ -171,8 +181,7 @@ test_that("ConditionFilterModule - filter", {
 
     mod <- conditionFilterModule(id = "test",
                                  x = c("{A=1,B=2}", "{A=2,B=2,C}", "{C}", "{}"),
-                                 meta = meta,
-                                 resetAllEvent = "resetAllEvent")
+                                 meta = meta)
     input <- list("test-tree" = c("n3"), # C
                   "test-radio" = "all",
                   "test-emptyCondition" = FALSE)
@@ -181,8 +190,7 @@ test_that("ConditionFilterModule - filter", {
 
     mod <- conditionFilterModule(id = "test",
                                  x = c("{A=1,B=2}", "{A=2,B=2,C}", "{C}", "{}"),
-                                 meta = meta,
-                                 resetAllEvent = "resetAllEvent")
+                                 meta = meta)
     input <- list("test-tree" = c("n3"), # C
                   "test-radio" = "all",
                   "test-emptyCondition" = TRUE)
@@ -191,8 +199,7 @@ test_that("ConditionFilterModule - filter", {
 
     mod <- conditionFilterModule(id = "test",
                                  x = c("{A=1,B=2}", "{A=2,B=2,C}", "{C}", "{}"),
-                                 meta = meta,
-                                 resetAllEvent = "resetAllEvent")
+                                 meta = meta)
     input <- list("test-tree" = c("v1", "n2", "v3"), # A=1, B=2
                   "test-radio" = "all",
                   "test-emptyCondition" = TRUE)
@@ -201,8 +208,7 @@ test_that("ConditionFilterModule - filter", {
 
     mod <- conditionFilterModule(id = "test",
                                  x = c("{A=1,B=2}", "{A=2,B=2,C}", "{C}", "{}"),
-                                 meta = meta,
-                                 resetAllEvent = "resetAllEvent")
+                                 meta = meta)
     input <- list("test-tree" = c("v1", "n2", "v3"), # A=1, B=2
                   "test-radio" = "any",
                   "test-emptyCondition" = TRUE)
@@ -211,8 +217,7 @@ test_that("ConditionFilterModule - filter", {
 
     mod <- conditionFilterModule(id = "test",
                                  x = c("{A=1,B=2}", "{A=2,B=2,C}", "{C}", "{}"),
-                                 meta = meta,
-                                 resetAllEvent = "resetAllEvent")
+                                 meta = meta)
     input <- list("test-tree" = c("predicate", "n1", "v1", "v2", "n2", "v3", "n3"), # A=1, A=2, B=2, C
                   "test-radio" = "all",
                   "test-emptyCondition" = TRUE)
@@ -221,8 +226,7 @@ test_that("ConditionFilterModule - filter", {
 
     mod <- conditionFilterModule(id = "test",
                                  x = c("{A=1,B=2}", "{A=2,B=2,C}", "{C}", "{}"),
-                                 meta = meta,
-                                 resetAllEvent = "resetAllEvent")
+                                 meta = meta)
     input <- list("test-tree" = c("predicate", "n1", "v1", "v2", "n2", "v3", "n3"), # A=1, A=2, B=2, C
                   "test-radio" = "all",
                   "test-emptyCondition" = FALSE)

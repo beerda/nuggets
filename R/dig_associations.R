@@ -1,3 +1,22 @@
+#######################################################################
+# nuggets: An R framework for exploration of patterns in data
+# Copyright (C) 2025 Michal Burda
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+#######################################################################
+
+
 #' Search for association rules
 #'
 #' @description
@@ -37,6 +56,10 @@
 #'
 #' *Confidence* of a rule is the fraction \eqn{supp(A) / supp(A \cup \{c\})}.
 #'
+#' *Lift* of a rule is the ratio of its support to the expected support
+#' assuming antecedent and consequent are independent, i.e.,
+#' \eqn{supp(A \cup \{c\}) / (supp(A) * supp(\{c\}))}.
+#'
 #' @param x a matrix or data frame with data to search in. The matrix must be
 #'      numeric (double) or logical. If `x` is a data frame then each column
 #'      must be either numeric (double) or logical.
@@ -73,7 +96,10 @@
 #'      the antecedent and the consequent, the antecedent but not the consequent,
 #'      the consequent but not the antecedent, and neither the antecedent nor the
 #'      consequent, respectively.
-#' @param measures a character vector specifying the additional quality measures to compute.
+#' @param measures (Deprecated. Search for associations using
+#'      `dig_associations(contingency_table = TRUE)` and use the `add_interest()`
+#'      function on the result to compute additional measures.)
+#'      A character vector specifying the additional quality measures to compute.
 #'      If `NULL`, no additional measures are computed. Possible values are `"lift"`,
 #'      `"conviction"`, `"added_value"`.
 #'      See [https://mhahsler.github.io/arules/docs/measures](https://mhahsler.github.io/arules/docs/measures)
@@ -121,8 +147,7 @@
 #'                  antecedent = !starts_with("mpg"),
 #'                  consequent = starts_with("mpg"),
 #'                  min_support = 0.3,
-#'                  min_confidence = 0.8,
-#'                  measures = c("lift", "conviction"))
+#'                  min_confidence = 0.8)
 #' @export
 dig_associations <- function(x,
                              antecedent = everything(),
@@ -135,7 +160,7 @@ dig_associations <- function(x,
                              min_support = 0,
                              min_confidence = 0,
                              contingency_table = FALSE,
-                             measures = NULL,
+                             measures = deprecated(),
                              t_norm = "goguen",
                              max_results = Inf,
                              verbose = FALSE,
@@ -181,9 +206,18 @@ dig_associations <- function(x,
     .must_be_flag(contingency_table,
                   arg = error_context$arg_contingency_table,
                   call = error_context$call)
+
     .must_be_flag(verbose,
                   arg = error_context$arg_verbose,
                   call = error_context$call)
+
+    if (lifecycle::is_present(measures)) {
+        deprecate_warn(when = "2.1.0",
+                       what = "nuggets::dig_associations(measures)",
+                       details = "The `measures` argument is deprecated and will be removed in future versions. Use the `add_interest()` function on the result of `dig_associations(contingency_table = TRUE)` to compute additional measures.")
+    } else {
+        measures <- NULL
+    }
     .must_be_enum(measures,
                   values = c("lift", "conviction", "added_value"),
                   null = TRUE,
@@ -236,6 +270,9 @@ dig_associations <- function(x,
     basic_callback <- function(condition, sum, pp) {
         conf <- pp / sum
         supp <- pp / n
+        covr <- sum / n
+        consupp <- conseq_supports[names(pp)]
+        lift <- supp / (covr * consupp)
         ante <- format_condition(names(condition))
         cons <- unlist(lapply(names(conf), format_condition))
 
@@ -247,8 +284,9 @@ dig_associations <- function(x,
                    consequent = cons,
                    support = supp,
                    confidence = conf,
-                   coverage = sum / n,
-                   conseq_support = conseq_supports[names(pp)],
+                   coverage = covr,
+                   conseq_support = consupp,
+                   lift = lift,
                    count = pp,
                    antecedent_length = length(condition))
     }
@@ -321,9 +359,6 @@ dig_associations <- function(x,
             res <- res[seq_len(max_results), , drop = FALSE]
         }
 
-        if ("lift" %in% measures) {
-            res$lift <- res$support / (res$coverage * res$conseq_support)
-        }
         if ("conviction" %in% measures) {
             res$conviction <- res$coverage * (1 - res$conseq_support) / (res$pn / n)
         }

@@ -1,3 +1,22 @@
+#######################################################################
+# nuggets: An R framework for exploration of patterns in data
+# Copyright (C) 2025 Michal Burda
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+#######################################################################
+
+
 test_that("dig_tautologies max_length 0", {
     d <- data.frame(
         a = c(TRUE, TRUE, FALSE, FALSE, FALSE),
@@ -151,19 +170,21 @@ test_that("dig_tautologies argument forwarding and attributes", {
         b = c(TRUE, TRUE, TRUE, TRUE, FALSE)
     )
 
-    res <- dig_tautologies(
-        d,
-        antecedent = a,
-        consequent = b,
-        disjoint = c(1, 2),
-        max_length = 2,
-        min_support = 0.1,
-        min_confidence = 0.2,
-        measures = "lift",
-        t_norm = "lukas",
-        max_results = 5,
-        verbose = FALSE,
-        threads = 1
+    suppressWarnings(
+        res <- dig_tautologies(
+            d,
+            antecedent = a,
+            consequent = b,
+            disjoint = c(1, 2),
+            max_length = 2,
+            min_support = 0.1,
+            min_confidence = 0.2,
+            measures = "lift",
+            t_norm = "lukas",
+            max_results = 5,
+            verbose = FALSE,
+            threads = 1
+        )
     )
 
     expect_true(is_nugget(res, "associations"))
@@ -210,8 +231,8 @@ test_that("dig_tautologies handles invalid arguments", {
                  "`min_support` must be a double scalar.")
     expect_error(dig_tautologies(d, min_confidence = "x"),
                  "`min_confidence` must be a double scalar.")
-    expect_error(dig_tautologies(d, measures = "x"),
-                 "`measures` must be equal to any of:")
+    expect_error(dig_tautologies(d, contingency_table = "x"),
+                 "`contingency_table` must be a flag.")
     expect_error(dig_tautologies(d, t_norm = "x"),
                  "`t_norm` must be equal to one of")
     expect_error(dig_tautologies(d, max_results = "x"),

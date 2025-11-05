@@ -1,32 +1,49 @@
+#######################################################################
+# nuggets: An R framework for exploration of patterns in data
+# Copyright (C) 2025 Michal Burda
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+#######################################################################
+
+
 associationsDetailModule <- function(id, rules, meta, data) {
     for (i in seq_len(nrow(meta))) {
-        col <- meta$short_name[i]
+        col <- meta$data_name[i]
         if (meta$type[i] == "condition") {
             rules[[paste0("highlighted-", col)]] <- highlightCondition(rules[[col]])
         }
     }
 
     list(ui = function() {
-            tagList(
-                fluidRow(
-                    column(width = 4,
-                        panel(heading = "Selected Rule",
-                            uiOutput(NS(id, "selectedRule"))
-                        ),
-                        panel(heading = "Settings",
-                            radioButtons(NS(id, "shorteningRadio"),
-                                         "Abbreviation of predicates",
-                                         choices = c("letters", "abbrev4", "abbrev8", "none"),
-                                         selected = "letters",
-                                         inline = TRUE)
-                        )
+            fluidRow(
+                column(width = 4,
+                    panel(heading = "Selected Rule",
+                        uiOutput(NS(id, "selectedRule"))
                     ),
-                    column(width = 8,
-                        panel(heading = "Ancestors",
-                            dataTableOutput(NS(id, "ancestorTable")),
-                            br(),
-                            plotOutput(NS(id, "ancestorPlot"), height = "500px")
-                        )
+                    panel(heading = "Settings",
+                        radioButtons(NS(id, "shorteningRadio"),
+                                     "Abbreviation of predicates",
+                                     choices = c("letters", "abbrev4", "abbrev8", "none"),
+                                     selected = "letters",
+                                     inline = TRUE)
+                    )
+                ),
+                column(width = 8,
+                    panel(heading = "Ancestors",
+                        dataTableOutput(NS(id, "ancestorTable")),
+                        br(),
+                        plotOutput(NS(id, "ancestorPlot"), height = "500px")
                     )
                 )
             )
@@ -35,10 +52,9 @@ associationsDetailModule <- function(id, rules, meta, data) {
         server = function(selectionReactive) {
             moduleServer(id, function(input, output, session) {
                 ancestors <- reactive({
+                    req(input$shorteningRadio)
                     ruleId <- selectionReactive()
-                    if (is.null(ruleId) || is.null(input$shorteningRadio)) {
-                        return(NULL)
-                    }
+                    req(ruleId)
 
                     rule <- rules[rules$id == ruleId, , drop = FALSE]
                     ante <- parse_condition(rule$antecedent)[[1]]
@@ -51,7 +67,6 @@ associationsDetailModule <- function(id, rules, meta, data) {
                                             min_coverage = 0,
                                             min_support = 0,
                                             min_confidence = 0,
-                                            measures = c("lift", "conviction"),
                                             max_results = Inf)
                     res <- res[order(res$antecedent_length), , drop = FALSE]
 
@@ -60,9 +75,8 @@ associationsDetailModule <- function(id, rules, meta, data) {
 
                 output$selectedRule <- renderUI({
                     ruleId <- selectionReactive()
-                    if (is.null(ruleId)) {
-                        return(NULL)
-                    }
+                    req(ruleId)
+
                     res <- rules[rules$id == ruleId, , drop = FALSE]
 
                     div(style = 'display: flex; flex-wrap: wrap; align-items: center; gap: 20px',
@@ -72,10 +86,9 @@ associationsDetailModule <- function(id, rules, meta, data) {
                 })
 
                 output$ancestorTable <- renderDT({
+                    req(input$shorteningRadio)
                     res <- ancestors()
-                    if (is.null(res)) {
-                        return(NULL)
-                    }
+                    req(res)
 
                     abbrev <- shorten_condition(res$antecedent, method = input$shorteningRadio)
                     res <- formatRulesForTable(res, meta)
@@ -96,10 +109,9 @@ associationsDetailModule <- function(id, rules, meta, data) {
                 })
 
                 output$ancestorPlot <- renderPlot({
+                    req(input$shorteningRadio)
                     res <- ancestors()
-                    if (is.null(res)) {
-                        return(NULL)
-                    }
+                    req(res)
 
                     res$abbrev <- shorten_condition(res$antecedent, method = input$shorteningRadio)
                     res$label = paste(res$abbrev,

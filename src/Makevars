@@ -6,6 +6,7 @@ PKG_LIBS=$(SHLIB_OPENMP_CXXFLAGS) `"$(R_HOME)/bin/Rscript" -e "RcppThread::LdFla
 SOURCES=RcppExports.cpp \
 	algebra.cpp \
 	dig.cpp \
+	parse_condition.cpp \
 	triangle.cpp \
 	raisedcos.cpp \
 	which_antichain.cpp \

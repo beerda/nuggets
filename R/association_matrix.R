@@ -1,3 +1,22 @@
+#######################################################################
+# nuggets: An R framework for exploration of patterns in data
+# Copyright (C) 2025 Michal Burda
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+#######################################################################
+
+
 #' Create an association matrix from a nugget of flavour `associations`.
 #'
 #' The association matrix is a matrix where rows correspond to antecedents,
@@ -58,7 +77,6 @@ association_matrix <- function(x,
     .must_have_column(x,
                       names(value_col),
                       arg_x = error_context$arg_x,
-                      arg_column = error_context$arg_value,
                       call = error_context$call)
     if (!is.numeric(x[[value_col]])) {
         cli_abort(c("{.arg {error_context$arg_value}} must select a numeric column.",

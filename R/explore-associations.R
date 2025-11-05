@@ -1,3 +1,22 @@
+#######################################################################
+# nuggets: An R framework for exploration of patterns in data
+# Copyright (C) 2025 Michal Burda
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+#######################################################################
+
+
 #' Show interactive application to explore association rules
 #'
 #' @description
@@ -35,48 +54,109 @@
 #' # launch the interactive explorer
 #' explore(rules, data = part)
 #' }
+#' @rdname explore
+#' @method explore associations
 #' @export
 explore.associations <- function(x, data = NULL, ...) {
     .must_be_nugget(x, "associations")
     .must_be_data_frame(data, null = TRUE)
 
-    meta <- tribble(
-        ~data_name,          ~short_name,  ~long_name,           ~type,       ~round, ~scatter,
-        "antecedent",        "antecedent", "Antecedent",         "condition", NA,     FALSE,
-        "consequent",        "consequent", "Consequent",         "condition", NA,     FALSE,
-        "coverage",          "asupp",      "Antecedent Support", "numeric",   2,      FALSE,
-        "conseq_support",    "csupp",      "Consequent Support", "numeric",   2,      FALSE,
-        "support",           "supp",       "Rule Support",       "numeric",   2,      TRUE,
-        "confidence",        "conf",       "Confidence",         "numeric",   2,      TRUE,
-        "lift",              "lift",       "Lift",               "numeric",   2,      TRUE,
-        "conviction",        "conv",       "Conviction",         "numeric",   2,      TRUE,
-        "antecedent_length", "len",        "Antecedent Length",  "integer",   NA,     TRUE
+    initial_meta <- tribble(
+        ~data_name,          ~long_name,                          ~type,       ~group,              ~round, ~scatter, ~clustering_default,
+        "antecedent",        "Antecedent",                        "condition", "formula",           NA,     FALSE,    0,
+        "consequent",        "Consequent",                        "condition", "formula",           NA,     FALSE,    0,
+        "coverage",          "Coverage (Antecedent Support)",     "numeric",   "basic measures",    2,      FALSE,    0,
+        "conseq_support",    "Consequent Support",                "numeric",   "basic measures",    2,      FALSE,    0,
+        "support",           "Support",                           "numeric",   "basic measures",    2,      TRUE,     0,
+        "confidence",        "Confidence",                        "numeric",   "basic measures",    2,      TRUE,     9,
+        "lift",              "Lift",                              "numeric",   "basic measures",    2,      TRUE,     10,
+        "antecedent_length", "Antecedent Length",                 "integer",   "basic measures",    NA,     TRUE,     0,
+        "pp",                "Antecedent \u2227 Consequent",           "numeric",   "contingency table", 2,      FALSE,    0,
+        "pn",                "Antecedent \u2227 \u00acConsequent",      "numeric",   "contingency table", 2,      FALSE,    0,
+        "np",                "\u00acAntecedent \u2227 Consequent",      "numeric",   "contingency table", 2,      FALSE,    0,
+        "nn",                "\u00acAntecedent \u2227 \u00acConsequent", "numeric",   "contingency table", 2,      FALSE,    0
     )
 
+    supported_measures <- names(.get_supported_association_measures())
+    measures_meta <- tibble(data_name = supported_measures,
+                            long_name = .get_supported_association_measure_names()[supported_measures],
+                            group = "additional measures",
+                            type = "numeric",
+                            round = 2,
+                            scatter = TRUE,
+                            clustering_default = 0)
+   measures_meta$group[measures_meta$data_name %in% names(.guha_association_measures)] <- "GUHA"
+
     x$id <- seq_len(nrow(x))
+    meta <- bind_rows(initial_meta, measures_meta)
     meta <- meta[meta$data_name %in% colnames(x), , drop = FALSE]
 
-    header <- NULL
-    detailModule <- NULL
-    if (is.null(data)) {
-        header <- infoBox(status = "warning",
-                          dismissible = TRUE,
-                          div("You started the explorer with rules only.",
-                              "Some advanced features are disabled.",
-                              "To enable full functionality, run",
-                              span(class = "mono",
-                                "explore(rules, data)"),
-                              "with the original dataset used to mine the rules."))
-    } else {
-        detailModule <- associationsDetailModule(id = "details",
-                                                 rules = x,
-                                                 meta = meta,
-                                                 data = data)
+    detailWindow <- NULL
+    clusterWindow <- NULL
+    extensions <- list()
+
+    if (nrow(x) > 2) {
+        clusterWindow <- associationsClusterModule(
+            id = "clustering", rules = x, meta = meta, data = data)
+        extensions[["navbarPage.enableSidebar.for"]] <- "clustering"
+        extensions[["navbarPage.Metadata.before1"]] <- tabPanel(
+            "Clustering",
+            icon = icon("circle-nodes"),
+            value = "clustering",
+            clusterWindow$ui())
     }
 
-    mainApp(x,
-            title = "Associations",
-            meta = meta,
-            header = header,
-            detailWindow = detailModule)
+    if (is.null(data)) {
+        extensions[["Rules.top"]] <- infoBox(
+            status = "warning",
+            dismissible = TRUE,
+            div("You started the explorer with rules only.",
+                "Some advanced features are disabled.",
+                "To enable full functionality, run",
+                span(class = "mono", "explore(rules, data)"),
+                "with the original dataset used to mine the rules."))
+
+    } else {
+        detailWindow <- associationsDetailModule(
+            id = "details", rules = x, meta = meta, data = data)
+
+        extensions[["navbarPage.Metadata.before3"]] <- tabPanel(
+            "Rule Detail",
+            value = "rule-detail-tab",
+            icon = icon("magnifying-glass"),
+            detailWindow$ui())
+
+        extensions[["filteredRulesPanel.rulesTable.action"]] <- list(
+            title = "show detailed analysis of the rule",
+            icon = "magnifying-glass")
+    }
+
+    extensions[["server"]] <- function(input,
+                                       output,
+                                       session,
+                                       rulesFiltering,
+                                       rulesProjection,
+                                       ruleSelection,
+                                       ...) {
+        observeEvent(ruleSelection(), {
+            if (is.null(ruleSelection())) {
+                hide(selector = '#nav a[data-value="rule-detail-tab"]')
+            } else {
+                show(selector = '#nav a[data-value="rule-detail-tab"]')
+                updateTabsetPanel(session, "nav", selected = "rule-detail-tab")
+            }
+        }, ignoreNULL = FALSE)
+
+        if (!is.null(detailWindow))
+            detailWindow$server(ruleSelection)
+
+        if (!is.null(clusterWindow))
+            clusterWindow$server(rulesProjection, rulesFiltering)
+    }
+
+
+    exploreApp(x,
+               title = "Associations",
+               meta = meta,
+               extensions = extensions)
 }
