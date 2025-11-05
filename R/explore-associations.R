@@ -60,18 +60,7 @@
 explore.associations <- function(x, data = NULL, ...) {
     .must_be_nugget(x, "associations")
     .must_be_data_frame(data, null = TRUE)
-
-    # Check for required Shiny-related packages
-    required_packages <- c("shiny", "shinyjs", "shinyWidgets", "DT", "htmltools", "htmlwidgets", "jsonlite")
-    missing_packages <- required_packages[!sapply(required_packages, requireNamespace, quietly = TRUE)]
-    
-    if (length(missing_packages) > 0) {
-        cli_abort(c(
-            "Required packages are not installed.",
-            "i" = paste("Please install the following packages:", paste(missing_packages, collapse = ", ")),
-            "i" = paste0("You can install them with: install.packages(c(", paste(shQuote(missing_packages, type = "cmd"), collapse = ", "), "))")
-        ))
-    }
+    .ensure_shiny()
 
     initial_meta <- tribble(
         ~data_name,          ~long_name,                          ~type,       ~group,              ~round, ~scatter, ~clustering_default,
