@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -506,7 +506,7 @@ support:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">arrange</span><span class="op">(</span><span class="va">result</span>, <span class="fu">desc</span><span class="op">(</span><span class="va">support</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 526 × 12</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 526 × 13</span></span></span>
 <span><span class="co">#&gt;    antecedent                     consequent support confidence coverage</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> {gear=3}                       {am=0}       0.469      1        0.469</span></span>
@@ -519,18 +519,18 @@ support:</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> {drat=(-Inf;2.76;3.84)}        {am=0}       0.311      0.948    0.328</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> {gear=3,mpg=(-Inf;15;20)}      {am=0}       0.309      1        0.309</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> {drat=(-Inf;2.76;3.84),gear=3} {am=0}       0.307      1        0.307</span></span>
-<span><span class="co">#&gt;    conseq_support count antecedent_length    pp    pn    np    nn</span></span>
-<span><span class="co">#&gt;             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>          0.594 15                    1 15    0      4     13  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>          0.594 12                    2 12    0      7     13  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>          0.594 12                    3 12    0      7     13  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>          0.594 12                    2 12    2      7     11  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>          0.594 12                    2 12    0      7     13  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>          0.594 12                    1 12    2      7     11  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>          0.594 10.5                  1 10.5  1.90   8.52  11.1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>          0.594  9.96                 1  9.96 0.546  9.04  12.5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>          0.594  9.88                 2  9.88 0      9.12  13.0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>          0.594  9.82                 2  9.82 0      9.18  13  </span></span>
+<span><span class="co">#&gt;    conseq_support  lift count antecedent_length    pp    pn    np    nn</span></span>
+<span><span class="co">#&gt;             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>          0.594  1.68 15                    1 15    0      4     13  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>          0.594  1.68 12                    2 12    0      7     13  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>          0.594  1.68 12                    3 12    0      7     13  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>          0.594  1.44 12                    2 12    2      7     11  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>          0.594  1.68 12                    2 12    0      7     13  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>          0.594  1.44 12                    1 12    2      7     11  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>          0.594  1.43 10.5                  1 10.5  1.90   8.52  11.1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>          0.594  1.60  9.96                 1  9.96 0.546  9.04  12.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>          0.594  1.68  9.88                 2  9.88 0      9.12  13.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>          0.594  1.68  9.82                 2  9.82 0      9.18  13  </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 516 more rows</span></span></span></code></pre></div>
 <p>This example illustrates the typical workflow for mining association
 rules with <code>nuggets</code>. The same structure and arguments apply
@@ -786,35 +786,35 @@ appear above their descendants:</p>
 <span>                              max_length <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>                              max_results <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">vis_rules</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 × 8</span></span></span>
-<span><span class="co">#&gt;    antecedent    consequent support confidence coverage conseq_support count</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 × 9</span></span></span>
+<span><span class="co">#&gt;    antecedent    consequent support confidence coverage conseq_support  lift</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> {}            {am=1}      0.406       0.406   1               0.406    13</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> {vs=0}        {am=1}      0.188       0.333   0.562           0.406     6</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> {gear=3,vs=0} {am=1}      0           0       0.375           0.406     0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> {gear=4,vs=0} {am=1}      0.062<span style="text-decoration: underline;">5</span>      1       0.062<span style="text-decoration: underline;">5</span>          0.406     2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> {gear=5,vs=0} {am=1}      0.125       1       0.125           0.406     4</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> {gear=3}      {am=1}      0           0       0.469           0.406     0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> {gear=3,vs=1} {am=1}      0           0       0.093<span style="text-decoration: underline;">8</span>          0.406     0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> {vs=1}        {am=1}      0.219       0.5     0.438           0.406     7</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> {gear=4,vs=1} {am=1}      0.188       0.6     0.312           0.406     6</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> {gear=5,vs=1} {am=1}      0.031<span style="text-decoration: underline;">2</span>      1       0.031<span style="text-decoration: underline;">2</span>          0.406     1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> {gear=4}      {am=1}      0.25        0.667   0.375           0.406     8</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> {gear=5}      {am=1}      0.156       1       0.156           0.406     5</span></span>
-<span><span class="co">#&gt;    antecedent_length</span></span>
-<span><span class="co">#&gt;                <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>                 0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>                 1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>                 1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>                 1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span>                 1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span>                 1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> {}            {am=1}      0.406       0.406   1               0.406 1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> {vs=0}        {am=1}      0.188       0.333   0.562           0.406 0.821</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> {gear=3,vs=0} {am=1}      0           0       0.375           0.406 0    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> {gear=4,vs=0} {am=1}      0.062<span style="text-decoration: underline;">5</span>      1       0.062<span style="text-decoration: underline;">5</span>          0.406 2.46 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> {gear=5,vs=0} {am=1}      0.125       1       0.125           0.406 2.46 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> {gear=3}      {am=1}      0           0       0.469           0.406 0    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> {gear=3,vs=1} {am=1}      0           0       0.093<span style="text-decoration: underline;">8</span>          0.406 0    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> {vs=1}        {am=1}      0.219       0.5     0.438           0.406 1.23 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> {gear=4,vs=1} {am=1}      0.188       0.6     0.312           0.406 1.48 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> {gear=5,vs=1} {am=1}      0.031<span style="text-decoration: underline;">2</span>      1       0.031<span style="text-decoration: underline;">2</span>          0.406 2.46 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> {gear=4}      {am=1}      0.25        0.667   0.375           0.406 1.64 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> {gear=5}      {am=1}      0.156       1       0.156           0.406 2.46 </span></span>
+<span><span class="co">#&gt;    count antecedent_length</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>    13                 0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     6                 1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     0                 2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     2                 2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     4                 2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     0                 1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     0                 2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     7                 1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     6                 2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     1                 2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span>     8                 1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span>     5                 1</span></span>
 <span></span>
 <span><span class="co"># Create diamond plot showing rule hierarchy</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">vis_rules</span><span class="op">)</span> <span class="op">+</span></span>
