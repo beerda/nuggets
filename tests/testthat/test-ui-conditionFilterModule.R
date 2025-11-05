@@ -78,6 +78,10 @@ test_that(".parse_tree_def_from_condition - >50, no subnodes", {
 })
 
 test_that("ConditionFilterModule - ui: with empty condition", {
+    skip_if_not_installed("shiny")
+    skip_if_not_installed("shinyWidgets")
+    skip_if_not_installed("htmltools")
+    
     meta <- tribble(
         ~data_name,   ~short_name,  ~long_name,   ~type,
         "antecedent", "antecedent", "Antecedent", "condition"
@@ -95,6 +99,10 @@ test_that("ConditionFilterModule - ui: with empty condition", {
 })
 
 test_that("ConditionFilterModule - ui: without empty condition", {
+    skip_if_not_installed("shiny")
+    skip_if_not_installed("shinyWidgets")
+    skip_if_not_installed("htmltools")
+    
     meta <- tribble(
         ~data_name,   ~short_name,  ~long_name,   ~type,
         "antecedent", "antecedent", "Antecedent", "condition"
@@ -112,6 +120,10 @@ test_that("ConditionFilterModule - ui: without empty condition", {
 })
 
 test_that("ConditionFilterModule - filter", {
+    skip_if_not_installed("shiny")
+    skip_if_not_installed("shinyWidgets")
+    skip_if_not_installed("htmltools")
+    
     meta <- tribble(
         ~data_name,   ~short_name,  ~long_name,   ~type,
         "antecedent", "antecedent", "Antecedent", "condition"
