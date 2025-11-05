@@ -26,35 +26,35 @@ associationsDetailModule <- function(id, rules, meta, data) {
     }
 
     list(ui = function() {
-            fluidRow(
-                column(width = 4,
-                    panel(heading = "Selected Rule",
-                        uiOutput(NS(id, "selectedRule"))
+            shiny::fluidRow(
+                shiny::column(width = 4,
+                    shinyWidgets::panel(heading = "Selected Rule",
+                        shiny::uiOutput(shiny::NS(id, "selectedRule"))
                     ),
-                    panel(heading = "Settings",
-                        radioButtons(NS(id, "shorteningRadio"),
+                    shinyWidgets::panel(heading = "Settings",
+                        shiny::radioButtons(shiny::NS(id, "shorteningRadio"),
                                      "Abbreviation of predicates",
                                      choices = c("letters", "abbrev4", "abbrev8", "none"),
                                      selected = "letters",
                                      inline = TRUE)
                     )
                 ),
-                column(width = 8,
-                    panel(heading = "Ancestors",
-                        dataTableOutput(NS(id, "ancestorTable")),
-                        br(),
-                        plotOutput(NS(id, "ancestorPlot"), height = "500px")
+                shiny::column(width = 8,
+                    shinyWidgets::panel(heading = "Ancestors",
+                        DT::dataTableOutput(shiny::NS(id, "ancestorTable")),
+                        htmltools::br(),
+                        shiny::plotOutput(shiny::NS(id, "ancestorPlot"), height = "500px")
                     )
                 )
             )
         },
 
         server = function(selectionReactive) {
-            moduleServer(id, function(input, output, session) {
-                ancestors <- reactive({
-                    req(input$shorteningRadio)
+            shiny::moduleServer(id, function(input, output, session) {
+                ancestors <- shiny::reactive({
+                    shiny::req(input$shorteningRadio)
                     ruleId <- selectionReactive()
-                    req(ruleId)
+                    shiny::req(ruleId)
 
                     rule <- rules[rules$id == ruleId, , drop = FALSE]
                     ante <- parse_condition(rule$antecedent)[[1]]
@@ -73,22 +73,22 @@ associationsDetailModule <- function(id, rules, meta, data) {
                     res
                 })
 
-                output$selectedRule <- renderUI({
+                output$selectedRule <- shiny::renderUI({
                     ruleId <- selectionReactive()
-                    req(ruleId)
+                    shiny::req(ruleId)
 
                     res <- rules[rules$id == ruleId, , drop = FALSE]
 
-                    div(style = 'display: flex; flex-wrap: wrap; align-items: center; gap: 20px',
-                        div(HTML(res[["highlighted-antecedent"]])),
-                        div(icon("arrow-right-long"), tags$span(style = "width: 10px; display:inline-block;"), HTML(res[["highlighted-consequent"]]))
+                    htmltools::div(style = 'display: flex; flex-wrap: wrap; align-items: center; gap: 20px',
+                        htmltools::div(htmltools::HTML(res[["highlighted-antecedent"]])),
+                        htmltools::div(shiny::icon("arrow-right-long"), htmltools::tags::span(style = "width: 10px; display:inline-block;"), htmltools::HTML(res[["highlighted-consequent"]]))
                     )
                 })
 
-                output$ancestorTable <- renderDT({
-                    req(input$shorteningRadio)
+                output$ancestorTable <- DT::renderDT({
+                    shiny::req(input$shorteningRadio)
                     res <- ancestors()
-                    req(res)
+                    shiny::req(res)
 
                     abbrev <- shorten_condition(res$antecedent, method = input$shorteningRadio)
                     res <- formatRulesForTable(res, meta)
@@ -96,7 +96,7 @@ associationsDetailModule <- function(id, rules, meta, data) {
                     res$abbrev <- highlightCondition(abbrev)
                     res <- res[, c("abbrev", nn), drop = FALSE]
 
-                    datatable(res,
+                    DT::datatable(res,
                               options = list(paging = FALSE,
                                              autoWidth = FALSE,
                                              searching = FALSE,
@@ -108,10 +108,10 @@ associationsDetailModule <- function(id, rules, meta, data) {
                               filter = "none")
                 })
 
-                output$ancestorPlot <- renderPlot({
-                    req(input$shorteningRadio)
+                output$ancestorPlot <- shiny::renderPlot({
+                    shiny::req(input$shorteningRadio)
                     res <- ancestors()
-                    req(res)
+                    shiny::req(res)
 
                     res$abbrev <- shorten_condition(res$antecedent, method = input$shorteningRadio)
                     res$label = paste(res$abbrev,

@@ -43,38 +43,38 @@
 columnProjectionModule <- function(id, rules, meta) {
     root_name <- "columns"
     def <- .create_tree_def_from_colnames(meta, root_name)
-    tree <- create_tree(def,
+    tree <- shinyWidgets::create_tree(def,
                         levels = c("rid", "group", "value"),
                         levels_id = c("rid", "gid", "vid"))
 
 
     list(ui = function() {
-            tabPanel(title = "Columns",
+            shiny::tabPanel(title = "Columns",
                      value = "column-projection-tab",
                 infoBox("Select columns to be shown in the table."),
-                treeInput(NS(id, "tree"),
+                shinyWidgets::treeInput(shiny::NS(id, "tree"),
                           label = NULL,
                           choices = tree,
                           selected = root_name,
                           returnValue = "id",
                           closeDepth = 2),
-                hr(),
-                actionButton(NS(id, "resetButton"), "Reset"),
-                actionButton(NS(id, "resetAllButton"), "Reset all")
+                htmltools::hr(),
+                shiny::actionButton(shiny::NS(id, "resetButton"), "Reset"),
+                shiny::actionButton(shiny::NS(id, "resetAllButton"), "Reset all")
             )
         },
 
         server = function(reset_all_trigger) {
-            moduleServer(id, function(input, output, session) {
-                observeEvent(input$resetButton, {
-                    updateTreeInput("tree", selected = def$vid, session = session)
+            shiny::moduleServer(id, function(input, output, session) {
+                shiny::observeEvent(input$resetButton, {
+                    shinyWidgets::updateTreeInput("tree", selected = def$vid, session = session)
                 })
 
-                observeEvent(input$resetAllButton, {
+                shiny::observeEvent(input$resetAllButton, {
                     reset_all_trigger(Sys.time())
                 })
 
-                reactive({
+                shiny::reactive({
                     treeInput <- input$tree
                     res <- NULL
                     if (!is.null(treeInput)) {
@@ -90,7 +90,7 @@ columnProjectionModule <- function(id, rules, meta) {
         },
 
         reset = function(session) {
-            updateTreeInput(NS(id, "tree"), selected = def$vid, session = session)
+            shinyWidgets::updateTreeInput(shiny::NS(id, "tree"), selected = def$vid, session = session)
         }
     )
 }
