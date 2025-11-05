@@ -81,7 +81,7 @@ associationsDetailModule <- function(id, rules, meta, data) {
 
                     htmltools::div(style = 'display: flex; flex-wrap: wrap; align-items: center; gap: 20px',
                         htmltools::div(htmltools::HTML(res[["highlighted-antecedent"]])),
-                        htmltools::div(shiny::icon("arrow-right-long"), htmltools::tags::span(style = "width: 10px; display:inline-block;"), htmltools::HTML(res[["highlighted-consequent"]]))
+                        htmltools::div(shiny::icon("arrow-right-long"), htmltools::tags$span(style = "width: 10px; display:inline-block;"), htmltools::HTML(res[["highlighted-consequent"]]))
                     )
                 })
 

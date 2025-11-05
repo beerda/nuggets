@@ -19,19 +19,19 @@
 
 infoTable <- function(df, header = FALSE, class = NULL, width = "100%") {
     trs <- lapply(seq_len(nrow(df)), function(i) {
-        htmltools::tags::tr(lapply(df[i, ], function(x) htmltools::tags::td(x)))
+        htmltools::tags$tr(lapply(df[i, ], function(x) htmltools::tags$td(x)))
     })
 
     head <- NULL
     if (header) {
-        head <- htmltools::tags::thead(
-            htmltools::tags::tr(lapply(colnames(df), function(x) htmltools::tags::th(x)))
+        head <- htmltools::tags$thead(
+            htmltools::tags$tr(lapply(colnames(df), function(x) htmltools::tags$th(x)))
         )
     }
 
-    htmltools::tags::table(class = paste(c("info-table", class), collapse = " "),
+    htmltools::tags$table(class = paste(c("info-table", class), collapse = " "),
                width = width,
                head,
-               do.call(htmltools::tags::tbody, trs))
+               do.call(htmltools::tags$tbody, trs))
 }
 

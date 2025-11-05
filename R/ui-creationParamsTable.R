@@ -42,13 +42,13 @@ creationParamsTable <- function(rules) {
     }
 
     htmlrows <- lapply(seq_along(args), function(i) {
-        htmltools::tags::tr(htmltools::tags::td(paste(names(args)[i], "=")),
-                htmltools::tags::td(args[[i]]))
+        htmltools::tags$tr(htmltools::tags$td(paste(names(args)[i], "=")),
+                htmltools::tags$td(args[[i]]))
     })
 
     shiny::tagList(fun,
             htmltools::br(),
-            do.call(htmltools::tags::table,
+            do.call(htmltools::tags$table,
                     c(list(class = "info-table left", width = "100%"),
                       htmlrows)))
 }

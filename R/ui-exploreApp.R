@@ -58,7 +58,7 @@ exploreApp <- function(rules,
     indexes <- which(!is.na(filter_subtext))
     names(filters) <- NULL # tabsetPanel does not like named lists
     filterTabSet <- do.call(tabsetPanel,
-                            c(list(id = "columnFilterTabset", type = "hidden", header = htmltools::tags::hr()),
+                            c(list(id = "columnFilterTabset", type = "hidden", header = htmltools::tags$hr()),
                               lapply(filters, function(f) f$ui())))
 
     scatterFilter <- scatterFilterModule(id = "scatterFilterModule",
@@ -67,8 +67,8 @@ exploreApp <- function(rules,
     filters <- c(filters, list(scatterFilter))
 
     ui <- shiny::tagList(
-        htmltools::tags::head(
-            htmltools::tags::style(htmltools::HTML("
+        htmltools::tags$head(
+            htmltools::tags$style(htmltools::HTML("
                 /* monospace font for code */
                 .mono {font-family: \"Courier New\", Courier, monospace;}
 
@@ -181,7 +181,7 @@ exploreApp <- function(rules,
                                  label = NULL,
                                  icon = shiny::icon("bars"),
                                  style = "padding: 0px 10px 0px 10px;"),
-                    htmltools::span(htmltools::tags::img(src = "pkgimages/nugget.png",
+                    htmltools::span(htmltools::tags$img(src = "pkgimages/nugget.png",
                                          style = "padding-left: 10px; filter: grayscale(100%);",
                                          height = "24px"),
                                 title)),
@@ -203,7 +203,7 @@ exploreApp <- function(rules,
                                                 width = "100%"),
                                     filterTabSet),
                                 shiny::tabPanel("Advanced",
-                                    shiny::tabsetPanel(type = "pills", header = htmltools::tags::hr(),
+                                    shiny::tabsetPanel(type = "pills", header = htmltools::tags$hr(),
                                         scatterFilter$ui()
                                     )
                                 )
@@ -239,9 +239,9 @@ exploreApp <- function(rules,
                     shiny::fluidRow(
                         shiny::column(width = 6, offset = 3,
                             shinyWidgets::panel(heading = "About the app",
-                                  htmltools::tags::div(style = "text-align: center; font-size: 40pt; color: gray; padding-bottom: 10px",
+                                  htmltools::tags$div(style = "text-align: center; font-size: 40pt; color: gray; padding-bottom: 10px",
                                            width = "100%",
-                                           htmltools::tags::img(src = "pkgimages/logo.png", width = "200px")),
+                                           htmltools::tags$img(src = "pkgimages/logo.png", width = "200px")),
                                   aboutTable("nuggets")
                             )
                         )
