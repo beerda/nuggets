@@ -18,6 +18,10 @@
 
 
 test_that("rulebaseTable", {
+    skip_if_not_installed("shiny")
+    skip_if_not_installed("shinyWidgets")
+    skip_if_not_installed("htmltools")
+    
     rules <- data.frame(a = 1:3,
                         b = 4:6,
                         cond = c("x", "y", "x"))

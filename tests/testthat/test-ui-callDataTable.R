@@ -18,6 +18,10 @@
 
 
 test_that("callDataTable()", {
+    skip_if_not_installed("shiny")
+    skip_if_not_installed("shinyWidgets")
+    skip_if_not_installed("htmltools")
+    
     meta <- data.frame(
         data_name = c("condA", "condB", "numX"),
         type = c("condition", "condition", "numeric"),

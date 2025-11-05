@@ -18,6 +18,10 @@
 
 
 test_that("creationParamsTable", {
+    skip_if_not_installed("shiny")
+    skip_if_not_installed("shinyWidgets")
+    skip_if_not_installed("htmltools")
+    
     rules <- data.frame(x = 1:3)
     attr(rules, "call_function") <- "dig_tautologies"
     attr(rules, "call_args") <- list(
