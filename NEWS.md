@@ -1,3 +1,10 @@
+# nuggets 2.2.0
+- released: ???
+- moved Shiny-related packages (shiny, shinyjs, shinyWidgets, DT, htmltools,
+  htmlwidgets, jsonlite) from Imports to Suggests to make them optional
+  dependencies. The explore() function now checks for their availability and
+  provides informative error messages if they are missing.
+
 # nuggets 2.1.0
 - released: 2025-11-05
 - added cluster_associations()
