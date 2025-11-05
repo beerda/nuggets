@@ -404,7 +404,8 @@ partition <- function(.data,
     args <- list(var = x,
                  n = span + (n - 1) * inc,
                  style = style,
-                 intervalClosure = if (right) "right" else "left")
+                 intervalClosure = if (right) "right" else "left",
+                 warnSmallN = FALSE)
     args <- c(args, style_params)
     ii <- do.call(classIntervals, args)
 
