@@ -39,6 +39,17 @@ through integrated Shiny applications.
 
 
 
+## What Patterns Can You Discover?
+
+- **Association Rules**: *"University educated people in middle age working in IT have high income"* – identify conditions that strongly predict specific outcomes
+- **Conditional Correlations**: *"Study time correlates with test score on hard exams"* – discover relationships between variables that only hold under certain conditions  
+- **Complement Contrasts**: *"Smokers have lower life expectancy than non-smokers"* – find subgroups with significantly different characteristics from the rest
+- **Baseline Contrasts**: *"Measurement error differs from zero when using tool A"* – detect when a variable deviates significantly from a baseline under specific conditions
+- **Paired Contrasts**: *"Ice cream sales exceed tea sales on sunny days"* – compare paired measurements within specific contexts
+- **Custom Patterns**: Define your own evaluation functions for specialized pattern mining
+
+
+
 ## Key Features
 
 - Support for both **categorical** and **numeric data**.

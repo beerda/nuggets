@@ -1,5 +1,5 @@
 # nuggets 2.1.0
-- released: ???
+- released: 2025-11-05
 - added cluster_associations()
 - added add_interest() for associations flavour of nugget to compute
   additional interest measures (GUHA and arules measures)
@@ -8,10 +8,18 @@
 - enhanced UI layout of explore() for associations
 - added "Cluster" tab to explore() for associations
 - added selection of columns to show in explore() for associations
+- fixed rchk protection stack imbalance in CombinatorialProgress constructor
+
+# nuggets 2.0.2
+- released: 2025-10-31
+- attempt to fix rchk protection stack imbalance in CombinatorialProgress constructor
+- created vignette "Data Preparation"
+- updated main vignette
 
 # nuggets 2.0.1
 - released: 2025-10-13
-- fixed problem with C++20 and testthat by downgrading system req. to C++17
+- fixed problem with C++20 and testthat by downgrading system requirements
+  to C++17
 - added association_matrix()
 
 # nuggets 2.0.0

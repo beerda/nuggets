@@ -1,7 +1,7 @@
 Package: nuggets
 Title: Extensible Framework for Data Pattern Exploration
 Version: 2.1.0
-Date: 2025-10-13
+Date: 2025-11-05
 Authors@R: 
     person(given = "Michal",
            family = "Burda",

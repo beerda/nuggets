@@ -45,13 +45,14 @@ logic:
   - *Łukasiewicz* t-norm: $\max(0, a + b - 1)$ 
   
 Before applying `nuggets`, data columns intended as predicates must be prepared
-either by *dichotomization* (conversion into *dummy variables*) or by
+either by *dichotomization* (conversion into *dummy* logical variables) or by
 transformation into *fuzzy sets*. The package provides functions for both
-transformations. See the section [Data Preparation](#data-preparation) below
-for more details.
+transformations. See the [section](#data-preparation) Data Preparation below
+for a quick overview, or the [Data Preparation](data-preparation.html) vignette
+for a comprehensive guide.
 
-`nuggets` implements functions to search for pre-defined types of patterns, for
-example:
+`nuggets` implements functions to search for pre-defined types of patterns or
+to discover patterns of *user-defined* type. For example, the package provides:
 
 - `dig_associations()` for association rules,
 - `dig_baseline_contrasts()`, `dig_complement_contrasts()`, and
@@ -59,608 +60,644 @@ example:
   variables,
 - `dig_correlations()` for conditional correlations. 
 
-See [Pre-defined Patterns](#pre-defined-patterns) below for further details.
-
-Discovered rules and patterns can be post-processed, visualized, and explored
-interactively. Section
-[Post-processing and Visualization](#post-processing-and-visualization)
-describes these features.
-
-Finally, the package allows users to provide custom evaluation functions for
-conditions and to search for *user-defined* types of patterns:
+To provide custom evaluation functions for conditions and to search for
+*user-defined* types of patterns, the package offers two general functions:
 
 - `dig()` is a general function for searching arbitrary pattern types.
 - `dig_grid()` is a wrapper around `dig()` for patterns defined by conditions
   and a pair of columns evaluated by a user-defined function.  
 
-See [Custom Patterns](#custom-patterns) for more information.
+See the section [Pre-defined Patterns](#pre-defined-patterns) below for examples
+and details on using the pre-defined pattern discovery functions and the section
+[Advanced Use](#advanced-use) for examples of custom pattern discovery.
+
+Discovered rules and patterns can be post-processed, visualized, and explored
+interactively. That part is covered in the section [Post-processing and
+Visualization](#postprocessing-and-visualization) below.
 
 
 
 
 # Data Preparation
 
-For patterns based on crisp conditions, the data columns that serve as
-predicates in conditions must be transformed either to logical (`TRUE`/`FALSE`)
-columns, or to fuzzy sets with values from the interval $[0, 1]$. The first
-option is simpler and faster, and it is the recommended option for most
-applications. The second option is more flexible and allows to model
-uncertainty in data, but it is more computationally demanding.
+Before applying `nuggets`, data columns intended as predicates must be prepared
+either by *dichotomization* (conversion into *dummy variables*) or by
+transformation into *fuzzy sets*. The package provides the `partition()` 
+function for both transformations. 
+
+This section gives a quick overview of data preparation with `nuggets`. For
+a detailed guide, including information about all available functions and
+advanced techniques, please see the
+[Data Preparation Vignette](data-preparation.html).
 
 
+## Crisp (Boolean) Predicates Example
 
-## Preparation of Crisp (Boolean) Predicates
-
-For patterns based on crisp conditions, the data columns that would serve as
-predicates in conditions have to be transformed to logical (`TRUE`/`FALSE`)
-columns. That can be done in two ways:
-
-- numeric columns can be transformed to factors with a selected number of
-  levels, and then
-- factors can be transformed to dummy logical columns.
-
-Both operations can be done with the help of the `partition()` function. The
-`partition()` function requires the dataset as its first argument and a
-*tidyselect* selection expression to select the columns to be transformed.
-
-Factors and logical columns are automatically transformed to dummy logical columns
-by the `partition()` function. For numeric columns, the `partition()` function
-requires the `.method` argument to specify the method of partitioning:
-
-- `.method = "dummy"` transforms numeric columns to factors and then to dummy
-  logical columns. That effectively creates a separate logical column for each
-  distinct value of the numeric column.
-- `.method = "crisp"` transforms numeric columns to crisp predicates by
-  dividing the range of values into intervals and coding the values into dummy
-  logical columns according to the intervals.
-- there exist other methods of partitioning of numeric columns. These
-  methods create fuzzy predicates and are described in the next section.
-
-For example, consider the built-in `mtcars` dataset. This dataset contains
-information about various car models. For the sake of illustration,
-let us transform the `cyl` column into factor first:
+For crisp patterns, numeric columns are transformed to logical (`TRUE`/`FALSE`)
+columns. To show the process, we start with the built-in `mtcars` dataset,
+which we first slightly modify by converting the `cyl` column to a factor:
 
 ```{r}
-mtcars$cyl <- factor(mtcars$cyl,
-                     levels= c(4, 6, 8),
-                     labels = c("four", "six", "eight"))
-head(mtcars)
+# For demonstration, convert 'cyl' column of the mtcars dataset to a factor
+mtcars <- mtcars |>
+    mutate(cyl = factor(cyl, levels = c(4, 6, 8), labels = c("four", "six", "eight")))
+
+head(mtcars, n = 3)
 ```
 
-Factors are transformed to dummy logical columns by the `partition()` function
-automatically:
+Now we can use the `partition()` function to transform all columns into crisp
+predicates:
 
 ```{r}
-partition(mtcars, cyl)
-```
-
-The `vs`, `am`, and `gear` columns are numeric but actually represent
-categories. To transform them to dummy logical columns in the same way as
-factors, we can use the `partition()` function with the `.method` argument set to
-`"dummy"`:
-
-```{r}
-partition(mtcars, vs:gear, .method = "dummy")
-```
-
-The `mpg` column is numeric and therefore cannot be transformed directly into
-dummy logical columns. A better approach is to use the `"crisp"` method of
-partitioning.
-
-The `"crisp"` method divides the range of values of the selected columns into
-intervals specified by the `.breaks` argument and then encodes the values into
-dummy logical columns corresponding to the intervals. The `.breaks` argument
-is a numeric vector that specifies the interval boundaries.
-
-For example, the `mpg` values can be divided into four intervals: (-Inf, 15],
-(15, 20], (20, 30], and (30, Inf). The `.breaks` argument is then the vector
-`c(-Inf, 15, 20, 30, Inf)`, which defines the boundaries of these intervals.
-
-```{r}
-partition(mtcars, mpg, .method = "crisp", .breaks = c(-Inf, 15, 20, 30, Inf))
-```
-
-Note: it is advisable to put `-Inf` and `Inf` as the first and last
-elements of the `.breaks` vector to ensure that all values are covered by
-the intervals.
-
-If we want the breaks to be evenly spaced across the range of values, we can
-set `.breaks` to a single integer. This value specifies the number of intervals
-to create. For example, the following command divides the `disp` values into
-three intervals of equal width:
-
-```{r}
-partition(mtcars, disp, .method = "crisp", .breaks = 3)
-```
-
-Each call to `partition()` returns a tibble with the selected columns
-transformed to dummy logical columns, while the other columns remain
-unchanged.
-
-The transformation of the whole `mtcars` dataset to crisp predicates can be done
-as follows:
-
-```{r}
-crispMtcars <- mtcars |>
+# Transform the whole dataset to crisp predicates
+crisp_mtcars <- mtcars |>
     partition(cyl, vs:gear, .method = "dummy") |>
     partition(mpg, .method = "crisp", .breaks = c(-Inf, 15, 20, 30, Inf)) |>
     partition(disp:carb, .method = "crisp", .breaks = 3) 
 
-head(crispMtcars, n = 3)
+head(crisp_mtcars, n = 3)
 ```
+
+As seen above, the `"dummy"` method can be used to create logical columns for
+each category of processed variables. Here, it was applied to create dummy
+variables for the factor variable `cyl` as well as for the numeric variables
+`vs`, `am`, and `gear`.
+
+The method `"crisp"` creates logical columns representing intervals for
+numeric variables. In the example, it was used to create intervals for `mpg`
+based on specified breakpoints (`-Inf`, `15`, `20`, `30`, `Inf`), and for
+`disp`, `hp`, `drat`, `wt`, `qsec`, and `carb` using equal-width intervals
+(3 intervals each).
 
 Now all columns are logical and can be used as predicates in crisp conditions.
 
 
+## Fuzzy Predicates Example
 
-## Preparation of Triangular and Raised-Cosine Fuzzy Predicates
-
-In many real-world datasets, numeric attributes do not lend themselves to
-clear-cut, crisp boundaries. For example, deciding whether a car has "low
-mileage" or "high mileage" is often subjective. A vehicle with 19 miles per
-gallon may be considered "low" in one context but "medium" in another. Crisp
-intervals force a strict separation between categories, which can be too rigid
-and may lose information about gradual changes in the data.
-
-To address this, **fuzzy predicates** are used. A fuzzy predicate expresses
-the degree to which a condition is satisfied. Instead of being strictly
-`TRUE` or `FALSE` (although allowed too), each predicate is represented by
-a number in the interval $[0,1]$. A truth degree of 0 means the predicate is
-entirely false, 1 means it is fully true, and values in between indicate 
-partial membership. This allows us to model smooth transitions between 
-categories and capture more nuanced patterns.
-
-For example, a fuzzy predicate could represent "medium horsepower" in the
-`mtcars` dataset. A car with 120 hp may belong to this category to a degree
-of 0.8, while a car with 150 hp may belong to it only to a degree of 0.2.
-Such representations are more faithful to human reasoning and often yield
-patterns that are both more robust and more interpretable.
-
-The transformation of numeric columns to fuzzy predicates can be done with the
-`partition()` function. As with crisp partitioning, factors are transformed to
-dummy logical columns. Numeric columns, however, are transformed into *fuzzy
-truth values*. The `partition()` function provides two fuzzy partitioning methods:
-
-- `.method = "triangle"` creates fuzzy sets with triangular or trapezoidal
-  membership functions;
-- `.method = "raisedcos"` creates fuzzy sets with raised cosine or trapezoidal
-  raised-cosine membership functions.
-
-These membership functions specify how strongly a value belongs to a fuzzy set.
-The choice of function depends on the desired smoothness of the transition
-between sets.
-
-> More advanced fuzzy partitioning of numeric columns can be achieved with the
-> [lfl](https://cran.r-project.org/package=lfl) package, which provides
-> tools for defining fuzzy sets of many types, including linguistic terms such as
-> "very small" or "extremely big". See the
-> [`lfl` documentation](https://github.com/beerda/lfl/blob/master/vignettes/main.pdf)
-> for more information.
-
-Both triangular and raised cosine shapes are fully defined by three points:
-the left border, the peak, and the right border. The `.breaks` argument in the
-`partition()` function specifies these points. See the following figure for an
-illustration of triangular and raised cosine membership functions for
-`.breaks = c(-10, 0, 10)`:
-
-```{r}
-#| fig.alt: >
-#|   Comparison of triangular and raised cosine membership functions for .breaks = c(-10, 0, 10)
-#| fig.cap: >
-#|   Comparison of triangular and raised cosine membership functions for `.breaks = c(-10, 0, 10)`
-#| fig.width: 7
-#| fig.height: 4
-#| out.width: "80%"
-#| fig.align: "center"
-#| echo: false
-#| message: false
-#| warning: false
-
-data.frame(x = seq(-15, 15, length.out = 1000)) |>
-    partition(x, .method = "triangle", .breaks = c(-10, 0, 10), .labels = "triangle", .keep = TRUE) |>
-    partition(x, .method = "raisedcos", .breaks = c(-10, 0, 10), .labels = "raisedcos", .keep = TRUE) |>
-    pivot_longer(starts_with("x="), names_to = "method", values_to = "value") |>
-    mutate(method = gsub("x=", "", method)) |>
-    ggplot() +
-        aes(x = x, y = value, color = method) +
-        geom_line(size = 1.2) +
-        labs(x = "x", y = "membership degree", title = ".breaks = c(-10, 0, 10)") +
-        theme_gray(base_size = 16) +
-        theme(legend.position = "right")
-```
-
-Each consecutive triplet of values in `.breaks` defines one fuzzy set. To
-create e.g. three fuzzy sets, five break points are needed. For instance,
-`.breaks = c(-10, -5, 0, 5, 10)` defines three fuzzy sets with peaks at
--5, 0, and 5. See the following figure for an illustration of these fuzzy sets:
-
-```{r}
-#| fig.alt: >
-#|   Fuzzy sets with triangular membership functions for .breaks = c(-10, -5, 0, 5, 10)
-#| fig.cap: >
-#|   Fuzzy sets with triangular membership functions for
-#|   `partition(x, .method = "triangle", .breaks = c(-10, -5, 0, 5, 10))`
-#| fig.width: 7
-#| fig.height: 4
-#| out.width: "80%"
-#| fig.align: "center"
-#| echo: false
-#| message: false
-#| warning: false
-
-data.frame(x = seq(-15, 15, length.out = 1000)) |>
-    partition(x, .method = "triangle", .breaks = c(-10, -5, 0, 5, 10), .keep = TRUE) |>
-    pivot_longer(starts_with("x="), names_to = "fuzzy set", values_to = "value") |>
-    ggplot() +
-        aes(x = x, y = value, color = `fuzzy set`) +
-        geom_line(size = 1.2) +
-        labs(x = "x", y = "membership degree", title = ".breaks = c(-10, -5, 0, 5, 10)") +
-        theme_gray(base_size = 16) +
-        theme(legend.position = "right")
-```
-
-It is often useful to extend the fuzzy sets on the edges to infinity. That
-ensures that all values are covered by the fuzzy sets. To achieve that, `-Inf`
-and `Inf` can be added as the first and last elements of the `.breaks` vector:
-
-```{r}
-#| fig.alt: >
-#|   Fuzzy sets with triangular membership functions for .breaks = c(-Inf, -5, 0, 5, Inf)
-#| fig.cap: >
-#|   Fuzzy sets with triangular membership functions for
-#|   `partition(x, .method = "triangle", .breaks = c(-Inf, -5, 0, 5, Inf))`
-#| fig.width: 7
-#| fig.height: 4
-#| out.width: "80%"
-#| fig.align: "center"
-#| echo: false
-#| message: false
-#| warning: false
-
-data.frame(x = seq(-15, 15, length.out = 1000)) |>
-    partition(x, .method = "triangle", .breaks = c(-Inf, -5, 0, 5, Inf), .keep = TRUE) |>
-    pivot_longer(starts_with("x="), names_to = "fuzzy set", values_to = "value") |>
-    ggplot() +
-        aes(x = x, y = value, color = `fuzzy set`) +
-        geom_line(size = 1.2) +
-        labs(x = "x", y = "membership degree", title = ".breaks = c(-Inf, -5, 0, 5, Inf)") +
-        theme_gray(base_size = 16) +
-        theme(legend.position = "right")
-```
-
-If a regular partitioning of the range of values is desired, `.breaks` can be set to a
-single integer, which specifies the number of fuzzy sets to create. For example,
-`.breaks = 4` creates partitioning with four fuzzy sets:
-
-```{r}
-#| fig.alt: >
-#|   Fuzzy sets with triangular membership functions for .breaks = 4
-#| fig.cap: >
-#|   Fuzzy sets with triangular membership functions for
-#|   `partition(x, .method = "triangle", .breaks = 4)`
-#| fig.width: 7
-#| fig.height: 4
-#| out.width: "80%"
-#| fig.align: "center"
-#| echo: false
-#| message: false
-#| warning: false
-
-data.frame(x = seq(-15, 15, length.out = 1000)) |>
-    partition(x, .method = "triangle", .breaks = 4, .keep = TRUE) |>
-    pivot_longer(starts_with("x="), names_to = "fuzzy set", values_to = "value") |>
-    ggplot() +
-        aes(x = x, y = value, color = `fuzzy set`) +
-        geom_line(size = 1.2) +
-        labs(x = "x", y = "membership degree", title = ".breaks = 4") +
-        theme_gray(base_size = 16) +
-        theme(legend.position = "right")
-```
-
-The same is valid for raised cosine fuzzy sets. For instance, the following
-figure shows five raised cosine fuzzy sets defined by
-`.breaks = c(-Inf, -10, -5, 0, 5, 10, Inf)`:
-
-```{r}
-#| fig.alt: >
-#|   Fuzzy sets with raised cosine membership functions for .breaks = c(-Inf, -10, -5, 0, 5, 10, Inf)
-#| fig.cap: >
-#|   Fuzzy sets with raised cosine membership functions for 
-#|   `partition(x, .method = "raisedcos", .breaks = c(-Inf, -10, -5, 0, 5, 10, Inf))`
-#| fig.width: 7
-#| fig.height: 4
-#| out.width: "80%"
-#| fig.align: "center"
-#| echo: false
-#| message: false
-#| warning: false
-
-data.frame(x = seq(-15, 15, length.out = 1000)) |>
-    partition(x, .method = "raisedcos", .breaks = c(-Inf, -10, -5, 0, 5, 10, Inf), .keep = TRUE) |>
-    pivot_longer(starts_with("x="), names_to = "fuzzy set", values_to = "value") |>
-    ggplot() +
-        aes(x = x, y = value, color = `fuzzy set`) +
-        geom_line(size = 1.2) +
-        labs(x = "x", y = "membership degree", title = ".breaks = c(-Inf, -10, -5, 0, 5, 10, Inf)") +
-        theme_gray(base_size = 16) +
-        theme(legend.position = "right")
-```
-
-
-A fuzzy transformation of the whole `mtcars` dataset can be done as follows:
+Fuzzy predicates express the degree to which a condition is satisfied, with
+values in the interval $[0,1]$. This allows modeling of smooth transitions
+between categories:
 
 ```{r, message=FALSE}
-fuzzyMtcars <- mtcars |>
+# Start with fresh mtcars and transform to fuzzy predicates
+fuzzy_mtcars <- mtcars |>
     partition(cyl, vs:gear, .method = "dummy") |>
     partition(mpg, .method = "triangle", .breaks = c(-Inf, 15, 20, 30, Inf)) |>
     partition(disp:carb, .method = "triangle", .breaks = 3) 
 
-head(fuzzyMtcars, n = 3)
+head(fuzzy_mtcars, n = 3)
 ```
+
+Similar to the crisp example, the `"dummy"` method creates logical columns for
+categorical variables (`cyl`, `vs`, `am`, `gear`).
+
+The `"triangle"` method creates fuzzy predicates with triangular membership
+functions. For `mpg`, it uses specified breakpoints to define fuzzy intervals.
+For the remaining numeric variables (`disp` through `carb`), it automatically
+creates 3 overlapping fuzzy sets with smooth transitions between intervals.
 
 Note that the `cyl`, `vs`, `am`, and `gear` columns are still represented by
-dummy logical columns, while the `mpg`, `disp`, and other columns are now
-represented by fuzzy sets. This combination allows both crisp and fuzzy
-predicates to be used together in pattern discovery, offering more flexibility 
-and interpretability.
+dummy logical columns, while the numeric columns are now represented by fuzzy
+sets. This combination allows both crisp and fuzzy predicates to be used 
+together in pattern discovery.
 
 
+## Advanced Data Preparation Capabilities
 
-## Preparation of Trapezoidal Fuzzy Predicates
+The `nuggets` package provides powerful and flexible data preparation tools. 
+The [Data Preparation](data-preparation.html) vignette covers these capabilities 
+in depth, including:
 
-The triangular and raised cosine membership functions are often sufficient to
-capture gradual transitions in numeric data. However, in some situations it is
-useful to have fuzzy sets that stay *fully true (membership = 1)* over a wider
-interval before decreasing again. This generalization corresponds to a
-*trapezoidal fuzzy set*, which can be seen as a triangle or raised cosine with
-a "flat top".
+- **Crisp (Boolean) partitioning** with customizable interval strategies:
+  - Equal-width intervals for uniform discretization
+  - Data-driven methods (quantile, k-means, hierarchical clustering, etc.) for 
+    optimal breakpoints that respect the data structure
+  - Custom breakpoints for domain-specific intervals
+  
+- **Fuzzy partitioning** for modeling gradual transitions and uncertainty:
+  - Triangular membership functions for basic fuzzy sets
+  - Raised-cosine membership functions for smoother transitions
+  - Trapezoidal shapes using `.span` and `.inc` parameters for overlapping 
+    fuzzy sets
+  
+- **Quality control utilities** to improve pattern mining:
+  - `is_almost_constant()` and `remove_almost_constant()` to identify and 
+    filter uninformative columns
+  - `dig_tautologies()` to find always-true or almost-always-true rules that
+    can be used to prune search spaces
+  
+- **Custom labels** for predicates to make discovered patterns more interpretable
 
-With `partition()`, trapezoids can be defined for both `"triangle"` and
-`"raisedcos"` methods by controlling how many consecutive break points
-constitute one fuzzy set and how far the window shifts along the breaks.
-That can be accomplished with the `.span` and `.inc` arguments:
-
-- `.span` - specifies the width of the flat top in terms of the number of
-  break intervals that should be merged.
-- `.inc` - the shift of the window along `.breaks` when forming the next
-  fuzzy set.  
-
-By default, `.span = 1` and `.inc = 1`, which means that each fuzzy set is
-triangular or raised cosine. Setting `.span` to a value greater than 1
-creates trapezoidal fuzzy sets. With `.span = 2`, each fuzzy set is defined by
-four consecutive break points - a flat top spans two break intervals.
-The following figure is the result of setting `.span = 2` and
-`.breaks = c(-10, -5, 5, 10)`:
-
-```{r}
-#| fig.alt: >
-#|   Fuzzy sets with triangular membership functions for .span = 2, .breaks = c(-10, -5, 5, 10)`
-#| fig.cap: >
-#|   Fuzzy sets with triangular membership functions for 
-#|   `partition(x, .method = "triangle", .span = 2, .breaks = c(-10, -5, 5, 10))`
-#| fig.width: 7
-#| fig.height: 4
-#| out.width: "80%"
-#| fig.align: "center"
-#| echo: false
-#| message: false
-#| warning: false
-
-data.frame(x = seq(-15, 15, length.out = 1000)) |>
-    partition(x, .method = "triangle", .breaks = c(-10, -5, 5, 10), .span = 2, .keep = TRUE) |>
-    pivot_longer(starts_with("x="), names_to = "fuzzy set", values_to = "value") |>
-    ggplot() +
-        aes(x = x, y = value, color = `fuzzy set`) +
-        geom_line(size = 1.2) +
-        labs(x = "x", y = "membership degree", title = ".span = 2, .breaks = c(-10, -5, 5, 10)") +
-        theme_gray(base_size = 16) +
-        theme(legend.position = "right")
-```
-
-Additional fuzzy sets are created by shifting the window along the break points.
-The shift is controlled by the `.inc` argument. By default, `.inc = 1`, which
-means that the window shifts by one break point. Consider the following example
-that shows the effect of setting `.inc = 1` in addition to `.span = 2` and
-`.breaks = c(-15, -10, -5, 0, 5, 10, 15)`:
-
-```{r}
-#| fig.alt: >
-#|   Fuzzy sets with triangular membership functions for .inc = 1, .span = 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15)`
-#| fig.cap: >
-#|   Fuzzy sets with triangular membership functions for 
-#|   `partition(x, .method = "triangle", .inc = 1, .span = 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15))`
-#| fig.width: 7
-#| fig.height: 4
-#| out.width: "80%"
-#| fig.align: "center"
-#| echo: false
-#| message: false
-#| warning: false
-
-data.frame(x = seq(-15, 15, length.out = 1000)) |>
-    partition(x, .method = "triangle", .breaks = c(-15, -10, -5, 0, 5, 10, 15), .inc = 1, .span = 2, .keep = TRUE) |>
-    pivot_longer(starts_with("x="), names_to = "fuzzy set", values_to = "value") |>
-    ggplot() +
-        aes(x = x, y = value, color = `fuzzy set`) +
-        geom_line(size = 1.2) +
-        labs(x = "x", y = "membership degree", title = ".inc = 1, .span = 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15)") +
-        theme_gray(base_size = 16) +
-        theme(legend.position = "right")
-```
-
-Setting `.inc` to a value greater than 1 modifies the shift of the window along 
-the break points. For example, with `.inc = 3`, the window shifts by three
-break points, which effectively skips two fuzzy sets after each created fuzzy set:
-
-```{r}
-#| fig.alt: >
-#|   Fuzzy sets with triangular membership functions for .inc = 3, .span = 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15)`
-#| fig.cap: >
-#|   Fuzzy sets with triangular membership functions for 
-#|   `partition(x, .method = "triangle", .inc = 3, .span = 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15))`
-#| fig.width: 7
-#| fig.height: 4
-#| out.width: "80%"
-#| fig.align: "center"
-#| echo: false
-#| message: false
-#| warning: false
-
-data.frame(x = seq(-15, 15, length.out = 1000)) |>
-    partition(x, .method = "triangle", .breaks = c(-15, -10, -5, 0, 5, 10, 15), .inc = 3, .span = 2, .keep = TRUE) |>
-    pivot_longer(starts_with("x="), names_to = "fuzzy set", values_to = "value") |>
-    ggplot() +
-        aes(x = x, y = value, color = `fuzzy set`) +
-        geom_line(size = 1.2) +
-        labs(x = "x", y = "membership degree", title = ".inc = 3, .span = 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15)") +
-        theme_gray(base_size = 16) +
-        theme(legend.position = "right")
-```
+For example, you can use quantile-based partitioning to ensure balanced 
+predicates, or use raised-cosine fuzzy sets with custom labels to create 
+meaningful linguistic terms like "very_low", "low", "medium", "high", and 
+"very_high". These preparation choices significantly impact the interpretability 
+and usefulness of patterns discovered in subsequent analyses.
 
 
 
 
 # Pre-defined Patterns
 
-`nuggets` provides a set of functions for searching for some best-known pattern types.
-These functions allow to process Boolean data, fuzzy data, or both. The result of
-these functions is always a tibble with patterns stored as rows. For more advance
-usage, which allows to search for custom patterns or to compute user-defined measures
-and statistics, see the section **Custom Patterns**.
+The package `nuggets` provides a set of functions for discovering some of the
+best-known pattern types. These functions can process Boolean data, fuzzy data,
+or both. Each function returns a tibble, where every row represents one detected
+pattern.
+
+> **Note:** This section assumes that the data have already been **preprocessed**
+> — i.e., transformed into a binarized or fuzzified form. See the previous
+> section [Data Preparation](#data-preparation) for details on how to prepare
+> your dataset (for example, `crisp_mtcars` and `fuzzy_mtcars`).
+
+For more advanced workflows — such as defining custom pattern types or
+computing user-defined measures — see the section
+[Advanced Use](#advanced-use).
 
 
-### Search for Association Rules
+## Search for Association Rules
 
-Association rules are rules of the form $A \Rightarrow B$, where $A$ is either
-Boolean or fuzzy condition in the form of conjunction, and $B$ is a Boolean or
-fuzzy predicate.
+**Association rules** identify conditions (*antecedents*) under which a specific
+feature (*consequent*) is present very often.
 
-Before continuing with the search for rules, it is advisable to create the so-called
-*vector of disjoints*. The vector of disjoints is a character vector with the same
-length as the number of columns in the analyzed dataset. It specifies predicates, which
-are mutually exclusive and should not be combined together in a single pattern's condition:
-columns with equal values in the disjoint vector will not appear in a single condition.
-Providing the vector of disjoints to the algorithm will speed-up the search as it makes
-no sense, e.g., to combine `Plant=Qn1` and `Plant=Qn2` in a condition
-`Plant=Qn1 & Plant=Qn2` as such formula is never true for any data row.
+\[
+A \Rightarrow C
+\]
 
-The vector of disjoints can be easily created from the column names of the dataset, e.g.,
-by obtaining the first part of column names before the equal sign, which is neatly
-provided by the `var_names()` function as follows:
+If condition `A` is satisfied, then the feature `C` tends to be present.
+
+For example,  
+
+<center>
+`university_edu & middle_age & IT_industry => high_income`  
+</center>
+
+can be read as:
+
+<center>
+*People in middle age with university education working in IT industry are very
+likely to have a high income.*
+</center>
+
+In practice, the antecedent `A` is a set of predicates, and the consequent `C`
+is usually a single predicate.
+
+For a set of predicates \(I\), let \(\text{supp}(I)\) denote the *support* —
+the relative frequency (for logical data) or the mean truth degree (for fuzzy
+data) of rows satisfying all predicates in \(I\). Using this notation,
+the following rule properties and quality measures may be defined:
+
+- **Length** — number of predicates in the antecedent.  
+- **Coverage** (antecedent support) — \(\text{supp}(A)\).  
+- **Consequent support** — \(\text{supp}(C)\).  
+- **Support** — \(\text{supp}(A \cup C)\).  
+- **Confidence** — \(\text{supp}(A \cup C) / \text{supp}(A)\).
+- **Lift** — \(\text{supp}(A \cup C) / (\text{supp}(A) \text{supp}(C))\).
+
+Rules with high *support* are frequent in the data. Rules with high *confidence*
+indicate a strong association between antecedent and consequent.
+Rules with high *lift* suggest that the validity of antecedent increases the
+likelihood of the consequent occurring.
+
+Before searching for rules, it is recommended to create a *vector of disjoints*,
+which specifies predicates that must not appear together in the same condition.
+This vector should have the same length as the number of dataset columns.
+
+For example, columns representing `gear=3` and `gear=4` are mutually exclusive,
+so their shared group label in `disj` prevents meaningless conditions like
+`gear=3 & gear=4`. You can conveniently generate this vector with
+`var_names()`:
 
 ```{r}
-#disj <- var_names(colnames(fuzzyCO2))
-#print(disj)
+disj <- var_names(colnames(fuzzy_mtcars))
+print(disj)
 ```
 
-The function `dig_associations` takes the analyzed dataset as its first parameter and
-a pair of `tidyselect` expressions to select the column names to appear
-in the left-hand (antecedent) and right-hand (consequent) side of the rule. The following
-command searches for associations rules, such that:
+The `dig_associations()` function searches for association rules. Its main
+arguments are:
 
-- any column except those starting with "Treatment" is in the antecedent;
-- any column starting with "Treatment" is in the consequent;
-- the minimum support is 0.02 (support is the proportion of rows that satisfy the
-  antecedent AND consequent));
-- the minimum confidence is 0.8 (confidence is the proportion of rows satisfying the
-  consequent GIVEN the antecedent is true).
+- `x`: the data matrix or data frame (logical or numeric);
+- `antecedent`, `consequent`: tidyselect expressions selecting columns for each
+  side of the rule;
+- `disjoint`: a vector defining mutually exclusive predicates;
+- rule filtering thresholds such as `min_support`, `min_confidence`,
+  `min_coverage`, and limits like `min_length`, `max_length`;
+- optional parameters such as `t_norm`, and `contingency_table`.
+
+In the following example, we search for fuzzy association rules in the dataset
+`fuzzy_mtcars`, such that:
+
+- any column except those starting with `"am"` may appear in the antecedent;
+- columns starting with `"am"` may appear in the consequent;
+- minimum support is `0.02`, i.e., 2 % of data rows have to contain both the
+  antecedent and consequent of the rule;
+- minimum confidence is `0.8`, i.e., the conditional probability of consequent
+  given antecedent should be at least 80%;
+- additionally to basic quality measures, the contingency table for each
+  rule is computed. The *contingency table* is a quadruplet `pp`, `pn`, `np` and
+  `nn`, which contains the counts (or sums of degrees) of rows satisfying 
+  antecedent & consequent (`pp`), antecedent & not consequent (`pn`), not
+  antecedent & consequent (`np`), and not antecedent & not consequent
+  (`nn`). These values are important for further computation of various 
+  additional interestingness measures.
 
 ```{r}
-#result <- dig_associations(fuzzyCO2,
-                           #antecedent = !starts_with("Treatment"),
-                           #consequent = starts_with("Treatment"),
-                           #disjoint = disj,
-                           #min_support = 0.02,
-                           #min_confidence = 0.8)
+result <- dig_associations(fuzzy_mtcars,
+                           antecedent = !starts_with("am"),
+                           consequent = starts_with("am"),
+                           disjoint = disj,
+                           min_support = 0.02,
+                           min_confidence = 0.8,
+                           contingency_table = TRUE)
 ```
 
-The result is a tibble with found rules. We may arrange it by support in descending order:
+The result is a tibble containing the discovered rules and their quality
+metrics. You can arrange them, for example, by decreasing support:
 
 ```{r}
-#result <- arrange(result, desc(support))
-#print(result)
+result <- arrange(result, desc(support))
+print(result)
 ```
+
+This example illustrates the typical workflow for mining association rules with
+`nuggets`. The same structure and arguments apply when analyzing either fuzzy or
+Boolean datasets.
+
 
 
 ## Conditional Correlations
 
-TBD (`dig_correlations`)
+**Conditional correlations** identify strong relationships between pairs of 
+numeric variables under specific conditions.
+
+The `dig_correlations()` function searches for pairs of variables that are 
+significantly correlated within sub-data satisfying generated conditions. This 
+is useful for discovering context-dependent relationships.
+
+In the following example, we search for correlations between different numeric
+variables in the original `mtcars` data under conditions defined by the prepared
+predicates in `crisp_mtcars`:
+
+```{r}
+# Prepare combined dataset with both condition predicates and numeric variables
+combined_mtcars <- cbind(crisp_mtcars, mtcars[, c("mpg", "disp", "hp", "wt")])
+
+# Extend disjoint vector for the new numeric columns
+disj_combined <- c(var_names(colnames(crisp_mtcars)),
+                   c("mpg", "disp", "hp", "wt"))
+
+# Search for conditional correlations
+corr_result <- dig_correlations(combined_mtcars,
+                                condition = colnames(crisp_mtcars),
+                                xvars = c("mpg", "hp"),
+                                yvars = c("wt", "disp"),
+                                disjoint = disj_combined,
+                                min_length = 1,
+                                max_length = 2,
+                                min_support = 0.2,
+                                method = "pearson")
+
+print(corr_result)
+```
+
+This example combines crisp predicates (from `crisp_mtcars`) with numeric
+variables from the original `mtcars` dataset. The function searches for
+conditions under which pairs of numeric variables show significant Pearson
+correlations. The `disjoint` vector is extended to include the new numeric
+columns, preventing conflicts in the search algorithm.
+
+The result shows conditions under which specific pairs of variables exhibit 
+strong correlations, along with correlation coefficients and p-values.
+
 
 ## Contrast Patterns
 
-TBD (`dig_contrasts`)
+Contrast patterns identify conditions under which numeric variables show 
+statistically significant differences. The `nuggets` package provides several 
+functions for different types of contrasts.
+
+
+### Baseline Contrasts
+
+*Baseline contrasts* identify conditions under which a variable is 
+significantly different from a baseline value (typically zero) using a 
+one-sample statistical test.
+
+```{r}
+# Prepare combined dataset with predicates and numeric variables
+combined_mtcars2 <- cbind(crisp_mtcars, 
+                          mtcars[, c("mpg", "hp", "wt")])
+
+# Extend disjoint vector for the new numeric columns
+disj_combined2 <- c(var_names(colnames(crisp_mtcars)),
+                    c("mpg", "hp", "wt"))
+
+# Search for baseline contrasts
+baseline_result <- dig_baseline_contrasts(combined_mtcars2,
+                                         condition = colnames(crisp_mtcars),
+                                         vars = c("mpg", "hp", "wt"),
+                                         disjoint = disj_combined2,
+                                         min_length = 1,
+                                         max_length = 2,
+                                         min_support = 0.2,
+                                         method = "t")
+
+head(baseline_result)
+```
+
+This example tests whether the mean of numeric variables (`mpg`, `hp`, `wt`)
+significantly differs from zero under various conditions. The `method = "t"`
+parameter specifies a t-test. The results show which combinations of
+conditions lead to statistically significant deviations from the baseline.
+
+
+### Complement Contrasts
+
+*Complement contrasts* identify conditions under which a variable differs 
+significantly between elements that satisfy the condition and those that don't.
+
+```{r}
+complement_result <- dig_complement_contrasts(combined_mtcars2,
+                                             condition = colnames(crisp_mtcars),
+                                             vars = c("mpg", "hp", "wt"),
+                                             disjoint = disj_combined2,
+                                             min_length = 1,
+                                             max_length = 2,
+                                             min_support = 0.15,
+                                             method = "t")
+
+head(complement_result)
+```
+
+This example uses a two-sample t-test to compare the mean values of numeric
+variables between rows that satisfy a condition and rows that don't. The
+results identify conditions where subgroups have significantly different
+characteristics compared to the rest of the data.
+
+
+### Paired Baseline Contrasts
+
+*Paired baseline contrasts* identify conditions under which there is a 
+significant difference between two paired numeric variables.
+
+```{r}
+paired_result <- dig_paired_baseline_contrasts(combined_mtcars2,
+                                              condition = colnames(crisp_mtcars),
+                                              xvars = c("mpg", "hp"),
+                                              yvars = c("wt", "wt"),
+                                              disjoint = disj_combined2,
+                                              min_length = 1,
+                                              max_length = 2,
+                                              min_support = 0.2,
+                                              method = "t")
+
+head(paired_result)
+```
+
+This example performs paired t-tests to compare two variables within the same
+rows under specific conditions. Here, it tests whether `mpg` differs from `wt`
+(and `hp` from `wt`) in various subgroups. This is useful for detecting
+context-dependent relationships between paired measurements.
 
 
 # Post-processing and Visualization
 
-TBD
+After discovering patterns with `nuggets`, you'll often want to manipulate, format, and visualize the results. The package provides several tools for these tasks.
 
-# Custom Patterns
 
-The `nuggets` package allows to execute a user-defined callback function on each generated
-frequent condition. That way a custom type of patterns may be searched. The following example
-replicates the search for associations rules with the custom callback function. For that, a dataset
-has to be dichotomized and the disjoint vector created as in the **Data Preparation** section
-above:
+## Visualizing Association Rules with Diamond Plots
 
-```{r}
-#head(fuzzyCO2)
-#print(disj)
+The `geom_diamond()` function provides a specialized visualization for association
+rules and their hierarchical structure. It displays rules as a lattice where 
+broader (more general) conditions appear above their descendants:
+
+```{r, fig.width=8, fig.height=5}
+# Search for rules with various confidence levels for visualization
+vis_rules <- dig_associations(fuzzy_mtcars,
+                              antecedent = starts_with(c("gear", "vs")),
+                              consequent = "am=1",
+                              disjoint = disj,
+                              min_support = 0,
+                              min_confidence = 0,
+                              min_length = 0,
+                              max_length = 3,
+                              max_results = 50)
+print(vis_rules)
+
+# Create diamond plot showing rule hierarchy
+ggplot(vis_rules) +
+    aes(condition = antecedent,
+        fill = confidence,
+        linewidth = confidence,
+        size = support,
+        label = paste0(antecedent, "\nconf: ", round(confidence, 2))) +
+    geom_diamond(nudge_y = 0.25) +
+    scale_x_discrete(expand = expansion(add = 0.5)) +
+    scale_y_discrete(expand = expansion(add = 0.25)) +
+    labs(title = "Association Rules Hierarchy",
+         subtitle = "consequent: am=1")
 ```
 
-As we want to search for associations rules with some minimum support and confidence, we define
-the variables to hold that thresholds. We also need to define a callback function that will be
-called for each found frequent condition. Its purpose is to generate the rules with the
-obtained condition as an antecedent:
+
+This example creates a hierarchical visualization of association rules. The
+`geom_diamond()` function arranges rules in a lattice structure where simpler
+rules (with fewer predicates) appear at the top and more complex rules below.
+Visual properties (fill color, edge width, node size) encode
+rule quality measures, making it easy to identify the most interesting patterns.
+Custom label merges antecedent with confidence value for better readability.
+Additional modifications (`scale_x_discrete`, `scale_y_discrete`) add padding.
+
+The diamond plot helps identify:
+
+- Simple vs. complex rules (vertical position)
+- Antecedent relationship (ancestor and descendant rules are connected with lines)
+- Strong vs. weak confidence (node color intensity)
+- Frequent vs. rare rules (node size)
+- Improvement/worsening of confidence (line size and color: improvement is depicted
+  with gray lines, worsening with reddish line; the amount of change is indicated
+  with the width of the lines)
+  
+
+
+# Interactive Exploration
+
+The `explore()` function launches an interactive Shiny application for exploring 
+discovered patterns. This is particularly useful for association rules:
+
+```{r, eval=FALSE}
+# Launch interactive explorer for association rules
+rules <- dig_associations(fuzzy_mtcars,
+                         antecedent = everything(),
+                         consequent = everything(),
+                         min_support = 0.05,
+                         min_confidence = 0.7)
+
+# Open interactive explorer
+explore(rules, data = fuzzy_mtcars)
+```
+
+The interactive explorer provides:
+
+- **Rule filtering**: Filter rules by support, confidence, lift, and other measures
+- **Sorting and searching**: Find specific rules of interest
+- **Visualizations**: Multiple visualization types for rule exploration
+
+
+
+# Advanced Use
+
+For advanced workflows, the `nuggets` package allows users to define custom 
+pattern types and evaluation functions. This section demonstrates how to use 
+the general `dig()` function with custom callbacks and the specialized 
+`dig_grid()` wrapper.
+
+
+## Custom Patterns with dig()
+
+The `dig()` function allows you to execute a user-defined callback function on 
+each generated frequent condition. This enables searching for custom pattern 
+types beyond the pre-defined functions.
+
+The following example replicates the search for association rules using a custom 
+callback function with the datasets prepared earlier:
 
 ```{r}
+# Define thresholds for custom association rules
 min_support <- 0.02
 min_confidence <- 0.8
 
-f <- function(condition, support, foci_supports) {
-    conf <- foci_supports / support
-    sel <- !is.na(conf) & conf >= min_confidence & !is.na(foci_supports) & foci_supports >= min_support
-    conf <- conf[sel]
-    supp <- foci_supports[sel]
+# Define custom callback function
+f <- function(condition, support, pp, pn) {
+    # Calculate confidence for each focus (consequent)
+    conf <- pp / support
     
+    # Filter rules by confidence and support thresholds
+    sel <- !is.na(conf) & conf >= min_confidence & !is.na(pp) & pp >= min_support
+    conf <- conf[sel]
+    supp <- pp[sel]
+    
+    # Return list of rules meeting criteria
     lapply(seq_along(conf), function(i) { 
       list(antecedent = format_condition(names(condition)),
-           consequent = format_condition(names(conf)[[i]]),
+           consequent = names(conf)[[i]],
            support = supp[[i]],
            confidence = conf[[i]])
     })
 }
+
+# Search using custom callback
+custom_result <- dig(fuzzy_mtcars,
+                    f = f,
+                    condition = !starts_with("am"),
+                    focus = starts_with("am"),
+                    disjoint = disj,
+                    min_length = 1,
+                    min_support = min_support)
+
+# Flatten and format results
+custom_result <- custom_result |>
+  unlist(recursive = FALSE) |>
+  lapply(as_tibble) |>
+  do.call(rbind, args = _) |>
+  arrange(desc(support))
+
+print(custom_result)
 ```
 
-The callback function `f()` defines three arguments: `condition`, `support` and `foci_supports`.
-The names of the arguments are not random. Based on the argument names of the callback function,
-the searching algorithm provides information to the function. Here `condition` is a vector of indices
-representing the conjunction of predicates in a condition. By the predicate we mean the column in the
-source dataset. The `support` argument gets the relative frequency of the condition in the dataset.
-`foci_supports` is a vector of supports of special predicates, which we call "foci" (plural of "focus"),
-within the rows satisfying the condition. For associations rules, foci are potential rule consequents.
+The callback function `f()` receives information based on its argument names:
 
-Now we can run the digging for rules:
+- `condition`: vector of column indices forming the condition
+- `support`: relative frequency of the condition
+- `pp`, `pn`: contingency table entries
+
+This approach gives you full control over pattern evaluation and filtering logic.
+
+
+## Grid-Based Patterns with dig_grid()
+
+The `dig_grid()` function is useful for patterns based on relationships between 
+pairs of columns. It creates a grid of column combinations and evaluates a 
+user-defined function for each condition and column pair.
+
+Here's an example that computes custom statistics for pairs of numeric variables:
 
 ```{r}
-#result <- dig(fuzzyCO2,
-              #f = f,
-              #condition = !starts_with("Treatment"),
-              #focus = starts_with("Treatment"),
-              #disjoint = disj,
-              #min_length = 1,
-              #min_support = min_support)
+# Define callback for grid-based patterns
+grid_callback <- function(d, weights) {
+    if (nrow(d) < 5) return(NULL)  # Skip if too few observations
+    
+    # Compute weighted correlation
+    wcor <- cov.wt(d, wt = weights, cor = TRUE)$cor[1, 2]
+    
+    list(
+        correlation = wcor,
+        n_obs = sum(weights > 0.1),
+        mean_x = weighted.mean(d[[1]], weights),
+        mean_y = weighted.mean(d[[2]], weights)
+    )
+}
+
+# Prepare combined dataset
+combined_fuzzy <- cbind(fuzzy_mtcars, mtcars[, c("mpg", "hp", "wt")])
+
+# Extend disjoint vector for new numeric columns
+combined_disj3 <- c(var_names(colnames(fuzzy_mtcars)),
+                    c("mpg", "hp", "wt"))
+
+# Search using grid approach
+grid_result <- dig_grid(combined_fuzzy,
+                       f = grid_callback,
+                       condition = colnames(fuzzy_mtcars),
+                       xvars = c("mpg", "hp"),
+                       yvars = c("wt"),
+                       disjoint = combined_disj3,
+                       type = "fuzzy",
+                       min_length = 1,
+                       max_length = 2,
+                       min_support = 0.15,
+                       max_results = 20)
+
+# Display results
+print(grid_result)
 ```
 
-As we return a list of lists in the callback function, we have to flatten the first level 
-of lists in the result and binding it into a data frame:
+The `dig_grid()` function is particularly useful for:
 
-```{r}
-#result <- result |>
-  #unlist(recursive = FALSE) |>
-  #lapply(as_tibble) |>
-  #do.call(rbind, args = _) |>
-  #arrange(desc(support))
-#
-#print(result)
-```
+- Computing conditional correlations with custom methods
+- Evaluating pairwise relationships under different conditions
+- Implementing specialized statistical tests on variable pairs
+
+
+
+# Summary
+
+This vignette has introduced the core functionality of the `nuggets` package for discovering patterns in data through systematic exploration of conditions. Key takeaways:
+
+1. **Data Preparation**: Transform your data into predicates using `partition()`.
+
+2. **Pre-defined Pattern Discovery**: The package provides specialized functions for common pattern types:
+
+    - `dig_associations()` finds association rules (A → C)
+    - `dig_correlations()` discovers conditional correlations between variable pairs
+    - `dig_baseline_contrasts()` identifies when variables deviate from baseline under conditions
+    - `dig_complement_contrasts()` finds subgroups differing from the rest
+    - `dig_paired_baseline_contrasts()` compares paired variables within contexts
+
+3. **Post-processing**: Manipulate and visualize discovered patterns:
+
+    - Create hierarchical visualizations with `geom_diamond()`
+    - Launch interactive explorers with `explore()`
+
+4. **Advanced Usage**: Define custom pattern types:
+
+    - Use `dig()` with custom callback functions for specialized analyses
+    - Use `dig_grid()` for patterns based on variable pairs
+
+
+## Next Steps
+
+- Explore the [Data Preparation vignette](data-preparation.html) for advanced preprocessing techniques
+- Review function documentation (e.g., `?dig_associations`) for detailed parameter descriptions
+- Experiment with your own datasets to discover meaningful patterns
+- Use interactive exploration (`explore()`) to gain insights into discovered patterns
+
+The `nuggets` package provides a flexible framework for pattern discovery that scales from simple association rule mining to complex custom pattern searches, all while supporting both crisp and fuzzy logic approaches.
