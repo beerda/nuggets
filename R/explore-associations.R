@@ -60,7 +60,7 @@
 explore.associations <- function(x, data = NULL, ...) {
     .must_be_nugget(x, "associations")
     .must_be_data_frame(data, null = TRUE)
-    .ensure_shiny()
+    .require_shiny()
 
     initial_meta <- tribble(
         ~data_name,          ~long_name,                          ~type,       ~group,              ~round, ~scatter, ~clustering_default,

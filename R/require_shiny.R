@@ -18,13 +18,13 @@
 
 
 # Check that Shiny-related packages are installed
-.ensure_shiny <- function() {
+.require_shiny <- function() {
     required_packages <- c("shiny", "shinyjs", "shinyWidgets", "DT", "htmltools", "htmlwidgets", "jsonlite")
     missing_packages <- required_packages[!sapply(required_packages, requireNamespace, quietly = TRUE)]
     
     if (length(missing_packages) > 0) {
         install_cmd <- sprintf("install.packages(c(%s))", 
-                              paste(shQuote(missing_packages, type = "cmd"), collapse = ", "))
+                              paste(sprintf('"%s"', missing_packages), collapse = ", "))
         cli_abort(c(
             "Required packages are not installed.",
             "i" = paste("Missing packages:", paste(missing_packages, collapse = ", ")),
