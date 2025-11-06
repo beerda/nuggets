@@ -138,7 +138,7 @@ associationsClusterModule <- function(id, rules, meta, data) {
                             value = i)
                     })
 
-                    do.call(tabsetPanel,
+                    do.call(shiny::tabsetPanel,
                             c(id = shiny::NS(id, "selectedCluster"), tabs))
                 })
 
