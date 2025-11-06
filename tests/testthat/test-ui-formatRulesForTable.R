@@ -18,9 +18,8 @@
 
 
 test_that("formatRulesForTable highlights condition columns", {
-    skip_if_not_installed("shiny")
-    skip_if_not_installed("shinyWidgets")
-    skip_if_not_installed("htmltools")
+    .skip_if_shiny_not_installed()
+
     
     rules <- data.frame(id = 1:2, cond = c("A=1", "B=2"), score = c(0.1, 0.2))
     meta <- data.frame(
@@ -36,9 +35,8 @@ test_that("formatRulesForTable highlights condition columns", {
 })
 
 test_that("formatRulesForTable rounds numeric columns with round specified", {
-    skip_if_not_installed("shiny")
-    skip_if_not_installed("shinyWidgets")
-    skip_if_not_installed("htmltools")
+    .skip_if_shiny_not_installed()
+
     
     rules <- data.frame(id = 1:3, val = c(1.111, 2.222, 3.333))
     meta <- data.frame(
@@ -53,9 +51,8 @@ test_that("formatRulesForTable rounds numeric columns with round specified", {
 })
 
 test_that("formatRulesForTable does not round numeric columns when round is NA", {
-    skip_if_not_installed("shiny")
-    skip_if_not_installed("shinyWidgets")
-    skip_if_not_installed("htmltools")
+    .skip_if_shiny_not_installed()
+
     
     rules <- data.frame(val = c(1.2345, 2.3456))
     meta <- data.frame(
@@ -70,9 +67,8 @@ test_that("formatRulesForTable does not round numeric columns when round is NA",
 })
 
 test_that("formatRulesForTable handles data frame without id column", {
-    skip_if_not_installed("shiny")
-    skip_if_not_installed("shinyWidgets")
-    skip_if_not_installed("htmltools")
+    .skip_if_shiny_not_installed()
+
     
     rules <- data.frame(cond = c("X=1"), num = 42)
     meta <- data.frame(
@@ -87,9 +83,8 @@ test_that("formatRulesForTable handles data frame without id column", {
 })
 
 test_that("formatRulesForTable preserves column order id + meta$data_name", {
-    skip_if_not_installed("shiny")
-    skip_if_not_installed("shinyWidgets")
-    skip_if_not_installed("htmltools")
+    .skip_if_shiny_not_installed()
+
     
     rules <- data.frame(id = 10:11, a = 1:2, b = 3:4)
     meta <- data.frame(
@@ -106,9 +101,8 @@ test_that("formatRulesForTable preserves column order id + meta$data_name", {
 })
 
 test_that("formatRulesForTable works with multiple types in mixed order", {
-    skip_if_not_installed("shiny")
-    skip_if_not_installed("shinyWidgets")
-    skip_if_not_installed("htmltools")
+    .skip_if_shiny_not_installed()
+
     
     rules <- data.frame(id = 1, cond = "A=1", score = 0.9876, name = "rule")
     meta <- data.frame(

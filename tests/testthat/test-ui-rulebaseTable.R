@@ -18,9 +18,8 @@
 
 
 test_that("rulebaseTable", {
-    skip_if_not_installed("shiny")
-    skip_if_not_installed("shinyWidgets")
-    skip_if_not_installed("htmltools")
+    .skip_if_shiny_not_installed()
+
     
     rules <- data.frame(a = 1:3,
                         b = 4:6,

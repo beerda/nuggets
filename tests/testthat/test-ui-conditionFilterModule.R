@@ -18,6 +18,8 @@
 
 
 test_that(".parse_tree_def_from_condition - border cases", {
+    .skip_if_shiny_not_installed()
+
     def <- .parse_tree_def_from_condition(parse_condition(character(0)), root_name = "root")
     expect_equal(def, data.frame())
 
@@ -26,6 +28,8 @@ test_that(".parse_tree_def_from_condition - border cases", {
 })
 
 test_that(".parse_tree_def_from_condition - no subnodes", {
+    .skip_if_shiny_not_installed()
+
     def <- .parse_tree_def_from_condition(parse_condition(c("{a,b}", "{b,c}")),
                                           root_name = "root")
     expect_equal(def,
@@ -38,6 +42,8 @@ test_that(".parse_tree_def_from_condition - no subnodes", {
 })
 
 test_that(".parse_tree_def_from_condition - with subnodes", {
+    .skip_if_shiny_not_installed()
+
     def <- .parse_tree_def_from_condition(parse_condition(c("{a,b=1}", "{b=2,c}")),
                                           root_name = "predicate")
     expect_equal(def,
@@ -50,6 +56,8 @@ test_that(".parse_tree_def_from_condition - with subnodes", {
 })
 
 test_that(".parse_tree_def_from_condition - complex (<= 50)", {
+    .skip_if_shiny_not_installed()
+
     def <- .parse_tree_def_from_condition(parse_condition(c("{A=1,B=2}", "{A=2,C=3}", "{B=1,C=2}", "{}")),
                                           root_name = "root")
     expect_equal(is.data.frame(def), TRUE)
@@ -65,6 +73,8 @@ test_that(".parse_tree_def_from_condition - complex (<= 50)", {
 })
 
 test_that(".parse_tree_def_from_condition - >50, no subnodes", {
+    .skip_if_shiny_not_installed()
+
     def <- .parse_tree_def_from_condition(parse_condition(c(sprintf("x%02d", 1:30), sprintf("y%02d", 1:30))),
                                           root_name = "root")
     expect_equal(def,
@@ -78,9 +88,8 @@ test_that(".parse_tree_def_from_condition - >50, no subnodes", {
 })
 
 test_that("ConditionFilterModule - ui: with empty condition", {
-    skip_if_not_installed("shiny")
-    skip_if_not_installed("shinyWidgets")
-    skip_if_not_installed("htmltools")
+    .skip_if_shiny_not_installed()
+
     
     meta <- tribble(
         ~data_name,   ~short_name,  ~long_name,   ~type,
@@ -99,9 +108,8 @@ test_that("ConditionFilterModule - ui: with empty condition", {
 })
 
 test_that("ConditionFilterModule - ui: without empty condition", {
-    skip_if_not_installed("shiny")
-    skip_if_not_installed("shinyWidgets")
-    skip_if_not_installed("htmltools")
+    .skip_if_shiny_not_installed()
+
     
     meta <- tribble(
         ~data_name,   ~short_name,  ~long_name,   ~type,
@@ -120,9 +128,8 @@ test_that("ConditionFilterModule - ui: without empty condition", {
 })
 
 test_that("ConditionFilterModule - filter", {
-    skip_if_not_installed("shiny")
-    skip_if_not_installed("shinyWidgets")
-    skip_if_not_installed("htmltools")
+    .skip_if_shiny_not_installed()
+
     
     meta <- tribble(
         ~data_name,   ~short_name,  ~long_name,   ~type,

@@ -17,22 +17,11 @@
 #######################################################################
 
 
-test_that("creationParamsTable", {
-    .skip_if_shiny_not_installed()
-
-    
-    rules <- data.frame(x = 1:3)
-    attr(rules, "call_function") <- "dig_tautologies"
-    attr(rules, "call_args") <- list(
-        min_support = 0.5,
-        min_confidence = 0.7
-    )
-
-    ui <- creationParamsTable(rules)
-    html <- as.character(ui)
-
-    expect_match(html, "^<p>Generated using the function <a href=\"https://beerda.github.io/nuggets/reference/dig_tautologies\\.html\">dig_tautologies\\(\\)</a> with the following parameters:</p>")
-    expect_match(html, "<td>min_support =</td>[^<]*<td><pre><code class=\"language-r\">0\\.5.*</code></pre>[^<]*</td>")
-    expect_match(html, "<td>min_confidence =</td>[^<]*<td><pre><code class=\"language-r\">0\\.7.*</code></pre>[^<]*</td>")
-})
-
+# Skip test if Shiny-related packages are not installed
+# This checks for all packages required by .require_shiny()
+.skip_if_shiny_not_installed <- function() {
+    required_packages <- c("shiny", "shinyjs", "shinyWidgets", "DT", "htmltools", "htmlwidgets", "jsonlite")
+    for (pkg in required_packages) {
+        skip_if_not_installed(pkg)
+    }
+}

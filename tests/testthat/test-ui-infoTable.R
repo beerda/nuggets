@@ -18,9 +18,8 @@
 
 
 test_that("infoTable 0 cols", {
-    skip_if_not_installed("shiny")
-    skip_if_not_installed("shinyWidgets")
-    skip_if_not_installed("htmltools")
+    .skip_if_shiny_not_installed()
+
     
     tab <- data.frame()
     ui <- infoTable(tab)
@@ -35,9 +34,8 @@ test_that("infoTable 0 cols", {
 })
 
 test_that("infoTable 2 cols", {
-    skip_if_not_installed("shiny")
-    skip_if_not_installed("shinyWidgets")
-    skip_if_not_installed("htmltools")
+    .skip_if_shiny_not_installed()
+
     
     tab <- data.frame(labels = c("A", "B", "C"),
                       values = c(1, 2, 3),
@@ -57,9 +55,8 @@ test_that("infoTable 2 cols", {
 })
 
 test_that("infoTable 3 cols", {
-    skip_if_not_installed("shiny")
-    skip_if_not_installed("shinyWidgets")
-    skip_if_not_installed("htmltools")
+    .skip_if_shiny_not_installed()
+
     
     tab <- data.frame(labels = c("A", "B", "C"),
                       values = c(1, 2, 3),
