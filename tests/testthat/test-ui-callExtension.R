@@ -20,7 +20,6 @@
 test_that("callExtension returns NULL if .extensions is NULL", {
     .skip_if_shiny_not_installed()
 
-    
     res <- callExtension(NULL, "x")
     expect_null(res)
 })
@@ -28,7 +27,6 @@ test_that("callExtension returns NULL if .extensions is NULL", {
 test_that("callExtension returns NULL if .id not found", {
     .skip_if_shiny_not_installed()
 
-    
     ext <- list(a = 1, b = 2)
     res <- callExtension(ext, "missing")
     expect_null(res)
@@ -37,7 +35,6 @@ test_that("callExtension returns NULL if .id not found", {
 test_that("callExtension returns the extension value when not a function", {
     .skip_if_shiny_not_installed()
 
-    
     ext <- list(msg = "hello")
     res <- callExtension(ext, "msg")
     expect_equal(res, "hello")
@@ -46,7 +43,6 @@ test_that("callExtension returns the extension value when not a function", {
 test_that("callExtension calls function extensions with arguments", {
     .skip_if_shiny_not_installed()
 
-    
     ext <- list(sumfun = function(x, y) x + y)
     res <- callExtension(ext, "sumfun", 3, 4)
     expect_equal(res, 7)
@@ -55,7 +51,6 @@ test_that("callExtension calls function extensions with arguments", {
 test_that("callExtension passes through ... correctly", {
     .skip_if_shiny_not_installed()
 
-    
     ext <- list(pastefun = function(...) paste(..., collapse = "-"))
     res <- callExtension(ext, "pastefun", "A", "B", "C")
     expect_equal(res, "A B C")
@@ -68,7 +63,6 @@ test_that("callExtension passes through ... correctly", {
 test_that("callExtension works with function returning NULL", {
     .skip_if_shiny_not_installed()
 
-    
     ext <- list(none = function() NULL)
     res <- callExtension(ext, "none")
     expect_null(res)
@@ -77,7 +71,6 @@ test_that("callExtension works with function returning NULL", {
 test_that("callExtension ignores ... when extension is not a function", {
     .skip_if_shiny_not_installed()
 
-    
     ext <- list(static = "constant")
     # Even though ... is provided, it should not fail
     res <- callExtension(ext, "static", "unused argument")

@@ -20,7 +20,6 @@
 test_that("callDataTable()", {
     .skip_if_shiny_not_installed()
 
-    
     meta <- data.frame(
         data_name = c("condA", "condB", "numX"),
         type = c("condition", "condition", "numeric"),

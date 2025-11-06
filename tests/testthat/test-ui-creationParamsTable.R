@@ -20,7 +20,6 @@
 test_that("creationParamsTable", {
     .skip_if_shiny_not_installed()
 
-    
     rules <- data.frame(x = 1:3)
     attr(rules, "call_function") <- "dig_tautologies"
     attr(rules, "call_args") <- list(
