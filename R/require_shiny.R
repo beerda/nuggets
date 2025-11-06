@@ -26,8 +26,8 @@
         install_cmd <- sprintf("install.packages(c(%s))", 
                               paste(sprintf('"%s"', missing_packages), collapse = ", "))
         cli_abort(c(
-            "Required packages are not installed.",
-            "i" = paste("Missing packages:", paste(missing_packages, collapse = ", ")),
+            "Packages required to run graphical user interface are not installed.",
+            "x" = paste("Missing packages:", paste(missing_packages, collapse = ", ")),
             "i" = paste("Install them with:", install_cmd)
         ))
     }
