@@ -57,7 +57,7 @@ exploreApp <- function(rules,
     filter_subtext <- meta$long_name[match(filter_choices, meta$data_name)]
     indexes <- which(!is.na(filter_subtext))
     names(filters) <- NULL # tabsetPanel does not like named lists
-    filterTabSet <- do.call(tabsetPanel,
+    filterTabSet <- do.call(shiny::tabsetPanel,
                             c(list(id = "columnFilterTabset", type = "hidden", header = htmltools::tags$hr()),
                               lapply(filters, function(f) f$ui())))
 
