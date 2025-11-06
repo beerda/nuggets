@@ -17,17 +17,18 @@
 #######################################################################
 
 
-infoBox <- function(...,
-                    status = c("info", "success", "danger", "warning"),
-                    dismissible = FALSE) {
-    status <- match.arg(status)
-    ico <- switch(status,
-                  info = "circle-info",
-                  success = "circle-check",
-                  danger = "circle-xmark",
-                  warning = "triangle-exclamation")
-
-    shinyWidgets::alert(status = match.arg(status),
-          dismissible = dismissible,
-          htmltools::div(class = "info-box", shiny::icon(ico), htmltools::span(...)))
+# Check that Shiny-related packages are installed
+.require_shiny <- function() {
+    required_packages <- c("shiny", "shinyjs", "shinyWidgets", "DT", "htmltools", "htmlwidgets", "jsonlite")
+    missing_packages <- required_packages[!sapply(required_packages, requireNamespace, quietly = TRUE)]
+    
+    if (length(missing_packages) > 0) {
+        install_cmd <- sprintf("install.packages(c(%s))", 
+                              paste(sprintf('"%s"', missing_packages), collapse = ", "))
+        cli_abort(c(
+            "Packages required to run graphical user interface are not installed.",
+            "x" = paste("Missing packages:", paste(missing_packages, collapse = ", ")),
+            "i" = paste("Install them with:", install_cmd)
+        ))
+    }
 }

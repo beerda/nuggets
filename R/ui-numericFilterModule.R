@@ -69,20 +69,20 @@ numericFilterModule <- function(id, x, meta) {
     list(ui = function() {
             specialCheckboxInput <- NULL;
             if (!is.null(special)) {
-                specialCheckboxInput <- checkboxGroupInput(NS(id, "special"),
+                specialCheckboxInput <- shiny::checkboxGroupInput(shiny::NS(id, "special"),
                                                           label = "special values",
                                                           choices = special,
                                                           selected = special,
                                                           inline = TRUE)
             }
 
-            tabPanel(title = meta$long_name,
+            shiny::tabPanel(title = meta$long_name,
                      value = paste0(meta$data_name, "-filter-tab"),
                 infoBox(paste0("Filter the rules by choosing a range of values for ",
                                tolower(meta$long_name), ".")),
-                tableOutput(NS(id, "summaryTable")),
-                plotOutput(NS(id, "histogramPlot")),
-                sliderInput(NS(id, "slider"),
+                shiny::tableOutput(shiny::NS(id, "summaryTable")),
+                shiny::plotOutput(shiny::NS(id, "histogramPlot")),
+                shiny::sliderInput(shiny::NS(id, "slider"),
                             label = tolower(meta$long_name),
                             min = rng[1],
                             max = rng[2],
@@ -91,20 +91,20 @@ numericFilterModule <- function(id, x, meta) {
                             round = FALSE,
                             width = "100%"),
                 specialCheckboxInput,
-                hr(),
-                actionButton(NS(id, "resetButton"), "Reset"),
-                actionButton(NS(id, "resetAllButton"), "Reset all")
+                htmltools::hr(),
+                shiny::actionButton(shiny::NS(id, "resetButton"), "Reset"),
+                shiny::actionButton(shiny::NS(id, "resetAllButton"), "Reset all")
             )
         },
 
         server = function(reset_all_trigger) {
-            moduleServer(id, function(input, output, session) {
-                output$summaryTable <- renderTable({
+            shiny::moduleServer(id, function(input, output, session) {
+                output$summaryTable <- shiny::renderTable({
                     summaryTable
                 }, width = "100%", bordered = TRUE, striped = TRUE, align = "c", digits = 2)
 
-                output$histogramPlot <- renderPlot({
-                    req(input$slider)
+                output$histogramPlot <- shiny::renderPlot({
+                    shiny::req(input$slider)
 
                     val <- input$slider
                     border <- val
@@ -134,27 +134,27 @@ numericFilterModule <- function(id, x, meta) {
                         labs(x = tolower(meta$long_name), y = "number of rules")
                 }, res = 96)
 
-                observeEvent(input$resetButton, {
-                    updateSliderInput("slider", value = rng, session = session)
+                shiny::observeEvent(input$resetButton, {
+                    shiny::updateSliderInput("slider", value = rng, session = session)
                     if (!is.null(special)) {
-                        updateCheckboxGroupInput("special", selected = special, session = session)
+                        shiny::updateCheckboxGroupInput("special", selected = special, session = session)
                     }
                 })
 
-                observeEvent(input$resetAllButton, {
+                shiny::observeEvent(input$resetAllButton, {
                     reset_all_trigger(Sys.time())
                 })
             })
         },
 
         filter = function(input) {
-            val <- input[[NS(id, "slider")]]
+            val <- input[[shiny::NS(id, "slider")]]
             if (is.null(val) || length(val) != 2) {
                 return(rep(TRUE, length(x)))
             }
 
             res <- !is.na(x) & !is.nan(x) & !is.infinite(x) & x >= val[1] & x <= val[2]
-            spec <- input[[NS(id, "special")]]
+            spec <- input[[shiny::NS(id, "special")]]
             if (!is.null(spec)) {
                 if ("NA" %in% spec) {
                     res <- res | (is.na(x) & !is.nan(x))
@@ -174,9 +174,9 @@ numericFilterModule <- function(id, x, meta) {
         },
 
         reset = function(session) {
-            updateSliderInput(inputId = NS(id, "slider"), value = rng, session = session)
+            shiny::updateSliderInput(inputId = shiny::NS(id, "slider"), value = rng, session = session)
             if (!is.null(special)) {
-                updateCheckboxGroupInput(inputId = NS(id, "special"), selected = special, session = session)
+                shiny::updateCheckboxGroupInput(inputId = shiny::NS(id, "special"), selected = special, session = session)
             }
         }
     )

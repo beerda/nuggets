@@ -17,17 +17,11 @@
 #######################################################################
 
 
-infoBox <- function(...,
-                    status = c("info", "success", "danger", "warning"),
-                    dismissible = FALSE) {
-    status <- match.arg(status)
-    ico <- switch(status,
-                  info = "circle-info",
-                  success = "circle-check",
-                  danger = "circle-xmark",
-                  warning = "triangle-exclamation")
-
-    shinyWidgets::alert(status = match.arg(status),
-          dismissible = dismissible,
-          htmltools::div(class = "info-box", shiny::icon(ico), htmltools::span(...)))
+# Skip test if Shiny-related packages are not installed
+# This checks for all packages required by .require_shiny()
+.skip_if_shiny_not_installed <- function() {
+    required_packages <- c("shiny", "shinyjs", "shinyWidgets", "DT", "htmltools", "htmlwidgets", "jsonlite")
+    for (pkg in required_packages) {
+        skip_if_not_installed(pkg)
+    }
 }

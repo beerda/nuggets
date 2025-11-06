@@ -18,6 +18,8 @@
 
 
 test_that("aboutTable", {
+    .skip_if_shiny_not_installed()
+
     ui <- aboutTable("stats")
     html <- as.character(ui)
 
