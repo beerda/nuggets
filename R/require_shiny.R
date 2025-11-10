@@ -17,13 +17,15 @@
 #######################################################################
 
 
+.shiny_required_packages <- c("shiny", "shinyjs", "shinyWidgets", "DT", "htmltools", "htmlwidgets", "jsonlite")
+
 # Check that Shiny-related packages are installed
 .require_shiny <- function() {
-    required_packages <- c("shiny", "shinyjs", "shinyWidgets", "DT", "htmltools", "htmlwidgets", "jsonlite")
-    missing_packages <- required_packages[!sapply(required_packages, requireNamespace, quietly = TRUE)]
-    
+    missing_packages <- !sapply(.shiny_required_packages, requireNamespace, quietly = TRUE)
+    missing_packages <- .shiny_required_packages[missing_packages]
+
     if (length(missing_packages) > 0) {
-        install_cmd <- sprintf("install.packages(c(%s))", 
+        install_cmd <- sprintf("install.packages(c(%s))",
                               paste(sprintf('"%s"', missing_packages), collapse = ", "))
         cli_abort(c(
             "Packages required to run graphical user interface are not installed.",

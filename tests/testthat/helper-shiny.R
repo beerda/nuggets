@@ -20,8 +20,7 @@
 # Skip test if Shiny-related packages are not installed
 # This checks for all packages required by .require_shiny()
 .skip_if_shiny_not_installed <- function() {
-    required_packages <- c("shiny", "shinyjs", "shinyWidgets", "DT", "htmltools", "htmlwidgets", "jsonlite")
-    for (pkg in required_packages) {
+    for (pkg in .shiny_required_packages) {
         skip_if_not_installed(pkg)
     }
 }
