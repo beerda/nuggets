@@ -1,0 +1,221 @@
+# nuggets
+
+`nuggets` is a package for [R statistical computing
+environment](https://www.r-project.org/) providing a framework for
+systematic exploration of **association rules** ([Agrawal
+(1994)](https://www.vldb.org/conf/1994/P487.PDF)), **contrast patterns**
+([Chen (2022)](https://doi.org/10.48550/arXiv.2209.13556)), **emerging
+patterns** ([Dong (1999)](https://doi.org/10.1145/312129.312191)),
+**subgroup discovery** ([Atzmueller
+(2015)](https://doi.org/10.1002/widm.1144)), and **conditional
+correlations** ([Hájek
+(1978)](https://doi.org/10.1007/978-3-642-66943-9)). User-defined
+functions may also be supplied to guide custom pattern searches.
+
+Supports both **crisp** (Boolean) and **fuzzy** data. Generates
+candidate conditions expressed as elementary conjunctions, evaluates
+them on a dataset, and inspects the induced sub-data for statistical,
+logical, or structural properties such as associations, correlations, or
+contrasts. Includes methods for **visualization** of logical structures
+and supports **interactive exploration** through integrated Shiny
+applications.
+
+## What Patterns Can You Discover?
+
+- **Association Rules**: *“University educated people in middle age
+  working in IT have high income”* – identify conditions that strongly
+  predict specific outcomes
+- **Conditional Correlations**: *“Study time correlates with test score
+  on hard exams”* – discover relationships between variables that only
+  hold under certain conditions  
+- **Complement Contrasts**: *“Smokers have lower life expectancy than
+  non-smokers”* – find subgroups with significantly different
+  characteristics from the rest
+- **Baseline Contrasts**: *“Measurement error differs from zero when
+  using tool A”* – detect when a variable deviates significantly from a
+  baseline under specific conditions
+- **Paired Contrasts**: *“Ice cream sales exceed tea sales on sunny
+  days”* – compare paired measurements within specific contexts
+- **Custom Patterns**: Define your own evaluation functions for
+  specialized pattern mining
+
+## Key Features
+
+- Support for both **categorical** and **numeric data**.
+- Provides both **Boolean** and **fuzzy** logic approach.
+- Data preparation functions for easy pre-processing phase.
+- Functions for examining **associations**, **conditional
+  correlations**, and **contrasts** among data variables.
+- **Visualization** and pattern post-processing tools.
+- Integrated Shiny applications for **interactive exploration** of
+  discovered patterns.
+
+## Installation
+
+To install the stable version of `nuggets` from CRAN, type the following
+command within the R session:
+
+``` r
+install.packages("nuggets")
+```
+
+You can also install the development version of `nuggets` from
+[GitHub](https://github.com/) with:
+
+``` r
+install.packages("devtools")
+devtools::install_github("beerda/nuggets")
+```
+
+To start using the package, load it to the R session with:
+
+``` r
+library(nuggets)
+```
+
+## Minimal Example
+
+The following example demonstrates how to use `nuggets` to find
+association rules in the built-in `mtcars` dataset:
+
+``` r
+# Preprocess: dichotomize and fuzzify numeric variables
+cars <- mtcars |>
+    partition(cyl, vs:gear, .method = "dummy") |>
+    partition(carb, .method = "crisp", .breaks = c(0, 3, 10)) |>
+    partition(mpg, disp:qsec, .method = "triangle", .breaks = 3)
+
+# Search for associations among conditions
+rules <- dig_associations(cars,
+                          antecedent = everything(),
+                          consequent = everything(),
+                          max_length = 4,
+                          min_support = 0.1,
+                          measures = c("lift", "conviction"))
+
+# Explore the found rules interactively
+explore(rules, cars)
+```
+
+![](reference/figures/assoc_explorer1.png)
+
+## Contributing
+
+Contributions, suggestions, and bug reports are welcome. Please submit
+[issues](https://github.com/beerda/nuggets/issues/) on
+[GitHub](https://github.com/).
+
+# Package index
+
+## Data Preparation
+
+Functions for transformation of input data into the format suitable for
+pattern extraction.
+
+- [`is_almost_constant()`](https://beerda.github.io/nuggets/reference/is_almost_constant.md)
+  : Test whether a vector is almost constant
+- [`partition()`](https://beerda.github.io/nuggets/reference/partition.md)
+  : Convert columns of a data frame to Boolean or fuzzy sets
+  (triangular, trapezoidal, or raised-cosine)
+- [`remove_almost_constant()`](https://beerda.github.io/nuggets/reference/remove_almost_constant.md)
+  : Remove almost constant columns from a data frame
+- [`dig_tautologies()`](https://beerda.github.io/nuggets/reference/dig_tautologies.md)
+  : Find tautologies or "almost tautologies" in a dataset
+
+## Pre-defined Pattern Extraction
+
+Functions for extraction of pre-defined patterns from input data.
+
+- [`dig_associations()`](https://beerda.github.io/nuggets/reference/dig_associations.md)
+  **\[experimental\]** : Search for association rules
+- [`dig_correlations()`](https://beerda.github.io/nuggets/reference/dig_correlations.md)
+  **\[experimental\]** : Search for conditional correlations
+- [`dig_baseline_contrasts()`](https://beerda.github.io/nuggets/reference/dig_baseline_contrasts.md)
+  **\[experimental\]** : Search for conditions that yield in
+  statistically significant one-sample test in selected variables.
+- [`dig_complement_contrasts()`](https://beerda.github.io/nuggets/reference/dig_complement_contrasts.md)
+  **\[experimental\]** : Search for conditions that provide significant
+  differences in selected variables to the rest of the data table
+- [`dig_paired_baseline_contrasts()`](https://beerda.github.io/nuggets/reference/dig_paired_baseline_contrasts.md)
+  **\[experimental\]** : Search for conditions that provide significant
+  differences between paired variables
+
+## Custom Pattern Extraction
+
+Functions for extraction of custom patterns from input data.
+
+- [`dig()`](https://beerda.github.io/nuggets/reference/dig.md) : Search
+  for patterns of a custom type
+- [`dig_grid()`](https://beerda.github.io/nuggets/reference/dig_grid.md)
+  **\[experimental\]** : Search for grid-based rules
+
+## Pattern Post-processing
+
+Functions for post-processing of extracted patterns.
+
+- [`association_matrix()`](https://beerda.github.io/nuggets/reference/association_matrix.md)
+  :
+
+  Create an association matrix from a nugget of flavour `associations`.
+
+- [`add_interest()`](https://beerda.github.io/nuggets/reference/add_interest.md)
+  **\[experimental\]** : Add additional interest measures for
+  association rules
+
+- [`cluster_associations()`](https://beerda.github.io/nuggets/reference/cluster_associations.md)
+  : Cluster association rules
+
+- [`explore(`*`<associations>`*`)`](https://beerda.github.io/nuggets/reference/explore.md)
+  **\[experimental\]** : Show interactive application to explore
+  association rules
+
+- [`geom_diamond()`](https://beerda.github.io/nuggets/reference/geom_diamond.md)
+  : Geom for drawing diamond plots of lattice structures
+
+- [`remove_ill_conditions()`](https://beerda.github.io/nuggets/reference/remove_ill_conditions.md)
+  : Remove invalid conditions from a list
+
+- [`which_antichain()`](https://beerda.github.io/nuggets/reference/which_antichain.md)
+  : Return indices of first elements of the list, which are incomparable
+  with preceding elements.
+
+## Tools and Helper Functions
+
+Other functions that can be useful in the pattern extraction process.
+
+- [`bound_range()`](https://beerda.github.io/nuggets/reference/bound_range.md)
+  : Bound a range of numeric values
+- [`fire()`](https://beerda.github.io/nuggets/reference/fire.md) :
+  Obtain truth-degrees of conditions
+- [`format_condition()`](https://beerda.github.io/nuggets/reference/format_condition.md)
+  : Format a vector of predicates into a condition string
+- [`is_condition()`](https://beerda.github.io/nuggets/reference/is_condition.md)
+  : Check whether a list of character vectors contains valid conditions
+- [`is_degree()`](https://beerda.github.io/nuggets/reference/is_degree.md)
+  : Test whether an object contains numeric values from the interval
+  \\\[0,1\]\\
+- [`is_nugget()`](https://beerda.github.io/nuggets/reference/is_nugget.md)
+  : Test whether an object is a nugget
+- [`is_subset()`](https://beerda.github.io/nuggets/reference/is_subset.md)
+  : Determine whether one vector is a subset of another
+- [`nugget()`](https://beerda.github.io/nuggets/reference/nugget.md) :
+  Create a nugget object of a given flavour
+- [`parse_condition()`](https://beerda.github.io/nuggets/reference/parse_condition.md)
+  : Convert condition strings into lists of predicate vectors
+- [`shorten_condition()`](https://beerda.github.io/nuggets/reference/shorten_condition.md)
+  : Shorten predicates within conditions
+- [`values()`](https://beerda.github.io/nuggets/reference/values.md) :
+  Extract values from predicate names
+- [`var_grid()`](https://beerda.github.io/nuggets/reference/var_grid.md)
+  : Create a tibble of combinations of selected column names
+- [`var_names()`](https://beerda.github.io/nuggets/reference/var_names.md)
+  : Extract variable names from predicate names
+
+# Articles
+
+### All vignettes
+
+- [Data
+  Preparation](https://beerda.github.io/nuggets/articles/data-preparation.md):
+- [nuggets: Get
+  Started](https://beerda.github.io/nuggets/articles/nuggets.md):

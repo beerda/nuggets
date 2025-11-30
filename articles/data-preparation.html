@@ -73,7 +73,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Data Preparation</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/vignettes/data-preparation.Rmd" class="external-link"><code>vignettes/data-preparation.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/v2.1.0/vignettes/data-preparation.Rmd" class="external-link"><code>vignettes/data-preparation.Rmd</code></a></small>
       <div class="d-none name"><code>data-preparation.Rmd</code></div>
     </div>
 
@@ -653,7 +653,7 @@ specifies these points. See the following figure for an illustration of
 triangular and raised cosine membership functions for
 <code>.breaks = c(-10, 0, 10)</code>:</p>
 <div class="figure" style="text-align: center">
-<img src="data-preparation_files/figure-html/unnamed-chunk-15-1.png" alt="Comparison of triangular and raised cosine membership functions for .breaks = c(-10, 0, 10)
+<img src="data-preparation_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="Comparison of triangular and raised cosine membership functions for .breaks = c(-10, 0, 10)
 " width="80%"><p class="caption">
 Comparison of triangular and raised cosine membership functions for
 <code>.breaks = c(-10, 0, 10)</code>
@@ -665,7 +665,7 @@ needed. For instance, <code>.breaks = c(-10, -5, 0, 5, 10)</code>
 defines three fuzzy sets with peaks at -5, 0, and 5. See the following
 figure for an illustration of these fuzzy sets:</p>
 <div class="figure" style="text-align: center">
-<img src="data-preparation_files/figure-html/unnamed-chunk-16-1.png" alt="Fuzzy sets with triangular membership functions for .breaks = c(-10, -5, 0, 5, 10)
+<img src="data-preparation_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" alt="Fuzzy sets with triangular membership functions for .breaks = c(-10, -5, 0, 5, 10)
 " width="80%"><p class="caption">
 Fuzzy sets with triangular membership functions for
 <code>partition(x, .method = "triangle", .breaks = c(-10, -5, 0, 5, 10))</code>
@@ -676,7 +676,7 @@ That ensures that all values are covered by the fuzzy sets. To achieve
 that, <code>-Inf</code> and <code>Inf</code> can be added as the first
 and last elements of the <code>.breaks</code> vector:</p>
 <div class="figure" style="text-align: center">
-<img src="data-preparation_files/figure-html/unnamed-chunk-17-1.png" alt="Fuzzy sets with triangular membership functions for .breaks = c(-Inf, -5, 0, 5, Inf)
+<img src="data-preparation_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="Fuzzy sets with triangular membership functions for .breaks = c(-Inf, -5, 0, 5, Inf)
 " width="80%"><p class="caption">
 Fuzzy sets with triangular membership functions for
 <code>partition(x, .method = "triangle", .breaks = c(-Inf, -5, 0, 5, Inf))</code>
@@ -687,7 +687,7 @@ Fuzzy sets with triangular membership functions for
 number of fuzzy sets to create. For example, <code>.breaks = 4</code>
 creates partitioning with four fuzzy sets:</p>
 <div class="figure" style="text-align: center">
-<img src="data-preparation_files/figure-html/unnamed-chunk-18-1.png" alt="Fuzzy sets with triangular membership functions for .breaks = 4
+<img src="data-preparation_files/figure-html/unnamed-chunk-18-1.png" class="r-plt" alt="Fuzzy sets with triangular membership functions for .breaks = 4
 " width="80%"><p class="caption">
 Fuzzy sets with triangular membership functions for
 <code>partition(x, .method = "triangle", .breaks = 4)</code>
@@ -697,7 +697,7 @@ Fuzzy sets with triangular membership functions for
 following figure shows five raised cosine fuzzy sets defined by
 <code>.breaks = c(-Inf, -10, -5, 0, 5, 10, Inf)</code>:</p>
 <div class="figure" style="text-align: center">
-<img src="data-preparation_files/figure-html/unnamed-chunk-19-1.png" alt="Fuzzy sets with raised cosine membership functions for .breaks = c(-Inf, -10, -5, 0, 5, 10, Inf)
+<img src="data-preparation_files/figure-html/unnamed-chunk-19-1.png" class="r-plt" alt="Fuzzy sets with raised cosine membership functions for .breaks = c(-Inf, -10, -5, 0, 5, 10, Inf)
 " width="80%"><p class="caption">
 Fuzzy sets with raised cosine membership functions for
 <code>partition(x, .method = "raisedcos", .breaks = c(-Inf, -10, -5, 0, 5, 10, Inf))</code>
@@ -792,7 +792,7 @@ consecutive break points - a flat top spans two break intervals. The
 following figure is the result of setting <code>.span = 2</code> and
 <code>.breaks = c(-10, -5, 5, 10)</code>:</p>
 <div class="figure" style="text-align: center">
-<img src="data-preparation_files/figure-html/unnamed-chunk-21-1.png" alt="Fuzzy sets with triangular membership functions for .span = 2, .breaks = c(-10, -5, 5, 10)`
+<img src="data-preparation_files/figure-html/unnamed-chunk-21-1.png" class="r-plt" alt="Fuzzy sets with triangular membership functions for .span = 2, .breaks = c(-10, -5, 5, 10)`
 " width="80%"><p class="caption">
 Fuzzy sets with triangular membership functions for
 <code>partition(x, .method = "triangle", .span = 2, .breaks = c(-10, -5, 5, 10))</code>
@@ -805,7 +805,7 @@ one break point. Consider the following example that shows the effect of
 setting <code>.inc = 1</code> in addition to <code>.span = 2</code> and
 <code>.breaks = c(-15, -10, -5, 0, 5, 10, 15)</code>:</p>
 <div class="figure" style="text-align: center">
-<img src="data-preparation_files/figure-html/unnamed-chunk-22-1.png" alt="Fuzzy sets with triangular membership functions for .inc = 1, .span = 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15)`
+<img src="data-preparation_files/figure-html/unnamed-chunk-22-1.png" class="r-plt" alt="Fuzzy sets with triangular membership functions for .inc = 1, .span = 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15)`
 " width="80%"><p class="caption">
 Fuzzy sets with triangular membership functions for
 <code>partition(x, .method = "triangle", .inc = 1, .span = 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15))</code>
@@ -816,7 +816,7 @@ shift of the window along the break points. For example, with
 <code>.inc = 3</code>, the window shifts by three break points, which
 effectively skips two fuzzy sets after each created fuzzy set:</p>
 <div class="figure" style="text-align: center">
-<img src="data-preparation_files/figure-html/unnamed-chunk-23-1.png" alt="Fuzzy sets with triangular membership functions for .inc = 3, .span = 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15)`
+<img src="data-preparation_files/figure-html/unnamed-chunk-23-1.png" class="r-plt" alt="Fuzzy sets with triangular membership functions for .inc = 3, .span = 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15)`
 " width="80%"><p class="caption">
 Fuzzy sets with triangular membership functions for
 <code>partition(x, .method = "triangle", .inc = 3, .span = 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15))</code>
@@ -1125,7 +1125,7 @@ documentation.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
