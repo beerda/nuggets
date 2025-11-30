@@ -76,10 +76,10 @@ numericFilterModule <- function(id, x, meta) {
                                                           inline = TRUE)
             }
 
-            shiny::tabPanel(title = meta$long_name,
-                     value = paste0(meta$data_name, "-filter-tab"),
-                infoBox(paste0("Filter the rules by choosing a range of values for ",
-                               tolower(meta$long_name), ".")),
+            filterTabPanel(title = meta$long_name,
+                           value = meta$data_name,
+                           info = paste0("Filter the rules by choosing a range of values for ",
+                                         tolower(meta$long_name), "."),
                 shiny::tableOutput(shiny::NS(id, "summaryTable")),
                 shiny::plotOutput(shiny::NS(id, "histogramPlot")),
                 shiny::sliderInput(shiny::NS(id, "slider"),

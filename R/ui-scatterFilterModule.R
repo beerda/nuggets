@@ -24,8 +24,9 @@ scatterFilterModule <- function(id, rules, meta) {
     }
 
     list(ui = function() {
-            shiny::tabPanel("XY-Scatter",
-                infoBox("Select rules by drawing a rectangle around them on the plot."),
+            filterTabPanel(title = "XY-Scatter",
+                           value = "XY-Scatter",
+                           info = "Select rules by drawing a rectangle around them on the plot.",
                 shiny::plotOutput(shiny::NS(id, "scatterPlot"), brush = shiny::NS(id, "scatterPlotBrush")),
                 htmltools::br(),
                 shiny::selectInput(shiny::NS(id, "scatterX"), "X-axis", choices = choices, selected = choices[1]),

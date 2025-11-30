@@ -98,10 +98,10 @@ conditionFilterModule <- function(id, x, meta) {
     }
 
     list(ui = function() {
-            shiny::tabPanel(title = meta$long_name,
-                     value = paste0(meta$data_name, "-filter-tab"),
-                infoBox(paste0("Filter the rules by choosing predicates that should appear in the ",
-                              tolower(meta$long_name), ".")),
+            filterTabPanel(title = meta$long_name,
+                           value = meta$data_name,
+                           info = paste0("Filter the rules by choosing predicates that should appear in the ",
+                                         tolower(meta$long_name), "."),
                 shinyWidgets::treeInput(shiny::NS(id, "tree"),
                           label = tolower(meta$long_name),
                           choices = tree,
