@@ -24,10 +24,10 @@ filterTabPanel <- function(title,
     long <- paste(title, "Filter")
     value <- paste0(value, "-filter-tab")
 
-    tabPanel(title = title,
-             htmltools::h3(long),
-             infoBox(info),
-             ...,
-             value = value,
-             icon = NULL)
+    shiny::tabPanel(title = title,
+                    htmltools::h3(long),
+                    infoBox(info),
+                    ...,
+                    value = value,
+                    icon = NULL)
 }
