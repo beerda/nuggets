@@ -17,7 +17,7 @@
 #######################################################################
 
 
-#' Add additional interest measures for association rules
+#' @title Add additional interest measures for association rules
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
