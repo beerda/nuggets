@@ -17,8 +17,9 @@
 #######################################################################
 
 
-#' Remove almost constant columns from a data frame
+#' @title Remove almost constant columns from a data frame
 #'
+#' @description
 #' Test all columns specified by `.what` and remove those that are almost
 #' constant. A column is considered almost constant if the proportion of its
 #' most frequent value is greater than or equal to the threshold specified by

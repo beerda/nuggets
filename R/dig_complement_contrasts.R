@@ -17,8 +17,7 @@
 #######################################################################
 
 
-#' Search for conditions that provide significant differences in selected
-#' variables to the rest of the data table
+#' @title Search for conditions that provide significant differences in selected variables to the rest of the data table
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
@@ -156,6 +155,12 @@
 #' @seealso [dig_baseline_contrasts()], [dig_paired_baseline_contrasts()],
 #'      [dig()], [dig_grid()],
 #'      [stats::t.test()], [stats::wilcox.test()], [stats::var.test()]
+#' @examples
+#' d <- partition(mtcars, .breaks = 2)
+#' dig_complement_contrasts(d,
+#'                          condition = where(is.logical),
+#'                          vars = where(is.numeric),
+#'                          min_support = 0.3)
 #' @export
 dig_complement_contrasts <- function(x,
                                      condition = where(is.logical),

@@ -17,8 +17,7 @@
 #######################################################################
 
 
-#' Search for conditions that provide significant differences between paired
-#' variables
+#' @title Search for conditions that provide significant differences between paired variables
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`

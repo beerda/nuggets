@@ -17,7 +17,7 @@
 #######################################################################
 
 
-#' Search for conditional correlations
+#' @title Search for conditional correlations
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`

@@ -17,8 +17,9 @@
 #######################################################################
 
 
-#' Shorten predicates within conditions
+#' @title Shorten predicates within conditions
 #'
+#' @description
 #' This function takes a character vector of conditions and shortens the
 #' predicates within each condition according to a specified method.
 #'

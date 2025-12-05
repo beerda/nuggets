@@ -17,8 +17,9 @@
 #######################################################################
 
 
-#' Convert condition strings into lists of predicate vectors
+#' @title Convert condition strings into lists of predicate vectors
 #'
+#' @description
 #' Parse a character vector of conditions into a list of predicate vectors.
 #' Each element of the list corresponds to one condition. A condition is a
 #' string of predicates separated by commas and enclosed in curly braces, as

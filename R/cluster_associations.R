@@ -17,8 +17,9 @@
 #######################################################################
 
 
-#' Cluster association rules
+#' @title Cluster association rules
 #'
+#' @description
 #' This function clusters association rules based on the selected numeric
 #' attribute `by` (e.g., confidence or lift) and summarizes the clusters.
 #' The clustering is performed using the k-means algorithm.

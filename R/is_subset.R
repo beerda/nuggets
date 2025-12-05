@@ -17,8 +17,9 @@
 #######################################################################
 
 
-#' Determine whether one vector is a subset of another
+#' @title Determine whether one vector is a subset of another
 #'
+#' @description
 #' Check if all elements of `x` are also contained in `y`. This is equivalent
 #' to testing whether `setdiff(x, y)` is empty.
 #'

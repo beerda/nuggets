@@ -17,8 +17,9 @@
 #######################################################################
 
 
-#' Search for patterns of a custom type
+#' @title Search for patterns of a custom type
 #'
+#' @description
 #' A general function for searching for patterns of a custom type. The function
 #' allows selection of columns of `x` to be used as condition predicates. It
 #' enumerates all possible conditions in the form of elementary conjunctions of

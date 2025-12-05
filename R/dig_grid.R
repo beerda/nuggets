@@ -17,7 +17,7 @@
 #######################################################################
 
 
-#' Search for grid-based rules
+#' @title Search for grid-based rules
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
