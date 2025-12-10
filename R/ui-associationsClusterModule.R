@@ -149,6 +149,7 @@ associationsClusterModule <- function(id, rules, meta, data) {
 
                     d <- attr(clu, "cluster_predicates")[[input$selectedCluster]]
                     d <- as.data.frame(d)
+                    colnames(d) <- c("tab", "Freq")
 
                     ggplot(d) +
                         aes(y = .data[["tab"]], x = .data[["Freq"]], label = .data[["Freq"]]) +

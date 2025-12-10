@@ -150,8 +150,10 @@ cluster_associations <- function(x,
         tab <- parse_condition(a)
         tab <- unlist(tab, use.names = FALSE)
         tab <- table(tab)
+        tab <- sort(tab, decreasing = TRUE)
+        tab <- as.table(tab)
 
-        sort(tab, decreasing = TRUE)
+        tab
     })
 
     # create cluster labels
