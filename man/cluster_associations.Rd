@@ -30,7 +30,7 @@ for details.}
 in the cluster label. The default is 2.}
 }
 \value{
-A tibble with one row per cluster. The columns are:
+A tibble with one row per (cluster, consequent) pair. The columns are:
 \itemize{
 \item \code{cluster}: the cluster number;
 \item \code{cluster_label}: a label for the cluster, consisting of the number of rules
@@ -68,6 +68,9 @@ rules <- dig_associations(cars,
 
 # Cluster the found rules
 clu <- cluster_associations(rules, 10, "lift")
+
+# Print the number of clusters
+length(unique(clu$cluster))
 
 \dontrun{
 # Plot the clustered rules
