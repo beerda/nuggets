@@ -31,7 +31,7 @@ associationsClusterModule <- function(id, rules, meta, data) {
                         shiny::fluidRow(
                             shiny::column(width = 6,
                                 shiny::sliderInput(shiny::NS(id, "k"),
-                                            "Number of clusters",
+                                            "Maximum number of clusters",
                                             min = 2,
                                             max = max_clusters,
                                             value = 2,
@@ -79,32 +79,25 @@ associationsClusterModule <- function(id, rules, meta, data) {
 
         server = function(projectionReactive, selectionReactive) {
             shiny::moduleServer(id, function(input, output, session) {
-                lengthUniqueAnte <- shiny::reactive({
-                    sel <- selectionReactive()
-
-                    length(unique(rules$antecedent[sel]))
-                })
-
-                shiny::observe({
-                    l <- lengthUniqueAnte()
-                    shiny::updateSliderInput(session,
-                                      "k",
-                                      max = min(max_clusters, l - 1))
-                })
-
                 clustering <- shiny::reactive({
                     shiny::req(input$k, input$by, input$algorithm)
-                    if (lengthUniqueAnte() <= input$k) {
+                    sel <- selectionReactive()
+                    if (is.null(sel)) {
+                        return(NULL)
+                    }
+                    d <- rules[sel, , drop = FALSE]
+                    if (nrow(d) < 2) {
                         return(NULL)
                     }
 
-                    sel <- selectionReactive()
-                    d <- rules[sel, , drop = FALSE]
+                    set.seed(234)
 
-                    cluster_associations(d,
-                                         n = input$k,
-                                         by = input$by,
-                                         algorithm = input$algorithm)
+                    suppressWarnings({
+                        cluster_associations(d,
+                                             n = input$k,
+                                             by = input$by,
+                                             algorithm = input$algorithm)
+                    })
                 })
 
                 output$clusteringPlot <- shiny::renderPlot({
@@ -131,8 +124,12 @@ associationsClusterModule <- function(id, rules, meta, data) {
                 }, res = 96)
 
                 output$clusterTabs <- shiny::renderUI({
-                    shiny::req(input$k)
-                    tabs <- lapply(seq_len(input$k), function(i) {
+                    clu <- clustering()
+                    if (is.null(clu)) {
+                        return(NULL)
+                    }
+                    k <- length(unique(clu$cluster))
+                    tabs <- lapply(seq_len(k), function(i) {
                         shiny::tabPanel(
                             title = paste("#", i),
                             value = i)
