@@ -208,6 +208,9 @@ exploreApp <- function(rules,
                                     )
                                 )
                             )
+                        ),
+                        shinyWidgets::panel(heading = "Filtering Summary",
+                            shiny::uiOutput("numFilteredRules")
                         )
                     )
                 ),
@@ -321,6 +324,11 @@ exploreApp <- function(rules,
         })
 
         ruleSelection <- rulesTable$server(rulesProjection, rulesFiltering)
+
+        output$numFilteredRules <- shiny::renderUI({
+            r <- rules[rulesFiltering(), rulesProjection(), drop = FALSE]
+            rulebaseTable(r, meta)
+        })
 
         callExtension(extensions,
                       "server",
