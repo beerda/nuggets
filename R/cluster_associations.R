@@ -121,6 +121,13 @@ cluster_associations <- function(x,
         n <- num_uniq
     }
 
+    if (n == nrow(mat)) {
+        # Each point is its own cluster; no need to run k-means
+        # However, Lloyd method is known to handle that properly
+        # (surprisingly, Hartigan-Wong fails in such case)
+        algorithm <- "Lloyd"
+    }
+
     # cluster and aggregate measures by clusters
     fit <- kmeans(mat, centers = n, algorithm = algorithm)
     matches <- match(x$antecedent, rownames(mat))
