@@ -1,5 +1,6 @@
 # nuggets 2.2.0
 - released: ???
+- implemented bit packing of binary condition columns for faster processing
 - moved Shiny-related packages (shiny, shinyjs, shinyWidgets, DT, htmltools,
   htmlwidgets, jsonlite) from Imports to Suggests
 
