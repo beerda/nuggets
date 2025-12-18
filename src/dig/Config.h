@@ -105,97 +105,97 @@ public:
         }
     }
 
-    bool hasConditionArgument() const
+    [[nodiscard]] inline bool hasConditionArgument() const
     { return conditionArgument; }
 
-    bool hasFociSupportsArgument() const
+    [[nodiscard]] inline bool hasFociSupportsArgument() const
     { return fociSupportsArgument; }
 
-    bool hasContiPpArgument() const
+    [[nodiscard]] inline bool hasContiPpArgument() const
     { return contiPpArgument; }
 
-    bool hasContiNpArgument() const
+    [[nodiscard]] inline bool hasContiNpArgument() const
     { return contiNpArgument; }
 
-    bool hasContiPnArgument() const
+    [[nodiscard]] inline bool hasContiPnArgument() const
     { return contiPnArgument; }
 
-    bool hasContiNnArgument() const
+    [[nodiscard]] inline bool hasContiNnArgument() const
     { return contiNnArgument; }
 
-    bool hasAnyContiArgument() const
+    [[nodiscard]] inline bool hasAnyContiArgument() const
     { return anyContiArgument; }
 
-    bool hasIndicesArgument() const
+    [[nodiscard]] inline bool hasIndicesArgument() const
     { return indicesArgument; }
 
-    bool hasSumArgument() const
+    [[nodiscard]] inline bool hasSumArgument() const
     { return sumArgument; }
 
-    bool hasSupportArgument() const
+    [[nodiscard]] inline bool hasSupportArgument() const
     { return supportArgument; }
 
-    bool hasWeightsArgument() const
+    [[nodiscard]] inline bool hasWeightsArgument() const
     { return weightsArgument; }
 
-    bool hasDisjoint() const
+    [[nodiscard]] inline bool hasDisjoint() const
     { return disjointDefined; }
 
-    bool hasFilterEmptyFoci() const
+    [[nodiscard]] inline bool hasFilterEmptyFoci() const
     { return filterEmptyFoci; }
 
-    bool hasFilterExcluded() const
+    [[nodiscard]] inline bool hasFilterExcluded() const
     { return filterExcluded; }
 
-    bool isVerbose() const
+    [[nodiscard]] inline bool isVerbose() const
     { return verbose; }
 
-    const vector<int>& getDisjoint() const
+    [[nodiscard]] inline const vector<int>& getDisjoint() const
     { return disjoint; }
 
-    const List getExcluded() const
+    [[nodiscard]] inline const List getExcluded() const
     { return excluded; }
 
-    size_t getNrow() const
+    [[nodiscard]] inline size_t getNrow() const
     { return nrow; }
 
-    size_t getThreads() const
+    [[nodiscard]] inline size_t getThreads() const
     { return threads; }
 
-    size_t getMinLength() const
+    [[nodiscard]] inline size_t getMinLength() const
     { return minLength; }
 
-    size_t getMaxLength() const
+    [[nodiscard]] inline size_t getMaxLength() const
     { return maxLength; }
 
-    size_t getMaxResults() const
+    [[nodiscard]] inline size_t getMaxResults() const
     { return maxResults; }
 
-    float getMinSupport() const
+    [[nodiscard]] inline float getMinSupport() const
     { return minSupport; }
 
-    float getMinSum() const
+    [[nodiscard]] inline float getMinSum() const
     { return minSum; }
 
-    float getMinFocusSupport() const
+    [[nodiscard]] inline float getMinFocusSupport() const
     { return minFocusSupport; }
 
-    float getMinFocusSum() const
+    [[nodiscard]] inline float getMinFocusSum() const
     { return minFocusSum; }
 
-    float getMinConditionalFocusSupport() const
+    [[nodiscard]] inline float getMinConditionalFocusSupport() const
     { return minConditionalFocusSupport; }
 
-    float getMaxSupport() const
+    [[nodiscard]] inline float getMaxSupport() const
     { return maxSupport; }
 
-    float getMaxSum() const
+    [[nodiscard]] inline float getMaxSum() const
     { return maxSum; }
 
-    TNorm getTNorm() const
+    [[nodiscard]] inline TNorm getTNorm() const
     { return tNorm; }
 
-    const string& getChainName(size_t i) const
+    [[nodiscard]] inline const string& getChainName(const size_t i) const
     { return chainNames[i]; }
 
 private:

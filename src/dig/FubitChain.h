@@ -111,23 +111,25 @@ public:
             }
         )
 
-        const BASE_TYPE* aa = a.data.data();
-        const BASE_TYPE* bb = b.data.data();
+        const size_t dataSize = a.data.size();
+        const BASE_TYPE* __restrict__ aa = a.data.data();
+        const BASE_TYPE* __restrict__ bb = b.data.data();
+        BASE_TYPE* __restrict__ dd = data.data();
 
-        for (size_t i = 0; i < a.data.size(); ++i) {
+        for (size_t i = 0; i < dataSize; ++i) {
             if constexpr (TNORM == TNorm::GOEDEL) {
-                BASE_TYPE s = internalCloneBits(aa[i] - bb[i]);
-                data[i] = (aa[i] & s) | (bb[i] & ~s);
+                const BASE_TYPE s = internalCloneBits(aa[i] - bb[i]);
+                dd[i] = (aa[i] & s) | (bb[i] & ~s);
             }
             else if constexpr (TNORM == TNorm::LUKASIEWICZ) {
-                BASE_TYPE bitsum = aa[i] + bb[i];
-                BASE_TYPE s = internalCloneBits(bitsum);
-                data[i] = (bitsum | s) & NEG_OVERFLOW_MASK;
+                const BASE_TYPE bitsum = aa[i] + bb[i];
+                const BASE_TYPE s = internalCloneBits(bitsum);
+                dd[i] = (bitsum | s) & NEG_OVERFLOW_MASK;
             }
             else if constexpr (TNORM == TNorm::GOGUEN) {
-                BASE_TYPE bitsum = (aa[i] + bb[i]);
-                BASE_TYPE s = internalCloneBits(bitsum);
-                data[i] = (bitsum | s) & NEG_OVERFLOW_MASK;
+                const BASE_TYPE bitsum = aa[i] + bb[i];
+                const BASE_TYPE s = internalCloneBits(bitsum);
+                dd[i] = (bitsum | s) & NEG_OVERFLOW_MASK;
             }
             else {
                 static_assert(TNORM != TNorm::GOEDEL && TNORM != TNorm::GOGUEN && TNORM != TNorm::LUKASIEWICZ,
@@ -230,18 +232,18 @@ private:
     AlignedVector<BASE_TYPE> data;
     size_t n;
 
-    void internalSet(size_t pos, BASE_TYPE value)
+    inline void internalSet(const size_t pos, const BASE_TYPE value)
     {
-        size_t index = pos * BLOCK_SIZE / INTEGER_SIZE;
-        size_t shift = pos * BLOCK_SIZE % INTEGER_SIZE;
+        const size_t index = pos * BLOCK_SIZE / INTEGER_SIZE;
+        const size_t shift = pos * BLOCK_SIZE % INTEGER_SIZE;
         data[index] |= value << shift;
         //cout << "FubitChain::internalSet: value=" << value << " index=" << index << ", shift=" << shift << ", data[index]=" << data[index] << endl;
     }
 
-    BASE_TYPE internalAt(size_t pos) const
+    [[nodiscard]] inline BASE_TYPE internalAt(const size_t pos) const
     {
-        size_t index = pos * BLOCK_SIZE / INTEGER_SIZE;
-        size_t shift = pos * BLOCK_SIZE % INTEGER_SIZE;
+        const size_t index = pos * BLOCK_SIZE / INTEGER_SIZE;
+        const size_t shift = pos * BLOCK_SIZE % INTEGER_SIZE;
 
         //cout << endl << "index: " << index << ", shift: " << shift << ", data: " << data[index] << endl;
         //cout << "chunkmask: " << BLOCK_MASK << ", result: " << ((data[index] >> shift) & BLOCK_MASK) << endl;
@@ -269,7 +271,7 @@ private:
         return result;
     }
 
-    BASE_TYPE internalCloneBits(BASE_TYPE value) const
+    inline BASE_TYPE internalCloneBits(const BASE_TYPE value) const
     {
         BASE_TYPE res = value & OVERFLOW_MASK;
 

@@ -74,51 +74,51 @@ public:
     ChainCollection(ChainCollection&&) = default;
     ChainCollection& operator=(ChainCollection&&) = default;
 
-    void reserve(size_t size)
+    inline void reserve(const size_t size)
     { chains.reserve(size); }
 
-    size_t size() const
+    [[nodiscard]] inline size_t size() const
     { return chains.size(); }
 
-    bool empty() const
+    [[nodiscard]] inline bool empty() const
     { return chains.empty(); }
 
-    const CHAIN& at(size_t i) const
+    [[nodiscard]] inline const CHAIN& at(const size_t i) const
     { return chains.at(i); }
 
-    CHAIN& operator[](size_t i)
+    [[nodiscard]] inline CHAIN& operator[](const size_t i)
     { return chains[i]; }
 
-    const CHAIN& operator[](size_t i) const
+    [[nodiscard]] inline const CHAIN& operator[](const size_t i) const
     { return chains[i]; }
 
-    typename vector<CHAIN>::const_iterator begin() const
+    [[nodiscard]] inline typename vector<CHAIN>::const_iterator begin() const
     { return chains.begin(); }
 
-    typename vector<CHAIN>::const_iterator end() const
+    [[nodiscard]] inline typename vector<CHAIN>::const_iterator end() const
     { return chains.end(); }
 
     // append with move
-    void append(CHAIN&& chain)
+    inline void append(CHAIN&& chain)
     {
         chains.push_back(std::move(chain));
         if (chains.back().isCondition()) nConditions++;
         if (chains.back().isFocus()) nFoci++;
     }
 
-    size_t firstFocusIndex() const
+    [[nodiscard]] inline size_t firstFocusIndex() const
     { return size() - focusCount(); }
 
-    size_t conditionCount() const
+    [[nodiscard]] inline size_t conditionCount() const
     { return nConditions; }
 
-    size_t focusCount() const
+    [[nodiscard]] inline size_t focusCount() const
     { return nFoci; }
 
-    bool hasConditions() const
+    [[nodiscard]] inline bool hasConditions() const
     { return nConditions > 0; }
 
-    bool hasFoci() const
+    [[nodiscard]] inline bool hasFoci() const
     { return nFoci > 0; }
 
 private:
