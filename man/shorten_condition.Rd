@@ -21,8 +21,7 @@ according to the specified method.
 \description{
 This function takes a character vector of conditions and shortens the
 predicates within each condition according to a specified method.
-}
-\details{
+
 Each element of \code{x} must be a condition formatted as a string, e.g.
 \code{"{a=1,b=100,c=3}"} (see \code{\link[=format_condition]{format_condition()}}). The function then
 shortens the predicates in each condition based on the selected \code{method}:
@@ -35,7 +34,8 @@ English alphabet, starting with \code{A} for the first distinct predicate;
 \code{\link[base:abbreviate]{base::abbreviate()}};
 \item \code{"none"}: no shortening is applied; predicates remain unchanged.
 }
-
+}
+\details{
 Predicate shortening is useful for visualization or reporting, especially
 when original predicate names are long or complex. Note that shortening is
 applied consistently across all conditions in \code{x}.

@@ -21,12 +21,18 @@ flavour, if given), otherwise \code{FALSE}.
 Check if the given object is a nugget, i.e. an object created by
 \code{\link[=nugget]{nugget()}}. If a \code{flavour} is specified, the function returns \code{TRUE} only
 if the object is a nugget of the given flavour.
-}
-\details{
+
 Technically, nuggets are implemented as S3 objects. An object is considered
 a nugget if it inherits from the S3 class \code{"nugget"}. It is a nugget of a
 given flavour if it inherits from both the specified \code{flavour} class and
 the \code{"nugget"} class.
+}
+\examples{
+d <- partition(mtcars, .breaks = 2)
+rules <- dig_associations(d, min_support = 0.3)
+is_nugget(rules)
+is_nugget(rules, "associations")
+is_nugget(mtcars)
 }
 \seealso{
 \code{\link[=nugget]{nugget()}}

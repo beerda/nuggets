@@ -2,8 +2,7 @@
 % Please edit documentation in R/dig_complement_contrasts.R
 \name{dig_complement_contrasts}
 \alias{dig_complement_contrasts}
-\title{Search for conditions that provide significant differences in selected
-variables to the rest of the data table}
+\title{Search for conditions that provide significant differences in selected variables to the rest of the data table}
 \usage{
 dig_complement_contrasts(
   x,
@@ -186,6 +185,13 @@ Complement contrasts are computed based on sub-data corresponding
 to conditions generated from the \code{condition} columns and the rest of the
 data table. Function #' \code{dig_complement_contrasts()} supports crisp
 conditions only, i.e., the condition columns in \code{x} must be logical.
+}
+\examples{
+d <- partition(mtcars, .breaks = 2)
+dig_complement_contrasts(d,
+                         condition = where(is.logical),
+                         vars = where(is.numeric),
+                         min_support = 0.3)
 }
 \seealso{
 \code{\link[=dig_baseline_contrasts]{dig_baseline_contrasts()}}, \code{\link[=dig_paired_baseline_contrasts]{dig_paired_baseline_contrasts()}},

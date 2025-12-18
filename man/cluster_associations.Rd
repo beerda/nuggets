@@ -45,8 +45,7 @@ cluster.
 This function clusters association rules based on the selected numeric
 attribute \code{by} (e.g., confidence or lift) and summarizes the clusters.
 The clustering is performed using the k-means algorithm.
-}
-\details{
+
 Each cluster is represented by a label consisting of the number of rules
 in the cluster and the most common predicates in the antecedents of those
 rules.

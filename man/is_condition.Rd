@@ -22,8 +22,7 @@ A valid condition is a character vector of predicate names, where each
 predicate corresponds to a column name in a given data frame or matrix.
 This function verifies that each element of a list \code{x} contains only valid
 predicates that match column names of \code{data}.
-}
-\details{
+
 Special cases:
 \itemize{
 \item An empty character vector (\code{character(0)}) is considered a valid condition

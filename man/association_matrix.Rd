@@ -33,10 +33,17 @@ column specified by \code{value}. Missing values are filled with zeros.
 The association matrix is a matrix where rows correspond to antecedents,
 columns correspond to consequents, and the values are taken from a specified
 column of the nugget. Missing values are filled with zeros.
-}
-\details{
+
 A pair of antecedent and consequent must be unique in the nugget. If there are
 multiple rows with the same pair, an error is raised.
+}
+\examples{
+d <- partition(mtcars, .breaks = 2)
+rules <- dig_associations(d,
+                          antecedent = everything(),
+                          consequent = everything(),
+                          min_support = 0.3)
+association_matrix(rules, confidence)
 }
 \author{
 Michal Burda

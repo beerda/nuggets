@@ -30,8 +30,7 @@ Otherwise, returns \code{FALSE}.
 Check if a vector contains (almost) the same value in the majority of its
 elements. The function returns \code{TRUE} if the proportion of the most frequent
 value in \code{x} is greater than or equal to the specified \code{threshold}.
-}
-\details{
+
 This is useful for detecting low-variability or degenerate variables, which
 may be uninformative in modeling or analysis.
 }

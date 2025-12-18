@@ -2,8 +2,7 @@
 % Please edit documentation in R/dig_paired_baseline_contrasts.R
 \name{dig_paired_baseline_contrasts}
 \alias{dig_paired_baseline_contrasts}
-\title{Search for conditions that provide significant differences between paired
-variables}
+\title{Search for conditions that provide significant differences between paired variables}
 \usage{
 dig_paired_baseline_contrasts(
   x,

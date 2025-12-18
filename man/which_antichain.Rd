@@ -2,8 +2,7 @@
 % Please edit documentation in R/which_antichain.R
 \name{which_antichain}
 \alias{which_antichain}
-\title{Return indices of first elements of the list, which are incomparable with preceding
-elements.}
+\title{Return indices of first elements of the list, which are incomparable with preceding elements.}
 \usage{
 which_antichain(x, distance = 0)
 }
@@ -20,6 +19,13 @@ The function returns indices of elements from the given list \code{x}, which are
 (i.e., it is neither subset nor superset) with any preceding element. The first element
 is always selected. The next element is selected only if it is incomparable with all
 previously selected elements.
+}
+\examples{
+# Create a list of integerish vectors
+x <- list(c(1, 2), c(1, 2, 3), c(2, 3), c(1, 3), c(4, 5))
+
+# Find incomparable elements
+which_antichain(x)
 }
 \author{
 Michal Burda

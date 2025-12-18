@@ -19,12 +19,12 @@ conditions.
 \description{
 From a given list of character vectors, remove those elements that are not
 valid conditions.
-}
-\details{
+
 A valid condition is a character vector of predicates, where each predicate
 corresponds to a column name in the supplied data frame or matrix. Empty
 character vectors and \code{NULL} elements are also considered valid conditions.
-
+}
+\details{
 This function acts as a simple filter around \code{\link[=is_condition]{is_condition()}}. It checks
 each element of \code{x} against the column names of \code{data} and removes those
 that contain invalid predicates. The result preserves only valid conditions

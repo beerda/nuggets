@@ -98,12 +98,18 @@ tautologies is to find rules that are always true, which may be
 used for filtering of further generated conditions. The resulting
 rules may be used as a basis for the list of \code{excluded} formulae
 (see the \code{excluded} argument of \code{\link[=dig]{dig()}}).
-}
-\details{
+
 The search for tautologies is performed by iteratively
 searching for rules with increasing length of the antecedent.
 Rules found in previous iterations are used as \code{excluded}
 argument in the next iteration.
+}
+\examples{
+d <- partition(mtcars, .breaks = 2)
+dig_tautologies(d,
+                antecedent = everything(),
+                consequent = everything(),
+                min_confidence = 0.99)
 }
 \author{
 Michal Burda

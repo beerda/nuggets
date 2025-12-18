@@ -22,8 +22,7 @@ Each element of the list corresponds to one condition. A condition is a
 string of predicates separated by commas and enclosed in curly braces, as
 produced by \code{\link[=format_condition]{format_condition()}}. The function splits each string into its
 component predicates.
-}
-\details{
+
 If multiple vectors of conditions are provided via \code{...}, they are combined
 element-wise. The result is a single list where each element is formed by
 merging the predicates from the corresponding elements of all input
