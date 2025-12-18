@@ -187,11 +187,12 @@ data table. Function #' \code{dig_complement_contrasts()} supports crisp
 conditions only, i.e., the condition columns in \code{x} must be logical.
 }
 \examples{
-d <- partition(mtcars, .breaks = 2)
+d <- partition(mtcars, .breaks = 2, .keep = TRUE)
 dig_complement_contrasts(d,
                          condition = where(is.logical),
                          vars = where(is.numeric),
-                         min_support = 0.3)
+                         min_support = 0.3,
+                         max_length = 2)
 }
 \seealso{
 \code{\link[=dig_baseline_contrasts]{dig_baseline_contrasts()}}, \code{\link[=dig_paired_baseline_contrasts]{dig_paired_baseline_contrasts()}},
