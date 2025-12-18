@@ -102,17 +102,18 @@ private:
 
     void processChains(ChainCollection<CHAIN>& collection)
     {
-        for (size_t i = 0; i < collection.conditionCount(); ++i) {
+        const size_t condCount = collection.conditionCount();
+        for (size_t i = 0; i < condCount; ++i) {
             ChainCollection<CHAIN> childCollection;
             CHAIN& chain = collection[i];
-            auto batch = progress->createBatch(chain.getClause().size(),
-                                               collection.conditionCount() - i - 1);
+            const auto batch = progress->createBatch(chain.getClause().size(),
+                                                      condCount - i - 1);
 
             tree.updateDeduction(chain);
-            if (chain.deducesItself())
+            if (UNLIKELY(chain.deducesItself()))
                 continue;
 
-            if (isExtendable(chain)) {
+            if (LIKELY(isExtendable(chain))) {
                 // need conjunction with everything
                 combine(childCollection, collection, i, false);
             }
@@ -130,15 +131,15 @@ private:
 
     void processChildrenChains(const CHAIN& chain, ChainCollection<CHAIN>& childCollection)
     {
-        if (!config.hasFilterEmptyFoci() || childCollection.hasFoci()) {
+        if (LIKELY(!config.hasFilterEmptyFoci() || childCollection.hasFoci())) {
             if (isStorable(chain)) {
                 Selector selector = createSelectorOfStorable(chain, childCollection);
-                if (isStorable(selector)) {
+                if (LIKELY(isStorable(selector))) {
                     storage.store(chain, childCollection, selector, predicateSums);
                 }
             }
             progress->increment(1);
-            if (isExtendable(chain)) {
+            if (LIKELY(isExtendable(chain))) {
                 processChains(childCollection);
             }
         }
@@ -147,22 +148,24 @@ private:
     void combine(ChainCollection<CHAIN>& target,
                  ChainCollection<CHAIN>& parent,
                  const size_t conditionChainIndex,
-                 bool onlyFoci) const
+                 const bool onlyFoci) const
     {
         CHAIN& conditionChain = parent[conditionChainIndex];
 
         size_t begin = conditionChainIndex + 1;
-        if (onlyFoci && begin < parent.firstFocusIndex()) {
-            begin = parent.firstFocusIndex();
+        const size_t firstFocusIdx = parent.firstFocusIndex();
+        if (onlyFoci && begin < firstFocusIdx) {
+            begin = firstFocusIdx;
         }
 
-        size_t bothLen = (conditionChainIndex > parent.firstFocusIndex()) ? conditionChainIndex - parent.firstFocusIndex() : 0;
+        const size_t bothLen = (conditionChainIndex > firstFocusIdx) ? conditionChainIndex - firstFocusIdx : 0;
+        const size_t parentSize = parent.size();
 
-        target.reserve(parent.size() - begin + bothLen);
-        for (size_t i = begin; i < parent.size(); ++i) {
+        target.reserve(parentSize - begin + bothLen);
+        for (size_t i = begin; i < parentSize; ++i) {
             combineInternal(target, conditionChain, parent[i], false);
         }
-        for (size_t i = parent.firstFocusIndex(); i < conditionChainIndex; ++i) {
+        for (size_t i = firstFocusIdx; i < conditionChainIndex; ++i) {
             combineInternal(target, conditionChain, parent[i], true);
         }
     }
@@ -248,13 +251,17 @@ private:
 
     Selector createSelectorOfStorable(const CHAIN& chain, const ChainCollection<CHAIN>& collection) const
     {
-        bool constant = config.getMinConditionalFocusSupport() <= 0.0f;
+        const bool constant = config.getMinConditionalFocusSupport() <= 0.0f;
         Selector result(collection.focusCount(), constant);
-        if (!constant) {
-            float chainSumReciprocal = 1.0f / chain.getSum();
-            for (size_t i = 0; i < collection.focusCount(); ++i) {
-                const CHAIN& focus = collection[i + collection.firstFocusIndex()];
-                if (focus.getSum() * chainSumReciprocal < config.getMinConditionalFocusSupport()) {
+        if (UNLIKELY(!constant)) {
+            const float chainSumReciprocal = 1.0f / chain.getSum();
+            const float minSupport = config.getMinConditionalFocusSupport();
+            const size_t focusCount = collection.focusCount();
+            const size_t firstFocus = collection.firstFocusIndex();
+            
+            for (size_t i = 0; i < focusCount; ++i) {
+                const CHAIN& focus = collection[i + firstFocus];
+                if (UNLIKELY(focus.getSum() * chainSumReciprocal < minSupport)) {
                     result.unselect(i);
                 }
             }
