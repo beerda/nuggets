@@ -17,8 +17,9 @@
 #######################################################################
 
 
-#' Find tautologies or "almost tautologies" in a dataset
+#' @title Find tautologies or "almost tautologies" in a dataset
 #'
+#' @description
 #' This function finds tautologies in a dataset, i.e., rules of the form
 #' `{a1 & a2 & ... & an} => {c}` where `a1`, `a2`, ..., `an` are
 #' antecedents and `c` is a consequent. The intent of searching for
@@ -85,6 +86,12 @@
 #'      classes and which is a tibble with found tautologies in the format equal to
 #'      the output of [dig_associations()].
 #' @author Michal Burda
+#' @examples
+#' d <- partition(mtcars, .breaks = 2)
+#' dig_tautologies(d,
+#'                 antecedent = everything(),
+#'                 consequent = everything(),
+#'                 min_confidence = 0.99)
 #' @export
 dig_tautologies <- function(x,
                             antecedent = everything(),

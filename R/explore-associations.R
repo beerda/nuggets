@@ -17,7 +17,7 @@
 #######################################################################
 
 
-#' Show interactive application to explore association rules
+#' @title Show interactive application to explore association rules
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`

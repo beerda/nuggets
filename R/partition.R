@@ -17,9 +17,9 @@
 #######################################################################
 
 
-#' Convert columns of a data frame to Boolean or fuzzy sets
-#' (triangular, trapezoidal, or raised-cosine)
+#' @title Convert columns of a data frame to Boolean or fuzzy sets (triangular, trapezoidal, or raised-cosine)
 #'
+#' @description
 #' Transform selected columns of a data frame into either dummy logical
 #' variables or membership degrees of fuzzy sets, while leaving all remaining
 #' columns unchanged. Each transformed column typically produces multiple new

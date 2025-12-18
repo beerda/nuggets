@@ -17,8 +17,9 @@
 #######################################################################
 
 
-#' Test whether an object contains numeric values from the interval \eqn{[0,1]}
+#' @title Test whether an object contains numeric values from the interval \eqn{[0,1]}
 #'
+#' @description
 #' Check if the input consists only of numeric values between 0 and 1,
 #' inclusive. This is often useful when validating truth degrees, membership
 #' values in fuzzy sets, or probabilities.

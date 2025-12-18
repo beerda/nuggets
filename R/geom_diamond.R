@@ -194,8 +194,9 @@ GeomDiamond <- ggproto(
 )
 
 
-#' Geom for drawing diamond plots of lattice structures
+#' @title Geom for drawing diamond plots of lattice structures
 #'
+#' @description
 #' Create a custom `ggplot2` geom for visualizing lattice structures as
 #' *diamond plots*. This geom is particularly useful for displaying
 #' association rules and their ancestor–descendant relationships in a clear,

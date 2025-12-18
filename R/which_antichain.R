@@ -17,9 +17,9 @@
 #######################################################################
 
 
-#' Return indices of first elements of the list, which are incomparable with preceding
-#' elements.
+#' @title Return indices of first elements of the list, which are incomparable with preceding elements.
 #'
+#' @description
 #' The function returns indices of elements from the given list `x`, which are incomparable
 #' (i.e., it is neither subset nor superset) with any preceding element. The first element
 #' is always selected. The next element is selected only if it is incomparable with all
@@ -29,6 +29,12 @@
 #' @param distance a non-negative integer, which specifies the allowed discrepancy between compared sets
 #' @return an integer vector of indices of selected (incomparable) elements.
 #' @author Michal Burda
+#' @examples
+#' # Create a list of integerish vectors
+#' x <- list(c(1, 2), c(1, 2, 3), c(2, 3), c(1, 3), c(4, 5))
+#' 
+#' # Find incomparable elements
+#' which_antichain(x)
 #' @export
 which_antichain <- function(x, distance = 0) {
     .must_be_list_of_integerishes(x)

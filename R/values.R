@@ -17,8 +17,9 @@
 #######################################################################
 
 
-#' Extract values from predicate names
+#' @title Extract values from predicate names
 #'
+#' @description
 #' This function extracts the value part from a character vector of predicate
 #' names. Each element of `x` is expected to follow the pattern
 #' `<varname>=<value>`, where `<varname>` is a variable name and `<value>` is

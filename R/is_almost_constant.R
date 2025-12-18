@@ -17,8 +17,9 @@
 #######################################################################
 
 
-#' Test whether a vector is almost constant
+#' @title Test whether a vector is almost constant
 #'
+#' @description
 #' Check if a vector contains (almost) the same value in the majority of its
 #' elements. The function returns `TRUE` if the proportion of the most frequent
 #' value in `x` is greater than or equal to the specified `threshold`.

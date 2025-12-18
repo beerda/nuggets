@@ -17,8 +17,9 @@
 #######################################################################
 
 
-#' Create a nugget object of a given flavour
+#' @title Create a nugget object of a given flavour
 #'
+#' @description
 #' Construct a nugget object, which is an S3 object used to store and
 #' represent results (e.g., rules or patterns) in the `nuggets` framework.
 #'
