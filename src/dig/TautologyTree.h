@@ -186,18 +186,22 @@ public:
 
     void updateDeduction(CHAIN& chain) const
     {
-        chain.getMutableDeduced().clear();
-        auto beg = chain.getClause().rbegin();
-        auto end = chain.getClause().rend();
-
-        if (beg == end) {
-            root.storeConsequentsTo(chain.getMutableDeduced());
+        auto& deduced = chain.getMutableDeduced();
+        deduced.clear();
+        
+        const auto& clause = chain.getClause();
+        if (clause.empty()) {
+            root.storeConsequentsTo(deduced);
+            return;
         }
-        else {
-            const Node* node = root.children[predicateToIndex[*beg]];
-            if (node != nullptr) {
-                get(node, beg + 1, end, chain.getMutableDeduced());
-            }
+
+        // Iterative traversal for better cache locality
+        auto beg = clause.rbegin();
+        auto end = clause.rend();
+        
+        const Node* node = root.children[predicateToIndex[*beg]];
+        if (node != nullptr) {
+            get(node, beg + 1, end, deduced);
         }
     }
 

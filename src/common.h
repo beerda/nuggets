@@ -50,6 +50,15 @@ using namespace std;
 // see: http://stackoverflow.com/questions/2745074/fast-ceiling-of-an-integer-division-in-c-c
 #define UNSIGNED_CEILING(a, b)  (((a) + (b) - 1) / (b))
 
+// Branch prediction hints for hot paths
+#ifdef __GNUC__
+#    define LIKELY(x)   __builtin_expect(!!(x), 1)
+#    define UNLIKELY(x) __builtin_expect(!!(x), 0)
+#else
+#    define LIKELY(x)   (x)
+#    define UNLIKELY(x) (x)
+#endif
+
 enum TNorm {
     GOEDEL,
     GOGUEN,

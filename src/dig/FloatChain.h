@@ -63,18 +63,23 @@ public:
             }
         )
 
-        for (size_t i = 0; i < a.data.size(); ++i) {
+        const size_t n = a.data.size();
+        const float* __restrict__ aptr = a.data.data();
+        const float* __restrict__ bptr = b.data.data();
+        float* __restrict__ dptr = data.data();
+
+        for (size_t i = 0; i < n; ++i) {
             if constexpr (TNORM == TNorm::GOEDEL) {
-                data[i] = std::min(a.data[i], b.data[i]);
+                dptr[i] = std::min(aptr[i], bptr[i]);
             } else if constexpr (TNORM == TNorm::LUKASIEWICZ) {
-                data[i] = std::max(0.0, a.data[i] + b.data[i] - 1.0);
+                dptr[i] = std::max(0.0f, aptr[i] + bptr[i] - 1.0f);
             } else if constexpr (TNORM == TNorm::GOGUEN) {
-                data[i] = a.data[i] * b.data[i];
+                dptr[i] = aptr[i] * bptr[i];
             } else {
                 static_assert(TNORM != TNorm::GOEDEL && TNORM != TNorm::GOGUEN && TNORM != TNorm::LUKASIEWICZ,
                               "Unsupported TNorm type");
             }
-            sum += data[i];
+            sum += dptr[i];
         }
     }
 

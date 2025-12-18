@@ -138,17 +138,17 @@ public:
     vector<size_t>& getMutableDeduced()
     { return deduced; }
 
-    bool deduces(size_t id) const
+    [[nodiscard]] inline bool deduces(const size_t id) const
     {
-        bool result = std::find(deduced.begin(), deduced.end(), id) != deduced.end();
+        const bool result = std::find(deduced.begin(), deduced.end(), id) != deduced.end();
         //cout << "deducing: " << clauseAsString() << " -> " << id << ": " << (result ? "TRUE" : "FALSE") << endl;
 
         return result;
     }
 
-    bool deducesItself() const
+    [[nodiscard]] inline bool deducesItself() const
     {
-        for (size_t predicate : clause) {
+        for (const size_t predicate : clause) {
             if (deduces(predicate)) {
                 return true;
             }
@@ -167,14 +167,14 @@ public:
      * Returns TRUE if the predicate may appear in the focus (consequent),
      * i.e., if the chain is of type FOCUS or BOTH.
      */
-    bool isFocus() const
+    [[nodiscard]] inline bool isFocus() const
     { return predicateType != CONDITION; }
 
     /**
      * Returns TRUE if the predicate may appear in the condition (antecedent),
      * i.e., if the chain is of type CONDITION or BOTH.
      */
-    bool isCondition() const
+    [[nodiscard]] inline bool isCondition() const
     { return predicateType != FOCUS; }
 
     string clauseAsString() const

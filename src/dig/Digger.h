@@ -147,53 +147,57 @@ private:
     void combine(ChainCollection<CHAIN>& target,
                  ChainCollection<CHAIN>& parent,
                  const size_t conditionChainIndex,
-                 bool onlyFoci) const
+                 const bool onlyFoci) const
     {
         CHAIN& conditionChain = parent[conditionChainIndex];
+        const size_t parentSize = parent.size();
+        const size_t firstFocus = parent.firstFocusIndex();
 
         size_t begin = conditionChainIndex + 1;
-        if (onlyFoci && begin < parent.firstFocusIndex()) {
-            begin = parent.firstFocusIndex();
+        if (UNLIKELY(onlyFoci && begin < firstFocus)) {
+            begin = firstFocus;
         }
 
-        size_t bothLen = (conditionChainIndex > parent.firstFocusIndex()) ? conditionChainIndex - parent.firstFocusIndex() : 0;
+        const size_t bothLen = (conditionChainIndex > firstFocus) ? conditionChainIndex - firstFocus : 0;
+        const size_t estimatedSize = parentSize - begin + bothLen;
 
-        target.reserve(parent.size() - begin + bothLen);
-        for (size_t i = begin; i < parent.size(); ++i) {
+        target.reserve(estimatedSize);
+        for (size_t i = begin; i < parentSize; ++i) {
             combineInternal(target, conditionChain, parent[i], false);
         }
-        for (size_t i = parent.firstFocusIndex(); i < conditionChainIndex; ++i) {
+        for (size_t i = firstFocus; i < conditionChainIndex; ++i) {
             combineInternal(target, conditionChain, parent[i], true);
         }
     }
 
-    void combineInternal(ChainCollection<CHAIN>& target,
-                         const CHAIN& conditionChain,
-                         const CHAIN& secondChain,
-                         const bool toFocus) const
+    inline void combineInternal(ChainCollection<CHAIN>& target,
+                                const CHAIN& conditionChain,
+                                const CHAIN& secondChain,
+                                const bool toFocus) const
     {
-        if (isNonRedundant(conditionChain, secondChain)) {
+        if (LIKELY(isNonRedundant(conditionChain, secondChain))) {
             CHAIN newChain(conditionChain, secondChain, toFocus);
-            if (isCandidate(newChain)) {
+            if (LIKELY(isCandidate(newChain))) {
                 target.append(std::move(newChain));
             }
         }
     }
 
-    bool isNonRedundant(const CHAIN& parent, const CHAIN& chain) const
+    [[nodiscard]] inline bool isNonRedundant(const CHAIN& parent, const CHAIN& chain) const
     {
-        size_t curr = chain.getClause().back();
+        const size_t curr = chain.getClause().back();
+        const auto& parentClause = parent.getClause();
 
-        if (parent.getClause().size() > 0) {
-            size_t pref = parent.getClause().back();
+        if (LIKELY(parentClause.size() > 0)) {
+            const size_t pref = parentClause.back();
 
-            if (pref == curr) {
+            if (UNLIKELY(pref == curr)) {
                 // Filter of focus even if disjoint is not defined
                 // (should never happen as we always have disjoint defined)
                 return false;
             }
 
-            if (config.hasDisjoint() && config.getDisjoint()[pref] == config.getDisjoint()[curr]) {
+            if (LIKELY(config.hasDisjoint()) && UNLIKELY(config.getDisjoint()[pref] == config.getDisjoint()[curr])) {
                 // It is enough to check the last element of the prefix because
                 // previous elements were already checked in parent tasks
                 //cout << "redundant: " << parent.clauseAsString() << " , " << chain.clauseAsString() << endl;
@@ -201,42 +205,45 @@ private:
             }
         }
 
-        if (config.hasFilterExcluded() && parent.deduces(curr)) {
+        if (UNLIKELY(config.hasFilterExcluded() && parent.deduces(curr))) {
             return false;
         }
 
         return true;
     }
 
-    bool isCandidate(const CHAIN& chain) const
+    [[nodiscard]] inline bool isCandidate(const CHAIN& chain) const
     {
         //cout << "chain.getSum() = " << chain.getSum() << " config.getMinSum() = " << config.getMinSum() << endl;
-        if (chain.isCondition() && chain.getSum() >= config.getMinSum())
+        const float chainSum = chain.getSum();
+        
+        if (LIKELY(chain.isCondition()) && LIKELY(chainSum >= config.getMinSum()))
             return true;
 
-        if (chain.isFocus() && chain.getSum() >= config.getMinFocusSum())
+        if (UNLIKELY(chain.isFocus()) && LIKELY(chainSum >= config.getMinFocusSum()))
             return true;
 
         return false;
     }
 
-    bool isExtendable(const CHAIN& chain) const
+    [[nodiscard]] inline bool isExtendable(const CHAIN& chain) const
     {
-        return chain.getClause().size() < config.getMaxLength()
-            && chain.getSum() >= config.getMinSum()
-            && storage.size() < config.getMaxResults();
+        return LIKELY(chain.getClause().size() < config.getMaxLength())
+            && LIKELY(chain.getSum() >= config.getMinSum())
+            && LIKELY(storage.size() < config.getMaxResults());
     }
 
-    bool isStorable(const CHAIN& chain) const
+    [[nodiscard]] inline bool isStorable(const CHAIN& chain) const
     {
-        return chain.getClause().size() >= config.getMinLength()
-            && chain.getSum() >= config.getMinSum()
-            && chain.getSum() <= config.getMaxSum()
-            && storage.size() < config.getMaxResults();
+        const float chainSum = chain.getSum();
+        return LIKELY(chain.getClause().size() >= config.getMinLength())
+            && LIKELY(chainSum >= config.getMinSum())
+            && LIKELY(chainSum <= config.getMaxSum())
+            && LIKELY(storage.size() < config.getMaxResults());
     }
 
-    bool isStorable(const Selector& selector) const
-    { return (!config.hasFilterEmptyFoci() || selector.getSelectedCount() > 0); }
+    [[nodiscard]] inline bool isStorable(const Selector& selector) const
+    { return LIKELY(!config.hasFilterEmptyFoci() || selector.getSelectedCount() > 0); }
 
     Selector createSelectorOfStorable(const CHAIN& chain, const ChainCollection<CHAIN>& collection) const
     {
