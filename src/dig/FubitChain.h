@@ -194,7 +194,7 @@ public:
 
     inline float at(const size_t index) const
     {
-        if (UNLIKELY(index >= n)) {
+        if (index >= n) {
             throw std::out_of_range("FubitChain::at");
         }
 

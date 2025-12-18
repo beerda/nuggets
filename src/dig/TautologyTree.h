@@ -194,12 +194,12 @@ public:
         const auto beg = chain.getClause().rbegin();
         const auto end = chain.getClause().rend();
 
-        if (UNLIKELY(beg == end)) {
+        if (beg == end) {
             root.storeConsequentsTo(chain.getMutableDeduced());
         }
         else {
             const Node* node = root.children[predicateToIndex[*beg]];
-            if (LIKELY(node != nullptr)) {
+            if (node != nullptr) {
                 get(node, beg + 1, end, chain.getMutableDeduced());
             }
         }
@@ -270,9 +270,9 @@ private:
         for (; b != e; ++b) {
             const size_t index = predicateToIndex[*b];
             // Bounds check: index is valid and less than children size
-            if (LIKELY(index < node->children.size())) {
+            if (index < node->children.size()) {
                 const Node* child = node->children[index];
-                if (LIKELY(child != nullptr)) {
+                if (child != nullptr) {
                     get(child, b + 1, e, result);
                 }
             }

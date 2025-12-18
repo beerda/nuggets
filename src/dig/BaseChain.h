@@ -140,7 +140,7 @@ public:
 
     void sortAndUniquifyDeduced()
     {
-        if (UNLIKELY(!deduced.empty())) {
+        if (!deduced.empty()) {
             std::sort(deduced.begin(), deduced.end());
             deduced.erase(std::unique(deduced.begin(), deduced.end()), deduced.end());
         }
@@ -158,7 +158,7 @@ public:
     inline bool deducesItself() const
     {
         for (const size_t predicate : clause) {
-            if (UNLIKELY(deduces(predicate))) {
+            if (deduces(predicate)) {
                 return true;
             }
         }

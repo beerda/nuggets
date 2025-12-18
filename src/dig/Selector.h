@@ -74,10 +74,10 @@ public:
 
     inline void unselect(const size_t index)
     {
-        if (UNLIKELY(pruned == nullptr)) {
+        if (pruned == nullptr) {
             throw invalid_argument("Selector: uninitialized selector");
         }
-        if (LIKELY(!pruned[index])) {
+        if (!pruned[index]) {
             selectedCount--;
         }
         pruned[index] = true;

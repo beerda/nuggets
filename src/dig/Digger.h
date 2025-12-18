@@ -110,10 +110,10 @@ private:
                                                       condCount - i - 1);
 
             tree.updateDeduction(chain);
-            if (UNLIKELY(chain.deducesItself()))
+            if (chain.deducesItself())
                 continue;
 
-            if (LIKELY(isExtendable(chain))) {
+            if (isExtendable(chain)) {
                 // need conjunction with everything
                 combine(childCollection, collection, i, false);
             }
@@ -131,15 +131,15 @@ private:
 
     void processChildrenChains(const CHAIN& chain, ChainCollection<CHAIN>& childCollection)
     {
-        if (LIKELY(!config.hasFilterEmptyFoci() || childCollection.hasFoci())) {
+        if (!config.hasFilterEmptyFoci() || childCollection.hasFoci()) {
             if (isStorable(chain)) {
                 Selector selector = createSelectorOfStorable(chain, childCollection);
-                if (LIKELY(isStorable(selector))) {
+                if (isStorable(selector)) {
                     storage.store(chain, childCollection, selector, predicateSums);
                 }
             }
             progress->increment(1);
-            if (LIKELY(isExtendable(chain))) {
+            if (isExtendable(chain)) {
                 processChains(childCollection);
             }
         }
@@ -188,18 +188,18 @@ private:
         const Clause& parentClause = parent.getClause();
         const size_t curr = chain.getClause().back();
 
-        if (LIKELY(parentClause.size() > 0)) {
+        if (parentClause.size() > 0) {
             const size_t pref = parentClause.back();
 
-            // Quick equality check first (unlikely to match)
-            if (UNLIKELY(pref == curr)) {
+            // Quick equality check first
+            if (pref == curr) {
                 // Filter of focus even if disjoint is not defined
                 // (should never happen as we always have disjoint defined)
                 return false;
             }
 
-            // Check disjoint constraint if enabled (unlikely to be redundant)
-            if (LIKELY(config.hasDisjoint()) && UNLIKELY(config.getDisjoint()[pref] == config.getDisjoint()[curr])) {
+            // Check disjoint constraint if enabled
+            if (config.hasDisjoint() && config.getDisjoint()[pref] == config.getDisjoint()[curr]) {
                 // It is enough to check the last element of the prefix because
                 // previous elements were already checked in parent tasks
                 //cout << "redundant: " << parent.clauseAsString() << " , " << chain.clauseAsString() << endl;
@@ -207,8 +207,8 @@ private:
             }
         }
 
-        // Check deduction (more expensive) last - unlikely to deduce
-        if (LIKELY(config.hasFilterExcluded()) && UNLIKELY(parent.deduces(curr))) {
+        // Check deduction (more expensive) last
+        if (config.hasFilterExcluded() && parent.deduces(curr)) {
             return false;
         }
 
@@ -219,7 +219,7 @@ private:
     {
         //cout << "chain.getSum() = " << chain.getSum() << " config.getMinSum() = " << config.getMinSum() << endl;
         const float sum = chain.getSum();
-        if (LIKELY(chain.isCondition())) {
+        if (chain.isCondition()) {
             return sum >= config.getMinSum();
         }
         if (chain.isFocus()) {
@@ -230,30 +230,30 @@ private:
 
     inline bool isExtendable(const CHAIN& chain) const
     {
-        // Check cheapest conditions first - most likely to pass these checks
-        return LIKELY(chain.getSum() >= config.getMinSum())
-            && LIKELY(chain.getClause().size() < config.getMaxLength())
-            && LIKELY(storage.size() < config.getMaxResults());
+        // Check cheapest conditions first
+        return chain.getSum() >= config.getMinSum()
+            && chain.getClause().size() < config.getMaxLength()
+            && storage.size() < config.getMaxResults();
     }
 
     inline bool isStorable(const CHAIN& chain) const
     {
         // Check cheapest conditions first, then more expensive ones
         const float sum = chain.getSum();
-        return LIKELY(sum >= config.getMinSum())
-            && LIKELY(sum <= config.getMaxSum())
-            && LIKELY(chain.getClause().size() >= config.getMinLength())
-            && LIKELY(storage.size() < config.getMaxResults());
+        return sum >= config.getMinSum()
+            && sum <= config.getMaxSum()
+            && chain.getClause().size() >= config.getMinLength()
+            && storage.size() < config.getMaxResults();
     }
 
     inline bool isStorable(const Selector& selector) const
-    { return (!config.hasFilterEmptyFoci() || LIKELY(selector.getSelectedCount() > 0)); }
+    { return (!config.hasFilterEmptyFoci() || selector.getSelectedCount() > 0); }
 
     Selector createSelectorOfStorable(const CHAIN& chain, const ChainCollection<CHAIN>& collection) const
     {
         const bool constant = config.getMinConditionalFocusSupport() <= 0.0f;
         Selector result(collection.focusCount(), constant);
-        if (UNLIKELY(!constant)) {
+        if (!constant) {
             const float chainSumReciprocal = 1.0f / chain.getSum();
             const float minSupport = config.getMinConditionalFocusSupport();
             const size_t focusCount = collection.focusCount();
@@ -261,7 +261,7 @@ private:
             
             for (size_t i = 0; i < focusCount; ++i) {
                 const CHAIN& focus = collection[i + firstFocus];
-                if (UNLIKELY(focus.getSum() * chainSumReciprocal < minSupport)) {
+                if (focus.getSum() * chainSumReciprocal < minSupport) {
                     result.unselect(i);
                 }
             }
