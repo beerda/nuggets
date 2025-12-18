@@ -63,22 +63,22 @@ public:
     BitChain(BitChain&& other) = default;
     BitChain& operator=(BitChain&& other) = default;
 
-    bool operator==(const BitChain& other) const
+    inline bool operator==(const BitChain& other) const
     { return BaseChain::operator==(other) && (data == other.data); }
 
-    bool operator!=(const BitChain& other) const
+    inline bool operator!=(const BitChain& other) const
     { return !(*this == other); }
 
-    bool operator[](size_t index) const
+    inline bool operator[](const size_t index) const
     { return data[index]; }
 
-    bool at(size_t index) const
+    inline bool at(const size_t index) const
     { return data.at(index); }
 
-    size_t size() const
+    inline size_t size() const
     { return data.size(); }
 
-    bool empty() const
+    inline bool empty() const
     { return data.empty(); }
 
     string toString() const

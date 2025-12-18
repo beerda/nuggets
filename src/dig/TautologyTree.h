@@ -57,7 +57,11 @@ public:
         }
 
         void storeConsequentsTo(vector<size_t>& vec) const
-        { vec.insert(vec.end(), consequents.begin(), consequents.end()); }
+        {
+            if (!consequents.empty()) {
+                vec.insert(vec.end(), consequents.begin(), consequents.end());
+            }
+        }
 
         string toString(size_t padding) const
         {
@@ -175,30 +179,31 @@ public:
         }
     }
 
-    bool empty() const
+    inline bool empty() const
     { return root.nChildren() == 0 && root.consequents.empty(); }
 
     /**
      * Returns the root node of the tree.
      */
-    const Node* getRoot() const
+    inline const Node* getRoot() const
     { return &root; }
 
-    void updateDeduction(CHAIN& chain) const
+    inline void updateDeduction(CHAIN& chain) const
     {
         chain.getMutableDeduced().clear();
-        auto beg = chain.getClause().rbegin();
-        auto end = chain.getClause().rend();
+        const auto beg = chain.getClause().rbegin();
+        const auto end = chain.getClause().rend();
 
-        if (beg == end) {
+        if (UNLIKELY(beg == end)) {
             root.storeConsequentsTo(chain.getMutableDeduced());
         }
         else {
             const Node* node = root.children[predicateToIndex[*beg]];
-            if (node != nullptr) {
+            if (LIKELY(node != nullptr)) {
                 get(node, beg + 1, end, chain.getMutableDeduced());
             }
         }
+        chain.sortAndUniquifyDeduced();
     }
 
     string toString() const
@@ -259,19 +264,18 @@ private:
     }
 
     template <typename Iterator>
-    void get(const Node* node, Iterator b, Iterator e, vector<size_t>& result) const
+    inline void get(const Node* node, Iterator b, const Iterator e, vector<size_t>& result) const
     {
         node->storeConsequentsTo(result);
-        while (b != e) {
-            size_t predicate = *b;
-            size_t index = predicateToIndex[predicate];
-            if (index < node->children.size()) {
+        for (; b != e; ++b) {
+            const size_t index = predicateToIndex[*b];
+            // Bounds check: index is valid and less than children size
+            if (LIKELY(index < node->children.size())) {
                 const Node* child = node->children[index];
-                if (child != nullptr) {
+                if (LIKELY(child != nullptr)) {
                     get(child, b + 1, e, result);
                 }
             }
-            b++;
         }
     }
 };

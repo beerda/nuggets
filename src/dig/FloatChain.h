@@ -63,18 +63,32 @@ public:
             }
         )
 
-        for (size_t i = 0; i < a.data.size(); ++i) {
-            if constexpr (TNORM == TNorm::GOEDEL) {
-                data[i] = std::min(a.data[i], b.data[i]);
-            } else if constexpr (TNORM == TNorm::LUKASIEWICZ) {
-                data[i] = std::max(0.0, a.data[i] + b.data[i] - 1.0);
-            } else if constexpr (TNORM == TNorm::GOGUEN) {
-                data[i] = a.data[i] * b.data[i];
-            } else {
-                static_assert(TNORM != TNorm::GOEDEL && TNORM != TNorm::GOGUEN && TNORM != TNorm::LUKASIEWICZ,
-                              "Unsupported TNorm type");
+        const size_t n = a.data.size();
+        const float* aptr = a.data.data();
+        const float* bptr = b.data.data();
+        float* dptr = data.data();
+        
+        if constexpr (TNORM == TNorm::GOEDEL) {
+            for (size_t i = 0; i < n; ++i) {
+                float val = std::min(aptr[i], bptr[i]);
+                dptr[i] = val;
+                sum += val;
             }
-            sum += data[i];
+        } else if constexpr (TNORM == TNorm::LUKASIEWICZ) {
+            for (size_t i = 0; i < n; ++i) {
+                float val = std::max(0.0f, aptr[i] + bptr[i] - 1.0f);
+                dptr[i] = val;
+                sum += val;
+            }
+        } else if constexpr (TNORM == TNorm::GOGUEN) {
+            for (size_t i = 0; i < n; ++i) {
+                float val = aptr[i] * bptr[i];
+                dptr[i] = val;
+                sum += val;
+            }
+        } else {
+            static_assert(TNORM != TNorm::GOEDEL && TNORM != TNorm::GOGUEN && TNORM != TNorm::LUKASIEWICZ,
+                          "Unsupported TNorm type");
         }
     }
 
@@ -86,22 +100,22 @@ public:
     FloatChain(FloatChain&& other) = default;
     FloatChain& operator=(FloatChain&& other) = default;
 
-    bool operator==(const FloatChain& other) const
+    inline bool operator==(const FloatChain& other) const
     { return BaseChain::operator==(other) && (data == other.data); }
 
-    bool operator!=(const FloatChain& other) const
+    inline bool operator!=(const FloatChain& other) const
     { return !(*this == other); }
 
-    float operator[](size_t index) const
+    inline float operator[](const size_t index) const
     { return data[index]; }
 
-    float at(size_t index) const
+    inline float at(const size_t index) const
     { return data.at(index); }
 
-    size_t size() const
+    inline size_t size() const
     { return data.size(); }
 
-    bool empty() const
+    inline bool empty() const
     { return data.empty(); }
 
     string toString() const

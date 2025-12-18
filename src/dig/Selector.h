@@ -33,10 +33,9 @@ public:
     }
 
     // Move constructor
-    Selector(Selector&& other)
+    Selector(Selector&& other) noexcept
         : n(other.n), selectedCount(other.selectedCount), pruned(other.pruned)
     {
-        cout << "moving1\n";
         other.n = 0;
         other.selectedCount = 0;
         other.pruned = nullptr;
@@ -44,9 +43,8 @@ public:
 
 
     // Move assignment operator
-    Selector& operator=(Selector&& other)
+    Selector& operator=(Selector&& other) noexcept
     {
-        cout << "moving2\n";
         if (this != &other) {
             if (pruned) {
                 delete[] pruned;
@@ -74,18 +72,18 @@ public:
     Selector(const Selector&) = delete;
     Selector& operator=(const Selector&) = delete;
 
-    void unselect(const size_t index)
+    inline void unselect(const size_t index)
     {
-        if (pruned == nullptr) {
+        if (UNLIKELY(pruned == nullptr)) {
             throw invalid_argument("Selector: uninitialized selector");
         }
-        if (!pruned[index]) {
+        if (LIKELY(!pruned[index])) {
             selectedCount--;
         }
         pruned[index] = true;
     }
 
-    bool isSelected(const size_t index) const
+    inline bool isSelected(const size_t index) const
     {
         if (pruned == nullptr) {
             return true;
@@ -93,10 +91,10 @@ public:
         return !pruned[index];
     }
 
-    size_t size() const
+    inline size_t size() const
     { return n; }
 
-    size_t getSelectedCount() const
+    inline size_t getSelectedCount() const
     { return selectedCount; }
 
 private:

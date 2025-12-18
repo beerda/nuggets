@@ -42,6 +42,16 @@ using namespace std;
 #endif
 
 
+// Branch prediction hints for better performance
+#ifdef __GNUC__
+#    define LIKELY(x)   __builtin_expect(!!(x), 1)
+#    define UNLIKELY(x) __builtin_expect(!!(x), 0)
+#else
+#    define LIKELY(x)   (x)
+#    define UNLIKELY(x) (x)
+#endif
+
+
 #define EQUAL(a, b) (fabs((a) - (b)) < 1e-6)
 #define EQUAL100(a, b) (fabs((a) - (b)) < 0.019)
 #define EQUAL1(a, b) (fabs((a) - (b)) < 1)

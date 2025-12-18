@@ -146,13 +146,13 @@ public:
     FubitChain(FubitChain&& other) = default;
     FubitChain& operator=(FubitChain&& other) = default;
 
-    bool operator==(const FubitChain& other) const
+    inline bool operator==(const FubitChain& other) const
     { return BaseChain::operator==(other) && (data == other.data); }
 
-    bool operator!=(const   FubitChain& other) const
+    inline bool operator!=(const FubitChain& other) const
     { return !(*this == other); }
 
-    void set(size_t index, float value)
+    inline void set(const size_t index, const float value)
     {
         if constexpr (TNORM == TNorm::GOEDEL) {
             internalSet(index, (BASE_TYPE) (value * MAX_VALUE));
@@ -171,18 +171,18 @@ public:
         }
     }
 
-    float operator[](size_t index) const
+    inline float operator[](const size_t index) const
     {
         float res = 0;
         if constexpr (TNORM == TNorm::GOEDEL) {
-            res = 1.0 * internalAt(index) / ((float) MAX_VALUE);
+            res = 1.0f * internalAt(index) / static_cast<float>(MAX_VALUE);
         }
         else if constexpr (TNORM == TNorm::LUKASIEWICZ) {
-            res = 1.0 - 1.0 * internalAt(index) / ((float) MAX_VALUE);
+            res = 1.0f - 1.0f * internalAt(index) / static_cast<float>(MAX_VALUE);
         }
         else if constexpr (TNORM == TNorm::GOGUEN) {
-            BASE_TYPE val = internalAt(index);
-            res = (val >= this->MAX_VALUE) ? 0.0 : pow(LOG_BASE, val);
+            const BASE_TYPE val = internalAt(index);
+            res = (val >= this->MAX_VALUE) ? 0.0f : pow(LOG_BASE, val);
         }
         else {
             static_assert(TNORM != TNorm::GOEDEL && TNORM != TNorm::GOGUEN && TNORM != TNorm::LUKASIEWICZ,
@@ -192,19 +192,19 @@ public:
         return res;
     }
 
-    float at(size_t index) const
+    inline float at(const size_t index) const
     {
-        if (index >= n) {
+        if (UNLIKELY(index >= n)) {
             throw std::out_of_range("FubitChain::at");
         }
 
         return operator[](index);
     }
 
-    size_t size() const
+    inline size_t size() const
     { return n; }
 
-    bool empty() const
+    inline bool empty() const
     { return n <= 0; }
 
     string toString() const
@@ -230,18 +230,18 @@ private:
     AlignedVector<BASE_TYPE> data;
     size_t n;
 
-    void internalSet(size_t pos, BASE_TYPE value)
+    inline void internalSet(const size_t pos, const BASE_TYPE value)
     {
-        size_t index = pos * BLOCK_SIZE / INTEGER_SIZE;
-        size_t shift = pos * BLOCK_SIZE % INTEGER_SIZE;
+        const size_t index = pos * BLOCK_SIZE / INTEGER_SIZE;
+        const size_t shift = pos * BLOCK_SIZE % INTEGER_SIZE;
         data[index] |= value << shift;
         //cout << "FubitChain::internalSet: value=" << value << " index=" << index << ", shift=" << shift << ", data[index]=" << data[index] << endl;
     }
 
-    BASE_TYPE internalAt(size_t pos) const
+    inline BASE_TYPE internalAt(const size_t pos) const
     {
-        size_t index = pos * BLOCK_SIZE / INTEGER_SIZE;
-        size_t shift = pos * BLOCK_SIZE % INTEGER_SIZE;
+        const size_t index = pos * BLOCK_SIZE / INTEGER_SIZE;
+        const size_t shift = pos * BLOCK_SIZE % INTEGER_SIZE;
 
         //cout << endl << "index: " << index << ", shift: " << shift << ", data: " << data[index] << endl;
         //cout << "chunkmask: " << BLOCK_MASK << ", result: " << ((data[index] >> shift) & BLOCK_MASK) << endl;
@@ -269,7 +269,7 @@ private:
         return result;
     }
 
-    BASE_TYPE internalCloneBits(BASE_TYPE value) const
+    inline BASE_TYPE internalCloneBits(const BASE_TYPE value) const
     {
         BASE_TYPE res = value & OVERFLOW_MASK;
 
