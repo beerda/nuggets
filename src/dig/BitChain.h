@@ -24,11 +24,13 @@
 #include <vector>
 #include <cstdint>
 #include <stdexcept>
+#include <bitset>
 
 
 /**
  * Custom bitset implementation using vector of uint64_t.
  * Optimized for performance-critical operations.
+ * Portable across all C++17 compilers (Linux, Windows, macOS).
  */
 class CustomBitset {
 private:
@@ -56,11 +58,11 @@ public:
     }
 
     // Count number of set bits (popcount)
+    // Uses std::bitset which is portable and optimized by compilers
     inline size_t count() const {
         size_t result = 0;
         for (uint64_t block : blocks) {
-            // Use builtin popcount for performance
-            result += __builtin_popcountll(block);
+            result += std::bitset<64>(block).count();
         }
         return result;
     }
