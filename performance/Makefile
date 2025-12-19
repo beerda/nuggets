@@ -1,9 +1,11 @@
 COMMITS := \
+    1be5c2db96e2ca33ef008c7bd4dde131f4e89ac6 \
 	b10572617c60c3cb4bd03713fa7f1f586b820a53 \
 	303bdc31dfa4cd8cde5cdad618bdb4256ee4f969 \
 	current
 
-	# b10572617c60c3cb4bd03713fa7f1f586b820a53  2022-11-15  Selector is made singleton to avoid allocation
+	# 1be5c2db96e2ca33ef008c7bd4dde131f4e89ac6  2025-12-18  dig_associations()'s callback written in C++
+	# b10572617c60c3cb4bd03713fa7f1f586b820a53  2025-12-18  Selector is made singleton to avoid allocation
 	# 303bdc31dfa4cd8cde5cdad618bdb4256ee4f969  2025-12-18  Base for comparison: BitChain
 
 TESTS := \
