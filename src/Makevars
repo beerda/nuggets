@@ -16,10 +16,12 @@ SOURCES=RcppExports.cpp \
 	test-antichain-Tree.cpp \
 	test-dig-BinomialCoefficients.cpp \
 	test-dig-BitChain.cpp \
+	test-dig-Bitset.cpp \
 	test-dig-ChainCollection.cpp \
 	test-dig-Config.cpp \
 	test-dig-FloatChain.cpp \
 	test-dig-FubitChain.cpp \
+	test-dig-Selector.cpp \
 	test-dig-TautologyTree.cpp
 
 # Obtain the object files
