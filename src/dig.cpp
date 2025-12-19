@@ -26,6 +26,8 @@
 #include "dig/Digger.h"
 
 
+#define BIT_CHAIN BitChain
+
 #ifdef __arm64__
     // MacOS
     #define GOGUEN_CHAIN FloatChain<TNorm::GOGUEN>
@@ -47,22 +49,6 @@
 //define GOGUEN_CHAIN FubitChain<TNorm::GOGUEN, 8>
 
 
-
-template <typename CHAIN, typename STORAGE>
-List runDigger(List data,
-               LogicalVector isCondition,
-               LogicalVector isFocus,
-               Function callback,
-               const Config& config)
-{
-        STORAGE caller(config, callback);
-        Digger<CHAIN, STORAGE> digger(config, data, isCondition, isFocus, caller);
-        digger.run();
-
-        return caller.getResult();
-}
-
-
 bool dataAreAllLogical(List data)
 {
     bool allLogical = true;
@@ -74,6 +60,23 @@ bool dataAreAllLogical(List data)
     }
 
     return allLogical;
+}
+
+
+template <typename CHAIN>
+List runDig(List data,
+            LogicalVector isCondition,
+            LogicalVector isFocus,
+            Function callback,
+            const Config& config)
+{
+    using STORAGE = CallbackCaller<CHAIN>;
+
+    STORAGE storage(config, callback);
+    Digger<CHAIN, STORAGE> digger(config, data, isCondition, isFocus, storage);
+    digger.run();
+
+    return storage.getResult();
 }
 
 
@@ -93,28 +96,16 @@ List dig_(List data,
     List result;
 
     if (allLogical) {
-        //cout << "BitChain\n";
-        using CHAIN = BitChain;
-        using STORAGE = CallbackCaller<CHAIN>;
-        result = runDigger<CHAIN, STORAGE>(data, isCondition, isFocus, callback, config);
+        result = runDig<BIT_CHAIN>(data, isCondition, isFocus, callback, config);
     }
     else if (config.getTNorm() == TNorm::GOEDEL) {
-        //cout << "Goedel\n";
-        using CHAIN = GOEDEL_CHAIN;
-        using STORAGE = CallbackCaller<CHAIN>;
-        result = runDigger<CHAIN, STORAGE>(data, isCondition, isFocus, callback, config);
+        result = runDig<GOEDEL_CHAIN>(data, isCondition, isFocus, callback, config);
     }
     else if (config.getTNorm() == TNorm::GOGUEN) {
-        //cout << "Goguen\n";
-        using CHAIN = GOGUEN_CHAIN;
-        using STORAGE = CallbackCaller<CHAIN>;
-        result = runDigger<CHAIN, STORAGE>(data, isCondition, isFocus, callback, config);
+        result = runDig<GOGUEN_CHAIN>(data, isCondition, isFocus, callback, config);
     }
     else if (config.getTNorm() == TNorm::LUKASIEWICZ) {
-        //cout << "Lukas\n";
-        using CHAIN = LUKASIEWICZ_CHAIN;
-        using STORAGE = CallbackCaller<CHAIN>;
-        result = runDigger<CHAIN, STORAGE>(data, isCondition, isFocus, callback, config);
+        result = runDig<LUKASIEWICZ_CHAIN>(data, isCondition, isFocus, callback, config);
     }
 
     return result;
