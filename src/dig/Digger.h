@@ -63,6 +63,8 @@ public:
     void run()
     {
         ChainCollection<CHAIN> filteredCollection;
+        filteredCollection.reserve(initialCollection.size());
+
         CHAIN emptyChain(config.getNrow());
         tree.updateDeduction(emptyChain);
 
