@@ -7,7 +7,8 @@ COMMITS := \
 	# 303bdc31dfa4cd8cde5cdad618bdb4256ee4f969  2025-12-18  Base for comparison: BitChain
 
 TESTS := \
-	test-assoc_m1e7_n10_maxlen4.R
+	test-assoc_m1e7_n10_maxlen4.R \
+	test-assoc_m1e7_n20_maxlen4.R
 
 RESULTS_DIR := results
 OUTPUTS := $(addprefix $(RESULTS_DIR)/, $(addsuffix .rds, $(COMMITS)))
