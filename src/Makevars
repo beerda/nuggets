@@ -20,7 +20,6 @@ SOURCES=RcppExports.cpp \
 	test-dig-Config.cpp \
 	test-dig-FloatChain.cpp \
 	test-dig-FubitChain.cpp \
-	test-dig-PackedBitChain.cpp \
 	test-dig-TautologyTree.cpp
 
 # Obtain the object files

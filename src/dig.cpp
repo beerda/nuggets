@@ -19,7 +19,6 @@
 
 #include "common.h"
 #include "dig/BitChain.h"
-#include "dig/PackedBitChain.h"
 #include "dig/FloatChain.h"
 #include "dig/CallbackCaller.h"
 #include "dig/Config.h"
@@ -89,7 +88,6 @@ List dig_(List data,
     if (allLogical) {
         //cout << "BitChain\n";
         using CHAIN = BitChain;
-        // using CHAIN = PackedBitChain;
         using STORAGE = CallbackCaller<CHAIN>;
         result = runDigger<CHAIN, STORAGE>(data, isCondition, isFocus, callback, config);
     }
