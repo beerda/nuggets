@@ -65,6 +65,14 @@ public:
         sanitize();
     }
 
+    // Disable copy
+    CustomBitset(const CustomBitset& other) = delete;
+    CustomBitset& operator=(const CustomBitset& other) = delete;
+
+    // Allow move
+    CustomBitset(CustomBitset&& other) = default;
+    CustomBitset& operator=(CustomBitset&& other) = default;
+
     // Set bit at position pos to 1
     inline void set(size_t pos)
     { blocks[block_index(pos)] |= bit_mask(pos); }
@@ -114,7 +122,7 @@ public:
         CustomBitset result;
         result.num_bits = num_bits;
         result.blocks.reserve(blocks.size());
-        
+
         for (size_t i = 0; i < blocks.size(); ++i) {
             result.blocks.push_back(blocks[i] & other.blocks[i]);
         }
