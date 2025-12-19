@@ -1,4 +1,6 @@
 COMMITS := \
+	da2c099e5d0d3e56c905bf51bdea0f75a8f5e657 \
+	2a8a347f3a74ef17d37d09ae7eecd74263dad0d1 \
 	0d6a9d80fc8ad98bda19f6a64fb62bd51d6994b1 \
     2fd9cd88299f29ff0a8bd3b0f93a5e35c7c6e5a0 \
     1be5c2db96e2ca33ef008c7bd4dde131f4e89ac6 \
@@ -6,6 +8,8 @@ COMMITS := \
 	303bdc31dfa4cd8cde5cdad618bdb4256ee4f969 \
 	current
 
+	# da2c099e5d0d3e56c905bf51bdea0f75a8f5e657  2025-12-18  Further optimizations of CustomBitSet
+	# 2a8a347f3a74ef17d37d09ae7eecd74263dad0d1  2025-12-18  Optimize CustomBitSet
 	# 0d6a9d80fc8ad98bda19f6a64fb62bd51d6994b1  2025-12-18  Removed dependency on Boost dynamic_bitset
 	# 2fd9cd88299f29ff0a8bd3b0f93a5e35c7c6e5a0  2025-12-18  Fixed references
 	# 1be5c2db96e2ca33ef008c7bd4dde131f4e89ac6  2025-12-18  dig_associations()'s callback written in C++
