@@ -8,7 +8,8 @@
 
 context("dig/Selector") {
     test_that("initialize and use non-constant") {
-        Selector s(10, false);
+        Selector s(10);
+        s.initialize(10, false);
         expect_true(s.size() == 10);
         expect_true(s.getSelectedCount() == 10);
 
@@ -30,7 +31,8 @@ context("dig/Selector") {
     }
 
     test_that("initialize and use constant") {
-        Selector s(10, true);
+        Selector s(10);
+        s.initialize(10, true);
         expect_true(s.size() == 10);
         expect_true(s.getSelectedCount() == 10);
 
