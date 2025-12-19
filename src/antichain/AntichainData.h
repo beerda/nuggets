@@ -29,7 +29,7 @@ public:
     AntichainData()
     { }
 
-    AntichainData(List data)
+    AntichainData(const List& data)
     {
         for (R_xlen_t i = 0; i < data.size(); ++i) {
             addCondition(data[i]);

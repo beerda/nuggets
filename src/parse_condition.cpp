@@ -79,7 +79,7 @@ std::vector<std::string> split_commas(const std::string &s) {
 
 
 // [[Rcpp::export(name=".parse_condition")]]
-List parse_condition(CharacterVector x) {
+List parse_condition(const CharacterVector& x) {
     int n = x.size();
     List out(n);
 

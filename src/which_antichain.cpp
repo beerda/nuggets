@@ -23,7 +23,7 @@
 
 
 // [[Rcpp::export]]
-IntegerVector which_antichain_(List x, IntegerVector dist)
+IntegerVector which_antichain_(const List& x, const IntegerVector& dist)
 {
     if (dist.size() == 0) {
         stop("dist must have at least one element");
