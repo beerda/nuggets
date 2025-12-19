@@ -24,7 +24,6 @@
 #include <vector>
 #include <cstdint>
 #include <stdexcept>
-#include <bitset>
 
 
 /**
@@ -42,6 +41,17 @@ private:
     static inline size_t bit_index(size_t pos) { return pos % BITS_PER_BLOCK; }
     static inline uint64_t bit_mask(size_t pos) { return uint64_t(1) << bit_index(pos); }
 
+    // Mask off unused bits in the last block
+    inline void sanitize()
+    {
+        if (num_bits > 0 && blocks.size() > 0) {
+            size_t extra_bits = num_bits % BITS_PER_BLOCK;
+            if (extra_bits > 0) {
+                blocks.back() &= (uint64_t(1) << extra_bits) - 1;
+            }
+        }
+    }
+
 public:
     CustomBitset()
         : num_bits(0)
@@ -52,19 +62,38 @@ public:
     {
         size_t num_blocks = (n + BITS_PER_BLOCK - 1) / BITS_PER_BLOCK;
         blocks.resize(num_blocks, 0);
+        sanitize();
     }
+
+    // Disable copy
+    CustomBitset(const CustomBitset& other) = delete;
+    CustomBitset& operator=(const CustomBitset& other) = delete;
+
+    // Allow move
+    CustomBitset(CustomBitset&& other) = default;
+    CustomBitset& operator=(CustomBitset&& other) = default;
 
     // Set bit at position pos to 1
     inline void set(size_t pos)
     { blocks[block_index(pos)] |= bit_mask(pos); }
 
     // Count number of set bits (popcount)
-    // Uses std::bitset which is portable and optimized by compilers
+    // Uses compiler intrinsics for optimal performance
     inline size_t count() const
     {
         size_t result = 0;
         for (uint64_t block : blocks) {
-            result += std::bitset<64>(block).count();
+            #if defined(__GNUC__) || defined(__clang__)
+                result += __builtin_popcountll(block);
+            #elif defined(_MSC_VER)
+                result += __popcnt64(block);
+            #else
+                // Fallback: Efficient software implementation
+                uint64_t v = block;
+                v = v - ((v >> 1) & 0x5555555555555555ULL);
+                v = (v & 0x3333333333333333ULL) + ((v >> 2) & 0x3333333333333333ULL);
+                result += (((v + (v >> 4)) & 0xF0F0F0F0F0F0F0FULL) * 0x101010101010101ULL) >> 56;
+            #endif
         }
         return result;
     }
@@ -87,12 +116,15 @@ public:
     inline CustomBitset operator&(const CustomBitset& other) const
     {
         if (blocks.size() != other.blocks.size()) {
-            throw std::invalid_argument("Bitset::operator==: incompatible sizes");
+            throw std::invalid_argument("CustomBitset::operator&: incompatible sizes");
         }
 
-        CustomBitset result(num_bits);
+        CustomBitset result;
+        result.num_bits = num_bits;
+        result.blocks.reserve(blocks.size());
+
         for (size_t i = 0; i < blocks.size(); ++i) {
-            result.blocks[i] = blocks[i] & other.blocks[i];
+            result.blocks.push_back(blocks[i] & other.blocks[i]);
         }
 
         return result;
