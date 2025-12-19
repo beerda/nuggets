@@ -12,269 +12,269 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // goedel_tnorm
-double goedel_tnorm(NumericVector vals);
+double goedel_tnorm(const NumericVector& vals);
 RcppExport SEXP _nuggets_goedel_tnorm(SEXP valsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type vals(valsSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type vals(valsSEXP);
     rcpp_result_gen = Rcpp::wrap(goedel_tnorm(vals));
     return rcpp_result_gen;
 END_RCPP
 }
 // pgoedel_tnorm
-NumericVector pgoedel_tnorm(List list);
+NumericVector pgoedel_tnorm(const List& list);
 RcppExport SEXP _nuggets_pgoedel_tnorm(SEXP listSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type list(listSEXP);
+    Rcpp::traits::input_parameter< const List& >::type list(listSEXP);
     rcpp_result_gen = Rcpp::wrap(pgoedel_tnorm(list));
     return rcpp_result_gen;
 END_RCPP
 }
 // lukas_tnorm
-double lukas_tnorm(NumericVector vals);
+double lukas_tnorm(const NumericVector& vals);
 RcppExport SEXP _nuggets_lukas_tnorm(SEXP valsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type vals(valsSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type vals(valsSEXP);
     rcpp_result_gen = Rcpp::wrap(lukas_tnorm(vals));
     return rcpp_result_gen;
 END_RCPP
 }
 // plukas_tnorm
-NumericVector plukas_tnorm(List list);
+NumericVector plukas_tnorm(const List& list);
 RcppExport SEXP _nuggets_plukas_tnorm(SEXP listSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type list(listSEXP);
+    Rcpp::traits::input_parameter< const List& >::type list(listSEXP);
     rcpp_result_gen = Rcpp::wrap(plukas_tnorm(list));
     return rcpp_result_gen;
 END_RCPP
 }
 // goguen_tnorm
-double goguen_tnorm(NumericVector vals);
+double goguen_tnorm(const NumericVector& vals);
 RcppExport SEXP _nuggets_goguen_tnorm(SEXP valsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type vals(valsSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type vals(valsSEXP);
     rcpp_result_gen = Rcpp::wrap(goguen_tnorm(vals));
     return rcpp_result_gen;
 END_RCPP
 }
 // pgoguen_tnorm
-NumericVector pgoguen_tnorm(List list);
+NumericVector pgoguen_tnorm(const List& list);
 RcppExport SEXP _nuggets_pgoguen_tnorm(SEXP listSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type list(listSEXP);
+    Rcpp::traits::input_parameter< const List& >::type list(listSEXP);
     rcpp_result_gen = Rcpp::wrap(pgoguen_tnorm(list));
     return rcpp_result_gen;
 END_RCPP
 }
 // goedel_tconorm
-double goedel_tconorm(NumericVector vals);
+double goedel_tconorm(const NumericVector& vals);
 RcppExport SEXP _nuggets_goedel_tconorm(SEXP valsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type vals(valsSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type vals(valsSEXP);
     rcpp_result_gen = Rcpp::wrap(goedel_tconorm(vals));
     return rcpp_result_gen;
 END_RCPP
 }
 // pgoedel_tconorm
-NumericVector pgoedel_tconorm(List list);
+NumericVector pgoedel_tconorm(const List& list);
 RcppExport SEXP _nuggets_pgoedel_tconorm(SEXP listSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type list(listSEXP);
+    Rcpp::traits::input_parameter< const List& >::type list(listSEXP);
     rcpp_result_gen = Rcpp::wrap(pgoedel_tconorm(list));
     return rcpp_result_gen;
 END_RCPP
 }
 // lukas_tconorm
-double lukas_tconorm(NumericVector vals);
+double lukas_tconorm(const NumericVector& vals);
 RcppExport SEXP _nuggets_lukas_tconorm(SEXP valsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type vals(valsSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type vals(valsSEXP);
     rcpp_result_gen = Rcpp::wrap(lukas_tconorm(vals));
     return rcpp_result_gen;
 END_RCPP
 }
 // plukas_tconorm
-NumericVector plukas_tconorm(List list);
+NumericVector plukas_tconorm(const List& list);
 RcppExport SEXP _nuggets_plukas_tconorm(SEXP listSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type list(listSEXP);
+    Rcpp::traits::input_parameter< const List& >::type list(listSEXP);
     rcpp_result_gen = Rcpp::wrap(plukas_tconorm(list));
     return rcpp_result_gen;
 END_RCPP
 }
 // goguen_tconorm
-double goguen_tconorm(NumericVector vals);
+double goguen_tconorm(const NumericVector& vals);
 RcppExport SEXP _nuggets_goguen_tconorm(SEXP valsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type vals(valsSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type vals(valsSEXP);
     rcpp_result_gen = Rcpp::wrap(goguen_tconorm(vals));
     return rcpp_result_gen;
 END_RCPP
 }
 // pgoguen_tconorm
-NumericVector pgoguen_tconorm(List list);
+NumericVector pgoguen_tconorm(const List& list);
 RcppExport SEXP _nuggets_pgoguen_tconorm(SEXP listSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type list(listSEXP);
+    Rcpp::traits::input_parameter< const List& >::type list(listSEXP);
     rcpp_result_gen = Rcpp::wrap(pgoguen_tconorm(list));
     return rcpp_result_gen;
 END_RCPP
 }
 // goedel_residuum
-NumericVector goedel_residuum(NumericVector x, NumericVector y);
+NumericVector goedel_residuum(const NumericVector& x, const NumericVector& y);
 RcppExport SEXP _nuggets_goedel_residuum(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type y(ySEXP);
     rcpp_result_gen = Rcpp::wrap(goedel_residuum(x, y));
     return rcpp_result_gen;
 END_RCPP
 }
 // lukas_residuum
-NumericVector lukas_residuum(NumericVector x, NumericVector y);
+NumericVector lukas_residuum(const NumericVector& x, const NumericVector& y);
 RcppExport SEXP _nuggets_lukas_residuum(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type y(ySEXP);
     rcpp_result_gen = Rcpp::wrap(lukas_residuum(x, y));
     return rcpp_result_gen;
 END_RCPP
 }
 // goguen_residuum
-NumericVector goguen_residuum(NumericVector x, NumericVector y);
+NumericVector goguen_residuum(const NumericVector& x, const NumericVector& y);
 RcppExport SEXP _nuggets_goguen_residuum(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type y(ySEXP);
     rcpp_result_gen = Rcpp::wrap(goguen_residuum(x, y));
     return rcpp_result_gen;
 END_RCPP
 }
 // invol_neg
-NumericVector invol_neg(NumericVector x);
+NumericVector invol_neg(const NumericVector& x);
 RcppExport SEXP _nuggets_invol_neg(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type x(xSEXP);
     rcpp_result_gen = Rcpp::wrap(invol_neg(x));
     return rcpp_result_gen;
 END_RCPP
 }
 // strict_neg
-NumericVector strict_neg(NumericVector x);
+NumericVector strict_neg(const NumericVector& x);
 RcppExport SEXP _nuggets_strict_neg(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type x(xSEXP);
     rcpp_result_gen = Rcpp::wrap(strict_neg(x));
     return rcpp_result_gen;
 END_RCPP
 }
 // dig_
-List dig_(List data, CharacterVector namesVector, LogicalVector isCondition, LogicalVector isFocus, Function callback, List confList);
+List dig_(const List& data, const CharacterVector& namesVector, const LogicalVector& isCondition, const LogicalVector& isFocus, const Function& callback, const List& confList);
 RcppExport SEXP _nuggets_dig_(SEXP dataSEXP, SEXP namesVectorSEXP, SEXP isConditionSEXP, SEXP isFocusSEXP, SEXP callbackSEXP, SEXP confListSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< CharacterVector >::type namesVector(namesVectorSEXP);
-    Rcpp::traits::input_parameter< LogicalVector >::type isCondition(isConditionSEXP);
-    Rcpp::traits::input_parameter< LogicalVector >::type isFocus(isFocusSEXP);
-    Rcpp::traits::input_parameter< Function >::type callback(callbackSEXP);
-    Rcpp::traits::input_parameter< List >::type confList(confListSEXP);
+    Rcpp::traits::input_parameter< const List& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const CharacterVector& >::type namesVector(namesVectorSEXP);
+    Rcpp::traits::input_parameter< const LogicalVector& >::type isCondition(isConditionSEXP);
+    Rcpp::traits::input_parameter< const LogicalVector& >::type isFocus(isFocusSEXP);
+    Rcpp::traits::input_parameter< const Function& >::type callback(callbackSEXP);
+    Rcpp::traits::input_parameter< const List& >::type confList(confListSEXP);
     rcpp_result_gen = Rcpp::wrap(dig_(data, namesVector, isCondition, isFocus, callback, confList));
     return rcpp_result_gen;
 END_RCPP
 }
 // dig_associations_
-List dig_associations_(List data, CharacterVector namesVector, LogicalVector isCondition, LogicalVector isFocus, List confList);
+List dig_associations_(const List& data, const CharacterVector& namesVector, const LogicalVector& isCondition, const LogicalVector& isFocus, const List& confList);
 RcppExport SEXP _nuggets_dig_associations_(SEXP dataSEXP, SEXP namesVectorSEXP, SEXP isConditionSEXP, SEXP isFocusSEXP, SEXP confListSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< CharacterVector >::type namesVector(namesVectorSEXP);
-    Rcpp::traits::input_parameter< LogicalVector >::type isCondition(isConditionSEXP);
-    Rcpp::traits::input_parameter< LogicalVector >::type isFocus(isFocusSEXP);
-    Rcpp::traits::input_parameter< List >::type confList(confListSEXP);
+    Rcpp::traits::input_parameter< const List& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const CharacterVector& >::type namesVector(namesVectorSEXP);
+    Rcpp::traits::input_parameter< const LogicalVector& >::type isCondition(isConditionSEXP);
+    Rcpp::traits::input_parameter< const LogicalVector& >::type isFocus(isFocusSEXP);
+    Rcpp::traits::input_parameter< const List& >::type confList(confListSEXP);
     rcpp_result_gen = Rcpp::wrap(dig_associations_(data, namesVector, isCondition, isFocus, confList));
     return rcpp_result_gen;
 END_RCPP
 }
 // parse_condition
-List parse_condition(CharacterVector x);
+List parse_condition(const CharacterVector& x);
 RcppExport SEXP _nuggets_parse_condition(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< CharacterVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const CharacterVector& >::type x(xSEXP);
     rcpp_result_gen = Rcpp::wrap(parse_condition(x));
     return rcpp_result_gen;
 END_RCPP
 }
 // raisedcos_
-NumericVector raisedcos_(NumericVector x, NumericVector ctx);
+NumericVector raisedcos_(const NumericVector& x, const NumericVector& ctx);
 RcppExport SEXP _nuggets_raisedcos_(SEXP xSEXP, SEXP ctxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type ctx(ctxSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type ctx(ctxSEXP);
     rcpp_result_gen = Rcpp::wrap(raisedcos_(x, ctx));
     return rcpp_result_gen;
 END_RCPP
 }
 // triangle_
-NumericVector triangle_(NumericVector x, NumericVector ctx);
+NumericVector triangle_(const NumericVector& x, const NumericVector& ctx);
 RcppExport SEXP _nuggets_triangle_(SEXP xSEXP, SEXP ctxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type ctx(ctxSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type ctx(ctxSEXP);
     rcpp_result_gen = Rcpp::wrap(triangle_(x, ctx));
     return rcpp_result_gen;
 END_RCPP
 }
 // which_antichain_
-IntegerVector which_antichain_(List x, IntegerVector dist);
+IntegerVector which_antichain_(const List& x, const IntegerVector& dist);
 RcppExport SEXP _nuggets_which_antichain_(SEXP xSEXP, SEXP distSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type x(xSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type dist(distSEXP);
+    Rcpp::traits::input_parameter< const List& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type dist(distSEXP);
     rcpp_result_gen = Rcpp::wrap(which_antichain_(x, dist));
     return rcpp_result_gen;
 END_RCPP

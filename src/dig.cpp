@@ -50,7 +50,7 @@
 //define GOGUEN_CHAIN FubitChain<TNorm::GOGUEN, 8>
 
 
-bool dataAreAllLogical(List data)
+bool dataAreAllLogical(const List& data)
 {
     bool allLogical = true;
     for (R_xlen_t i = 0; i < data.size(); ++i) {
@@ -65,10 +65,10 @@ bool dataAreAllLogical(List data)
 
 
 template <typename CHAIN>
-List runDig(List data,
-            LogicalVector isCondition,
-            LogicalVector isFocus,
-            Function callback,
+List runDig(const List& data,
+            const LogicalVector& isCondition,
+            const LogicalVector& isFocus,
+            const Function& callback,
             const Config& config)
 {
     using STORAGE = CallbackCaller<CHAIN>;
@@ -83,12 +83,12 @@ List runDig(List data,
 
 // [[Rcpp::plugins(openmp)]]
 // [[Rcpp::export]]
-List dig_(List data,
-          CharacterVector namesVector,
-          LogicalVector isCondition,
-          LogicalVector isFocus,
-          Function callback,
-          List confList)
+List dig_(const List& data,
+          const CharacterVector& namesVector,
+          const LogicalVector& isCondition,
+          const LogicalVector& isFocus,
+          const Function& callback,
+          const List& confList)
 {
     LogStartEnd l("dig_");
 
@@ -114,9 +114,9 @@ List dig_(List data,
 
 
 template <typename CHAIN>
-List runDigAssoc(List data,
-                 LogicalVector isCondition,
-                 LogicalVector isFocus,
+List runDigAssoc(const List& data,
+                 const LogicalVector& isCondition,
+                 const LogicalVector& isFocus,
                  const Config& config)
 {
     using STORAGE = AssocStorage<CHAIN>;
@@ -131,11 +131,11 @@ List runDigAssoc(List data,
 
 // [[Rcpp::plugins(openmp)]]
 // [[Rcpp::export]]
-List dig_associations_(List data,
-                       CharacterVector namesVector,
-                       LogicalVector isCondition,
-                       LogicalVector isFocus,
-                       List confList)
+List dig_associations_(const List& data,
+                       const CharacterVector& namesVector,
+                       const LogicalVector& isCondition,
+                       const LogicalVector& isFocus,
+                       const List& confList)
 {
     LogStartEnd l("dig_assoc_");
 
