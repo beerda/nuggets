@@ -24,59 +24,31 @@
 
 class Selector {
 public:
-    Selector(const size_t size, const bool constantlyTrue)
-        : n(size), selectedCount(size), pruned(nullptr)
-    {
-        if (!constantlyTrue) {
-            pruned = new bool[size](); // Initialize to false
-        }
-    }
+    Selector(const size_t size)
+        : n(0), selectedCount(0), pruned(size), constantlyTrue(false)
+    { }
 
-    // Move constructor
-    Selector(Selector&& other)
-        : n(other.n), selectedCount(other.selectedCount), pruned(other.pruned)
-    {
-        cout << "moving1\n";
-        other.n = 0;
-        other.selectedCount = 0;
-        other.pruned = nullptr;
-    }
-
-
-    // Move assignment operator
-    Selector& operator=(Selector&& other)
-    {
-        cout << "moving2\n";
-        if (this != &other) {
-            if (pruned) {
-                delete[] pruned;
-            }
-            n = other.n;
-            selectedCount = other.selectedCount;
-            pruned = other.pruned;
-
-            other.n = 0;
-            other.selectedCount = 0;
-            other.pruned = nullptr;
-        }
-
-        return *this;
-    }
-
-    ~Selector()
-    {
-        if (pruned) {
-            delete[] pruned;
-        }
-    }
+    // Disable move
+    Selector(Selector&& other) = delete;
+    Selector& operator=(Selector&& other) = delete;
 
     // Disable copy
     Selector(const Selector&) = delete;
     Selector& operator=(const Selector&) = delete;
 
+    void initialize(const size_t size, const bool isConstantlyTrue)
+    {
+        n = size;
+        selectedCount = size;
+        constantlyTrue = isConstantlyTrue;
+        if (!constantlyTrue) {
+            fill(pruned.begin(), pruned.end(), false);
+        }
+    }
+
     void unselect(const size_t index)
     {
-        if (pruned == nullptr) {
+        if (constantlyTrue) {
             throw invalid_argument("Selector: uninitialized selector");
         }
         if (!pruned[index]) {
@@ -87,7 +59,7 @@ public:
 
     bool isSelected(const size_t index) const
     {
-        if (pruned == nullptr) {
+        if (constantlyTrue) {
             return true;
         }
         return !pruned[index];
@@ -102,5 +74,6 @@ public:
 private:
     size_t n;
     size_t selectedCount;
-    bool* pruned;
+    vector<short> pruned;
+    bool constantlyTrue;
 };

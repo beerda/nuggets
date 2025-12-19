@@ -41,6 +41,7 @@ public:
           config(config),
           initialCollection(data, isCondition, isFocus),
           predicateSums(data.size() + 1),
+          selectorSingleton(initialCollection.focusCount()),
           tree(initialCollection),
           progress(nullptr)
     {
@@ -99,6 +100,7 @@ private:
     const Config& config;
     ChainCollection<CHAIN> initialCollection;
     vector<float> predicateSums;
+    Selector selectorSingleton;
     TautologyTree<CHAIN> tree;
     CombinatorialProgress* progress;
 
@@ -134,7 +136,8 @@ private:
     {
         if (!config.hasFilterEmptyFoci() || childCollection.hasFoci()) {
             if (isStorable(chain)) {
-                Selector selector = createSelectorOfStorable(chain, childCollection);
+                // return singleton selector to avoid allocations
+                const Selector& selector = initializeSelectorOfStorable(chain, childCollection);
                 if (isStorable(selector)) {
                     storage.store(chain, childCollection, selector, predicateSums);
                 }
@@ -240,20 +243,20 @@ private:
     bool isStorable(const Selector& selector) const
     { return (!config.hasFilterEmptyFoci() || selector.getSelectedCount() > 0); }
 
-    Selector createSelectorOfStorable(const CHAIN& chain, const ChainCollection<CHAIN>& collection) const
+    const Selector& initializeSelectorOfStorable(const CHAIN& chain, const ChainCollection<CHAIN>& collection)
     {
         bool constant = config.getMinConditionalFocusSupport() <= 0.0f;
-        Selector result(collection.focusCount(), constant);
+        selectorSingleton.initialize(collection.focusCount(), constant);
         if (!constant) {
             float chainSumReciprocal = 1.0f / chain.getSum();
             for (size_t i = 0; i < collection.focusCount(); ++i) {
                 const CHAIN& focus = collection[i + collection.firstFocusIndex()];
                 if (focus.getSum() * chainSumReciprocal < config.getMinConditionalFocusSupport()) {
-                    result.unselect(i);
+                    selectorSingleton.unselect(i);
                 }
             }
         }
 
-        return result;
+        return selectorSingleton;
     }
 };
