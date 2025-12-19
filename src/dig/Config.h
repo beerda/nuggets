@@ -25,7 +25,7 @@
 
 class Config {
 public:
-    Config(List configuration, CharacterVector namesVector)
+    Config(const List& configuration, const CharacterVector& namesVector)
     {
         int nrow_i = as<IntegerVector>(configuration["nrow"])[0];
         if (nrow_i < 0)
