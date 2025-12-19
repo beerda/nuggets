@@ -8,7 +8,8 @@ d <- matrix(sample(c(T, F), m * n, replace = TRUE),
             ncol = n)
 colnames(d) <- letters[seq_len(n)]
 
-system.time({
+# replications comes from run.R
+res <- benchmark(replications = replications, {
     rules <- dig_associations(d,
                               min_support = supp,
                               min_length = 0,
@@ -17,3 +18,5 @@ system.time({
                               contingency_table = TRUE,
                               threads = 1)
 })
+
+res

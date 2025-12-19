@@ -8,6 +8,8 @@ if (length(args) < 1) {
 
 library(tidyverse)
 
+str(args)
+
 res <- args |>
     map(readRDS) |>
     reduce(bind_rows)
