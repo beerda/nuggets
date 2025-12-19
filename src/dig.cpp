@@ -63,6 +63,20 @@ List runDigger(List data,
 }
 
 
+bool dataAreAllLogical(List data)
+{
+    bool allLogical = true;
+    for (R_xlen_t i = 0; i < data.size(); ++i) {
+        if (!Rf_isLogical(data[i])) {
+            allLogical = false;
+            break;
+        }
+    }
+
+    return allLogical;
+}
+
+
 // [[Rcpp::plugins(openmp)]]
 // [[Rcpp::export]]
 List dig_(List data,
@@ -74,14 +88,7 @@ List dig_(List data,
 {
     LogStartEnd l("dig_");
 
-    bool allLogical = true;
-    for (R_xlen_t i = 0; i < data.size(); ++i) {
-        if (!Rf_isLogical(data[i])) {
-            allLogical = false;
-            break;
-        }
-    }
-
+    bool allLogical = dataAreAllLogical(data);
     Config config(confList, namesVector);
     List result;
 
