@@ -29,7 +29,7 @@
  */
 class BaseChain {
 public:
-    static PredicateType createPredicateType(bool isCondition, bool isFocus)
+    static inline PredicateType createPredicateType(const bool isCondition, const bool isFocus)
     {
         if (isCondition && isFocus) {
             return BOTH;
@@ -109,7 +109,7 @@ public:
     /**
      * Comparison (equality) operator.
      */
-    bool operator==(const BaseChain& other) const
+    inline bool operator==(const BaseChain& other) const
     {
         return (sum == other.sum)
             && (predicateType == other.predicateType)
@@ -119,26 +119,26 @@ public:
     /**
      * Comparison (inequality) operator.
      */
-    bool operator!=(const BaseChain& other) const
+    inline bool operator!=(const BaseChain& other) const
     { return !(*this == other); }
 
     /**
      * Returns the clause of the chain, i.e., the vector of predicate ids.
      */
-    const Clause& getClause() const
+    inline const Clause& getClause() const
     { return clause; }
 
     /**
      * Returns the sum of TRUEs (for binary data) or membership degrees (for
      * fuzzy data) of the chain.
      */
-    float getSum() const
+    inline float getSum() const
     { return sum; }
 
-    vector<size_t>& getMutableDeduced()
+    inline vector<size_t>& getMutableDeduced()
     { return deduced; }
 
-    bool deduces(size_t id) const
+    inline bool deduces(const size_t id) const
     {
         bool result = std::find(deduced.begin(), deduced.end(), id) != deduced.end();
         //cout << "deducing: " << clauseAsString() << " -> " << id << ": " << (result ? "TRUE" : "FALSE") << endl;
@@ -146,7 +146,7 @@ public:
         return result;
     }
 
-    bool deducesItself() const
+    inline bool deducesItself() const
     {
         for (size_t predicate : clause) {
             if (deduces(predicate)) {
@@ -160,24 +160,24 @@ public:
     /**
      * Returns the type of the predicate represented by this chain.
      */
-    PredicateType getPredicateType() const
+    inline PredicateType getPredicateType() const
     { return predicateType; }
 
     /**
      * Returns TRUE if the predicate may appear in the focus (consequent),
      * i.e., if the chain is of type FOCUS or BOTH.
      */
-    bool isFocus() const
+    inline bool isFocus() const
     { return predicateType != CONDITION; }
 
     /**
      * Returns TRUE if the predicate may appear in the condition (antecedent),
      * i.e., if the chain is of type CONDITION or BOTH.
      */
-    bool isCondition() const
+    inline bool isCondition() const
     { return predicateType != FOCUS; }
 
-    string clauseAsString() const
+    inline string clauseAsString() const
     {
         string res = "";
         bool first = true;

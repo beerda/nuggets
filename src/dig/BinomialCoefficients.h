@@ -54,7 +54,7 @@ public:
      * @param k The number of selected elements.
      * @return The binomial coefficient C(n, k).
      */
-    size_t get(size_t n, size_t k) const
+    inline size_t get(const size_t n, const size_t k) const
     {
         if (n > dimension) {
             throw std::out_of_range("BinomialCoefficients::get: index out of range");
@@ -69,10 +69,10 @@ private:
     size_t dimension;
     size_t* table;
 
-    size_t& lookup(size_t n, size_t k) const
+    inline size_t& lookup(const size_t n, const size_t k) const
     { return table[n * dimension + k]; }
 
-    size_t compute(size_t n, size_t k) const
+    inline size_t compute(const size_t n, const size_t k) const
     {
         if (k == 0 || k == n)
             return 1;

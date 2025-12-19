@@ -56,13 +56,13 @@ public:
         return true;
     }
 
-    Node& getRoot()
+    inline Node& getRoot()
     { return root; }
 
-    int getNumNodes()
+    inline int getNumNodes()
     { return root.getNumDescendants() + 1; }
 
-    string visualize()
+    inline string visualize()
     {
         stringstream ss;
         ss << "root" << endl;
