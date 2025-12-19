@@ -90,20 +90,13 @@
 #'      (See Description for the definition of *support*.)
 #' @param min_confidence the minimum confidence of a rule in the dataset `x`.
 #'      (See Description for the definition of *confidence*.)
-#' @param contingency_table a logical value indicating whether to provide a contingency
+#' @param contingency_table (Deprecated. Contingency table is always added to the
+#'      result.) A logical value indicating whether to provide a contingency
 #'      table for each rule. If `TRUE`, the columns `pp`, `pn`, `np`, and `nn` are
 #'      added to the output table. These columns contain the number of rows satisfying
 #'      the antecedent and the consequent, the antecedent but not the consequent,
 #'      the consequent but not the antecedent, and neither the antecedent nor the
 #'      consequent, respectively.
-#' @param measures (Deprecated. Search for associations using
-#'      `dig_associations(contingency_table = TRUE)` and use the `add_interest()`
-#'      function on the result to compute additional measures.)
-#'      A character vector specifying the additional quality measures to compute.
-#'      If `NULL`, no additional measures are computed. Possible values are `"lift"`,
-#'      `"conviction"`, `"added_value"`.
-#'      See [https://mhahsler.github.io/arules/docs/measures](https://mhahsler.github.io/arules/docs/measures)
-#'      for a description of the measures.
 #' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
 #'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
 #'      (Łukasiewicz t-norm).
@@ -131,7 +124,6 @@
 #'          \item `arg_min_support` - name of the argument `min_support`
 #'          \item `arg_min_confidence` - name of the argument `min_confidence`
 #'          \item `arg_contingency_table` - name of the argument `contingency_table`
-#'          \item `arg_measures` - name of the argument `measures`
 #'          \item `arg_t_norm` - name of the argument `t_norm`
 #'          \item `arg_max_results` - name of the argument `max_results`
 #'          \item `arg_verbose` - name of the argument `verbose`
@@ -159,8 +151,7 @@ dig_associations <- function(x,
                              min_coverage = 0,
                              min_support = 0,
                              min_confidence = 0,
-                             contingency_table = FALSE,
-                             measures = deprecated(),
+                             contingency_table = deprecated(),
                              t_norm = "goguen",
                              max_results = Inf,
                              verbose = FALSE,
@@ -176,7 +167,6 @@ dig_associations <- function(x,
                                                   arg_min_support = "min_support",
                                                   arg_min_confidence = "min_confidence",
                                                   arg_contingency_table = "contingency_table",
-                                                  arg_measures = "measures",
                                                   arg_t_norm = "t_norm",
                                                   arg_max_results = "max_results",
                                                   arg_verbose = "verbose",
@@ -203,26 +193,19 @@ dig_associations <- function(x,
                       arg = error_context$arg_min_confidence,
                       call = error_context$call)
 
+    if (lifecycle::is_present(contingency_table)) {
+        deprecate_warn(when = "2.2.0",
+                       what = "nuggets::dig_associations(contingency_table)",
+                       details = "The `contingency_table` argument is deprecated and will be removed in future versions. Contingency table is always added to the result.")
+    } else {
+        contingency_table <- TRUE
+    }
     .must_be_flag(contingency_table,
                   arg = error_context$arg_contingency_table,
                   call = error_context$call)
 
     .must_be_flag(verbose,
                   arg = error_context$arg_verbose,
-                  call = error_context$call)
-
-    if (lifecycle::is_present(measures)) {
-        deprecate_warn(when = "2.1.0",
-                       what = "nuggets::dig_associations(measures)",
-                       details = "The `measures` argument is deprecated and will be removed in future versions. Use the `add_interest()` function on the result of `dig_associations(contingency_table = TRUE)` to compute additional measures.")
-    } else {
-        measures <- NULL
-    }
-    .must_be_enum(measures,
-                  values = c("lift", "conviction", "added_value"),
-                  null = TRUE,
-                  multi = TRUE,
-                  arg = error_context$arg_measures,
                   call = error_context$call)
 
     .must_be_integerish_scalar(max_results,
@@ -238,80 +221,6 @@ dig_associations <- function(x,
 
     antecedent <- enquo(antecedent)
     consequent <- enquo(consequent)
-
-    f1 <- function(condition, support) {
-        res <- support
-        names(res) <- colnames(x)[condition]
-
-        res
-    }
-
-    .msg(verbose, "dig_associations: computing consequent supports")
-    conseq_supports <- dig(x = x,
-                           f = f1,
-                           condition = !!consequent,
-                           disjoint = disjoint,
-                           min_length = 1,
-                           max_length = 1,
-                           min_support = 0.0,
-                           verbose = verbose,
-                           threads = threads,
-                           error_context = list(arg_x = error_context$arg_x,
-                                                arg_condition = error_context$arg_consequent,
-                                                arg_disjoint = error_context$arg_disjoint,
-                                                arg_min_length = error_context$arg_min_length,
-                                                arg_max_length = error_context$arg_max_length,
-                                                arg_min_support = error_context$arg_min_support,
-                                                arg_verbose = error_context$arg_verbose,
-                                                arg_threads = error_context$arg_threads,
-                                                call = error_context$call))
-    conseq_supports <- unlist(conseq_supports)
-
-    basic_callback <- function(condition, sum, pp) {
-        conf <- pp / sum
-        supp <- pp / n
-        covr <- sum / n
-        consupp <- conseq_supports[names(pp)]
-        lift <- supp / (covr * consupp)
-        ante <- format_condition(names(condition))
-        cons <- unlist(lapply(names(conf), format_condition))
-
-        if (length(conf) <= 0) {
-            return(NULL)
-        }
-
-        data.frame(antecedent = ante,
-                   consequent = cons,
-                   support = supp,
-                   confidence = conf,
-                   coverage = covr,
-                   conseq_support = consupp,
-                   lift = lift,
-                   count = pp,
-                   antecedent_length = length(condition))
-    }
-
-    extended_callback <- function(condition, sum, pp, pn, np, nn) {
-        res <- basic_callback(condition, sum, pp)
-
-        if (length(res) <= 0) {
-            return(NULL)
-        }
-
-        res$pp <- pp
-        res$pn <- pn
-        res$np <- np
-        res$nn <- nn
-
-        res
-    }
-
-    contingency_needed_measures <- c("conviction")
-    contingency_needed <- length(intersect(measures, contingency_needed_measures)) > 0
-
-    f <- ifelse(contingency_table || contingency_needed,
-                extended_callback,
-                basic_callback)
 
     .msg(verbose, "dig_associations: computing rules")
     res <- .dig(x = x,
@@ -362,21 +271,6 @@ dig_associations <- function(x,
         if (is.finite(max_results) && nrow(res) > max_results) {
             res <- res[seq_len(max_results), , drop = FALSE]
         }
-
-        if ("conviction" %in% measures) {
-            res$conviction <- res$coverage * (1 - res$conseq_support) / (res$pn / n)
-        }
-
-        if ("added_value" %in% measures) {
-            res$added_value <- res$confidence - res$conseq_support
-        }
-
-        if (!contingency_table) {
-            res$pp <- NULL
-            res$pn <- NULL
-            res$np <- NULL
-            res$nn <- NULL
-        }
     }
 
     nugget(res,
@@ -396,7 +290,6 @@ dig_associations <- function(x,
                             min_support = min_support,
                             min_confidence = min_confidence,
                             contingency_table = contingency_table,
-                            measures = measures,
                             t_norm = t_norm,
                             max_results = max_results,
                             verbose = verbose,

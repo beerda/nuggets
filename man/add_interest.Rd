@@ -11,7 +11,7 @@ add_interest(x, ...)
 }
 \arguments{
 \item{x}{A nugget of flavour \code{associations}, typically created with
-\code{\link[=dig_associations]{dig_associations()}} with argument \code{contingency_table = TRUE}.}
+\code{\link[=dig_associations]{dig_associations()}}.}
 
 \item{measures}{A character vector specifying which interest measures to
 calculate. If \code{NULL} (the default), all supported measures are calculated.
@@ -52,8 +52,8 @@ The input nugget object must contain the columns
 \code{pn} (positive antecedent & negative consequent),
 \code{np} (negative antecedent & positive consequent), and
 \code{nn} (negative antecedent & negative consequent), representing the counts
-from the contingency table. These columns are typically produced by
-\code{\link[=dig_associations]{dig_associations()}} when the \code{contingency_table} argument is set to \code{TRUE}.
+from the contingency table. These columns are automatically produced by
+\code{\link[=dig_associations]{dig_associations()}}.
 
 The supported interest measures that can be calculated include:
 \itemize{
@@ -138,8 +138,7 @@ rules <- dig_associations(d,
                           antecedent = !starts_with("mpg"),
                           consequent = starts_with("mpg"),
                           min_support = 0.3,
-                          min_confidence = 0.8,
-                          contingency_table = TRUE)
+                          min_confidence = 0.8)
 rules <- add_interest(rules,
                    measures = c("conviction", "leverage", "jaccard"))
 }

@@ -31,8 +31,8 @@
 #' `pn` (positive antecedent & negative consequent),
 #' `np` (negative antecedent & positive consequent), and
 #' `nn` (negative antecedent & negative consequent), representing the counts
-#' from the contingency table. These columns are typically produced by
-#' [dig_associations()] when the `contingency_table` argument is set to `TRUE`.
+#' from the contingency table. These columns are automatically produced by
+#' [dig_associations()].
 #'
 #' The supported interest measures that can be calculated include:
 #' - Founded GUHA (General Unary Hypothesis Automaton) quantifiers:
@@ -72,7 +72,7 @@
 #' argument.
 #'
 #' @param x A nugget of flavour `associations`, typically created with
-#'    [dig_associations()] with argument `contingency_table = TRUE`.
+#'    [dig_associations()].
 #' @param measures A character vector specifying which interest measures to
 #'    calculate. If `NULL` (the default), all supported measures are calculated.
 #'    See the Details section for the list of supported measures.
@@ -102,8 +102,7 @@
 #'                           antecedent = !starts_with("mpg"),
 #'                           consequent = starts_with("mpg"),
 #'                           min_support = 0.3,
-#'                           min_confidence = 0.8,
-#'                           contingency_table = TRUE)
+#'                           min_confidence = 0.8)
 #' rules <- add_interest(rules,
 #'                    measures = c("conviction", "leverage", "jaccard"))
 #' @rdname add_interest
