@@ -128,25 +128,25 @@ public:
     SimdChain(SimdChain&& other) = default;
     SimdChain& operator=(SimdChain&& other) = default;
 
-    bool operator==(const SimdChain& other) const
+    inline bool operator==(const SimdChain& other) const
     { return BaseChain::operator==(other) && (data == other.data); }
 
-    bool operator!=(const SimdChain& other) const
+    inline bool operator!=(const SimdChain& other) const
     { return !(*this == other); }
 
-    float operator[](size_t index) const
+    inline float operator[](const size_t index) const
     { return data[index]; }
 
-    float at(size_t index) const
+    inline float at(const size_t index) const
     { return data.at(index); }
 
-    size_t size() const
+    inline size_t size() const
     { return data.size(); }
 
-    bool empty() const
+    inline bool empty() const
     { return data.empty(); }
 
-    string toString() const
+    inline string toString() const
     {
         stringstream res;
         res << "[n=" << data.size() << "]";
@@ -160,7 +160,7 @@ public:
 private:
     AlignedVector<float> data;
 
-    void setSum()
+    inline void setSum()
     {
         __m256 sumv = _mm256_set1_ps(0.0f);
 

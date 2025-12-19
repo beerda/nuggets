@@ -36,7 +36,7 @@ public:
     Selector(const Selector&) = delete;
     Selector& operator=(const Selector&) = delete;
 
-    void initialize(const size_t size, const bool isConstantlyTrue)
+    inline void initialize(const size_t size, const bool isConstantlyTrue)
     {
         n = size;
         selectedCount = size;
@@ -46,7 +46,7 @@ public:
         }
     }
 
-    void unselect(const size_t index)
+    inline void unselect(const size_t index)
     {
         if (constantlyTrue) {
             throw invalid_argument("Selector: uninitialized selector");
@@ -57,7 +57,7 @@ public:
         pruned[index] = true;
     }
 
-    bool isSelected(const size_t index) const
+    inline bool isSelected(const size_t index) const
     {
         if (constantlyTrue) {
             return true;
@@ -65,10 +65,10 @@ public:
         return !pruned[index];
     }
 
-    size_t size() const
+    inline size_t size() const
     { return n; }
 
-    size_t getSelectedCount() const
+    inline size_t getSelectedCount() const
     { return selectedCount; }
 
 private:

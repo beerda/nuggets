@@ -33,15 +33,15 @@ public:
         : predicates(_predicates)
     { }
 
-    bool hasPredicate(int predicate) const {
+    inline bool hasPredicate(const int predicate) const {
         return predicates.find(predicate) != predicates.end();
     }
 
-    const unordered_set<int> getPredicates() const {
+    inline const unordered_set<int>& getPredicates() const {
         return predicates;
     }
 
-    int length() const {
+    inline int length() const {
         return predicates.size();
     }
 

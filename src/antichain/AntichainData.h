@@ -36,13 +36,13 @@ public:
         }
     }
 
-    void addCondition(const IntegerVector& values)
+    inline void addCondition(const IntegerVector& values)
     { conditions.push_back(Condition(values)); }
 
-    const Condition& getCondition(size_t i) const
+    inline const Condition& getCondition(const size_t i) const
     { return conditions.at(i); }
 
-    size_t size() const
+    inline size_t size() const
     { return conditions.size(); }
 
 private:

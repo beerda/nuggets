@@ -105,16 +105,16 @@ public:
     PackedBitChain(PackedBitChain&& other) = default;
     PackedBitChain& operator=(PackedBitChain&& other) = default;
 
-    bool operator==(const PackedBitChain& other) const
+    inline bool operator==(const PackedBitChain& other) const
     { return BaseChain::operator==(other) && (data == other.data); }
 
-    bool operator!=(const PackedBitChain& other) const
+    inline bool operator!=(const PackedBitChain& other) const
     { return !(*this == other); }
 
-    bool operator[](size_t index) const
+    inline bool operator[](const size_t index) const
     {  return getValue(index); }
 
-    bool at(size_t index) const
+    inline bool at(const size_t index) const
     {
         if (index >= n) {
             throw std::out_of_range("PackedBitChain::at");
@@ -123,16 +123,16 @@ public:
         return getValue(index);
     }
 
-    size_t size() const
+    inline size_t size() const
     { return n; }
 
-    bool empty() const
+    inline bool empty() const
     { return data.empty(); }
 
-    const vector<size_t>& raw() const
+    inline const vector<size_t>& raw() const
     { return data; }
 
-    string toString() const
+    inline string toString() const
     {
         Iter iter(this);
         stringstream res;
@@ -160,16 +160,16 @@ private:
             : chain(theChain), index(0), offset(0)
         { }
 
-        bool hasData() const
+        inline bool hasData() const
         { return index < chain->data.size(); }
 
-        bool currentValue() const
+        inline bool currentValue() const
         { return index % 2; }
 
-        size_t remainingCount() const
+        inline size_t remainingCount() const
         { return chain->data[index] - offset; }
 
-        void increment(size_t count)
+        inline void increment(const size_t count)
         {
             offset += count;
             if (offset >= chain->data[index]) {
@@ -182,7 +182,7 @@ private:
     size_t n;
     std::vector<size_t> data;
 
-    bool getValue(const size_t index) const
+    inline bool getValue(const size_t index) const
     {
         size_t i = 0;
         size_t pos = 0;

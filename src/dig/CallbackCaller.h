@@ -68,10 +68,10 @@ public:
         }
     }
 
-    size_t size() const
+    inline size_t size() const
     { return result.size(); }
 
-    List getResult() const
+    inline List getResult() const
     {
         // Rcpp:List is tragically slow if the size is not known in advance
         List res(result.size());

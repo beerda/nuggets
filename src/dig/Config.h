@@ -105,97 +105,97 @@ public:
         }
     }
 
-    bool hasConditionArgument() const
+    inline bool hasConditionArgument() const
     { return conditionArgument; }
 
-    bool hasFociSupportsArgument() const
+    inline bool hasFociSupportsArgument() const
     { return fociSupportsArgument; }
 
-    bool hasContiPpArgument() const
+    inline bool hasContiPpArgument() const
     { return contiPpArgument; }
 
-    bool hasContiNpArgument() const
+    inline bool hasContiNpArgument() const
     { return contiNpArgument; }
 
-    bool hasContiPnArgument() const
+    inline bool hasContiPnArgument() const
     { return contiPnArgument; }
 
-    bool hasContiNnArgument() const
+    inline bool hasContiNnArgument() const
     { return contiNnArgument; }
 
-    bool hasAnyContiArgument() const
+    inline bool hasAnyContiArgument() const
     { return anyContiArgument; }
 
-    bool hasIndicesArgument() const
+    inline bool hasIndicesArgument() const
     { return indicesArgument; }
 
-    bool hasSumArgument() const
+    inline bool hasSumArgument() const
     { return sumArgument; }
 
-    bool hasSupportArgument() const
+    inline bool hasSupportArgument() const
     { return supportArgument; }
 
-    bool hasWeightsArgument() const
+    inline bool hasWeightsArgument() const
     { return weightsArgument; }
 
-    bool hasDisjoint() const
+    inline bool hasDisjoint() const
     { return disjointDefined; }
 
-    bool hasFilterEmptyFoci() const
+    inline bool hasFilterEmptyFoci() const
     { return filterEmptyFoci; }
 
-    bool hasFilterExcluded() const
+    inline bool hasFilterExcluded() const
     { return filterExcluded; }
 
-    bool isVerbose() const
+    inline bool isVerbose() const
     { return verbose; }
 
-    const vector<int>& getDisjoint() const
+    inline const vector<int>& getDisjoint() const
     { return disjoint; }
 
-    const List getExcluded() const
+    inline const List getExcluded() const
     { return excluded; }
 
-    size_t getNrow() const
+    inline size_t getNrow() const
     { return nrow; }
 
-    size_t getThreads() const
+    inline size_t getThreads() const
     { return threads; }
 
-    size_t getMinLength() const
+    inline size_t getMinLength() const
     { return minLength; }
 
-    size_t getMaxLength() const
+    inline size_t getMaxLength() const
     { return maxLength; }
 
-    size_t getMaxResults() const
+    inline size_t getMaxResults() const
     { return maxResults; }
 
-    float getMinSupport() const
+    inline float getMinSupport() const
     { return minSupport; }
 
-    float getMinSum() const
+    inline float getMinSum() const
     { return minSum; }
 
-    float getMinFocusSupport() const
+    inline float getMinFocusSupport() const
     { return minFocusSupport; }
 
-    float getMinFocusSum() const
+    inline float getMinFocusSum() const
     { return minFocusSum; }
 
-    float getMinConditionalFocusSupport() const
+    inline float getMinConditionalFocusSupport() const
     { return minConditionalFocusSupport; }
 
-    float getMaxSupport() const
+    inline float getMaxSupport() const
     { return maxSupport; }
 
-    float getMaxSum() const
+    inline float getMaxSum() const
     { return maxSum; }
 
-    TNorm getTNorm() const
+    inline TNorm getTNorm() const
     { return tNorm; }
 
-    const string& getChainName(size_t i) const
+    inline const string& getChainName(const size_t i) const
     { return chainNames[i]; }
 
 private:
@@ -233,7 +233,7 @@ private:
     bool supportArgument = false;
     bool weightsArgument = false;
 
-    static TNorm parseTNorm(const CharacterVector& vec)
+    static inline TNorm parseTNorm(const CharacterVector& vec)
     {
         if (vec[0] == "goguen")
             return TNorm::GOGUEN;

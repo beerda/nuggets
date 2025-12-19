@@ -146,13 +146,13 @@ public:
     FubitChain(FubitChain&& other) = default;
     FubitChain& operator=(FubitChain&& other) = default;
 
-    bool operator==(const FubitChain& other) const
+    inline bool operator==(const FubitChain& other) const
     { return BaseChain::operator==(other) && (data == other.data); }
 
-    bool operator!=(const   FubitChain& other) const
+    inline bool operator!=(const FubitChain& other) const
     { return !(*this == other); }
 
-    void set(size_t index, float value)
+    inline void set(const size_t index, const float value)
     {
         if constexpr (TNORM == TNorm::GOEDEL) {
             internalSet(index, (BASE_TYPE) (value * MAX_VALUE));
@@ -171,7 +171,7 @@ public:
         }
     }
 
-    float operator[](size_t index) const
+    inline float operator[](const size_t index) const
     {
         float res = 0;
         if constexpr (TNORM == TNorm::GOEDEL) {
@@ -192,7 +192,7 @@ public:
         return res;
     }
 
-    float at(size_t index) const
+    inline float at(const size_t index) const
     {
         if (index >= n) {
             throw std::out_of_range("FubitChain::at");
@@ -201,13 +201,13 @@ public:
         return operator[](index);
     }
 
-    size_t size() const
+    inline size_t size() const
     { return n; }
 
-    bool empty() const
+    inline bool empty() const
     { return n <= 0; }
 
-    string toString() const
+    inline string toString() const
     {
         stringstream res;
         res << "[n=" << data.size() << "]";
@@ -218,7 +218,7 @@ public:
         return res.str();
     }
 
-    void printBits(BASE_TYPE value) const
+    inline void printBits(const BASE_TYPE value) const
     {
         for (size_t i = 0; i < INTEGER_SIZE; ++i) {
             std::cout << ((value >> (INTEGER_SIZE - 1 - i)) & 1);
@@ -230,7 +230,7 @@ private:
     AlignedVector<BASE_TYPE> data;
     size_t n;
 
-    void internalSet(size_t pos, BASE_TYPE value)
+    inline void internalSet(const size_t pos, const BASE_TYPE value)
     {
         size_t index = pos * BLOCK_SIZE / INTEGER_SIZE;
         size_t shift = pos * BLOCK_SIZE % INTEGER_SIZE;
@@ -238,7 +238,7 @@ private:
         //cout << "FubitChain::internalSet: value=" << value << " index=" << index << ", shift=" << shift << ", data[index]=" << data[index] << endl;
     }
 
-    BASE_TYPE internalAt(size_t pos) const
+    inline BASE_TYPE internalAt(const size_t pos) const
     {
         size_t index = pos * BLOCK_SIZE / INTEGER_SIZE;
         size_t shift = pos * BLOCK_SIZE % INTEGER_SIZE;
@@ -248,7 +248,7 @@ private:
         return (data[index] >> shift) & BLOCK_MASK;
     }
 
-    BASE_TYPE internalSum() const
+    inline BASE_TYPE internalSum() const
     {
         BASE_TYPE result = 0;
         size_t index = 0;
@@ -269,7 +269,7 @@ private:
         return result;
     }
 
-    BASE_TYPE internalCloneBits(BASE_TYPE value) const
+    inline BASE_TYPE internalCloneBits(const BASE_TYPE value) const
     {
         BASE_TYPE res = value & OVERFLOW_MASK;
 
@@ -295,7 +295,7 @@ private:
         return res;
     }
 
-    void setSum()
+    inline void setSum()
     {
         if constexpr (TNORM == TNorm::GOEDEL) {
             this->sum = ((float) internalSum()) / ((float) MAX_VALUE);
