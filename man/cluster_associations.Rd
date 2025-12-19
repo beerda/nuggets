@@ -62,8 +62,7 @@ rules <- dig_associations(cars,
                           antecedent = everything(),
                           consequent = everything(),
                           max_length = 3,
-                          min_support = 0.2,
-                          measures = c("lift", "conviction"))
+                          min_support = 0.2)
 
 # Cluster the found rules
 clu <- cluster_associations(rules, 10, "lift")
