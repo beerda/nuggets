@@ -29,8 +29,6 @@
 
 /**
  * Custom bitset implementation using vector of uint64_t.
- * Optimized for performance-critical operations.
- * Portable across all C++17 compilers (Linux, Windows, macOS).
  */
 class CustomBitset {
 private:
@@ -45,21 +43,25 @@ private:
     static inline uint64_t bit_mask(size_t pos) { return uint64_t(1) << bit_index(pos); }
 
 public:
-    CustomBitset() : num_bits(0) {}
+    CustomBitset()
+        : num_bits(0)
+    {}
 
-    explicit CustomBitset(size_t n) : num_bits(n) {
+    explicit CustomBitset(size_t n)
+        : num_bits(n)
+    {
         size_t num_blocks = (n + BITS_PER_BLOCK - 1) / BITS_PER_BLOCK;
         blocks.resize(num_blocks, 0);
     }
 
     // Set bit at position pos to 1
-    inline void set(size_t pos) {
-        blocks[block_index(pos)] |= bit_mask(pos);
-    }
+    inline void set(size_t pos)
+    { blocks[block_index(pos)] |= bit_mask(pos); }
 
     // Count number of set bits (popcount)
     // Uses std::bitset which is portable and optimized by compilers
-    inline size_t count() const {
+    inline size_t count() const
+    {
         size_t result = 0;
         for (uint64_t block : blocks) {
             result += std::bitset<64>(block).count();
@@ -68,36 +70,48 @@ public:
     }
 
     // Access bit at position (no bounds check)
-    inline bool operator[](size_t pos) const {
-        return (blocks[block_index(pos)] & bit_mask(pos)) != 0;
-    }
+    inline bool operator[](size_t pos) const
+    { return (blocks[block_index(pos)] & bit_mask(pos)) != 0; }
 
     // Access bit with bounds checking
-    inline bool at(size_t pos) const {
+    inline bool at(size_t pos) const
+    {
         if (pos >= num_bits) {
             throw std::out_of_range("CustomBitset::at: position out of range");
         }
+
         return (*this)[pos];
     }
 
     // Bitwise AND operation
-    inline CustomBitset operator&(const CustomBitset& other) const {
+    inline CustomBitset operator&(const CustomBitset& other) const
+    {
+        if (blocks.size() != other.blocks.size()) {
+            throw std::invalid_argument("Bitset::operator==: incompatible sizes");
+        }
+
         CustomBitset result(num_bits);
-        size_t min_blocks = std::min(blocks.size(), other.blocks.size());
-        for (size_t i = 0; i < min_blocks; ++i) {
+        for (size_t i = 0; i < blocks.size(); ++i) {
             result.blocks[i] = blocks[i] & other.blocks[i];
         }
+
         return result;
     }
 
     // Equality comparison
-    inline bool operator==(const CustomBitset& other) const {
-        if (num_bits != other.num_bits) return false;
+    inline bool operator==(const CustomBitset& other) const
+    {
+        if (num_bits != other.num_bits)
+            return false;
+
         return blocks == other.blocks;
     }
 
-    inline size_t size() const { return num_bits; }
-    inline bool empty() const { return num_bits == 0; }
+    inline size_t size() const
+    { return num_bits; }
+
+    inline bool empty() const
+    { return num_bits == 0; }
 };
 
 
