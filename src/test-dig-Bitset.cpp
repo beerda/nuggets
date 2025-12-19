@@ -1,4 +1,5 @@
 #include <testthat.h>
+#include "common.h"
 #include "dig/Bitset.h"
 
 context("dig/Bitset.h") {
