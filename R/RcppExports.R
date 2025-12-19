@@ -73,6 +73,10 @@ dig_ <- function(data, namesVector, isCondition, isFocus, callback, confList) {
     .Call(`_nuggets_dig_`, data, namesVector, isCondition, isFocus, callback, confList)
 }
 
+dig_associations_ <- function(data, namesVector, isCondition, isFocus, confList) {
+    .Call(`_nuggets_dig_associations_`, data, namesVector, isCondition, isFocus, confList)
+}
+
 .parse_condition <- function(x) {
     .Call(`_nuggets_parse_condition`, x)
 }

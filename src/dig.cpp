@@ -21,6 +21,7 @@
 #include "dig/BitChain.h"
 #include "dig/FloatChain.h"
 #include "dig/CallbackCaller.h"
+#include "dig/AssocStorage.h"
 #include "dig/Config.h"
 #include "dig/ChainCollection.h"
 #include "dig/Digger.h"
@@ -106,6 +107,53 @@ List dig_(List data,
     }
     else if (config.getTNorm() == TNorm::LUKASIEWICZ) {
         result = runDig<LUKASIEWICZ_CHAIN>(data, isCondition, isFocus, callback, config);
+    }
+
+    return result;
+}
+
+
+template <typename CHAIN>
+List runDigAssoc(List data,
+                 LogicalVector isCondition,
+                 LogicalVector isFocus,
+                 const Config& config)
+{
+    using STORAGE = AssocStorage<CHAIN>;
+
+    STORAGE storage(config);
+    Digger<CHAIN, STORAGE> digger(config, data, isCondition, isFocus, storage);
+    digger.run();
+
+    return storage.getResult();
+}
+
+
+// [[Rcpp::plugins(openmp)]]
+// [[Rcpp::export]]
+List dig_associations_(List data,
+                       CharacterVector namesVector,
+                       LogicalVector isCondition,
+                       LogicalVector isFocus,
+                       List confList)
+{
+    LogStartEnd l("dig_assoc_");
+
+    bool allLogical = dataAreAllLogical(data);
+    Config config(confList, namesVector);
+    List result;
+
+    if (allLogical) {
+        result = runDigAssoc<BIT_CHAIN>(data, isCondition, isFocus, config);
+    }
+    else if (config.getTNorm() == TNorm::GOEDEL) {
+        result = runDigAssoc<GOEDEL_CHAIN>(data, isCondition, isFocus, config);
+    }
+    else if (config.getTNorm() == TNorm::GOGUEN) {
+        result = runDigAssoc<GOGUEN_CHAIN>(data, isCondition, isFocus, config);
+    }
+    else if (config.getTNorm() == TNorm::LUKASIEWICZ) {
+        result = runDigAssoc<LUKASIEWICZ_CHAIN>(data, isCondition, isFocus, config);
     }
 
     return result;

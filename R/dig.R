@@ -281,6 +281,67 @@ dig <- function(x,
                                      arg_verbose = "verbose",
                                      arg_threads = "threads",
                                      call = current_env())) {
+    .must_be_function(f,
+                      required = NULL,
+                      optional = c("condition", "foci_supports",
+                                   "pp", "np", "pn", "nn",
+                                   "indices", "sum", "support", "weights"),
+                      arg = error_context$arg_f,
+                      call = error_context$call)
+    arguments <- formalArgs(f)
+    if (is.null(arguments)) {
+        arguments <- ""
+    }
+
+    fun <- function(l) {
+        do.call(f, l)
+    }
+
+    .dig(x = x,
+         xname = deparse(substitute(x)),
+         call_function = "dig",
+         callback = fun,
+         callback_arguments = arguments,
+         condition = !!enquo(condition),
+         focus = !!enquo(focus),
+         disjoint = disjoint,
+         excluded = excluded,
+         min_length = min_length,
+         max_length = max_length,
+         min_support = min_support,
+         min_focus_support = min_focus_support,
+         min_conditional_focus_support = min_conditional_focus_support,
+         max_support = max_support,
+         filter_empty_foci = filter_empty_foci,
+         t_norm = t_norm,
+         max_results = max_results,
+         verbose = verbose,
+         threads = threads,
+         error_context = error_context)
+}
+
+
+.dig <- function(x,
+                 xname,
+                 call_function,
+                 callback,
+                 callback_arguments,
+                 condition,
+                 focus,
+                 disjoint,
+                 excluded,
+                 min_length,
+                 max_length,
+                 min_support,
+                 min_focus_support,
+                 min_conditional_focus_support,
+                 max_support,
+                 filter_empty_foci,
+                 t_norm,
+                 max_results,
+                 verbose,
+                 threads,
+                 error_context) {
     cols <- .convert_data_to_list(x,
                                   error_context = error_context)
 
@@ -298,22 +359,6 @@ dig <- function(x,
                                allow_empty = TRUE,
                                error_context = list(arg_selection = error_context$arg_focus,
                                                     call = error_context$call))
-
-    .must_be_function(f,
-                      required = NULL,
-                      optional = c("condition", "foci_supports",
-                                   "pp", "np", "pn", "nn",
-                                   "indices", "sum", "support", "weights"),
-                      arg = error_context$arg_f,
-                      call = error_context$call)
-    arguments <- formalArgs(f)
-    if (is.null(arguments)) {
-        arguments <- ""
-    }
-
-    fun <- function(l) {
-        do.call(f, l)
-    }
 
     .must_be_vector_or_factor(disjoint,
                               null = TRUE,
@@ -447,7 +492,7 @@ dig <- function(x,
     threads <- as.integer(threads)
 
     config <- list(nrow = nrow(x),
-                   arguments = arguments,
+                   arguments = callback_arguments,
                    disjoint = disjoint,
                    excluded = excluded,
                    minLength = min_length,
@@ -462,20 +507,30 @@ dig <- function(x,
                    verbose = verbose,
                    threads = threads)
 
-    res <- dig_(cols,
-                names(cols),
-                condition_cols$selected,
-                foci_cols$selected,
-                fun,
-                config)
+    if (call_function == "dig") {
+        res <- dig_(cols,
+                    names(cols),
+                    condition_cols$selected,
+                    foci_cols$selected,
+                    callback,
+                    config)
+    } else if (call_function == "dig_associations") {
+        res <- dig_associations_(cols,
+                                 names(cols),
+                                 condition_cols$selected,
+                                 foci_cols$selected,
+                                 config)
+    } else {
+        cli_abort("Unknown internal call function {.var {call_function}}.")
+    }
 
     nugget(res,
            flavour = NULL,
-           call_function = "dig",
+           call_function = call_function,
            call_data = list(nrow = nrow(x),
                             ncol = ncol(x),
                             colnames = as.character(colnames(x))),
-           call_args = list(x = deparse(substitute(x)),
+           call_args = list(x = xname,
                             condition = names(cols)[condition_cols$selected],
                             focus = names(cols)[foci_cols$selected],
                             disjoint = orig_disjoint,

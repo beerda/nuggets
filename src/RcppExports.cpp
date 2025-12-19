@@ -217,6 +217,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// dig_associations_
+List dig_associations_(List data, CharacterVector namesVector, LogicalVector isCondition, LogicalVector isFocus, List confList);
+RcppExport SEXP _nuggets_dig_associations_(SEXP dataSEXP, SEXP namesVectorSEXP, SEXP isConditionSEXP, SEXP isFocusSEXP, SEXP confListSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< CharacterVector >::type namesVector(namesVectorSEXP);
+    Rcpp::traits::input_parameter< LogicalVector >::type isCondition(isConditionSEXP);
+    Rcpp::traits::input_parameter< LogicalVector >::type isFocus(isFocusSEXP);
+    Rcpp::traits::input_parameter< List >::type confList(confListSEXP);
+    rcpp_result_gen = Rcpp::wrap(dig_associations_(data, namesVector, isCondition, isFocus, confList));
+    return rcpp_result_gen;
+END_RCPP
+}
 // parse_condition
 List parse_condition(CharacterVector x);
 RcppExport SEXP _nuggets_parse_condition(SEXP xSEXP) {
@@ -286,6 +301,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_nuggets_invol_neg", (DL_FUNC) &_nuggets_invol_neg, 1},
     {"_nuggets_strict_neg", (DL_FUNC) &_nuggets_strict_neg, 1},
     {"_nuggets_dig_", (DL_FUNC) &_nuggets_dig_, 6},
+    {"_nuggets_dig_associations_", (DL_FUNC) &_nuggets_dig_associations_, 5},
     {"_nuggets_parse_condition", (DL_FUNC) &_nuggets_parse_condition, 1},
     {"_nuggets_raisedcos_", (DL_FUNC) &_nuggets_raisedcos_, 2},
     {"_nuggets_triangle_", (DL_FUNC) &_nuggets_triangle_, 2},
