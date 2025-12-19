@@ -21,7 +21,82 @@
 
 #include "../common.h"
 #include "BaseChain.h"
-#include <boost/dynamic_bitset.hpp>
+#include <vector>
+#include <cstdint>
+#include <stdexcept>
+
+
+/**
+ * Custom bitset implementation using vector of uint64_t.
+ * Optimized for performance-critical operations.
+ */
+class CustomBitset {
+private:
+    std::vector<uint64_t> blocks;
+    size_t num_bits;
+
+    static constexpr size_t BITS_PER_BLOCK = 64;
+
+    // Get block index and bit position within block
+    static inline size_t block_index(size_t pos) { return pos / BITS_PER_BLOCK; }
+    static inline size_t bit_index(size_t pos) { return pos % BITS_PER_BLOCK; }
+    static inline uint64_t bit_mask(size_t pos) { return uint64_t(1) << bit_index(pos); }
+
+public:
+    CustomBitset() : num_bits(0) {}
+
+    explicit CustomBitset(size_t n) : num_bits(n) {
+        size_t num_blocks = (n + BITS_PER_BLOCK - 1) / BITS_PER_BLOCK;
+        blocks.resize(num_blocks, 0);
+    }
+
+    // Set bit at position pos to 1
+    inline void set(size_t pos) {
+        blocks[block_index(pos)] |= bit_mask(pos);
+    }
+
+    // Count number of set bits (popcount)
+    inline size_t count() const {
+        size_t result = 0;
+        for (uint64_t block : blocks) {
+            // Use builtin popcount for performance
+            result += __builtin_popcountll(block);
+        }
+        return result;
+    }
+
+    // Access bit at position (no bounds check)
+    inline bool operator[](size_t pos) const {
+        return (blocks[block_index(pos)] & bit_mask(pos)) != 0;
+    }
+
+    // Access bit with bounds checking
+    inline bool at(size_t pos) const {
+        if (pos >= num_bits) {
+            throw std::out_of_range("CustomBitset::at: position out of range");
+        }
+        return (*this)[pos];
+    }
+
+    // Bitwise AND operation
+    inline CustomBitset operator&(const CustomBitset& other) const {
+        CustomBitset result(num_bits);
+        size_t min_blocks = std::min(blocks.size(), other.blocks.size());
+        for (size_t i = 0; i < min_blocks; ++i) {
+            result.blocks[i] = blocks[i] & other.blocks[i];
+        }
+        return result;
+    }
+
+    // Equality comparison
+    inline bool operator==(const CustomBitset& other) const {
+        if (num_bits != other.num_bits) return false;
+        return blocks == other.blocks;
+    }
+
+    inline size_t size() const { return num_bits; }
+    inline bool empty() const { return num_bits == 0; }
+};
 
 
 /**
@@ -93,5 +168,5 @@ public:
     }
 
 private:
-    boost::dynamic_bitset<> data;
+    CustomBitset data;
 };
