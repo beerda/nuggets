@@ -155,15 +155,15 @@ public:
     inline void set(const size_t index, const float value)
     {
         if constexpr (TNORM == TNorm::GOEDEL) {
-            internalSet(index, (BASE_TYPE) (value * MAX_VALUE));
+            internalSet(index, (BASE_TYPE) llroundf(value * MAX_VALUE));
         }
         else if constexpr (TNORM == TNorm::LUKASIEWICZ) {
-            internalSet(index, (BASE_TYPE) ((1.0 - value) * MAX_VALUE));
+            internalSet(index, (BASE_TYPE) llroundf((1.0 - value) * MAX_VALUE));
         }
         else if constexpr (TNORM == TNorm::GOGUEN) {
             static float reciprocal = 1.0 / MAX_VALUE;
             static float logLogBase = log(LOG_BASE);
-            internalSet(index, (value <= reciprocal) ? this->MAX_VALUE : round(log(value) / logLogBase));
+            internalSet(index, (value <= reciprocal) ? this->MAX_VALUE : llroundf(log(value) / logLogBase));
         }
         else {
             static_assert(TNORM != TNorm::GOEDEL && TNORM != TNorm::GOGUEN && TNORM != TNorm::LUKASIEWICZ,
