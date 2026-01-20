@@ -27,11 +27,13 @@
 
 template <typename CHAIN>
 class AssocStorage {
+    static constexpr size_t INITIAL_RESULT_CAPACITY = 65536;
+
 public:
     AssocStorage(const Config& config)
         : config(config),
           result()
-    { result.reserve(1000); }
+    { result.reserve(INITIAL_RESULT_CAPACITY); }
 
     // Disable copy
     AssocStorage(const AssocStorage&) = delete;
@@ -114,15 +116,7 @@ public:
     { return result.size(); }
 
     inline List getResult() const
-    {
-        // Rcpp:List is tragically slow if the size is not known in advance
-        List res(result.size());
-        for (size_t i = 0; i < result.size(); ++i) {
-            res[i] = result[i];
-        }
-
-        return res;
-    }
+    { return wrap(result); }
 
 private:
     const Config& config;
