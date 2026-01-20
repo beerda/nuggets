@@ -79,9 +79,9 @@ for (i in 4:7) {
     for (j in c(5, 10, 15, 20, 25)) {
         result <- rbind(result, testIt(10^i, j))
         saveRDS(result, "comparison_result-2025-06-06.rds")
-        cat("\n---------------------------------------------------------------------\n")
-        print(result)
     }
+    cat("\n---------------------------------------------------------------------\n")
+    print(result)
 }
 print(result)
 
