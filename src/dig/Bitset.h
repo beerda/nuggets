@@ -22,6 +22,7 @@
 #include <vector>
 #include <cstdint>
 #include <stdexcept>
+#include "xsimd/xsimd.hpp"
 
 
 /**
@@ -143,7 +144,7 @@ public:
         return (*this)[pos];
     }
 
-    // Bitwise AND operation
+    // Bitwise AND operation with SIMD optimization
     inline Bitset operator&(const Bitset& other) const
     {
         if (num_bits != other.num_bits) {
@@ -156,11 +157,39 @@ public:
         if (num_blocks > 0)
             result.blocks = new uint64_t[num_blocks];
 
+#if !defined(XSIMD_NO_SUPPORTED_ARCHITECTURE)
+        // Use SIMD acceleration when available
+        using batch_type = xsimd::batch<uint64_t>;
+        constexpr size_t simd_size = batch_type::size;
+        
+        // Process blocks in SIMD batches
+        size_t i = 0;
+        for (; i + simd_size <= num_blocks; i += simd_size) {
+            batch_type a = batch_type::load_unaligned(&blocks[i]);
+            batch_type b = batch_type::load_unaligned(&other.blocks[i]);
+            batch_type c = a & b;
+            c.store_unaligned(&result.blocks[i]);
+            
+            // Count set bits in the result batch
+            for (size_t j = 0; j < simd_size; ++j) {
+                result.count_true += internalCount(result.blocks[i + j]);
+            }
+        }
+        
+        // Process remaining blocks that don't fit in a SIMD batch
+        for (; i < num_blocks; ++i) {
+            int64_t value = blocks[i] & other.blocks[i];
+            result.blocks[i] = value;
+            result.count_true += internalCount(value);
+        }
+#else
+        // Fallback for architectures without SIMD support
         for (size_t i = 0; i < num_blocks; ++i) {
             int64_t value = blocks[i] & other.blocks[i];
             result.blocks[i] = value;
             result.count_true += internalCount(value);
         }
+#endif
 
         return result;
     }
