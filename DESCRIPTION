@@ -54,7 +54,7 @@ LinkingTo:
     Rcpp,
     RcppThread,
     testthat
-SystemRequirements: C++17
+SystemRequirements: C++20
 Suggests: 
     arules,
     DT,
