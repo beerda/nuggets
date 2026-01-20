@@ -19,7 +19,7 @@
 
 #pragma once
 
-// [[Rcpp::plugins(cpp17)]]
+// [[Rcpp::plugins(cpp20)]]
 // [[Rcpp::depends(RcppThread)]]
 
 #include <cmath>
