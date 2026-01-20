@@ -80,7 +80,7 @@ public:
           count_true(0)
     {
         if (num_blocks > 0) {
-            blocks = static_cast<uint64_t*>(::operator new[](num_blocks * sizeof(uint64_t), 
+            blocks = static_cast<uint64_t*>(::operator new[](num_blocks * sizeof(uint64_t),
                                                               std::align_val_t{BLOCK_ALIGNMENT}));
             for (size_t i = 0; i < num_blocks; ++i) {
                 blocks[i] = 0;
@@ -125,7 +125,7 @@ public:
     }
 
     ~Bitset()
-    { 
+    {
         if (blocks) {
             ::operator delete[](blocks, std::align_val_t{BLOCK_ALIGNMENT});
         }
@@ -178,7 +178,7 @@ public:
         // Use SIMD acceleration when available
         using batch_type = xsimd::batch<uint64_t>;
         constexpr size_t simd_size = batch_type::size;
-        
+
         // Process blocks in SIMD batches using aligned operations
         size_t i = 0;
         for (; i + simd_size <= num_blocks; i += simd_size) {
@@ -186,13 +186,13 @@ public:
             batch_type b = batch_type::load_aligned(&other.blocks[i]);
             batch_type c = a & b;
             c.store_aligned(&result.blocks[i]);
-            
+
             // Count set bits in the result batch
             for (size_t j = 0; j < simd_size; ++j) {
                 result.count_true += internalCount(result.blocks[i + j]);
             }
         }
-        
+
         // Process remaining blocks that don't fit in a SIMD batch
         for (; i < num_blocks; ++i) {
             int64_t value = blocks[i] & other.blocks[i];
