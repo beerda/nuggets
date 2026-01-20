@@ -187,9 +187,14 @@ public:
             batch_type c = a & b;
             c.store_aligned(&result.blocks[i]);
 
-            // Count set bits in the result batch
-            for (size_t j = 0; j < simd_size; ++j) {
-                result.count_true += internalCount(result.blocks[i + j]);
+            if constexpr (simd_size == 2) {
+                result.count_true += internalCount(result.blocks[i]);
+                result.count_true += internalCount(result.blocks[i + 1]);
+            } else {
+                // Count set bits in the result batch
+                for (size_t j = 0; j < simd_size; ++j) {
+                    result.count_true += internalCount(result.blocks[i + j]);
+                }
             }
         }
 
