@@ -22,6 +22,10 @@
 #include <vector>
 #include <cstdint>
 #include <stdexcept>
+#include <new>
+#if __cplusplus >= 202002L
+#include <bit>
+#endif
 #include "xsimd/xsimd.hpp"
 
 
@@ -36,6 +40,7 @@ private:
     size_t count_true;
 
     static constexpr size_t BITS_PER_BLOCK = 64;
+    static constexpr size_t BLOCK_ALIGNMENT = 64; // Align to 64 bytes for AVX-512
 
     // Get block index and bit position within block
     static inline size_t blockIndex(size_t pos) { return pos / BITS_PER_BLOCK; }
@@ -43,7 +48,10 @@ private:
     static inline uint64_t bitMask(size_t pos) { return uint64_t(1) << bitIndex(pos); }
 
     static inline size_t internalCount(int64_t value) {
-        #if defined(__GNUC__) || defined(__clang__)
+        #if __cplusplus >= 202002L
+            // C++20 standard popcount
+            return std::popcount(static_cast<uint64_t>(value));
+        #elif defined(__GNUC__) || defined(__clang__)
             return __builtin_popcountll(value);
         #elif defined(_MSC_VER) && defined(_M_X64)
             return __popcnt64(value);
@@ -72,7 +80,8 @@ public:
           count_true(0)
     {
         if (num_blocks > 0) {
-            blocks = new uint64_t[num_blocks];
+            blocks = static_cast<uint64_t*>(::operator new[](num_blocks * sizeof(uint64_t), 
+                                                              std::align_val_t{BLOCK_ALIGNMENT}));
             for (size_t i = 0; i < num_blocks; ++i) {
                 blocks[i] = 0;
             }
@@ -100,7 +109,9 @@ public:
     Bitset& operator=(Bitset&& other) noexcept
     {
         if (this != &other) {
-            delete[] blocks;
+            if (blocks) {
+                ::operator delete[](blocks, std::align_val_t{BLOCK_ALIGNMENT});
+            }
             blocks = other.blocks;
             num_blocks = other.num_blocks;
             num_bits = other.num_bits;
@@ -114,7 +125,11 @@ public:
     }
 
     ~Bitset()
-    { if (blocks) delete[] blocks; }
+    { 
+        if (blocks) {
+            ::operator delete[](blocks, std::align_val_t{BLOCK_ALIGNMENT});
+        }
+    }
 
     // Set bit at position pos to 1
     inline void set(size_t pos)
@@ -154,21 +169,23 @@ public:
         Bitset result;
         result.num_bits = num_bits;
         result.num_blocks = num_blocks;
-        if (num_blocks > 0)
-            result.blocks = new uint64_t[num_blocks];
+        if (num_blocks > 0) {
+            result.blocks = static_cast<uint64_t*>(::operator new[](num_blocks * sizeof(uint64_t),
+                                                                      std::align_val_t{BLOCK_ALIGNMENT}));
+        }
 
 #if !defined(XSIMD_NO_SUPPORTED_ARCHITECTURE)
         // Use SIMD acceleration when available
         using batch_type = xsimd::batch<uint64_t>;
         constexpr size_t simd_size = batch_type::size;
         
-        // Process blocks in SIMD batches
+        // Process blocks in SIMD batches using aligned operations
         size_t i = 0;
         for (; i + simd_size <= num_blocks; i += simd_size) {
-            batch_type a = batch_type::load_unaligned(&blocks[i]);
-            batch_type b = batch_type::load_unaligned(&other.blocks[i]);
+            batch_type a = batch_type::load_aligned(&blocks[i]);
+            batch_type b = batch_type::load_aligned(&other.blocks[i]);
             batch_type c = a & b;
-            c.store_unaligned(&result.blocks[i]);
+            c.store_aligned(&result.blocks[i]);
             
             // Count set bits in the result batch
             for (size_t j = 0; j < simd_size; ++j) {
