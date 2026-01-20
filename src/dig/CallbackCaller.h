@@ -32,7 +32,7 @@ public:
         : config(config),
           callback(callback),
           result()
-    { result.reserve(1000); }
+    { result.reserve(65536); }
 
     // Disable copy
     CallbackCaller(const CallbackCaller&) = delete;
