@@ -27,12 +27,15 @@
 
 template <typename CHAIN>
 class CallbackCaller {
+    static constexpr size_t INITIAL_RESULT_CAPACITY = 65536;
+    static constexpr size_t INITIAL_ARGUMENTS_CAPACITY = 10;
+
 public:
     CallbackCaller(const Config& config, const Function& callback)
         : config(config),
           callback(callback),
           result()
-    { result.reserve(65536); }
+    { result.reserve(INITIAL_RESULT_CAPACITY); }
 
     // Disable copy
     CallbackCaller(const CallbackCaller&) = delete;
@@ -47,18 +50,25 @@ public:
                const Selector& selector,
                const vector<float>& predicateSums)
     {
-        List args;
+        vector<RObject> args;
+        args.reserve(INITIAL_ARGUMENTS_CAPACITY);
 
-        processConditionArgument(args, chain);
-        processSumArgument(args, chain);
-        processSupportArgument(args, chain);
-        processIndicesArgument(args, chain);
-        processWeightsArgument(args, chain);
-        processFociSupportsArgument(args, chain, collection, selector);
-        processContiArguments(args, chain, collection, selector, predicateSums);
+        vector<string> argNames;
+        argNames.reserve(INITIAL_ARGUMENTS_CAPACITY);
+
+        processConditionArgument(args, argNames, chain);
+        processSumArgument(args, argNames, chain);
+        processSupportArgument(args, argNames, chain);
+        processIndicesArgument(args, argNames, chain);
+        processWeightsArgument(args, argNames, chain);
+        processFociSupportsArgument(args, argNames, chain, collection, selector);
+        processContiArguments(args, argNames, chain, collection, selector, predicateSums);
+
+        List argList = wrap(args);
+        argList.names() = wrap(argNames);
 
         try {
-            RObject callbackResult = callback(args);
+            RObject callbackResult = callback(argList);
             result.push_back(callbackResult);
         }
         catch (...) {
@@ -77,7 +87,7 @@ private:
     const Function& callback;
     vector<RObject> result;
 
-    void processConditionArgument(List& args, const CHAIN& chain)
+    void processConditionArgument(vector<RObject>& args, vector<string>& argNames, const CHAIN& chain)
     {
         if (config.hasConditionArgument()) {
             IntegerVector vals(chain.getClause().size());
@@ -90,61 +100,69 @@ private:
             if (vals.size() > 0) {
                 vals.names() = valNames;
             }
-            args.push_back(vals, "condition");
+            args.push_back(vals);
+            argNames.push_back("condition");
         }
     }
 
-    void processSumArgument(List& args, const CHAIN& chain)
+    void processSumArgument(vector<RObject>& args, vector<string>& argNames, const CHAIN& chain)
     {
         if (config.hasSumArgument()) {
             NumericVector vals({ chain.getSum() });
-            args.push_back(vals, "sum");
+            args.push_back(vals);
+            argNames.push_back("sum");
         }
     }
 
-    void processSupportArgument(List& args, const CHAIN& chain)
+    void processSupportArgument(vector<RObject>& args, vector<string>& argNames, const CHAIN& chain)
     {
         if (config.hasSupportArgument()) {
             NumericVector vals({ chain.getSum() / config.getNrow() });
-            args.push_back(vals, "support");
+            args.push_back(vals);
+            argNames.push_back("support");
         }
     }
 
-    void processIndicesArgument(List& args, const CHAIN& chain)
+    void processIndicesArgument(vector<RObject>& args, vector<string>& argNames, const CHAIN& chain)
     {
         if (config.hasIndicesArgument()) {
             if (chain.getClause().empty()) {
                 LogicalVector vals(config.getNrow(), true);
-                args.push_back(vals, "indices");
+                args.push_back(vals);
+                argNames.push_back("indices");
             }
             else {
                 LogicalVector vals(config.getNrow());
                 for (size_t i = 0; i < chain.size(); ++i) {
                     vals[i] = chain[i] > 0;
                 }
-                args.push_back(vals, "indices");
+                args.push_back(vals);
+                argNames.push_back("indices");
             }
         }
     }
 
-    void processWeightsArgument(List& args, const CHAIN& chain)
+    void processWeightsArgument(vector<RObject>& args, vector<string>& argNames, const CHAIN& chain)
     {
         if (config.hasWeightsArgument()) {
             if (chain.getClause().empty()) {
                 NumericVector vals(config.getNrow(), 1.0);
-                args.push_back(vals, "weights");
+                args.push_back(vals);
+                argNames.push_back("weights");
             }
             else {
                 NumericVector vals(config.getNrow());
                 for (size_t i = 0; i < chain.size(); ++i) {
                     vals[i] = static_cast<float>(chain[i]);
                 }
-                args.push_back(vals, "weights");
+                args.push_back(vals);
+                argNames.push_back("weights");
             }
         }
     }
 
-    void processFociSupportsArgument(List& args,
+    void processFociSupportsArgument(vector<RObject>& args,
+                                     vector<string>& argNames,
                                      const CHAIN& chain,
                                      const ChainCollection<CHAIN>& collection,
                                      const Selector& selector)
@@ -167,11 +185,13 @@ private:
             if (vals.size() > 0) {
                 vals.names() = valNames;
             }
-            args.push_back(vals, "foci_supports");
+            args.push_back(vals);
+            argNames.push_back("foci_supports");
         }
     }
 
-    void processContiArguments(List& args,
+    void processContiArguments(vector<RObject>& args,
+                               vector<string>& argNames,
                                const CHAIN& chain,
                                const ChainCollection<CHAIN>& collection,
                                const Selector& selector,
@@ -226,28 +246,32 @@ private:
                 if (pp->size() > 0) {
                     pp->names() = valNames;
                 }
-                args.push_back(*pp, "pp");
+                args.push_back(*pp);
+                argNames.push_back("pp");
                 delete pp;
             }
             if (np) {
                 if (np->size() > 0) {
                     np->names() = valNames;
                 }
-                args.push_back(*np, "np");
+                args.push_back(*np);
+                argNames.push_back("np");
                 delete np;
             }
             if (pn) {
                 if (pn->size() > 0) {
                     pn->names() = valNames;
                 }
-                args.push_back(*pn, "pn");
+                args.push_back(*pn);
+                argNames.push_back("pn");
                 delete pn;
             }
             if (nn) {
                 if (nn->size() > 0) {
                     nn->names() = valNames;
                 }
-                args.push_back(*nn, "nn");
+                args.push_back(*nn);
+                argNames.push_back("nn");
                 delete nn;
             }
         }
