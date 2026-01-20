@@ -29,8 +29,9 @@
  */
 class Bitset {
 private:
-    std::vector<uint64_t> blocks;
+    uint64_t* blocks;
     size_t num_bits;
+    size_t num_blocks;
     size_t count_true;
 
     static constexpr size_t BITS_PER_BLOCK = 64;
@@ -43,38 +44,76 @@ private:
     static inline size_t internalCount(int64_t value) {
         #if defined(__GNUC__) || defined(__clang__)
             return __builtin_popcountll(value);
-        #elif defined(_MSC_VER)
+        #elif defined(_MSC_VER) && defined(_M_X64)
             return __popcnt64(value);
         #else
             // Fallback: Efficient software implementation
-            uint64_t v = value;
+            uint64_t v = static_cast<uint64_t>(value);
             v = v - ((v >> 1) & 0x5555555555555555ULL);
             v = (v & 0x3333333333333333ULL) + ((v >> 2) & 0x3333333333333333ULL);
-            return (((v + (v >> 4)) & 0xF0F0F0F0F0F0F0FULL) * 0x101010101010101ULL) >> 56;
+            v = (v + (v >> 4)) & 0x0F0F0F0F0F0F0F0FULL;  // Slightly cleaner
+            return (v * 0x0101010101010101ULL) >> 56;
         #endif
     }
 
 public:
     Bitset()
-        : num_bits(0),
+        : blocks(nullptr),
+          num_bits(0),
+          num_blocks(0),
           count_true(0)
     {}
 
     explicit Bitset(size_t n)
-        : num_bits(n),
+        : blocks(nullptr),
+          num_bits(n),
+          num_blocks((n + BITS_PER_BLOCK - 1) / BITS_PER_BLOCK),
           count_true(0)
     {
-        size_t num_blocks = (n + BITS_PER_BLOCK - 1) / BITS_PER_BLOCK;
-        blocks.resize(num_blocks, 0);
+        if (num_blocks > 0) {
+            blocks = new uint64_t[num_blocks];
+            for (size_t i = 0; i < num_blocks; ++i) {
+                blocks[i] = 0;
+            }
+        }
     }
 
     // Disable copy
     Bitset(const Bitset& other) = delete;
     Bitset& operator=(const Bitset& other) = delete;
 
-    // Allow move
-    Bitset(Bitset&& other) = default;
-    Bitset& operator=(Bitset&& other) = default;
+    // Move constructor
+    Bitset(Bitset&& other) noexcept
+        : blocks(other.blocks),
+          num_bits(other.num_bits),
+          num_blocks(other.num_blocks),
+          count_true(other.count_true)
+    {
+        other.blocks = nullptr;
+        other.num_blocks = 0;
+        other.num_bits = 0;
+        other.count_true = 0;
+    }
+
+    // Move assignment operator
+    Bitset& operator=(Bitset&& other) noexcept
+    {
+        if (this != &other) {
+            delete[] blocks;
+            blocks = other.blocks;
+            num_blocks = other.num_blocks;
+            num_bits = other.num_bits;
+            count_true = other.count_true;
+            other.blocks = nullptr;
+            other.num_blocks = 0;
+            other.num_bits = 0;
+            other.count_true = 0;
+        }
+        return *this;
+    }
+
+    ~Bitset()
+    { if (blocks) delete[] blocks; }
 
     // Set bit at position pos to 1
     inline void set(size_t pos)
@@ -107,15 +146,17 @@ public:
     // Bitwise AND operation
     inline Bitset operator&(const Bitset& other) const
     {
-        if (blocks.size() != other.blocks.size()) {
+        if (num_bits != other.num_bits) {
             throw std::invalid_argument("Bitset::operator&: incompatible sizes");
         }
 
         Bitset result;
         result.num_bits = num_bits;
-        result.blocks.resize(blocks.size());
+        result.num_blocks = num_blocks;
+        if (num_blocks > 0)
+            result.blocks = new uint64_t[num_blocks];
 
-        for (size_t i = 0; i < blocks.size(); ++i) {
+        for (size_t i = 0; i < num_blocks; ++i) {
             int64_t value = blocks[i] & other.blocks[i];
             result.blocks[i] = value;
             result.count_true += internalCount(value);
@@ -134,7 +175,13 @@ public:
             return false;
         }
 
-        return blocks == other.blocks;
+        for (size_t i = 0; i < num_blocks; ++i) {
+            if (blocks[i] != other.blocks[i]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     inline size_t size() const
