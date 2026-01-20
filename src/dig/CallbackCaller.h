@@ -70,15 +70,7 @@ public:
     { return result.size(); }
 
     inline List getResult() const
-    {
-        // Rcpp:List is tragically slow if the size is not known in advance
-        List res(result.size());
-        for (size_t i = 0; i < result.size(); ++i) {
-            res[i] = result[i];
-        }
-
-        return res;
-    }
+    { return wrap(result); }
 
 private:
     const Config& config;
