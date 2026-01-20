@@ -113,11 +113,11 @@ public:
 
         Bitset result;
         result.num_bits = num_bits;
-        result.blocks.reserve(blocks.size());
+        result.blocks.resize(blocks.size());
 
         for (size_t i = 0; i < blocks.size(); ++i) {
             int64_t value = blocks[i] & other.blocks[i];
-            result.blocks.push_back(value);
+            result.blocks[i] = value;
             result.count_true += internalCount(value);
         }
 
