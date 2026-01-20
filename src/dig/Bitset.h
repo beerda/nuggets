@@ -23,10 +23,41 @@
 #include <cstdint>
 #include <stdexcept>
 #include <new>
-#if __cplusplus >= 202002L
-#include <bit>
-#endif
 #include "xsimd/xsimd.hpp"
+
+// Include CPUID headers for runtime detection
+#if defined(_MSC_VER)
+#include <intrin.h>
+#elif defined(__GNUC__) || defined(__clang__)
+#include <cpuid.h>
+#endif
+
+// Runtime CPU feature detection
+#if defined(__x86_64__) || defined(_M_X64) || defined(__i386__) || defined(_M_IX86)
+#define HAS_X86_CPUID 1
+#endif
+
+
+// Helper function to detect POPCNT instruction support at runtime
+inline bool cpuSupportsPopcnt() {
+    static const bool support = []() {
+#ifdef HAS_X86_CPUID
+        // Check for POPCNT support using CPUID
+#if defined(_MSC_VER)
+        int cpuInfo[4];
+        __cpuid(cpuInfo, 1);
+        return (cpuInfo[2] & (1 << 23)) != 0; // POPCNT is bit 23 of ECX
+#elif defined(__GNUC__) || defined(__clang__)
+        unsigned int eax, ebx, ecx, edx;
+        if (__get_cpuid(1, &eax, &ebx, &ecx, &edx)) {
+            return (ecx & (1 << 23)) != 0; // POPCNT is bit 23 of ECX
+        }
+#endif
+#endif
+        return false;
+    }();
+    return support;
+}
 
 
 /**
@@ -48,21 +79,24 @@ private:
     static inline uint64_t bitMask(size_t pos) { return uint64_t(1) << bitIndex(pos); }
 
     static inline size_t internalCount(int64_t value) {
-        #if __cplusplus >= 202002L
-            // C++20 standard popcount
-            return std::popcount(static_cast<uint64_t>(value));
-        #elif defined(__GNUC__) || defined(__clang__)
+        // Runtime dispatch based on CPU capabilities
+        if (cpuSupportsPopcnt()) {
+#if defined(__GNUC__) || defined(__clang__)
             return __builtin_popcountll(value);
-        #elif defined(_MSC_VER) && defined(_M_X64)
+#elif defined(_MSC_VER) && defined(_M_X64)
             return __popcnt64(value);
-        #else
-            // Fallback: Efficient software implementation
-            uint64_t v = static_cast<uint64_t>(value);
-            v = v - ((v >> 1) & 0x5555555555555555ULL);
-            v = (v & 0x3333333333333333ULL) + ((v >> 2) & 0x3333333333333333ULL);
-            v = (v + (v >> 4)) & 0x0F0F0F0F0F0F0F0FULL;  // Slightly cleaner
-            return (v * 0x0101010101010101ULL) >> 56;
-        #endif
+#elif defined(_MSC_VER)
+            return __popcnt(static_cast<unsigned int>(value)) + 
+                   __popcnt(static_cast<unsigned int>(value >> 32));
+#endif
+        }
+        
+        // Fallback: Efficient software implementation
+        uint64_t v = static_cast<uint64_t>(value);
+        v = v - ((v >> 1) & 0x5555555555555555ULL);
+        v = (v & 0x3333333333333333ULL) + ((v >> 2) & 0x3333333333333333ULL);
+        v = (v + (v >> 4)) & 0x0F0F0F0F0F0F0F0FULL;
+        return (v * 0x0101010101010101ULL) >> 56;
     }
 
 public:
