@@ -87,7 +87,7 @@ private:
     const Function& callback;
     vector<RObject> result;
 
-    void processConditionArgument(vector<RObject>& args, vector<string>& argNames, const CHAIN& chain)
+    inline void processConditionArgument(vector<RObject>& args, vector<string>& argNames, const CHAIN& chain)
     {
         if (config.hasConditionArgument()) {
             IntegerVector vals(chain.getClause().size());
@@ -105,7 +105,7 @@ private:
         }
     }
 
-    void processSumArgument(vector<RObject>& args, vector<string>& argNames, const CHAIN& chain)
+    inline void processSumArgument(vector<RObject>& args, vector<string>& argNames, const CHAIN& chain)
     {
         if (config.hasSumArgument()) {
             NumericVector vals({ chain.getSum() });
@@ -114,7 +114,7 @@ private:
         }
     }
 
-    void processSupportArgument(vector<RObject>& args, vector<string>& argNames, const CHAIN& chain)
+    inline void processSupportArgument(vector<RObject>& args, vector<string>& argNames, const CHAIN& chain)
     {
         if (config.hasSupportArgument()) {
             NumericVector vals({ chain.getSum() / config.getNrow() });
@@ -123,7 +123,7 @@ private:
         }
     }
 
-    void processIndicesArgument(vector<RObject>& args, vector<string>& argNames, const CHAIN& chain)
+    inline void processIndicesArgument(vector<RObject>& args, vector<string>& argNames, const CHAIN& chain)
     {
         if (config.hasIndicesArgument()) {
             if (chain.getClause().empty()) {
@@ -142,7 +142,7 @@ private:
         }
     }
 
-    void processWeightsArgument(vector<RObject>& args, vector<string>& argNames, const CHAIN& chain)
+    inline void processWeightsArgument(vector<RObject>& args, vector<string>& argNames, const CHAIN& chain)
     {
         if (config.hasWeightsArgument()) {
             if (chain.getClause().empty()) {
@@ -161,11 +161,11 @@ private:
         }
     }
 
-    void processFociSupportsArgument(vector<RObject>& args,
-                                     vector<string>& argNames,
-                                     const CHAIN& chain,
-                                     const ChainCollection<CHAIN>& collection,
-                                     const Selector& selector)
+    inline void processFociSupportsArgument(vector<RObject>& args,
+                                            vector<string>& argNames,
+                                            const CHAIN& chain,
+                                            const ChainCollection<CHAIN>& collection,
+                                            const Selector& selector)
     {
         if (config.hasFociSupportsArgument()) {
             NumericVector vals(selector.getSelectedCount());
@@ -190,12 +190,12 @@ private:
         }
     }
 
-    void processContiArguments(vector<RObject>& args,
-                               vector<string>& argNames,
-                               const CHAIN& chain,
-                               const ChainCollection<CHAIN>& collection,
-                               const Selector& selector,
-                               const vector<float>& predicateSums)
+    inline void processContiArguments(vector<RObject>& args,
+                                      vector<string>& argNames,
+                                      const CHAIN& chain,
+                                      const ChainCollection<CHAIN>& collection,
+                                      const Selector& selector,
+                                      const vector<float>& predicateSums)
     {
         if (config.hasAnyContiArgument()) {
             NumericVector* pp = nullptr;
