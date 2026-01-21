@@ -5,7 +5,7 @@ library(nuggets)
 set.seed(42344)
 
 m <- 10^6
-n <- 15
+n <- 25
 conf <- 0.5
 
 testIt <- function(m, n) {
@@ -30,28 +30,28 @@ testIt <- function(m, n) {
         })
 
         t3 <- system.time({
-            freq <- eclat(d, parameter = list(minlen = 1,
+            rules3 <- eclat(d, parameter = list(minlen = 1,
                                               maxlen = 6,
                                               target = "frequent itemsets",
                                               supp=0.001),
                           control = list(verbose = FALSE))
-            #fit <- ruleInduction(freq, conf = conf)
-            rules3 <- DATAFRAME(fit)
+            rules3 <- ruleInduction(rules3, conf = conf)
+            rules3 <- DATAFRAME(rules3)
         })
 
         t2 <- system.time({
-            f <- function(condition) list(condition = format_condition(names(condition)))
-            rules2 <- dig(d,
-                          f = f,
-                          min_support = 0.001,
-                          min_length = 1,
-                          max_length = 6,
-                          min_focus_support = 0.001)
-            #rules2 <- dig_associations(d,
-                                       #min_support = 0.001,
-                                       #min_length = 0,
-                                       #max_length = 5,
-                                       #min_confidence = conf)
+            #f <- function(condition) list(condition = format_condition(names(condition)))
+            #rules2 <- dig(d,
+                          #f = f,
+                          #min_support = 0.001,
+                          #min_length = 1,
+                          #max_length = 6,
+                          #min_focus_support = 0.001)
+            rules2 <- dig_associations(d,
+                                       min_support = 0.001,
+                                       min_length = 0,
+                                       max_length = 5,
+                                       min_confidence = conf)
         })
 
         t1time <- t1time + t1["elapsed"]
@@ -65,7 +65,7 @@ testIt <- function(m, n) {
                eclat_time = t3time / reps,
                nuggets_time = t2time / reps,
                apriori_count = nrow(rules1),
-               eclat_count = nrow(rules3),
+               eclat_count = length(rules3),
                nuggets_count = length(rules2))
 }
 
@@ -75,8 +75,10 @@ testIt <- function(m, n) {
 #print(c(nrow(rules1), nrow(rules2)))
 
 result <- NULL
-for (i in 4:7) {
-    for (j in c(5, 10, 15, 20, 25)) {
+#for (i in 4:7) {
+for (i in 6) {
+    #for (j in c(5, 10, 15, 20, 25)) {
+    for (j in c(20, 25)) {
         result <- rbind(result, testIt(10^i, j))
         saveRDS(result, "comparison_result-2025-06-06.rds")
     }

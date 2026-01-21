@@ -261,11 +261,7 @@ dig_associations <- function(x,
 
     .msg(verbose, "dig_associations: post-processing")
     digattr <- attributes(res)
-    res <- do.call(rbind, res)
-
-    if (is.null(res)) {
-        res <- tibble()
-    }
+    res <- as_tibble(res)
 
     if (nrow(res) > 0) {
         if (is.finite(max_results) && nrow(res) > max_results) {

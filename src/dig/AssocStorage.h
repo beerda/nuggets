@@ -27,13 +27,43 @@
 
 template <typename CHAIN>
 class AssocStorage {
-    static constexpr size_t INITIAL_RESULT_CAPACITY = 65536;
+    static constexpr size_t INITIAL_RESULT_CAPACITY = 2^18;
 
 public:
     AssocStorage(const Config& config)
         : config(config),
-          result()
-    { result.reserve(INITIAL_RESULT_CAPACITY); }
+          antecedentVec(),
+          consequentVec(),
+          supportVec(),
+          confidenceVec(),
+          coverageVec(),
+          conseqSupportVec(),
+          liftVec(),
+          countVec(),
+          antecedentLengthVec(),
+          ppVec(),
+          pnVec(),
+          npVec(),
+          nnVec()
+    {
+        size_t capacity = config.getMaxResults();
+        if (capacity > INITIAL_RESULT_CAPACITY)
+            capacity = INITIAL_RESULT_CAPACITY;
+
+        antecedentVec.reserve(capacity);
+        consequentVec.reserve(capacity);
+        supportVec.reserve(capacity);
+        confidenceVec.reserve(capacity);
+        coverageVec.reserve(capacity);
+        conseqSupportVec.reserve(capacity);
+        liftVec.reserve(capacity);
+        countVec.reserve(capacity);
+        antecedentLengthVec.reserve(capacity);
+        ppVec.reserve(capacity);
+        pnVec.reserve(capacity);
+        npVec.reserve(capacity);
+        nnVec.reserve(capacity);
+    }
 
     // Disable copy
     AssocStorage(const AssocStorage&) = delete;
@@ -48,24 +78,10 @@ public:
                const Selector& selector,
                const vector<float>& predicateSums)
     {
-        size_t selectedCount = selector.getSelectedCount();
+        if (antecedentVec.size() >= config.getMaxResults())
+            return;
+
         String ante = formatCondition(chain);
-
-        StringVector antecedent(selectedCount);
-        StringVector consequent(selectedCount);
-        NumericVector pp(selectedCount);
-        NumericVector np(selectedCount);
-        NumericVector pn(selectedCount);
-        NumericVector nn(selectedCount);
-        NumericVector support(selectedCount);
-        NumericVector confidence(selectedCount);
-        NumericVector coverage(selectedCount);
-        NumericVector conseq_support(selectedCount);
-        NumericVector lift(selectedCount);
-        NumericVector count(selectedCount);
-        NumericVector antecedent_length(selectedCount);
-
-        size_t j = 0;
         for (size_t i = 0; i < collection.focusCount(); ++i) {
             if (!selector.isSelected(i))
                 continue;
@@ -76,51 +92,67 @@ public:
             float focusSum = focus.getSum();
             float chainSum = chain.getSum();
             float predicateSum = predicateSums[predicate];
+            float conf = (chainSum > 0) ? (focusSum / chainSum) : 0.0;
+            float conseqSupp = predicateSum / config.getNrow();
+            float cover = chainSum / config.getNrow();
+            float pp = focusSum;
+            float pn = chainSum - focusSum;
+            float np = predicateSum - focusSum;
+            float nn = config.getNrow() - pp - pn - np;
 
-            antecedent[j] = ante;
-            consequent[j] = string("{") + chainName + string("}");
+            antecedentVec.push_back(ante);
+            consequentVec.push_back(string("{") + chainName + string("}"));
 
-            pp[j] = focusSum;
-            pn[j] = chainSum - focusSum;
-            np[j] = predicateSum - focusSum;
-            nn[j] = config.getNrow() - pp[j] - pn[j] - np[j];
+            ppVec.push_back(pp);
+            pnVec.push_back(pn);
+            npVec.push_back(np);
+            nnVec.push_back(nn);
 
-            support[j] = pp[j] / config.getNrow();
-            confidence[j] = (chainSum > 0) ? (pp[j] / chainSum) : 0.0;
-            coverage[j] = chainSum / config.getNrow();
-            conseq_support[j] = predicateSum / config.getNrow();
-            lift[j] = (coverage[j] > 0) ? (confidence[j] / conseq_support[j]) : 0.0;
-            count[j] = pp[j];
-            antecedent_length[j] = chain.getClause().size();
-
-            j++;
+            supportVec.push_back(focusSum / config.getNrow());
+            confidenceVec.push_back(conf);
+            coverageVec.push_back(cover);
+            conseqSupportVec.push_back(conseqSupp);
+            liftVec.push_back((cover > 0) ? (conf / conseqSupp) : 0.0);
+            countVec.push_back(focusSum);
+            antecedentLengthVec.push_back(chain.getClause().size());
         }
-
-        DataFrame df = DataFrame::create(Named("antecedent") = antecedent,
-                                         Named("consequent") = consequent,
-                                         Named("support") = support,
-                                         Named("confidence") = confidence,
-                                         Named("coverage") = coverage,
-                                         Named("conseq_support") = conseq_support,
-                                         Named("lift") = lift,
-                                         Named("count") = count,
-                                         Named("antecedent_length") = antecedent_length,
-                                         Named("pp") = pp,
-                                         Named("pn") = pn,
-                                         Named("np") = np,
-                                         Named("nn") = nn);
-        result.push_back(df);
     }
 
     inline size_t size() const
-    { return result.size(); }
+    { return antecedentVec.size(); }
 
     inline List getResult() const
-    { return wrap(result); }
+    {
+        return List::create(Named("antecedent") = wrap(antecedentVec),
+                            Named("consequent") = wrap(consequentVec),
+                            Named("support") = wrap(supportVec),
+                            Named("confidence") = wrap(confidenceVec),
+                            Named("coverage") = wrap(coverageVec),
+                            Named("conseq_support") = wrap(conseqSupportVec),
+                            Named("lift") = wrap(liftVec),
+                            Named("count") = wrap(countVec),
+                            Named("antecedent_length") = wrap(antecedentLengthVec),
+                            Named("pp") = wrap(ppVec),
+                            Named("pn") = wrap(pnVec),
+                            Named("np") = wrap(npVec),
+                            Named("nn") = wrap(nnVec));
+    }
 
 private:
     const Config& config;
-    vector<RObject> result;
+    vector<string> antecedentVec;
+    vector<string> consequentVec;
+    vector<float> supportVec;
+    vector<float> confidenceVec;
+    vector<float> coverageVec;
+    vector<float> conseqSupportVec;
+    vector<float> liftVec;
+    vector<float> countVec;
+    vector<int> antecedentLengthVec;
+    vector<float> ppVec;
+    vector<float> pnVec;
+    vector<float> npVec;
+    vector<float> nnVec;
 
     string formatCondition(const CHAIN& chain) const
     {
