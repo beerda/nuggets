@@ -37,6 +37,8 @@ public:
                     const LogicalVector& isFocusVec)
         : chains(), nConditions(0), nFoci(0)
     {
+        LogStartEnd log("ChainCollection::ChainCollection - load data into chains");
+
         if (data.size() != isConditionVec.size() || data.size() != isFocusVec.size()) {
             throw std::invalid_argument("ChainCollection: data, isCondition and isFocus vectors must have the same length");
         }

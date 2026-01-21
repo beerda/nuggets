@@ -73,8 +73,12 @@ List runDig(const List& data,
 {
     using STORAGE = CallbackCaller<CHAIN>;
 
+    LogStartEnd* initLog = new LogStartEnd("runDig - initialization");
     STORAGE storage(config, callback);
     Digger<CHAIN, STORAGE> digger(config, data, isCondition, isFocus, storage);
+    delete initLog;
+
+    LogStartEnd runLog("runDig - run");
     digger.run();
 
     return storage.getResult();
