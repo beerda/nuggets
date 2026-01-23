@@ -16,6 +16,7 @@ context("dig/Config.h") {
             Named("maxSupport") = 0.8,
             Named("tautologyLimit") = 0.9,
             Named("filterEmptyFoci") = true,
+            Named("groupedFoci") = true,
             Named("verbose") = false,
             Named("tNorm") = "goedel",
             Named("excluded") = List::create(),
@@ -27,8 +28,20 @@ context("dig/Config.h") {
 
         Config c(r, n);
 
+        expect_true(c.getNrow() == 600);
+        expect_true(c.getThreads() == 2);
+        expect_true(c.getMinLength() == 3);
         expect_true(c.getMaxLength() == 5);
         expect_true(c.getMaxResults() == 6);
+        expect_true(c.getMinSupport() == 0.5);
+        expect_true(c.getMinSum() == 300);
+        expect_true(c.getMinFocusSupport() == 0.6f);
+        expect_true(c.getMinFocusSum() == 360);
+        expect_true(c.getMinConditionalFocusSupport() == 0.7f);
+        expect_true(c.getMaxSupport() == 0.8f);
+        expect_true(c.hasFilterEmptyFoci() == true);
+        expect_true(c.hasGroupedFoci() == true);
+        expect_true(c.isVerbose() == false);
     }
 
     test_that("complex test with defaults") {
@@ -44,6 +57,7 @@ context("dig/Config.h") {
             Named("maxSupport") = 0.8,
             Named("tautologyLimit") = 0.9,
             Named("filterEmptyFoci") = true,
+            Named("groupedFoci") = true,
             Named("verbose") = false,
             Named("tNorm") = "goedel",
             Named("excluded") = List::create(),
@@ -67,6 +81,7 @@ context("dig/Config.h") {
         expect_true(c.getMinConditionalFocusSupport() == 0.7f);
         expect_true(c.getMaxSupport() == 0.8f);
         expect_true(c.hasFilterEmptyFoci() == true);
+        expect_true(c.hasGroupedFoci() == true);
         expect_true(c.isVerbose() == false);
 
         expect_true(c.getExcluded().size() == 0);

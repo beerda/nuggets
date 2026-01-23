@@ -156,6 +156,13 @@
 #'   conditions with no remaining foci after filtering by `min_focus_support`
 #'   or `min_conditional_focus_support`. If `TRUE`, `f` is called only when at
 #'   least one focus remains. If `FALSE`, `f` is called regardless.
+#' @param grouped_foci Logical; if `TRUE`, foci are handled in a group, that is,
+#'   for single condition, `f` is called once with all remaining foci after
+#'   filtering. If `FALSE`, `f` may called multiple times for a single condition,
+#'   each time with different foci. Note that handling of  `grouped_foci = TRUE`
+#'   is typically more time-consuming, hence, if processing all foci at once
+#'   per each generated condition is not required, it is recommended to set
+#'   `grouped_foci = FALSE` for better performance.
 #' @param t_norm T-norm used for conjunction of weights: `"goedel"` (minimum),
 #'   `"goguen"` (product), or `"lukas"` (Łukasiewicz).
 #' @param max_results Maximum number of results (objects returned by the
@@ -259,6 +266,7 @@ dig <- function(x,
                 min_conditional_focus_support = 0.0,
                 max_support = 1.0,
                 filter_empty_foci = FALSE,
+                grouped_foci = FALSE,
                 t_norm = "goguen",
                 max_results = Inf,
                 verbose = FALSE,
@@ -276,6 +284,7 @@ dig <- function(x,
                                      arg_min_conditional_focus_support = "min_conditional_focus_support",
                                      arg_max_support = "max_support",
                                      arg_filter_empty_foci = "filter_empty_foci",
+                                     arg_grouped_foci = "grouped_foci",
                                      arg_t_norm = "t_norm",
                                      arg_max_results = "max_results",
                                      arg_verbose = "verbose",
@@ -313,6 +322,7 @@ dig <- function(x,
          min_conditional_focus_support = min_conditional_focus_support,
          max_support = max_support,
          filter_empty_foci = filter_empty_foci,
+         grouped_foci = grouped_foci,
          t_norm = t_norm,
          max_results = max_results,
          verbose = verbose,
@@ -337,6 +347,7 @@ dig <- function(x,
                  min_conditional_focus_support,
                  max_support,
                  filter_empty_foci,
+                 grouped_foci,
                  t_norm,
                  max_results,
                  verbose,
@@ -463,6 +474,10 @@ dig <- function(x,
                   arg = error_context$arg_filter_empty_foci,
                   call = error_context$call)
 
+    .must_be_flag(grouped_foci,
+                  arg = error_context$arg_grouped_foci,
+                  call = error_context$call)
+
     .must_be_enum(t_norm, c("goguen", "goedel", "lukas"),
                   arg = error_context$arg_t_norm,
                   call = error_context$call)
@@ -502,6 +517,7 @@ dig <- function(x,
                    minConditionalFocusSupport = min_conditional_focus_support,
                    maxSupport = max_support,
                    filterEmptyFoci = filter_empty_foci,
+                   groupedFoci = grouped_foci,
                    tNorm = t_norm,
                    maxResults = max_results,
                    verbose = verbose,
@@ -515,6 +531,11 @@ dig <- function(x,
                     callback,
                     config)
     } else if (call_function == "dig_associations") {
+        if (grouped_foci) {
+            cli_abort(c("The {.arg grouped_foci} parameter is not supported when calling {.fn dig_associations()}."),
+                      call = error_context$call)
+        }
+
         res <- dig_associations_(cols,
                                  names(cols),
                                  condition_cols$selected,
@@ -542,6 +563,7 @@ dig <- function(x,
                             min_conditional_focus_support = min_conditional_focus_support,
                             max_support = max_support,
                             filter_empty_foci = filter_empty_foci,
+                            grouped_foci = grouped_foci,
                             t_norm = t_norm,
                             max_results = max_results,
                             verbose = verbose,

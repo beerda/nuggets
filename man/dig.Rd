@@ -18,6 +18,7 @@ dig(
   min_conditional_focus_support = 0,
   max_support = 1,
   filter_empty_foci = FALSE,
+  grouped_foci = FALSE,
   t_norm = "goguen",
   max_results = Inf,
   verbose = FALSE,
@@ -27,10 +28,10 @@ dig(
     "min_length", arg_max_length = "max_length", arg_min_support = "min_support",
     arg_min_focus_support = "min_focus_support", arg_min_conditional_focus_support =
     "min_conditional_focus_support", arg_max_support = "max_support",
-    arg_filter_empty_foci = "filter_empty_foci", arg_t_norm = "t_norm", arg_max_results =
-    "max_results", arg_verbose = "verbose", 
-     arg_threads = "threads", call =
-    current_env())
+    arg_filter_empty_foci = "filter_empty_foci", arg_grouped_foci = "grouped_foci",
+    arg_t_norm = "t_norm", arg_max_results = "max_results", 
+     arg_verbose =
+    "verbose", arg_threads = "threads", call = current_env())
 )
 }
 \arguments{
@@ -118,6 +119,14 @@ their supersets continues. Must be in \eqn{[0,1]}.}
 conditions with no remaining foci after filtering by \code{min_focus_support}
 or \code{min_conditional_focus_support}. If \code{TRUE}, \code{f} is called only when at
 least one focus remains. If \code{FALSE}, \code{f} is called regardless.}
+
+\item{grouped_foci}{Logical; if \code{TRUE}, foci are handled in a group, that is,
+for single condition, \code{f} is called once with all remaining foci after
+filtering. If \code{FALSE}, \code{f} may called multiple times for a single condition,
+each time with different foci. Note that handling of  \code{grouped_foci = TRUE}
+is typically more time-consuming, hence, if processing all foci at once
+per each generated condition is not required, it is recommended to set
+\code{grouped_foci = FALSE} for better performance.}
 
 \item{t_norm}{T-norm used for conjunction of weights: \code{"goedel"} (minimum),
 \code{"goguen"} (product), or \code{"lukas"} (Łukasiewicz).}

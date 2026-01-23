@@ -87,6 +87,8 @@ public:
 
         filterEmptyFoci = as<LogicalVector>(configuration["filterEmptyFoci"])[0];
 
+        groupedFoci = as<LogicalVector>(configuration["groupedFoci"])[0];
+
         verbose = as<LogicalVector>(configuration["verbose"])[0];
 
         parseArguments(configuration["arguments"]);
@@ -145,6 +147,9 @@ public:
 
     inline bool hasFilterEmptyFoci() const
     { return filterEmptyFoci; }
+
+    inline bool hasGroupedFoci() const
+    { return groupedFoci; }
 
     inline bool hasFilterExcluded() const
     { return filterExcluded; }
@@ -219,6 +224,7 @@ private:
     vector<string> chainNames;
 
     bool filterEmptyFoci;
+    bool groupedFoci;
     bool verbose;
     bool filterExcluded;
     bool disjointDefined;
