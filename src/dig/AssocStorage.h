@@ -27,7 +27,7 @@
 
 template <typename CHAIN>
 class AssocStorage {
-    static constexpr size_t INITIAL_RESULT_CAPACITY = 2^18;
+    static constexpr size_t INITIAL_RESULT_CAPACITY = 1 << 18; // 256k results
 
 public:
     AssocStorage(const Config& config)
