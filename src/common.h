@@ -30,6 +30,11 @@ using namespace Rcpp;
 using namespace std;
 
 
+// if testthat.h is included, set debug mode
+#ifdef TESTTHAT_HPP
+#    define DEBUG 1
+#endif
+
 #ifndef DEBUG
 //#    define DEBUG 1
 #endif
