@@ -75,7 +75,7 @@ public:
      * @param b The second chain.
      */
     BaseChain(const BaseChain& a, const BaseChain& b, const bool toFocus)
-        : clause(a.clause.size() + 1),
+        : clause(),
           predicateType(toFocus ? PredicateType::FOCUS : b.predicateType),
           sum(0)
     {
@@ -94,7 +94,11 @@ public:
                     throw invalid_argument("BaseChain: clause prefixes differ");
             }
         )
-        clause.assign(a.clause.begin(), a.clause.end());
+
+        clause.reserve(a.clause.size() + 1);
+        for (size_t i = 0; i < a.clause.size(); ++i) {
+            clause.push_back(a.clause[i]);
+        }
         clause.push_back(b.clause.back());
     }
 
