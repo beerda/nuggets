@@ -18,6 +18,7 @@ SOURCES=RcppExports.cpp \
 	test-dig-BinomialCoefficients.cpp \
 	test-dig-BitChain.cpp \
 	test-dig-Bitset.cpp \
+	test-dig-Cache.cpp \
 	test-dig-ChainCollection.cpp \
 	test-dig-Config.cpp \
 	test-dig-FloatChain.cpp \
