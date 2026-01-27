@@ -15,6 +15,7 @@ SOURCES=RcppExports.cpp \
 	test-antichain-Condition.cpp \
 	test-antichain-Node.cpp \
 	test-antichain-Tree.cpp \
+	test-dig-BaseChain.cpp \
 	test-dig-BinomialCoefficients.cpp \
 	test-dig-BitChain.cpp \
 	test-dig-Bitset.cpp \
