@@ -112,7 +112,7 @@ public:
                 current->child = new Node(pid, sum, nullptr);
             }
             else {
-                Node* current = current->child;
+                current = current->child;
                 Node* sibling = current->sibling;
                 while (sibling != nullptr && sibling->predicateId < pid) {
                     current = sibling;
