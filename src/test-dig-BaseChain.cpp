@@ -7,10 +7,6 @@ context("dig/BaseChain.h") {
     test_that("default constructor") {
         BaseChain c(0.3f);
 
-        IF_DEBUG(
-            expect_true(false);
-        )
-
         expect_true(c.getClause().empty());
         expect_true(c.getPredicateType() == CONDITION);
         expect_true(c.getSum() == 0.3f);
