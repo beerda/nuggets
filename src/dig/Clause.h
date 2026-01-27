@@ -22,4 +22,36 @@
 #include "../common.h"
 
 
-using Clause = vector<size_t>;
+class Clause : public vector<size_t> {
+public:
+    Clause() = default;
+
+    Clause(size_t n)
+        : vector<size_t>(n)
+    { }
+
+    Clause(initializer_list<size_t> init)
+        : vector<size_t>(init)
+    { }
+
+    Clause(const Clause& other) = default;
+    Clause& operator=(const Clause& other) = default;
+    Clause(Clause&& other) = default;
+    Clause& operator=(Clause&& other) = default;
+
+    bool operator==(const Clause& other) const
+    {
+        if (size() != other.size())
+            return false;
+
+        for (size_t i = 0; i < size(); ++i) {
+            if (at(i) != other.at(i))
+                return false;
+        }
+
+        return true;
+    }
+
+    inline void sort()
+    { std::sort(begin(), end()); }
+};
