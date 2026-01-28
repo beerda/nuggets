@@ -78,7 +78,7 @@ public:
         }
     }
 
-    FloatChain(const FloatChain& a, const FloatChain& b, const float sum)
+    FloatChain(const FloatChain& a, const FloatChain& b, const double sum)
         : BaseChain(a, b, sum),
           data()
     { }

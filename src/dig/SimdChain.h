@@ -120,7 +120,7 @@ public:
         setSum();
     }
 
-    SimdChain(const SimdChain& a, const SimdChain& b, const float sum)
+    SimdChain(const SimdChain& a, const SimdChain& b, const double sum)
         : BaseChain(a, b, sum),
           data()
     { }

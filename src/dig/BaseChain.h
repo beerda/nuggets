@@ -205,9 +205,7 @@ public:
 
         Clause result;
         result.reserve(a.size() + 1);
-        for (size_t i = 0; i < a.size(); ++i) {
-            result.push_back(a[i]);
-        }
+        result.assign(a.begin(), a.end());
         result.push_back(b.back());
 
         return result;

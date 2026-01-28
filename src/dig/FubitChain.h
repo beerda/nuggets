@@ -138,7 +138,7 @@ public:
         setSum();
     }
 
-    FubitChain(const FubitChain& a, const FubitChain& b, const float sum)
+    FubitChain(const FubitChain& a, const FubitChain& b, const double sum)
         : BaseChain(a, b, sum),
           data(),
           n(a.n)

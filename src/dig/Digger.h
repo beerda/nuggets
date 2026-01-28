@@ -214,12 +214,11 @@ private:
         }
     }
 
-    bool isNonRedundant(const CHAIN& parent, const CHAIN& chain) const
+    inline bool isNonRedundant(const CHAIN& parent, const CHAIN& chain) const
     {
-        size_t curr = chain.getClause().back();
-
         if (parent.getClause().size() > 0) {
             size_t pref = parent.getClause().back();
+            size_t curr = chain.getClause().back();
 
             if (pref == curr) {
                 // Filter of focus even if disjoint is not defined
@@ -238,17 +237,19 @@ private:
         return true;
     }
 
-    bool isNonTautological(const CHAIN& parent, const CHAIN& chain) const
+    inline bool isNonTautological(const CHAIN& parent, const CHAIN& chain) const
     {
-        size_t curr = chain.getClause().back();
-        if (config.hasFilterExcluded() && parent.deduces(curr)) {
-            return false;
+        if (config.hasFilterExcluded()) {
+            size_t curr = chain.getClause().back();
+            if (parent.deduces(curr)) {
+                return false;
+            }
         }
 
         return true;
     }
 
-    bool isCandidate(const CHAIN& chain) const
+    inline bool isCandidate(const CHAIN& chain) const
     {
         //cout << "chain.getSum() = " << chain.getSum() << " config.getMinSum() = " << config.getMinSum() << endl;
         if (chain.isCondition() && chain.getSum() >= config.getMinSum())
@@ -260,14 +261,14 @@ private:
         return false;
     }
 
-    bool isExtendable(const CHAIN& chain) const
+    inline bool isExtendable(const CHAIN& chain) const
     {
         return chain.getClause().size() < config.getMaxLength()
             && chain.getSum() >= config.getMinSum()
             && storage.size() < config.getMaxResults();
     }
 
-    bool isStorable(const CHAIN& chain) const
+    inline bool isStorable(const CHAIN& chain) const
     {
         return chain.getClause().size() >= config.getMinLength()
             && chain.getSum() >= config.getMinSum()
@@ -275,10 +276,10 @@ private:
             && storage.size() < config.getMaxResults();
     }
 
-    bool isStorable(const Selector& selector) const
+    inline bool isStorable(const Selector& selector) const
     { return (!config.hasFilterEmptyFoci() || selector.getSelectedCount() > 0); }
 
-    const Selector& initializeSelectorOfStorable(const CHAIN& chain, const ChainCollection<CHAIN>& collection)
+    inline const Selector& initializeSelectorOfStorable(const CHAIN& chain, const ChainCollection<CHAIN>& collection)
     {
         bool constant = config.getMinConditionalFocusSupport() <= 0.0;
         selectorSingleton.initialize(collection.focusCount(), constant);
