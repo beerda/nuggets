@@ -202,11 +202,12 @@ private:
     {
         if (isNonRedundant(conditionChain, secondChain)
                 && isNonTautological(conditionChain, secondChain)) {
-            double sum = getSumFromCache(conditionChain, secondChain);
+            CHAIN newChain(conditionChain, secondChain, 0);
+            double sum = getSumFromCache(newChain);
 
             // not being in cache means that the conjunction is not frequent
             if (sum != Cache::NOT_IN_CACHE) {
-                CHAIN newChain(conditionChain, secondChain, sum);
+                newChain.setSum(sum);
                 if (isCandidate(newChain)) {
                     target.append(std::move(newChain));
                 }
@@ -302,13 +303,10 @@ private:
         cache.add(clause, chain.getSum());
     }
 
-    inline double getSumFromCache(const CHAIN& conditionChain,
-                                 const CHAIN& secondChain) const
+    inline double getSumFromCache(const CHAIN& chain) const
     {
-        Clause clause = BaseChain::mergeClauses(conditionChain.getClause(),
-                                                secondChain.getClause());
+        Clause clause = chain.getClause().clone();
         clause.sort();
-
         return cache.get(clause);
     }
 };

@@ -147,6 +147,9 @@ public:
     inline double getSum() const
     { return sum; }
 
+    inline void setSum(double newSum)
+    { sum = newSum; }
+
     inline vector<size_t>& getMutableDeduced()
     { return deduced; }
 

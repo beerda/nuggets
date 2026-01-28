@@ -85,7 +85,7 @@ public:
             set(i, vec[i] ? 1.0 : 0.0);
         }
 
-        setSum();
+        internalSetSum();
     }
 
     FubitChain(size_t id, PredicateType type, const NumericVector& vec)
@@ -97,7 +97,7 @@ public:
             set(i, vec[i]);
         }
 
-        setSum();
+        internalSetSum();
     }
 
     FubitChain(const FubitChain& a, const FubitChain& b)
@@ -135,7 +135,7 @@ public:
             }
         }
 
-        setSum();
+        internalSetSum();
     }
 
     FubitChain(const FubitChain& a, const FubitChain& b, const double sum)
@@ -301,7 +301,7 @@ private:
         return res;
     }
 
-    inline void setSum()
+    inline void internalSetSum()
     {
         if constexpr (TNORM == TNorm::GOEDEL) {
             this->sum = ((float) internalSum()) / ((float) MAX_VALUE);
