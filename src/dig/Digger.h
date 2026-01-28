@@ -114,49 +114,51 @@ private:
     TautologyTree<CHAIN> tree;
     CombinatorialProgress* progress;
 
-    void processChains(ChainCollection<CHAIN>& collection)
+    void processChildrenChains(const CHAIN& chain, ChainCollection<CHAIN>& collection)
     {
-        for (size_t i = 0; i < collection.conditionCount(); ++i) {
-            ChainCollection<CHAIN> childCollection;
-            CHAIN& chain = collection[i];
-            auto batch = progress->createBatch(chain.getClause().size(),
-                                               collection.conditionCount() - i - 1);
+        if (!config.hasFilterEmptyFoci() || collection.hasFoci()) {
 
-            tree.updateDeduction(chain);
-            if (chain.deducesItself())
-                continue;
-
-            if (isExtendable(chain)) {
-                // need conjunction with everything
-                combine(childCollection, collection, i, false);
-            }
-            else if (collection.hasFoci()) {
-                // need conjunction with foci only
-                combine(childCollection, collection, i, true);
-            }
-            else {
-                // do not need childCollection at all
-            }
-
-            processChildrenChains(chain, childCollection);
-        }
-    }
-
-    void processChildrenChains(const CHAIN& chain, ChainCollection<CHAIN>& childCollection)
-    {
-        BLOCK_INC_TIMER(st, t, "Digger::processChildrenChains");
-
-        if (!config.hasFilterEmptyFoci() || childCollection.hasFoci()) {
             if (isStorable(chain)) {
+                BLOCK_INC_TIMER(st, t, "Digger::processChildrenChains - store");
+
                 // return singleton selector to avoid allocations
-                const Selector& selector = initializeSelectorOfStorable(chain, childCollection);
+                const Selector& selector = initializeSelectorOfStorable(chain, collection);
                 if (isStorable(selector)) {
-                    storage.store(chain, childCollection, selector, predicateSums);
+                    storage.store(chain, collection, selector, predicateSums);
                 }
             }
             progress->increment(1);
+
             if (isExtendable(chain)) {
-                processChains(childCollection);
+                for (size_t i = 0; i < collection.conditionCount(); ++i) {
+                    ChainCollection<CHAIN> childCollection;
+
+                    CHAIN& chain = collection[i];
+                    auto batch = progress->createBatch(chain.getClause().size(),
+                                                       collection.conditionCount() - i - 1);
+
+                    {
+                        BLOCK_INC_TIMER(st, t, "Digger::processChildrenChains - for loop");
+
+                        tree.updateDeduction(chain);
+                        if (chain.deducesItself())
+                            continue;
+
+                        if (isExtendable(chain)) {
+                            // need conjunction with everything
+                            combine(childCollection, collection, i, false);
+                        }
+                        else if (collection.hasFoci()) {
+                            // need conjunction with foci only
+                            combine(childCollection, collection, i, true);
+                        }
+                        else {
+                            // do not need childCollection at all
+                        }
+                    }
+
+                    processChildrenChains(chain, childCollection);
+                }
             }
         }
     }
@@ -166,6 +168,8 @@ private:
                  const size_t conditionChainIndex,
                  bool onlyFoci)
     {
+        BLOCK_INC_TIMER(st, t, "Digger::combine");
+
         CHAIN& conditionChain = parent[conditionChainIndex];
 
         size_t begin = conditionChainIndex + 1;
@@ -310,6 +314,8 @@ private:
 
     inline void addSumToCache(const CHAIN& chain)
     {
+        BLOCK_INC_TIMER(st, t, "Digger::addSumToCache");
+
         Clause clause = chain.getClause().clone();
         clause.sort();
         cache.add(clause, chain.getSum());
@@ -317,6 +323,8 @@ private:
 
     inline double getSumFromCache(const CHAIN& chain) const
     {
+        BLOCK_INC_TIMER(st, t, "Digger::getSumFromCache");
+
         Clause clause = chain.getClause().clone();
         clause.sort();
         return cache.get(clause);
