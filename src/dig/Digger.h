@@ -248,10 +248,9 @@ private:
         bool constant = config.getMinConditionalFocusSupport() <= 0.0f;
         selectorSingleton.initialize(collection.focusCount(), constant);
         if (!constant) {
-            float chainSumReciprocal = 1.0f / chain.getSum();
             for (size_t i = 0; i < collection.focusCount(); ++i) {
                 const CHAIN& focus = collection[i + collection.firstFocusIndex()];
-                if (focus.getSum() * chainSumReciprocal < config.getMinConditionalFocusSupport()) {
+                if (1.0 * focus.getSum() / chain.getSum() < config.getMinConditionalFocusSupport()) {
                     selectorSingleton.unselect(i);
                 }
             }
