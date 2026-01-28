@@ -203,9 +203,13 @@ private:
         if (isNonRedundant(conditionChain, secondChain)
                 && isNonTautological(conditionChain, secondChain)) {
             double sum = getSumFromCache(conditionChain, secondChain);
-            CHAIN newChain(conditionChain, secondChain, sum);
-            if (isCandidate(newChain)) {
-                target.append(std::move(newChain));
+
+            // not being in cache means that the conjunction is not frequent
+            if (sum != Cache::NOT_IN_CACHE) {
+                CHAIN newChain(conditionChain, secondChain, sum);
+                if (isCandidate(newChain)) {
+                    target.append(std::move(newChain));
+                }
             }
         }
     }
