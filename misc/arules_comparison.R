@@ -4,11 +4,12 @@ library(nuggets)
 
 set.seed(42344)
 
-m <- 10^6
-n <- 25
+m <- 10^4
+n <- 10
 conf <- 0.5
 
 testIt <- function(m, n) {
+    set.seed(42344)
     d <- matrix(sample(c(T,F), m * n, replace=TRUE),
                 nrow = m,
                 ncol = n)
@@ -20,13 +21,14 @@ testIt <- function(m, n) {
     reps <- 1
     for (x in 1:reps) {
         t1 <- system.time({
-            fit <- apriori(d, parameter = list(minlen = 1,
+            rules1 <- apriori(d, parameter = list(minlen = 1,
                                                maxlen = 6,
                                                supp = 0.001,
                                                maxtime = 0,
                                                target = "frequent itemsets"),
                            control = list(verbose = FALSE))
-            rules1 <- DATAFRAME(fit)
+            rules1 <- ruleInduction(rules1, confidence = conf)
+            rules1 <- DATAFRAME(rules1)
         })
 
         t3 <- system.time({
@@ -35,8 +37,9 @@ testIt <- function(m, n) {
                                               target = "frequent itemsets",
                                               supp=0.001),
                           control = list(verbose = FALSE))
-            rules3 <- ruleInduction(rules3, conf = conf)
+            rules3 <- ruleInduction(rules3, confidence = conf)
             rules3 <- DATAFRAME(rules3)
+            rules3$rule <- paste0(rules3$LHS, "=>", rules3$RHS)
         })
 
         t2 <- system.time({
@@ -49,9 +52,10 @@ testIt <- function(m, n) {
                           #min_focus_support = 0.001)
             rules2 <- dig_associations(d,
                                        min_support = 0.001,
-                                       min_length = 0,
+                                       min_length = 1,
                                        max_length = 5,
                                        min_confidence = conf)
+            rules2$rule <- paste0(rules2$antecedent, "=>", rules2$consequent)
         })
 
         t1time <- t1time + t1["elapsed"]
@@ -65,8 +69,8 @@ testIt <- function(m, n) {
                eclat_time = t3time / reps,
                nuggets_time = t2time / reps,
                apriori_count = nrow(rules1),
-               eclat_count = length(rules3),
-               nuggets_count = length(rules2))
+               eclat_count = nrow(rules3),
+               nuggets_count = nrow(rules2))
 }
 
 
@@ -75,10 +79,10 @@ testIt <- function(m, n) {
 #print(c(nrow(rules1), nrow(rules2)))
 
 result <- NULL
-#for (i in 4:7) {
-for (i in 6) {
-    #for (j in c(5, 10, 15, 20, 25)) {
-    for (j in c(20, 25)) {
+for (i in 4:7) {
+#for (i in 6) {
+    for (j in c(5, 10, 15, 20, 25)) {
+    #for (j in c(20, 25)) {
         result <- rbind(result, testIt(10^i, j))
         saveRDS(result, "comparison_result-2025-06-06.rds")
     }
