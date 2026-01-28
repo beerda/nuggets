@@ -126,10 +126,8 @@ public:
 
         Node* node = children[clause[0]];
         node = find(clause.begin(), clause.end(), node);
-        if (node->sum == NOT_IN_CACHE) {
-            throw runtime_error(string("Cache::get: clause not found in cache: ") + clause.toString());
-        }
 
+        // possibly return NOT_IN_CACHE
         return node->sum;
     }
 

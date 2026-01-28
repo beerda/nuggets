@@ -511,3 +511,51 @@ test_that("dig_associations limiting max_results", {
     expect_equal(nrow(res), 2)
 })
 
+test_that("bug with cache", {
+    d <- partition(mtcars, .breaks = 2)
+    d <- d[, c(1,7,9)]
+    colnames(d) <- c("a", "b", "c")
+
+    ia <- sum(d$a) / nrow(d)
+    ib <- sum(d$b) / nrow(d)
+    ic <- sum(d$c) / nrow(d)
+    iab <- sum(d$a & d$b) / nrow(d)
+    iac <- sum(d$a & d$c) / nrow(d)
+    ibc <- sum(d$b & d$c) / nrow(d)
+    iabc <- sum(d$a & d$b & d$c) / nrow(d)
+
+    ex <- data.frame(rule = c("{} => {a}",
+                              "{} => {b}",
+                              "{} => {c}",
+                              "{a} => {b}",
+                              "{a} => {c}",
+                              "{b} => {a}",
+                              "{b} => {c}",
+                              "{c} => {a}",
+                              "{c} => {b}",
+                              "{a,b} => {c}",
+                              "{a,c} => {b}",
+                              "{b,c} => {a}"),
+                 support = c(ia, ib, ic, iab, iac, iab, ibc, iac, ibc, iabc, iabc, iabc))
+
+    ex05 <- ex[ex$support >= 0.5, ]
+    ex05 <- ex05[order(ex05$rule), ]
+
+    # here was the error that itemset "abc" was not added to the cache
+    # because its parent "bc" was not frequent, but later "abc" was searched
+    # in the cache because both parents "ac" and "ab" were frequent
+    res <- dig_associations(d,
+                            antecedent = everything(),
+                            consequent = everything(),
+                            min_support = 0.5)
+
+    expect_true(is_nugget(res, "associations"))
+    expect_true(is_tibble(res))
+
+    res$rule <- paste0(res$antecedent, " => ", res$consequent)
+    res <- res[order(res$rule), c("rule", "support")]
+    attributes(res) <- NULL
+    names(res) <- c("rule", "support")
+
+    expect_equal(as.list(res), as.list(ex05))
+})
