@@ -54,4 +54,19 @@ public:
 
     inline void sort()
     { std::sort(begin(), end()); }
+
+    inline string toString() const
+    {
+        stringstream res;
+        res << "{";
+        for (size_t i = 0; i < size(); ++i) {
+            if (i > 0) {
+                res << ",";
+            }
+            res << at(i);
+        }
+        res << "}";
+
+        return res.str();
+    }
 };
