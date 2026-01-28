@@ -81,8 +81,21 @@ public:
         }
     }
 
+    // Disable copy
+    Cache(const Cache& other) = delete;
+    Cache& operator=(const Cache& other) = delete;
+
+    // Allow move
+    Cache(Cache&& other) = default;
+    Cache& operator=(Cache&& other) = default;
+
     ~Cache()
-    { }
+    {
+        for (size_t i = 0; i < rootSize; ++i) {
+            delete children[i];
+        }
+        delete[] children;
+    }
 
     void add(const Clause& clause, double sum)
     {

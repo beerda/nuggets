@@ -30,6 +30,13 @@ private:
 public:
     Clause() = default;
 
+    // Disable copy (use clone() to copy)
+    Clause& operator=(const Clause& other) = delete;
+
+    // Allow move
+    Clause(Clause&& other) = default;
+    Clause& operator=(Clause&& other) = default;
+
     Clause(size_t n)
         : vector<size_t>(n)
     { }
@@ -37,13 +44,6 @@ public:
     Clause(initializer_list<size_t> init)
         : vector<size_t>(init)
     { }
-
-    // Disable copy (use clone() to copy)
-    Clause& operator=(const Clause& other) = delete;
-
-    // Allow move
-    Clause(Clause&& other) = default;
-    Clause& operator=(Clause&& other) = default;
 
     Clause clone() const
     { return Clause(*this); }
