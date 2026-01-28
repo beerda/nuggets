@@ -74,10 +74,10 @@ public:
         for (size_t i = 0; i < initialCollection.size(); ++i) {
             CHAIN& chain = initialCollection[i];
             addSumToCache(chain);
-            if (isNonRedundant(emptyChain, chain)) {
-                if (isCandidate(chain)) {
-                    filteredCollection.append(std::move(chain));
-                }
+            if (isNonRedundant(emptyChain, chain)
+                    && isNonTautological(emptyChain, chain)
+                    && isCandidate(chain)) {
+                filteredCollection.append(std::move(chain));
             }
         }
 
@@ -188,9 +188,9 @@ private:
     {
         if (isNonRedundant(conditionChain, secondChain)) {
             CHAIN newChain(conditionChain, secondChain);
-            //Rcout << "combineByConjunction: " << newChain.getClause().toString() << endl;
             addSumToCache(newChain);
-            if (isCandidate(newChain)) {
+            if (isNonTautological(conditionChain, secondChain)
+                    && isCandidate(newChain)) {
                 target.append(std::move(newChain));
             }
         }
@@ -200,7 +200,8 @@ private:
                         const CHAIN& conditionChain,
                         const CHAIN& secondChain)
     {
-        if (isNonRedundant(conditionChain, secondChain)) {
+        if (isNonRedundant(conditionChain, secondChain)
+                && isNonTautological(conditionChain, secondChain)) {
             double sum = getSumFromCache(conditionChain, secondChain);
             CHAIN newChain(conditionChain, secondChain, sum);
             if (isCandidate(newChain)) {
@@ -230,6 +231,12 @@ private:
             }
         }
 
+        return true;
+    }
+
+    bool isNonTautological(const CHAIN& parent, const CHAIN& chain) const
+    {
+        size_t curr = chain.getClause().back();
         if (config.hasFilterExcluded() && parent.deduces(curr)) {
             return false;
         }
