@@ -86,8 +86,6 @@ public:
 
     void add(const Clause& clause, double sum)
     {
-        //Rcout << "adding " << clause.toString() << " to cache with sum " << sum << endl;
-
         if (clause.empty())
             throw runtime_error("Cache::add: cannot add empty clause");
 
@@ -104,7 +102,7 @@ public:
                 node->sum = sum;
             }
             else {
-                throw runtime_error("1 Cache::add: trying to add existing clause");
+                throw runtime_error(string("Cache::add: trying to add existing clause: ") + clause.toString());
             }
         }
         else {
@@ -115,15 +113,13 @@ public:
                 node->sum = sum;
             }
             else {
-                throw runtime_error("2 Cache::add: trying to add existing clause");
+                throw runtime_error(string("Cache::add: trying to add existing clause: ") + clause.toString());
             }
         }
     }
 
     double get(const Clause& clause) const
     {
-        //Rcout << "getting " << clause.toString() << " from cache" << endl;
-
         if (clause.empty()) {
             throw runtime_error("Cache::get: cannot get empty clause");
         }
@@ -131,7 +127,7 @@ public:
         Node* node = children[clause[0]];
         node = find(clause.begin(), clause.end(), node);
         if (node->sum == NOT_IN_CACHE) {
-            throw runtime_error("Cache::get: clause not found in cache");
+            throw runtime_error(string("Cache::get: clause not found in cache: ") + clause.toString());
         }
 
         return node->sum;
