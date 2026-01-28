@@ -23,6 +23,10 @@
 
 
 class Clause : public vector<size_t> {
+private:
+    // Copy constructor is private, use clone() for public copy
+    Clause(const Clause& other) = default;
+
 public:
     Clause() = default;
 
@@ -34,10 +38,15 @@ public:
         : vector<size_t>(init)
     { }
 
-    Clause(const Clause& other) = default;
-    Clause& operator=(const Clause& other) = default;
+    // Disable copy (use clone() to copy)
+    Clause& operator=(const Clause& other) = delete;
+
+    // Allow move
     Clause(Clause&& other) = default;
     Clause& operator=(Clause&& other) = default;
+
+    Clause clone() const
+    { return Clause(*this); }
 
     bool operator==(const Clause& other) const
     {

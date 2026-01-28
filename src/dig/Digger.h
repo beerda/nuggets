@@ -285,7 +285,7 @@ private:
 
     inline void addSumToCache(const CHAIN& chain)
     {
-        Clause clause = chain.getClause(); // deep copy
+        Clause clause = chain.getClause().clone();
         clause.sort();
         cache.add(clause, chain.getSum());
     }
