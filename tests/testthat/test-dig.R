@@ -1150,6 +1150,7 @@ test_that("exclude tautology 1", {
 
     res <- dig(d,
                f,
+               #             1  2  3  5  6  7
                condition = c(a, b, c, x, y, z),
                focus = c(a, b, c, x, y, z),
                excluded = list(c("c", "x")),
