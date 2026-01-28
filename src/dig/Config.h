@@ -20,6 +20,7 @@
 #pragma once
 
 #include "../common.h"
+#include "../timer.h"
 #include <vector>
 
 
@@ -27,7 +28,7 @@ class Config {
 public:
     Config(const List& configuration, const CharacterVector& namesVector)
     {
-        LogStartEnd log("Config::Config - load config");
+        BLOCK_TIMER(bt, "Config::Config - load config");
 
         int nrow_i = as<IntegerVector>(configuration["nrow"])[0];
         if (nrow_i < 0)

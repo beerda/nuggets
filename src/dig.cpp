@@ -18,6 +18,7 @@
 
 
 #include "common.h"
+#include "timer.h"
 #include "dig/BitChain.h"
 #include "dig/FloatChain.h"
 #include "dig/CallbackCaller.h"
@@ -73,12 +74,12 @@ List runDig(const List& data,
 {
     using STORAGE = CallbackCaller<CHAIN>;
 
-    LogStartEnd* initLog = new LogStartEnd("runDig - initialization");
+    START_TIMER(t, "runDig - initialization");
     STORAGE storage(config, callback);
     Digger<CHAIN, STORAGE> digger(config, data, isCondition, isFocus, storage);
-    delete initLog;
+    STOP_TIMER(t);
 
-    LogStartEnd runLog("runDig - run");
+    BLOCK_TIMER(bt, "runDig - run");
     digger.run();
 
     return storage.getResult();
@@ -94,7 +95,7 @@ List dig_(const List& data,
           const Function& callback,
           const List& confList)
 {
-    LogStartEnd l("dig_");
+    START_TIMER(bt, "dig_");
 
     bool allLogical = dataAreAllLogical(data);
     Config config(confList, namesVector);
@@ -112,6 +113,9 @@ List dig_(const List& data,
     else if (config.getTNorm() == TNorm::LUKASIEWICZ) {
         result = runDig<LUKASIEWICZ_CHAIN>(data, isCondition, isFocus, callback, config);
     }
+
+    STOP_TIMER(bt);
+    CLEAR_INC_TIMERS();
 
     return result;
 }
@@ -141,7 +145,7 @@ List dig_associations_(const List& data,
                        const LogicalVector& isFocus,
                        const List& confList)
 {
-    LogStartEnd l("dig_assoc_");
+    START_TIMER(bt, "dig_associations_");
 
     bool allLogical = dataAreAllLogical(data);
     Config config(confList, namesVector);
@@ -159,6 +163,9 @@ List dig_associations_(const List& data,
     else if (config.getTNorm() == TNorm::LUKASIEWICZ) {
         result = runDigAssoc<LUKASIEWICZ_CHAIN>(data, isCondition, isFocus, config);
     }
+
+    STOP_TIMER(bt);
+    CLEAR_INC_TIMERS();
 
     return result;
 }

@@ -22,6 +22,7 @@
 #include <algorithm>
 
 #include "../common.h"
+#include "../timer.h"
 #include "Config.h"
 #include "CombinatorialProgress.h"
 #include "ChainCollection.h"
@@ -47,6 +48,7 @@ public:
           tree(initialCollection),
           progress(nullptr)
     {
+        BLOCK_TIMER(t, "Digger::Constructor");
         for (const CHAIN& chain : initialCollection) {
             size_t id = chain.getClause().back();
             predicateSums[id] = chain.getSum();
@@ -65,6 +67,8 @@ public:
 
     void run()
     {
+        START_TIMER(t, "Digger::run");
+
         ChainCollection<CHAIN> filteredCollection;
         filteredCollection.reserve(initialCollection.size());
 
@@ -88,6 +92,8 @@ public:
         SEXP bar = PROTECT(cli_progress_bar(progress->getTotal(),
                                             List::create(Named("name") = "searching rules")));
         progress->assignBar(bar);
+
+        STOP_TIMER(t);
         {
             auto batch = progress->createBatch(0, filteredCollection.conditionCount());
             processChildrenChains(emptyChain, filteredCollection);
@@ -138,6 +144,8 @@ private:
 
     void processChildrenChains(const CHAIN& chain, ChainCollection<CHAIN>& childCollection)
     {
+        BLOCK_INC_TIMER(st, t, "Digger::processChildrenChains");
+
         if (!config.hasFilterEmptyFoci() || childCollection.hasFoci()) {
             if (isStorable(chain)) {
                 // return singleton selector to avoid allocations
@@ -186,6 +194,8 @@ private:
                               const CHAIN& conditionChain,
                               const CHAIN& secondChain)
     {
+        BLOCK_INC_TIMER(st, t, "Digger::combineByConjunction");
+
         if (isNonRedundant(conditionChain, secondChain)) {
             CHAIN newChain(conditionChain, secondChain);
             addSumToCache(newChain);
@@ -200,6 +210,8 @@ private:
                         const CHAIN& conditionChain,
                         const CHAIN& secondChain)
     {
+        BLOCK_INC_TIMER(st, t, "Digger::combineByCache");
+
         if (isNonRedundant(conditionChain, secondChain)
                 && isNonTautological(conditionChain, secondChain)) {
             CHAIN newChain(conditionChain, secondChain, 0);
