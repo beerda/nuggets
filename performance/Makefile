@@ -1,4 +1,5 @@
 COMMITS := \
+	e2b8dbb608d2ab42d71224c7541e899f79a70483 \
 	865683a8400eb40ea3c9345efa8f897e628b0bfe \
 	da2c099e5d0d3e56c905bf51bdea0f75a8f5e657 \
 	2a8a347f3a74ef17d37d09ae7eecd74263dad0d1 \
@@ -9,6 +10,7 @@ COMMITS := \
 	303bdc31dfa4cd8cde5cdad618bdb4256ee4f969 \
 	current
 
+	# e2b8dbb608d2ab42d71224c7541e899f79a70483  2026-01-28  Cache of itemset supports
 	# 865683a8400eb40ea3c9345efa8f897e628b0bfe  2026-01-23  Rewritten AssocStorage to collect results directly to DataSet
 	# da2c099e5d0d3e56c905bf51bdea0f75a8f5e657  2025-12-18  Further optimizations of CustomBitSet
 	# 2a8a347f3a74ef17d37d09ae7eecd74263dad0d1  2025-12-18  Optimize CustomBitSet
