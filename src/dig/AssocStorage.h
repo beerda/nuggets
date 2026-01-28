@@ -76,7 +76,7 @@ public:
     void store(const CHAIN& chain,
                const ChainCollection<CHAIN>& collection,
                const Selector& selector,
-               const vector<float>& predicateSums)
+               const vector<double>& predicateSums)
     {
         if (antecedentVec.size() >= config.getMaxResults())
             return;
@@ -89,16 +89,16 @@ public:
             const CHAIN& focus = collection[i + collection.firstFocusIndex()];
             size_t predicate = focus.getClause().back();
             string chainName = config.getChainName(predicate);
-            float focusSum = focus.getSum();
-            float chainSum = chain.getSum();
-            float predicateSum = predicateSums[predicate];
-            float conf = (chainSum > 0) ? (focusSum / chainSum) : 0.0;
-            float conseqSupp = predicateSum / config.getNrow();
-            float cover = chainSum / config.getNrow();
-            float pp = focusSum;
-            float pn = chainSum - focusSum;
-            float np = predicateSum - focusSum;
-            float nn = config.getNrow() - pp - pn - np;
+            double focusSum = focus.getSum();
+            double chainSum = chain.getSum();
+            double predicateSum = predicateSums[predicate];
+            double conf = (chainSum > 0) ? (focusSum / chainSum) : 0.0;
+            double conseqSupp = predicateSum / config.getNrow();
+            double cover = chainSum / config.getNrow();
+            double pp = focusSum;
+            double pn = chainSum - focusSum;
+            double np = predicateSum - focusSum;
+            double nn = config.getNrow() - pp - pn - np;
 
             antecedentVec.push_back(ante);
             consequentVec.push_back(string("{") + chainName + string("}"));
@@ -142,17 +142,17 @@ private:
     const Config& config;
     vector<string> antecedentVec;
     vector<string> consequentVec;
-    vector<float> supportVec;
-    vector<float> confidenceVec;
-    vector<float> coverageVec;
-    vector<float> conseqSupportVec;
-    vector<float> liftVec;
-    vector<float> countVec;
+    vector<double> supportVec;
+    vector<double> confidenceVec;
+    vector<double> coverageVec;
+    vector<double> conseqSupportVec;
+    vector<double> liftVec;
+    vector<double> countVec;
     vector<int> antecedentLengthVec;
-    vector<float> ppVec;
-    vector<float> pnVec;
-    vector<float> npVec;
-    vector<float> nnVec;
+    vector<double> ppVec;
+    vector<double> pnVec;
+    vector<double> npVec;
+    vector<double> nnVec;
 
     string formatCondition(const CHAIN& chain) const
     {

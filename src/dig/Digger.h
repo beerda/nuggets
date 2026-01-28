@@ -102,7 +102,7 @@ private:
     STORAGE& storage;
     const Config& config;
     ChainCollection<CHAIN> initialCollection;
-    vector<float> predicateSums;
+    vector<double> predicateSums;
     Selector selectorSingleton;
     Cache cache;
     TautologyTree<CHAIN> tree;
@@ -201,7 +201,7 @@ private:
                         const CHAIN& secondChain)
     {
         if (isNonRedundant(conditionChain, secondChain)) {
-            float sum = getSumFromCache(conditionChain, secondChain);
+            double sum = getSumFromCache(conditionChain, secondChain);
             CHAIN newChain(conditionChain, secondChain, sum);
             if (isCandidate(newChain)) {
                 target.append(std::move(newChain));
@@ -269,7 +269,7 @@ private:
 
     const Selector& initializeSelectorOfStorable(const CHAIN& chain, const ChainCollection<CHAIN>& collection)
     {
-        bool constant = config.getMinConditionalFocusSupport() <= 0.0f;
+        bool constant = config.getMinConditionalFocusSupport() <= 0.0;
         selectorSingleton.initialize(collection.focusCount(), constant);
         if (!constant) {
             for (size_t i = 0; i < collection.focusCount(); ++i) {
@@ -290,7 +290,7 @@ private:
         cache.add(clause, chain.getSum());
     }
 
-    inline float getSumFromCache(const CHAIN& conditionChain,
+    inline double getSumFromCache(const CHAIN& conditionChain,
                                  const CHAIN& secondChain) const
     {
         Clause clause = BaseChain::mergeClauses(conditionChain.getClause(),

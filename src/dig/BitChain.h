@@ -29,7 +29,7 @@
  */
 class BitChain : public BaseChain {
 public:
-    BitChain(float sum)
+    BitChain(double sum)
         : BaseChain(sum)
     { }
 
@@ -55,7 +55,7 @@ public:
           data(a.data & b.data)
     { sum = data.count(); }
 
-    BitChain(const BitChain& a, const BitChain& b, const float sum)
+    BitChain(const BitChain& a, const BitChain& b, const double sum)
         : BaseChain(a, b, sum),
           data()
     { }

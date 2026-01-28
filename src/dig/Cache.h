@@ -30,13 +30,13 @@
  */
 class Cache {
 public:
-    static constexpr float NOT_IN_CACHE = -1.0f;
+    static constexpr double NOT_IN_CACHE = -1.0;
 
     /**
      * Representation of a node in the cache tree
      */
     struct Node {
-        Node(size_t pid, float sum, Node* sibling)
+        Node(size_t pid, double sum, Node* sibling)
             : predicateId(pid),
               sum(sum),
               child(nullptr),
@@ -62,7 +62,7 @@ public:
         }
 
         size_t predicateId;
-        float sum;
+        double sum;
         Node* child;
         Node* sibling;
     };
@@ -84,7 +84,7 @@ public:
     ~Cache()
     { }
 
-    void add(const Clause& clause, float sum)
+    void add(const Clause& clause, double sum)
     {
         //Rcout << "adding " << clause.toString() << " to cache with sum " << sum << endl;
 
@@ -120,7 +120,7 @@ public:
         }
     }
 
-    float get(const Clause& clause) const
+    double get(const Clause& clause) const
     {
         //Rcout << "getting " << clause.toString() << " from cache" << endl;
 
