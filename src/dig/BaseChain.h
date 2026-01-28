@@ -110,9 +110,9 @@ public:
         )
     }
 
-    // Allow copy
-    BaseChain(const BaseChain& other) = default;
-    BaseChain& operator=(const BaseChain& other) = default;
+    // Disable copy
+    BaseChain(const BaseChain& other) = delete;
+    BaseChain& operator=(const BaseChain& other) = delete;
 
     // Allow move
     BaseChain(BaseChain&& other) = default;
