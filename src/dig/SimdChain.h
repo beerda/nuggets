@@ -59,8 +59,8 @@ public:
         setSum();
     }
 
-    SimdChain(const SimdChain& a, const SimdChain& b, const bool toFocus)
-        : BaseChain(a, b, toFocus),
+    SimdChain(const SimdChain& a, const SimdChain& b)
+        : BaseChain(a, b),
           data(a.data.size())
     {
         IF_DEBUG(
@@ -119,6 +119,11 @@ public:
 
         setSum();
     }
+
+    SimdChain(const SimdChain& a, const SimdChain& b, const float sum)
+        : BaseChain(a, b, sum),
+          data()
+    { }
 
     // Disable copy
     SimdChain(const SimdChain& other) = delete;

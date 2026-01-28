@@ -53,8 +53,8 @@ public:
         }
     }
 
-    FloatChain(const FloatChain& a, const FloatChain& b, const bool toFocus)
-        : BaseChain(a, b, toFocus),
+    FloatChain(const FloatChain& a, const FloatChain& b)
+        : BaseChain(a, b),
           data(a.data.size())
     {
         IF_DEBUG(
@@ -77,6 +77,11 @@ public:
             sum += data[i];
         }
     }
+
+    FloatChain(const FloatChain& a, const FloatChain& b, const float sum)
+        : BaseChain(a, b, sum),
+          data()
+    { }
 
     // Disable copy
     FloatChain(const FloatChain& other) = delete;

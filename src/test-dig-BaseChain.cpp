@@ -27,19 +27,20 @@ context("dig/BaseChain.h") {
 
     test_that("constructor with conjunction 1") {
         BaseChain a(2, CONDITION, 0.5f);
-        BaseChain b(3, BOTH, 0.8f);
+        BaseChain b(3, BOTH, 1.5f);
 
-        BaseChain c(a, b, true);
+        BaseChain c(a, b, 0.8f);
 
         expect_true(c.getClause().size() == 2);
         expect_true(c.getClause()[0] == 2);
         expect_true(c.getClause()[1] == 3);
         expect_true(c.getPredicateType() == FOCUS);
-        expect_true(c.getSum() == 0.0f);
+        expect_true(c.getSum() == 0.8f);
         expect_true(!c.isCondition());
         expect_true(c.isFocus());
+        expect_true(c.isCached());
 
-        BaseChain d(a, b, false);
+        BaseChain d(a, b);
 
         expect_true(d.getClause().size() == 2);
         expect_true(d.getClause()[0] == 2);
@@ -48,5 +49,6 @@ context("dig/BaseChain.h") {
         expect_true(d.getSum() == 0.0f);
         expect_true(d.isCondition());
         expect_true(d.isFocus());
+        expect_true(!d.isCached());
     }
 }

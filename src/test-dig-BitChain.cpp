@@ -48,7 +48,7 @@ context("dig/BitChain.h") {
             BitChain a2(11, PredicateType::BOTH, la);
             BitChain b(20, PredicateType::BOTH, lb);
 
-            BitChain c1(b, a1, false);
+            BitChain c1(b, a1);
             expect_true(c1.getClause().size() == 2);
             expect_true(c1.getClause()[0] == 20);
             expect_true(c1.getClause()[1] == 10);
@@ -64,14 +64,14 @@ context("dig/BitChain.h") {
             expect_true(!c1.at(4));
             expect_true(c1.toString() == "[n=5]00100");
 
-            BitChain c2(b, a2, false);
+            BitChain c2(b, a2);
             expect_true(c2.getClause().size() == 2);
             expect_true(c2.getClause()[0] == 20);
             expect_true(c2.getClause()[1] == 11);
             expect_true(c2.getSum() == 1);
             expect_true(c2.toString() == "[n=5]00100");
 
-            BitChain d(c1, c2, false);
+            BitChain d(c1, c2);
             expect_true(d.getClause().size() == 3);
             expect_true(d.getClause()[0] == 20);
             expect_true(d.getClause()[1] == 10);
@@ -82,18 +82,29 @@ context("dig/BitChain.h") {
         {
             BitChain a(10, PredicateType::BOTH, la);
             BitChain b(20, PredicateType::CONDITION, lb);
-            BitChain c(a, b, false);
+            BitChain c(a, b);
             expect_true(c.isCondition());
             expect_true(!c.isFocus());
+            expect_true(!c.isCached());
             expect_true(c.toString() == "[n=5]00100");
         }
         {
             BitChain a(10, PredicateType::BOTH, la);
             BitChain b(20, PredicateType::FOCUS, lb);
-            BitChain c(a, b, false);
+            BitChain c(a, b);
             expect_true(!c.isCondition());
             expect_true(c.isFocus());
+            expect_true(!c.isCached());
             expect_true(c.toString() == "[n=5]00100");
+        }
+        {
+            BitChain a(10, PredicateType::BOTH, la);
+            BitChain b(20, PredicateType::BOTH, lb);
+            BitChain c(a, b, 5.2f);
+            expect_true(!c.isCondition());
+            expect_true(c.isFocus());
+            expect_true(c.isCached());
+            expect_true(c.toString() == "[cached:5.2]");
         }
     }
 }

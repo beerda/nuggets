@@ -30,6 +30,8 @@
  */
 class Cache {
 public:
+    static constexpr float NOT_IN_CACHE = -1.0f;
+
     /**
      * Representation of a node in the cache tree
      */
@@ -70,11 +72,11 @@ public:
      * IDs starting from 1 (as in R), so the last predicate's ID is equal to
      * the number of predicates.
      */
-    Cache(size_t nPredicates)
-        : nPredicates(nPredicates)
+    Cache(size_t rootSize)
+        : rootSize(rootSize)
     {
-        children = new Node*[nPredicates + 1];
-        for (size_t i = 0; i <= nPredicates; ++i) {
+        children = new Node*[rootSize];
+        for (size_t i = 0; i < rootSize; ++i) {
             children[i] = nullptr;
         }
     }
@@ -84,59 +86,51 @@ public:
 
     void add(const Clause& clause, float sum)
     {
+        //Rcout << "adding " << clause.toString() << " to cache with sum " << sum << endl;
+
         if (clause.empty())
             throw runtime_error("Cache::add: cannot add empty clause");
 
-        if (clause[0] > nPredicates)
+        if (clause[0] > rootSize)
             throw runtime_error("Cache::add: predicate ID exceeds number of predicates");
 
         if (clause.size() == 1) {
             size_t pid = clause[0];
-            if (children[pid] == nullptr) {
+            Node* node = children[pid];
+            if (node == nullptr) {
                 children[pid] = new Node(pid, sum, nullptr);
             }
+            else if (node->sum == NOT_IN_CACHE) {
+                node->sum = sum;
+            }
             else {
-                throw runtime_error("Cache::add: trying to add existing clause");
+                throw runtime_error("1 Cache::add: trying to add existing clause");
             }
         }
         else {
-            Node* current = find(clause.begin(),
-                                 clause.end() - 1,
-                                 children[clause[0]]);
-
-            if (current == nullptr)
-                throw runtime_error("Cache::add: clause prefix not found in cache");
-
-            size_t pid = clause.back();
-            if (current->child == nullptr) {
-                current->child = new Node(pid, sum, nullptr);
+            Node* node = find(clause.begin(),
+                              clause.end(),
+                              children[clause[0]]);
+            if (node->sum == NOT_IN_CACHE) {
+                node->sum = sum;
             }
             else {
-                current = current->child;
-                Node* sibling = current->sibling;
-                while (sibling != nullptr && sibling->predicateId < pid) {
-                    current = sibling;
-                    sibling = current->sibling;
-                }
-
-                if (sibling == nullptr || sibling->predicateId > pid) {
-                    current->sibling = new Node(pid, sum, sibling);
-                }
-                else {
-                    throw runtime_error("Cache::add: trying to add existing clause");
-                }
+                throw runtime_error("2 Cache::add: trying to add existing clause");
             }
         }
     }
 
     float get(const Clause& clause) const
     {
-        if (clause.empty())
+        //Rcout << "getting " << clause.toString() << " from cache" << endl;
+
+        if (clause.empty()) {
             throw runtime_error("Cache::get: cannot get empty clause");
+        }
 
         Node* node = children[clause[0]];
         node = find(clause.begin(), clause.end(), node);
-        if (node == nullptr) {
+        if (node->sum == NOT_IN_CACHE) {
             throw runtime_error("Cache::get: clause not found in cache");
         }
 
@@ -146,7 +140,7 @@ public:
     size_t size() const
     {
         size_t total = 0;
-        for (size_t i = 1; i <= nPredicates; ++i) {
+        for (size_t i = 0; i < rootSize; ++i) {
             if (children[i] != nullptr) {
                 total += children[i]->size();
             }
@@ -155,25 +149,41 @@ public:
     }
 
 private:
-    size_t nPredicates;
+    size_t rootSize;
     Node** children; // array of root nodes for each predicate ID
 
     inline Node* find(Clause::const_iterator begin,
                       Clause::const_iterator end,
                       Node* node) const
     {
-        size_t pid = *begin;
-        while (node != nullptr && node->predicateId < pid) {
-            node = node->sibling;
+        if (node == nullptr) {
+            throw runtime_error("Cache::find: node is null");
         }
 
-        if (node == nullptr || node->predicateId > pid)
-            return nullptr;
+        size_t pid = *begin;
+        if (node->predicateId != pid) {
+            Node* sibling = node->sibling;
+            while (sibling != nullptr && sibling->predicateId <= pid) {
+                node = sibling;
+                sibling = node->sibling;
+            }
+
+            if (node->predicateId != pid) {
+                node->sibling = new Node(pid, NOT_IN_CACHE, sibling);
+                node = node->sibling;
+            }
+        }
 
         begin++;
-        if (begin == end)
+        if (begin == end) {
             return node;
-        else
+        }
+        else {
+            if (node->child == nullptr) {
+                size_t pid = *begin;
+                node->child = new Node(pid, NOT_IN_CACHE, nullptr);
+            }
             return find(begin, end, node->child);
+        }
     }
 };

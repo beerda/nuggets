@@ -100,8 +100,8 @@ public:
         setSum();
     }
 
-    FubitChain(const FubitChain& a, const FubitChain& b, const bool toFocus)
-        : BaseChain(a, b, toFocus),
+    FubitChain(const FubitChain& a, const FubitChain& b)
+        : BaseChain(a, b),
           data(a.data.size()),
           n(a.n)
     {
@@ -137,6 +137,12 @@ public:
 
         setSum();
     }
+
+    FubitChain(const FubitChain& a, const FubitChain& b, const float sum)
+        : BaseChain(a, b, sum),
+          data(),
+          n(a.n)
+    { }
 
     // Disable copy
     FubitChain(const FubitChain& other) = delete;
