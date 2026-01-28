@@ -49,7 +49,8 @@ public:
     BaseChain(float sum)
         : clause(),
           predicateType(CONDITION),
-          sum(sum)
+          sum(sum),
+          cached(false)
     { }
 
     /**
@@ -64,7 +65,8 @@ public:
     BaseChain(size_t id, PredicateType type, float sum)
         : clause({ id }),
           predicateType(type),
-          sum(sum)
+          sum(sum),
+          cached(false)
     { }
 
     /**
@@ -74,32 +76,38 @@ public:
      * @param a The first chain.
      * @param b The second chain.
      */
-    BaseChain(const BaseChain& a, const BaseChain& b, const bool toFocus)
-        : clause(),
-          predicateType(toFocus ? PredicateType::FOCUS : b.predicateType),
-          sum(0)
+    BaseChain(const BaseChain& a, const BaseChain& b)
+        : clause(mergeClauses(a.clause, b.clause)),
+          predicateType(b.predicateType),
+          sum(0),
+          cached(false)
+    {
+        IF_DEBUG(
+            if (!a.isCondition())
+                throw invalid_argument("BaseChain: first chain is not a condition");
+        )
+    }
+
+    /**
+     * Constructor that creates a chain by combining two chains with
+     * a conjunction.
+     *
+     * @param a The first chain.
+     * @param b The second chain.
+     */
+    BaseChain(const BaseChain& a, const BaseChain& b, const float sum)
+        : clause(mergeClauses(a.clause, b.clause)),
+          predicateType(PredicateType::FOCUS),
+          sum(sum),
+          cached(true)
     {
         IF_DEBUG(
             if (!a.isCondition())
                 throw invalid_argument("BaseChain: first chain is not a condition");
 
-            if (toFocus && b.predicateType != PredicateType::BOTH)
+            if (b.predicateType != PredicateType::BOTH)
                 throw invalid_argument("BaseChain: illegal conversion to FOCUS");
-
-            if (a.clause.size() != b.clause.size())
-                throw invalid_argument("BaseChain: clause sizes differ");
-
-            for (size_t i = 0; i < a.clause.size() - 1; ++i) {
-                if (a.clause[i] != b.clause[i])
-                    throw invalid_argument("BaseChain: clause prefixes differ");
-            }
         )
-
-        clause.reserve(a.clause.size() + 1);
-        for (size_t i = 0; i < a.clause.size(); ++i) {
-            clause.push_back(a.clause[i]);
-        }
-        clause.push_back(b.clause.back());
     }
 
     // Allow copy
@@ -145,7 +153,6 @@ public:
     inline bool deduces(const size_t id) const
     {
         bool result = std::find(deduced.begin(), deduced.end(), id) != deduced.end();
-        //cout << "deducing: " << clauseAsString() << " -> " << id << ": " << (result ? "TRUE" : "FALSE") << endl;
 
         return result;
     }
@@ -167,6 +174,9 @@ public:
     inline PredicateType getPredicateType() const
     { return predicateType; }
 
+    inline bool isCached() const
+    { return cached; }
+
     /**
      * Returns TRUE if the predicate may appear in the focus (consequent),
      * i.e., if the chain is of type FOCUS or BOTH.
@@ -181,21 +191,26 @@ public:
     inline bool isCondition() const
     { return predicateType != FOCUS; }
 
-    inline string clauseAsString() const
+    inline static Clause mergeClauses(const Clause& a, const Clause& b)
     {
-        string res = "";
-        bool first = true;
-        for (size_t p : clause) {
-            if (first) {
-                first = false;
-            }
-            else {
-                res += "&";
-            }
-            res += std::to_string(p);
-        }
+        IF_DEBUG(
+            if (a.size() != b.size())
+                throw invalid_argument("BaseChain: clause sizes differ");
 
-        return res;
+            for (size_t i = 0; i < a.size() - 1; ++i) {
+                if (a[i] != b[i])
+                    throw invalid_argument("BaseChain: clause prefixes differ");
+            }
+        )
+
+        Clause result;
+        result.reserve(a.size() + 1);
+        for (size_t i = 0; i < a.size(); ++i) {
+            result.push_back(a[i]);
+        }
+        result.push_back(b.back());
+
+        return result;
     }
 
 protected:
@@ -218,4 +233,6 @@ protected:
     float sum;
 
     vector<size_t> deduced;
+
+    bool cached;
 };

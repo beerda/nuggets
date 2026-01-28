@@ -50,10 +50,15 @@ public:
           data(vec.size())
     { throw std::invalid_argument("BitChain: NumericVector constructor not implemented"); }
 
-    BitChain(const BitChain& a, const BitChain& b, const bool toFocus)
-        : BaseChain(a, b, toFocus),
+    BitChain(const BitChain& a, const BitChain& b)
+        : BaseChain(a, b),
           data(a.data & b.data)
     { sum = data.count(); }
+
+    BitChain(const BitChain& a, const BitChain& b, const float sum)
+        : BaseChain(a, b, sum),
+          data()
+    { }
 
     // Disable copy
     BitChain(const BitChain& other) = delete;
@@ -84,9 +89,15 @@ public:
     inline string toString() const
     {
         stringstream res;
-        res << "[n=" << data.size() << "]";
-        for (size_t i = 0; i < data.size(); ++i) {
-            res << data[i];
+
+        if (this->isCached()) {
+            res << "[cached:" << this->getSum() << "]";
+        }
+        else {
+            res << "[n=" << data.size() << "]";
+            for (size_t i = 0; i < data.size(); ++i) {
+                res << data[i];
+            }
         }
 
         return res.str();

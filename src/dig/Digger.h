@@ -26,6 +26,7 @@
 #include "CombinatorialProgress.h"
 #include "ChainCollection.h"
 #include "Selector.h"
+#include "Cache.h"
 #include "TautologyTree.h"
 
 
@@ -42,6 +43,7 @@ public:
           initialCollection(data, isCondition, isFocus),
           predicateSums(data.size() + 1),
           selectorSingleton(initialCollection.focusCount()),
+          cache(data.size() + 1),
           tree(initialCollection),
           progress(nullptr)
     {
@@ -71,6 +73,7 @@ public:
 
         for (size_t i = 0; i < initialCollection.size(); ++i) {
             CHAIN& chain = initialCollection[i];
+            addSumToCache(chain);
             if (isNonRedundant(emptyChain, chain)) {
                 if (isCandidate(chain)) {
                     filteredCollection.append(std::move(chain));
@@ -101,6 +104,7 @@ private:
     ChainCollection<CHAIN> initialCollection;
     vector<float> predicateSums;
     Selector selectorSingleton;
+    Cache cache;
     TautologyTree<CHAIN> tree;
     CombinatorialProgress* progress;
 
@@ -152,7 +156,7 @@ private:
     void combine(ChainCollection<CHAIN>& target,
                  ChainCollection<CHAIN>& parent,
                  const size_t conditionChainIndex,
-                 bool onlyFoci) const
+                 bool onlyFoci)
     {
         CHAIN& conditionChain = parent[conditionChainIndex];
 
@@ -165,20 +169,40 @@ private:
 
         target.reserve(parent.size() - begin + bothLen);
         for (size_t i = begin; i < parent.size(); ++i) {
-            combineInternal(target, conditionChain, parent[i], false);
+            CHAIN& secondChain = parent[i];
+            if (secondChain.isCached()) {
+                combineByCache(target, conditionChain, secondChain);
+            }
+            else {
+                combineByConjunction(target, conditionChain, secondChain);
+            }
         }
         for (size_t i = parent.firstFocusIndex(); i < conditionChainIndex; ++i) {
-            combineInternal(target, conditionChain, parent[i], true);
+            combineByCache(target, conditionChain, parent[i]);
         }
     }
 
-    void combineInternal(ChainCollection<CHAIN>& target,
-                         const CHAIN& conditionChain,
-                         const CHAIN& secondChain,
-                         const bool toFocus) const
+    inline void combineByConjunction(ChainCollection<CHAIN>& target,
+                              const CHAIN& conditionChain,
+                              const CHAIN& secondChain)
     {
         if (isNonRedundant(conditionChain, secondChain)) {
-            CHAIN newChain(conditionChain, secondChain, toFocus);
+            CHAIN newChain(conditionChain, secondChain);
+            //Rcout << "combineByConjunction: " << newChain.getClause().toString() << endl;
+            addSumToCache(newChain);
+            if (isCandidate(newChain)) {
+                target.append(std::move(newChain));
+            }
+        }
+    }
+
+    inline void combineByCache(ChainCollection<CHAIN>& target,
+                        const CHAIN& conditionChain,
+                        const CHAIN& secondChain)
+    {
+        if (isNonRedundant(conditionChain, secondChain)) {
+            float sum = getSumFromCache(conditionChain, secondChain);
+            CHAIN newChain(conditionChain, secondChain, sum);
             if (isCandidate(newChain)) {
                 target.append(std::move(newChain));
             }
@@ -257,5 +281,22 @@ private:
         }
 
         return selectorSingleton;
+    }
+
+    inline void addSumToCache(const CHAIN& chain)
+    {
+        Clause clause = chain.getClause(); // deep copy
+        clause.sort();
+        cache.add(clause, chain.getSum());
+    }
+
+    inline float getSumFromCache(const CHAIN& conditionChain,
+                                 const CHAIN& secondChain) const
+    {
+        Clause clause = BaseChain::mergeClauses(conditionChain.getClause(),
+                                                secondChain.getClause());
+        clause.sort();
+
+        return cache.get(clause);
     }
 };

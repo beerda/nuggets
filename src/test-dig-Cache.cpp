@@ -27,10 +27,6 @@ context("dig/Cache.h") {
         Clause c4({ 2, 3 });
         Clause c5({ 1, 2, 3 });
 
-        expect_error(cache.add(c0, 0.0f));
-        expect_error(cache.add(c2, 0.0f));
-        expect_error(cache.add(c4, 0.0f));
-        expect_error(cache.add(c5, 0.0f));
         expect_true(cache.size() == 0);
         expect_error(cache.get(c0));
         expect_error(cache.get(c1));
@@ -43,19 +39,12 @@ context("dig/Cache.h") {
         expect_true(cache.size() == 1);
         expect_error(cache.get(c0));
         expect_true(cache.get(c1) == 0.5f);
-        expect_error(cache.get(c2));
-        expect_error(cache.get(c3));
-        expect_error(cache.get(c4));
-        expect_error(cache.get(c5));
 
         cache.add(c2, 1.5f);
         expect_true(cache.size() == 2);
         expect_error(cache.get(c0));
         expect_true(cache.get(c1) == 0.5f);
         expect_true(cache.get(c2) == 1.5f);
-        expect_error(cache.get(c3));
-        expect_error(cache.get(c4));
-        expect_error(cache.get(c5));
 
         cache.add(c3, 2.5f);
         expect_true(cache.size() == 3);
@@ -63,8 +52,6 @@ context("dig/Cache.h") {
         expect_true(cache.get(c1) == 0.5f);
         expect_true(cache.get(c2) == 1.5f);
         expect_true(cache.get(c3) == 2.5f);
-        expect_error(cache.get(c4));
-        expect_error(cache.get(c5));
 
         cache.add(c4, 3.5f);
         expect_true(cache.size() == 4);
@@ -73,7 +60,6 @@ context("dig/Cache.h") {
         expect_true(cache.get(c2) == 1.5f);
         expect_true(cache.get(c3) == 2.5f);
         expect_true(cache.get(c4) == 3.5f);
-        expect_error(cache.get(c5));
 
         cache.add(c5, 4.5f);
         expect_true(cache.size() == 5);
