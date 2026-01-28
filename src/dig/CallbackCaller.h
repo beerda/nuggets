@@ -48,7 +48,7 @@ public:
     void store(const CHAIN& chain,
                const ChainCollection<CHAIN>& collection,
                const Selector& selector,
-               const vector<float>& predicateSums)
+               const vector<double>& predicateSums)
     {
         vector<RObject> args;
         args.reserve(INITIAL_ARGUMENTS_CAPACITY);
@@ -153,7 +153,7 @@ private:
             else {
                 NumericVector vals(config.getNrow());
                 for (size_t i = 0; i < chain.size(); ++i) {
-                    vals[i] = static_cast<float>(chain[i]);
+                    vals[i] = static_cast<double>(chain[i]);
                 }
                 args.push_back(vals);
                 argNames.push_back("weights");
@@ -195,7 +195,7 @@ private:
                                       const CHAIN& chain,
                                       const ChainCollection<CHAIN>& collection,
                                       const Selector& selector,
-                                      const vector<float>& predicateSums)
+                                      const vector<double>& predicateSums)
     {
         if (config.hasAnyContiArgument()) {
             NumericVector* pp = nullptr;

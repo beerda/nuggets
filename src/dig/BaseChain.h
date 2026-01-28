@@ -46,7 +46,7 @@ public:
      * Default constructor that creates an empty chain of type CONDITION with
      * empty clause.
      */
-    BaseChain(float sum)
+    BaseChain(double sum)
         : clause(),
           predicateType(CONDITION),
           sum(sum),
@@ -62,7 +62,7 @@ public:
      * @param sum The sum of TRUEs (for binary data) or membership degrees
      *     (for fuzzy data) of the chain.
      */
-    BaseChain(size_t id, PredicateType type, float sum)
+    BaseChain(size_t id, PredicateType type, double sum)
         : clause({ id }),
           predicateType(type),
           sum(sum),
@@ -95,7 +95,7 @@ public:
      * @param a The first chain.
      * @param b The second chain.
      */
-    BaseChain(const BaseChain& a, const BaseChain& b, const float sum)
+    BaseChain(const BaseChain& a, const BaseChain& b, const double sum)
         : clause(mergeClauses(a.clause, b.clause)),
           predicateType(PredicateType::FOCUS),
           sum(sum),
@@ -144,7 +144,7 @@ public:
      * Returns the sum of TRUEs (for binary data) or membership degrees (for
      * fuzzy data) of the chain.
      */
-    inline float getSum() const
+    inline double getSum() const
     { return sum; }
 
     inline vector<size_t>& getMutableDeduced()
@@ -230,7 +230,7 @@ protected:
      * The sum of TRUEs (for binary data) or membership degrees (for
      * fuzzy data) of the chain.
      */
-    float sum;
+    double sum;
 
     vector<size_t> deduced;
 

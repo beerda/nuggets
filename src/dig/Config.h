@@ -60,23 +60,23 @@ public:
             maxResults = static_cast<size_t>(maxResults_i);
 
         minSupport = as<NumericVector>(configuration["minSupport"])[0];
-        if (minSupport < 0.0f || minSupport > 1.0f)
+        if (minSupport < 0.0 || minSupport > 1.0)
             throw invalid_argument("minSupport must be in the range [0, 1]");
 
         minSum = minSupport * nrow;
 
         minFocusSupport = as<NumericVector>(configuration["minFocusSupport"])[0];
-        if (minFocusSupport < 0.0f || minFocusSupport > 1.0f)
+        if (minFocusSupport < 0.0 || minFocusSupport > 1.0)
             throw invalid_argument("minFocusSupport must be in the range [0, 1]");
 
         minFocusSum = minFocusSupport * nrow;
 
         minConditionalFocusSupport = as<NumericVector>(configuration["minConditionalFocusSupport"])[0];
-        if (minConditionalFocusSupport < 0.0f || minConditionalFocusSupport > 1.0f)
+        if (minConditionalFocusSupport < 0.0 || minConditionalFocusSupport > 1.0)
             throw invalid_argument("minConditionalFocusSupport must be in the range [0, 1]");
 
         maxSupport = as<NumericVector>(configuration["maxSupport"])[0];
-        if (maxSupport < 0.0f || maxSupport > 1.0f)
+        if (maxSupport < 0.0 || maxSupport > 1.0)
             throw invalid_argument("maxSupport must be in the range [0, 1]");
 
         maxSum = maxSupport * nrow;
@@ -173,25 +173,25 @@ public:
     inline size_t getMaxResults() const
     { return maxResults; }
 
-    inline float getMinSupport() const
+    inline double getMinSupport() const
     { return minSupport; }
 
-    inline float getMinSum() const
+    inline double getMinSum() const
     { return minSum; }
 
-    inline float getMinFocusSupport() const
+    inline double getMinFocusSupport() const
     { return minFocusSupport; }
 
-    inline float getMinFocusSum() const
+    inline double getMinFocusSum() const
     { return minFocusSum; }
 
-    inline float getMinConditionalFocusSupport() const
+    inline double getMinConditionalFocusSupport() const
     { return minConditionalFocusSupport; }
 
-    inline float getMaxSupport() const
+    inline double getMaxSupport() const
     { return maxSupport; }
 
-    inline float getMaxSum() const
+    inline double getMaxSum() const
     { return maxSum; }
 
     inline TNorm getTNorm() const
@@ -206,13 +206,13 @@ private:
     size_t minLength;
     size_t maxLength;
     size_t maxResults;
-    float minSupport;
-    float minSum;
-    float minFocusSupport;
-    float minFocusSum;
-    float minConditionalFocusSupport;
-    float maxSupport;
-    float maxSum;
+    double minSupport;
+    double minSum;
+    double minFocusSupport;
+    double minFocusSum;
+    double minConditionalFocusSupport;
+    double maxSupport;
+    double maxSum;
     TNorm tNorm;
     List excluded;
     vector<int> disjoint;
