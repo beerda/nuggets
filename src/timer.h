@@ -37,18 +37,24 @@ class BlockTimer {
     }
 
 public:
+    __attribute__((noinline))
     BlockTimer(const std::string &what)
-        : what(what),
-          start(std::chrono::steady_clock::now())
+        : what(what)
     {
+        asm volatile("" ::: "memory"); // Prevents code movement across this point
+        start = std::chrono::steady_clock::now();
+        asm volatile("" ::: "memory");
         indentation();
         Rcout << "BEGIN " << what << std::endl;
         indent++;
     }
 
+    __attribute__((noinline))
     ~BlockTimer()
     {
+        asm volatile("" ::: "memory");
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        asm volatile("" ::: "memory");
         indent--;
         indentation();
         Rcout << "END " << what << ": "  <<
@@ -84,18 +90,25 @@ static deque<IncrementalTimer> globalIncrementalTimerPool;
 
 
 class IncrementalTimer_Measurer {
-    std::chrono::steady_clock::time_point start;
     size_t parent;
+    std::chrono::steady_clock::time_point start;
 
 public:
+    __attribute__((noinline))
     IncrementalTimer_Measurer(size_t parent)
-        : start(std::chrono::steady_clock::now()),
-          parent(parent)
-    { }
+        : parent(parent)
+    {
+        asm volatile("" ::: "memory");
+        start = std::chrono::steady_clock::now();
+        asm volatile("" ::: "memory");
+    }
 
+    __attribute__((noinline))
     ~IncrementalTimer_Measurer()
     {
+        asm volatile("" ::: "memory");
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        asm volatile("" ::: "memory");
         int64_t duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
         globalIncrementalTimerPool.at(parent).increment(duration);
     }
