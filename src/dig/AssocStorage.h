@@ -158,7 +158,7 @@ private:
     {
         const Clause& clause = chain.getClause();
         
-        // For single or double element clauses, avoid intermediate vector
+        // For empty or single element clauses, avoid intermediate vector
         if (clause.size() <= 1) {
             stringstream res;
             res << "{";
