@@ -20,6 +20,7 @@
 #pragma once
 
 #include "../common.h"
+#include "../timer.h"
 #include "Clause.h"
 
 
@@ -196,6 +197,7 @@ public:
 
     inline static Clause mergeClauses(const Clause& a, const Clause& b)
     {
+        BLOCK_INC_TIMER(st, t, "BaseChain::mergeClauses");
         IF_DEBUG(
             if (a.size() != b.size())
                 throw invalid_argument("BaseChain: clause sizes differ");

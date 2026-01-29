@@ -127,11 +127,16 @@ List runDigAssoc(const List& data,
                  const LogicalVector& isFocus,
                  const Config& config)
 {
+    START_TIMER(t1, "runDigAssoc - initialization");
     using STORAGE = AssocStorage<CHAIN>;
 
     STORAGE storage(config);
     Digger<CHAIN, STORAGE> digger(config, data, isCondition, isFocus, storage);
+
+    STOP_TIMER(t1);
+    START_TIMER(t2, "runDigAssoc - run");
     digger.run();
+    STOP_TIMER(t2);
 
     return storage.getResult();
 }
