@@ -169,6 +169,21 @@ private:
             return res.str();
         }
         
+        // For 2-element clauses, sort directly without vector allocation
+        if (clause.size() == 2) {
+            string name0 = config.getChainName(clause[0]);
+            string name1 = config.getChainName(clause[1]);
+            stringstream res;
+            res << "{";
+            if (name0 < name1) {
+                res << name0 << "," << name1;
+            } else {
+                res << name1 << "," << name0;
+            }
+            res << "}";
+            return res.str();
+        }
+        
         // For larger clauses, use vector for sorting
         vector<string> parts;
         parts.reserve(clause.size());

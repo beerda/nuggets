@@ -218,9 +218,17 @@ public:
 
 protected:
     /**
+     * The sum of TRUEs (for binary data) or membership degrees (for
+     * fuzzy data) of the chain.
+     */
+    double sum;
+
+    /**
      * The clause of the chain, i.e., the vector of predicate ids.
      */
     Clause clause;
+
+    vector<size_t> deduced;
 
     /**
      * The type of the predicate represented by this chain, i.e.,
@@ -228,14 +236,6 @@ protected:
      * in focus (consequent), or in both positions).
      */
     PredicateType predicateType;
-
-    /**
-     * The sum of TRUEs (for binary data) or membership degrees (for
-     * fuzzy data) of the chain.
-     */
-    double sum;
-
-    vector<size_t> deduced;
 
     bool cached;
 };

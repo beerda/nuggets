@@ -204,6 +204,8 @@ private:
             // Use stack allocation instead of heap allocation
             std::vector<NumericVector> vectors;
             std::vector<string> names;
+            vectors.reserve(4);  // Max: pp, np, pn, nn
+            names.reserve(4);
             
             if (config.hasContiPpArgument()) {
                 vectors.emplace_back(selectedCount);
