@@ -4,8 +4,8 @@ library(nuggets)
 
 set.seed(42344)
 
-m <- 10^4
-n <- 10
+m <- 10^6
+n <- 25
 conf <- 0.5
 
 testIt <- function(m, n) {
@@ -13,35 +13,13 @@ testIt <- function(m, n) {
     d <- matrix(sample(c(T,F), m * n, replace=TRUE),
                 nrow = m,
                 ncol = n)
-    colnames(d) <- letters[seq_len(n)]
+    colnames(d) <- paste0("V", seq_len(n))
 
     t1time <- 0
     t2time <- 0
     t3time <- 0
     reps <- 1
     for (x in 1:reps) {
-        t1 <- system.time({
-            rules1 <- apriori(d, parameter = list(minlen = 1,
-                                               maxlen = 6,
-                                               supp = 0.001,
-                                               maxtime = 0,
-                                               target = "frequent itemsets"),
-                           control = list(verbose = FALSE))
-            rules1 <- ruleInduction(rules1, confidence = conf)
-            rules1 <- DATAFRAME(rules1)
-        })
-
-        t3 <- system.time({
-            rules3 <- eclat(d, parameter = list(minlen = 1,
-                                              maxlen = 6,
-                                              target = "frequent itemsets",
-                                              supp=0.001),
-                          control = list(verbose = FALSE))
-            rules3 <- ruleInduction(rules3, confidence = conf)
-            rules3 <- DATAFRAME(rules3)
-            rules3$rule <- paste0(rules3$LHS, "=>", rules3$RHS)
-        })
-
         t2 <- system.time({
             #f <- function(condition) list(condition = format_condition(names(condition)))
             #rules2 <- dig(d,
@@ -56,6 +34,29 @@ testIt <- function(m, n) {
                                        max_length = 5,
                                        min_confidence = conf)
             rules2$rule <- paste0(rules2$antecedent, "=>", rules2$consequent)
+        })
+
+        t1 <- system.time({
+            #rules1 <- apriori(d, parameter = list(minlen = 1,
+                                               #maxlen = 6,
+                                               #supp = 0.001,
+                                               #maxtime = 0,
+                                               #target = "frequent itemsets"),
+                           #control = list(verbose = FALSE))
+            #rules1 <- ruleInduction(rules1, confidence = conf)
+            #rules1 <- DATAFRAME(rules1)
+            rules1 <- data.frame(a=1)
+        })
+
+        t3 <- system.time({
+            rules3 <- eclat(d, parameter = list(minlen = 1,
+                                              maxlen = 6,
+                                              target = "frequent itemsets",
+                                              supp=0.001),
+                          control = list(verbose = TRUE))
+            rules3 <- ruleInduction(rules3, confidence = conf)
+            rules3 <- DATAFRAME(rules3)
+            rules3$rule <- paste0(rules3$LHS, "=>", rules3$RHS)
         })
 
         t1time <- t1time + t1["elapsed"]
@@ -79,10 +80,10 @@ testIt <- function(m, n) {
 #print(c(nrow(rules1), nrow(rules2)))
 
 result <- NULL
-for (i in 4:7) {
-#for (i in 6) {
-    for (j in c(5, 10, 15, 20, 25)) {
-    #for (j in c(20, 25)) {
+#for (i in 4:7) {
+for (i in 4) {
+    #for (j in c(5, 10, 15, 20, 25)) {
+    for (j in c(10)) {
         result <- rbind(result, testIt(10^i, j))
         saveRDS(result, "comparison_result-2025-06-06.rds")
     }
@@ -90,6 +91,9 @@ for (i in 4:7) {
     print(result)
 }
 print(result)
+
+
+q()
 
 longResult <- result |>
     pivot_longer(cols = c("apriori_time", "eclat_time", "nuggets_time"),
