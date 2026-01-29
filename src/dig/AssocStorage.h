@@ -27,7 +27,7 @@
 
 template <typename CHAIN>
 class AssocStorage {
-    static constexpr size_t INITIAL_RESULT_CAPACITY = 1 << 18; // 256k results
+    static constexpr size_t INITIAL_RESULT_CAPACITY = 1024; // 1K results
 
 public:
     AssocStorage(const Config& config)
@@ -101,7 +101,7 @@ public:
             double nn = config.getNrow() - pp - pn - np;
 
             antecedentVec.push_back(ante);
-            consequentVec.push_back(string("{") + chainName + string("}"));
+            consequentVec.push_back("{" + chainName + "}");
 
             ppVec.push_back(pp);
             pnVec.push_back(pn);
@@ -157,9 +157,23 @@ private:
     string formatCondition(const CHAIN& chain) const
     {
         const Clause& clause = chain.getClause();
-        vector<string> parts(clause.size());
+        
+        // For single or double element clauses, avoid intermediate vector
+        if (clause.size() <= 1) {
+            stringstream res;
+            res << "{";
+            if (clause.size() == 1) {
+                res << config.getChainName(clause[0]);
+            }
+            res << "}";
+            return res.str();
+        }
+        
+        // For larger clauses, use vector for sorting
+        vector<string> parts;
+        parts.reserve(clause.size());
         for (size_t i = 0; i < clause.size(); ++i) {
-            parts[i] = config.getChainName(clause[i]);
+            parts.push_back(config.getChainName(clause[i]));
         }
         sort(parts.begin(), parts.end());
 

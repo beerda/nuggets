@@ -27,7 +27,7 @@
 
 template <typename CHAIN>
 class CallbackCaller {
-    static constexpr size_t INITIAL_RESULT_CAPACITY = 65536;
+    static constexpr size_t INITIAL_RESULT_CAPACITY = 1024;
     static constexpr size_t INITIAL_ARGUMENTS_CAPACITY = 10;
 
 public:
@@ -198,23 +198,28 @@ private:
                                       const vector<double>& predicateSums)
     {
         if (config.hasAnyContiArgument()) {
-            NumericVector* pp = nullptr;
-            NumericVector* np = nullptr;
-            NumericVector* pn = nullptr;
-            NumericVector* nn = nullptr;
             CharacterVector valNames(selector.getSelectedCount());
-
+            const size_t selectedCount = selector.getSelectedCount();
+            
+            // Use stack allocation instead of heap allocation
+            std::vector<NumericVector> vectors;
+            std::vector<string> names;
+            
             if (config.hasContiPpArgument()) {
-                pp = new NumericVector(selector.getSelectedCount());
+                vectors.emplace_back(selectedCount);
+                names.push_back("pp");
             }
             if (config.hasContiNpArgument()) {
-                np = new NumericVector(selector.getSelectedCount());
+                vectors.emplace_back(selectedCount);
+                names.push_back("np");
             }
             if (config.hasContiPnArgument()) {
-                pn = new NumericVector(selector.getSelectedCount());
+                vectors.emplace_back(selectedCount);
+                names.push_back("pn");
             }
             if (config.hasContiNnArgument()) {
-                nn = new NumericVector(selector.getSelectedCount());
+                vectors.emplace_back(selectedCount);
+                names.push_back("nn");
             }
 
             size_t j = 0;
@@ -226,53 +231,34 @@ private:
                 size_t predicate = focus.getClause().back();
                 valNames[j] = config.getChainName(predicate);
 
-                if (pp) {
-                    (*pp)[j] = focus.getSum();
+                size_t vecIdx = 0;
+                if (config.hasContiPpArgument()) {
+                    vectors[vecIdx][j] = focus.getSum();
+                    vecIdx++;
                 }
-                if (pn) {
-                    (*pn)[j] = chain.getSum() - focus.getSum();
+                if (config.hasContiNpArgument()) {
+                    vectors[vecIdx][j] = predicateSums[predicate] - focus.getSum();
+                    vecIdx++;
                 }
-                if (np) {
-                    (*np)[j] = predicateSums[predicate] - focus.getSum();
+                if (config.hasContiPnArgument()) {
+                    vectors[vecIdx][j] = chain.getSum() - focus.getSum();
+                    vecIdx++;
                 }
-                if (nn) {
-                    (*nn)[j] = config.getNrow() - chain.getSum() - predicateSums[predicate] + focus.getSum();
+                if (config.hasContiNnArgument()) {
+                    vectors[vecIdx][j] = config.getNrow() - chain.getSum() - predicateSums[predicate] + focus.getSum();
+                    vecIdx++;
                 }
 
                 j++;
             }
 
-            if (pp) {
-                if (pp->size() > 0) {
-                    pp->names() = valNames;
+            // Add vectors to args
+            for (size_t k = 0; k < vectors.size(); ++k) {
+                if (vectors[k].size() > 0) {
+                    vectors[k].names() = valNames;
                 }
-                args.push_back(*pp);
-                argNames.push_back("pp");
-                delete pp;
-            }
-            if (np) {
-                if (np->size() > 0) {
-                    np->names() = valNames;
-                }
-                args.push_back(*np);
-                argNames.push_back("np");
-                delete np;
-            }
-            if (pn) {
-                if (pn->size() > 0) {
-                    pn->names() = valNames;
-                }
-                args.push_back(*pn);
-                argNames.push_back("pn");
-                delete pn;
-            }
-            if (nn) {
-                if (nn->size() > 0) {
-                    nn->names() = valNames;
-                }
-                args.push_back(*nn);
-                argNames.push_back("nn");
-                delete nn;
+                args.push_back(vectors[k]);
+                argNames.push_back(names[k]);
             }
         }
     }
