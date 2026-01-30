@@ -29,40 +29,25 @@ template <typename CHAIN>
 class AssocStorage {
     static constexpr size_t INITIAL_RESULT_CAPACITY = 1024;
 
+    struct Rule {
+        double focusSum;
+        double chainSum;
+        double predicateSum;
+        string antecedent;
+        string consequent;
+        int antecedentLength;
+    };
+
 public:
     AssocStorage(const Config& config)
-        : config(config),
-          antecedentVec(),
-          consequentVec(),
-          supportVec(),
-          confidenceVec(),
-          coverageVec(),
-          conseqSupportVec(),
-          liftVec(),
-          countVec(),
-          antecedentLengthVec(),
-          ppVec(),
-          pnVec(),
-          npVec(),
-          nnVec()
+        : rules(),
+          config(config)
     {
         size_t capacity = config.getMaxResults();
-        if (capacity > INITIAL_RESULT_CAPACITY)
+        if (capacity >= SIZE_MAX) {
             capacity = INITIAL_RESULT_CAPACITY;
-
-        antecedentVec.reserve(capacity);
-        consequentVec.reserve(capacity);
-        supportVec.reserve(capacity);
-        confidenceVec.reserve(capacity);
-        coverageVec.reserve(capacity);
-        conseqSupportVec.reserve(capacity);
-        liftVec.reserve(capacity);
-        countVec.reserve(capacity);
-        antecedentLengthVec.reserve(capacity);
-        ppVec.reserve(capacity);
-        pnVec.reserve(capacity);
-        npVec.reserve(capacity);
-        nnVec.reserve(capacity);
+        }
+        rules.reserve(capacity);
     }
 
     // Disable copy
@@ -78,7 +63,7 @@ public:
                const Selector& selector,
                const vector<double>& predicateSums)
     {
-        if (antecedentVec.size() >= config.getMaxResults())
+        if (rules.size() >= config.getMaxResults())
             return;
 
         String ante = formatCondition(chain);
@@ -89,70 +74,76 @@ public:
             const CHAIN& focus = collection[i + collection.firstFocusIndex()];
             size_t predicate = focus.getClause().back();
             string chainName = config.getChainName(predicate);
-            double focusSum = focus.getSum();
-            double chainSum = chain.getSum();
-            double predicateSum = predicateSums[predicate];
-            double conf = (chainSum > 0) ? (focusSum / chainSum) : 0.0;
-            double conseqSupp = predicateSum / config.getNrow();
-            double cover = chainSum / config.getNrow();
-            double pp = focusSum;
-            double pn = chainSum - focusSum;
-            double np = predicateSum - focusSum;
-            double nn = config.getNrow() - pp - pn - np;
 
-            antecedentVec.push_back(ante);
-            consequentVec.push_back("{" + chainName + "}");
+            Rule rule;
+            rule.antecedent = ante;
+            rule.consequent = "{" + chainName + "}";
+            rule.antecedentLength = chain.getClause().size();
+            rule.focusSum = focus.getSum();
+            rule.chainSum = chain.getSum();
+            rule.predicateSum = predicateSums[predicate];
 
-            ppVec.push_back(pp);
-            pnVec.push_back(pn);
-            npVec.push_back(np);
-            nnVec.push_back(nn);
-
-            supportVec.push_back(focusSum / config.getNrow());
-            confidenceVec.push_back(conf);
-            coverageVec.push_back(cover);
-            conseqSupportVec.push_back(conseqSupp);
-            liftVec.push_back((cover > 0) ? (conf / conseqSupp) : 0.0);
-            countVec.push_back(focusSum);
-            antecedentLengthVec.push_back(chain.getClause().size());
+            rules.push_back(rule);
         }
     }
 
     inline size_t size() const
-    { return antecedentVec.size(); }
+    { return rules.size(); }
 
     inline List getResult() const
     {
-        return List::create(Named("antecedent") = wrap(antecedentVec),
-                            Named("consequent") = wrap(consequentVec),
-                            Named("support") = wrap(supportVec),
-                            Named("confidence") = wrap(confidenceVec),
-                            Named("coverage") = wrap(coverageVec),
-                            Named("conseq_support") = wrap(conseqSupportVec),
-                            Named("lift") = wrap(liftVec),
-                            Named("count") = wrap(countVec),
-                            Named("antecedent_length") = wrap(antecedentLengthVec),
-                            Named("pp") = wrap(ppVec),
-                            Named("pn") = wrap(pnVec),
-                            Named("np") = wrap(npVec),
-                            Named("nn") = wrap(nnVec));
+        CharacterVector antecedentVec(rules.size());
+        CharacterVector consequentVec(rules.size());
+        NumericVector supportVec(rules.size());
+        NumericVector confidenceVec(rules.size());
+        NumericVector coverageVec(rules.size());
+        NumericVector conseqSupportVec(rules.size());
+        NumericVector liftVec(rules.size());
+        NumericVector countVec(rules.size());
+        IntegerVector antecedentLengthVec(rules.size());
+        NumericVector ppVec(rules.size());
+        NumericVector pnVec(rules.size());
+        NumericVector npVec(rules.size());
+        NumericVector nnVec(rules.size());
+
+        for (size_t i = 0; i < rules.size(); ++i) {
+            const Rule& rule = rules[i];
+            double conf = (rule.chainSum > 0) ? (rule.focusSum / rule.chainSum) : 0.0;
+            double conseqSupp = rule.predicateSum / config.getNrow();
+
+            antecedentVec[i] = rule.antecedent;
+            consequentVec[i] = rule.consequent;
+            supportVec[i] = rule.focusSum / config.getNrow();
+            confidenceVec[i] = conf;
+            coverageVec[i] = rule.chainSum / config.getNrow();
+            conseqSupportVec[i] = conseqSupp;
+            liftVec[i] = conf / conseqSupp;
+            countVec[i] = rule.focusSum;
+            antecedentLengthVec[i] = rule.antecedentLength;
+            ppVec[i] = rule.focusSum;
+            pnVec[i] = rule.chainSum - rule.focusSum;
+            npVec[i] = rule.predicateSum - rule.focusSum;
+            nnVec[i] = config.getNrow() - ppVec[i] - pnVec[i] - npVec[i];
+        }
+
+        return List::create(Named("antecedent") = antecedentVec,
+                            Named("consequent") = consequentVec,
+                            Named("support") = supportVec,
+                            Named("confidence") = confidenceVec,
+                            Named("coverage") = coverageVec,
+                            Named("conseq_support") = conseqSupportVec,
+                            Named("lift") = liftVec,
+                            Named("count") = countVec,
+                            Named("antecedent_length") = antecedentLengthVec,
+                            Named("pp") = ppVec,
+                            Named("pn") = pnVec,
+                            Named("np") = npVec,
+                            Named("nn") = nnVec);
     }
 
 private:
+    vector<Rule> rules;
     const Config& config;
-    vector<string> antecedentVec;
-    vector<string> consequentVec;
-    vector<double> supportVec;
-    vector<double> confidenceVec;
-    vector<double> coverageVec;
-    vector<double> conseqSupportVec;
-    vector<double> liftVec;
-    vector<double> countVec;
-    vector<int> antecedentLengthVec;
-    vector<double> ppVec;
-    vector<double> pnVec;
-    vector<double> npVec;
-    vector<double> nnVec;
 
     string formatCondition(const CHAIN& chain) const
     {
