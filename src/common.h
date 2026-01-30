@@ -40,7 +40,7 @@ using namespace std;
 #endif
 
 #ifndef PERFORMANCE_MEASUREMENT
-#    define PERFORMANCE_MEASUREMENT 1
+//#    define PERFORMANCE_MEASUREMENT 1
 #endif
 
 #ifdef DEBUG

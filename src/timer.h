@@ -24,6 +24,7 @@
 #include <deque>
 
 
+#ifdef PERFORMANCE_MEASUREMENT
 class BlockTimer {
     std::string what;
     std::chrono::steady_clock::time_point start;
@@ -113,6 +114,7 @@ public:
         globalIncrementalTimerPool.at(parent).increment(duration);
     }
 };
+#endif
 
 
 #ifdef PERFORMANCE_MEASUREMENT
