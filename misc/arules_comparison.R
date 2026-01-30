@@ -53,7 +53,7 @@ testIt <- function(m, n) {
                                               maxlen = 6,
                                               target = "frequent itemsets",
                                               supp=0.001),
-                          control = list(verbose = TRUE))
+                          control = list(verbose = FALSE))
             rules3 <- ruleInduction(rules3, confidence = conf)
             rules3 <- DATAFRAME(rules3)
             rules3$rule <- paste0(rules3$LHS, "=>", rules3$RHS)
@@ -80,20 +80,18 @@ testIt <- function(m, n) {
 #print(c(nrow(rules1), nrow(rules2)))
 
 result <- NULL
-#for (i in 4:7) {
-for (i in 4) {
-    #for (j in c(5, 10, 15, 20, 25)) {
-    for (j in c(10)) {
+for (i in 4:7) {
+#for (i in 6) {
+    for (j in c(5, 10, 15, 20, 25)) {
+    #for (j in c(20, 25)) {
         result <- rbind(result, testIt(10^i, j))
-        saveRDS(result, "comparison_result-2025-06-06.rds")
+        saveRDS(result, "comparison_result-2026-01-30.rds")
     }
     cat("\n---------------------------------------------------------------------\n")
     print(result)
 }
 print(result)
 
-
-q()
 
 longResult <- result |>
     pivot_longer(cols = c("apriori_time", "eclat_time", "nuggets_time"),
