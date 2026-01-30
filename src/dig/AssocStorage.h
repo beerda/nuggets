@@ -27,7 +27,7 @@
 
 template <typename CHAIN>
 class AssocStorage {
-    static constexpr size_t INITIAL_RESULT_CAPACITY = 1 << 18; // 256k results
+    static constexpr size_t INITIAL_RESULT_CAPACITY = 1024;
 
 public:
     AssocStorage(const Config& config)
@@ -101,7 +101,7 @@ public:
             double nn = config.getNrow() - pp - pn - np;
 
             antecedentVec.push_back(ante);
-            consequentVec.push_back(string("{") + chainName + string("}"));
+            consequentVec.push_back("{" + chainName + "}");
 
             ppVec.push_back(pp);
             pnVec.push_back(pn);
@@ -157,19 +157,64 @@ private:
     string formatCondition(const CHAIN& chain) const
     {
         const Clause& clause = chain.getClause();
-        vector<string> parts(clause.size());
-        for (size_t i = 0; i < clause.size(); ++i) {
-            parts[i] = config.getChainName(clause[i]);
-        }
-        sort(parts.begin(), parts.end());
+        if (clause.empty())
+            return "{}";
 
         stringstream res;
         res << "{";
-        for (size_t i = 0; i < parts.size(); ++i) {
-            if (i > 0)
-                res << ",";
-            res << parts[i];
+
+        if (clause.size() == 1) {
+            res << config.getChainName(clause[0]);
         }
+        else if (clause.size() == 2) {
+            const string& name0 = config.getChainName(clause[0]);
+            const string& name1 = config.getChainName(clause[1]);
+            if (name0 < name1) {
+                res << name0 << "," << name1;
+            } else {
+                res << name1 << "," << name0;
+            }
+        }
+        else if (clause.size() == 3) {
+            const string& name0 = config.getChainName(clause[0]);
+            const string& name1 = config.getChainName(clause[1]);
+            const string& name2 = config.getChainName(clause[2]);
+            if (name0 <= name1) {
+                if (name1 <= name2) {
+                    res << name0 << "," << name1 << "," << name2;
+                }
+                else if (name0 <= name2) {
+                    res << name0 << "," << name2 << "," << name1;
+                }
+                else {
+                    res << name2 << "," << name0 << "," << name1;
+                }
+            }
+            else {
+                if (name0 <= name2) {
+                    res << name1 << "," << name0 << "," << name2;
+                }
+                else if (name1 <= name2) {
+                    res << name1 << "," << name2 << "," << name0;
+                }
+                else {
+                    res << name2 << "," << name1 << "," << name0;
+                }
+            }
+        }
+        else {
+            vector<string> parts;
+            parts.reserve(clause.size());
+            for (size_t predicate : clause) {
+                parts.push_back(config.getChainName(predicate));
+            }
+            sort(parts.begin(), parts.end());
+            res << parts.front();
+            for (size_t i = 1; i < parts.size(); ++i) {
+                res << "," << parts[i];
+            }
+        }
+
         res << "}";
 
         return res.str();

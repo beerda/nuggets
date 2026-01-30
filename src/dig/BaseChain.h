@@ -48,9 +48,10 @@ public:
      * empty clause.
      */
     BaseChain(double sum)
-        : clause(),
+        : sum(sum),
+          deduced(),
+          clause(),
           predicateType(CONDITION),
-          sum(sum),
           cached(false)
     { }
 
@@ -64,9 +65,10 @@ public:
      *     (for fuzzy data) of the chain.
      */
     BaseChain(size_t id, PredicateType type, double sum)
-        : clause({ id }),
+        : sum(sum),
+          deduced(),
+          clause({ id }),
           predicateType(type),
-          sum(sum),
           cached(false)
     { }
 
@@ -78,9 +80,10 @@ public:
      * @param b The second chain.
      */
     BaseChain(const BaseChain& a, const BaseChain& b)
-        : clause(mergeClauses(a.clause, b.clause)),
+        : sum(0),
+          deduced(),
+          clause(mergeClauses(a.clause, b.clause)),
           predicateType(b.predicateType),
-          sum(0),
           cached(false)
     {
         IF_DEBUG(
@@ -97,9 +100,10 @@ public:
      * @param b The second chain.
      */
     BaseChain(const BaseChain& a, const BaseChain& b, const double sum)
-        : clause(mergeClauses(a.clause, b.clause)),
+        : sum(sum),
+          deduced(),
+          clause(mergeClauses(a.clause, b.clause)),
           predicateType(PredicateType::FOCUS),
-          sum(sum),
           cached(true)
     {
         IF_DEBUG(
@@ -218,6 +222,17 @@ public:
 
 protected:
     /**
+     * The sum of TRUEs (for binary data) or membership degrees (for
+     * fuzzy data) of the chain.
+     */
+    double sum;
+
+    /**
+     * The vector of predicate IDs that are deduced by clause of this chain.
+     */
+    vector<size_t> deduced;
+
+    /**
      * The clause of the chain, i.e., the vector of predicate ids.
      */
     Clause clause;
@@ -230,12 +245,8 @@ protected:
     PredicateType predicateType;
 
     /**
-     * The sum of TRUEs (for binary data) or membership degrees (for
-     * fuzzy data) of the chain.
+     * Indicates whether the sum is obtained from cache instead of being
+     * computed from data chains.
      */
-    double sum;
-
-    vector<size_t> deduced;
-
     bool cached;
 };
