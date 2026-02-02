@@ -62,6 +62,8 @@ inline double internalGoedelTnorm(int size, const std::function<double(int)>& ge
     using batch_type = xsimd::batch<double>;
     constexpr size_t simd_size = batch_type::size;
     
+    if (size == 0) return 1.0;
+    
     // Check for NA/NaN and validity in first pass
     for (int i = 0; i < size; ++i) {
         double v = getValue(i);
@@ -70,8 +72,6 @@ inline double internalGoedelTnorm(int size, const std::function<double(int)>& ge
             return NA_REAL;
         }
     }
-    
-    if (size == 0) return 1.0;
     
     batch_type min_vec = batch_type(1.0);
     int i = 0;
@@ -172,6 +172,8 @@ inline double internalGoguenTnorm(int size, const std::function<double(int)>& ge
     using batch_type = xsimd::batch<double>;
     constexpr size_t simd_size = batch_type::size;
     
+    if (size == 0) return 1.0;
+    
     // Check for NA/NaN and validity in first pass
     for (int i = 0; i < size; ++i) {
         double v = getValue(i);
@@ -180,8 +182,6 @@ inline double internalGoguenTnorm(int size, const std::function<double(int)>& ge
             return NA_REAL;
         }
     }
-    
-    if (size == 0) return 1.0;
     
     batch_type prod_vec = batch_type(1.0);
     int i = 0;
@@ -225,6 +225,8 @@ inline double internalGoedelTconorm(int size, const std::function<double(int)>& 
     using batch_type = xsimd::batch<double>;
     constexpr size_t simd_size = batch_type::size;
     
+    if (size == 0) return 0.0;
+    
     // Check for NA/NaN and validity in first pass
     for (int i = 0; i < size; ++i) {
         double v = getValue(i);
@@ -233,8 +235,6 @@ inline double internalGoedelTconorm(int size, const std::function<double(int)>& 
             return NA_REAL;
         }
     }
-    
-    if (size == 0) return 0.0;
     
     batch_type max_vec = batch_type(0.0);
     int i = 0;
