@@ -77,7 +77,7 @@ inline double internalGoedelTnorm(int size, const std::function<double(int)>& ge
     int i = 0;
     
     // Process in SIMD batches
-    for (; i + simd_size <= size; i += simd_size) {
+    for (; i + static_cast<int>(simd_size) <= size; i += static_cast<int>(simd_size)) {
         alignas(batch_type::arch_type::alignment()) double values[simd_size];
         for (size_t j = 0; j < simd_size; ++j) {
             values[j] = getValue(i + j);
@@ -131,7 +131,7 @@ inline double internalLukasTnorm(int size, const std::function<double(int)>& get
     int i = 0;
     
     // Process in SIMD batches
-    for (; i + simd_size <= size; i += simd_size) {
+    for (; i + static_cast<int>(simd_size) <= size; i += static_cast<int>(simd_size)) {
         alignas(batch_type::arch_type::alignment()) double values[simd_size];
         for (size_t j = 0; j < simd_size; ++j) {
             values[j] = getValue(i + j);
@@ -187,7 +187,7 @@ inline double internalGoguenTnorm(int size, const std::function<double(int)>& ge
     int i = 0;
     
     // Process in SIMD batches
-    for (; i + simd_size <= size; i += simd_size) {
+    for (; i + static_cast<int>(simd_size) <= size; i += static_cast<int>(simd_size)) {
         alignas(batch_type::arch_type::alignment()) double values[simd_size];
         for (size_t j = 0; j < simd_size; ++j) {
             values[j] = getValue(i + j);
@@ -240,7 +240,7 @@ inline double internalGoedelTconorm(int size, const std::function<double(int)>& 
     int i = 0;
     
     // Process in SIMD batches
-    for (; i + simd_size <= size; i += simd_size) {
+    for (; i + static_cast<int>(simd_size) <= size; i += static_cast<int>(simd_size)) {
         alignas(batch_type::arch_type::alignment()) double values[simd_size];
         for (size_t j = 0; j < simd_size; ++j) {
             values[j] = getValue(i + j);
@@ -294,7 +294,7 @@ inline double internalLukasTconorm(int size, const std::function<double(int)>& g
     int i = 0;
     
     // Process in SIMD batches
-    for (; i + simd_size <= size; i += simd_size) {
+    for (; i + static_cast<int>(simd_size) <= size; i += static_cast<int>(simd_size)) {
         alignas(batch_type::arch_type::alignment()) double values[simd_size];
         for (size_t j = 0; j < simd_size; ++j) {
             values[j] = getValue(i + j);
