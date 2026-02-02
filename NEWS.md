@@ -8,7 +8,7 @@
   dig_tautologies()
 - deprecated argument contingency_table in dig_associations() and
   dig_tautologies()
-- removed dependency on BH
+- removed dependency on BH and RcppThread
 
 # nuggets 2.1.0
 - released: 2025-11-05
