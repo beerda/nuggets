@@ -143,12 +143,13 @@ inline double internalLukasTnorm(int size, const std::function<double(int)>& get
     // Horizontal sum
     double res = xsimd::reduce_add(sum_vec);
     
-    // Process remaining elements (already validated above)
+    // Process remaining elements (already validated in first pass)
     for (; i < size; ++i) {
         res += getValue(i);
     }
     
-    res = res + 1.0 - size;
+    // Apply Lukasiewicz formula: 1 + sum - size
+    res = 1.0 + res - size;
     return res > 0 ? res : 0;
 #else
     double res = 1.0;
