@@ -1,5 +1,5 @@
-# nuggets 2.2.0
-- released: ???
+# nuggets 2.1.1
+- released: 2026-02-03
 - performance improvements
 - updated XSIMD library to 14.0.0
 - moved Shiny-related packages (shiny, shinyjs, shinyWidgets, DT, htmltools,
