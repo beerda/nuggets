@@ -69,5 +69,13 @@ context("dig/Cache.h") {
         expect_true(cache.get(c3) == 2.5f);
         expect_true(cache.get(c4) == 3.5f);
         expect_true(cache.get(c5) == 4.5f);
+
+        expect_error(cache.add(c0, 0.0f));  // cannot add empty clause
+        expect_error(cache.add(c1, 1.0f));  // cannot add existing clause
+        expect_error(cache.add(c2, 1.0f));  // cannot add existing clause
+
+        Clause cerr({ 4 });
+        expect_error(cache.add(cerr, 1.0f));  // predicate ID exceeds root size
+
     }
 }
