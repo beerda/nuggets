@@ -74,10 +74,11 @@ inline double internalGoedelTnorm(int size, const std::function<double(int)>& ge
     }
     
     batch_type min_vec = batch_type(1.0);
+    const int simd_step = static_cast<int>(simd_size);
     int i = 0;
     
     // Process in SIMD batches
-    for (; i + static_cast<int>(simd_size) <= size; i += static_cast<int>(simd_size)) {
+    for (; i + simd_step <= size; i += simd_step) {
         alignas(batch_type::arch_type::alignment()) double values[simd_size];
         for (size_t j = 0; j < simd_size; ++j) {
             values[j] = getValue(i + j);
@@ -128,10 +129,11 @@ inline double internalLukasTnorm(int size, const std::function<double(int)>& get
     }
     
     batch_type sum_vec = batch_type(0.0);
+    const int simd_step = static_cast<int>(simd_size);
     int i = 0;
     
     // Process in SIMD batches
-    for (; i + static_cast<int>(simd_size) <= size; i += static_cast<int>(simd_size)) {
+    for (; i + simd_step <= size; i += simd_step) {
         alignas(batch_type::arch_type::alignment()) double values[simd_size];
         for (size_t j = 0; j < simd_size; ++j) {
             values[j] = getValue(i + j);
@@ -184,10 +186,11 @@ inline double internalGoguenTnorm(int size, const std::function<double(int)>& ge
     }
     
     batch_type prod_vec = batch_type(1.0);
+    const int simd_step = static_cast<int>(simd_size);
     int i = 0;
     
     // Process in SIMD batches
-    for (; i + static_cast<int>(simd_size) <= size; i += static_cast<int>(simd_size)) {
+    for (; i + simd_step <= size; i += simd_step) {
         alignas(batch_type::arch_type::alignment()) double values[simd_size];
         for (size_t j = 0; j < simd_size; ++j) {
             values[j] = getValue(i + j);
@@ -237,10 +240,11 @@ inline double internalGoedelTconorm(int size, const std::function<double(int)>& 
     }
     
     batch_type max_vec = batch_type(0.0);
+    const int simd_step = static_cast<int>(simd_size);
     int i = 0;
     
     // Process in SIMD batches
-    for (; i + static_cast<int>(simd_size) <= size; i += static_cast<int>(simd_size)) {
+    for (; i + simd_step <= size; i += simd_step) {
         alignas(batch_type::arch_type::alignment()) double values[simd_size];
         for (size_t j = 0; j < simd_size; ++j) {
             values[j] = getValue(i + j);
@@ -291,10 +295,11 @@ inline double internalLukasTconorm(int size, const std::function<double(int)>& g
     }
     
     batch_type sum_vec = batch_type(0.0);
+    const int simd_step = static_cast<int>(simd_size);
     int i = 0;
     
     // Process in SIMD batches
-    for (; i + static_cast<int>(simd_size) <= size; i += static_cast<int>(simd_size)) {
+    for (; i + simd_step <= size; i += simd_step) {
         alignas(batch_type::arch_type::alignment()) double values[simd_size];
         for (size_t j = 0; j < simd_size; ++j) {
             values[j] = getValue(i + j);
