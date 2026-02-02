@@ -19,10 +19,11 @@
 
 #pragma once
 
-#include <RcppThread.h>
-#include <cli/progress.h>
-
 #include "../common.h"
+#include <cli/progress.h>
+#include <R.h>
+#include <Rinternals.h>
+
 #include "BinomialCoefficients.h"
 
 
@@ -50,9 +51,6 @@ public:
 
         ~Batch()
         {
-            //RcppThread::Rcout << "finishing batch: "
-                              //<< onStart << " + " << total
-                              //<< " = " << (onStart + total) << std::endl;
             progress->set(onStart + total);
         }
 
@@ -69,12 +67,7 @@ public:
           total(computeSize(maxLevel, elements)),
           actual(0),
           bar(R_NilValue)
-    {
-        //RcppThread::Rcout << "creating progress for "
-                          //<< this->maxLevel << " levels and "
-                          //<< elements << " elements: total = "
-                          //<< this->total << std::endl;
-    }
+    { }
 
     ~CombinatorialProgress()
     {
@@ -87,9 +80,6 @@ public:
     Batch createBatch(size_t currentLevel, size_t currentElements)
     {
         size_t batchTotal = computeSize(maxLevel - currentLevel, currentElements);
-        //RcppThread::Rcout << "creating batch for level " << currentLevel
-                          //<< " with " << currentElements << " elements: total = "
-                          //<< total << std::endl;
         return Batch(this, actual, batchTotal);
     }
 
@@ -97,14 +87,12 @@ public:
     {
         actual = value;
         updateBar();
-        //RcppThread::Rcout << "progress: " << actual << "/" << total << std::endl;
     }
 
     inline void increment(const size_t inc)
     {
         actual += inc;
         updateBar();
-        //RcppThread::Rcout << "progress: " << actual << "/" << total << std::endl;
     }
 
     inline size_t getActual() const
@@ -148,7 +136,7 @@ private:
     void updateBar()
     {
         if (CLI_SHOULD_TICK) {
-            RcppThread::checkUserInterrupt();
+            R_CheckUserInterrupt();
             if (bar) {
                 cli_progress_set(bar, actual);
             }

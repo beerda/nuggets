@@ -52,7 +52,6 @@ Imports:
 LinkingTo: 
     cli,
     Rcpp,
-    RcppThread,
     testthat
 SystemRequirements: C++17
 Suggests: 
