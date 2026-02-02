@@ -89,7 +89,7 @@ inline double internalGoedelTnorm(int size, const std::function<double(int)>& ge
     // Horizontal minimum
     double res = xsimd::reduce_min(min_vec);
     
-    // Process remaining elements
+    // Process remaining elements (already validated in first pass)
     for (; i < size; ++i) {
         double v = getValue(i);
         if (v < res) {
@@ -143,12 +143,12 @@ inline double internalLukasTnorm(int size, const std::function<double(int)>& get
     // Horizontal sum
     double res = xsimd::reduce_add(sum_vec);
     
-    // Process remaining elements
+    // Process remaining elements (already validated above)
     for (; i < size; ++i) {
         res += getValue(i);
     }
     
-    res -= size;
+    res = res + 1.0 - size;
     return res > 0 ? res : 0;
 #else
     double res = 1.0;
@@ -198,7 +198,7 @@ inline double internalGoguenTnorm(int size, const std::function<double(int)>& ge
     // Horizontal product
     double res = xsimd::reduce_mul(prod_vec);
     
-    // Process remaining elements
+    // Process remaining elements (already validated in first pass)
     for (; i < size; ++i) {
         res *= getValue(i);
     }
@@ -251,7 +251,7 @@ inline double internalGoedelTconorm(int size, const std::function<double(int)>& 
     // Horizontal maximum
     double res = xsimd::reduce_max(max_vec);
     
-    // Process remaining elements
+    // Process remaining elements (already validated in first pass)
     for (; i < size; ++i) {
         double v = getValue(i);
         if (v > res) {
@@ -305,7 +305,7 @@ inline double internalLukasTconorm(int size, const std::function<double(int)>& g
     // Horizontal sum
     double res = xsimd::reduce_add(sum_vec);
     
-    // Process remaining elements
+    // Process remaining elements (already validated in first pass)
     for (; i < size; ++i) {
         res += getValue(i);
     }
