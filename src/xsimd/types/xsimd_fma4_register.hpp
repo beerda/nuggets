@@ -14,6 +14,10 @@
 
 #include "./xsimd_sse4_2_register.hpp"
 
+#if XSIMD_WITH_FMA4
+#include <x86intrin.h>
+#endif
+
 namespace xsimd
 {
     /**
@@ -25,11 +29,15 @@ namespace xsimd
     {
         static constexpr bool supported() noexcept { return XSIMD_WITH_FMA4; }
         static constexpr bool available() noexcept { return true; }
-        static constexpr unsigned version() noexcept { return generic::version(1, 4, 4); }
         static constexpr char const* name() noexcept { return "fma4"; }
     };
 
 #if XSIMD_WITH_FMA4
+
+#if !XSIMD_WITH_SSE4_2
+#error "architecture inconsistency: fma4 requires sse4.2"
+#endif
+
     namespace types
     {
 

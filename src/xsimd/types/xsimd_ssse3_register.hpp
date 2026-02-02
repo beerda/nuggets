@@ -29,11 +29,15 @@ namespace xsimd
     {
         static constexpr bool supported() noexcept { return XSIMD_WITH_SSSE3; }
         static constexpr bool available() noexcept { return true; }
-        static constexpr unsigned version() noexcept { return generic::version(1, 3, 1); }
         static constexpr char const* name() noexcept { return "ssse3"; }
     };
 
 #if XSIMD_WITH_SSSE3
+
+#if !XSIMD_WITH_SSE3
+#error "architecture inconsistency: ssse3 requires sse3"
+#endif
+
     namespace types
     {
         XSIMD_DECLARE_SIMD_REGISTER_ALIAS(ssse3, sse3);

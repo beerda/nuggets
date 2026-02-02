@@ -13,7 +13,7 @@
 #ifndef XSIMD_SVE_REGISTER_HPP
 #define XSIMD_SVE_REGISTER_HPP
 
-#include "xsimd_generic_arch.hpp"
+#include "xsimd_common_arch.hpp"
 #include "xsimd_register.hpp"
 
 #if XSIMD_WITH_SVE
@@ -30,13 +30,12 @@ namespace xsimd
          * SVE instructions (fixed vector size) for arm64
          */
         template <size_t Width>
-        struct sve : xsimd::generic
+        struct sve : xsimd::common
         {
             static constexpr bool supported() noexcept { return Width == XSIMD_SVE_BITS; }
             static constexpr bool available() noexcept { return true; }
             static constexpr bool requires_alignment() noexcept { return true; }
             static constexpr std::size_t alignment() noexcept { return 16; }
-            static constexpr unsigned version() noexcept { return generic::version(9, 0, 0); }
             static constexpr char const* name() noexcept { return "arm64+sve"; }
         };
     }
@@ -109,14 +108,14 @@ namespace xsimd
             using floating_point_sve_vector_type = typename sve_vector_type_impl<8 * sizeof(T)>::floating_point_type;
 
             template <class T>
-            using signed_int_or_floating_point_sve_vector_type = typename std::conditional<std::is_floating_point<T>::value,
-                                                                                           floating_point_sve_vector_type<T>,
-                                                                                           signed_int_sve_vector_type<T>>::type;
+            using signed_int_or_floating_point_sve_vector_type = std::conditional_t<std::is_floating_point<T>::value,
+                                                                                    floating_point_sve_vector_type<T>,
+                                                                                    signed_int_sve_vector_type<T>>;
 
             template <class T>
-            using sve_vector_type = typename std::conditional<std::is_signed<T>::value,
-                                                              signed_int_or_floating_point_sve_vector_type<T>,
-                                                              unsigned_int_sve_vector_type<T>>::type;
+            using sve_vector_type = std::conditional_t<std::is_signed<T>::value,
+                                                       signed_int_or_floating_point_sve_vector_type<T>,
+                                                       unsigned_int_sve_vector_type<T>>;
         } // namespace detail
 
         XSIMD_DECLARE_SIMD_REGISTER(signed char, sve, detail::sve_vector_type<signed char>);
@@ -149,6 +148,8 @@ namespace xsimd
             using type = detail::sve_bool_simd_register;
         };
     } // namespace types
+#else
+    using sve = detail::sve<0xFFFFFFFF>;
 #endif
 } // namespace xsimd
 

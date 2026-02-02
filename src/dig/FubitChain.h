@@ -21,7 +21,6 @@
 
 #include "../common.h"
 #include "../AlignedVector.h"
-#include "xsimd/xsimd.hpp"
 #include "BaseChain.h"
 
 

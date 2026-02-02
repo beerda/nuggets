@@ -26,7 +26,7 @@
 #if __cplusplus >= 202002L
 #include <bit>
 #endif
-#include "xsimd/xsimd.hpp"
+#include <xsimd/xsimd.hpp>
 
 
 /**

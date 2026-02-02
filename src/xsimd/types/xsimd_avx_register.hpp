@@ -12,7 +12,7 @@
 #ifndef XSIMD_AVX_REGISTER_HPP
 #define XSIMD_AVX_REGISTER_HPP
 
-#include "./xsimd_generic_arch.hpp"
+#include "./xsimd_common_arch.hpp"
 
 namespace xsimd
 {
@@ -22,11 +22,10 @@ namespace xsimd
      *
      * AVX instructions
      */
-    struct avx : generic
+    struct avx : common
     {
         static constexpr bool supported() noexcept { return XSIMD_WITH_AVX; }
         static constexpr bool available() noexcept { return true; }
-        static constexpr unsigned version() noexcept { return generic::version(2, 1, 0); }
         static constexpr std::size_t alignment() noexcept { return 32; }
         static constexpr bool requires_alignment() noexcept { return true; }
         static constexpr char const* name() noexcept { return "avx"; }
@@ -35,6 +34,10 @@ namespace xsimd
 
 #if XSIMD_WITH_AVX
 
+#if !XSIMD_WITH_SSE4_2
+#error "architecture inconsistency: avx requires sse4.2"
+#endif
+
 #include <immintrin.h>
 
 namespace xsimd
@@ -42,7 +45,6 @@ namespace xsimd
     namespace types
     {
 
-        XSIMD_DECLARE_SIMD_REGISTER(bool, avx, __m256i);
         XSIMD_DECLARE_SIMD_REGISTER(signed char, avx, __m256i);
         XSIMD_DECLARE_SIMD_REGISTER(unsigned char, avx, __m256i);
         XSIMD_DECLARE_SIMD_REGISTER(char, avx, __m256i);
