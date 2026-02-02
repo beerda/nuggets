@@ -1,7 +1,3 @@
-# nuggets 2.2.0
-- released: ???
-- added is_logicalish()
-
 # nuggets 2.1.1
 - released: 2026-02-03
 - performance improvements
@@ -12,7 +8,7 @@
   dig_tautologies()
 - deprecated argument contingency_table in dig_associations() and
   dig_tautologies()
-- removed dependency on BH and RcppThread
+- removed dependency on BH
 
 # nuggets 2.1.0
 - released: 2025-11-05
