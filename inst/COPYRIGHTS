@@ -1,0 +1,19 @@
+This package includes third-party code:
+
+1. File: src/libpopcnt.h
+   Copyright (c) 2016 - 2024, Kim Walisch
+   Copyright (c) 2016 - 2018, Wojciech Muła
+   License: BSD 2-Clause License
+   Original source: https://github.com/kimwalisch/libpopcnt/blob/master/libpopcnt.h
+
+2. File: R/arules_association_measures.R
+   Copyright (C) 2011-2015 Michael Hahsler, Christian Buchta, Bettina Gruen and Kurt Hornik
+   License: GPL-2 or later
+   Original source: https://github.com/mhahsler/arules/blob/master/R/interestMeasures.R
+
+3. Files: src/xsimd/**
+   Copyright (c) 2016, Johan Mabille, Sylvain Corlay, Wolf Vollprecht and Martin Renou
+   Copyright (c) 2016, QuantStack
+   Copyright (c) 2018, Serge Guelton
+   License: BSD-3-Clause license
+   Original source: https://github.com/xtensor-stack/xsimd/tree/master/include/xsimd
