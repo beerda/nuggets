@@ -1,4 +1,5 @@
 COMMITS := \
+	154e3d247e2921a34572b018c7970d320efcf2e2 \
 	fa41c43c0261ffca62cd09282df448830ed31095 \
 	e2b8dbb608d2ab42d71224c7541e899f79a70483 \
 	865683a8400eb40ea3c9345efa8f897e628b0bfe \
@@ -11,6 +12,7 @@ COMMITS := \
 	303bdc31dfa4cd8cde5cdad618bdb4256ee4f969 \
 	current
 
+	# 154e3d247e2921a34572b018c7970d320efcf2e2  2026-02-02  Fix alignment in Bitset + use libpopcount library
 	# fa41c43c0261ffca62cd09282df448830ed31095  2026-01-30  Optimized AssocStorage
 	# e2b8dbb608d2ab42d71224c7541e899f79a70483  2026-01-28  Cache of itemset supports
 	# 865683a8400eb40ea3c9345efa8f897e628b0bfe  2026-01-23  Rewritten AssocStorage to collect results directly to DataSet
