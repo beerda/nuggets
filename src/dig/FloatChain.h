@@ -22,6 +22,7 @@
 #include "../common.h"
 #include "../AlignedVector.h"
 #include "BaseChain.h"
+#include <xsimd/xsimd.hpp>
 
 
 template <TNorm TNORM>
@@ -49,8 +50,10 @@ public:
     {
         for (R_xlen_t i = 0; i < vec.size(); i++) {
             data[i] = vec[i];
-            this->sum += vec[i];
         }
+        
+        // Compute sum using SIMD
+        this->sum = computeSum();
     }
 
     FloatChain(const FloatChain& a, const FloatChain& b)
@@ -63,19 +66,61 @@ public:
             }
         )
 
+#if !defined(XSIMD_NO_SUPPORTED_ARCHITECTURE)
+        using batch_type = xsimd::batch<float>;
+        constexpr size_t simd_size = batch_type::size;
+        
+        size_t i = 0;
+        // Process in SIMD batches
+        for (; i + simd_size <= a.data.size(); i += simd_size) {
+            batch_type aa = batch_type::load_aligned(&a.data[i]);
+            batch_type bb = batch_type::load_aligned(&b.data[i]);
+            batch_type result;
+            
+            if constexpr (TNORM == TNorm::GOEDEL) {
+                result = xsimd::min(aa, bb);
+            } else if constexpr (TNORM == TNorm::LUKASIEWICZ) {
+                batch_type zero = batch_type(0.0f);
+                batch_type one = batch_type(1.0f);
+                result = xsimd::max(aa + bb - one, zero);
+            } else if constexpr (TNORM == TNorm::GOGUEN) {
+                result = aa * bb;
+            } else {
+                static_assert(TNORM != TNorm::GOEDEL && TNORM != TNorm::GOGUEN && TNORM != TNorm::LUKASIEWICZ,
+                              "Unsupported TNorm type");
+            }
+            
+            result.store_aligned(&data[i]);
+        }
+        
+        // Process remaining elements
+        for (; i < a.data.size(); ++i) {
+            if constexpr (TNORM == TNorm::GOEDEL) {
+                data[i] = std::min(a.data[i], b.data[i]);
+            } else if constexpr (TNORM == TNorm::LUKASIEWICZ) {
+                data[i] = std::max(0.0f, a.data[i] + b.data[i] - 1.0f);
+            } else if constexpr (TNORM == TNorm::GOGUEN) {
+                data[i] = a.data[i] * b.data[i];
+            }
+        }
+#else
+        // Fallback for architectures without SIMD support
         for (size_t i = 0; i < a.data.size(); ++i) {
             if constexpr (TNORM == TNorm::GOEDEL) {
                 data[i] = std::min(a.data[i], b.data[i]);
             } else if constexpr (TNORM == TNorm::LUKASIEWICZ) {
-                data[i] = std::max(0.0, a.data[i] + b.data[i] - 1.0);
+                data[i] = std::max(0.0f, a.data[i] + b.data[i] - 1.0f);
             } else if constexpr (TNORM == TNorm::GOGUEN) {
                 data[i] = a.data[i] * b.data[i];
             } else {
                 static_assert(TNORM != TNorm::GOEDEL && TNORM != TNorm::GOGUEN && TNORM != TNorm::LUKASIEWICZ,
                               "Unsupported TNorm type");
             }
-            sum += data[i];
         }
+#endif
+        
+        // Compute sum using SIMD
+        sum = computeSum();
     }
 
     FloatChain(const FloatChain& a, const FloatChain& b, const double sum)
@@ -122,4 +167,38 @@ public:
 
 private:
     AlignedVector<float> data;
+    
+    inline float computeSum() const
+    {
+#if !defined(XSIMD_NO_SUPPORTED_ARCHITECTURE)
+        using batch_type = xsimd::batch<float>;
+        constexpr size_t simd_size = batch_type::size;
+        
+        batch_type sum_vec = batch_type(0.0f);
+        size_t i = 0;
+        
+        // Process in SIMD batches
+        for (; i + simd_size <= data.size(); i += simd_size) {
+            batch_type values = batch_type::load_aligned(&data[i]);
+            sum_vec += values;
+        }
+        
+        // Horizontal sum
+        float result = xsimd::reduce_add(sum_vec);
+        
+        // Add remaining elements
+        for (; i < data.size(); ++i) {
+            result += data[i];
+        }
+        
+        return result;
+#else
+        // Fallback for architectures without SIMD support
+        float result = 0.0f;
+        for (size_t i = 0; i < data.size(); ++i) {
+            result += data[i];
+        }
+        return result;
+#endif
+    }
 };

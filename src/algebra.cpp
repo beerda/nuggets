@@ -18,6 +18,7 @@
 
 
 #include <Rcpp.h>
+#include <xsimd/xsimd.hpp>
 
 
 using namespace Rcpp;
@@ -57,6 +58,47 @@ inline void testInvalids(double x) {
 }
 
 inline double internalGoedelTnorm(int size, const std::function<double(int)>& getValue) {
+#if !defined(XSIMD_NO_SUPPORTED_ARCHITECTURE)
+    using batch_type = xsimd::batch<double>;
+    constexpr size_t simd_size = batch_type::size;
+    
+    // Check for NA/NaN and validity in first pass
+    for (int i = 0; i < size; ++i) {
+        double v = getValue(i);
+        testInvalids(v);
+        if (NumericVector::is_na(v)) {
+            return NA_REAL;
+        }
+    }
+    
+    if (size == 0) return 1.0;
+    
+    batch_type min_vec = batch_type(1.0);
+    int i = 0;
+    
+    // Process in SIMD batches
+    for (; i + simd_size <= size; i += simd_size) {
+        alignas(batch_type::arch_type::alignment()) double values[simd_size];
+        for (size_t j = 0; j < simd_size; ++j) {
+            values[j] = getValue(i + j);
+        }
+        batch_type vals = batch_type::load_aligned(values);
+        min_vec = xsimd::min(min_vec, vals);
+    }
+    
+    // Horizontal minimum
+    double res = xsimd::reduce_min(min_vec);
+    
+    // Process remaining elements
+    for (; i < size; ++i) {
+        double v = getValue(i);
+        if (v < res) {
+            res = v;
+        }
+    }
+    
+    return res;
+#else
     double res = 1.0;
     for (int i = 0; i < size; ++i) {
         double v = getValue(i);
@@ -68,9 +110,47 @@ inline double internalGoedelTnorm(int size, const std::function<double(int)>& ge
         }
     }
     return res;
+#endif
 }
 
 inline double internalLukasTnorm(int size, const std::function<double(int)>& getValue) {
+#if !defined(XSIMD_NO_SUPPORTED_ARCHITECTURE)
+    using batch_type = xsimd::batch<double>;
+    constexpr size_t simd_size = batch_type::size;
+    
+    // Check for NA/NaN and validity in first pass
+    for (int i = 0; i < size; ++i) {
+        double v = getValue(i);
+        testInvalids(v);
+        if (NumericVector::is_na(v)) {
+            return NA_REAL;
+        }
+    }
+    
+    batch_type sum_vec = batch_type(0.0);
+    int i = 0;
+    
+    // Process in SIMD batches
+    for (; i + simd_size <= size; i += simd_size) {
+        alignas(batch_type::arch_type::alignment()) double values[simd_size];
+        for (size_t j = 0; j < simd_size; ++j) {
+            values[j] = getValue(i + j);
+        }
+        batch_type vals = batch_type::load_aligned(values);
+        sum_vec += vals;
+    }
+    
+    // Horizontal sum
+    double res = xsimd::reduce_add(sum_vec);
+    
+    // Process remaining elements
+    for (; i < size; ++i) {
+        res += getValue(i);
+    }
+    
+    res -= size;
+    return res > 0 ? res : 0;
+#else
     double res = 1.0;
     for (int i = 0; i < size; ++i) {
         double v = getValue(i);
@@ -83,9 +163,48 @@ inline double internalLukasTnorm(int size, const std::function<double(int)>& get
     }
     res -= size;
     return res > 0 ? res : 0;
+#endif
 }
 
 inline double internalGoguenTnorm(int size, const std::function<double(int)>& getValue) {
+#if !defined(XSIMD_NO_SUPPORTED_ARCHITECTURE)
+    using batch_type = xsimd::batch<double>;
+    constexpr size_t simd_size = batch_type::size;
+    
+    // Check for NA/NaN and validity in first pass
+    for (int i = 0; i < size; ++i) {
+        double v = getValue(i);
+        testInvalids(v);
+        if (NumericVector::is_na(v)) {
+            return NA_REAL;
+        }
+    }
+    
+    if (size == 0) return 1.0;
+    
+    batch_type prod_vec = batch_type(1.0);
+    int i = 0;
+    
+    // Process in SIMD batches
+    for (; i + simd_size <= size; i += simd_size) {
+        alignas(batch_type::arch_type::alignment()) double values[simd_size];
+        for (size_t j = 0; j < simd_size; ++j) {
+            values[j] = getValue(i + j);
+        }
+        batch_type vals = batch_type::load_aligned(values);
+        prod_vec *= vals;
+    }
+    
+    // Horizontal product
+    double res = xsimd::reduce_mul(prod_vec);
+    
+    // Process remaining elements
+    for (; i < size; ++i) {
+        res *= getValue(i);
+    }
+    
+    return res;
+#else
     double res = 1.0;
     for (int i = 0; i < size; ++i) {
         double v = getValue(i);
@@ -97,9 +216,51 @@ inline double internalGoguenTnorm(int size, const std::function<double(int)>& ge
         }
     }
     return res;
+#endif
 }
 
 inline double internalGoedelTconorm(int size, const std::function<double(int)>& getValue) {
+#if !defined(XSIMD_NO_SUPPORTED_ARCHITECTURE)
+    using batch_type = xsimd::batch<double>;
+    constexpr size_t simd_size = batch_type::size;
+    
+    // Check for NA/NaN and validity in first pass
+    for (int i = 0; i < size; ++i) {
+        double v = getValue(i);
+        testInvalids(v);
+        if (NumericVector::is_na(v)) {
+            return NA_REAL;
+        }
+    }
+    
+    if (size == 0) return 0.0;
+    
+    batch_type max_vec = batch_type(0.0);
+    int i = 0;
+    
+    // Process in SIMD batches
+    for (; i + simd_size <= size; i += simd_size) {
+        alignas(batch_type::arch_type::alignment()) double values[simd_size];
+        for (size_t j = 0; j < simd_size; ++j) {
+            values[j] = getValue(i + j);
+        }
+        batch_type vals = batch_type::load_aligned(values);
+        max_vec = xsimd::max(max_vec, vals);
+    }
+    
+    // Horizontal maximum
+    double res = xsimd::reduce_max(max_vec);
+    
+    // Process remaining elements
+    for (; i < size; ++i) {
+        double v = getValue(i);
+        if (v > res) {
+            res = v;
+        }
+    }
+    
+    return res;
+#else
     double res = 0.0;
     for (int i = 0; i < size; ++i) {
         double v = getValue(i);
@@ -111,9 +272,46 @@ inline double internalGoedelTconorm(int size, const std::function<double(int)>& 
         }
     }
     return res;
+#endif
 }
 
 inline double internalLukasTconorm(int size, const std::function<double(int)>& getValue) {
+#if !defined(XSIMD_NO_SUPPORTED_ARCHITECTURE)
+    using batch_type = xsimd::batch<double>;
+    constexpr size_t simd_size = batch_type::size;
+    
+    // Check for NA/NaN and validity in first pass
+    for (int i = 0; i < size; ++i) {
+        double v = getValue(i);
+        testInvalids(v);
+        if (NumericVector::is_na(v)) {
+            return NA_REAL;
+        }
+    }
+    
+    batch_type sum_vec = batch_type(0.0);
+    int i = 0;
+    
+    // Process in SIMD batches
+    for (; i + simd_size <= size; i += simd_size) {
+        alignas(batch_type::arch_type::alignment()) double values[simd_size];
+        for (size_t j = 0; j < simd_size; ++j) {
+            values[j] = getValue(i + j);
+        }
+        batch_type vals = batch_type::load_aligned(values);
+        sum_vec += vals;
+    }
+    
+    // Horizontal sum
+    double res = xsimd::reduce_add(sum_vec);
+    
+    // Process remaining elements
+    for (; i < size; ++i) {
+        res += getValue(i);
+    }
+    
+    return res >= 1 ? 1 : res;
+#else
     double res = 0.0;
     for (int i = 0; i < size; ++i) {
         double v = getValue(i);
@@ -125,6 +323,7 @@ inline double internalLukasTconorm(int size, const std::function<double(int)>& g
         }
     }
     return res >= 1 ? 1 : res;
+#endif
 }
 
 inline double internalGoguenTconorm(int size, const std::function<double(int)>& getValue) {
