@@ -18,6 +18,8 @@
 
 
 test_that("infoTable 0 cols", {
+    .skip_if_shiny_not_installed()
+
     tab <- data.frame()
     ui <- infoTable(tab)
     html <- as.character(ui)
@@ -31,6 +33,8 @@ test_that("infoTable 0 cols", {
 })
 
 test_that("infoTable 2 cols", {
+    .skip_if_shiny_not_installed()
+
     tab <- data.frame(labels = c("A", "B", "C"),
                       values = c(1, 2, 3),
                       stringsAsFactors = FALSE)
@@ -49,6 +53,8 @@ test_that("infoTable 2 cols", {
 })
 
 test_that("infoTable 3 cols", {
+    .skip_if_shiny_not_installed()
+
     tab <- data.frame(labels = c("A", "B", "C"),
                       values = c(1, 2, 3),
                       extra = c("x", "y", "z"),

@@ -45,7 +45,7 @@ public:
             }
         }
 
-        size_t nChildren() const
+        inline size_t nChildren() const
         {
             size_t result = 0;
             for (Node* child : children) {
@@ -56,10 +56,10 @@ public:
             return result;
         }
 
-        void storeConsequentsTo(vector<size_t>& vec) const
+        inline void storeConsequentsTo(vector<size_t>& vec) const
         { vec.insert(vec.end(), consequents.begin(), consequents.end()); }
 
-        string toString(size_t padding) const
+        inline string toString(const size_t padding) const
         {
             string res;
             string pad;
@@ -91,6 +91,14 @@ public:
 
 
     constexpr static size_t NULL_PREDICATE = numeric_limits<size_t>::max();
+
+    // Disable copy
+    TautologyTree(const TautologyTree&) = delete;
+    TautologyTree& operator=(const TautologyTree&) = delete;
+
+    // Allow move
+    TautologyTree(TautologyTree&&) = default;
+    TautologyTree& operator=(TautologyTree&&) = default;
 
     /**
      * Constructs a new tautology tree with allowed predicates in antecedents.

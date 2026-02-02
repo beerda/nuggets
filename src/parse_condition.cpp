@@ -58,11 +58,12 @@ std::string remove_braces(const std::string &s) {
 std::vector<std::string> split_commas(const std::string &s) {
     std::vector<std::string> parts;
     std::string current;
+    parts.reserve(4);
     for (char c : s) {
         if (c == ',') {
             std::string trimmed = trim(current);
             if (!trimmed.empty())
-                parts.push_back(trimmed);
+                parts.push_back(std::move(trimmed));
 
             current.clear();
         } else {
@@ -72,14 +73,14 @@ std::vector<std::string> split_commas(const std::string &s) {
 
     std::string trimmed = trim(current);
     if (!trimmed.empty())
-        parts.push_back(trimmed);
+        parts.push_back(std::move(trimmed));
 
     return parts;
 }
 
 
 // [[Rcpp::export(name=".parse_condition")]]
-List parse_condition(CharacterVector x) {
+List parse_condition(const CharacterVector& x) {
     int n = x.size();
     List out(n);
 

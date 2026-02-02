@@ -56,13 +56,13 @@ Create a custom \code{ggplot2} geom for visualizing lattice structures as
 \emph{diamond plots}. This geom is particularly useful for displaying
 association rules and their ancestor–descendant relationships in a clear,
 compact graphical form.
-}
-\details{
+
 In a diamond plot, nodes (diamonds) represent items or conditions within
 the lattice, while edges denote inclusion (subset) relationships between
 them. The geom combines node and edge rendering with flexible control over
 aesthetics such as labels, color, and size.
-
+}
+\details{
 \strong{Concept overview}
 
 A \emph{lattice} represents inclusion relationships between conditions. Each

@@ -26,7 +26,7 @@ datatable2 <- function(data,
                        filter = "none",
                        options = list(),
                        ...) {
-    js_tips <- toJSON(unname(tooltips), auto_unbox = TRUE)
+    js_tips <- jsonlite::toJSON(unname(tooltips), auto_unbox = TRUE)
 
     if (is.null(options$pageLength)) {
         options$pageLength <- 10
@@ -41,7 +41,7 @@ datatable2 <- function(data,
         options$scrollX <- TRUE
     }
     if (is.null(options$initComplete)) {
-        options$initComplete <- JS(sprintf(
+        options$initComplete <- htmlwidgets::JS(sprintf(
                 "function(settings, json){
              var api = this.api();
              var tips = %s;
@@ -52,7 +52,7 @@ datatable2 <- function(data,
            }", js_tips))
     }
     if (is.null(options$drawCallback)) {
-        options$drawCallback = JS(
+        options$drawCallback = htmlwidgets::JS(
                 "function(settings){
              var api = this.api();
              api.columns().every(function(i){
@@ -62,7 +62,7 @@ datatable2 <- function(data,
            }")
     }
 
-    datatable(data = data,
+    DT::datatable(data = data,
               options = options,
               escape = escape,
               rownames = rownames,

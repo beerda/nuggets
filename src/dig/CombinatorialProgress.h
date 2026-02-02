@@ -93,27 +93,27 @@ public:
         return Batch(this, actual, batchTotal);
     }
 
-    void set(size_t value)
+    inline void set(const size_t value)
     {
         actual = value;
         updateBar();
         //RcppThread::Rcout << "progress: " << actual << "/" << total << std::endl;
     }
 
-    void increment(size_t inc)
+    inline void increment(const size_t inc)
     {
         actual += inc;
         updateBar();
         //RcppThread::Rcout << "progress: " << actual << "/" << total << std::endl;
     }
 
-    size_t getActual() const
+    inline size_t getActual() const
     { return actual; }
 
-    size_t getTotal() const
+    inline size_t getTotal() const
     { return total; }
 
-    void assignBar(SEXP bar)
+    inline void assignBar(SEXP bar)
     {
         this->bar = bar;
         updateBar();
@@ -160,7 +160,7 @@ private:
      * The function returns b(n, 0) + b(n, 1) + ... + b(n, k),
      * where "n" is the number of elements and "k" is the number of levels.
      */
-    size_t computeSize(size_t levels, size_t elements) const
+    inline size_t computeSize(const size_t levels, const size_t elements) const
     {
         size_t size = 1;
         for (size_t i = 1; i <= min(levels, elements); ++i) {

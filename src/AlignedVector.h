@@ -20,6 +20,7 @@
 #pragma once
 
 #include <vector>
+#include <xsimd/xsimd.hpp>
 #include <xsimd/memory/xsimd_aligned_allocator.hpp>
 
 

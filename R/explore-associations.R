@@ -17,7 +17,7 @@
 #######################################################################
 
 
-#' Show interactive application to explore association rules
+#' @title Show interactive application to explore association rules
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
@@ -60,6 +60,7 @@
 explore.associations <- function(x, data = NULL, ...) {
     .must_be_nugget(x, "associations")
     .must_be_data_frame(data, null = TRUE)
+    .require_shiny()
 
     initial_meta <- tribble(
         ~data_name,          ~long_name,                          ~type,       ~group,              ~round, ~scatter, ~clustering_default,
@@ -99,9 +100,9 @@ explore.associations <- function(x, data = NULL, ...) {
         clusterWindow <- associationsClusterModule(
             id = "clustering", rules = x, meta = meta, data = data)
         extensions[["navbarPage.enableSidebar.for"]] <- "clustering"
-        extensions[["navbarPage.Metadata.before1"]] <- tabPanel(
+        extensions[["navbarPage.Metadata.before1"]] <- shiny::tabPanel(
             "Clustering",
-            icon = icon("circle-nodes"),
+            icon = shiny::icon("circle-nodes"),
             value = "clustering",
             clusterWindow$ui())
     }
@@ -110,20 +111,20 @@ explore.associations <- function(x, data = NULL, ...) {
         extensions[["Rules.top"]] <- infoBox(
             status = "warning",
             dismissible = TRUE,
-            div("You started the explorer with rules only.",
+            htmltools::div("You started the explorer with rules only.",
                 "Some advanced features are disabled.",
                 "To enable full functionality, run",
-                span(class = "mono", "explore(rules, data)"),
+                htmltools::span(class = "mono", "explore(rules, data)"),
                 "with the original dataset used to mine the rules."))
 
     } else {
         detailWindow <- associationsDetailModule(
             id = "details", rules = x, meta = meta, data = data)
 
-        extensions[["navbarPage.Metadata.before3"]] <- tabPanel(
+        extensions[["navbarPage.Metadata.before3"]] <- shiny::tabPanel(
             "Rule Detail",
             value = "rule-detail-tab",
-            icon = icon("magnifying-glass"),
+            icon = shiny::icon("magnifying-glass"),
             detailWindow$ui())
 
         extensions[["filteredRulesPanel.rulesTable.action"]] <- list(
@@ -138,12 +139,12 @@ explore.associations <- function(x, data = NULL, ...) {
                                        rulesProjection,
                                        ruleSelection,
                                        ...) {
-        observeEvent(ruleSelection(), {
+        shiny::observeEvent(ruleSelection(), {
             if (is.null(ruleSelection())) {
-                hide(selector = '#nav a[data-value="rule-detail-tab"]')
+                shinyjs::hide(selector = '#nav a[data-value="rule-detail-tab"]')
             } else {
-                show(selector = '#nav a[data-value="rule-detail-tab"]')
-                updateTabsetPanel(session, "nav", selected = "rule-detail-tab")
+                shinyjs::show(selector = '#nav a[data-value="rule-detail-tab"]')
+                shiny::updateTabsetPanel(session, "nav", selected = "rule-detail-tab")
             }
         }, ignoreNULL = FALSE)
 

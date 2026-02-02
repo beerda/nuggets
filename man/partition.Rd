@@ -2,8 +2,7 @@
 % Please edit documentation in R/partition.R
 \name{partition}
 \alias{partition}
-\title{Convert columns of a data frame to Boolean or fuzzy sets
-(triangular, trapezoidal, or raised-cosine)}
+\title{Convert columns of a data frame to Boolean or fuzzy sets (triangular, trapezoidal, or raised-cosine)}
 \usage{
 partition(
   .data,
@@ -73,8 +72,7 @@ Transform selected columns of a data frame into either dummy logical
 variables or membership degrees of fuzzy sets, while leaving all remaining
 columns unchanged. Each transformed column typically produces multiple new
 columns in the output.
-}
-\details{
+
 These transformations are most often used as a preprocessing step before
 calling \code{\link[=dig]{dig()}} or one of its derivatives, such as
 \code{\link[=dig_correlations]{dig_correlations()}}, \code{\link[=dig_paired_baseline_contrasts]{dig_paired_baseline_contrasts()}},
@@ -101,6 +99,8 @@ degrees in \eqn{[0,1]} (triangular or raised-cosine shaped).
 
 Details of numeric transformations are controlled by \code{.breaks}, \code{.labels},
 \code{.style}, \code{.style_params}, \code{.right}, \code{.span}, and \code{.inc}.
+}
+\details{
 \itemize{
 \item Crisp partitioning is efficient and works well when attributes have
 distinct categories or clear boundaries.

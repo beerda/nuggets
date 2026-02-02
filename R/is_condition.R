@@ -17,8 +17,9 @@
 #######################################################################
 
 
-#' Check whether a list of character vectors contains valid conditions
+#' @title Check whether a list of character vectors contains valid conditions
 #'
+#' @description
 #' A valid condition is a character vector of predicate names, where each
 #' predicate corresponds to a column name in a given data frame or matrix.
 #' This function verifies that each element of a list `x` contains only valid

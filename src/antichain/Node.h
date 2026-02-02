@@ -37,35 +37,35 @@ public:
         : predicate(predicate), depth(depth), prefix(prefix)
     { }
 
-    int getPredicate() const {
+    inline int getPredicate() const {
         return predicate;
     }
 
-    int getDepth() const {
+    inline int getDepth() const {
         return depth;
     }
 
-    const unordered_set<int>& getPrefix() const {
+    inline const unordered_set<int>& getPrefix() const {
         return prefix;
     }
 
-    const vector<Node>& getChildren() const {
+    inline const vector<Node>& getChildren() const {
         return children;
     }
 
-    vector<Node>& getMutableChildren() {
+    inline vector<Node>& getMutableChildren() {
         return children;
     }
 
-    bool isRoot() const {
+    inline bool isRoot() const {
         return depth == 0;
     }
 
-    bool isLeaf() const {
+    inline bool isLeaf() const {
         return children.empty();
     }
 
-    int getNumDescendants() const {
+    inline int getNumDescendants() const {
         int numDescendants = 0;
         for (const Node& child : children) {
             numDescendants += child.getNumDescendants() + 1;
@@ -103,7 +103,7 @@ public:
         }
     }
 
-    string visualize() const
+    inline string visualize() const
     {
         stringstream ss;
 
@@ -121,7 +121,7 @@ public:
         return ss.str();
     }
 
-    bool operator==(const Node& other) const {
+    inline bool operator==(const Node& other) const {
         return predicate == other.predicate && children == other.children;
     }
 

@@ -21,7 +21,7 @@
 
 
 // [[Rcpp::export]]
-NumericVector raisedcos_(NumericVector x, NumericVector ctx)
+NumericVector raisedcos_(const NumericVector& x, const NumericVector& ctx)
 {
     if (ctx.size() < 2) {
         stop("ctx must have at least 2 elements");

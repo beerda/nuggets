@@ -15,8 +15,7 @@ dig_associations(
   min_coverage = 0,
   min_support = 0,
   min_confidence = 0,
-  contingency_table = FALSE,
-  measures = deprecated(),
+  contingency_table = deprecated(),
   t_norm = "goguen",
   max_results = Inf,
   verbose = FALSE,
@@ -25,9 +24,9 @@ dig_associations(
     "consequent", arg_disjoint = "disjoint", arg_excluded = "excluded", arg_min_length =
     "min_length", arg_max_length = "max_length", arg_min_coverage = "min_coverage",
     arg_min_support = "min_support", arg_min_confidence = "min_confidence",
-    arg_contingency_table = "contingency_table", arg_measures = "measures", arg_t_norm =
-    "t_norm", arg_max_results = "max_results", arg_verbose = "verbose", arg_threads =
-    "threads", call = current_env())
+    arg_contingency_table = "contingency_table", arg_t_norm = "t_norm", arg_max_results =
+    "max_results", arg_verbose = "verbose", arg_threads = "threads", call =
+    current_env())
 )
 }
 \arguments{
@@ -71,21 +70,13 @@ is limited only by the number of available predicates.}
 \item{min_confidence}{the minimum confidence of a rule in the dataset \code{x}.
 (See Description for the definition of \emph{confidence}.)}
 
-\item{contingency_table}{a logical value indicating whether to provide a contingency
+\item{contingency_table}{(Deprecated. Contingency table is always added to the
+result.) A logical value indicating whether to provide a contingency
 table for each rule. If \code{TRUE}, the columns \code{pp}, \code{pn}, \code{np}, and \code{nn} are
 added to the output table. These columns contain the number of rows satisfying
 the antecedent and the consequent, the antecedent but not the consequent,
 the consequent but not the antecedent, and neither the antecedent nor the
 consequent, respectively.}
-
-\item{measures}{(Deprecated. Search for associations using
-\code{dig_associations(contingency_table = TRUE)} and use the \code{add_interest()}
-function on the result to compute additional measures.)
-A character vector specifying the additional quality measures to compute.
-If \code{NULL}, no additional measures are computed. Possible values are \code{"lift"},
-\code{"conviction"}, \code{"added_value"}.
-See \url{https://mhahsler.github.io/arules/docs/measures}
-for a description of the measures.}
 
 \item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
 \code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}
@@ -118,7 +109,6 @@ of that calling function. The list must contain the following elements:
 \item \code{arg_min_support} - name of the argument \code{min_support}
 \item \code{arg_min_confidence} - name of the argument \code{min_confidence}
 \item \code{arg_contingency_table} - name of the argument \code{contingency_table}
-\item \code{arg_measures} - name of the argument \code{measures}
 \item \code{arg_t_norm} - name of the argument \code{t_norm}
 \item \code{arg_max_results} - name of the argument \code{max_results}
 \item \code{arg_verbose} - name of the argument \code{verbose}

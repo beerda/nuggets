@@ -17,8 +17,9 @@
 #######################################################################
 
 
-#' Format a vector of predicates into a condition string
+#' @title Format a vector of predicates into a condition string
 #'
+#' @description
 #' Convert a character vector of predicate names into a standardized string
 #' representation of a condition. Predicates are concatenated with commas and
 #' enclosed in curly braces. This formatting ensures consistency when storing

@@ -18,6 +18,8 @@
 
 
 test_that("infoBox", {
+    .skip_if_shiny_not_installed()
+
     # Test "info" status
     ui <- infoBox("Some text", "blah", status = "info")
     html <- as.character(ui)

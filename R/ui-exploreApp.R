@@ -24,7 +24,7 @@ exploreApp <- function(rules,
     # to show special numeric values (such as Inf) in DT
     options(htmlwidgets.TOJSON_ARGS = list(na = 'string'))
 
-    addResourcePath("pkgimages",
+    shiny::addResourcePath("pkgimages",
                     system.file(c("figures"),
                                 package = "nuggets"))
 
@@ -57,8 +57,8 @@ exploreApp <- function(rules,
     filter_subtext <- meta$long_name[match(filter_choices, meta$data_name)]
     indexes <- which(!is.na(filter_subtext))
     names(filters) <- NULL # tabsetPanel does not like named lists
-    filterTabSet <- do.call(tabsetPanel,
-                            c(list(id = "columnFilterTabset", type = "hidden", header = tags$hr()),
+    filterTabSet <- do.call(shiny::tabsetPanel,
+                            c(list(id = "columnFilterTabset", type = "hidden", header = htmltools::tags$hr()),
                               lapply(filters, function(f) f$ui())))
 
     scatterFilter <- scatterFilterModule(id = "scatterFilterModule",
@@ -66,9 +66,9 @@ exploreApp <- function(rules,
                                          meta = meta)
     filters <- c(filters, list(scatterFilter))
 
-    ui <- tagList(
-        tags$head(
-            tags$style(HTML("
+    ui <- shiny::tagList(
+        htmltools::tags$head(
+            htmltools::tags$style(htmltools::HTML("
                 /* monospace font for code */
                 .mono {font-family: \"Courier New\", Courier, monospace;}
 
@@ -172,16 +172,16 @@ exploreApp <- function(rules,
                 }
             "))
         ),
-        useShinyjs(),
+        shinyjs::useShinyjs(),
 
-        div(id = "mainContent",
-            navbarPage(
-                title = tagList(
-                    actionButton("toggle_sidebar",
+        htmltools::div(id = "mainContent",
+            shiny::navbarPage(
+                title = shiny::tagList(
+                    shiny::actionButton("toggle_sidebar",
                                  label = NULL,
-                                 icon = icon("bars"),
+                                 icon = shiny::icon("bars"),
                                  style = "padding: 0px 10px 0px 10px;"),
-                    span(tags$img(src = "pkgimages/nugget.png",
+                    htmltools::span(htmltools::tags$img(src = "pkgimages/nugget.png",
                                          style = "padding-left: 10px; filter: grayscale(100%);",
                                          height = "24px"),
                                 title)),
@@ -189,59 +189,62 @@ exploreApp <- function(rules,
                 windowTitle = title,
                 fluid = TRUE,
                 position = "fixed-top",
-                header = tagList(
-                    div(id = "sharedSidebar", class = "shared-sidebar",
-                        panel(heading = "Filters",
-                            tabsetPanel(
+                header = shiny::tagList(
+                    htmltools::div(id = "sharedSidebar", class = "shared-sidebar",
+                        shinyWidgets::panel(heading = "Filters",
+                            shiny::tabsetPanel(
                                 columnProjector$ui(),
-                                tabPanel("Rows",
-                                    pickerInput("columnFiltersInput",
+                                shiny::tabPanel("Rows",
+                                    shinyWidgets::pickerInput("columnFiltersInput",
                                                 label = "Show filter:",
                                                 choices = filter_choices,
                                                 choicesOpt = list(subtext = filter_subtext),
-                                                options = pickerOptions(container = "body"),
+                                                options = shinyWidgets::pickerOptions(container = "body"),
                                                 width = "100%"),
                                     filterTabSet),
-                                tabPanel("Advanced",
-                                    tabsetPanel(type = "pills", header = tags$hr(),
+                                shiny::tabPanel("Advanced",
+                                    shiny::tabsetPanel(type = "pills", header = htmltools::tags$hr(),
                                         scatterFilter$ui()
                                     )
                                 )
                             )
+                        ),
+                        shinyWidgets::panel(heading = "Filtering Summary",
+                            shiny::uiOutput("numFilteredRules")
                         )
                     )
                 ),
-                tabPanel("Rules", icon = icon("chart-simple"), value = "rules",
-                    fluidRow(
+                shiny::tabPanel("Rules", icon = shiny::icon("chart-simple"), value = "rules",
+                    shiny::fluidRow(
                         callExtension(extensions, "Rules.top"),
-                        column(width = 12,
-                            panel(heading = "Filtered Rules", rulesTable$ui())
+                        shiny::column(width = 12,
+                            shinyWidgets::panel(heading = "Filtered Rules", rulesTable$ui())
                         )
                     )
                 ),
                 callExtension(extensions, "navbarPage.Metadata.before1"),
                 callExtension(extensions, "navbarPage.Metadata.before2"),
                 callExtension(extensions, "navbarPage.Metadata.before3"),
-                tabPanel("Metadata", icon = icon("list"), value = "metadata",
-                    fluidRow(
-                        column(width = 8, offset = 2,
-                            panel(heading = "Metadata",
-                                tabsetPanel(
-                                    tabPanel("Rulebase", rulebaseTable(rules, meta)),
-                                    tabPanel("Data", callDataTable(rules, meta)),
-                                    tabPanel("Call", creationParamsTable(rules))
+                shiny::tabPanel("Metadata", icon = shiny::icon("list"), value = "metadata",
+                    shiny::fluidRow(
+                        shiny::column(width = 8, offset = 2,
+                            shinyWidgets::panel(heading = "Metadata",
+                                shiny::tabsetPanel(
+                                    shiny::tabPanel("Rulebase", rulebaseTable(rules, meta)),
+                                    shiny::tabPanel("Data", callDataTable(rules, meta)),
+                                    shiny::tabPanel("Call", creationParamsTable(rules))
                                 )
                             )
                         )
                     )
                 ),
-                tabPanel("About", icon = icon("circle-info"), value = "about",
-                    fluidRow(
-                        column(width = 6, offset = 3,
-                            panel(heading = "About the app",
-                                  tags$div(style = "text-align: center; font-size: 40pt; color: gray; padding-bottom: 10px",
+                shiny::tabPanel("About", icon = shiny::icon("circle-info"), value = "about",
+                    shiny::fluidRow(
+                        shiny::column(width = 6, offset = 3,
+                            shinyWidgets::panel(heading = "About the app",
+                                  htmltools::tags$div(style = "text-align: center; font-size: 40pt; color: gray; padding-bottom: 10px",
                                            width = "100%",
-                                           tags$img(src = "pkgimages/logo.png", width = "200px")),
+                                           htmltools::tags$img(src = "pkgimages/logo.png", width = "200px")),
                                   aboutTable("nuggets")
                             )
                         )
@@ -253,54 +256,54 @@ exploreApp <- function(rules,
 
 
     server <- function(input, output, session) {
-        sidebar_collapsed <- reactiveVal(FALSE)
-        manual_sidebar_collapsed <- reactiveVal(FALSE)
-        reset_all_trigger <- reactiveVal(Sys.time()) # set system time to force reactivity
+        sidebar_collapsed <- shiny::reactiveVal(FALSE)
+        manual_sidebar_collapsed <- shiny::reactiveVal(FALSE)
+        reset_all_trigger <- shiny::reactiveVal(Sys.time()) # set system time to force reactivity
 
         set_sidebar_collapsed <- function(val, animate) {
             sidebar_collapsed(val)
             if (isTRUE(animate)) {
-                addClass("sharedSidebar", "animated")
-                addClass("mainContent", "animated")
+                shinyjs::addClass("sharedSidebar", "animated")
+                shinyjs::addClass("mainContent", "animated")
             } else {
-                removeClass("sharedSidebar", "animated")
-                removeClass("mainContent", "animated")
+                shinyjs::removeClass("sharedSidebar", "animated")
+                shinyjs::removeClass("mainContent", "animated")
             }
             if (isTRUE(val)) {
-                addClass("sharedSidebar", "collapsed")
-                addClass("mainContent", "no-sidebar")
+                shinyjs::addClass("sharedSidebar", "collapsed")
+                shinyjs::addClass("mainContent", "no-sidebar")
             } else {
-                removeClass("sharedSidebar", "collapsed")
-                removeClass("mainContent", "no-sidebar")
+                shinyjs::removeClass("sharedSidebar", "collapsed")
+                shinyjs::removeClass("mainContent", "no-sidebar")
             }
         }
 
-        observeEvent(input$toggle_sidebar, {
+        shiny::observeEvent(input$toggle_sidebar, {
             set_sidebar_collapsed(!isTRUE(sidebar_collapsed()), animate = TRUE)
             manual_sidebar_collapsed(sidebar_collapsed())
-            runjs("window.dispatchEvent(new Event('resize'));") # notify any plots of size change
+            shinyjs::runjs("window.dispatchEvent(new Event('resize'));") # notify any plots of size change
         })
 
-        observeEvent(input$nav, {
-            req(input$nav)
+        shiny::observeEvent(input$nav, {
+            shiny::req(input$nav)
             if (input$nav %in% c("rules", callExtension(extensions, "navbarPage.enableSidebar.for"))) {
                 set_sidebar_collapsed(manual_sidebar_collapsed(), animate = FALSE)
-                removeClass("toggle_sidebar", "grayed")
+                shinyjs::removeClass("toggle_sidebar", "grayed")
             } else {
                 set_sidebar_collapsed(TRUE, animate = FALSE)
-                addClass("toggle_sidebar", "grayed")
+                shinyjs::addClass("toggle_sidebar", "grayed")
             }
         }, ignoreNULL = TRUE)
 
         # On initial load, sync UI to reactiveVal (expanded by default)
-        observe({
-            isolate({
+        shiny::observe({
+            shiny::isolate({
                 set_sidebar_collapsed(isTRUE(sidebar_collapsed()), animate = FALSE)
             })
         })
 
-        observeEvent(input$columnFiltersInput, {
-            updateTabsetPanel(session,
+        shiny::observeEvent(input$columnFiltersInput, {
+            shiny::updateTabsetPanel(session,
                               "columnFilterTabset",
                               selected = paste0(input$columnFiltersInput, "-filter-tab"))
         })
@@ -309,18 +312,23 @@ exploreApp <- function(rules,
 
         lapply(filters, function(f) f$server(reset_all_trigger))
 
-        observeEvent(reset_all_trigger(), {
+        shiny::observeEvent(reset_all_trigger(), {
             columnProjector$reset(session)
             lapply(filters, function(f) f$reset(session))
         }, ignoreInit = TRUE)
 
-        rulesFiltering <- reactive({
+        rulesFiltering <- shiny::reactive({
             sel <- lapply(filters, function(f) f$filter(input))
 
             Reduce(`&`, sel)
         })
 
         ruleSelection <- rulesTable$server(rulesProjection, rulesFiltering)
+
+        output$numFilteredRules <- shiny::renderUI({
+            r <- rules[rulesFiltering(), rulesProjection(), drop = FALSE]
+            rulebaseTable(r, meta)
+        })
 
         callExtension(extensions,
                       "server",
@@ -332,5 +340,5 @@ exploreApp <- function(rules,
                       ruleSelection = ruleSelection)
     }
 
-    shinyApp(ui = ui, server = server)
+    shiny::shinyApp(ui = ui, server = server)
 }

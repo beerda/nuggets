@@ -2,8 +2,7 @@
 % Please edit documentation in R/dig_baseline_contrasts.R
 \name{dig_baseline_contrasts}
 \alias{dig_baseline_contrasts}
-\title{Search for conditions that yield in statistically significant one-sample
-test in selected variables.}
+\title{Search for conditions that yield in statistically significant one-sample test in selected variables.}
 \usage{
 dig_baseline_contrasts(
   x,
@@ -171,6 +170,14 @@ between all variables specified by the \code{vars} argument. Baseline contrasts
 are computed in sub-data corresponding to conditions generated from the
 \code{condition} columns. Function \code{dig_baseline_contrasts()} supports crisp
 conditions only, i.e., the condition columns in \code{x} must be logical.
+}
+\examples{
+d <- partition(mtcars, .breaks = 2, .keep = TRUE)
+dig_baseline_contrasts(d,
+                       condition = where(is.logical),
+                       vars = where(is.numeric),
+                       min_support = 0.3,
+                       max_length = 2)
 }
 \seealso{
 \code{\link[=dig_paired_baseline_contrasts]{dig_paired_baseline_contrasts()}}, \code{\link[=dig_complement_contrasts]{dig_complement_contrasts()}},

@@ -21,11 +21,11 @@ This function extracts the value part from a character vector of predicate
 names. Each element of \code{x} is expected to follow the pattern
 \verb{<varname>=<value>}, where \verb{<varname>} is a variable name and \verb{<value>} is
 the associated value.
-}
-\details{
+
 If an element does not contain an equal sign (\code{=}), the function returns an
 empty string for that element.
-
+}
+\details{
 This function is the counterpart to \code{\link[=var_names]{var_names()}}, which extracts the
 variable part of predicates. Together, \code{\link[=var_names]{var_names()}} and \code{values()} provide
 a convenient way to split predicate strings into their variable and value

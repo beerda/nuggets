@@ -24,14 +24,14 @@ rulesTableModule <- function(id, rules, meta, action) {
     rules <- formatRulesForTable(rules, meta)
 
     list(ui = function() {
-            DT::dataTableOutput(NS(id, "table"))
+            DT::dataTableOutput(shiny::NS(id, "table"))
         },
 
         server = function(projectionReactive, selectionReactive) {
-            moduleServer(id, function(input, output, session) {
+            shiny::moduleServer(id, function(input, output, session) {
                 ns <- session$ns
 
-                output$table <- renderDT({
+                output$table <- DT::renderDT({
                     sel <- selectionReactive()
                     proj <- c("id", projectionReactive())
                     d <- rules[sel, proj, drop = FALSE]
@@ -67,7 +67,7 @@ rulesTableModule <- function(id, rules, meta, action) {
                     datatable2(d, tooltips = tooltips)
                 })
 
-                reactive({ input$selected })
+                shiny::reactive({ input$selected })
             })
         }
     )

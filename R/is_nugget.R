@@ -17,8 +17,9 @@
 #######################################################################
 
 
-#' Test whether an object is a nugget
+#' @title Test whether an object is a nugget
 #'
+#' @description
 #' Check if the given object is a nugget, i.e. an object created by
 #' [nugget()]. If a `flavour` is specified, the function returns `TRUE` only
 #' if the object is a nugget of the given flavour.
@@ -38,6 +39,12 @@
 #'
 #' @seealso [nugget()]
 #' @author Michal Burda
+#' @examples
+#' d <- partition(mtcars, .breaks = 2)
+#' rules <- dig_associations(d, min_support = 0.3)
+#' is_nugget(rules)
+#' is_nugget(rules, "associations")
+#' is_nugget(mtcars)
 #' @export
 is_nugget <- function(x, flavour = NULL) {
     .must_be_character_scalar(flavour, null = TRUE)

@@ -17,7 +17,10 @@
 #######################################################################
 
 
+
 test_that("numericFilterModule - ui: numeric, round 2, all specials", {
+    .skip_if_shiny_not_installed()
+
     meta <- tribble(
         ~data_name,          ~short_name,  ~long_name,           ~type,       ~round,
         "confidence",        "conf",       "Confidence",         "numeric",   2
@@ -41,6 +44,8 @@ test_that("numericFilterModule - ui: numeric, round 2, all specials", {
 
 
 test_that("numericFilterModule - ui: numeric, round 1, no specials", {
+    .skip_if_shiny_not_installed()
+
     meta <- tribble(
         ~data_name,          ~short_name,  ~long_name,           ~type,       ~round,
         "confidence",        "conf",       "Confidence",         "numeric",   1
@@ -64,6 +69,8 @@ test_that("numericFilterModule - ui: numeric, round 1, no specials", {
 
 
 test_that("numericFilterModule - ui: integer, NA special", {
+    .skip_if_shiny_not_installed()
+
     meta <- tribble(
         ~data_name,          ~short_name,  ~long_name,           ~type,       ~round,
         "confidence",        "conf",       "Confidence",         "integer",   NA
@@ -88,6 +95,8 @@ test_that("numericFilterModule - ui: integer, NA special", {
 
 
 test_that("numericFilterModule - server", {
+    .skip_if_shiny_not_installed()
+
     suppressMessages(library(shiny))
 
     meta <- tribble(
@@ -118,6 +127,8 @@ test_that("numericFilterModule - server", {
 
 
 test_that("numericFilterModule - filter", {
+    .skip_if_shiny_not_installed()
+
     meta <- tribble(
         ~data_name,          ~short_name,  ~long_name,           ~type,       ~round,
         "confidence",        "conf",       "Confidence",         "numeric",   1

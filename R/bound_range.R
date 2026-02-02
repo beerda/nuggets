@@ -17,8 +17,9 @@
 #######################################################################
 
 
-#' Bound a range of numeric values
+#' @title Bound a range of numeric values
 #'
+#' @description
 #' This function computes the range of numeric values in a vector and adjusts
 #' the bounds to "nice" rounded numbers. Specifically, it rounds the lower
 #' bound downwards (similar to [floor()]) and the upper bound upwards (similar

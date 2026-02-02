@@ -20,6 +20,7 @@
 #pragma once
 
 #include "../common.h"
+#include "../timer.h"
 #include "BaseChain.h"
 
 
@@ -37,6 +38,8 @@ public:
                     const LogicalVector& isFocusVec)
         : chains(), nConditions(0), nFoci(0)
     {
+        BLOCK_TIMER(bt, "ChainCollection::ChainCollection - load data into chains");
+
         if (data.size() != isConditionVec.size() || data.size() != isFocusVec.size()) {
             throw std::invalid_argument("ChainCollection: data, isCondition and isFocus vectors must have the same length");
         }
@@ -74,28 +77,28 @@ public:
     ChainCollection(ChainCollection&&) = default;
     ChainCollection& operator=(ChainCollection&&) = default;
 
-    void reserve(size_t size)
+    inline void reserve(const size_t size)
     { chains.reserve(size); }
 
-    size_t size() const
+    inline size_t size() const
     { return chains.size(); }
 
-    bool empty() const
+    inline bool empty() const
     { return chains.empty(); }
 
-    const CHAIN& at(size_t i) const
+    inline const CHAIN& at(const size_t i) const
     { return chains.at(i); }
 
-    CHAIN& operator[](size_t i)
+    inline CHAIN& operator[](const size_t i)
     { return chains[i]; }
 
-    const CHAIN& operator[](size_t i) const
+    inline const CHAIN& operator[](const size_t i) const
     { return chains[i]; }
 
-    typename vector<CHAIN>::const_iterator begin() const
+    inline typename vector<CHAIN>::const_iterator begin() const
     { return chains.begin(); }
 
-    typename vector<CHAIN>::const_iterator end() const
+    inline typename vector<CHAIN>::const_iterator end() const
     { return chains.end(); }
 
     // append with move
@@ -106,19 +109,19 @@ public:
         if (chains.back().isFocus()) nFoci++;
     }
 
-    size_t firstFocusIndex() const
+    inline size_t firstFocusIndex() const
     { return size() - focusCount(); }
 
-    size_t conditionCount() const
+    inline size_t conditionCount() const
     { return nConditions; }
 
-    size_t focusCount() const
+    inline size_t focusCount() const
     { return nFoci; }
 
-    bool hasConditions() const
+    inline bool hasConditions() const
     { return nConditions > 0; }
 
-    bool hasFoci() const
+    inline bool hasFoci() const
     { return nFoci > 0; }
 
 private:

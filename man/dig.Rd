@@ -167,8 +167,7 @@ selected predicates, and for each condition executes a user-defined callback
 function \code{f}. The callback is expected to perform some analysis and return an
 object (often a list) representing a pattern or patterns related to the
 condition. The results of all calls are returned as a list.
-}
-\details{
+
 The callback function \code{f} may accept a number of arguments (see \code{f} argument
 description). The algorithm automatically provides condition-related
 information to \code{f} based on which arguments are present.
@@ -184,7 +183,8 @@ Restrictions may be imposed on generated conditions, such as:
 \item minimum focus support (\code{min_focus_support}), i.e. support of rows where
 both the condition and the focus hold.
 }
-
+}
+\details{
 Let \eqn{P} be the set of condition predicates selected by \code{condition} and
 \eqn{E} be the set of focus predicates selected by \code{focus}. The function
 generates all possible conditions as elementary conjunctions of distinct

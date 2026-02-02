@@ -27,7 +27,7 @@ infoBox <- function(...,
                   danger = "circle-xmark",
                   warning = "triangle-exclamation")
 
-    alert(status = match.arg(status),
+    shinyWidgets::alert(status = match.arg(status),
           dismissible = dismissible,
-          div(class = "info-box", icon(ico), span(...)))
+          htmltools::div(class = "info-box", shiny::icon(ico), htmltools::span(...)))
 }

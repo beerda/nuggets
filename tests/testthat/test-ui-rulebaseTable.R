@@ -18,6 +18,8 @@
 
 
 test_that("rulebaseTable", {
+    .skip_if_shiny_not_installed()
+
     rules <- data.frame(a = 1:3,
                         b = 4:6,
                         cond = c("x", "y", "x"))

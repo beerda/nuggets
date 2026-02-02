@@ -1,3 +1,15 @@
+# nuggets 2.2.0
+- released: ???
+- performance improvements
+- updated XSIMD library to 14.0.0
+- moved Shiny-related packages (shiny, shinyjs, shinyWidgets, DT, htmltools,
+  htmlwidgets, jsonlite) from Imports to Suggests
+- removed deprecated measures argument from dig_associations() and
+  dig_tautologies()
+- deprecated argument contingency_table in dig_associations() and
+  dig_tautologies()
+- removed dependency on BH
+
 # nuggets 2.1.0
 - released: 2025-11-05
 - added cluster_associations()

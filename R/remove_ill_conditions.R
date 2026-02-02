@@ -17,8 +17,9 @@
 #######################################################################
 
 
-#' Remove invalid conditions from a list
+#' @title Remove invalid conditions from a list
 #'
+#' @description
 #' From a given list of character vectors, remove those elements that are not
 #' valid conditions.
 #'

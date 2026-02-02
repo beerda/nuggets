@@ -56,7 +56,7 @@ inline void testInvalids(double x) {
     }
 }
 
-inline double internalGoedelTnorm(int size, std::function<double(int)> getValue) {
+inline double internalGoedelTnorm(int size, const std::function<double(int)>& getValue) {
     double res = 1.0;
     for (int i = 0; i < size; ++i) {
         double v = getValue(i);
@@ -70,7 +70,7 @@ inline double internalGoedelTnorm(int size, std::function<double(int)> getValue)
     return res;
 }
 
-inline double internalLukasTnorm(int size, std::function<double(int)> getValue) {
+inline double internalLukasTnorm(int size, const std::function<double(int)>& getValue) {
     double res = 1.0;
     for (int i = 0; i < size; ++i) {
         double v = getValue(i);
@@ -85,7 +85,7 @@ inline double internalLukasTnorm(int size, std::function<double(int)> getValue) 
     return res > 0 ? res : 0;
 }
 
-inline double internalGoguenTnorm(int size, std::function<double(int)> getValue) {
+inline double internalGoguenTnorm(int size, const std::function<double(int)>& getValue) {
     double res = 1.0;
     for (int i = 0; i < size; ++i) {
         double v = getValue(i);
@@ -99,7 +99,7 @@ inline double internalGoguenTnorm(int size, std::function<double(int)> getValue)
     return res;
 }
 
-inline double internalGoedelTconorm(int size, std::function<double(int)> getValue) {
+inline double internalGoedelTconorm(int size, const std::function<double(int)>& getValue) {
     double res = 0.0;
     for (int i = 0; i < size; ++i) {
         double v = getValue(i);
@@ -113,7 +113,7 @@ inline double internalGoedelTconorm(int size, std::function<double(int)> getValu
     return res;
 }
 
-inline double internalLukasTconorm(int size, std::function<double(int)> getValue) {
+inline double internalLukasTconorm(int size, const std::function<double(int)>& getValue) {
     double res = 0.0;
     for (int i = 0; i < size; ++i) {
         double v = getValue(i);
@@ -127,7 +127,7 @@ inline double internalLukasTconorm(int size, std::function<double(int)> getValue
     return res >= 1 ? 1 : res;
 }
 
-inline double internalGoguenTconorm(int size, std::function<double(int)> getValue) {
+inline double internalGoguenTconorm(int size, const std::function<double(int)>& getValue) {
     double res = 0.0;
     for (int i = 0; i < size; ++i) {
         double v = getValue(i);
@@ -142,55 +142,55 @@ inline double internalGoguenTconorm(int size, std::function<double(int)> getValu
 }
 
 // [[Rcpp::export(name=".goedel.tnorm")]]
-double goedel_tnorm(NumericVector vals)
+double goedel_tnorm(const NumericVector& vals)
 { TNORM_IMPL(internalGoedelTnorm); }
 
 // [[Rcpp::export(name=".pgoedel.tnorm")]]
-NumericVector pgoedel_tnorm(List list)
+NumericVector pgoedel_tnorm(const List& list)
 { PTNORM_IMPL(internalGoedelTnorm); }
 
 // [[Rcpp::export(name=".lukas.tnorm")]]
-double lukas_tnorm(NumericVector vals)
+double lukas_tnorm(const NumericVector& vals)
 { TNORM_IMPL(internalLukasTnorm); }
 
 // [[Rcpp::export(name=".plukas.tnorm")]]
-NumericVector plukas_tnorm(List list)
+NumericVector plukas_tnorm(const List& list)
 { PTNORM_IMPL(internalLukasTnorm); }
 
 // [[Rcpp::export(name=".goguen.tnorm")]]
-double goguen_tnorm(NumericVector vals)
+double goguen_tnorm(const NumericVector& vals)
 { TNORM_IMPL(internalGoguenTnorm); }
 
 // [[Rcpp::export(name=".pgoguen.tnorm")]]
-NumericVector pgoguen_tnorm(List list)
+NumericVector pgoguen_tnorm(const List& list)
 { PTNORM_IMPL(internalGoguenTnorm); }
 
 // [[Rcpp::export(name=".goedel.tconorm")]]
-double goedel_tconorm(NumericVector vals)
+double goedel_tconorm(const NumericVector& vals)
 { TNORM_IMPL(internalGoedelTconorm); }
 
 // [[Rcpp::export(name=".pgoedel.tconorm")]]
-NumericVector pgoedel_tconorm(List list)
+NumericVector pgoedel_tconorm(const List& list)
 { PTNORM_IMPL(internalGoedelTconorm); }
 
 // [[Rcpp::export(name=".lukas.tconorm")]]
-double lukas_tconorm(NumericVector vals)
+double lukas_tconorm(const NumericVector& vals)
 { TNORM_IMPL(internalLukasTconorm); }
 
 // [[Rcpp::export(name=".plukas.tconorm")]]
-NumericVector plukas_tconorm(List list)
+NumericVector plukas_tconorm(const List& list)
 { PTNORM_IMPL(internalLukasTconorm); }
 
 // [[Rcpp::export(name=".goguen.tconorm")]]
-double goguen_tconorm(NumericVector vals)
+double goguen_tconorm(const NumericVector& vals)
 { TNORM_IMPL(internalGoguenTconorm); }
 
 // [[Rcpp::export(name=".pgoguen.tconorm")]]
-NumericVector pgoguen_tconorm(List list)
+NumericVector pgoguen_tconorm(const List& list)
 { PTNORM_IMPL(internalGoguenTconorm); }
 
 // [[Rcpp::export(name=".goedel.residuum")]]
-NumericVector goedel_residuum(NumericVector x, NumericVector y)
+NumericVector goedel_residuum(const NumericVector& x, const NumericVector& y)
 {
     int n = 0;
     if (x.size() > 0 && y.size() > 0) {
@@ -214,7 +214,7 @@ NumericVector goedel_residuum(NumericVector x, NumericVector y)
 }
 
 // [[Rcpp::export(name=".lukas.residuum")]]
-NumericVector lukas_residuum(NumericVector x, NumericVector y)
+NumericVector lukas_residuum(const NumericVector& x, const NumericVector& y)
 {
     int n = 0;
     if (x.size() > 0 && y.size() > 0) {
@@ -238,7 +238,7 @@ NumericVector lukas_residuum(NumericVector x, NumericVector y)
 }
 
 // [[Rcpp::export(name=".goguen.residuum")]]
-NumericVector goguen_residuum(NumericVector x, NumericVector y)
+NumericVector goguen_residuum(const NumericVector& x, const NumericVector& y)
 {
     int n = 0;
     if (x.size() > 0 && y.size() > 0) {
@@ -262,7 +262,7 @@ NumericVector goguen_residuum(NumericVector x, NumericVector y)
 }
 
 // [[Rcpp::export(name=".invol.neg")]]
-NumericVector invol_neg(NumericVector x)
+NumericVector invol_neg(const NumericVector& x)
 {
     NumericVector res(x.size());
     for (int i = 0; i < x.size(); ++i) {
@@ -277,7 +277,7 @@ NumericVector invol_neg(NumericVector x)
 }
 
 // [[Rcpp::export(name=".strict.neg")]]
-NumericVector strict_neg(NumericVector x)
+NumericVector strict_neg(const NumericVector& x)
 {
     NumericVector res(x.size());
     for (int i = 0; i < x.size(); ++i) {

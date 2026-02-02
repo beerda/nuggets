@@ -20,6 +20,7 @@
 #pragma once
 
 #include "../common.h"
+#include "../timer.h"
 #include "Clause.h"
 
 
@@ -29,7 +30,7 @@
  */
 class BaseChain {
 public:
-    static PredicateType createPredicateType(bool isCondition, bool isFocus)
+    static inline PredicateType createPredicateType(const bool isCondition, const bool isFocus)
     {
         if (isCondition && isFocus) {
             return BOTH;
@@ -46,10 +47,12 @@ public:
      * Default constructor that creates an empty chain of type CONDITION with
      * empty clause.
      */
-    BaseChain(float sum)
-        : clause(),
+    BaseChain(double sum)
+        : sum(sum),
+          deduced(),
+          clause(),
           predicateType(CONDITION),
-          sum(sum)
+          cached(false)
     { }
 
     /**
@@ -61,10 +64,12 @@ public:
      * @param sum The sum of TRUEs (for binary data) or membership degrees
      *     (for fuzzy data) of the chain.
      */
-    BaseChain(size_t id, PredicateType type, float sum)
-        : clause({ id }),
+    BaseChain(size_t id, PredicateType type, double sum)
+        : sum(sum),
+          deduced(),
+          clause({ id }),
           predicateType(type),
-          sum(sum)
+          cached(false)
     { }
 
     /**
@@ -74,33 +79,45 @@ public:
      * @param a The first chain.
      * @param b The second chain.
      */
-    BaseChain(const BaseChain& a, const BaseChain& b, const bool toFocus)
-        : clause(a.clause.size() + 1),
-          predicateType(toFocus ? PredicateType::FOCUS : b.predicateType),
-          sum(0)
+    BaseChain(const BaseChain& a, const BaseChain& b)
+        : sum(0),
+          deduced(),
+          clause(mergeClauses(a.clause, b.clause)),
+          predicateType(b.predicateType),
+          cached(false)
+    {
+        IF_DEBUG(
+            if (!a.isCondition())
+                throw invalid_argument("BaseChain: first chain is not a condition");
+        )
+    }
+
+    /**
+     * Constructor that creates a chain by combining two chains with
+     * a conjunction.
+     *
+     * @param a The first chain.
+     * @param b The second chain.
+     */
+    BaseChain(const BaseChain& a, const BaseChain& b, const double sum)
+        : sum(sum),
+          deduced(),
+          clause(mergeClauses(a.clause, b.clause)),
+          predicateType(PredicateType::FOCUS),
+          cached(true)
     {
         IF_DEBUG(
             if (!a.isCondition())
                 throw invalid_argument("BaseChain: first chain is not a condition");
 
-            if (toFocus && b.predicateType != PredicateType::BOTH)
+            if (b.predicateType != PredicateType::BOTH)
                 throw invalid_argument("BaseChain: illegal conversion to FOCUS");
-
-            if (a.clause.size() != b.clause.size())
-                throw invalid_argument("BaseChain: clause sizes differ");
-
-            for (size_t i = 0; i < a.clause.size() - 1; ++i) {
-                if (a.clause[i] != b.clause[i])
-                    throw invalid_argument("BaseChain: clause prefixes differ");
-            }
         )
-        clause.assign(a.clause.begin(), a.clause.end());
-        clause.push_back(b.clause.back());
     }
 
-    // Allow copy
-    BaseChain(const BaseChain& other) = default;
-    BaseChain& operator=(const BaseChain& other) = default;
+    // Disable copy
+    BaseChain(const BaseChain& other) = delete;
+    BaseChain& operator=(const BaseChain& other) = delete;
 
     // Allow move
     BaseChain(BaseChain&& other) = default;
@@ -109,7 +126,7 @@ public:
     /**
      * Comparison (equality) operator.
      */
-    bool operator==(const BaseChain& other) const
+    inline bool operator==(const BaseChain& other) const
     {
         return (sum == other.sum)
             && (predicateType == other.predicateType)
@@ -119,34 +136,36 @@ public:
     /**
      * Comparison (inequality) operator.
      */
-    bool operator!=(const BaseChain& other) const
+    inline bool operator!=(const BaseChain& other) const
     { return !(*this == other); }
 
     /**
      * Returns the clause of the chain, i.e., the vector of predicate ids.
      */
-    const Clause& getClause() const
+    inline const Clause& getClause() const
     { return clause; }
 
     /**
      * Returns the sum of TRUEs (for binary data) or membership degrees (for
      * fuzzy data) of the chain.
      */
-    float getSum() const
+    inline double getSum() const
     { return sum; }
 
-    vector<size_t>& getMutableDeduced()
+    inline void setSum(double newSum)
+    { sum = newSum; }
+
+    inline vector<size_t>& getMutableDeduced()
     { return deduced; }
 
-    bool deduces(size_t id) const
+    inline bool deduces(const size_t id) const
     {
         bool result = std::find(deduced.begin(), deduced.end(), id) != deduced.end();
-        //cout << "deducing: " << clauseAsString() << " -> " << id << ": " << (result ? "TRUE" : "FALSE") << endl;
 
         return result;
     }
 
-    bool deducesItself() const
+    inline bool deducesItself() const
     {
         for (size_t predicate : clause) {
             if (deduces(predicate)) {
@@ -160,41 +179,59 @@ public:
     /**
      * Returns the type of the predicate represented by this chain.
      */
-    PredicateType getPredicateType() const
+    inline PredicateType getPredicateType() const
     { return predicateType; }
+
+    inline bool isCached() const
+    { return cached; }
 
     /**
      * Returns TRUE if the predicate may appear in the focus (consequent),
      * i.e., if the chain is of type FOCUS or BOTH.
      */
-    bool isFocus() const
+    inline bool isFocus() const
     { return predicateType != CONDITION; }
 
     /**
      * Returns TRUE if the predicate may appear in the condition (antecedent),
      * i.e., if the chain is of type CONDITION or BOTH.
      */
-    bool isCondition() const
+    inline bool isCondition() const
     { return predicateType != FOCUS; }
 
-    string clauseAsString() const
+    inline static Clause mergeClauses(const Clause& a, const Clause& b)
     {
-        string res = "";
-        bool first = true;
-        for (size_t p : clause) {
-            if (first) {
-                first = false;
-            }
-            else {
-                res += "&";
-            }
-            res += std::to_string(p);
-        }
+        BLOCK_INC_TIMER(st, t, "BaseChain::mergeClauses");
+        IF_DEBUG(
+            if (a.size() != b.size())
+                throw invalid_argument("BaseChain: clause sizes differ");
 
-        return res;
+            for (size_t i = 0; i < a.size() - 1; ++i) {
+                if (a[i] != b[i])
+                    throw invalid_argument("BaseChain: clause prefixes differ");
+            }
+        )
+
+        Clause result;
+        result.reserve(a.size() + 1);
+        result.assign(a.begin(), a.end());
+        result.push_back(b.back());
+
+        return result;
     }
 
 protected:
+    /**
+     * The sum of TRUEs (for binary data) or membership degrees (for
+     * fuzzy data) of the chain.
+     */
+    double sum;
+
+    /**
+     * The vector of predicate IDs that are deduced by clause of this chain.
+     */
+    vector<size_t> deduced;
+
     /**
      * The clause of the chain, i.e., the vector of predicate ids.
      */
@@ -208,10 +245,8 @@ protected:
     PredicateType predicateType;
 
     /**
-     * The sum of TRUEs (for binary data) or membership degrees (for
-     * fuzzy data) of the chain.
+     * Indicates whether the sum is obtained from cache instead of being
+     * computed from data chains.
      */
-    float sum;
-
-    vector<size_t> deduced;
+    bool cached;
 };

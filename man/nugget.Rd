@@ -32,13 +32,13 @@ specified, the given \code{flavour} class. The object also contains attributes
 \description{
 Construct a nugget object, which is an S3 object used to store and
 represent results (e.g., rules or patterns) in the \code{nuggets} framework.
-}
-\details{
+
 A nugget is technically a tibble (or data frame) that inherits from both
 the \code{"nugget"} class and, optionally, a flavour-specific S3 class. This
 allows distinguishing different types of nuggets (flavours) while still
 supporting generic methods for all nuggets.
-
+}
+\details{
 Each nugget stores additional provenance information in attributes:
 \itemize{
 \item \code{"call_function"} — the name of the function that created the nugget.

@@ -30,7 +30,7 @@ for details.}
 in the cluster label. The default is 2.}
 }
 \value{
-A tibble with one row per cluster. The columns are:
+A tibble with one row per (cluster, consequent) pair. The columns are:
 \itemize{
 \item \code{cluster}: the cluster number;
 \item \code{cluster_label}: a label for the cluster, consisting of the number of rules
@@ -45,8 +45,7 @@ cluster.
 This function clusters association rules based on the selected numeric
 attribute \code{by} (e.g., confidence or lift) and summarizes the clusters.
 The clustering is performed using the k-means algorithm.
-}
-\details{
+
 Each cluster is represented by a label consisting of the number of rules
 in the cluster and the most common predicates in the antecedents of those
 rules.
@@ -63,11 +62,13 @@ rules <- dig_associations(cars,
                           antecedent = everything(),
                           consequent = everything(),
                           max_length = 3,
-                          min_support = 0.2,
-                          measures = c("lift", "conviction"))
+                          min_support = 0.2)
 
 # Cluster the found rules
 clu <- cluster_associations(rules, 10, "lift")
+
+# Print the number of clusters
+length(unique(clu$cluster))
 
 \dontrun{
 # Plot the clustered rules

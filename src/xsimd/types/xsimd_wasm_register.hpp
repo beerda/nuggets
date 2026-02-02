@@ -13,7 +13,7 @@
 #ifndef XSIMD_WASM_REGISTER_HPP
 #define XSIMD_WASM_REGISTER_HPP
 
-#include "xsimd_generic_arch.hpp"
+#include "xsimd_common_arch.hpp"
 #include "xsimd_register.hpp"
 
 #if XSIMD_WITH_WASM
@@ -27,12 +27,11 @@ namespace xsimd
      *
      * WASM instructions
      */
-    struct wasm : generic
+    struct wasm : common
     {
         static constexpr bool supported() noexcept { return XSIMD_WITH_WASM; }
         static constexpr bool available() noexcept { return true; }
         static constexpr bool requires_alignment() noexcept { return true; }
-        static constexpr unsigned version() noexcept { return generic::version(10, 0, 0); }
         static constexpr std::size_t alignment() noexcept { return 16; }
         static constexpr char const* name() noexcept { return "wasm"; }
     };
@@ -40,7 +39,6 @@ namespace xsimd
 #if XSIMD_WITH_WASM
     namespace types
     {
-        XSIMD_DECLARE_SIMD_REGISTER(bool, wasm, v128_t);
         XSIMD_DECLARE_SIMD_REGISTER(signed char, wasm, v128_t);
         XSIMD_DECLARE_SIMD_REGISTER(unsigned char, wasm, v128_t);
         XSIMD_DECLARE_SIMD_REGISTER(char, wasm, v128_t);

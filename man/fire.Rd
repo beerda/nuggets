@@ -31,8 +31,7 @@ corresponds to the truth degree of the \emph{j}-th condition evaluated on the
 \description{
 Given a data frame or matrix of truth values for predicates, compute the
 truth values of a set of conditions expressed as elementary conjunctions.
-}
-\details{
+
 Each element of \code{condition} must be a character string of the format
 \code{"{p1,p2,p3}"}, where \code{"p1"}, \code{"p2"}, and \code{"p3"} are predicate names. The
 data object \code{x} must contain columns whose names correspond exactly to all

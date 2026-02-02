@@ -17,7 +17,7 @@
 #######################################################################
 
 
-#' Create a tibble of combinations of selected column names
+#' @title Create a tibble of combinations of selected column names
 #'
 #' @description
 #' The `xvars` and `yvars` arguments are tidyselect expressions (see

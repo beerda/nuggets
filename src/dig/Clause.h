@@ -22,4 +22,60 @@
 #include "../common.h"
 
 
-using Clause = vector<size_t>;
+class Clause : public vector<size_t> {
+private:
+    // Copy constructor is private, use clone() for public copy
+    Clause(const Clause& other) = default;
+
+public:
+    Clause() = default;
+
+    // Disable copy (use clone() to copy)
+    Clause& operator=(const Clause& other) = delete;
+
+    // Allow move
+    Clause(Clause&& other) = default;
+    Clause& operator=(Clause&& other) = default;
+
+    Clause(size_t n)
+        : vector<size_t>(n)
+    { }
+
+    Clause(initializer_list<size_t> init)
+        : vector<size_t>(init)
+    { }
+
+    Clause clone() const
+    { return Clause(*this); }
+
+    bool operator==(const Clause& other) const
+    {
+        if (size() != other.size())
+            return false;
+
+        for (size_t i = 0; i < size(); ++i) {
+            if (at(i) != other.at(i))
+                return false;
+        }
+
+        return true;
+    }
+
+    inline void sort()
+    { std::sort(begin(), end()); }
+
+    inline string toString() const
+    {
+        stringstream res;
+        res << "{";
+        for (size_t i = 0; i < size(); ++i) {
+            if (i > 0) {
+                res << ",";
+            }
+            res << at(i);
+        }
+        res << "}";
+
+        return res.str();
+    }
+};

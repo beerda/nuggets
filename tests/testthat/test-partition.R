@@ -459,6 +459,14 @@ test_that("partition errors", {
                  "`.right` must be a flag")
     expect_error(partition(d, a, .method = "foo"),
                  '`.method` must be equal to one of: "dummy", "crisp", "triangle", "raisedcos".')
+    expect_error(partition(data.frame(a = c(NA, NA)),
+                           .method = "crisp",
+                           .breaks = c(1, 2, 3)),
+                 "Unable to partition column `a` because it contains only NA values.")
+    expect_error(partition(data.frame(a = c(1:10, Inf)),
+                           .method = "crisp",
+                           .breaks = c(1, 2, 3)),
+                 "Unable to partition column `a` because it contains infinite values.")
 
 })
 

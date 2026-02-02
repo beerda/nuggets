@@ -17,8 +17,7 @@
 #######################################################################
 
 
-#' Search for conditions that yield in statistically significant one-sample
-#' test in selected variables.
+#' @title Search for conditions that yield in statistically significant one-sample test in selected variables.
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
@@ -143,6 +142,13 @@
 #' @seealso [dig_paired_baseline_contrasts()], [dig_complement_contrasts()],
 #'      [dig()], [dig_grid()],
 #'      [stats::t.test()], [stats::wilcox.test()]
+#' @examples
+#' d <- partition(mtcars, .breaks = 2, .keep = TRUE)
+#' dig_baseline_contrasts(d,
+#'                        condition = where(is.logical),
+#'                        vars = where(is.numeric),
+#'                        min_support = 0.3,
+#'                        max_length = 2)
 #' @export
 dig_baseline_contrasts <- function(x,
                                    condition = where(is.logical),

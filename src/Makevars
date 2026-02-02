@@ -1,3 +1,4 @@
+CXX_STD = CXX20
 PKG_CPPFLAGS=-I.
 PKG_CXXFLAGS=$(SHLIB_OPENMP_CXXFLAGS)
 #PKG_CXXFLAGS=$(SHLIB_OPENMP_CXXFLAGS) -O3 -march=native -mtune=native
@@ -14,12 +15,16 @@ SOURCES=RcppExports.cpp \
 	test-antichain-Condition.cpp \
 	test-antichain-Node.cpp \
 	test-antichain-Tree.cpp \
+	test-dig-BaseChain.cpp \
 	test-dig-BinomialCoefficients.cpp \
 	test-dig-BitChain.cpp \
+	test-dig-Bitset.cpp \
+	test-dig-Cache.cpp \
 	test-dig-ChainCollection.cpp \
 	test-dig-Config.cpp \
 	test-dig-FloatChain.cpp \
 	test-dig-FubitChain.cpp \
+	test-dig-Selector.cpp \
 	test-dig-TautologyTree.cpp
 
 # Obtain the object files

@@ -21,7 +21,7 @@
 
 #include "../common.h"
 #include "BaseChain.h"
-#include <boost/dynamic_bitset.hpp>
+#include "Bitset.h"
 
 
 /**
@@ -29,7 +29,7 @@
  */
 class BitChain : public BaseChain {
 public:
-    BitChain(float sum)
+    BitChain(double sum)
         : BaseChain(sum)
     { }
 
@@ -50,10 +50,15 @@ public:
           data(vec.size())
     { throw std::invalid_argument("BitChain: NumericVector constructor not implemented"); }
 
-    BitChain(const BitChain& a, const BitChain& b, const bool toFocus)
-        : BaseChain(a, b, toFocus),
+    BitChain(const BitChain& a, const BitChain& b)
+        : BaseChain(a, b),
           data(a.data & b.data)
     { sum = data.count(); }
+
+    BitChain(const BitChain& a, const BitChain& b, const double sum)
+        : BaseChain(a, b, sum),
+          data()
+    { }
 
     // Disable copy
     BitChain(const BitChain& other) = delete;
@@ -63,35 +68,41 @@ public:
     BitChain(BitChain&& other) = default;
     BitChain& operator=(BitChain&& other) = default;
 
-    bool operator==(const BitChain& other) const
+    inline bool operator==(const BitChain& other) const
     { return BaseChain::operator==(other) && (data == other.data); }
 
-    bool operator!=(const BitChain& other) const
+    inline bool operator!=(const BitChain& other) const
     { return !(*this == other); }
 
-    bool operator[](size_t index) const
+    inline bool operator[](const size_t index) const
     { return data[index]; }
 
-    bool at(size_t index) const
+    inline bool at(const size_t index) const
     { return data.at(index); }
 
-    size_t size() const
+    inline size_t size() const
     { return data.size(); }
 
-    bool empty() const
+    inline bool empty() const
     { return data.empty(); }
 
-    string toString() const
+    inline string toString() const
     {
         stringstream res;
-        res << "[n=" << data.size() << "]";
-        for (size_t i = 0; i < data.size(); ++i) {
-            res << data[i];
+
+        if (this->isCached()) {
+            res << "[cached:" << this->getSum() << "]";
+        }
+        else {
+            res << "[n=" << data.size() << "]";
+            for (size_t i = 0; i < data.size(); ++i) {
+                res << data[i];
+            }
         }
 
         return res.str();
     }
 
 private:
-    boost::dynamic_bitset<> data;
+    Bitset data;
 };

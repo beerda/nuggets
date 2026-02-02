@@ -30,8 +30,7 @@ test_that("add_interest.associations(measures = NULL)", {
                             min_support = 0.001,
                             min_length = 0,
                             max_length = 5,
-                            min_confidence = 0.5,
-                            contingency_table = TRUE)
+                            min_confidence = 0.5)
 
     res <- add_interest(fit, measures = NULL)
     expect_true(is_nugget(res, "associations"))
@@ -59,8 +58,7 @@ test_that("add_interest.associations() test GUHA quantifiers", {
                             min_support = 0.001,
                             min_length = 0,
                             max_length = 5,
-                            min_confidence = 0.5,
-                            contingency_table = TRUE)
+                            min_confidence = 0.5)
 
     guha <- c("fi", "dfi", "fe", "lci", "uci", "dlci", "duci", "lce", "uce")
     p <- 0.8
@@ -168,8 +166,7 @@ test_that("compare add_interest.associations to arules::interestMeasure", {
                             min_support = 0.001,
                             min_length = 0,
                             max_length = 5,
-                            min_confidence = 0.5,
-                            contingency_table = TRUE)
+                            min_confidence = 0.5)
 
     # no smoothing
     res <- add_interest(fit,

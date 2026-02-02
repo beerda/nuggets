@@ -22,10 +22,12 @@
 #include <algorithm>
 
 #include "../common.h"
+#include "../timer.h"
 #include "Config.h"
 #include "CombinatorialProgress.h"
 #include "ChainCollection.h"
 #include "Selector.h"
+#include "Cache.h"
 #include "TautologyTree.h"
 
 
@@ -41,9 +43,12 @@ public:
           config(config),
           initialCollection(data, isCondition, isFocus),
           predicateSums(data.size() + 1),
+          selectorSingleton(initialCollection.focusCount()),
+          cache(data.size() + 1),
           tree(initialCollection),
           progress(nullptr)
     {
+        BLOCK_TIMER(t, "Digger::Constructor");
         for (const CHAIN& chain : initialCollection) {
             size_t id = chain.getClause().back();
             predicateSums[id] = chain.getSum();
@@ -62,16 +67,21 @@ public:
 
     void run()
     {
+        START_TIMER(t, "Digger::run");
+
         ChainCollection<CHAIN> filteredCollection;
+        filteredCollection.reserve(initialCollection.size());
+
         CHAIN emptyChain(config.getNrow());
         tree.updateDeduction(emptyChain);
 
         for (size_t i = 0; i < initialCollection.size(); ++i) {
             CHAIN& chain = initialCollection[i];
-            if (isNonRedundant(emptyChain, chain)) {
-                if (isCandidate(chain)) {
-                    filteredCollection.append(std::move(chain));
-                }
+            addSumToCache(chain);
+            if (isNonRedundant(emptyChain, chain)
+                    && isNonTautological(emptyChain, chain)
+                    && isCandidate(chain)) {
+                filteredCollection.append(std::move(chain));
             }
         }
 
@@ -82,6 +92,8 @@ public:
         SEXP bar = PROTECT(cli_progress_bar(progress->getTotal(),
                                             List::create(Named("name") = "searching rules")));
         progress->assignBar(bar);
+
+        STOP_TIMER(t);
         {
             auto batch = progress->createBatch(0, filteredCollection.conditionCount());
             processChildrenChains(emptyChain, filteredCollection);
@@ -96,50 +108,57 @@ private:
     STORAGE& storage;
     const Config& config;
     ChainCollection<CHAIN> initialCollection;
-    vector<float> predicateSums;
+    vector<double> predicateSums;
+    Selector selectorSingleton;
+    Cache cache;
     TautologyTree<CHAIN> tree;
     CombinatorialProgress* progress;
 
-    void processChains(ChainCollection<CHAIN>& collection)
+    void processChildrenChains(const CHAIN& chain, ChainCollection<CHAIN>& collection)
     {
-        for (size_t i = 0; i < collection.conditionCount(); ++i) {
-            ChainCollection<CHAIN> childCollection;
-            CHAIN& chain = collection[i];
-            auto batch = progress->createBatch(chain.getClause().size(),
-                                               collection.conditionCount() - i - 1);
+        if (!config.hasFilterEmptyFoci() || collection.hasFoci()) {
 
-            tree.updateDeduction(chain);
-            if (chain.deducesItself())
-                continue;
-
-            if (isExtendable(chain)) {
-                // need conjunction with everything
-                combine(childCollection, collection, i, false);
-            }
-            else if (collection.hasFoci()) {
-                // need conjunction with foci only
-                combine(childCollection, collection, i, true);
-            }
-            else {
-                // do not need childCollection at all
-            }
-
-            processChildrenChains(chain, childCollection);
-        }
-    }
-
-    void processChildrenChains(const CHAIN& chain, ChainCollection<CHAIN>& childCollection)
-    {
-        if (!config.hasFilterEmptyFoci() || childCollection.hasFoci()) {
             if (isStorable(chain)) {
-                Selector selector = createSelectorOfStorable(chain, childCollection);
+                BLOCK_INC_TIMER(st, t, "Digger::processChildrenChains - store");
+
+                // return singleton selector to avoid allocations
+                const Selector& selector = initializeSelectorOfStorable(chain, collection);
                 if (isStorable(selector)) {
-                    storage.store(chain, childCollection, selector, predicateSums);
+                    storage.store(chain, collection, selector, predicateSums);
                 }
             }
             progress->increment(1);
+
             if (isExtendable(chain)) {
-                processChains(childCollection);
+                for (size_t i = 0; i < collection.conditionCount(); ++i) {
+                    ChainCollection<CHAIN> childCollection;
+
+                    CHAIN& chain = collection[i];
+                    auto batch = progress->createBatch(chain.getClause().size(),
+                                                       collection.conditionCount() - i - 1);
+
+                    {
+                        BLOCK_INC_TIMER(st, t, "Digger::processChildrenChains - for loop");
+
+                        tree.updateDeduction(chain);
+                        if (chain.deducesItself())
+                            continue;
+
+                        if (isExtendable(chain)) {
+                            // need conjunction with everything
+                            combine(childCollection, collection, i, false);
+                        }
+                        else if (collection.hasFoci()) {
+                            // need conjunction with foci only
+                            combine(childCollection, collection, i, true);
+                        }
+                        else {
+                            // do not need childCollection at all
+                        }
+                    }
+
+                    processChildrenChains(chain, childCollection);
+                }
             }
         }
     }
@@ -147,8 +166,10 @@ private:
     void combine(ChainCollection<CHAIN>& target,
                  ChainCollection<CHAIN>& parent,
                  const size_t conditionChainIndex,
-                 bool onlyFoci) const
+                 bool onlyFoci)
     {
+        BLOCK_INC_TIMER(st, t, "Digger::combine");
+
         CHAIN& conditionChain = parent[conditionChainIndex];
 
         size_t begin = conditionChainIndex + 1;
@@ -160,32 +181,61 @@ private:
 
         target.reserve(parent.size() - begin + bothLen);
         for (size_t i = begin; i < parent.size(); ++i) {
-            combineInternal(target, conditionChain, parent[i], false);
+            CHAIN& secondChain = parent[i];
+            if (secondChain.isCached()) {
+                combineByCache(target, conditionChain, secondChain);
+            }
+            else {
+                combineByConjunction(target, conditionChain, secondChain);
+            }
         }
         for (size_t i = parent.firstFocusIndex(); i < conditionChainIndex; ++i) {
-            combineInternal(target, conditionChain, parent[i], true);
+            combineByCache(target, conditionChain, parent[i]);
         }
     }
 
-    void combineInternal(ChainCollection<CHAIN>& target,
-                         const CHAIN& conditionChain,
-                         const CHAIN& secondChain,
-                         const bool toFocus) const
+    inline void combineByConjunction(ChainCollection<CHAIN>& target,
+                              const CHAIN& conditionChain,
+                              const CHAIN& secondChain)
     {
+        BLOCK_INC_TIMER(st, t, "Digger::combineByConjunction");
+
         if (isNonRedundant(conditionChain, secondChain)) {
-            CHAIN newChain(conditionChain, secondChain, toFocus);
-            if (isCandidate(newChain)) {
+            CHAIN newChain(conditionChain, secondChain);
+            addSumToCache(newChain);
+            if (isNonTautological(conditionChain, secondChain)
+                    && isCandidate(newChain)) {
                 target.append(std::move(newChain));
             }
         }
     }
 
-    bool isNonRedundant(const CHAIN& parent, const CHAIN& chain) const
+    inline void combineByCache(ChainCollection<CHAIN>& target,
+                        const CHAIN& conditionChain,
+                        const CHAIN& secondChain)
     {
-        size_t curr = chain.getClause().back();
+        BLOCK_INC_TIMER(st, t, "Digger::combineByCache");
 
+        if (isNonRedundant(conditionChain, secondChain)
+                && isNonTautological(conditionChain, secondChain)) {
+            CHAIN newChain(conditionChain, secondChain, 0);
+            double sum = getSumFromCache(newChain);
+
+            // not being in cache means that the conjunction is not frequent
+            if (sum != Cache::NOT_IN_CACHE) {
+                newChain.setSum(sum);
+                if (isCandidate(newChain)) {
+                    target.append(std::move(newChain));
+                }
+            }
+        }
+    }
+
+    inline bool isNonRedundant(const CHAIN& parent, const CHAIN& chain) const
+    {
         if (parent.getClause().size() > 0) {
             size_t pref = parent.getClause().back();
+            size_t curr = chain.getClause().back();
 
             if (pref == curr) {
                 // Filter of focus even if disjoint is not defined
@@ -201,14 +251,22 @@ private:
             }
         }
 
-        if (config.hasFilterExcluded() && parent.deduces(curr)) {
-            return false;
+        return true;
+    }
+
+    inline bool isNonTautological(const CHAIN& parent, const CHAIN& chain) const
+    {
+        if (config.hasFilterExcluded()) {
+            size_t curr = chain.getClause().back();
+            if (parent.deduces(curr)) {
+                return false;
+            }
         }
 
         return true;
     }
 
-    bool isCandidate(const CHAIN& chain) const
+    inline bool isCandidate(const CHAIN& chain) const
     {
         //cout << "chain.getSum() = " << chain.getSum() << " config.getMinSum() = " << config.getMinSum() << endl;
         if (chain.isCondition() && chain.getSum() >= config.getMinSum())
@@ -220,14 +278,14 @@ private:
         return false;
     }
 
-    bool isExtendable(const CHAIN& chain) const
+    inline bool isExtendable(const CHAIN& chain) const
     {
         return chain.getClause().size() < config.getMaxLength()
             && chain.getSum() >= config.getMinSum()
             && storage.size() < config.getMaxResults();
     }
 
-    bool isStorable(const CHAIN& chain) const
+    inline bool isStorable(const CHAIN& chain) const
     {
         return chain.getClause().size() >= config.getMinLength()
             && chain.getSum() >= config.getMinSum()
@@ -235,23 +293,40 @@ private:
             && storage.size() < config.getMaxResults();
     }
 
-    bool isStorable(const Selector& selector) const
+    inline bool isStorable(const Selector& selector) const
     { return (!config.hasFilterEmptyFoci() || selector.getSelectedCount() > 0); }
 
-    Selector createSelectorOfStorable(const CHAIN& chain, const ChainCollection<CHAIN>& collection) const
+    inline const Selector& initializeSelectorOfStorable(const CHAIN& chain, const ChainCollection<CHAIN>& collection)
     {
-        bool constant = config.getMinConditionalFocusSupport() <= 0.0f;
-        Selector result(collection.focusCount(), constant);
+        bool constant = config.getMinConditionalFocusSupport() <= 0.0;
+        selectorSingleton.initialize(collection.focusCount(), constant);
         if (!constant) {
-            float chainSumReciprocal = 1.0f / chain.getSum();
             for (size_t i = 0; i < collection.focusCount(); ++i) {
                 const CHAIN& focus = collection[i + collection.firstFocusIndex()];
-                if (focus.getSum() * chainSumReciprocal < config.getMinConditionalFocusSupport()) {
-                    result.unselect(i);
+                if (1.0 * focus.getSum() / chain.getSum() < config.getMinConditionalFocusSupport()) {
+                    selectorSingleton.unselect(i);
                 }
             }
         }
 
-        return result;
+        return selectorSingleton;
+    }
+
+    inline void addSumToCache(const CHAIN& chain)
+    {
+        BLOCK_INC_TIMER(st, t, "Digger::addSumToCache");
+
+        Clause clause = chain.getClause().clone();
+        clause.sort();
+        cache.add(clause, chain.getSum());
+    }
+
+    inline double getSumFromCache(const CHAIN& chain) const
+    {
+        BLOCK_INC_TIMER(st, t, "Digger::getSumFromCache");
+
+        Clause clause = chain.getClause().clone();
+        clause.sort();
+        return cache.get(clause);
     }
 };

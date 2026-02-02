@@ -18,13 +18,17 @@
 
 
 #include "common.h"
+#include "timer.h"
 #include "dig/BitChain.h"
 #include "dig/FloatChain.h"
 #include "dig/CallbackCaller.h"
+#include "dig/AssocStorage.h"
 #include "dig/Config.h"
 #include "dig/ChainCollection.h"
 #include "dig/Digger.h"
 
+
+#define BIT_CHAIN BitChain
 
 #ifdef __arm64__
     // MacOS
@@ -47,33 +51,8 @@
 //define GOGUEN_CHAIN FubitChain<TNorm::GOGUEN, 8>
 
 
-
-template <typename CHAIN, typename STORAGE>
-List runDigger(List data,
-               LogicalVector isCondition,
-               LogicalVector isFocus,
-               Function callback,
-               const Config& config)
+bool dataAreAllLogical(const List& data)
 {
-        STORAGE caller(config, callback);
-        Digger<CHAIN, STORAGE> digger(config, data, isCondition, isFocus, caller);
-        digger.run();
-
-        return caller.getResult();
-}
-
-
-// [[Rcpp::plugins(openmp)]]
-// [[Rcpp::export]]
-List dig_(List data,
-          CharacterVector namesVector,
-          LogicalVector isCondition,
-          LogicalVector isFocus,
-          Function callback,
-          List confList)
-{
-    LogStartEnd l("dig_");
-
     bool allLogical = true;
     for (R_xlen_t i = 0; i < data.size(); ++i) {
         if (!Rf_isLogical(data[i])) {
@@ -82,34 +61,116 @@ List dig_(List data,
         }
     }
 
+    return allLogical;
+}
+
+
+template <typename CHAIN>
+List runDig(const List& data,
+            const LogicalVector& isCondition,
+            const LogicalVector& isFocus,
+            const Function& callback,
+            const Config& config)
+{
+    using STORAGE = CallbackCaller<CHAIN>;
+
+    START_TIMER(t, "runDig - initialization");
+    STORAGE storage(config, callback);
+    Digger<CHAIN, STORAGE> digger(config, data, isCondition, isFocus, storage);
+    STOP_TIMER(t);
+
+    BLOCK_TIMER(bt, "runDig - run");
+    digger.run();
+
+    return storage.getResult();
+}
+
+
+// [[Rcpp::plugins(openmp)]]
+// [[Rcpp::export]]
+List dig_(const List& data,
+          const CharacterVector& namesVector,
+          const LogicalVector& isCondition,
+          const LogicalVector& isFocus,
+          const Function& callback,
+          const List& confList)
+{
+    START_TIMER(bt, "dig_");
+
+    bool allLogical = dataAreAllLogical(data);
     Config config(confList, namesVector);
     List result;
 
     if (allLogical) {
-        //cout << "BitChain\n";
-        using CHAIN = BitChain;
-        using STORAGE = CallbackCaller<CHAIN>;
-
-        result = runDigger<CHAIN, STORAGE>(data, isCondition, isFocus, callback, config);
+        result = runDig<BIT_CHAIN>(data, isCondition, isFocus, callback, config);
     }
     else if (config.getTNorm() == TNorm::GOEDEL) {
-        //cout << "Goedel\n";
-        using CHAIN = GOEDEL_CHAIN;
-        using STORAGE = CallbackCaller<CHAIN>;
-        result = runDigger<CHAIN, STORAGE>(data, isCondition, isFocus, callback, config);
+        result = runDig<GOEDEL_CHAIN>(data, isCondition, isFocus, callback, config);
     }
     else if (config.getTNorm() == TNorm::GOGUEN) {
-        //cout << "Goguen\n";
-        using CHAIN = GOGUEN_CHAIN;
-        using STORAGE = CallbackCaller<CHAIN>;
-        result = runDigger<CHAIN, STORAGE>(data, isCondition, isFocus, callback, config);
+        result = runDig<GOGUEN_CHAIN>(data, isCondition, isFocus, callback, config);
     }
     else if (config.getTNorm() == TNorm::LUKASIEWICZ) {
-        //cout << "Lukas\n";
-        using CHAIN = LUKASIEWICZ_CHAIN;
-        using STORAGE = CallbackCaller<CHAIN>;
-        result = runDigger<CHAIN, STORAGE>(data, isCondition, isFocus, callback, config);
+        result = runDig<LUKASIEWICZ_CHAIN>(data, isCondition, isFocus, callback, config);
     }
+
+    STOP_TIMER(bt);
+    CLEAR_INC_TIMERS();
+
+    return result;
+}
+
+
+template <typename CHAIN>
+List runDigAssoc(const List& data,
+                 const LogicalVector& isCondition,
+                 const LogicalVector& isFocus,
+                 const Config& config)
+{
+    START_TIMER(t1, "runDigAssoc - initialization");
+    using STORAGE = AssocStorage<CHAIN>;
+
+    STORAGE storage(config);
+    Digger<CHAIN, STORAGE> digger(config, data, isCondition, isFocus, storage);
+
+    STOP_TIMER(t1);
+    START_TIMER(t2, "runDigAssoc - run");
+    digger.run();
+    STOP_TIMER(t2);
+
+    return storage.getResult();
+}
+
+
+// [[Rcpp::plugins(openmp)]]
+// [[Rcpp::export]]
+List dig_associations_(const List& data,
+                       const CharacterVector& namesVector,
+                       const LogicalVector& isCondition,
+                       const LogicalVector& isFocus,
+                       const List& confList)
+{
+    START_TIMER(bt, "dig_associations_");
+
+    bool allLogical = dataAreAllLogical(data);
+    Config config(confList, namesVector);
+    List result;
+
+    if (allLogical) {
+        result = runDigAssoc<BIT_CHAIN>(data, isCondition, isFocus, config);
+    }
+    else if (config.getTNorm() == TNorm::GOEDEL) {
+        result = runDigAssoc<GOEDEL_CHAIN>(data, isCondition, isFocus, config);
+    }
+    else if (config.getTNorm() == TNorm::GOGUEN) {
+        result = runDigAssoc<GOGUEN_CHAIN>(data, isCondition, isFocus, config);
+    }
+    else if (config.getTNorm() == TNorm::LUKASIEWICZ) {
+        result = runDigAssoc<LUKASIEWICZ_CHAIN>(data, isCondition, isFocus, config);
+    }
+
+    STOP_TIMER(bt);
+    CLEAR_INC_TIMERS();
 
     return result;
 }

@@ -17,8 +17,9 @@
 #######################################################################
 
 
-#' Obtain truth-degrees of conditions
+#' @title Obtain truth-degrees of conditions
 #'
+#' @description
 #' Given a data frame or matrix of truth values for predicates, compute the
 #' truth values of a set of conditions expressed as elementary conjunctions.
 #'

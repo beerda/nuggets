@@ -1,6 +1,7 @@
 library(stringr)
+library(rbenchmark)
 
-repeats <- 10
+replications <- 10
 
 # parse command line arguments -------------------------------------------------
 args <- commandArgs(trailingOnly = TRUE)
@@ -46,13 +47,9 @@ library(nuggets)
 result <- NULL
 for (test in tests) {
     cat("Executing test: ", test, "\n", sep = "")
-    elapsed <- lapply(seq_len(repeats), function(i) {
-        source(test)$value["elapsed"]
-    })
-    elapsed <- as.numeric(elapsed)
-    elapsed <- mean(elapsed)
-    result <- rbind(result,
-                    data.frame(test = test, elapsed = elapsed))
+    res <- source(test)$value
+    res$file <- test
+    result <- rbind(result, res)
 }
 
 

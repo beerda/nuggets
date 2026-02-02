@@ -19,20 +19,28 @@
 
 #pragma once
 
-// [[Rcpp::plugins(cpp17)]]
-// [[Rcpp::depends(BH)]]
+// [[Rcpp::plugins(cpp20)]]
 // [[Rcpp::depends(RcppThread)]]
 
+#include <Rcpp.h>
 #include <cmath>
 #include <chrono>
-#include <Rcpp.h>
 
 using namespace Rcpp;
 using namespace std;
 
 
+// if testthat.h is included, set debug mode
+#ifdef TESTTHAT_HPP
+#    define DEBUG 1
+#endif
+
 #ifndef DEBUG
 //#    define DEBUG 1
+#endif
+
+#ifndef PERFORMANCE_MEASUREMENT
+//#    define PERFORMANCE_MEASUREMENT 1
 #endif
 
 #ifdef DEBUG
@@ -74,33 +82,3 @@ enum PredicateType {
 };
 
 
-
-
-// /*
-class LogStartEnd {
-public:
-    LogStartEnd(const std::string &what)
-    { }
-};
-/*/
-class LogStartEnd {
-    std::string what;
-    std::chrono::steady_clock::time_point start;
-
-public:
-    LogStartEnd(const std::string &what)
-        : what(what)
-    {
-        start = std::chrono::steady_clock::now();
-        Rcout << "BEGIN " << what << std::endl;
-    }
-
-    ~LogStartEnd()
-    {
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        Rcout << "END " << what << ": "  <<
-            (std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0) <<
-            "[ms]" << std::endl;
-    }
-};
-// */

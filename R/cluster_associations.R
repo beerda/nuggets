@@ -17,8 +17,9 @@
 #######################################################################
 
 
-#' Cluster association rules
+#' @title Cluster association rules
 #'
+#' @description
 #' This function clusters association rules based on the selected numeric
 #' attribute `by` (e.g., confidence or lift) and summarizes the clusters.
 #' The clustering is performed using the k-means algorithm.
@@ -39,7 +40,7 @@
 #' @param predicates_in_label The number of most common predicates to include
 #'    in the cluster label. The default is 2.
 #'
-#' @return A tibble with one row per cluster. The columns are:
+#' @return A tibble with one row per (cluster, consequent) pair. The columns are:
 #' - `cluster`: the cluster number;
 #' - `cluster_label`: a label for the cluster, consisting of the number of rules
 #'     in the cluster and the most common predicates in the antecedents of those
@@ -61,11 +62,13 @@
 #'                           antecedent = everything(),
 #'                           consequent = everything(),
 #'                           max_length = 3,
-#'                           min_support = 0.2,
-#'                           measures = c("lift", "conviction"))
+#'                           min_support = 0.2)
 #'
 #' # Cluster the found rules
 #' clu <- cluster_associations(rules, 10, "lift")
+#'
+#' # Print the number of clusters
+#' length(unique(clu$cluster))
 #'
 #' \dontrun{
 #' # Plot the clustered rules
@@ -106,13 +109,23 @@ cluster_associations <- function(x,
                               error_context = list(arg_x = "x",
                                                    arg_value = "by",
                                                    call = current_env()))
-
-    if (n >= nrow(mat)) {
-        cli_abort(c(
-            "The number of clusters {.arg n} must be less than the number of unique antecedents in {.arg x}.",
-            "i" = "The number of unique antecedents in {.arg x} is {nrow(mat)}.",
-            "x" = "You provided {.arg n} = {n}."
+    dup <- duplicated(mat, MARGIN = 1)
+    num_uniq <- sum(!dup)
+    if (n >= num_uniq) {
+        cli_warn(c(
+            "{.fn cluster_associations}: The number of clusters {.arg n} should be less than the number of distinct data points in {.arg x}.",
+            "i" = "The number of distinct data points in {.arg x} is {num_uniq}.",
+            "!" = "You provided {.arg n} = {n}.",
+            ">" = "{num_uniq} clusters will be created instead."
         ))
+        n <- num_uniq
+    }
+
+    if (n == nrow(mat)) {
+        # Each point is its own cluster; no need to run k-means
+        # However, Lloyd method is known to handle that properly
+        # (surprisingly, Hartigan-Wong fails in such case)
+        algorithm <- "Lloyd"
     }
 
     # cluster and aggregate measures by clusters
@@ -144,8 +157,10 @@ cluster_associations <- function(x,
         tab <- parse_condition(a)
         tab <- unlist(tab, use.names = FALSE)
         tab <- table(tab)
+        tab <- sort(tab, decreasing = TRUE)
+        tab <- as.table(tab)
 
-        sort(tab, decreasing = TRUE)
+        tab
     })
 
     # create cluster labels

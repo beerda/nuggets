@@ -24,22 +24,23 @@ scatterFilterModule <- function(id, rules, meta) {
     }
 
     list(ui = function() {
-            tabPanel("XY-Scatter",
-                infoBox("Select rules by drawing a rectangle around them on the plot."),
-                plotOutput(NS(id, "scatterPlot"), brush = NS(id, "scatterPlotBrush")),
-                br(),
-                selectInput(NS(id, "scatterX"), "X-axis", choices = choices, selected = choices[1]),
-                selectInput(NS(id, "scatterY"), "Y-axis", choices = choices, selected = choices[2]),
-                selectInput(NS(id, "scatterColor"), "Color", choices = choices, selected = choices[3]),
-                hr(),
-                actionButton(NS(id, "resetButton"), "Reset"),
-                actionButton(NS(id, "resetAllButton"), "Reset all")
+            filterTabPanel(title = "XY-Scatter",
+                           value = "XY-Scatter",
+                           info = "Select rules by drawing a rectangle around them on the plot.",
+                shiny::plotOutput(shiny::NS(id, "scatterPlot"), brush = shiny::NS(id, "scatterPlotBrush")),
+                htmltools::br(),
+                shiny::selectInput(shiny::NS(id, "scatterX"), "X-axis", choices = choices, selected = choices[1]),
+                shiny::selectInput(shiny::NS(id, "scatterY"), "Y-axis", choices = choices, selected = choices[2]),
+                shiny::selectInput(shiny::NS(id, "scatterColor"), "Color", choices = choices, selected = choices[3]),
+                htmltools::hr(),
+                shiny::actionButton(shiny::NS(id, "resetButton"), "Reset"),
+                shiny::actionButton(shiny::NS(id, "resetAllButton"), "Reset all")
             )
         },
 
         server = function(reset_all_trigger) {
-            moduleServer(id, function(input, output, session) {
-                output$scatterPlot <- renderPlot({
+            shiny::moduleServer(id, function(input, output, session) {
+                output$scatterPlot <- shiny::renderPlot({
                     res <- rules
                     ggplot(res) +
                         aes(x = .data[[input$scatterX]],
@@ -50,18 +51,18 @@ scatterFilterModule <- function(id, rules, meta) {
                         theme(legend.position = "bottom")
                 }, res = 96)
 
-                observeEvent(input$resetButton, {
-                    session$resetBrush(NS(id, "scatterPlotBrush"))
+                shiny::observeEvent(input$resetButton, {
+                    session$resetBrush(shiny::NS(id, "scatterPlotBrush"))
                 })
 
-                observeEvent(input$resetAllButton, {
+                shiny::observeEvent(input$resetAllButton, {
                     reset_all_trigger(Sys.time())
                 })
             })
         },
 
         filter = function(input) {
-            brush <- input[[NS(id, "scatterPlotBrush")]]
+            brush <- input[[shiny::NS(id, "scatterPlotBrush")]]
             if (is.null(brush)) {
                 return(rep(TRUE, nrow(rules)))
             }
@@ -71,13 +72,13 @@ scatterFilterModule <- function(id, rules, meta) {
                 # is created using .data[[input$scatterX]] etc.
                 gsub("\\.data\\[\\[\"(.*)\"\\]\\]", "\\1", x)
             })
-            res <- brushedPoints(rules, brush, allRows = TRUE)
+            res <- shiny::brushedPoints(rules, brush, allRows = TRUE)
 
             res$selected_
         },
 
         reset = function(session) {
-            session$resetBrush(NS(id, "scatterPlotBrush"))
+            session$resetBrush(shiny::NS(id, "scatterPlotBrush"))
         }
     )
 }

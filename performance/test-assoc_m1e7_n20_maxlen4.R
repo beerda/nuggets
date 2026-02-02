@@ -1,5 +1,5 @@
 m <- 10^7
-n <- 10
+n <- 20
 conf <- 0.7
 supp <- 0.001
 
@@ -8,7 +8,8 @@ d <- matrix(sample(c(T, F), m * n, replace = TRUE),
             ncol = n)
 colnames(d) <- letters[seq_len(n)]
 
-system.time({
+# replications comes from run.R
+res <- benchmark(replications = replications, {
     rules <- dig_associations(d,
                               min_support = supp,
                               min_length = 0,
@@ -17,3 +18,5 @@ system.time({
                               contingency_table = TRUE,
                               threads = 1)
 })
+
+res
