@@ -1,3 +1,7 @@
+# nuggets 2.2.0
+- released: ???
+- added is_logicalish()
+
 # nuggets 2.1.1
 - released: 2026-02-03
 - performance improvements
