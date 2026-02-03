@@ -196,7 +196,7 @@ dig_associations <- function(x,
     if (lifecycle::is_present(contingency_table)) {
         deprecate_warn(when = "2.2.0",
                        what = "nuggets::dig_associations(contingency_table)",
-                       details = "The `contingency_table` argument is deprecated and will be removed in future versions. Contingency table is always added to the result.")
+                       details = "The `contingency_table` argument is deprecated and will be removed in future versions. dig_associations() works as 'contingency_table = TRUE' would be specified by default.")
     } else {
         contingency_table <- TRUE
     }
