@@ -344,7 +344,6 @@ dig <- function(x,
                  error_context) {
     cols <- .convert_data_to_list(x,
                                   error_context = error_context)
-
     condition <- enquo(condition)
     focus <- enquo(focus)
     condition_cols <- .extract_cols(cols,
@@ -359,6 +358,9 @@ dig <- function(x,
                                allow_empty = TRUE,
                                error_context = list(arg_selection = error_context$arg_focus,
                                                     call = error_context$call))
+
+    logicalish <- vapply(cols, is_logicalish, logical(1))
+    cols[logicalish] <- lapply(cols[logicalish], as.logical)
 
     .must_be_vector_or_factor(disjoint,
                               null = TRUE,
