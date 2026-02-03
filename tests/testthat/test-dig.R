@@ -30,6 +30,19 @@ test_that("numeric matrix", {
 })
 
 
+test_that("integer matrix", {
+    m <- matrix(1L, ncol = 4, nrow = 10)
+    res <- dig(m, function() 1)
+
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(length(res), 16)
+
+    attributes(res) <- NULL
+    expect_equal(res, rep(list(1), 16))
+})
+
+
 test_that("logical matrix", {
     m <- matrix(T, ncol = 4, nrow = 10)
     res <- dig(m, function() 1)

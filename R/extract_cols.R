@@ -61,7 +61,8 @@
     selected[indices] <- TRUE
 
     cols <- cols[indices]
-    logicals <- vapply(cols, is.logical, logical(1))
+
+    logicals <- vapply(cols, is_logicalish, logical(1))
     doubles <- vapply(cols, is_degree, logical(1))
     test <- if (allow_numeric) logicals | doubles else logicals
 
