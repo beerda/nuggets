@@ -19,8 +19,7 @@ add_interest(x, ...)
 - x:
 
   A nugget of flavour `associations`, typically created with
-  [`dig_associations()`](https://beerda.github.io/nuggets/reference/dig_associations.md)
-  with argument `contingency_table = TRUE`.
+  [`dig_associations()`](https://beerda.github.io/nuggets/reference/dig_associations.md).
 
 - measures:
 
@@ -64,9 +63,8 @@ The input nugget object must contain the columns `pp` (positive
 antecedent & positive consequent), `pn` (positive antecedent & negative
 consequent), `np` (negative antecedent & positive consequent), and `nn`
 (negative antecedent & negative consequent), representing the counts
-from the contingency table. These columns are typically produced by
-[`dig_associations()`](https://beerda.github.io/nuggets/reference/dig_associations.md)
-when the `contingency_table` argument is set to `TRUE`.
+from the contingency table. These columns are automatically produced by
+[`dig_associations()`](https://beerda.github.io/nuggets/reference/dig_associations.md).
 
 The supported interest measures that can be calculated include:
 
@@ -268,8 +266,7 @@ rules <- dig_associations(d,
                           antecedent = !starts_with("mpg"),
                           consequent = starts_with("mpg"),
                           min_support = 0.3,
-                          min_confidence = 0.8,
-                          contingency_table = TRUE)
+                          min_confidence = 0.8)
 rules <- add_interest(rules,
                    measures = c("conviction", "leverage", "jaccard"))
 ```

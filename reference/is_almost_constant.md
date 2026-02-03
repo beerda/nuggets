@@ -5,6 +5,9 @@ its elements. The function returns `TRUE` if the proportion of the most
 frequent value in `x` is greater than or equal to the specified
 `threshold`.
 
+This is useful for detecting low-variability or degenerate variables,
+which may be uninformative in modeling or analysis.
+
 ## Usage
 
 ``` r
@@ -38,11 +41,6 @@ A logical scalar. Returns `TRUE` in the following cases:
 
 - The proportion of the most frequent value in `x` is greater than or
   equal to `threshold`. Otherwise, returns `FALSE`.
-
-## Details
-
-This is useful for detecting low-variability or degenerate variables,
-which may be uninformative in modeling or analysis.
 
 ## See also
 

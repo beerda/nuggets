@@ -9,6 +9,24 @@ to perform some analysis and return an object (often a list)
 representing a pattern or patterns related to the condition. The results
 of all calls are returned as a list.
 
+The callback function `f` may accept a number of arguments (see `f`
+argument description). The algorithm automatically provides
+condition-related information to `f` based on which arguments are
+present.
+
+In addition to conditions, the function can evaluate *focus* predicates
+(foci). Foci are specified separately and are tested within each
+generated condition. Extra information about them is then passed to `f`.
+
+Restrictions may be imposed on generated conditions, such as:
+
+- minimum and maximum condition length (`min_length`, `max_length`);
+
+- minimum condition support (`min_support`);
+
+- minimum focus support (`min_focus_support`), i.e. support of rows
+  where both the condition and the focus hold.
+
 ## Usage
 
 ``` r
@@ -226,24 +244,6 @@ A list of results returned by the callback function `f`.
 
 ## Details
 
-The callback function `f` may accept a number of arguments (see `f`
-argument description). The algorithm automatically provides
-condition-related information to `f` based on which arguments are
-present.
-
-In addition to conditions, the function can evaluate *focus* predicates
-(foci). Foci are specified separately and are tested within each
-generated condition. Extra information about them is then passed to `f`.
-
-Restrictions may be imposed on generated conditions, such as:
-
-- minimum and maximum condition length (`min_length`, `max_length`);
-
-- minimum condition support (`min_support`);
-
-- minimum focus support (`min_focus_support`), i.e. support of rows
-  where both the condition and the focus hold.
-
 Let \\P\\ be the set of condition predicates selected by `condition` and
 \\E\\ be the set of focus predicates selected by `focus`. The function
 generates all possible conditions as elementary conjunctions of distinct
@@ -422,7 +422,7 @@ do.call(rbind, lapply(res, as_tibble))
 #> 3 {Petal.Length=(3.95;Inf],Sepal.Width=(-Inf;3.2]}   0.527
 #> 4 {Sepal.Length=(-Inf;6.1]}                          0.633
 #> 5 {Petal.Length=(3.95;Inf]}                          0.593
-#> 6 {Petal.Width=(-Inf;1.3]}                           0.520
+#> 6 {Petal.Width=(-Inf;1.3]}                           0.52 
 
 # Within each condition, evaluate also supports of columns starting with
 # "Species"
@@ -445,7 +445,7 @@ do.call(rbind, lapply(res, as_tibble))
 #> 3 {Petal.Length=(3.95;I…             0.527            0                    0.247
 #> 4 {Sepal.Length=(-Inf;6…             0.633            0.333                0.227
 #> 5 {Petal.Length=(3.95;I…             0.593            0                    0.26 
-#> 6 {Petal.Width=(-Inf;1.…             0.520            0.333                0.187
+#> 6 {Petal.Width=(-Inf;1.…             0.52             0.333                0.187
 #> # ℹ 1 more variable: `Species=virginica` <dbl>
 
 # Multiple patterns per condition based on foci
@@ -484,7 +484,7 @@ do.call(rbind, lapply(res, as_tibble))
 #> 13 {Petal.Length=(3.95;Inf]}                           0.593 Spec…        0     
 #> 14 {Petal.Length=(3.95;Inf]}                           0.593 Spec…        0.26  
 #> 15 {Petal.Length=(3.95;Inf]}                           0.593 Spec…        0.333 
-#> 16 {Petal.Width=(-Inf;1.3]}                            0.520 Spec…        0.333 
-#> 17 {Petal.Width=(-Inf;1.3]}                            0.520 Spec…        0.187 
-#> 18 {Petal.Width=(-Inf;1.3]}                            0.520 Spec…        0     
+#> 16 {Petal.Width=(-Inf;1.3]}                            0.52  Spec…        0.333 
+#> 17 {Petal.Width=(-Inf;1.3]}                            0.52  Spec…        0.187 
+#> 18 {Petal.Width=(-Inf;1.3]}                            0.52  Spec…        0     
 ```

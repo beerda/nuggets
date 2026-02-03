@@ -11,13 +11,21 @@ antecedents and c is a consequent. The intent of searching for
 tautologies is to find rules that are always true, which may be
 used for filtering of further generated conditions. The resulting
 rules may be used as a basis for the list of excluded formulae
-(see the excluded argument of dig())."><meta property="og:description" content="This function finds tautologies in a dataset, i.e., rules of the form
+(see the excluded argument of dig()).
+The search for tautologies is performed by iteratively
+searching for rules with increasing length of the antecedent.
+Rules found in previous iterations are used as excluded
+argument in the next iteration."><meta property="og:description" content="This function finds tautologies in a dataset, i.e., rules of the form
 {a1 &amp;amp; a2 &amp;amp; ... &amp;amp; an} =&amp;gt; {c} where a1, a2, ..., an are
 antecedents and c is a consequent. The intent of searching for
 tautologies is to find rules that are always true, which may be
 used for filtering of further generated conditions. The resulting
 rules may be used as a basis for the list of excluded formulae
-(see the excluded argument of dig())."><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
+(see the excluded argument of dig()).
+The search for tautologies is performed by iteratively
+searching for rules with increasing length of the antecedent.
+Rules found in previous iterations are used as excluded
+argument in the next iteration."><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -25,7 +33,7 @@ rules may be used as a basis for the list of excluded formulae
 
     <a class="navbar-brand me-2" href="../index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,7 +65,7 @@ rules may be used as a basis for the list of excluded formulae
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Find tautologies or "almost tautologies" in a dataset</h1>
-      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/v2.1.0/R/dig_tautologies.R" class="external-link"><code>R/dig_tautologies.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/R/dig_tautologies.R" class="external-link"><code>R/dig_tautologies.R</code></a></small>
       <div class="d-none name"><code>dig_tautologies.Rd</code></div>
     </div>
 
@@ -69,6 +77,10 @@ tautologies is to find rules that are always true, which may be
 used for filtering of further generated conditions. The resulting
 rules may be used as a basis for the list of <code>excluded</code> formulae
 (see the <code>excluded</code> argument of <code><a href="dig.html">dig()</a></code>).</p>
+<p>The search for tautologies is performed by iteratively
+searching for rules with increasing length of the antecedent.
+Rules found in previous iterations are used as <code>excluded</code>
+argument in the next iteration.</p>
     </div>
 
     <div class="section level2">
@@ -82,8 +94,7 @@ rules may be used as a basis for the list of <code>excluded</code> formulae
 <span>  min_coverage <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  min_support <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  min_confidence <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  contingency_table <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  measures <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  contingency_table <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  t_norm <span class="op">=</span> <span class="st">"goguen"</span>,</span>
 <span>  max_results <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -144,23 +155,13 @@ is limited only by the number of available predicates.</p></dd>
 
 
 <dt id="arg-contingency-table">contingency_table<a class="anchor" aria-label="anchor" href="#arg-contingency-table"></a></dt>
-<dd><p>a logical value indicating whether to provide a contingency
+<dd><p>(Deprecated.)
+A logical value indicating whether to provide a contingency
 table for each rule. If <code>TRUE</code>, the columns <code>pp</code>, <code>pn</code>, <code>np</code>, and <code>nn</code> are
 added to the output table. These columns contain the number of rows satisfying
 the antecedent and the consequent, the antecedent but not the consequent,
 the consequent but not the antecedent, and neither the antecedent nor the
 consequent, respectively.</p></dd>
-
-
-<dt id="arg-measures">measures<a class="anchor" aria-label="anchor" href="#arg-measures"></a></dt>
-<dd><p>(Deprecated. Search for tautologies using
-<code>dig_tautologies(contingency_table = TRUE)</code> and use the <code><a href="add_interest.html">add_interest()</a></code>
-function on the result to compute additional measures.)
-A character vector specifying the additional quality measures to compute.
-If <code>NULL</code>, no additional measures are computed. Possible values are <code>"lift"</code>,
-<code>"conviction"</code>, <code>"added_value"</code>.
-See <a href="https://mhahsler.github.io/arules/docs/measures" class="external-link">https://mhahsler.github.io/arules/docs/measures</a>
-for a description of the measures.</p></dd>
 
 
 <dt id="arg-t-norm">t_norm<a class="anchor" aria-label="anchor" href="#arg-t-norm"></a></dt>
@@ -193,17 +194,20 @@ classes and which is a tibble with found tautologies in the format equal to
 the output of <code><a href="dig_associations.html">dig_associations()</a></code>.</p>
     </div>
     <div class="section level2">
-    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The search for tautologies is performed by iteratively
-searching for rules with increasing length of the antecedent.
-Rules found in previous iterations are used as <code>excluded</code>
-argument in the next iteration.</p>
-    </div>
-    <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Michal Burda</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition.html">partition</a></span><span class="op">(</span><span class="va">mtcars</span>, .breaks <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">dig_tautologies</span><span class="op">(</span><span class="va">d</span>,</span></span>
+<span class="r-in"><span>                antecedent <span class="op">=</span> <span class="fu">everything</span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                consequent <span class="op">=</span> <span class="fu">everything</span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                min_confidence <span class="op">=</span> <span class="fl">0.99</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 0</span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

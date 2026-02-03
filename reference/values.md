@@ -5,6 +5,9 @@ predicate names. Each element of `x` is expected to follow the pattern
 `<varname>=<value>`, where `<varname>` is a variable name and `<value>`
 is the associated value.
 
+If an element does not contain an equal sign (`=`), the function returns
+an empty string for that element.
+
 ## Usage
 
 ``` r
@@ -25,9 +28,6 @@ A character vector containing the `<value>` parts of predicate names in
 (`character(0)`), the function returns an empty vector (`character(0)`).
 
 ## Details
-
-If an element does not contain an equal sign (`=`), the function returns
-an empty string for that element.
 
 This function is the counterpart to
 [`var_names()`](https://beerda.github.io/nuggets/reference/var_names.md),

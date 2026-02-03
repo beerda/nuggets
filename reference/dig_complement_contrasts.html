@@ -63,7 +63,7 @@ conditions only, i.e., the condition columns in x must be logical."><meta proper
 
     <a class="navbar-brand me-2" href="../index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,7 +95,7 @@ conditions only, i.e., the condition columns in x must be logical."><meta proper
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Search for conditions that provide significant differences in selected variables to the rest of the data table</h1>
-      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/v2.1.0/R/dig_complement_contrasts.R" class="external-link"><code>R/dig_complement_contrasts.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/R/dig_complement_contrasts.R" class="external-link"><code>R/dig_complement_contrasts.R</code></a></small>
       <div class="d-none name"><code>dig_complement_contrasts.Rd</code></div>
     </div>
 
@@ -374,6 +374,44 @@ present (see also <code><a href="https://rdrr.io/r/stats/t.test.html" class="ext
     <p>Michal Burda</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition.html">partition</a></span><span class="op">(</span><span class="va">mtcars</span>, .breaks <span class="op">=</span> <span class="fl">2</span>, .keep <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">dig_complement_contrasts</span><span class="op">(</span><span class="va">d</span>,</span></span>
+<span class="r-in"><span>                         condition <span class="op">=</span> <span class="fu">where</span><span class="op">(</span><span class="va">is.logical</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                         vars <span class="op">=</span> <span class="fu">where</span><span class="op">(</span><span class="va">is.numeric</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                         min_support <span class="op">=</span> <span class="fl">0.3</span>,</span></span>
+<span class="r-in"><span>                         max_length <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 834 × 17</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    condition   support var   estimate_x estimate_y statistic    df p_value   n_x</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> {carb=(-In…   0.656 mpg       17.0       25.9       -<span style="color: #BB0000;">4.73</span>  13.8 3.36<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span>    21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> {carb=(-In…   0.656 cyl        7.05       4.55       5.11  21.3 4.44<span style="color: #949494;">e</span><span style="color: #BB0000;">-5</span>    21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> {carb=(-In…   0.656 disp     287.       124.         5.25  29.3 1.24<span style="color: #949494;">e</span><span style="color: #BB0000;">-5</span>    21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> {carb=(-In…   0.656 drat       3.38       4.01      -<span style="color: #BB0000;">3.98</span>  23.1 5.85<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span>    21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> {carb=(-In…   0.656 wt         3.65       2.39       4.63  23.7 1.08<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span>    21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> {carb=(-In…   0.656 vs         0.286      0.727     -<span style="color: #BB0000;">2.55</span>  20.3 1.91<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span>    21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> {carb=(-In…   0.656 am         0.190      0.818     -<span style="color: #BB0000;">4.18</span>  20.3 4.52<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span>    21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> {carb=(-In…   0.656 gear       3.33       4.36      -<span style="color: #BB0000;">5.22</span>  23.0 2.73<span style="color: #949494;">e</span><span style="color: #BB0000;">-5</span>    21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> {carb=(-In…   0.656 mpg       18.5       23.1       -<span style="color: #BB0000;">2.12</span>  19.1 4.70<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span>    21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> {carb=(-In…   0.656 cyl        6.76       5.09       2.98  24.9 6.34<span style="color: #949494;">e</span><span style="color: #BB0000;">-3</span>    21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 824 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 8 more variables: n_y &lt;int&gt;, conf_lo &lt;dbl&gt;, conf_hi &lt;dbl&gt;, stderr &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   alternative &lt;chr&gt;, method &lt;chr&gt;, comment &lt;chr&gt;, condition_length &lt;int&gt;</span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

@@ -4,6 +4,14 @@ Given a data frame or matrix of truth values for predicates, compute the
 truth values of a set of conditions expressed as elementary
 conjunctions.
 
+Each element of `condition` must be a character string of the format
+`"{p1,p2,p3}"`, where `"p1"`, `"p2"`, and `"p3"` are predicate names.
+The data object `x` must contain columns whose names correspond exactly
+to all predicates referenced in the conditions. Each condition is
+evaluated for every row of `x` as a conjunction of its predicates, with
+the conjunction operation determined by the `t_norm` argument. An empty
+condition (`"{}"`) is always evaluated as 1 (i.e., fully true).
+
 ## Usage
 
 ``` r
@@ -40,16 +48,6 @@ truth degrees of the conditions. The matrix has `nrow(x)` rows and
 `length(condition)` columns. The element in row *i* and column *j*
 corresponds to the truth degree of the *j*-th condition evaluated on the
 *i*-th row of `x`.
-
-## Details
-
-Each element of `condition` must be a character string of the format
-`"{p1,p2,p3}"`, where `"p1"`, `"p2"`, and `"p3"` are predicate names.
-The data object `x` must contain columns whose names correspond exactly
-to all predicates referenced in the conditions. Each condition is
-evaluated for every row of `x` as a conjunction of its predicates, with
-the conjunction operation determined by the `t_norm` argument. An empty
-condition (`"{}"`) is always evaluated as 1 (i.e., fully true).
 
 ## See also
 

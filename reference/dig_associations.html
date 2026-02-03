@@ -79,7 +79,7 @@ assuming antecedent and consequent are independent, i.e.,
 
     <a class="navbar-brand me-2" href="../index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -111,7 +111,7 @@ assuming antecedent and consequent are independent, i.e.,
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Search for association rules</h1>
-      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/v2.1.0/R/dig_associations.R" class="external-link"><code>R/dig_associations.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/R/dig_associations.R" class="external-link"><code>R/dig_associations.R</code></a></small>
       <div class="d-none name"><code>dig_associations.Rd</code></div>
     </div>
 
@@ -162,8 +162,7 @@ assuming antecedent and consequent are independent, i.e.,
 <span>  min_coverage <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  min_support <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  min_confidence <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  contingency_table <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  measures <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  contingency_table <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  t_norm <span class="op">=</span> <span class="st">"goguen"</span>,</span>
 <span>  max_results <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -172,9 +171,9 @@ assuming antecedent and consequent are independent, i.e.,
 <span>    <span class="st">"consequent"</span>, arg_disjoint <span class="op">=</span> <span class="st">"disjoint"</span>, arg_excluded <span class="op">=</span> <span class="st">"excluded"</span>, arg_min_length <span class="op">=</span></span>
 <span>    <span class="st">"min_length"</span>, arg_max_length <span class="op">=</span> <span class="st">"max_length"</span>, arg_min_coverage <span class="op">=</span> <span class="st">"min_coverage"</span>,</span>
 <span>    arg_min_support <span class="op">=</span> <span class="st">"min_support"</span>, arg_min_confidence <span class="op">=</span> <span class="st">"min_confidence"</span>,</span>
-<span>    arg_contingency_table <span class="op">=</span> <span class="st">"contingency_table"</span>, arg_measures <span class="op">=</span> <span class="st">"measures"</span>, arg_t_norm <span class="op">=</span></span>
-<span>    <span class="st">"t_norm"</span>, arg_max_results <span class="op">=</span> <span class="st">"max_results"</span>, arg_verbose <span class="op">=</span> <span class="st">"verbose"</span>, arg_threads <span class="op">=</span></span>
-<span>    <span class="st">"threads"</span>, call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>    arg_contingency_table <span class="op">=</span> <span class="st">"contingency_table"</span>, arg_t_norm <span class="op">=</span> <span class="st">"t_norm"</span>, arg_max_results <span class="op">=</span></span>
+<span>    <span class="st">"max_results"</span>, arg_verbose <span class="op">=</span> <span class="st">"verbose"</span>, arg_threads <span class="op">=</span> <span class="st">"threads"</span>, call <span class="op">=</span></span>
+<span>    <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -243,23 +242,13 @@ is limited only by the number of available predicates.</p></dd>
 
 
 <dt id="arg-contingency-table">contingency_table<a class="anchor" aria-label="anchor" href="#arg-contingency-table"></a></dt>
-<dd><p>a logical value indicating whether to provide a contingency
+<dd><p>(Deprecated. Contingency table is always added to the
+result.) A logical value indicating whether to provide a contingency
 table for each rule. If <code>TRUE</code>, the columns <code>pp</code>, <code>pn</code>, <code>np</code>, and <code>nn</code> are
 added to the output table. These columns contain the number of rows satisfying
 the antecedent and the consequent, the antecedent but not the consequent,
 the consequent but not the antecedent, and neither the antecedent nor the
 consequent, respectively.</p></dd>
-
-
-<dt id="arg-measures">measures<a class="anchor" aria-label="anchor" href="#arg-measures"></a></dt>
-<dd><p>(Deprecated. Search for associations using
-<code>dig_associations(contingency_table = TRUE)</code> and use the <code><a href="add_interest.html">add_interest()</a></code>
-function on the result to compute additional measures.)
-A character vector specifying the additional quality measures to compute.
-If <code>NULL</code>, no additional measures are computed. Possible values are <code>"lift"</code>,
-<code>"conviction"</code>, <code>"added_value"</code>.
-See <a href="https://mhahsler.github.io/arules/docs/measures" class="external-link">https://mhahsler.github.io/arules/docs/measures</a>
-for a description of the measures.</p></dd>
 
 
 <dt id="arg-t-norm">t_norm<a class="anchor" aria-label="anchor" href="#arg-t-norm"></a></dt>
@@ -300,7 +289,6 @@ of that calling function. The list must contain the following elements:</p><ul><
 <li><p><code>arg_min_support</code> - name of the argument <code>min_support</code></p></li>
 <li><p><code>arg_min_confidence</code> - name of the argument <code>min_confidence</code></p></li>
 <li><p><code>arg_contingency_table</code> - name of the argument <code>contingency_table</code></p></li>
-<li><p><code>arg_measures</code> - name of the argument <code>measures</code></p></li>
 <li><p><code>arg_t_norm</code> - name of the argument <code>t_norm</code></p></li>
 <li><p><code>arg_max_results</code> - name of the argument <code>max_results</code></p></li>
 <li><p><code>arg_verbose</code> - name of the argument <code>verbose</code></p></li>
@@ -330,7 +318,7 @@ classes, and which is a tibble with found patterns and computed quality measures
 <span class="r-in"><span>                 consequent <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"mpg"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                 min_support <span class="op">=</span> <span class="fl">0.3</span>,</span></span>
 <span class="r-in"><span>                 min_confidence <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 524 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 524 × 13</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    antecedent  consequent support confidence coverage conseq_support  lift count</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> {carb=(-In… {mpg=(-In…   0.344      0.846    0.406          0.719  1.18    11</span>
@@ -344,7 +332,8 @@ classes, and which is a tibble with found patterns and computed quality measures
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> {am=(-Inf;… {mpg=(-In…   0.375      1        0.375          0.719  1.39    12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> {am=(-Inf;… {mpg=(-In…   0.375      1        0.375          0.719  1.39    12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 514 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1 more variable: antecedent_length &lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 5 more variables: antecedent_length &lt;int&gt;, pp &lt;dbl&gt;, pn &lt;dbl&gt;, np &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   nn &lt;dbl&gt;</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

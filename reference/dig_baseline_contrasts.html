@@ -59,7 +59,7 @@ conditions only, i.e., the condition columns in x must be logical."><meta proper
 
     <a class="navbar-brand me-2" href="../index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -91,7 +91,7 @@ conditions only, i.e., the condition columns in x must be logical."><meta proper
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Search for conditions that yield in statistically significant one-sample test in selected variables.</h1>
-      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/v2.1.0/R/dig_baseline_contrasts.R" class="external-link"><code>R/dig_baseline_contrasts.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/R/dig_baseline_contrasts.R" class="external-link"><code>R/dig_baseline_contrasts.R</code></a></small>
       <div class="d-none name"><code>dig_baseline_contrasts.Rd</code></div>
     </div>
 
@@ -351,6 +351,84 @@ present (see also <code><a href="https://rdrr.io/r/stats/t.test.html" class="ext
     <p>Michal Burda</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition.html">partition</a></span><span class="op">(</span><span class="va">mtcars</span>, .breaks <span class="op">=</span> <span class="fl">2</span>, .keep <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">dig_baseline_contrasts</span><span class="op">(</span><span class="va">d</span>,</span></span>
+<span class="r-in"><span>                       condition <span class="op">=</span> <span class="fu">where</span><span class="op">(</span><span class="va">is.logical</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                       vars <span class="op">=</span> <span class="fu">where</span><span class="op">(</span><span class="va">is.numeric</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                       min_support <span class="op">=</span> <span class="fl">0.3</span>,</span></span>
+<span class="r-in"><span>                       max_length <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1,049 × 15</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    condition support var   estimate statistic    df  p_value     n conf_lo</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> {}              1 mpg     20.1       18.9     31 1.53<span style="color: #949494;">e</span><span style="color: #BB0000;">-18</span>    32  17.9  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> {}              1 cyl      6.19      19.6     31 5.05<span style="color: #949494;">e</span><span style="color: #BB0000;">-19</span>    32   5.54 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> {}              1 disp   231.        10.5     31 9.19<span style="color: #949494;">e</span><span style="color: #BB0000;">-12</span>    32 186.   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> {}              1 hp     147.        12.1     31 2.79<span style="color: #949494;">e</span><span style="color: #BB0000;">-13</span>    32 122.   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> {}              1 drat     3.60      38.1     31 1.38<span style="color: #949494;">e</span><span style="color: #BB0000;">-27</span>    32   3.40 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> {}              1 wt       3.22      18.6     31 2.26<span style="color: #949494;">e</span><span style="color: #BB0000;">-18</span>    32   2.86 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> {}              1 qsec    17.8       56.5     31 7.79<span style="color: #949494;">e</span><span style="color: #BB0000;">-33</span>    32  17.2  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> {}              1 vs       0.438      4.91    31 2.78<span style="color: #949494;">e</span><span style="color: #BB0000;">- 5</span>    32   0.256</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> {}              1 am       0.406      4.61    31 6.63<span style="color: #949494;">e</span><span style="color: #BB0000;">- 5</span>    32   0.226</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> {}              1 gear     3.69      28.3     31 1.07<span style="color: #949494;">e</span><span style="color: #BB0000;">-23</span>    32   3.42 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1,039 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 6 more variables: conf_hi &lt;dbl&gt;, stderr &lt;dbl&gt;, alternative &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   method &lt;chr&gt;, comment &lt;chr&gt;, condition_length &lt;int&gt;</span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

@@ -385,6 +385,14 @@ result <- dig_associations(fuzzy_mtcars,
                            min_support = 0.02,
                            min_confidence = 0.8,
                            contingency_table = TRUE)
+#> Warning: The `contingency_table` argument of `dig_associations()` is deprecated as of
+#> nuggets 2.2.0.
+#> ℹ The `contingency_table` argument is deprecated and will be removed in future
+#>   versions. dig_associations() works as 'contingency_table = TRUE' would be
+#>   specified by default.
+#> This warning is displayed once per session.
+#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+#> generated.
 ```
 
 The result is a tibble containing the discovered rules and their quality
@@ -416,7 +424,7 @@ print(result)
 #>  6          0.594  1.44 12                    1 12    2      7     11  
 #>  7          0.594  1.43 10.5                  1 10.5  1.90   8.52  11.1
 #>  8          0.594  1.60  9.96                 1  9.96 0.546  9.04  12.5
-#>  9          0.594  1.68  9.88                 2  9.88 0      9.12  13.0
+#>  9          0.594  1.68  9.88                 2  9.88 0      9.12  13  
 #> 10          0.594  1.68  9.82                 2  9.82 0      9.18  13  
 #> # ℹ 516 more rows
 ```
@@ -682,7 +690,7 @@ vis_rules <- dig_associations(fuzzy_mtcars,
                               max_length = 3,
                               max_results = 50)
 print(vis_rules)
-#> # A tibble: 12 × 9
+#> # A tibble: 12 × 13
 #>    antecedent    consequent support confidence coverage conseq_support  lift
 #>    <chr>         <chr>        <dbl>      <dbl>    <dbl>          <dbl> <dbl>
 #>  1 {}            {am=1}      0.406       0.406   1               0.406 1    
@@ -697,20 +705,20 @@ print(vis_rules)
 #> 10 {gear=5,vs=1} {am=1}      0.0312      1       0.0312          0.406 2.46 
 #> 11 {gear=4}      {am=1}      0.25        0.667   0.375           0.406 1.64 
 #> 12 {gear=5}      {am=1}      0.156       1       0.156           0.406 2.46 
-#>    count antecedent_length
-#>    <dbl>             <int>
-#>  1    13                 0
-#>  2     6                 1
-#>  3     0                 2
-#>  4     2                 2
-#>  5     4                 2
-#>  6     0                 1
-#>  7     0                 2
-#>  8     7                 1
-#>  9     6                 2
-#> 10     1                 2
-#> 11     8                 1
-#> 12     5                 1
+#>    count antecedent_length    pp    pn    np    nn
+#>    <dbl>             <int> <dbl> <dbl> <dbl> <dbl>
+#>  1    13                 0    13    19     0     0
+#>  2     6                 1     6    12     7     7
+#>  3     0                 2     0    12    13     7
+#>  4     2                 2     2     0    11    19
+#>  5     4                 2     4     0     9    19
+#>  6     0                 1     0    15    13     4
+#>  7     0                 2     0     3    13    16
+#>  8     7                 1     7     7     6    12
+#>  9     6                 2     6     4     7    15
+#> 10     1                 2     1     0    12    19
+#> 11     8                 1     8     4     5    15
+#> 12     5                 1     5     0     8    19
 
 # Create diamond plot showing rule hierarchy
 ggplot(vis_rules) +

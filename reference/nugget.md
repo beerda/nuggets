@@ -3,6 +3,11 @@
 Construct a nugget object, which is an S3 object used to store and
 represent results (e.g., rules or patterns) in the `nuggets` framework.
 
+A nugget is technically a tibble (or data frame) that inherits from both
+the `"nugget"` class and, optionally, a flavour-specific S3 class. This
+allows distinguishing different types of nuggets (flavours) while still
+supporting generic methods for all nuggets.
+
 ## Usage
 
 ``` r
@@ -45,11 +50,6 @@ the given `flavour` class. The object also contains attributes
 `"call_function"` and `"call_args"` describing its provenance.
 
 ## Details
-
-A nugget is technically a tibble (or data frame) that inherits from both
-the `"nugget"` class and, optionally, a flavour-specific S3 class. This
-allows distinguishing different types of nuggets (flavours) while still
-supporting generic methods for all nuggets.
 
 Each nugget stores additional provenance information in attributes:
 

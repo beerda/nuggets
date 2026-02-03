@@ -8,10 +8,14 @@
 </script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Extract values from predicate names — values"><meta name="description" content="This function extracts the value part from a character vector of predicate
 names. Each element of x is expected to follow the pattern
 &amp;lt;varname&amp;gt;=&amp;lt;value&amp;gt;, where &amp;lt;varname&amp;gt; is a variable name and &amp;lt;value&amp;gt; is
-the associated value."><meta property="og:description" content="This function extracts the value part from a character vector of predicate
+the associated value.
+If an element does not contain an equal sign (=), the function returns an
+empty string for that element."><meta property="og:description" content="This function extracts the value part from a character vector of predicate
 names. Each element of x is expected to follow the pattern
 &amp;lt;varname&amp;gt;=&amp;lt;value&amp;gt;, where &amp;lt;varname&amp;gt; is a variable name and &amp;lt;value&amp;gt; is
-the associated value."><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
+the associated value.
+If an element does not contain an equal sign (=), the function returns an
+empty string for that element."><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -19,7 +23,7 @@ the associated value."><meta property="og:image" content="https://beerda.github.
 
     <a class="navbar-brand me-2" href="../index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +55,7 @@ the associated value."><meta property="og:image" content="https://beerda.github.
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Extract values from predicate names</h1>
-      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/v2.1.0/R/values.R" class="external-link"><code>R/values.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/R/values.R" class="external-link"><code>R/values.R</code></a></small>
       <div class="d-none name"><code>values.Rd</code></div>
     </div>
 
@@ -60,6 +64,8 @@ the associated value."><meta property="og:image" content="https://beerda.github.
 names. Each element of <code>x</code> is expected to follow the pattern
 <code>&lt;varname&gt;=&lt;value&gt;</code>, where <code>&lt;varname&gt;</code> is a variable name and <code>&lt;value&gt;</code> is
 the associated value.</p>
+<p>If an element does not contain an equal sign (<code>=</code>), the function returns an
+empty string for that element.</p>
     </div>
 
     <div class="section level2">
@@ -85,9 +91,7 @@ vector (<code>character(0)</code>), the function returns an empty vector
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>If an element does not contain an equal sign (<code>=</code>), the function returns an
-empty string for that element.</p>
-<p>This function is the counterpart to <code><a href="var_names.html">var_names()</a></code>, which extracts the
+    <p>This function is the counterpart to <code><a href="var_names.html">var_names()</a></code>, which extracts the
 variable part of predicates. Together, <code><a href="var_names.html">var_names()</a></code> and <code>values()</code> provide
 a convenient way to split predicate strings into their variable and value
 components.</p>

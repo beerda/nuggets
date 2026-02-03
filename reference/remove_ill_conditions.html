@@ -6,8 +6,14 @@
     }
   };
 </script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Remove invalid conditions from a list — remove_ill_conditions"><meta name="description" content="From a given list of character vectors, remove those elements that are not
-valid conditions."><meta property="og:description" content="From a given list of character vectors, remove those elements that are not
-valid conditions."><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
+valid conditions.
+A valid condition is a character vector of predicates, where each predicate
+corresponds to a column name in the supplied data frame or matrix. Empty
+character vectors and NULL elements are also considered valid conditions."><meta property="og:description" content="From a given list of character vectors, remove those elements that are not
+valid conditions.
+A valid condition is a character vector of predicates, where each predicate
+corresponds to a column name in the supplied data frame or matrix. Empty
+character vectors and NULL elements are also considered valid conditions."><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -15,7 +21,7 @@ valid conditions."><meta property="og:image" content="https://beerda.github.io/n
 
     <a class="navbar-brand me-2" href="../index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,13 +53,16 @@ valid conditions."><meta property="og:image" content="https://beerda.github.io/n
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Remove invalid conditions from a list</h1>
-      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/v2.1.0/R/remove_ill_conditions.R" class="external-link"><code>R/remove_ill_conditions.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/R/remove_ill_conditions.R" class="external-link"><code>R/remove_ill_conditions.R</code></a></small>
       <div class="d-none name"><code>remove_ill_conditions.Rd</code></div>
     </div>
 
     <div class="ref-description section level2">
     <p>From a given list of character vectors, remove those elements that are not
 valid conditions.</p>
+<p>A valid condition is a character vector of predicates, where each predicate
+corresponds to a column name in the supplied data frame or matrix. Empty
+character vectors and <code>NULL</code> elements are also considered valid conditions.</p>
     </div>
 
     <div class="section level2">
@@ -81,10 +90,7 @@ conditions.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>A valid condition is a character vector of predicates, where each predicate
-corresponds to a column name in the supplied data frame or matrix. Empty
-character vectors and <code>NULL</code> elements are also considered valid conditions.</p>
-<p>This function acts as a simple filter around <code><a href="is_condition.html">is_condition()</a></code>. It checks
+    <p>This function acts as a simple filter around <code><a href="is_condition.html">is_condition()</a></code>. It checks
 each element of <code>x</code> against the column names of <code>data</code> and removes those
 that contain invalid predicates. The result preserves only valid conditions
 and discards the invalid ones.</p>

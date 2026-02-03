@@ -5,13 +5,59 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Convert columns of a data frame to Boolean or fuzzy sets (triangular, trapezoidal, or raised-cosine) — partition"><meta name="description" content="Transform selected columns of a data frame into either dummy logical
+</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Convert columns of a data frame to Boolean or fuzzy sets (triangular, trapezoidal, or raised-cosine) — partition"><meta name="description" content='Transform selected columns of a data frame into either dummy logical
 variables or membership degrees of fuzzy sets, while leaving all remaining
 columns unchanged. Each transformed column typically produces multiple new
-columns in the output."><meta property="og:description" content="Transform selected columns of a data frame into either dummy logical
+columns in the output.
+These transformations are most often used as a preprocessing step before
+calling dig() or one of its derivatives, such as
+dig_correlations(), dig_paired_baseline_contrasts(),
+or dig_associations().
+The transformation depends on the column type:
+logical column x is expanded into two logical columns:
+x=TRUE and x=FALSE;
+factor column x with levels l1, l2, l3 becomes three
+logical columns: x=l1, x=l2, and x=l3;
+numeric column x is transformed according to .method:
+.method = "dummy": the column is treated as a factor with one level
+per unique value, then expanded into dummy columns;
+.method = "crisp": the column is discretized into intervals (defined
+by .breaks, .style, and .style_params) and expanded into dummy
+columns representing those intervals;
+.method = "triangle" or .method = "raisedcos": the column is
+converted into one or more fuzzy sets, each represented by membership
+degrees in \([0,1]\) (triangular or raised-cosine shaped).
+
+
+
+Details of numeric transformations are controlled by .breaks, .labels,
+.style, .style_params, .right, .span, and .inc.'><meta property="og:description" content='Transform selected columns of a data frame into either dummy logical
 variables or membership degrees of fuzzy sets, while leaving all remaining
 columns unchanged. Each transformed column typically produces multiple new
-columns in the output."><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
+columns in the output.
+These transformations are most often used as a preprocessing step before
+calling dig() or one of its derivatives, such as
+dig_correlations(), dig_paired_baseline_contrasts(),
+or dig_associations().
+The transformation depends on the column type:
+logical column x is expanded into two logical columns:
+x=TRUE and x=FALSE;
+factor column x with levels l1, l2, l3 becomes three
+logical columns: x=l1, x=l2, and x=l3;
+numeric column x is transformed according to .method:
+.method = "dummy": the column is treated as a factor with one level
+per unique value, then expanded into dummy columns;
+.method = "crisp": the column is discretized into intervals (defined
+by .breaks, .style, and .style_params) and expanded into dummy
+columns representing those intervals;
+.method = "triangle" or .method = "raisedcos": the column is
+converted into one or more fuzzy sets, each represented by membership
+degrees in \([0,1]\) (triangular or raised-cosine shaped).
+
+
+
+Details of numeric transformations are controlled by .breaks, .labels,
+.style, .style_params, .right, .span, and .inc.'><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -19,7 +65,7 @@ columns in the output."><meta property="og:image" content="https://beerda.github
 
     <a class="navbar-brand me-2" href="../index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +97,7 @@ columns in the output."><meta property="og:image" content="https://beerda.github
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Convert columns of a data frame to Boolean or fuzzy sets (triangular, trapezoidal, or raised-cosine)</h1>
-      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/v2.1.0/R/partition.R" class="external-link"><code>R/partition.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/R/partition.R" class="external-link"><code>R/partition.R</code></a></small>
       <div class="d-none name"><code>partition.Rd</code></div>
     </div>
 
@@ -60,6 +106,25 @@ columns in the output."><meta property="og:image" content="https://beerda.github
 variables or membership degrees of fuzzy sets, while leaving all remaining
 columns unchanged. Each transformed column typically produces multiple new
 columns in the output.</p>
+<p>These transformations are most often used as a preprocessing step before
+calling <code><a href="dig.html">dig()</a></code> or one of its derivatives, such as
+<code><a href="dig_correlations.html">dig_correlations()</a></code>, <code><a href="dig_paired_baseline_contrasts.html">dig_paired_baseline_contrasts()</a></code>,
+or <code><a href="dig_associations.html">dig_associations()</a></code>.</p>
+<p>The transformation depends on the column type:</p><ul><li><p><strong>logical</strong> column <code>x</code> is expanded into two logical columns:
+<code>x=TRUE</code> and <code>x=FALSE</code>;</p></li>
+<li><p><strong>factor</strong> column <code>x</code> with levels <code>l1</code>, <code>l2</code>, <code>l3</code> becomes three
+logical columns: <code>x=l1</code>, <code>x=l2</code>, and <code>x=l3</code>;</p></li>
+<li><p><strong>numeric</strong> column <code>x</code> is transformed according to <code>.method</code>:</p><ul><li><p><code>.method = "dummy"</code>: the column is treated as a factor with one level
+per unique value, then expanded into dummy columns;</p></li>
+<li><p><code>.method = "crisp"</code>: the column is discretized into intervals (defined
+by <code>.breaks</code>, <code>.style</code>, and <code>.style_params</code>) and expanded into dummy
+columns representing those intervals;</p></li>
+<li><p><code>.method = "triangle"</code> or <code>.method = "raisedcos"</code>: the column is
+converted into one or more fuzzy sets, each represented by membership
+degrees in \([0,1]\) (triangular or raised-cosine shaped).</p></li>
+</ul></li>
+</ul><p>Details of numeric transformations are controlled by <code>.breaks</code>, <code>.labels</code>,
+<code>.style</code>, <code>.style_params</code>, <code>.right</code>, <code>.span</code>, and <code>.inc</code>.</p>
     </div>
 
     <div class="section level2">
@@ -160,25 +225,8 @@ With <code>.inc = 1</code>, all possible sets are created; larger values skip se
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>These transformations are most often used as a preprocessing step before
-calling <code><a href="dig.html">dig()</a></code> or one of its derivatives, such as
-<code><a href="dig_correlations.html">dig_correlations()</a></code>, <code><a href="dig_paired_baseline_contrasts.html">dig_paired_baseline_contrasts()</a></code>,
-or <code><a href="dig_associations.html">dig_associations()</a></code>.</p>
-<p>The transformation depends on the column type:</p><ul><li><p><strong>logical</strong> column <code>x</code> is expanded into two logical columns:
-<code>x=TRUE</code> and <code>x=FALSE</code>;</p></li>
-<li><p><strong>factor</strong> column <code>x</code> with levels <code>l1</code>, <code>l2</code>, <code>l3</code> becomes three
-logical columns: <code>x=l1</code>, <code>x=l2</code>, and <code>x=l3</code>;</p></li>
-<li><p><strong>numeric</strong> column <code>x</code> is transformed according to <code>.method</code>:</p><ul><li><p><code>.method = "dummy"</code>: the column is treated as a factor with one level
-per unique value, then expanded into dummy columns;</p></li>
-<li><p><code>.method = "crisp"</code>: the column is discretized into intervals (defined
-by <code>.breaks</code>, <code>.style</code>, and <code>.style_params</code>) and expanded into dummy
-columns representing those intervals;</p></li>
-<li><p><code>.method = "triangle"</code> or <code>.method = "raisedcos"</code>: the column is
-converted into one or more fuzzy sets, each represented by membership
-degrees in \([0,1]\) (triangular or raised-cosine shaped).</p></li>
-</ul></li>
-</ul><p>Details of numeric transformations are controlled by <code>.breaks</code>, <code>.labels</code>,
-<code>.style</code>, <code>.style_params</code>, <code>.right</code>, <code>.span</code>, and <code>.inc</code>.</p><ul><li><p>Crisp partitioning is efficient and works well when attributes have
+
+<ul><li><p>Crisp partitioning is efficient and works well when attributes have
 distinct categories or clear boundaries.</p></li>
 <li><p>Fuzzy partitioning is recommended for modeling gradual changes or
 uncertainty, allowing smooth category transitions at a higher
@@ -320,20 +368,20 @@ are linear for <code>.method = "triangle"</code> and cosine for <code>.method = 
 <span class="r-in"><span><span class="fu">partition</span><span class="op">(</span><span class="va">CO2</span>, <span class="va">conc</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fl">4</span>, .style <span class="op">=</span> <span class="st">"kmeans"</span>,</span></span>
 <span class="r-in"><span>          .style_params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>algorithm <span class="op">=</span> <span class="st">"Lloyd"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 84 × 8</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Plant Type   Treatment  uptake `conc=(-Inf;135]` `conc=(135;300]`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Plant Type   Treatment  uptake `conc=(-Inf;212]` `conc=(212;425]`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Qn1   Quebec nonchilled   16   TRUE              FALSE           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Qn1   Quebec nonchilled   30.4 FALSE             TRUE            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Qn1   Quebec nonchilled   30.4 TRUE              FALSE           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Qn1   Quebec nonchilled   34.8 FALSE             TRUE            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Qn1   Quebec nonchilled   37.2 FALSE             FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Qn1   Quebec nonchilled   37.2 FALSE             TRUE            </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Qn1   Quebec nonchilled   35.3 FALSE             FALSE           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Qn1   Quebec nonchilled   39.2 FALSE             FALSE           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Qn1   Quebec nonchilled   39.7 FALSE             FALSE           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Qn2   Quebec nonchilled   13.6 TRUE              FALSE           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Qn2   Quebec nonchilled   27.3 FALSE             TRUE            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Qn2   Quebec nonchilled   27.3 TRUE              FALSE           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Qn2   Quebec nonchilled   37.1 FALSE             TRUE            </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 74 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: `conc=(300;588]` &lt;lgl&gt;, `conc=(588;Inf]` &lt;lgl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: `conc=(425;838]` &lt;lgl&gt;, `conc=(838;Inf]` &lt;lgl&gt;</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fuzzy triangular transformation (default)</span></span></span>
 <span class="r-in"><span><span class="fu">partition</span><span class="op">(</span><span class="va">CO2</span>, <span class="va">conc</span><span class="op">:</span><span class="va">uptake</span>, .method <span class="op">=</span> <span class="st">"triangle"</span>, .breaks <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>

@@ -5,9 +5,33 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Shorten predicates within conditions — shorten_condition"><meta name="description" content="This function takes a character vector of conditions and shortens the
-predicates within each condition according to a specified method."><meta property="og:description" content="This function takes a character vector of conditions and shortens the
-predicates within each condition according to a specified method."><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
+</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Shorten predicates within conditions — shorten_condition"><meta name="description" content='This function takes a character vector of conditions and shortens the
+predicates within each condition according to a specified method.
+Each element of x must be a condition formatted as a string, e.g.
+"{a=1,b=100,c=3}" (see format_condition()). The function then
+shortens the predicates in each condition based on the selected method:
+"letters": predicates are replaced with single letters from the
+English alphabet, starting with A for the first distinct predicate;
+"abbrev4": predicates are abbreviated to at most 4 characters using
+base::abbreviate();
+"abbrev8": predicates are abbreviated to at most 8 characters using
+base::abbreviate();
+"none": no shortening is applied; predicates remain unchanged.
+
+'><meta property="og:description" content='This function takes a character vector of conditions and shortens the
+predicates within each condition according to a specified method.
+Each element of x must be a condition formatted as a string, e.g.
+"{a=1,b=100,c=3}" (see format_condition()). The function then
+shortens the predicates in each condition based on the selected method:
+"letters": predicates are replaced with single letters from the
+English alphabet, starting with A for the first distinct predicate;
+"abbrev4": predicates are abbreviated to at most 4 characters using
+base::abbreviate();
+"abbrev8": predicates are abbreviated to at most 8 characters using
+base::abbreviate();
+"none": no shortening is applied; predicates remain unchanged.
+
+'><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -15,7 +39,7 @@ predicates within each condition according to a specified method."><meta propert
 
     <a class="navbar-brand me-2" href="../index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,14 +71,23 @@ predicates within each condition according to a specified method."><meta propert
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Shorten predicates within conditions</h1>
-      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/v2.1.0/R/shorten_condition.R" class="external-link"><code>R/shorten_condition.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/R/shorten_condition.R" class="external-link"><code>R/shorten_condition.R</code></a></small>
       <div class="d-none name"><code>shorten_condition.Rd</code></div>
     </div>
 
     <div class="ref-description section level2">
     <p>This function takes a character vector of conditions and shortens the
 predicates within each condition according to a specified method.</p>
-    </div>
+<p>Each element of <code>x</code> must be a condition formatted as a string, e.g.
+<code>"{a=1,b=100,c=3}"</code> (see <code><a href="format_condition.html">format_condition()</a></code>). The function then
+shortens the predicates in each condition based on the selected <code>method</code>:</p><ul><li><p><code>"letters"</code>: predicates are replaced with single letters from the
+English alphabet, starting with <code>A</code> for the first distinct predicate;</p></li>
+<li><p><code>"abbrev4"</code>: predicates are abbreviated to at most 4 characters using
+<code><a href="https://rdrr.io/r/base/abbreviate.html" class="external-link">base::abbreviate()</a></code>;</p></li>
+<li><p><code>"abbrev8"</code>: predicates are abbreviated to at most 8 characters using
+<code><a href="https://rdrr.io/r/base/abbreviate.html" class="external-link">base::abbreviate()</a></code>;</p></li>
+<li><p><code>"none"</code>: no shortening is applied; predicates remain unchanged.</p></li>
+</ul></div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
@@ -83,16 +116,7 @@ according to the specified method.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Each element of <code>x</code> must be a condition formatted as a string, e.g.
-<code>"{a=1,b=100,c=3}"</code> (see <code><a href="format_condition.html">format_condition()</a></code>). The function then
-shortens the predicates in each condition based on the selected <code>method</code>:</p><ul><li><p><code>"letters"</code>: predicates are replaced with single letters from the
-English alphabet, starting with <code>A</code> for the first distinct predicate;</p></li>
-<li><p><code>"abbrev4"</code>: predicates are abbreviated to at most 4 characters using
-<code><a href="https://rdrr.io/r/base/abbreviate.html" class="external-link">base::abbreviate()</a></code>;</p></li>
-<li><p><code>"abbrev8"</code>: predicates are abbreviated to at most 8 characters using
-<code><a href="https://rdrr.io/r/base/abbreviate.html" class="external-link">base::abbreviate()</a></code>;</p></li>
-<li><p><code>"none"</code>: no shortening is applied; predicates remain unchanged.</p></li>
-</ul><p>Predicate shortening is useful for visualization or reporting, especially
+    <p>Predicate shortening is useful for visualization or reporting, especially
 when original predicate names are long or complex. Note that shortening is
 applied consistently across all conditions in <code>x</code>.</p>
     </div>

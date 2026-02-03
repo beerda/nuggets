@@ -4,6 +4,10 @@ This function clusters association rules based on the selected numeric
 attribute `by` (e.g., confidence or lift) and summarizes the clusters.
 The clustering is performed using the k-means algorithm.
 
+Each cluster is represented by a label consisting of the number of rules
+in the cluster and the most common predicates in the antecedents of
+those rules.
+
 ## Usage
 
 ``` r
@@ -46,7 +50,7 @@ cluster_associations(
 
 ## Value
 
-A tibble with one row per cluster. The columns are:
+A tibble with one row per (cluster, consequent) pair. The columns are:
 
 - `cluster`: the cluster number;
 
@@ -58,12 +62,6 @@ A tibble with one row per cluster. The columns are:
 
 - other numeric columns from the input nugget, aggregated by mean within
   each cluster.
-
-## Details
-
-Each cluster is represented by a label consisting of the number of rules
-in the cluster and the most common predicates in the antecedents of
-those rules.
 
 ## See also
 
@@ -89,16 +87,14 @@ rules <- dig_associations(cars,
                           antecedent = everything(),
                           consequent = everything(),
                           max_length = 3,
-                          min_support = 0.2,
-                          measures = c("lift", "conviction"))
-#> Warning: The `measures` argument of `dig_associations()` is deprecated as of nuggets
-#> 2.1.0.
-#> ℹ The `measures` argument is deprecated and will be removed in future versions.
-#>   Use the `add_interest()` function on the result of
-#>   `dig_associations(contingency_table = TRUE)` to compute additional measures.
+                          min_support = 0.2)
 
 # Cluster the found rules
 clu <- cluster_associations(rules, 10, "lift")
+
+# Print the number of clusters
+length(unique(clu$cluster))
+#> [1] 10
 
 if (FALSE) { # \dontrun{
 # Plot the clustered rules

@@ -280,3 +280,82 @@ For the `"t"` method, the following additional columns are also present
 ## Author
 
 Michal Burda
+
+## Examples
+
+``` r
+d <- partition(mtcars, .breaks = 2, .keep = TRUE)
+dig_baseline_contrasts(d,
+                       condition = where(is.logical),
+                       vars = where(is.numeric),
+                       min_support = 0.3,
+                       max_length = 2)
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> # A tibble: 1,049 × 15
+#>    condition support var   estimate statistic    df  p_value     n conf_lo
+#>    <chr>       <dbl> <chr>    <dbl>     <dbl> <dbl>    <dbl> <int>   <dbl>
+#>  1 {}              1 mpg     20.1       18.9     31 1.53e-18    32  17.9  
+#>  2 {}              1 cyl      6.19      19.6     31 5.05e-19    32   5.54 
+#>  3 {}              1 disp   231.        10.5     31 9.19e-12    32 186.   
+#>  4 {}              1 hp     147.        12.1     31 2.79e-13    32 122.   
+#>  5 {}              1 drat     3.60      38.1     31 1.38e-27    32   3.40 
+#>  6 {}              1 wt       3.22      18.6     31 2.26e-18    32   2.86 
+#>  7 {}              1 qsec    17.8       56.5     31 7.79e-33    32  17.2  
+#>  8 {}              1 vs       0.438      4.91    31 2.78e- 5    32   0.256
+#>  9 {}              1 am       0.406      4.61    31 6.63e- 5    32   0.226
+#> 10 {}              1 gear     3.69      28.3     31 1.07e-23    32   3.42 
+#> # ℹ 1,039 more rows
+#> # ℹ 6 more variables: conf_hi <dbl>, stderr <dbl>, alternative <chr>,
+#> #   method <chr>, comment <chr>, condition_length <int>
+```

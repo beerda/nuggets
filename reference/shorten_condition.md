@@ -3,6 +3,23 @@
 This function takes a character vector of conditions and shortens the
 predicates within each condition according to a specified method.
 
+Each element of `x` must be a condition formatted as a string, e.g.
+`"{a=1,b=100,c=3}"` (see
+[`format_condition()`](https://beerda.github.io/nuggets/reference/format_condition.md)).
+The function then shortens the predicates in each condition based on the
+selected `method`:
+
+- `"letters"`: predicates are replaced with single letters from the
+  English alphabet, starting with `A` for the first distinct predicate;
+
+- `"abbrev4"`: predicates are abbreviated to at most 4 characters using
+  [`base::abbreviate()`](https://rdrr.io/r/base/abbreviate.html);
+
+- `"abbrev8"`: predicates are abbreviated to at most 8 characters using
+  [`base::abbreviate()`](https://rdrr.io/r/base/abbreviate.html);
+
+- `"none"`: no shortening is applied; predicates remain unchanged.
+
 ## Usage
 
 ``` r
@@ -28,23 +45,6 @@ A character vector of conditions with predicates shortened according to
 the specified method.
 
 ## Details
-
-Each element of `x` must be a condition formatted as a string, e.g.
-`"{a=1,b=100,c=3}"` (see
-[`format_condition()`](https://beerda.github.io/nuggets/reference/format_condition.md)).
-The function then shortens the predicates in each condition based on the
-selected `method`:
-
-- `"letters"`: predicates are replaced with single letters from the
-  English alphabet, starting with `A` for the first distinct predicate;
-
-- `"abbrev4"`: predicates are abbreviated to at most 4 characters using
-  [`base::abbreviate()`](https://rdrr.io/r/base/abbreviate.html);
-
-- `"abbrev8"`: predicates are abbreviated to at most 8 characters using
-  [`base::abbreviate()`](https://rdrr.io/r/base/abbreviate.html);
-
-- `"none"`: no shortening is applied; predicates remain unchanged.
 
 Predicate shortening is useful for visualization or reporting,
 especially when original predicate names are long or complex. Note that

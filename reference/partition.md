@@ -5,6 +5,39 @@ variables or membership degrees of fuzzy sets, while leaving all
 remaining columns unchanged. Each transformed column typically produces
 multiple new columns in the output.
 
+These transformations are most often used as a preprocessing step before
+calling [`dig()`](https://beerda.github.io/nuggets/reference/dig.md) or
+one of its derivatives, such as
+[`dig_correlations()`](https://beerda.github.io/nuggets/reference/dig_correlations.md),
+[`dig_paired_baseline_contrasts()`](https://beerda.github.io/nuggets/reference/dig_paired_baseline_contrasts.md),
+or
+[`dig_associations()`](https://beerda.github.io/nuggets/reference/dig_associations.md).
+
+The transformation depends on the column type:
+
+- **logical** column `x` is expanded into two logical columns: `x=TRUE`
+  and `x=FALSE`;
+
+- **factor** column `x` with levels `l1`, `l2`, `l3` becomes three
+  logical columns: `x=l1`, `x=l2`, and `x=l3`;
+
+- **numeric** column `x` is transformed according to `.method`:
+
+  - `.method = "dummy"`: the column is treated as a factor with one
+    level per unique value, then expanded into dummy columns;
+
+  - `.method = "crisp"`: the column is discretized into intervals
+    (defined by `.breaks`, `.style`, and `.style_params`) and expanded
+    into dummy columns representing those intervals;
+
+  - `.method = "triangle"` or `.method = "raisedcos"`: the column is
+    converted into one or more fuzzy sets, each represented by
+    membership degrees in \\\[0,1\]\\ (triangular or raised-cosine
+    shaped).
+
+Details of numeric transformations are controlled by `.breaks`,
+`.labels`, `.style`, `.style_params`, `.right`, `.span`, and `.inc`.
+
 ## Usage
 
 ``` r
@@ -102,39 +135,6 @@ partition(
 A tibble with `.data` transformed into Boolean or fuzzy predicates.
 
 ## Details
-
-These transformations are most often used as a preprocessing step before
-calling [`dig()`](https://beerda.github.io/nuggets/reference/dig.md) or
-one of its derivatives, such as
-[`dig_correlations()`](https://beerda.github.io/nuggets/reference/dig_correlations.md),
-[`dig_paired_baseline_contrasts()`](https://beerda.github.io/nuggets/reference/dig_paired_baseline_contrasts.md),
-or
-[`dig_associations()`](https://beerda.github.io/nuggets/reference/dig_associations.md).
-
-The transformation depends on the column type:
-
-- **logical** column `x` is expanded into two logical columns: `x=TRUE`
-  and `x=FALSE`;
-
-- **factor** column `x` with levels `l1`, `l2`, `l3` becomes three
-  logical columns: `x=l1`, `x=l2`, and `x=l3`;
-
-- **numeric** column `x` is transformed according to `.method`:
-
-  - `.method = "dummy"`: the column is treated as a factor with one
-    level per unique value, then expanded into dummy columns;
-
-  - `.method = "crisp"`: the column is discretized into intervals
-    (defined by `.breaks`, `.style`, and `.style_params`) and expanded
-    into dummy columns representing those intervals;
-
-  - `.method = "triangle"` or `.method = "raisedcos"`: the column is
-    converted into one or more fuzzy sets, each represented by
-    membership degrees in \\\[0,1\]\\ (triangular or raised-cosine
-    shaped).
-
-Details of numeric transformations are controlled by `.breaks`,
-`.labels`, `.style`, `.style_params`, `.right`, `.span`, and `.inc`.
 
 - Crisp partitioning is efficient and works well when attributes have
   distinct categories or clear boundaries.
@@ -317,20 +317,20 @@ partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "kmeans")
 partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "kmeans",
           .style_params = list(algorithm = "Lloyd"))
 #> # A tibble: 84 × 8
-#>    Plant Type   Treatment  uptake `conc=(-Inf;135]` `conc=(135;300]`
+#>    Plant Type   Treatment  uptake `conc=(-Inf;212]` `conc=(212;425]`
 #>    <ord> <fct>  <fct>       <dbl> <lgl>             <lgl>           
 #>  1 Qn1   Quebec nonchilled   16   TRUE              FALSE           
-#>  2 Qn1   Quebec nonchilled   30.4 FALSE             TRUE            
+#>  2 Qn1   Quebec nonchilled   30.4 TRUE              FALSE           
 #>  3 Qn1   Quebec nonchilled   34.8 FALSE             TRUE            
-#>  4 Qn1   Quebec nonchilled   37.2 FALSE             FALSE           
+#>  4 Qn1   Quebec nonchilled   37.2 FALSE             TRUE            
 #>  5 Qn1   Quebec nonchilled   35.3 FALSE             FALSE           
 #>  6 Qn1   Quebec nonchilled   39.2 FALSE             FALSE           
 #>  7 Qn1   Quebec nonchilled   39.7 FALSE             FALSE           
 #>  8 Qn2   Quebec nonchilled   13.6 TRUE              FALSE           
-#>  9 Qn2   Quebec nonchilled   27.3 FALSE             TRUE            
+#>  9 Qn2   Quebec nonchilled   27.3 TRUE              FALSE           
 #> 10 Qn2   Quebec nonchilled   37.1 FALSE             TRUE            
 #> # ℹ 74 more rows
-#> # ℹ 2 more variables: `conc=(300;588]` <lgl>, `conc=(588;Inf]` <lgl>
+#> # ℹ 2 more variables: `conc=(425;838]` <lgl>, `conc=(838;Inf]` <lgl>
 
 # Fuzzy triangular transformation (default)
 partition(CO2, conc:uptake, .method = "triangle", .breaks = 3)

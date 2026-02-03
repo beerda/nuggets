@@ -9,6 +9,10 @@ used as a basis for the list of `excluded` formulae (see the `excluded`
 argument of
 [`dig()`](https://beerda.github.io/nuggets/reference/dig.md)).
 
+The search for tautologies is performed by iteratively searching for
+rules with increasing length of the antecedent. Rules found in previous
+iterations are used as `excluded` argument in the next iteration.
+
 ## Usage
 
 ``` r
@@ -21,8 +25,7 @@ dig_tautologies(
   min_coverage = 0,
   min_support = 0,
   min_confidence = 0,
-  contingency_table = FALSE,
-  measures = deprecated(),
+  contingency_table = deprecated(),
   t_norm = "goguen",
   max_results = Inf,
   verbose = FALSE,
@@ -85,24 +88,13 @@ dig_tautologies(
 
 - contingency_table:
 
-  a logical value indicating whether to provide a contingency table for
-  each rule. If `TRUE`, the columns `pp`, `pn`, `np`, and `nn` are added
-  to the output table. These columns contain the number of rows
-  satisfying the antecedent and the consequent, the antecedent but not
-  the consequent, the consequent but not the antecedent, and neither the
-  antecedent nor the consequent, respectively.
-
-- measures:
-
-  (Deprecated. Search for tautologies using
-  `dig_tautologies(contingency_table = TRUE)` and use the
-  [`add_interest()`](https://beerda.github.io/nuggets/reference/add_interest.md)
-  function on the result to compute additional measures.) A character
-  vector specifying the additional quality measures to compute. If
-  `NULL`, no additional measures are computed. Possible values are
-  `"lift"`, `"conviction"`, `"added_value"`. See
-  <https://mhahsler.github.io/arules/docs/measures> for a description of
-  the measures.
+  (Deprecated.) A logical value indicating whether to provide a
+  contingency table for each rule. If `TRUE`, the columns `pp`, `pn`,
+  `np`, and `nn` are added to the output table. These columns contain
+  the number of rows satisfying the antecedent and the consequent, the
+  antecedent but not the consequent, the consequent but not the
+  antecedent, and neither the antecedent nor the consequent,
+  respectively.
 
 - t_norm:
 
@@ -134,12 +126,17 @@ and which is a tibble with found tautologies in the format equal to the
 output of
 [`dig_associations()`](https://beerda.github.io/nuggets/reference/dig_associations.md).
 
-## Details
-
-The search for tautologies is performed by iteratively searching for
-rules with increasing length of the antecedent. Rules found in previous
-iterations are used as `excluded` argument in the next iteration.
-
 ## Author
 
 Michal Burda
+
+## Examples
+
+``` r
+d <- partition(mtcars, .breaks = 2)
+dig_tautologies(d,
+                antecedent = everything(),
+                consequent = everything(),
+                min_confidence = 0.99)
+#> # A tibble: 0 × 0
+```

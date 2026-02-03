@@ -3,6 +3,11 @@
 From a given list of character vectors, remove those elements that are
 not valid conditions.
 
+A valid condition is a character vector of predicates, where each
+predicate corresponds to a column name in the supplied data frame or
+matrix. Empty character vectors and `NULL` elements are also considered
+valid conditions.
+
 ## Usage
 
 ``` r
@@ -24,11 +29,6 @@ remove_ill_conditions(x, data)
 A list containing only those elements of `x` that are valid conditions.
 
 ## Details
-
-A valid condition is a character vector of predicates, where each
-predicate corresponds to a column name in the supplied data frame or
-matrix. Empty character vectors and `NULL` elements are also considered
-valid conditions.
 
 This function acts as a simple filter around
 [`is_condition()`](https://beerda.github.io/nuggets/reference/is_condition.md).

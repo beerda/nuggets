@@ -30,3 +30,14 @@ an integer vector of indices of selected (incomparable) elements.
 ## Author
 
 Michal Burda
+
+## Examples
+
+``` r
+# Create a list of integerish vectors
+x <- list(c(1, 2), c(1, 2, 3), c(2, 3), c(1, 3), c(4, 5))
+
+# Find incomparable elements
+which_antichain(x)
+#> [1] 1 3 4 5
+```

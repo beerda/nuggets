@@ -5,6 +5,11 @@ Create a custom `ggplot2` geom for visualizing lattice structures as
 association rules and their ancestor–descendant relationships in a
 clear, compact graphical form.
 
+In a diamond plot, nodes (diamonds) represent items or conditions within
+the lattice, while edges denote inclusion (subset) relationships between
+them. The geom combines node and edge rendering with flexible control
+over aesthetics such as labels, color, and size.
+
 ## Usage
 
 ``` r
@@ -85,11 +90,6 @@ A `ggplot2` layer object that adds a diamond lattice visualization to an
 existing plot.
 
 ## Details
-
-In a diamond plot, nodes (diamonds) represent items or conditions within
-the lattice, while edges denote inclusion (subset) relationships between
-them. The geom combines node and edge rendering with flexible control
-over aesthetics such as labels, color, and size.
 
 **Concept overview**
 

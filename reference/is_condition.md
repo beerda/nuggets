@@ -5,6 +5,14 @@ predicate corresponds to a column name in a given data frame or matrix.
 This function verifies that each element of a list `x` contains only
 valid predicates that match column names of `data`.
 
+Special cases:
+
+- An empty character vector (`character(0)`) is considered a valid
+  condition and always passes the check.
+
+- A `NULL` element is treated the same as an empty character vector,
+  i.e., it is also a valid condition.
+
 ## Usage
 
 ``` r
@@ -26,16 +34,6 @@ is_condition(x, data)
 A logical vector with one element for each condition in `x`. An element
 is `TRUE` if the corresponding condition is valid, i.e. all of its
 predicates are column names of `data`. Otherwise, it is `FALSE`.
-
-## Details
-
-Special cases:
-
-- An empty character vector (`character(0)`) is considered a valid
-  condition and always passes the check.
-
-- A `NULL` element is treated the same as an empty character vector,
-  i.e., it is also a valid condition.
 
 ## See also
 

@@ -300,3 +300,42 @@ For the `"t"` method, the following additional columns are also present
 ## Author
 
 Michal Burda
+
+## Examples
+
+``` r
+d <- partition(mtcars, .breaks = 2, .keep = TRUE)
+dig_complement_contrasts(d,
+                         condition = where(is.logical),
+                         vars = where(is.numeric),
+                         min_support = 0.3,
+                         max_length = 2)
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> Warning: t.test: error: data are essentially constant
+#> # A tibble: 834 × 17
+#>    condition   support var   estimate_x estimate_y statistic    df p_value   n_x
+#>    <chr>         <dbl> <chr>      <dbl>      <dbl>     <dbl> <dbl>   <dbl> <int>
+#>  1 {carb=(-In…   0.656 mpg       17.0       25.9       -4.73  13.8 3.36e-4    21
+#>  2 {carb=(-In…   0.656 cyl        7.05       4.55       5.11  21.3 4.44e-5    21
+#>  3 {carb=(-In…   0.656 disp     287.       124.         5.25  29.3 1.24e-5    21
+#>  4 {carb=(-In…   0.656 drat       3.38       4.01      -3.98  23.1 5.85e-4    21
+#>  5 {carb=(-In…   0.656 wt         3.65       2.39       4.63  23.7 1.08e-4    21
+#>  6 {carb=(-In…   0.656 vs         0.286      0.727     -2.55  20.3 1.91e-2    21
+#>  7 {carb=(-In…   0.656 am         0.190      0.818     -4.18  20.3 4.52e-4    21
+#>  8 {carb=(-In…   0.656 gear       3.33       4.36      -5.22  23.0 2.73e-5    21
+#>  9 {carb=(-In…   0.656 mpg       18.5       23.1       -2.12  19.1 4.70e-2    21
+#> 10 {carb=(-In…   0.656 cyl        6.76       5.09       2.98  24.9 6.34e-3    21
+#> # ℹ 824 more rows
+#> # ℹ 8 more variables: n_y <int>, conf_lo <dbl>, conf_hi <dbl>, stderr <dbl>,
+#> #   alternative <chr>, method <chr>, comment <chr>, condition_length <int>
+```

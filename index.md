@@ -104,3 +104,10 @@ explore(rules, cars)
 Contributions, suggestions, and bug reports are welcome. Please submit
 [issues](https://github.com/beerda/nuggets/issues/) on
 [GitHub](https://github.com/).
+
+## License
+
+This package is licensed under the GPL-3 license.
+
+It includes third-party code licensed under BSD-2-Clause, BSD-3-Clause,
+and GPL-2 or later licenses. See `inst/COPYRIGHTS` for details.

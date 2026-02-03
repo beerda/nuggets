@@ -5,6 +5,9 @@ predicate names. Each element of `x` is expected to follow the pattern
 `<varname>=<value>`, where `<varname>` is a variable name and `<value>`
 is the associated value.
 
+If an element does not contain an equal sign (`=`), the entire string is
+returned unchanged.
+
 ## Usage
 
 ``` r
@@ -25,9 +28,6 @@ returned as is. If `x` is `NULL`, the function returns `NULL`. If `x`
 has length zero (`character(0)`), the function returns `character(0)`.
 
 ## Details
-
-If an element does not contain an equal sign (`=`), the entire string is
-returned unchanged.
 
 This function is the counterpart to
 [`values()`](https://beerda.github.io/nuggets/reference/values.md),

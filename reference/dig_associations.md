@@ -61,8 +61,7 @@ dig_associations(
   min_coverage = 0,
   min_support = 0,
   min_confidence = 0,
-  contingency_table = FALSE,
-  measures = deprecated(),
+  contingency_table = deprecated(),
   t_norm = "goguen",
   max_results = Inf,
   verbose = FALSE,
@@ -71,9 +70,9 @@ dig_associations(
     "consequent", arg_disjoint = "disjoint", arg_excluded = "excluded", arg_min_length =
     "min_length", arg_max_length = "max_length", arg_min_coverage = "min_coverage",
     arg_min_support = "min_support", arg_min_confidence = "min_confidence",
-    arg_contingency_table = "contingency_table", arg_measures = "measures", arg_t_norm =
-    "t_norm", arg_max_results = "max_results", arg_verbose = "verbose", arg_threads =
-    "threads", call = current_env())
+    arg_contingency_table = "contingency_table", arg_t_norm = "t_norm", arg_max_results =
+    "max_results", arg_verbose = "verbose", arg_threads = "threads", call =
+    current_env())
 )
 ```
 
@@ -145,24 +144,13 @@ dig_associations(
 
 - contingency_table:
 
-  a logical value indicating whether to provide a contingency table for
+  (Deprecated. Contingency table is always added to the result.) A
+  logical value indicating whether to provide a contingency table for
   each rule. If `TRUE`, the columns `pp`, `pn`, `np`, and `nn` are added
   to the output table. These columns contain the number of rows
   satisfying the antecedent and the consequent, the antecedent but not
   the consequent, the consequent but not the antecedent, and neither the
   antecedent nor the consequent, respectively.
-
-- measures:
-
-  (Deprecated. Search for associations using
-  `dig_associations(contingency_table = TRUE)` and use the
-  [`add_interest()`](https://beerda.github.io/nuggets/reference/add_interest.md)
-  function on the result to compute additional measures.) A character
-  vector specifying the additional quality measures to compute. If
-  `NULL`, no additional measures are computed. Possible values are
-  `"lift"`, `"conviction"`, `"added_value"`. See
-  <https://mhahsler.github.io/arules/docs/measures> for a description of
-  the measures.
 
 - t_norm:
 
@@ -216,8 +204,6 @@ dig_associations(
 
   - `arg_contingency_table` - name of the argument `contingency_table`
 
-  - `arg_measures` - name of the argument `measures`
-
   - `arg_t_norm` - name of the argument `t_norm`
 
   - `arg_max_results` - name of the argument `max_results`
@@ -251,7 +237,7 @@ dig_associations(d,
                  consequent = starts_with("mpg"),
                  min_support = 0.3,
                  min_confidence = 0.8)
-#> # A tibble: 524 × 9
+#> # A tibble: 524 × 13
 #>    antecedent  consequent support confidence coverage conseq_support  lift count
 #>    <chr>       <chr>        <dbl>      <dbl>    <dbl>          <dbl> <dbl> <dbl>
 #>  1 {carb=(-In… {mpg=(-In…   0.344      0.846    0.406          0.719  1.18    11
@@ -265,5 +251,6 @@ dig_associations(d,
 #>  9 {am=(-Inf;… {mpg=(-In…   0.375      1        0.375          0.719  1.39    12
 #> 10 {am=(-Inf;… {mpg=(-In…   0.375      1        0.375          0.719  1.39    12
 #> # ℹ 514 more rows
-#> # ℹ 1 more variable: antecedent_length <int>
+#> # ℹ 5 more variables: antecedent_length <int>, pp <dbl>, pn <dbl>, np <dbl>,
+#> #   nn <dbl>
 ```

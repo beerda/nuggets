@@ -8,10 +8,18 @@
 </script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Geom for drawing diamond plots of lattice structures — geom_diamond"><meta name="description" content="Create a custom ggplot2 geom for visualizing lattice structures as
 diamond plots. This geom is particularly useful for displaying
 association rules and their ancestor–descendant relationships in a clear,
-compact graphical form."><meta property="og:description" content="Create a custom ggplot2 geom for visualizing lattice structures as
+compact graphical form.
+In a diamond plot, nodes (diamonds) represent items or conditions within
+the lattice, while edges denote inclusion (subset) relationships between
+them. The geom combines node and edge rendering with flexible control over
+aesthetics such as labels, color, and size."><meta property="og:description" content="Create a custom ggplot2 geom for visualizing lattice structures as
 diamond plots. This geom is particularly useful for displaying
 association rules and their ancestor–descendant relationships in a clear,
-compact graphical form."><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
+compact graphical form.
+In a diamond plot, nodes (diamonds) represent items or conditions within
+the lattice, while edges denote inclusion (subset) relationships between
+them. The geom combines node and edge rendering with flexible control over
+aesthetics such as labels, color, and size."><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -19,7 +27,7 @@ compact graphical form."><meta property="og:image" content="https://beerda.githu
 
     <a class="navbar-brand me-2" href="../index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +59,7 @@ compact graphical form."><meta property="og:image" content="https://beerda.githu
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Geom for drawing diamond plots of lattice structures</h1>
-      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/v2.1.0/R/geom_diamond.R" class="external-link"><code>R/geom_diamond.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/R/geom_diamond.R" class="external-link"><code>R/geom_diamond.R</code></a></small>
       <div class="d-none name"><code>geom_diamond.Rd</code></div>
     </div>
 
@@ -60,6 +68,10 @@ compact graphical form."><meta property="og:image" content="https://beerda.githu
 <em>diamond plots</em>. This geom is particularly useful for displaying
 association rules and their ancestor–descendant relationships in a clear,
 compact graphical form.</p>
+<p>In a diamond plot, nodes (diamonds) represent items or conditions within
+the lattice, while edges denote inclusion (subset) relationships between
+them. The geom combines node and edge rendering with flexible control over
+aesthetics such as labels, color, and size.</p>
     </div>
 
     <div class="section level2">
@@ -142,11 +154,7 @@ to an existing plot.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>In a diamond plot, nodes (diamonds) represent items or conditions within
-the lattice, while edges denote inclusion (subset) relationships between
-them. The geom combines node and edge rendering with flexible control over
-aesthetics such as labels, color, and size.</p>
-<p><strong>Concept overview</strong></p>
+    <p><strong>Concept overview</strong></p>
 <p>A <em>lattice</em> represents inclusion relationships between conditions. Each
 node corresponds to a condition, and a line connects a condition to its
 direct descendants:</p>

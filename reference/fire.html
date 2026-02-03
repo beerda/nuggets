@@ -5,9 +5,23 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Obtain truth-degrees of conditions — fire"><meta name="description" content="Given a data frame or matrix of truth values for predicates, compute the
-truth values of a set of conditions expressed as elementary conjunctions."><meta property="og:description" content="Given a data frame or matrix of truth values for predicates, compute the
-truth values of a set of conditions expressed as elementary conjunctions."><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
+</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Obtain truth-degrees of conditions — fire"><meta name="description" content='Given a data frame or matrix of truth values for predicates, compute the
+truth values of a set of conditions expressed as elementary conjunctions.
+Each element of condition must be a character string of the format
+"{p1,p2,p3}", where "p1", "p2", and "p3" are predicate names. The
+data object x must contain columns whose names correspond exactly to all
+predicates referenced in the conditions. Each condition is evaluated for
+every row of x as a conjunction of its predicates, with the conjunction
+operation determined by the t_norm argument. An empty condition ("{}")
+is always evaluated as 1 (i.e., fully true).'><meta property="og:description" content='Given a data frame or matrix of truth values for predicates, compute the
+truth values of a set of conditions expressed as elementary conjunctions.
+Each element of condition must be a character string of the format
+"{p1,p2,p3}", where "p1", "p2", and "p3" are predicate names. The
+data object x must contain columns whose names correspond exactly to all
+predicates referenced in the conditions. Each condition is evaluated for
+every row of x as a conjunction of its predicates, with the conjunction
+operation determined by the t_norm argument. An empty condition ("{}")
+is always evaluated as 1 (i.e., fully true).'><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -15,7 +29,7 @@ truth values of a set of conditions expressed as elementary conjunctions."><meta
 
     <a class="navbar-brand me-2" href="../index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,13 +61,20 @@ truth values of a set of conditions expressed as elementary conjunctions."><meta
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Obtain truth-degrees of conditions</h1>
-      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/v2.1.0/R/fire.R" class="external-link"><code>R/fire.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/R/fire.R" class="external-link"><code>R/fire.R</code></a></small>
       <div class="d-none name"><code>fire.Rd</code></div>
     </div>
 
     <div class="ref-description section level2">
     <p>Given a data frame or matrix of truth values for predicates, compute the
 truth values of a set of conditions expressed as elementary conjunctions.</p>
+<p>Each element of <code>condition</code> must be a character string of the format
+<code>"{p1,p2,p3}"</code>, where <code>"p1"</code>, <code>"p2"</code>, and <code>"p3"</code> are predicate names. The
+data object <code>x</code> must contain columns whose names correspond exactly to all
+predicates referenced in the conditions. Each condition is evaluated for
+every row of <code>x</code> as a conjunction of its predicates, with the conjunction
+operation determined by the <code>t_norm</code> argument. An empty condition (<code>"{}"</code>)
+is always evaluated as 1 (i.e., fully true).</p>
     </div>
 
     <div class="section level2">
@@ -92,16 +113,6 @@ the truth degrees of the conditions. The matrix has <code>nrow(x)</code> rows an
 <code>length(condition)</code> columns. The element in row <em>i</em> and column <em>j</em>
 corresponds to the truth degree of the <em>j</em>-th condition evaluated on the
 <em>i</em>-th row of <code>x</code>.</p>
-    </div>
-    <div class="section level2">
-    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Each element of <code>condition</code> must be a character string of the format
-<code>"{p1,p2,p3}"</code>, where <code>"p1"</code>, <code>"p2"</code>, and <code>"p3"</code> are predicate names. The
-data object <code>x</code> must contain columns whose names correspond exactly to all
-predicates referenced in the conditions. Each condition is evaluated for
-every row of <code>x</code> as a conjunction of its predicates, with the conjunction
-operation determined by the <code>t_norm</code> argument. An empty condition (<code>"{}"</code>)
-is always evaluated as 1 (i.e., fully true).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
