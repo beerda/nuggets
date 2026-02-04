@@ -522,7 +522,7 @@ The `explore()` function launches an interactive Shiny application for exploring
 discovered patterns. This is particularly useful for association rules:
 
 ```{r, eval=FALSE}
-# Launch interactive explorer for association rules
+# Search for association rules
 rules <- dig_associations(fuzzy_mtcars,
                          antecedent = everything(),
                          consequent = everything(),
