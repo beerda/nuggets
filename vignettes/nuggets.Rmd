@@ -281,7 +281,7 @@ arguments are:
 - `disjoint`: a vector defining mutually exclusive predicates;
 - rule filtering thresholds such as `min_support`, `min_confidence`,
   `min_coverage`, and limits like `min_length`, `max_length`;
-- optional parameters such as `t_norm`, and `contingency_table`.
+- optional parameters such as `t_norm`.
 
 In the following example, we search for fuzzy association rules in the dataset
 `fuzzy_mtcars`, such that:
@@ -291,14 +291,7 @@ In the following example, we search for fuzzy association rules in the dataset
 - minimum support is `0.02`, i.e., 2 % of data rows have to contain both the
   antecedent and consequent of the rule;
 - minimum confidence is `0.8`, i.e., the conditional probability of consequent
-  given antecedent should be at least 80%;
-- additionally to basic quality measures, the contingency table for each
-  rule is computed. The *contingency table* is a quadruplet `pp`, `pn`, `np` and
-  `nn`, which contains the counts (or sums of degrees) of rows satisfying 
-  antecedent & consequent (`pp`), antecedent & not consequent (`pn`), not
-  antecedent & consequent (`np`), and not antecedent & not consequent
-  (`nn`). These values are important for further computation of various 
-  additional interestingness measures.
+  given antecedent should be at least 80%.
 
 ```{r}
 result <- dig_associations(fuzzy_mtcars,
@@ -306,12 +299,17 @@ result <- dig_associations(fuzzy_mtcars,
                            consequent = starts_with("am"),
                            disjoint = disj,
                            min_support = 0.02,
-                           min_confidence = 0.8,
-                           contingency_table = TRUE)
+                           min_confidence = 0.8)
 ```
 
-The result is a tibble containing the discovered rules and their quality
-metrics. You can arrange them, for example, by decreasing support:
+The result is a tibble containing the discovered rules. Additional quality
+metrics may be computed:
+
+```{r}
+result <- add_interest(result, measures = c("conviction", "leverage"))
+```
+
+You can arrange the resulting rules, for example, by decreasing support:
 
 ```{r}
 result <- arrange(result, desc(support))
