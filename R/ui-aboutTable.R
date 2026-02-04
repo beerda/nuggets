@@ -22,7 +22,7 @@ aboutTable <- function(pkg) {
 
     author <- descr[["Authors@R"]]
     author <- eval(parse(text = author))
-    author <- format(author, style = "md")
+    author <- format(author, style = "text")
     author <- shiny::markdown(author)
 
     url <- descr[["URL"]]
