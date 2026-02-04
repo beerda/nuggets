@@ -1,5 +1,11 @@
 # Changelog
 
+## nuggets 2.1.2
+
+- released: 2026-02-04
+- added is_logicalish()
+- fixed issue with required version of R (\>= 4.5.0)
+
 ## nuggets 2.1.1
 
 - released: 2026-02-03

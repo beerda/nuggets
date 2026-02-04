@@ -8,7 +8,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/beerda/nuggets/blob/v2.1.1/inst/CITATION)
+[`inst/CITATION`](https://github.com/beerda/nuggets/blob/main/inst/CITATION)
 
 Burda M (2024). “nuggets: Data Pattern Extraction Framework in R.” In
 Torra, Vicenc, Narukawa, Yasuo, Kikuchi, Hiroaki (eds.), *Modeling

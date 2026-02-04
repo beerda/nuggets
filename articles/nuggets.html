@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>nuggets: Get Started</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/v2.1.1/vignettes/nuggets.Rmd" class="external-link"><code>vignettes/nuggets.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/vignettes/nuggets.Rmd" class="external-link"><code>vignettes/nuggets.Rmd</code></a></small>
       <div class="d-none name"><code>nuggets.Rmd</code></div>
     </div>
 
@@ -468,8 +468,7 @@ predicates;</li>
 <li>rule filtering thresholds such as <code>min_support</code>,
 <code>min_confidence</code>, <code>min_coverage</code>, and limits like
 <code>min_length</code>, <code>max_length</code>;</li>
-<li>optional parameters such as <code>t_norm</code>, and
-<code>contingency_table</code>.</li>
+<li>optional parameters such as <code>t_norm</code>.</li>
 </ul>
 <p>In the following example, we search for fuzzy association rules in
 the dataset <code>fuzzy_mtcars</code>, such that:</p>
@@ -481,16 +480,7 @@ consequent;</li>
 <li>minimum support is <code>0.02</code>, i.e., 2 % of data rows have to
 contain both the antecedent and consequent of the rule;</li>
 <li>minimum confidence is <code>0.8</code>, i.e., the conditional
-probability of consequent given antecedent should be at least 80%;</li>
-<li>additionally to basic quality measures, the contingency table for
-each rule is computed. The <em>contingency table</em> is a quadruplet
-<code>pp</code>, <code>pn</code>, <code>np</code> and <code>nn</code>,
-which contains the counts (or sums of degrees) of rows satisfying
-antecedent &amp; consequent (<code>pp</code>), antecedent &amp; not
-consequent (<code>pn</code>), not antecedent &amp; consequent
-(<code>np</code>), and not antecedent &amp; not consequent
-(<code>nn</code>). These values are important for further computation of
-various additional interestingness measures.</li>
+probability of consequent given antecedent should be at least 80%.</li>
 </ul>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">fuzzy_mtcars</span>,</span>
@@ -498,23 +488,17 @@ various additional interestingness measures.</li>
 <span>                           consequent <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"am"</span><span class="op">)</span>,</span>
 <span>                           disjoint <span class="op">=</span> <span class="va">disj</span>,</span>
 <span>                           min_support <span class="op">=</span> <span class="fl">0.02</span>,</span>
-<span>                           min_confidence <span class="op">=</span> <span class="fl">0.8</span>,</span>
-<span>                           contingency_table <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: The `contingency_table` argument of `dig_associations()` is deprecated as of</span></span>
-<span><span class="co">#&gt; nuggets 2.2.0.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The `contingency_table` argument is deprecated and will be removed in future</span></span>
-<span><span class="co">#&gt;   versions. dig_associations() works as 'contingency_table = TRUE' would be</span></span>
-<span><span class="co">#&gt;   specified by default.</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once per session.</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
-<p>The result is a tibble containing the discovered rules and their
-quality metrics. You can arrange them, for example, by decreasing
-support:</p>
+<span>                           min_confidence <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span></code></pre></div>
+<p>The result is a tibble containing the discovered rules. Additional
+quality metrics may be computed:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_interest.html">add_interest</a></span><span class="op">(</span><span class="va">result</span>, measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"conviction"</span>, <span class="st">"leverage"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>You can arrange the resulting rules, for example, by decreasing
+support:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">arrange</span><span class="op">(</span><span class="va">result</span>, <span class="fu">desc</span><span class="op">(</span><span class="va">support</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 526 × 13</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 526 × 15</span></span></span>
 <span><span class="co">#&gt;    antecedent                     consequent support confidence coverage</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> {gear=3}                       {am=0}       0.469      1        0.469</span></span>
@@ -539,6 +523,18 @@ support:</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>          0.594  1.60  9.96                 1  9.96 0.546  9.04  12.5</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>          0.594  1.68  9.88                 2  9.88 0      9.12  13  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>          0.594  1.68  9.82                 2  9.82 0      9.18  13  </span></span>
+<span><span class="co">#&gt;    conviction leverage</span></span>
+<span><span class="co">#&gt;         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     <span style="color: #BB0000;">Inf</span>      0.190 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     <span style="color: #BB0000;">Inf</span>      0.152 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     <span style="color: #BB0000;">Inf</span>      0.152 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>       2.84   0.115 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     <span style="color: #BB0000;">Inf</span>      0.152 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>       2.84   0.115 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>       2.65   0.097<span style="text-decoration: underline;">8</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>       7.82   0.116 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     <span style="color: #BB0000;">Inf</span>      0.125 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     <span style="color: #BB0000;">Inf</span>      0.125 </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 516 more rows</span></span></span></code></pre></div>
 <p>This example illustrates the typical workflow for mining association
 rules with <code>nuggets</code>. The same structure and arguments apply
@@ -558,7 +554,7 @@ relationships.</p>
 different numeric variables in the original <code>mtcars</code> data
 under conditions defined by the prepared predicates in
 <code>crisp_mtcars</code>:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Prepare combined dataset with both condition predicates and numeric variables</span></span>
 <span><span class="va">combined_mtcars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">crisp_mtcars</span>, <span class="va">mtcars</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mpg"</span>, <span class="st">"disp"</span>, <span class="st">"hp"</span>, <span class="st">"wt"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
@@ -626,7 +622,7 @@ package provides several functions for different types of contrasts.</p>
 <p><em>Baseline contrasts</em> identify conditions under which a
 variable is significantly different from a baseline value (typically
 zero) using a one-sample statistical test.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Prepare combined dataset with predicates and numeric variables</span></span>
 <span><span class="va">combined_mtcars2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">crisp_mtcars</span>, </span>
 <span>                          <span class="va">mtcars</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mpg"</span>, <span class="st">"hp"</span>, <span class="st">"wt"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
@@ -676,7 +672,7 @@ deviations from the baseline.</p>
 <p><em>Complement contrasts</em> identify conditions under which a
 variable differs significantly between elements that satisfy the
 condition and those that don’t.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">complement_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_complement_contrasts.html">dig_complement_contrasts</a></span><span class="op">(</span><span class="va">combined_mtcars2</span>,</span>
 <span>                                             condition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">crisp_mtcars</span><span class="op">)</span>,</span>
 <span>                                             vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mpg"</span>, <span class="st">"hp"</span>, <span class="st">"wt"</span><span class="op">)</span>,</span>
@@ -724,7 +720,7 @@ data.</p>
 <p><em>Paired baseline contrasts</em> identify conditions under which
 there is a significant difference between two paired numeric
 variables.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">paired_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_paired_baseline_contrasts.html">dig_paired_baseline_contrasts</a></span><span class="op">(</span><span class="va">combined_mtcars2</span>,</span>
 <span>                                              condition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">crisp_mtcars</span><span class="op">)</span>,</span>
 <span>                                              xvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mpg"</span>, <span class="st">"hp"</span><span class="op">)</span>,</span>
@@ -782,7 +778,7 @@ provides several tools for these tasks.</p>
 visualization for association rules and their hierarchical structure. It
 displays rules as a lattice where broader (more general) conditions
 appear above their descendants:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Search for rules with various confidence levels for visualization</span></span>
 <span><span class="va">vis_rules</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">fuzzy_mtcars</span>,</span>
 <span>                              antecedent <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gear"</span>, <span class="st">"vs"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -836,7 +832,7 @@ appear above their descendants:</p>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_discrete.html" class="external-link">scale_y_discrete</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/expansion.html" class="external-link">expansion</a></span><span class="op">(</span>add <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Association Rules Hierarchy"</span>,</span>
 <span>         subtitle <span class="op">=</span> <span class="st">"consequent: am=1"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="nuggets_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="" width="768"></p>
+<p><img src="nuggets_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="" width="768"></p>
 <p>This example creates a hierarchical visualization of association
 rules. The <code><a href="../reference/geom_diamond.html">geom_diamond()</a></code> function arranges rules in a
 lattice structure where simpler rules (with fewer predicates) appear at
@@ -865,8 +861,8 @@ the amount of change is indicated with the width of the lines)</li>
 <p>The <code><a href="https://generics.r-lib.org/reference/explore.html" class="external-link">explore()</a></code> function launches an interactive Shiny
 application for exploring discovered patterns. This is particularly
 useful for association rules:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Launch interactive explorer for association rules</span></span>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Search for association rules</span></span>
 <span><span class="va">rules</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">fuzzy_mtcars</span>,</span>
 <span>                         antecedent <span class="op">=</span> <span class="fu">everything</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>                         consequent <span class="op">=</span> <span class="fu">everything</span><span class="op">(</span><span class="op">)</span>,</span>
@@ -904,7 +900,7 @@ callback function on each generated frequent condition. This enables
 searching for custom pattern types beyond the pre-defined functions.</p>
 <p>The following example replicates the search for association rules
 using a custom callback function with the datasets prepared earlier:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define thresholds for custom association rules</span></span>
 <span><span class="va">min_support</span> <span class="op">&lt;-</span> <span class="fl">0.02</span></span>
 <span><span class="va">min_confidence</span> <span class="op">&lt;-</span> <span class="fl">0.8</span></span>
@@ -982,7 +978,7 @@ combinations and evaluates a user-defined function for each condition
 and column pair.</p>
 <p>Here’s an example that computes custom statistics for pairs of
 numeric variables:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define callback for grid-based patterns</span></span>
 <span><span class="va">grid_callback</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">d</span>, <span class="va">weights</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">5</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span>  <span class="co"># Skip if too few observations</span></span>

@@ -65,7 +65,7 @@ Details of numeric transformations are controlled by .breaks, .labels,
 
     <a class="navbar-brand me-2" href="../index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -97,7 +97,7 @@ Details of numeric transformations are controlled by .breaks, .labels,
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Convert columns of a data frame to Boolean or fuzzy sets (triangular, trapezoidal, or raised-cosine)</h1>
-      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/v2.1.1/R/partition.R" class="external-link"><code>R/partition.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/R/partition.R" class="external-link"><code>R/partition.R</code></a></small>
       <div class="d-none name"><code>partition.Rd</code></div>
     </div>
 
@@ -349,20 +349,20 @@ are linear for <code>.method = "triangle"</code> and cosine for <code>.method = 
 <span class="r-in"><span><span class="co"># Crisp transformation using k-means clustering for breakpoints</span></span></span>
 <span class="r-in"><span><span class="fu">partition</span><span class="op">(</span><span class="va">CO2</span>, <span class="va">conc</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fl">4</span>, .style <span class="op">=</span> <span class="st">"kmeans"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 84 × 8</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Plant Type   Treatment  uptake `conc=(-Inf;300]` `conc=(300;588]`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Plant Type   Treatment  uptake `conc=(-Inf;212]` `conc=(212;425]`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Qn1   Quebec nonchilled   16   TRUE              FALSE           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Qn1   Quebec nonchilled   30.4 TRUE              FALSE           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Qn1   Quebec nonchilled   34.8 TRUE              FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Qn1   Quebec nonchilled   34.8 FALSE             TRUE            </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Qn1   Quebec nonchilled   37.2 FALSE             TRUE            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Qn1   Quebec nonchilled   35.3 FALSE             TRUE            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Qn1   Quebec nonchilled   35.3 FALSE             FALSE           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Qn1   Quebec nonchilled   39.2 FALSE             FALSE           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Qn1   Quebec nonchilled   39.7 FALSE             FALSE           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Qn2   Quebec nonchilled   13.6 TRUE              FALSE           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Qn2   Quebec nonchilled   27.3 TRUE              FALSE           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Qn2   Quebec nonchilled   37.1 TRUE              FALSE           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Qn2   Quebec nonchilled   37.1 FALSE             TRUE            </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 74 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: `conc=(588;838]` &lt;lgl&gt;, `conc=(838;Inf]` &lt;lgl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: `conc=(425;838]` &lt;lgl&gt;, `conc=(838;Inf]` &lt;lgl&gt;</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Crisp transformation using Lloyd algorithm for k-means clustering for breakpoints</span></span></span>
 <span class="r-in"><span><span class="fu">partition</span><span class="op">(</span><span class="va">CO2</span>, <span class="va">conc</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fl">4</span>, .style <span class="op">=</span> <span class="st">"kmeans"</span>,</span></span>

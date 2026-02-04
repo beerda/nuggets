@@ -298,20 +298,20 @@ partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "quantile")
 # Crisp transformation using k-means clustering for breakpoints
 partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "kmeans")
 #> # A tibble: 84 × 8
-#>    Plant Type   Treatment  uptake `conc=(-Inf;300]` `conc=(300;588]`
+#>    Plant Type   Treatment  uptake `conc=(-Inf;212]` `conc=(212;425]`
 #>    <ord> <fct>  <fct>       <dbl> <lgl>             <lgl>           
 #>  1 Qn1   Quebec nonchilled   16   TRUE              FALSE           
 #>  2 Qn1   Quebec nonchilled   30.4 TRUE              FALSE           
-#>  3 Qn1   Quebec nonchilled   34.8 TRUE              FALSE           
+#>  3 Qn1   Quebec nonchilled   34.8 FALSE             TRUE            
 #>  4 Qn1   Quebec nonchilled   37.2 FALSE             TRUE            
-#>  5 Qn1   Quebec nonchilled   35.3 FALSE             TRUE            
+#>  5 Qn1   Quebec nonchilled   35.3 FALSE             FALSE           
 #>  6 Qn1   Quebec nonchilled   39.2 FALSE             FALSE           
 #>  7 Qn1   Quebec nonchilled   39.7 FALSE             FALSE           
 #>  8 Qn2   Quebec nonchilled   13.6 TRUE              FALSE           
 #>  9 Qn2   Quebec nonchilled   27.3 TRUE              FALSE           
-#> 10 Qn2   Quebec nonchilled   37.1 TRUE              FALSE           
+#> 10 Qn2   Quebec nonchilled   37.1 FALSE             TRUE            
 #> # ℹ 74 more rows
-#> # ℹ 2 more variables: `conc=(588;838]` <lgl>, `conc=(838;Inf]` <lgl>
+#> # ℹ 2 more variables: `conc=(425;838]` <lgl>, `conc=(838;Inf]` <lgl>
 
 # Crisp transformation using Lloyd algorithm for k-means clustering for breakpoints
 partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "kmeans",

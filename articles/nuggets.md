@@ -357,7 +357,7 @@ function searches for association rules. Its main arguments are:
 - `disjoint`: a vector defining mutually exclusive predicates;
 - rule filtering thresholds such as `min_support`, `min_confidence`,
   `min_coverage`, and limits like `min_length`, `max_length`;
-- optional parameters such as `t_norm`, and `contingency_table`.
+- optional parameters such as `t_norm`.
 
 In the following example, we search for fuzzy association rules in the
 dataset `fuzzy_mtcars`, such that:
@@ -368,14 +368,7 @@ dataset `fuzzy_mtcars`, such that:
 - minimum support is `0.02`, i.e., 2 % of data rows have to contain both
   the antecedent and consequent of the rule;
 - minimum confidence is `0.8`, i.e., the conditional probability of
-  consequent given antecedent should be at least 80%;
-- additionally to basic quality measures, the contingency table for each
-  rule is computed. The *contingency table* is a quadruplet `pp`, `pn`,
-  `np` and `nn`, which contains the counts (or sums of degrees) of rows
-  satisfying antecedent & consequent (`pp`), antecedent & not consequent
-  (`pn`), not antecedent & consequent (`np`), and not antecedent & not
-  consequent (`nn`). These values are important for further computation
-  of various additional interestingness measures.
+  consequent given antecedent should be at least 80%.
 
 ``` r
 result <- dig_associations(fuzzy_mtcars,
@@ -383,25 +376,22 @@ result <- dig_associations(fuzzy_mtcars,
                            consequent = starts_with("am"),
                            disjoint = disj,
                            min_support = 0.02,
-                           min_confidence = 0.8,
-                           contingency_table = TRUE)
-#> Warning: The `contingency_table` argument of `dig_associations()` is deprecated as of
-#> nuggets 2.2.0.
-#> ℹ The `contingency_table` argument is deprecated and will be removed in future
-#>   versions. dig_associations() works as 'contingency_table = TRUE' would be
-#>   specified by default.
-#> This warning is displayed once per session.
-#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-#> generated.
+                           min_confidence = 0.8)
 ```
 
-The result is a tibble containing the discovered rules and their quality
-metrics. You can arrange them, for example, by decreasing support:
+The result is a tibble containing the discovered rules. Additional
+quality metrics may be computed:
+
+``` r
+result <- add_interest(result, measures = c("conviction", "leverage"))
+```
+
+You can arrange the resulting rules, for example, by decreasing support:
 
 ``` r
 result <- arrange(result, desc(support))
 print(result)
-#> # A tibble: 526 × 13
+#> # A tibble: 526 × 15
 #>    antecedent                     consequent support confidence coverage
 #>    <chr>                          <chr>        <dbl>      <dbl>    <dbl>
 #>  1 {gear=3}                       {am=0}       0.469      1        0.469
@@ -426,6 +416,18 @@ print(result)
 #>  8          0.594  1.60  9.96                 1  9.96 0.546  9.04  12.5
 #>  9          0.594  1.68  9.88                 2  9.88 0      9.12  13  
 #> 10          0.594  1.68  9.82                 2  9.82 0      9.18  13  
+#>    conviction leverage
+#>         <dbl>    <dbl>
+#>  1     Inf      0.190 
+#>  2     Inf      0.152 
+#>  3     Inf      0.152 
+#>  4       2.84   0.115 
+#>  5     Inf      0.152 
+#>  6       2.84   0.115 
+#>  7       2.65   0.0978
+#>  8       7.82   0.116 
+#>  9     Inf      0.125 
+#> 10     Inf      0.125 
 #> # ℹ 516 more rows
 ```
 
@@ -734,7 +736,7 @@ ggplot(vis_rules) +
          subtitle = "consequent: am=1")
 ```
 
-![](nuggets_files/figure-html/unnamed-chunk-13-1.png)
+![](nuggets_files/figure-html/unnamed-chunk-14-1.png)
 
 This example creates a hierarchical visualization of association rules.
 The
@@ -765,7 +767,7 @@ function launches an interactive Shiny application for exploring
 discovered patterns. This is particularly useful for association rules:
 
 ``` r
-# Launch interactive explorer for association rules
+# Search for association rules
 rules <- dig_associations(fuzzy_mtcars,
                          antecedent = everything(),
                          consequent = everything(),

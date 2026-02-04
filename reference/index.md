@@ -87,6 +87,8 @@ Other functions that can be useful in the pattern extraction process.
 - [`is_degree()`](https://beerda.github.io/nuggets/reference/is_degree.md)
   : Test whether an object contains numeric values from the interval
   \\\[0,1\]\\
+- [`is_logicalish()`](https://beerda.github.io/nuggets/reference/is_logicalish.md)
+  : Check if an object is logical or numeric with only 0s and 1s
 - [`is_nugget()`](https://beerda.github.io/nuggets/reference/is_nugget.md)
   : Test whether an object is a nugget
 - [`is_subset()`](https://beerda.github.io/nuggets/reference/is_subset.md)
