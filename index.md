@@ -102,8 +102,10 @@ rules <- dig_associations(cars,
                           antecedent = everything(),
                           consequent = everything(),
                           max_length = 4,
-                          min_support = 0.1,
-                          measures = c("lift", "conviction"))
+                          min_support = 0.1)
+
+# Add various interest measures
+rules <- add_interest(rules)
 
 # Explore the found rules interactively
 explore(rules, cars)
