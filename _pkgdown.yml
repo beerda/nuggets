@@ -57,6 +57,7 @@ reference:
       - format_condition
       - is_condition
       - is_degree
+      - is_integerish
       - is_nugget
       - is_subset
       - nugget
