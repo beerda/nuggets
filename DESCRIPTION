@@ -1,7 +1,7 @@
 Package: nuggets
 Title: Extensible Framework for Data Pattern Exploration
-Version: 2.1.1
-Date: 2026-02-03
+Version: 2.1.2
+Date: 2026-02-04
 Authors@R: 
     person(given = "Michal",
            family = "Burda",
@@ -29,7 +29,7 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Language: en-US
-Depends: R (>= 4.1.0)
+Depends: R (>= 4.5.0)
 Imports: 
     classInt,
     cli,
