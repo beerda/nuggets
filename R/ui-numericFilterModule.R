@@ -30,22 +30,13 @@ numericFilterModule <- function(id, x, meta) {
         x <- as.numeric(x)
     }
 
-    finx <- x
-    finx <- finx[!is.na(finx)]
-    finx <- finx[!is.nan(finx)]
-    finx <- finx[is.finite(finx)]
-
-    rng <- bound_range(finx,
-                       digits = digits,
-                       na_rm = TRUE)
-
-    summaryTable <- quantile(finx, probs = seq(0, 1, 0.25), names = FALSE)
-    summaryTable <- as.data.frame(t(summaryTable))
-    colnames(summaryTable) <- c("min", "Q1", "median", "Q3", "max")
+    finx <- .just_finite_values(x)
+    rng <- bound_range(finx, digits = digits, na_rm = TRUE)
+    summaryTable <- .summarize_finite(x)
 
     g <- ggplot(data.frame(x = finx)) + aes(x = x)
     if (int) {
-        g <- g + geom_bar()
+        g <- g + geom_bar(fill = "white", color = "black")
     } else {
         g <- g + geom_histogram(bins = 30, fill = "white", color = "black")
     }
