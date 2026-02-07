@@ -1,6 +1,7 @@
 # nuggets ???
 - released: ???
-- fixed bug in explore() when viewing rules with empty antecedents only
+- fixed bug in explore(): rules with empty antecedents only
+- fixed bug in explore(): measure containing non-finite values only
 
 # nuggets 2.1.2
 - released: 2026-02-04
