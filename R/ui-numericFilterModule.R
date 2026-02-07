@@ -19,20 +19,7 @@
 
 numericFilterModule <- function(id, x, meta) {
     int <- meta$type == "integer"
-
-    special <- NULL
-    if (any(x == -Inf, na.rm = TRUE)) {
-        special <- c(special, "-Inf")
-    }
-    if (any(is.na(x))) {
-        special <- c(special, "NA")
-    }
-    if (any(is.nan(x), na.rm = TRUE)) {
-        special <- c(special, "NaN")
-    }
-    if (any(x == Inf, na.rm = TRUE)) {
-        special <- c(special, "Inf")
-    }
+    special <- .extract_special_value_names(x)
 
     digits <- NULL
     if (int) {
