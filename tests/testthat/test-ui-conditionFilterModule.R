@@ -21,10 +21,24 @@ test_that(".parse_tree_def_from_condition - border cases", {
     .skip_if_shiny_not_installed()
 
     def <- .parse_tree_def_from_condition(parse_condition(character(0)), root_name = "root")
-    expect_equal(def, data.frame())
+    expect_equal(def,
+                 data.frame(nid = character(0),
+                            vid = character(0),
+                            rid = character(0),
+                            predicate = character(0),
+                            name = character(0),
+                            value = character(0),
+                            stringsAsFactors = FALSE))
 
     def <- .parse_tree_def_from_condition(parse_condition("{}"), root_name = "root")
-    expect_equal(def, data.frame())
+    expect_equal(def,
+                 data.frame(nid = character(0),
+                            vid = character(0),
+                            rid = character(0),
+                            predicate = character(0),
+                            name = character(0),
+                            value = character(0),
+                            stringsAsFactors = FALSE))
 })
 
 test_that(".parse_tree_def_from_condition - no subnodes", {

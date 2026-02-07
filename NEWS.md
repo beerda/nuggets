@@ -1,3 +1,7 @@
+# nuggets ???
+- released: ???
+- fixed bug in explore() when viewing rules with empty antecedents only
+
 # nuggets 2.1.2
 - released: 2026-02-04
 - added is_logicalish()

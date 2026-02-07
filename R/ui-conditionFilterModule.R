@@ -19,13 +19,13 @@
 
 .parse_tree_def_from_condition <- function(pred, root_name) {
     if (is.null(pred) || length(pred) == 0) {
-        return(data.frame())
+        return(.create_empty_tree_def())
     }
 
     empties <- vapply(pred, length, integer(1)) == 0
     pred <- pred[!empties]
     if (length(pred) == 0) {
-        return(data.frame())
+        return(.create_empty_tree_def())
     }
 
     pred <- unlist(pred)
@@ -61,6 +61,16 @@
     res
 }
 
+.create_empty_tree_def <- function() {
+    data.frame(nid = character(0),
+               vid = character(0),
+               rid = character(0),
+               predicate = character(0),
+               name = character(0),
+               value = character(0),
+               stringsAsFactors = FALSE)
+}
+
 .create_tree_from_def <- function(def) {
     if (is.null(def$pid)) {
         lev <- c("rid", "name", "value")
@@ -88,13 +98,28 @@ conditionFilterModule <- function(id, x, meta) {
     def <- .parse_tree_def_from_condition(pred, root_name = root_name)
     tab <- .create_filtering_table(x, pred, def)
     tree <- .create_tree_from_def(def)
-
     empty_cond <- vapply(pred, length, integer(1)) == 0
+
+    showTree <- NULL
+    showRadio <- NULL
     showEmptyCheckbox <- NULL
     if (any(empty_cond)) {
         showEmptyCheckbox <- shiny::checkboxInput(shiny::NS(id, "emptyCondition"),
                                            paste0("show empty ", tolower(meta$long_name)),
                                            value = TRUE)
+    }
+    if (!all(empty_cond)) {
+        showTree <- shinyWidgets::treeInput(shiny::NS(id, "tree"),
+                                            label = tolower(meta$long_name),
+                                            choices = tree,
+                                            selected = root_name,
+                                            returnValue = "id",
+                                            closeDepth = 1)
+        showRadio <- shiny::radioButtons(shiny::NS(id, "radio"),
+                                         label = "show rules containing",
+                                         choiceNames = c("all selected predicates", "at least one selected predicate"),
+                                         choiceValues = c("all", "any"),
+                                         selected = "all")
     }
 
     list(ui = function() {
@@ -102,17 +127,8 @@ conditionFilterModule <- function(id, x, meta) {
                            value = meta$data_name,
                            info = paste0("Filter the rules by choosing predicates that should appear in the ",
                                          tolower(meta$long_name), "."),
-                shinyWidgets::treeInput(shiny::NS(id, "tree"),
-                          label = tolower(meta$long_name),
-                          choices = tree,
-                          selected = root_name,
-                          returnValue = "id",
-                          closeDepth = 1),
-                shiny::radioButtons(shiny::NS(id, "radio"),
-                             label = "show rules containing",
-                             choiceNames = c("all selected predicates", "at least one selected predicate"),
-                             choiceValues = c("all", "any"),
-                             selected = "all"),
+                showTree,
+                showRadio,
                 showEmptyCheckbox,
                 htmltools::hr(),
                 shiny::actionButton(shiny::NS(id, "resetButton"), "Reset"),
@@ -123,8 +139,12 @@ conditionFilterModule <- function(id, x, meta) {
         server = function(reset_all_trigger) {
             shiny::moduleServer(id, function(input, output, session) {
                 shiny::observeEvent(input$resetButton, {
-                    shinyWidgets::updateTreeInput("tree", selected = def$vid, session = session)
-                    shiny::updateRadioButtons("radio", selected = "all", session = session)
+                    if (!is.null(showTree)) {
+                        shinyWidgets::updateTreeInput("tree", selected = def$vid, session = session)
+                    }
+                    if (!is.null(showRadio)) {
+                        shiny::updateRadioButtons("radio", selected = "all", session = session)
+                    }
                     if (!is.null(showEmptyCheckbox)) {
                         shiny::updateCheckboxInput("emptyCondition", value = TRUE, session = session)
                     }
@@ -167,8 +187,12 @@ conditionFilterModule <- function(id, x, meta) {
         },
 
         reset = function(session) {
-            shinyWidgets::updateTreeInput(shiny::NS(id, "tree"), selected = def$vid, session = session)
-            shiny::updateRadioButtons(shiny::NS(id, "radio"), selected = "all", session = session)
+            if (!is.null(showTree)) {
+                shinyWidgets::updateTreeInput(shiny::NS(id, "tree"), selected = def$vid, session = session)
+            }
+            if (!is.null(showRadio)) {
+                shiny::updateRadioButtons(shiny::NS(id, "radio"), selected = "all", session = session)
+            }
             if (!is.null(showEmptyCheckbox)) {
                 shiny::updateCheckboxInput(shiny::NS(id, "emptyCondition"), value = TRUE, session = session)
             }
