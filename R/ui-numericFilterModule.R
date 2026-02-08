@@ -175,3 +175,50 @@ numericFilterModule <- function(id, x, meta) {
         }
     )
 }
+
+.extract_special_value_names <- function(x) {
+    special <- NULL
+    if (any(x == -Inf, na.rm = TRUE)) {
+        special <- c(special, "-Inf")
+    }
+    if (any(is.na(x) & !is.nan(x))) {
+        special <- c(special, "NA")
+    }
+    if (any(is.nan(x), na.rm = TRUE)) {
+        special <- c(special, "NaN")
+    }
+    if (any(x == Inf, na.rm = TRUE)) {
+        special <- c(special, "Inf")
+    }
+
+    special
+}
+
+.just_finite_values <- function(x) {
+    x <- x[!is.na(x)]
+    x <- x[!is.nan(x)]
+
+    x[is.finite(x)]
+}
+
+.summarize_finite <- function(x) {
+    finx <- .just_finite_values(x)
+    res <- quantile(finx, probs = seq(0, 1, 0.25), names = FALSE)
+    res <- as.data.frame(t(res))
+    colnames(res) <- c("min", "Q1", "median", "Q3", "max")
+
+    res
+}
+
+.summarize_special <- function(x) {
+    count_ninf <- sum(is.infinite(x) & x < 0)
+    count_na <- sum(is.na(x) & !is.nan(x))
+    count_nan <- sum(is.nan(x))
+    count_pinf <- sum(is.infinite(x) & x > 0)
+
+    data.frame(`# -Inf` = count_ninf,
+               `# NA` = count_na,
+               `# NaN` = count_nan,
+               `# +Inf` = count_pinf)
+}
+

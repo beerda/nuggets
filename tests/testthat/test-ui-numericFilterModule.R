@@ -162,3 +162,78 @@ test_that("numericFilterModule - filter", {
     res <- mod$filter(input)
     expect_equal(res, c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE))
 })
+
+
+test_that(".extract_special_value_names", {
+    expect_equal(.extract_special_value_names(NULL), NULL)
+    expect_equal(.extract_special_value_names(1:5), NULL)
+    expect_equal(.extract_special_value_names(c(1:5, NA)), c("NA"))
+    expect_equal(.extract_special_value_names(c(1:5, NaN)), c("NaN"))
+    expect_equal(.extract_special_value_names(c(1:5, -Inf)), c("-Inf"))
+    expect_equal(.extract_special_value_names(c(1:5, Inf)), c("Inf"))
+
+    expect_equal(.extract_special_value_names(c(1:5, Inf, NaN, NA)),
+                 c("NA", "NaN", "Inf"))
+
+    expect_equal(.extract_special_value_names(c(1:5, Inf, NaN, -Inf, NA, 1)),
+                 c("-Inf", "NA", "NaN", "Inf"))
+})
+
+
+test_that(".just_finite_values", {
+  expect_equal(.just_finite_values(c(1.0, 2.0, NA, 3.0, NaN, -Inf, Inf)),
+               c(1.0, 2.0, 3.0))
+  expect_equal(.just_finite_values(c(1L, 2L, NA, 3L, NaN, -Inf, Inf)),
+               c(1L, 2L, 3L))
+})
+
+
+test_that(".summarize_finite", {
+    expect_equal(.summarize_finite(c(1, 4, 2, 5, 3, NA, NaN, Inf, -Inf)),
+                 data.frame(min = 1, Q1 = 2, median = 3, Q3 = 4, max = 5))
+})
+
+
+test_that(".summarize_special", {
+    x <- c(1, 4, 2, 5, 3)
+    expect_equal(.summarize_special(x),
+                 data.frame(`# -Inf` = 0,
+                            `# NA` = 0,
+                            `# NaN` = 0,
+                            `# +Inf` = 0))
+
+    x <- c(x, NA)
+    expect_equal(.summarize_special(x),
+                 data.frame(`# -Inf` = 0,
+                            `# NA` = 1,
+                            `# NaN` = 0,
+                            `# +Inf` = 0))
+
+    x <- c(x, NaN)
+    expect_equal(.summarize_special(x),
+                 data.frame(`# -Inf` = 0,
+                            `# NA` = 1,
+                            `# NaN` = 1,
+                            `# +Inf` = 0))
+
+    x <- c(x, -Inf)
+    expect_equal(.summarize_special(x),
+                 data.frame(`# -Inf` = 1,
+                            `# NA` = 1,
+                            `# NaN` = 1,
+                            `# +Inf` = 0))
+
+    x <- c(x, Inf)
+    expect_equal(.summarize_special(x),
+                 data.frame(`# -Inf` = 1,
+                            `# NA` = 1,
+                            `# NaN` = 1,
+                            `# +Inf` = 1))
+
+    x <- c(rep(x, 5), NA, NA, NaN)
+    expect_equal(.summarize_special(x),
+                 data.frame(`# -Inf` = 5,
+                            `# NA` = 7,
+                            `# NaN` = 6,
+                            `# +Inf` = 5))
+})
