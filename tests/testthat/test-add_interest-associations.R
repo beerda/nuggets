@@ -22,7 +22,6 @@ test_that("measure names are equal in internal lists", {
     n <- .get_supported_association_measure_names()
 
     expect_equal(names(m), names(n))
-    print(.create_arules_measures_doc())
 })
 
 
