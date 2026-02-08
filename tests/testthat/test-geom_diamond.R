@@ -210,3 +210,223 @@ test_that("geom_diamond of single rule with empty condition", {
         print(g)
     })
 })
+
+test_that(".geom_diamond_draw_panel returns gList", {
+    # Prepare data that has been processed by setup_data
+    x <- c(0.0, -0.5, 0.5)
+    y <- c(2.0, 1.0, 1.0)
+    d <- data.frame(
+        condition = c("{}", "{a=1}", "{b=2}"),
+        x = x,
+        y = y,
+        xlabel = x + 0.125,
+        ylabel = y + 0.125,
+        linewidth_orig = rep(0.5, 3),
+        label = c("-", "a=1", "b=2"),
+        colour = rep("black", 3),
+        size = rep(1, 3),
+        shape = rep(21, 3),
+        fill = rep("white", 3),
+        alpha = rep(NA, 3),
+        stroke = rep(1, 3),
+        stringsAsFactors = FALSE
+    )
+    
+    # Create mock panel_params and coord (these are ggplot internals)
+    panel_params <- list()
+    coord <- ggplot2::coord_cartesian()
+    
+    # Call the function
+    result <- .geom_diamond_draw_panel(d, panel_params, coord)
+    
+    # Verify result is a gList
+    expect_true(inherits(result, "gList"))
+    
+    # Verify it contains elements (at least point and label)
+    expect_true(length(result) > 0)
+})
+
+test_that(".geom_diamond_draw_panel with edges (no curvature)", {
+    # Create data with parent-child relationships (no curvature needed)
+    x <- c(0.0, 0.0)
+    y <- c(1.0, 0.0)
+    d <- data.frame(
+        condition = c("{a=1}", "{a=1, b=2}"),
+        x = x,
+        y = y,
+        xlabel = x + 0.125,
+        ylabel = y + 0.125,
+        linewidth_orig = rep(0.5, 2),
+        label = c("a=1", "a=1, b=2"),
+        colour = rep("black", 2),
+        size = rep(1, 2),
+        shape = rep(21, 2),
+        fill = rep("white", 2),
+        alpha = rep(NA, 2),
+        stroke = rep(1, 2),
+        stringsAsFactors = FALSE
+    )
+    
+    panel_params <- list()
+    coord <- ggplot2::coord_cartesian()
+    
+    result <- .geom_diamond_draw_panel(d, panel_params, coord,
+                                       linetype = "solid")
+    
+    expect_true(inherits(result, "gList"))
+    expect_true(length(result) > 0)
+})
+
+test_that(".geom_diamond_draw_panel with custom parameters", {
+    x <- c(0.0, -0.5, 0.5)
+    y <- c(2.0, 1.0, 1.0)
+    d <- data.frame(
+        condition = c("{}", "{a=1}", "{b=2}"),
+        x = x,
+        y = y,
+        xlabel = x + 0.2,
+        ylabel = y - 0.3,
+        linewidth_orig = rep(0.5, 3),
+        label = c("-", "a=1", "b=2"),
+        colour = rep("black", 3),
+        size = rep(1, 3),
+        shape = rep(21, 3),
+        fill = rep("white", 3),
+        alpha = rep(NA, 3),
+        stroke = rep(1, 3),
+        stringsAsFactors = FALSE
+    )
+    
+    panel_params <- list()
+    coord <- ggplot2::coord_cartesian()
+    
+    # Test with custom linewidth and linetype
+    result <- .geom_diamond_draw_panel(d, panel_params, coord,
+                                       linetype = "dashed",
+                                       linewidth = 1.5,
+                                       nudge_x = 0.2,
+                                       nudge_y = -0.3)
+    
+    expect_true(inherits(result, "gList"))
+})
+
+test_that(".geom_diamond_draw_panel with na.rm parameter", {
+    x <- c(0.0, -0.5, 0.5)
+    y <- c(2.0, 1.0, 1.0)
+    d <- data.frame(
+        condition = c("{}", "{a=1}", "{b=2}"),
+        x = x,
+        y = y,
+        xlabel = x,
+        ylabel = y,
+        linewidth_orig = rep(0.5, 3),
+        label = c("-", "a=1", "b=2"),
+        colour = rep("black", 3),
+        size = rep(1, 3),
+        shape = rep(21, 3),
+        fill = rep("white", 3),
+        alpha = rep(NA, 3),
+        stroke = rep(1, 3),
+        stringsAsFactors = FALSE
+    )
+    
+    panel_params <- list()
+    coord <- ggplot2::coord_cartesian()
+    
+    # Test with na.rm = TRUE
+    result <- .geom_diamond_draw_panel(d, panel_params, coord, na.rm = TRUE)
+    expect_true(inherits(result, "gList"))
+    
+    # Test with na.rm = FALSE
+    result <- .geom_diamond_draw_panel(d, panel_params, coord, na.rm = FALSE)
+    expect_true(inherits(result, "gList"))
+})
+
+test_that(".geom_diamond_draw_panel with edges having different curvatures", {
+    # Create a more complex lattice with edges that will have different curvatures
+    x <- c(0.0, -0.5, 0.5, -1.0, 0.0, 1.0)
+    y <- c(2.0, 1.0, 1.0, 0.0, 0.0, 0.0)
+    d <- data.frame(
+        condition = c("{}", "{a=1}", "{b=2}", "{a=1, b=2}", "{b=2, a=3}", "{b=2, a=4}"),
+        x = x,
+        y = y,
+        xlabel = x + 0.125,
+        ylabel = y + 0.125,
+        linewidth_orig = rep(0.5, 6),
+        label = c("-", "a=1", "b=2", "a=1, b=2", "a=3, b=2", "a=4, b=2"),
+        colour = rep("black", 6),
+        size = rep(1, 6),
+        shape = rep(21, 6),
+        fill = rep("white", 6),
+        alpha = rep(NA, 6),
+        stroke = rep(1, 6),
+        stringsAsFactors = FALSE
+    )
+    
+    panel_params <- list()
+    coord <- ggplot2::coord_cartesian()
+    
+    result <- .geom_diamond_draw_panel(d, panel_params, coord)
+    
+    # Should produce a gList with curves, points, and labels
+    expect_true(inherits(result, "gList"))
+    expect_true(length(result) > 0)
+})
+
+test_that(".geom_diamond_draw_panel with varying linewidth", {
+    # Test with different linewidth values to trigger edge styling
+    x <- c(0.0, 0.0, 0.0)
+    y <- c(2.0, 1.0, 0.0)
+    d <- data.frame(
+        condition = c("{}", "{a=1}", "{a=1, b=2}"),
+        x = x,
+        y = y,
+        xlabel = x,
+        ylabel = y,
+        linewidth_orig = c(1.0, 2.0, 3.0),
+        label = c("-", "a=1", "a=1, b=2"),
+        colour = rep("black", 3),
+        size = rep(1, 3),
+        shape = rep(21, 3),
+        fill = rep("white", 3),
+        alpha = rep(NA, 3),
+        stroke = rep(1, 3),
+        stringsAsFactors = FALSE
+    )
+    
+    panel_params <- list()
+    coord <- ggplot2::coord_cartesian()
+    
+    result <- .geom_diamond_draw_panel(d, panel_params, coord)
+    
+    expect_true(inherits(result, "gList"))
+})
+
+test_that(".geom_diamond_draw_panel with empty edges", {
+    # Single node with no edges
+    d <- data.frame(
+        condition = "{a=1}",
+        x = 0.0,
+        y = 0.0,
+        xlabel = 0.125,
+        ylabel = 0.125,
+        linewidth_orig = 0.5,
+        label = "a=1",
+        colour = "black",
+        size = 1,
+        shape = 21,
+        fill = "white",
+        alpha = NA,
+        stroke = 1,
+        stringsAsFactors = FALSE
+    )
+    
+    panel_params <- list()
+    coord <- ggplot2::coord_cartesian()
+    
+    result <- .geom_diamond_draw_panel(d, panel_params, coord)
+    
+    # Should still return a valid gList (with point and label, but no edges)
+    expect_true(inherits(result, "gList"))
+    expect_true(length(result) > 0)
+})
