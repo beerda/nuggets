@@ -468,5 +468,110 @@ test_that("partition errors", {
                            .breaks = c(1, 2, 3)),
                  "Unable to partition column `a` because it contains infinite values.")
 
+    # Test .style errors
+    expect_error(partition(d, a, .style = "invalid"),
+                 '`.style` must be equal to one of')
+
+    # Test .style with non-crisp method
+    expect_error(partition(data.frame(a = 1:10), a,
+                           .method = "triangle",
+                           .breaks = 3,
+                           .style = "quantile"),
+                 "The `.style` argument is only applicable when `.method` is `crisp`")
+
+    # Test .style_params errors
+    expect_error(partition(d, a, .style_params = "invalid"),
+                 "`.style_params` must be a list")
+
+    # Test .span errors
+    expect_error(partition(d, a, .span = "x"),
+                 "`.span` must be an integerish scalar")
+    expect_error(partition(d, a, .span = 0),
+                 "`.span` must be >= 1")
+
+    # Test .inc errors
+    expect_error(partition(d, a, .inc = "x"),
+                 "`.inc` must be an integerish scalar")
+    expect_error(partition(d, a, .inc = 0),
+                 "`.inc` must be >= 1")
+
+    # Test .breaks NULL error for numeric columns
+    expect_error(partition(data.frame(a = 1:10), a,
+                           .method = "crisp",
+                           .breaks = NULL),
+                 "`.breaks` must not be NULL in order to partition numeric column `a`")
+
+    # Test invalid column type
+    expect_error(partition(data.frame(a = list(1:3, 4:6)), a),
+                 "Unable to partition column `a`")
+    expect_error(partition(data.frame(a = list(1:3, 4:6)), a),
+                 "Column selected for partitioning must be a factor, logical, or numeric")
+
+    # Test scalar .breaks validation for crisp
+    expect_error(partition(data.frame(a = 1:10), a,
+                           .method = "crisp",
+                           .breaks = 1),
+                 "If `.breaks` is a single value, it must be a natural number greater than 1")
+    expect_error(partition(data.frame(a = 1:10), a,
+                           .method = "crisp",
+                           .breaks = 1.5),
+                 "If `.breaks` is a single value, it must be a natural number greater than 1")
+
+    # Test non-scalar .breaks length validation for crisp
+    expect_error(partition(data.frame(a = 1:10), a,
+                           .method = "crisp",
+                           .breaks = c(1, 2),
+                           .span = 2,
+                           .inc = 1),
+                 "If `.breaks` is non-scalar, the length of the vector must be equal to")
+
+    # Test .labels length mismatch for crisp scalar breaks
+    expect_error(partition(data.frame(a = 1:10), a,
+                           .method = "crisp",
+                           .breaks = 3,
+                           .labels = c("a", "b")),
+                 "If `.breaks` is scalar, the length of `.labels` must be equal to the value of `.breaks`")
+
+    # Test .labels length mismatch for crisp non-scalar breaks
+    expect_error(partition(data.frame(a = 1:10), a,
+                           .method = "crisp",
+                           .breaks = c(1, 3, 5, 7),
+                           .labels = c("a", "b")),
+                 "If `.breaks` is non-scalar, the length of `.labels` must be equal to")
+
+    # Test scalar .breaks validation for fuzzy
+    expect_error(partition(data.frame(a = 1:10), a,
+                           .method = "triangle",
+                           .breaks = 1),
+                 "If `.breaks` is a single value, it must be a natural number greater than 1")
+
+    # Test non-scalar .breaks minimum length for fuzzy
+    expect_error(partition(data.frame(a = 1:10), a,
+                           .method = "triangle",
+                           .breaks = c(1, 2)),
+                 "If `.breaks` is non-scalar, it must be a vector with at least 3 elements")
+
+    # Test non-scalar .breaks length validation for fuzzy
+    expect_error(partition(data.frame(a = 1:10), a,
+                           .method = "triangle",
+                           .breaks = c(1, 2, 3, 4),
+                           .span = 2,
+                           .inc = 1),
+                 "If `.breaks` is non-scalar, the length of the vector must be equal to")
+
+    # Test .labels length mismatch for fuzzy scalar breaks
+    expect_error(partition(data.frame(a = 1:10), a,
+                           .method = "triangle",
+                           .breaks = 3,
+                           .labels = c("a", "b")),
+                 "If `.breaks` is scalar, the length of `.labels` must be equal to the value of `.var .breaks`")
+
+    # Test .labels length mismatch for fuzzy non-scalar breaks
+    expect_error(partition(data.frame(a = 1:10), a,
+                           .method = "triangle",
+                           .breaks = c(-Inf, 3, 5, 7, Inf),
+                           .labels = c("a", "b")),
+                 "If `.breaks` is non-scalar, the length of `.labels` must be equal to")
+
 })
 

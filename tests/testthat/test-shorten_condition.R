@@ -37,3 +37,26 @@ test_that("shorten_condition", {
                                    method = "abbrev8"),
                  c("{hellWrld=1}", "{hellWrld=2}", "{c=3,hellWrld=1}"))
 })
+
+
+test_that("shorten_condition errors", {
+    # Test non-character input
+    expect_error(shorten_condition(123),
+                 "`x` must be a character vector or NULL")
+
+    expect_error(shorten_condition(list("a", "b")),
+                 "`x` must be a character vector or NULL")
+
+    # Test invalid method
+    expect_error(shorten_condition(c("{a=1}", "{b=2}"), method = "invalid"),
+                 '`method` must be equal to one of: "letters", "abbrev4", "abbrev8", "none"')
+
+    # Test too many unique predicates for letters method
+    # Create a condition with more than 26 unique predicates
+    conditions <- paste0("{", letters, "=1}")
+    conditions <- c(conditions, "{z1=1}")  # 27th predicate
+    expect_error(shorten_condition(conditions, method = "letters"),
+                 "The number of unique values in `x` is greater than 26")
+    expect_error(shorten_condition(conditions, method = "letters"),
+                 "You can use `shorten_condition\\(\\)` with `method = 'abbrev4'` or `method = 'abbrev8'`")
+})
