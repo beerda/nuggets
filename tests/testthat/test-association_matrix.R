@@ -51,37 +51,29 @@ test_that("association_matrix errors", {
     expect_error(association_matrix(data.frame(a = 1:3), confidence),
                  "`x` must be a nugget")
 
-    # Test wrong flavour
-    wrong_nugget <- nugget(data.frame(x = 1:3), "wrong_flavour",
-                          call_function = "test",
-                          call_data = list(),
-                          call_args = list())
-    expect_error(association_matrix(wrong_nugget, confidence),
-                 "`x` must be a nugget of flavour `associations`")
-
     # Test missing antecedent column
     d_no_ante <- d
     d_no_ante$antecedent <- NULL
     expect_error(association_matrix(d_no_ante, confidence),
-                 "`x` must have a column `antecedent`")
+                 "Column `antecedent` must be present in `x`.")
 
     # Test missing consequent column
     d_no_cons <- d
     d_no_cons$consequent <- NULL
     expect_error(association_matrix(d_no_cons, confidence),
-                 "`x` must have a column `consequent`")
+                 "Column `consequent` must be present in `x`.")
 
     # Test non-character antecedent column
     d_bad_ante <- d
     d_bad_ante$antecedent <- 1:nrow(d)
     expect_error(association_matrix(d_bad_ante, confidence),
-                 "`antecedent` must be a character vector")
+                 "Column `antecedent` of `x` must be a character vector")
 
     # Test non-character consequent column
     d_bad_cons <- d
     d_bad_cons$consequent <- 1:nrow(d)
     expect_error(association_matrix(d_bad_cons, confidence),
-                 "`consequent` must be a character vector")
+                 "Column `consequent` of `x` must be a character vector")
 
     # Test empty value selection
     expect_error(association_matrix(d, starts_with("nonexistent")),

@@ -87,12 +87,6 @@ test_that("remove_almost_constant messages", {
     # Test no message when .verbose = FALSE
     expect_silent(remove_almost_constant(d, .threshold = 1.0, .verbose = FALSE))
 
-    # Test message with unnamed data frame
-    d_unnamed <- d
-    names(d_unnamed) <- NULL
-    expect_message(remove_almost_constant(d_unnamed, .threshold = 1.0, .verbose = TRUE),
-                   "Removing \\(almost\\) constant columns: 2, 3")
-
     # Test no message when no columns are removed
     d2 <- data.frame(a = 1:10, b = 11:20, c = rep(c(TRUE, FALSE), 5))
     expect_silent(remove_almost_constant(d2, .threshold = 1.0, .verbose = TRUE))

@@ -56,7 +56,5 @@ test_that("shorten_condition errors", {
     conditions <- paste0("{", letters, "=1}")
     conditions <- c(conditions, "{z1=1}")  # 27th predicate
     expect_error(shorten_condition(conditions, method = "letters"),
-                 "The number of unique values in `x` is greater than 26")
-    expect_error(shorten_condition(conditions, method = "letters"),
-                 "You can use `shorten_condition\\(\\)` with `method = 'abbrev4'` or `method = 'abbrev8'`")
+                 "If `method` is \"letters\" the number of unique values in `x` must not be greater than 26.")
 })

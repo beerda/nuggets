@@ -237,7 +237,7 @@ partition <- function(.data,
 
     if (.style != "equal" && .method != "crisp") {
         cli_abort(c("The {.arg .style} argument is only applicable when {.arg .method} is {.val crisp}.",
-                    "i" = "You've supplied {.arg .style} = {.val {.style}} and {.arg .method} = {.val {.method}}."),
+                    "i" = "You've supplied {.arg .style} = {.val { .style}} and {.arg .method} = {.val { .method}}."),
                   call = current_env())
     }
 

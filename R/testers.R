@@ -188,6 +188,10 @@
     .is_just_vector(x) || is.factor(x)
 }
 
+.is_named_data_frame <- function(x) {
+    is.data.frame(x) && !is.null(names(x)) && all(names(x) != "")
+}
+
 .must_be_vector <- ..must_be_type(.is_just_vector, "a plain vector (not a matrix, list, or array)")
 .must_be_vector_or_factor <- ..must_be_type(.is_just_vector_or_factor, "a plain vector or a factor (not a matrix, list, or array)")
 .must_be_integer_vector <- ..must_be_type(is_integer, "an integer vector")
@@ -198,6 +202,7 @@
 .must_be_matrix <- ..must_be_type(is.matrix, "a matrix")
 .must_be_list <- ..must_be_type(is.list, "a list")
 .must_be_data_frame <- ..must_be_type(is.data.frame, "a data frame")
+.must_be_named_data_frame <- ..must_be_type(.is_named_data_frame, "a data frame with non-empty column names")
 
 .must_be_matrix_or_data_frame <- ..must_be_type(function(x) is.matrix(x) || is.data.frame(x),
                                                 "a matrix or a data frame")
