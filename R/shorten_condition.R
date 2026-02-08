@@ -89,8 +89,9 @@ shorten_condition <- function(x,
 
     if (method == "letters") {
         if (length(predicates) > length(LETTERS)) {
-            cli_abort(c("The number of unique values in {.arg x} is greater than {length(LETTERS)}.",
-                        "x" = "You can use {.fn shorten_condition} with {.val method = 'abbrev4'} or {.val method = 'abbrev8'} to shorten the condition."))
+            cli_abort(c("If {.arg method} is \"letters\" the number of unique values in {.arg x} must not be greater than {length(LETTERS)}.",
+                        "i" = "The number of unique values in {.arg x} is {length(predicates)}.",
+                        "x" = "You can use {.fn shorten_condition} with {.code method = 'abbrev4'} or {.code method = 'abbrev8'} to shorten the condition."))
         }
         dict <- setNames(LETTERS[seq_along(predicates)], predicates)
 
