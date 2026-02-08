@@ -116,7 +116,7 @@ test_that("numericFilterModule - server", {
     testServer(function(id) mod$server(), {
         session$setInputs(slider = c(1.5, 3.5))
 
-        expect_match(output$summaryTable,
+        expect_match(output$finiteSummaryTable,
                      "^<table .* min .* Q1 .* median .* Q3 .* max .*</table>$")
 
         plot <- output$histogramPlot
@@ -164,6 +164,45 @@ test_that("numericFilterModule - filter", {
 })
 
 
+test_that("numericFilterModule - filter special only", {
+    .skip_if_shiny_not_installed()
+
+    meta <- tribble(
+        ~data_name,          ~short_name,  ~long_name,           ~type,       ~round,
+        "confidence",        "conf",       "Confidence",         "numeric",   1
+    )
+
+    mod <- numericFilterModule(id = "test",
+                               x = c(NA, NA, Inf, -Inf, NaN),
+                               meta = meta)
+
+    input <- list("test-slider" = NULL,
+                  "test-special" = NULL)
+    res <- mod$filter(input)
+    expect_equal(res, c(FALSE, FALSE, FALSE, FALSE, FALSE))
+
+    input <- list("test-slider" = NULL,
+                  "test-special" = c("NA"))
+    res <- mod$filter(input)
+    expect_equal(res, c(TRUE, TRUE, FALSE, FALSE, FALSE))
+
+    input <- list("test-slider" = NULL,
+                  "test-special" = c("Inf"))
+    res <- mod$filter(input)
+    expect_equal(res, c(FALSE, FALSE, TRUE, FALSE, FALSE))
+
+    input <- list("test-slider" = NULL,
+                  "test-special" = c("-Inf"))
+    res <- mod$filter(input)
+    expect_equal(res, c(FALSE, FALSE, FALSE, TRUE, FALSE))
+
+    input <- list("test-slider" = NULL,
+                  "test-special" = c("NaN"))
+    res <- mod$filter(input)
+    expect_equal(res, c(FALSE, FALSE, FALSE, FALSE, TRUE))
+})
+
+
 test_that(".extract_special_value_names", {
     expect_equal(.extract_special_value_names(NULL), NULL)
     expect_equal(.extract_special_value_names(1:5), NULL)
@@ -200,40 +239,52 @@ test_that(".summarize_special", {
                  data.frame(`# -Inf` = 0,
                             `# NA` = 0,
                             `# NaN` = 0,
-                            `# +Inf` = 0))
+                            `# +Inf` = 0,
+                            `# finite` = 5,
+                            check.names = FALSE))
 
     x <- c(x, NA)
     expect_equal(.summarize_special(x),
                  data.frame(`# -Inf` = 0,
                             `# NA` = 1,
                             `# NaN` = 0,
-                            `# +Inf` = 0))
+                            `# +Inf` = 0,
+                            `# finite` = 5,
+                            check.names = FALSE))
 
     x <- c(x, NaN)
     expect_equal(.summarize_special(x),
                  data.frame(`# -Inf` = 0,
                             `# NA` = 1,
                             `# NaN` = 1,
-                            `# +Inf` = 0))
+                            `# +Inf` = 0,
+                            `# finite` = 5,
+                            check.names = FALSE))
 
     x <- c(x, -Inf)
     expect_equal(.summarize_special(x),
                  data.frame(`# -Inf` = 1,
                             `# NA` = 1,
                             `# NaN` = 1,
-                            `# +Inf` = 0))
+                            `# +Inf` = 0,
+                            `# finite` = 5,
+                            check.names = FALSE))
 
     x <- c(x, Inf)
     expect_equal(.summarize_special(x),
                  data.frame(`# -Inf` = 1,
                             `# NA` = 1,
                             `# NaN` = 1,
-                            `# +Inf` = 1))
+                            `# +Inf` = 1,
+                            `# finite` = 5,
+                            check.names = FALSE))
 
     x <- c(rep(x, 5), NA, NA, NaN)
     expect_equal(.summarize_special(x),
                  data.frame(`# -Inf` = 5,
                             `# NA` = 7,
                             `# NaN` = 6,
-                            `# +Inf` = 5))
+                            `# +Inf` = 5,
+                            `# finite` = 25,
+                            check.names = FALSE))
 })

@@ -32,7 +32,8 @@ numericFilterModule <- function(id, x, meta) {
 
     finx <- .just_finite_values(x)
     rng <- bound_range(finx, digits = digits, na_rm = TRUE)
-    summaryTable <- .summarize_finite(x)
+    finiteSummaryTable <- .summarize_finite(x)
+    specialSummaryTable <- .summarize_special(x)
 
     g <- ggplot(data.frame(x = finx)) + aes(x = x)
     if (int) {
@@ -69,7 +70,8 @@ numericFilterModule <- function(id, x, meta) {
                            value = meta$data_name,
                            info = paste0("Filter the rules by choosing a range of values for ",
                                          tolower(meta$long_name), "."),
-                shiny::tableOutput(shiny::NS(id, "summaryTable")),
+                shiny::tableOutput(shiny::NS(id, "finiteSummaryTable")),
+                shiny::tableOutput(shiny::NS(id, "specialSummaryTable")),
                 histogramPlot,
                 filterSliderInput,
                 specialCheckboxInput,
@@ -81,8 +83,12 @@ numericFilterModule <- function(id, x, meta) {
 
         server = function(reset_all_trigger) {
             shiny::moduleServer(id, function(input, output, session) {
-                output$summaryTable <- shiny::renderTable({
-                    summaryTable
+                output$finiteSummaryTable <- shiny::renderTable({
+                    finiteSummaryTable
+                }, width = "100%", bordered = TRUE, striped = TRUE, align = "c", digits = 2)
+
+                output$specialSummaryTable <- shiny::renderTable({
+                    specialSummaryTable
                 }, width = "100%", bordered = TRUE, striped = TRUE, align = "c", digits = 2)
 
                 if (!is.null(rng)) {
@@ -219,6 +225,8 @@ numericFilterModule <- function(id, x, meta) {
     data.frame(`# -Inf` = count_ninf,
                `# NA` = count_na,
                `# NaN` = count_nan,
-               `# +Inf` = count_pinf)
+               `# +Inf` = count_pinf,
+               `# finite` = length(x) - count_ninf - count_na - count_nan - count_pinf,
+               check.names = FALSE)
 }
 
