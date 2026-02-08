@@ -17,6 +17,15 @@
 #######################################################################
 
 
+test_that("measure names are equal in internal lists", {
+    m <- .get_supported_association_measures()
+    n <- .get_supported_association_measure_names()
+
+    expect_equal(names(m), names(n))
+    print(.create_arules_measures_doc())
+})
+
+
 test_that("add_interest.associations(measures = NULL)", {
     set.seed(2123)
     rows <- 100
