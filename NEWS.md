@@ -1,6 +1,7 @@
 # nuggets ???
 - released: ???
 - fixed some bugs in explore()
+- added plot_contingency()
 
 # nuggets 2.1.2
 - released: 2026-02-04

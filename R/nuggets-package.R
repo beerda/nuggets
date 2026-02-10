@@ -31,6 +31,7 @@
 #' @importFrom ggplot2 .data
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 draw_key_point
+#' @importFrom ggplot2 element_blank
 #' @importFrom ggplot2 element_text
 #' @importFrom ggplot2 expansion
 #' @importFrom ggplot2 Geom
