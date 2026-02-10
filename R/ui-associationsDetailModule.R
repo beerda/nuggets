@@ -33,7 +33,7 @@ associationsDetailModule <- function(id, rules, meta, data) {
                     ),
                     shinyWidgets::panel(heading = "Settings",
                         shiny::radioButtons(shiny::NS(id, "shorteningRadio"),
-                                     "Abbreviation of predicates",
+                                     "Abbreviation of predicates in the antecedent",
                                      choices = c("letters", "abbrev4", "abbrev8", "none"),
                                      selected = "letters",
                                      inline = TRUE)

@@ -28,7 +28,7 @@ test_that("rulebaseTable", {
                        type = c("numeric", "numeric", "condition"),
                        stringsAsFactors = FALSE)
 
-    ui <- rulebaseTable(rules, meta)
+    ui <- rulebaseTable(meta, rules)
     html <- as.character(ui)
 
     expect_match(html, "^<table class=\"info-table")
@@ -38,7 +38,7 @@ test_that("rulebaseTable", {
     expect_match(html, "</table>$")
 
     rules <- data.frame()
-    ui <- rulebaseTable(rules, meta)
+    ui <- rulebaseTable(meta, rules)
     html <- as.character(ui)
 
     expect_match(html, "^<table class=\"info-table")
