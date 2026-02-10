@@ -210,6 +210,7 @@ exploreApp <- function(rules,
                             )
                         ),
                         shinyWidgets::panel(heading = "Filtering Summary",
+                            infoBox("Rule base characteristics after filtering / total available."),
                             shiny::uiOutput("numFilteredRules")
                         )
                     )
@@ -230,7 +231,7 @@ exploreApp <- function(rules,
                         shiny::column(width = 8, offset = 2,
                             shinyWidgets::panel(heading = "Metadata",
                                 shiny::tabsetPanel(
-                                    shiny::tabPanel("Rulebase", rulebaseTable(rules, meta)),
+                                    shiny::tabPanel("Rulebase", rulebaseTable(meta, rules)),
                                     shiny::tabPanel("Data", callDataTable(rules, meta)),
                                     shiny::tabPanel("Call", creationParamsTable(rules))
                                 )
@@ -327,7 +328,7 @@ exploreApp <- function(rules,
 
         output$numFilteredRules <- shiny::renderUI({
             r <- rules[rulesFiltering(), rulesProjection(), drop = FALSE]
-            rulebaseTable(r, meta)
+            rulebaseTable(meta, r, rules)
         })
 
         callExtension(extensions,
