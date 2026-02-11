@@ -17,34 +17,30 @@
 #######################################################################
 
 
-#' Plot a mosaic plot for a contingency table
-#'
-#' @param x A data frame with exactly one row and columns named `pp`,
+#' @param d A data frame with exactly one row and columns named `pp`,
 #'     `pn`, `np`, and `nn`, representing the counts of true positives, false
 #'     positives, false negatives, and true negatives, respectively. All values must
 #'     be greater or equal to zero.
 #' @param ... Additional arguments passed to `plot_contingency.default()`.
-#' @return A ggplot object representing the mosaic plot of the contingency table.
-#' @author Michal Burda
 #' @rdname plot_contingency
 #' @method plot_contingency data.frame
 #' @export
-plot_contingency.data.frame <- function(x, ...) {
-    .must_be_named_data_frame(x)
+plot_contingency.data.frame <- function(d, ...) {
+    .must_be_named_data_frame(d)
 
-    if (nrow(x) != 1L) {
+    if (nrow(d) != 1L) {
         cli_abort(c("The data frame must have exactly one row.",
-                    "x" = "You've supplied a data frame with {nrow(x)} rows."),
+                    "x" = "You've supplied a data frame with {nrow(d)} rows."),
                   call = caller_env())
     }
 
     req_cols <- c("pp", "pn", "np", "nn")
-    if (!all(req_cols %in% names(x))) {
-        missing_cols <- setdiff(req_cols, names(x))
+    if (!all(req_cols %in% names(d))) {
+        missing_cols <- setdiff(req_cols, names(d))
         cli_abort(c("The data frame must have columns named {.field pp}, {.field pn}, {.field np}, and {.field nn}.",
                     "x" = "The following required columns are missing: {.field {missing_cols}}."),
                   call = caller_env())
     }
 
-    with(x, plot_contingency.default(pp, pn, np, nn, ...))
+    with(d, plot_contingency.default(pp, pn, np, nn, ...))
 }

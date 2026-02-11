@@ -17,8 +17,6 @@
 #######################################################################
 
 
-#' Plot a mosaic plot for a contingency table
-#'
 #' @param pp The count of true positives (antecedent and consequent both true).
 #'     Value must be greater or equal to zero.
 #' @param pn The count of false positives (antecedent true, consequent false).
@@ -28,8 +26,8 @@
 #' @param nn The count of true negatives (antecedent and consequent both false).
 #'     Value must be greater or equal to zero.
 #' @param ... Additional arguments (currently ignored).
-#' @return A ggplot object representing the mosaic plot of the contingency table.
-#' @author Michal Burda
+#' @examples
+#' plot_contingency(pp = 30, pn = 10, np = 20, nn = 40)
 #' @rdname plot_contingency
 #' @method plot_contingency default
 #' @export
@@ -77,7 +75,9 @@ plot_contingency.default <- function(pp, pn, np, nn, ...) {
                     ymax = c(y3 + eps, y3 + eps, y1, y2      ))
 
     ggplot(d) +
-        aes(fill = ante, xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax) +
+        aes(fill = .data$ante,
+            xmin = .data$xmin, xmax = .data$xmax,
+            ymin = .data$ymin, ymax = .data$ymax) +
         geom_rect(color = "black") +
         geom_hline(yintercept = ante_expected, linetype = "dashed", color = "black") +
         geom_vline(xintercept = cons_expected, linetype = "dashed", color = "black") +

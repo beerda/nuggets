@@ -7,14 +7,14 @@
 \alias{plot_contingency}
 \title{Plot a mosaic plot for a contingency table}
 \usage{
-\method{plot_contingency}{data.frame}(x, ...)
+\method{plot_contingency}{data.frame}(d, ...)
 
 \method{plot_contingency}{default}(pp, pn, np, nn, ...)
 
-plot_contingency(x, ...)
+plot_contingency(...)
 }
 \arguments{
-\item{x}{A data frame with exactly one row and columns named \code{pp},
+\item{d}{A data frame with exactly one row and columns named \code{pp},
 \code{pn}, \code{np}, and \code{nn}, representing the counts of true positives, false
 positives, false negatives, and true negatives, respectively. All values must
 be greater or equal to zero.}
@@ -35,13 +35,18 @@ Value must be greater or equal to zero.}
 }
 \value{
 A ggplot object representing the mosaic plot of the contingency table.
-
-A ggplot object representing the mosaic plot of the contingency table.
 }
 \description{
-Plot a mosaic plot for a contingency table
-
-Plot a mosaic plot for a contingency table
+This function creates a mosaic plot for a contingency table defined by the
+counts of true positives, false positives, false negatives, and true negatives.
+The plot visually represents the distribution of these counts in a 2x2 grid.
+The area of each rectangle in the plot corresponds to the count of the respective category.
+Vertical and horizontal lines are added to the plot to indicate the expected
+proportions of the counts under the assumption of independence between the antecedent
+and the consequent.
+}
+\examples{
+plot_contingency(pp = 30, pn = 10, np = 20, nn = 40)
 }
 \author{
 Michal Burda
