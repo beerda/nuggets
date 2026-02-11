@@ -65,6 +65,9 @@ plot_contingency.default <- function(pp, pn, np, nn, ...) {
     tick_y0 <- y1 + eps + (y3 - y1) / 2
     tick_y1 <- (y1 - y0) / 2
 
+    ante_expected <- nx / n + eps / 2
+    cons_expected <- xp / n + eps / 2
+
     #                        pp        pn        np  nn
     d <- data.frame(ante = c("T"     , "T"     ,"F", "F"),
                     cons = c("T"     , "F"     ,"T", "F"),
@@ -76,10 +79,12 @@ plot_contingency.default <- function(pp, pn, np, nn, ...) {
     ggplot(d) +
         aes(fill = ante, xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax) +
         geom_rect(color = "black") +
-        scale_x_continuous(expand = expansion(mult = 0, add = eps),
+        geom_hline(yintercept = ante_expected, linetype = "dashed", color = "black") +
+        geom_vline(xintercept = cons_expected, linetype = "dashed", color = "black") +
+        scale_x_continuous(expand = expansion(mult = 0, add = 2 * eps),
                            breaks = c(tick_x0, tick_x1),
                            labels = c("T", "F")) +
-        scale_y_continuous(expand = expansion(mult = 0, add = eps),
+        scale_y_continuous(expand = expansion(mult = 0, add = 2 * eps),
                            breaks = c(tick_y0, tick_y1),
                            labels = c("T", "F")) +
         xlab("consequent") +

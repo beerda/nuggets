@@ -38,6 +38,7 @@
 #' @importFrom ggplot2 geom_bar
 #' @importFrom ggplot2 geom_col
 #' @importFrom ggplot2 geom_histogram
+#' @importFrom ggplot2 geom_hline
 #' @importFrom ggplot2 geom_point
 #' @importFrom ggplot2 geom_rect
 #' @importFrom ggplot2 geom_text
