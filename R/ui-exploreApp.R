@@ -202,11 +202,11 @@ exploreApp <- function(rules,
                                                 options = shinyWidgets::pickerOptions(container = "body"),
                                                 width = "100%"),
                                     filterTabSet),
-                                shiny::tabPanel("Advanced",
-                                    shiny::tabsetPanel(type = "pills", header = htmltools::tags$hr(),
+                                #shiny::tabPanel("Advanced",
+                                    #shiny::tabsetPanel(type = "pills", header = htmltools::tags$hr(),
                                         scatterFilter$ui()
-                                    )
-                                )
+                                    #)
+                                #)
                             )
                         ),
                         shinyWidgets::panel(heading = "Filtering Summary",
