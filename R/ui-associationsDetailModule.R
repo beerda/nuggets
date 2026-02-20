@@ -42,7 +42,19 @@ associationsDetailModule <- function(id, rules, meta, data) {
                 shiny::column(width = 8,
                     shinyWidgets::panel(heading = "Rule Detail",
                         shiny::tabsetPanel(
-                            shiny::tabPanel("Contingency"),
+                            shiny::tabPanel("Contingency Table",
+                                infoBox(paste("The contingency table shows how many data rows contain:",
+                                              "both antecedent and consequent, antecedent only,",
+                                              "consequent only, or neither.")),
+                                shiny::fluidRow(
+                                    shiny::column(width = 6,
+                                        shiny::plotOutput(shiny::NS(id, "contingencyPlot"), height = "200px")
+                                    ),
+                                    shiny::column(width = 6,
+                                        shiny::tableOutput(shiny::NS(id, "contingencyTable"))
+                                    )
+                                ),
+                            ),
                             shiny::tabPanel("Ancestors",
                                 DT::dataTableOutput(shiny::NS(id, "ancestorTable")),
                                 htmltools::br(),
@@ -56,12 +68,18 @@ associationsDetailModule <- function(id, rules, meta, data) {
 
         server = function(selectionReactive) {
             shiny::moduleServer(id, function(input, output, session) {
-                ancestors <- shiny::reactive({
-                    shiny::req(input$shorteningRadio)
+                selectedRule <- shiny::reactive({
                     ruleId <- selectionReactive()
                     shiny::req(ruleId)
 
-                    rule <- rules[rules$id == ruleId, , drop = FALSE]
+                    rules[rules$id == ruleId, , drop = FALSE]
+                })
+
+                ancestors <- shiny::reactive({
+                    shiny::req(input$shorteningRadio)
+                    rule <- selectedRule()
+                    shiny::req(rule)
+
                     ante <- parse_condition(rule$antecedent)[[1]]
                     cons <- parse_condition(rule$consequent)[[1]]
                     res <- dig_associations(data,
@@ -79,16 +97,33 @@ associationsDetailModule <- function(id, rules, meta, data) {
                 })
 
                 output$selectedRule <- shiny::renderUI({
-                    ruleId <- selectionReactive()
-                    shiny::req(ruleId)
-
-                    res <- rules[rules$id == ruleId, , drop = FALSE]
+                    rule <- selectedRule()
+                    shiny::req(rule)
 
                     htmltools::div(style = 'display: flex; flex-wrap: wrap; align-items: center; gap: 20px',
-                        htmltools::div(htmltools::HTML(res[["highlighted-antecedent"]])),
-                        htmltools::div(shiny::icon("arrow-right-long"), htmltools::tags$span(style = "width: 10px; display:inline-block;"), htmltools::HTML(res[["highlighted-consequent"]]))
+                        htmltools::div(htmltools::HTML(rule[["highlighted-antecedent"]])),
+                        htmltools::div(shiny::icon("arrow-right-long"),
+                                       htmltools::tags$span(style = "width: 10px; display:inline-block;"),
+                                       htmltools::HTML(rule[["highlighted-consequent"]]))
                     )
                 })
+
+                output$contingencyPlot <- shiny::renderPlot({
+                    rule <- selectedRule()
+                    shiny::req(rule)
+
+                    plot_contingency(rule)
+                }, res = 96)
+
+                output$contingencyTable <- shiny::renderTable({
+                    rule <- selectedRule()
+                    shiny::req(rule)
+
+                    data.frame(`conseq` = c(rule$pp, rule$np),
+                               `¬conseq` = c(rule$pn, rule$nn),
+                               row.names = c("ante", "¬ante"),
+                               check.names = FALSE)
+                }, rownames = TRUE)
 
                 output$ancestorTable <- DT::renderDT({
                     shiny::req(input$shorteningRadio)
