@@ -336,7 +336,7 @@ test_that(".must_be_list_of_logicals", {
     
     # Error cases
     expect_error(.must_be_list_of_logicals(list(1, 2)), "must be a list of logical vectors")
-    expect_error(.must_be_list_of_logicals(list(c(TRUE, FALSE), "a")), "Element 2 is a")
+    expect_error(.must_be_list_of_logicals(list(c(TRUE, FALSE), "a")), 'Element "2" is a')
 })
 
 
@@ -355,7 +355,7 @@ test_that(".must_be_list_of_integerishes", {
     
     # Error cases
     expect_error(.must_be_list_of_integerishes(list(c(1.5, 2.5))), "must be a list of integerish vectors")
-    expect_error(.must_be_list_of_integerishes(list(1L:5L, "a")), "Element 2 is a")
+    expect_error(.must_be_list_of_integerishes(list(1L:5L, "a")), 'Element "2" is a')
 })
 
 
@@ -374,7 +374,7 @@ test_that(".must_be_list_of_doubles", {
     
     # Error cases
     expect_error(.must_be_list_of_doubles(list(1L:5L)), "must be a list of double")
-    expect_error(.must_be_list_of_doubles(list(c(1.5, 2.5), "a")), "Element 2 is a")
+    expect_error(.must_be_list_of_doubles(list(c(1.5, 2.5), "a")), 'Element "2" is a')
 })
 
 
@@ -393,7 +393,7 @@ test_that(".must_be_list_of_numeric", {
     
     # Error cases
     expect_error(.must_be_list_of_numeric(list(letters[1:5])), "must be a list of numeric vectors")
-    expect_error(.must_be_list_of_numeric(list(c(1, 2), "a")), "Element 2 is a")
+    expect_error(.must_be_list_of_numeric(list(c(1, 2), "a")), 'Element "2" is a')
 })
 
 
@@ -412,7 +412,7 @@ test_that(".must_be_list_of_characters", {
     
     # Error cases
     expect_error(.must_be_list_of_characters(list(1:5)), "must be a list of character vectors")
-    expect_error(.must_be_list_of_characters(list(letters[1:5], 123)), "Element 2 is a")
+    expect_error(.must_be_list_of_characters(list(letters[1:5], 123)), 'Element "2" is a')
 })
 
 
@@ -433,7 +433,7 @@ test_that(".must_be_list_of_functions", {
     
     # Error cases
     expect_error(.must_be_list_of_functions(list(1, 2)), "must be a list of functions")
-    expect_error(.must_be_list_of_functions(list(f1, "not a function")), "Element 2 is a")
+    expect_error(.must_be_list_of_functions(list(f1, "not a function")), 'Element "2" is a')
 })
 
 
@@ -450,7 +450,7 @@ test_that(".must_be_finite", {
     expect_error(.must_be_finite(c(1, 2, Inf)), "must be finite")
     
     # Check error message format
-    expect_error(.must_be_finite(c(1, 2, Inf)), "Element 3 equals")
+    expect_error(.must_be_finite(c(1, 2, Inf)), 'Element "3" equals')
 })
 
 
@@ -469,7 +469,7 @@ test_that(".must_be_greater", {
     expect_error(.must_be_greater(3, 5), "Value.*was provided")
     
     # Check error message format for multiple values
-    expect_error(.must_be_greater(c(5, 2, 7), 3), "Element 2 equals")
+    expect_error(.must_be_greater(c(5, 2, 7), 3), 'Element "2" equals')
 })
 
 
@@ -666,7 +666,7 @@ test_that(".must_have_length", {
     expect_error(.must_have_length(c("a", "b"), 5), "must have 5 elements")
     
     # Check error message format
-    expect_error(.must_have_length(1:5, 3), "has 5 elements")
+    expect_error(.must_have_length(1:5, 3), 'has "5" elements')
 })
 
 
@@ -680,8 +680,8 @@ test_that(".must_have_equal_lengths", {
     expect_error(.must_have_equal_lengths(1:5, 1:3), "must have the same number of elements")
     
     # Check error message format
-    expect_error(.must_have_equal_lengths(1:5, 1:3), "has 5 elements")
-    expect_error(.must_have_equal_lengths(1:5, 1:3), "has 3 elements")
+    expect_error(.must_have_equal_lengths(1:5, 1:3), 'has "5" elements')
+    expect_error(.must_have_equal_lengths(1:5, 1:3), 'has "3" elements')
 })
 
 
