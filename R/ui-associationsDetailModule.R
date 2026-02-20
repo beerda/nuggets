@@ -25,6 +25,15 @@ associationsDetailModule <- function(id, rules, meta, data) {
         }
     }
 
+    ancestorsTab <- NULL
+    if (!is.null(data)) {
+        ancestorsTab <- shiny::tabPanel("Ancestors",
+                            DT::dataTableOutput(shiny::NS(id, "ancestorTable")),
+                            htmltools::br(),
+                            shiny::plotOutput(shiny::NS(id, "ancestorPlot"), height = "500px")
+                        )
+    }
+
     list(ui = function() {
             shiny::fluidRow(
                 shiny::column(width = 4,
@@ -44,8 +53,8 @@ associationsDetailModule <- function(id, rules, meta, data) {
                         shiny::tabsetPanel(
                             shiny::tabPanel("Contingency Table",
                                 infoBox(paste("The contingency table shows how many data rows contain:",
-                                              "both antecedent and consequent, antecedent only,",
-                                              "consequent only, or neither.")),
+                                              "both antecedent and consequent, antecedent only, consequent only, or neither.",
+                                              "Dashed lines in the plot indicate the expected values if antecedent and consequent were independent.")),
                                 shiny::fluidRow(
                                     shiny::column(width = 6,
                                         shiny::plotOutput(shiny::NS(id, "contingencyPlot"), height = "200px")
@@ -53,13 +62,9 @@ associationsDetailModule <- function(id, rules, meta, data) {
                                     shiny::column(width = 6,
                                         shiny::tableOutput(shiny::NS(id, "contingencyTable"))
                                     )
-                                ),
+                                )
                             ),
-                            shiny::tabPanel("Ancestors",
-                                DT::dataTableOutput(shiny::NS(id, "ancestorTable")),
-                                htmltools::br(),
-                                shiny::plotOutput(shiny::NS(id, "ancestorPlot"), height = "500px")
-                            )
+                            ancestorsTab
                         )
                     )
                 )
@@ -73,27 +78,6 @@ associationsDetailModule <- function(id, rules, meta, data) {
                     shiny::req(ruleId)
 
                     rules[rules$id == ruleId, , drop = FALSE]
-                })
-
-                ancestors <- shiny::reactive({
-                    shiny::req(input$shorteningRadio)
-                    rule <- selectedRule()
-                    shiny::req(rule)
-
-                    ante <- parse_condition(rule$antecedent)[[1]]
-                    cons <- parse_condition(rule$consequent)[[1]]
-                    res <- dig_associations(data,
-                                            antecedent = all_of(ante),
-                                            consequent = all_of(cons),
-                                            min_length = 0,
-                                            max_length = Inf,
-                                            min_coverage = 0,
-                                            min_support = 0,
-                                            min_confidence = 0,
-                                            max_results = Inf)
-                    res <- res[order(res$antecedent_length), , drop = FALSE]
-
-                    res
                 })
 
                 output$selectedRule <- shiny::renderUI({
@@ -127,48 +111,71 @@ associationsDetailModule <- function(id, rules, meta, data) {
                     res
                 }, rownames = TRUE)
 
-                output$ancestorTable <- DT::renderDT({
-                    shiny::req(input$shorteningRadio)
-                    res <- ancestors()
-                    shiny::req(res)
+                if (!is.null(data)) {
+                    ancestors <- shiny::reactive({
+                        shiny::req(input$shorteningRadio)
+                        rule <- selectedRule()
+                        shiny::req(rule)
 
-                    abbrev <- shorten_condition(res$antecedent, method = input$shorteningRadio)
-                    res <- formatRulesForTable(res, meta)
-                    nn <- colnames(res)
-                    res$abbrev <- highlightCondition(abbrev)
-                    res <- res[, c("abbrev", nn), drop = FALSE]
+                        ante <- parse_condition(rule$antecedent)[[1]]
+                        cons <- parse_condition(rule$consequent)[[1]]
+                        res <- dig_associations(data,
+                                                antecedent = all_of(ante),
+                                                consequent = all_of(cons),
+                                                min_length = 0,
+                                                max_length = Inf,
+                                                min_coverage = 0,
+                                                min_support = 0,
+                                                min_confidence = 0,
+                                                max_results = Inf)
+                        res <- res[order(res$antecedent_length), , drop = FALSE]
 
-                    DT::datatable(res,
-                              options = list(paging = FALSE,
-                                             autoWidth = FALSE,
-                                             searching = FALSE,
-                                             scrollX = TRUE,
-                                             info = FALSE),
-                              escape = FALSE,
-                              rownames = FALSE,
-                              selection = "none",
-                              filter = "none")
-                })
+                        res
+                    })
 
-                output$ancestorPlot <- shiny::renderPlot({
-                    shiny::req(input$shorteningRadio)
-                    res <- ancestors()
-                    shiny::req(res)
+                    output$ancestorTable <- DT::renderDT({
+                        shiny::req(input$shorteningRadio)
+                        res <- ancestors()
+                        shiny::req(res)
 
-                    res$abbrev <- shorten_condition(res$antecedent, method = input$shorteningRadio)
-                    res$label = paste(res$abbrev,
-                                      "\nconf:",
-                                      format(round(res$confidence, 2), nsmall = 2))
+                        abbrev <- shorten_condition(res$antecedent, method = input$shorteningRadio)
+                        res <- formatRulesForTable(res, meta)
+                        nn <- colnames(res)
+                        res$abbrev <- highlightCondition(abbrev)
+                        res <- res[, c("abbrev", nn), drop = FALSE]
 
-                    ggplot(res) +
-                        aes(condition = .data$antecedent,
-                            fill = .data$confidence,
-                            linewidth = .data$confidence,
-                            size = .data$coverage,
-                            label = .data$label) +
-                        geom_diamond(nudge_y = 0.25) +
-                        scale_x_continuous(expand = expansion(mult = c(0, 0), add = c(0.5, 0.5)))
-                }, res = 96)
+                        DT::datatable(res,
+                                  options = list(paging = FALSE,
+                                                 autoWidth = FALSE,
+                                                 searching = FALSE,
+                                                 scrollX = TRUE,
+                                                 info = FALSE),
+                                  escape = FALSE,
+                                  rownames = FALSE,
+                                  selection = "none",
+                                  filter = "none")
+                    })
+
+                    output$ancestorPlot <- shiny::renderPlot({
+                        shiny::req(input$shorteningRadio)
+                        res <- ancestors()
+                        shiny::req(res)
+
+                        res$abbrev <- shorten_condition(res$antecedent, method = input$shorteningRadio)
+                        res$label = paste(res$abbrev,
+                                          "\nconf:",
+                                          format(round(res$confidence, 2), nsmall = 2))
+
+                        ggplot(res) +
+                            aes(condition = .data$antecedent,
+                                fill = .data$confidence,
+                                linewidth = .data$confidence,
+                                size = .data$coverage,
+                                label = .data$label) +
+                            geom_diamond(nudge_y = 0.25) +
+                            scale_x_continuous(expand = expansion(mult = c(0, 0), add = c(0.5, 0.5)))
+                    }, res = 96)
+                }
             })
         }
     )

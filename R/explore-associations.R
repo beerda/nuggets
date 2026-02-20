@@ -116,21 +116,20 @@ explore.associations <- function(x, data = NULL, ...) {
                 "To enable full functionality, run",
                 htmltools::span(class = "mono", "explore(rules, data)"),
                 "with the original dataset used to mine the rules."))
-
-    } else {
-        detailWindow <- associationsDetailModule(
-            id = "details", rules = x, meta = meta, data = data)
-
-        extensions[["navbarPage.Metadata.before3"]] <- shiny::tabPanel(
-            "Rule Detail",
-            value = "rule-detail-tab",
-            icon = shiny::icon("magnifying-glass"),
-            detailWindow$ui())
-
-        extensions[["filteredRulesPanel.rulesTable.action"]] <- list(
-            title = "show detailed analysis of the rule",
-            icon = "magnifying-glass")
     }
+
+    detailWindow <- associationsDetailModule(
+        id = "details", rules = x, meta = meta, data = data)
+
+    extensions[["navbarPage.Metadata.before3"]] <- shiny::tabPanel(
+        "Rule Detail",
+        value = "rule-detail-tab",
+        icon = shiny::icon("magnifying-glass"),
+        detailWindow$ui())
+
+    extensions[["filteredRulesPanel.rulesTable.action"]] <- list(
+        title = "show detailed analysis of the rule",
+        icon = "magnifying-glass")
 
     extensions[["server"]] <- function(input,
                                        output,
