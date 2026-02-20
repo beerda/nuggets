@@ -69,7 +69,7 @@ parse_condition <- function(...,
     test <- sapply(dots, is.character)
     if (!isTRUE(all(test))) {
         types <- sapply(dots, function(i) class(i)[1])
-        details <- paste0("Argument ", seq_along(types), " is a {.cls ", types, "}.")
+        details <- paste0("Argument {.val ", seq_along(types), "} is a {.cls ", types, "}.")
         details <- details[!test]
         cli_abort(c("Arguments {.arg ...} must be character vectors.",
                     ..error_details(details)),

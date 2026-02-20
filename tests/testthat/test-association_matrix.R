@@ -55,25 +55,25 @@ test_that("association_matrix errors", {
     d_no_ante <- d
     d_no_ante$antecedent <- NULL
     expect_error(association_matrix(d_no_ante, confidence),
-                 "Column `antecedent` must be present in `x`.")
+                 "Column .?antecedent.? must be present in `x`.")
 
     # Test missing consequent column
     d_no_cons <- d
     d_no_cons$consequent <- NULL
     expect_error(association_matrix(d_no_cons, confidence),
-                 "Column `consequent` must be present in `x`.")
+                 "Column .?consequent.? must be present in `x`.")
 
     # Test non-character antecedent column
     d_bad_ante <- d
     d_bad_ante$antecedent <- 1:nrow(d)
     expect_error(association_matrix(d_bad_ante, confidence),
-                 "Column `antecedent` of `x` must be a character vector")
+                 "Column .?antecedent.? of `x` must be a character vector")
 
     # Test non-character consequent column
     d_bad_cons <- d
     d_bad_cons$consequent <- 1:nrow(d)
     expect_error(association_matrix(d_bad_cons, confidence),
-                 "Column `consequent` of `x` must be a character vector")
+                 "Column .?consequent.? of `x` must be a character vector")
 
     # Test empty value selection
     expect_error(association_matrix(d, starts_with("nonexistent")),
@@ -96,5 +96,5 @@ test_that("association_matrix errors", {
     expect_error(association_matrix(d_dup, confidence),
                  "Multiple values for the same cell in the association matrix")
     expect_error(association_matrix(d_dup, confidence),
-                 "Pairs of `antecedent` and `consequent` must be unique")
+                 "Pairs of .?antecedent.? and .?consequent.? must be unique")
 })

@@ -26,8 +26,8 @@
     formula[formula == ""] <- "-"    # empty string does not work well in vector names
 
     if (length(unique(formula)) != length(formula)) {
-        cli_abort(c("The {.var condition} contains duplicate values.",
-                    "i" = "Each item in {.var condition} must be unique."))
+        cli_abort(c("The {.field condition} contains duplicate values.",
+                    "i" = "Each item in {.field condition} must be unique."))
     }
 
     x_dict <- rep(0, length(formula))

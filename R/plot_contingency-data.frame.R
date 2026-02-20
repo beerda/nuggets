@@ -30,7 +30,7 @@ plot_contingency.data.frame <- function(d, ...) {
 
     if (nrow(d) != 1L) {
         cli_abort(c("The data frame must have exactly one row.",
-                    "x" = "You've supplied a data frame with {nrow(d)} rows."),
+                    "x" = "You've supplied a data frame with {.val {nrow(d)}} rows."),
                   call = caller_env())
     }
 
