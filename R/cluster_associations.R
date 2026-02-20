@@ -114,9 +114,9 @@ cluster_associations <- function(x,
     if (n >= num_uniq) {
         cli_warn(c(
             "{.fun cluster_associations}: The number of clusters {.arg n} should be less than the number of distinct data points in {.arg x}.",
-            "i" = "The number of distinct data points in {.arg x} is {num_uniq}.",
-            "!" = "You provided {.arg n} = {n}.",
-            ">" = "{num_uniq} clusters will be created instead."
+            "i" = "The number of distinct data points in {.arg x} is {.val {num_uniq}}.",
+            "!" = "You provided {.arg n} = {.val {n}}.",
+            ">" = "{.val {num_uniq}} clusters will be created instead."
         ))
         n <- num_uniq
     }

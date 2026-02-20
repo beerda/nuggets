@@ -152,8 +152,8 @@ var_grid <- function(x,
                               call = error_context$call)
     if (!isTRUE(length(disjoint) == 0 || length(disjoint) == ncol(x))) {
         cli_abort(c("The length of {.arg {error_context$arg_disjoint}} must be 0 or must be equal to the number of columns in {.arg {error_context$arg_x}}.",
-                    "x" = "The number of columns in {.arg {error_context$arg_x}} is {ncol(x)}.",
-                    "x" = "The length of {.arg {error_context$arg_disjoint}} is {length(disjoint)}."),
+                    "x" = "The number of columns in {.arg {error_context$arg_x}} is {.val {ncol(x)}}.",
+                    "x" = "The length of {.arg {error_context$arg_disjoint}} is {.val {length(disjoint)}}."),
                   call = error_context$call)
     }
 

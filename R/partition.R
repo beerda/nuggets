@@ -278,7 +278,7 @@ partition <- function(.data,
             positions <- which(is.infinite(x))
             cli_abort(c("Unable to partition column {.field {colname}} because it contains infinite values.",
                        "i"="Column selected for partitioning must not contain infinite values.",
-                       "x"="Column {.field {colname}} contains {length(positions)} infinite value{?s} at position{?s}: {paste(positions, collapse = ', ')}."),
+                       "x"="Column {.field {colname}} contains {.val {length(positions)}} infinite value{?s} at position{?s}: {paste(positions, collapse = ', ')}."),
                       call = call)
 
         } else if (is.logical(x)) {
@@ -357,11 +357,11 @@ partition <- function(.data,
         n <- (length(breaks) - span - 1) / inc + 1
         req <- span + (ceiling(n) - 1) * inc + 1
         if (!is_integerish(n) || n <= 0) {
-            cli_abort(c("If {.arg .breaks} is non-scalar, the length of the vector must be equal to {.arg .span} + (n - 1) * {inc} + 1 for some natural number n.",
-                        "i"="The length of {.arg .breaks} is {length(breaks)}.",
-                        "i"="The value of {.arg .span} is {span}.",
-                        "i"="The value of {.arg .inc} is {inc}.",
-                        "i"="Provide {req - length(breaks)} more elements to {.arg .breaks} to satisfy the condition."),
+            cli_abort(c("If {.arg .breaks} is non-scalar, the length of the vector must be equal to {.arg .span} + (n - 1) * {.val {inc}} + 1 for some natural number n.",
+                        "i"="The length of {.arg .breaks} is {.val {length(breaks)}}.",
+                        "i"="The value of {.arg .span} is {.val {span}}.",
+                        "i"="The value of {.arg .inc} is {.val {inc}}.",
+                        "i"="Provide {.val {req - length(breaks)}} more elements to {.arg .breaks} to satisfy the condition."),
                       call = call)
         }
         br <- breaks
@@ -374,8 +374,8 @@ partition <- function(.data,
         if (length(labels) != length(br)) {
             if (length(breaks) == 1) {
                 cli_abort(c("If {.arg .breaks} is scalar, the length of {.arg .labels} must be equal to the value of {.arg .breaks}.",
-                            "i"="The length of {.arg .labels} is {length(labels)}.",
-                            "i"="{.arg .breaks} is scalar value {breaks}."),
+                            "i"="The length of {.arg .labels} is {.val {length(labels)}}.",
+                            "i"="{.arg .breaks} is scalar value {.val {breaks}}."),
                           call = call)
             } else {
                 n <- (length(breaks) - span - 1) / inc + 1
@@ -383,11 +383,11 @@ partition <- function(.data,
                     stop("fatal in .prepare_crisp()")
                 }
                 cli_abort(c("If {.arg .breaks} is non-scalar, the length of {.arg .labels} must be equal to (length({.arg .breaks}) - {.arg .span} - 1) / {.arg .inc} + 1.",
-                            "i"="The length of {.arg .labels} is {length(labels)}.",
-                            "i"="The length of {.arg .breaks} is {length(breaks)}.",
-                            "i"="The value of {.arg .span} is {span}.",
-                            "i"="The value of {.arg .inc} is {inc}.",
-                            "i"="Provide {.arg .labels} of length {n} to satisfy the condition."),
+                            "i"="The length of {.arg .labels} is {.val {length(labels)}}.",
+                            "i"="The length of {.arg .breaks} is {.val {length(breaks)}}.",
+                            "i"="The value of {.arg .span} is {.val {span}}.",
+                            "i"="The value of {.arg .inc} is {.val {inc}}.",
+                            "i"="Provide {.arg .labels} of length {.val {n}} to satisfy the condition."),
                           call = call)
             }
         }
@@ -401,7 +401,7 @@ partition <- function(.data,
 .check_scalar_breaks <- function(breaks, call) {
     if (breaks <= 1 || !is_integerish(breaks)) {
         cli_abort(c("If {.arg .breaks} is a single value, it must be a natural number greater than 1.",
-                    "i"="You've supplied {breaks}."),
+                    "i"="You've supplied {.val {breaks}}."),
                   call = call)
     }
 }
@@ -448,17 +448,17 @@ partition <- function(.data,
     } else {
         if (length(breaks) < 3) {
             cli_abort(c("If {.arg .breaks} is non-scalar, it must be a vector with at least 3 elements.",
-                        "i"="The length of {.arg .breaks} is {length(breaks)}."),
+                        "i"="The length of {.arg .breaks} is {.val {length(breaks)}}."),
                       call = call)
         }
         n <- (length(breaks) - span - 2) / inc + 1
         req <- span + (ceiling(n) - 2) * inc
         if (!is_integerish(n) || n <= 0) {
-            cli_abort(c("If {.arg .breaks} is non-scalar, the length of the vector must be equal to {.arg .span} + (n - 1) * {inc} + 2 for some natural number n.",
-                        "i"="The length of {.arg .breaks} is {length(breaks)}.",
-                        "i"="The value of {.arg .span} is {span}.",
-                        "i"="The value of {.arg .inc} is {inc}.",
-                        "i"="Provide {req - length(breaks)} more elements to {.arg .breaks} to satisfy the condition."),
+            cli_abort(c("If {.arg .breaks} is non-scalar, the length of the vector must be equal to {.arg .span} + (n - 1) * {.val {inc}} + 2 for some natural number n.",
+                        "i"="The length of {.arg .breaks} is {.val {length(breaks)}}.",
+                        "i"="The value of {.arg .span} is {.val {span}}.",
+                        "i"="The value of {.arg .inc} is {.val {inc}}.",
+                        "i"="Provide {.val {req - length(breaks)}} more elements to {.arg .breaks} to satisfy the condition."),
                       call = call)
         }
         br <- breaks
@@ -473,8 +473,8 @@ partition <- function(.data,
         if (length(labels) != length(br)) {
             if (length(breaks) == 1) {
                 cli_abort(c("If {.arg .breaks} is scalar, the length of {.arg .labels} must be equal to the value of {.arg .breaks}.",
-                            "i"="The length of {.arg .labels} is {length(labels)}.",
-                            "i"="{.arg .breaks} is {breaks}."),
+                            "i"="The length of {.arg .labels} is {.val {length(labels)}}.",
+                            "i"="{.arg .breaks} is {.val {breaks}}."),
                           call = call)
             } else {
                 n <- (length(breaks) - span - 2) / inc + 1
@@ -482,11 +482,11 @@ partition <- function(.data,
                     stop("fatal in .prepare_fuzzy()")
                 }
                 cli_abort(c("If {.arg .breaks} is non-scalar, the length of {.arg .labels} must be equal to (length({.arg .breaks}) - {.arg .span} - 2) / {.arg .inc} + 1.",
-                            "i"="The length of {.arg .labels} is {length(labels)}.",
-                            "i"="The length of {.arg .breaks} is {length(breaks)}.",
-                            "i"="The value of {.arg .span} is {span}.",
-                            "i"="The value of {.arg .inc} is {inc}.",
-                            "i"="Provide {.arg .labels} of length {n} to satisfy the condition."),
+                            "i"="The length of {.arg .labels} is {.val {length(labels)}}.",
+                            "i"="The length of {.arg .breaks} is {.val {length(breaks)}}.",
+                            "i"="The value of {.arg .span} is {.val {span}}.",
+                            "i"="The value of {.arg .inc} is {.val {inc}}.",
+                            "i"="Provide {.arg .labels} of length {.val {n}} to satisfy the condition."),
                           call = call)
             }
         }

@@ -59,7 +59,7 @@
             test <- sapply(x, f2)
             if (!isTRUE(all(test))) {
                 types <- sapply(x, function(i) class(i)[1])
-                details <- paste0("Element ", seq_along(types), " is a {.cls ", types, "}.")
+                details <- paste0("Element {.val ", seq_along(types), "} is a {.cls ", types, "}.")
                 details <- details[!test]
                 cli_abort(c("{.arg {arg}} must be a list of {msg}.",
                             ..error_details(details)),
@@ -76,7 +76,7 @@
              call = caller_env()) {
         test <- f(x)
         if (!isTRUE(all(test))) {
-            details <- paste0("Element ", seq_along(x), " equals {.val ", x, "}.")
+            details <- paste0("Element {.val ", seq_along(x), "} equals {.val ", x, "}.")
             details <- details[!test]
             cli_abort(c("{.arg {arg}} must be {msg}.",
                         ..error_details(details)),
@@ -96,7 +96,7 @@
             if (length(x) == 1) {
                 details <- paste0("Value {.val ", x, "} was provided instead.")
             } else {
-                details <- paste0("Element ", seq_along(x), " equals {.val ", x, "}.")
+                details <- paste0("Element {.val ", seq_along(x), "} equals {.val ", x, "}.")
                 details <- details[!test]
             }
             cli_abort(c("{.arg {arg}} must be {msg} {.val {value}}.",
@@ -312,8 +312,8 @@
                               arg = caller_arg(x),
                               call = caller_env()) {
     if (!isTRUE(length(x) == value)) {
-        cli_abort(c("{.arg {arg}} must have {value} elements.",
-                    ..error_details("{.arg {arg}} has {length(x)} elements.")),
+        cli_abort(c("{.arg {arg}} must have {.val {value}} elements.",
+                    ..error_details("{.arg {arg}} has {.val {length(x)}} elements.")),
                   call = call)
     }
 }
@@ -325,8 +325,8 @@
                                      call = caller_env()) {
     if (!isTRUE(length(x) == length(y))) {
         cli_abort(c("{.var {name_x}} and {.var {name_y}} must have the same number of elements.",
-                    ..error_details(c("{.var {name_x}} has {length(x)} elements.",
-                                      "{.var {name_y}} has {length(y)} elements."))),
+                    ..error_details(c("{.var {name_x}} has {.val {length(x)}} elements.",
+                                      "{.var {name_y}} has {.val {length(y)}} elements."))),
                     call = call)
     }
 }
@@ -338,7 +338,7 @@
     lengths <- sapply(x, length)
     if (!isTRUE(length(unique(lengths)) <= 1)) {
         test <- duplicated(lengths)
-        details <- paste0("Element ", seq_along(lengths), " has length ", lengths, ".")
+        details <- paste0("Element {.val ", seq_along(lengths), "} has length {.val ", lengths, "}.")
         details <- details[!test]
         cli_abort(c("{.arg {arg}} must be a list of vectors of equal length.",
                     ..error_details(details)),
