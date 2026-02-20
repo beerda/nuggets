@@ -269,16 +269,16 @@ partition <- function(.data,
         x <- .data[[colindex]]
 
         if (all(is.na(x))) {
-            cli_abort(c("Unable to partition column {.var {colname}} because it contains only NA values.",
+            cli_abort(c("Unable to partition column {.field {colname}} because it contains only NA values.",
                        "i"="Column selected for partitioning must contain some non-NA values.",
-                       "x"="Column {.var {colname}} is empty or all values are NA."),
+                       "x"="Column {.field {colname}} is empty or all values are NA."),
                       call = call)
 
         } else if (any(is.infinite(x))) {
             positions <- which(is.infinite(x))
-            cli_abort(c("Unable to partition column {.var {colname}} because it contains infinite values.",
+            cli_abort(c("Unable to partition column {.field {colname}} because it contains infinite values.",
                        "i"="Column selected for partitioning must not contain infinite values.",
-                       "x"="Column {.var {colname}} contains {length(positions)} infinite value{?s} at position{?s}: {paste(positions, collapse = ', ')}."),
+                       "x"="Column {.field {colname}} contains {length(positions)} infinite value{?s} at position{?s}: {paste(positions, collapse = ', ')}."),
                       call = call)
 
         } else if (is.logical(x)) {
@@ -294,7 +294,7 @@ partition <- function(.data,
                 res <- .partition_factor(as.factor(x), colname)
 
             } else if (is.null(.breaks)) {
-                cli_abort(c("{.arg .breaks} must not be NULL in order to partition numeric column {.var {colname}}."),
+                cli_abort(c("{.arg .breaks} must not be NULL in order to partition numeric column {.field {colname}}."),
                           call = call)
 
             } else if (.method == "crisp") {
@@ -315,9 +315,9 @@ partition <- function(.data,
             }
 
         } else {
-            cli_abort(c("Unable to partition column {.var {colname}}.",
+            cli_abort(c("Unable to partition column {.field {colname}}.",
                        "i"="Column selected for partitioning must be a factor, logical, or numeric.",
-                       "x"="The column {.var {colname}} is a {.cls {class(x)}}."),
+                       "x"="The column {.field {colname}} is a {.cls {class(x)}}."),
                       call = call)
         }
 
@@ -472,7 +472,7 @@ partition <- function(.data,
     } else {
         if (length(labels) != length(br)) {
             if (length(breaks) == 1) {
-                cli_abort(c("If {.arg .breaks} is scalar, the length of {.arg .labels} must be equal to the value of {.var .breaks}.",
+                cli_abort(c("If {.arg .breaks} is scalar, the length of {.arg .labels} must be equal to the value of {.arg .breaks}.",
                             "i"="The length of {.arg .labels} is {length(labels)}.",
                             "i"="{.arg .breaks} is {breaks}."),
                           call = call)

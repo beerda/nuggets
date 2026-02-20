@@ -245,7 +245,7 @@ var_grid <- function(x,
     test <- vapply(x, test_fun, logical(1))
     if (!all(test)) {
         types <- sapply(x, function(i) class(i)[1])
-        details <- paste0("Column {.var ", names(x), "} is a {.cls ", types, "}.")
+        details <- paste0("Column {.field ", names(x), "} is a {.cls ", types, "}.")
         details <- details[!test]
         cli_abort(c("All columns selected by {.arg {arg}} must be {test_type}.",
                     ..error_details(details)),

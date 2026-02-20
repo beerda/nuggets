@@ -391,9 +391,9 @@ dig <- function(x,
         excluded_predicates <- unique(unlist(excluded))
         excluded_undefined <- setdiff(excluded_predicates, colnames(x))
         if (length(excluded_undefined) > 0) {
-            details <- paste0("Column {.var ", excluded_undefined, "} can't be found.")
+            details <- paste0("Column {.field ", excluded_undefined, "} can't be found.")
             cli_abort(c("Can't find some column names in {.arg {error_context$arg_x}} that correspond to all predicates in {.arg {error_context$arg_excluded}}.",
-                        "i" = "Consider using {.fn remove_ill_conditions()} to remove conditions with undefined predicates.",
+                        "i" = "Consider using {.fun remove_ill_conditions} to remove conditions with undefined predicates.",
                         ..error_details(details)))
         }
         excluded <- lapply(excluded,
@@ -530,7 +530,7 @@ dig <- function(x,
                                  foci_cols$selected,
                                  config)
     } else {
-        cli_abort("Unknown internal call function {.var {call_function}}.")
+        cli_abort("Unknown internal call function {.fun {call_function}}.")
     }
 
     nugget(res,

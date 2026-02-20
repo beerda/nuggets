@@ -113,7 +113,7 @@ cluster_associations <- function(x,
     num_uniq <- sum(!dup)
     if (n >= num_uniq) {
         cli_warn(c(
-            "{.fn cluster_associations}: The number of clusters {.arg n} should be less than the number of distinct data points in {.arg x}.",
+            "{.fun cluster_associations}: The number of clusters {.arg n} should be less than the number of distinct data points in {.arg x}.",
             "i" = "The number of distinct data points in {.arg x} is {num_uniq}.",
             "!" = "You provided {.arg n} = {n}.",
             ">" = "{num_uniq} clusters will be created instead."

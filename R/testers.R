@@ -354,12 +354,12 @@
              call = caller_env()) {
         col <- x[[column]]
         if (is.null(col)) {
-            cli_abort(c("Column {.var {column}} must be present in {.arg {arg_x}}.",
-                        "i" = "{.arg {arg_x}} has the following columns: {.var {names(x)}}."),
+            cli_abort(c("Column {.field {column}} must be present in {.arg {arg_x}}.",
+                        "i" = "{.arg {arg_x}} has the following columns: {.field {names(x)}}."),
                       call = call)
         } else {
             if (!isTRUE(f(col))) {
-                cli_abort(c("Column {.var {column}} of {.arg {arg_x}} must be {msg}.",
+                cli_abort(c("Column {.field {column}} of {.arg {arg_x}} must be {msg}.",
                             "x" = "You've supplied a {.cls {class(col)}}."),
                           call = call)
             }
