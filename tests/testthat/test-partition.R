@@ -253,7 +253,7 @@ test_that("partition crisp", {
 
     expect_error(partition(data.frame(a = 0:10),
                            .method = "crisp"),
-                 "`.breaks` must not be NULL in order to partition numeric column.*a")
+                 "`.breaks` must not be NULL in order to partition numeric column `a`")
 
     expect_error(partition(data.frame(a = 0:10),
                            .breaks = -1,
@@ -462,11 +462,11 @@ test_that("partition errors", {
     expect_error(partition(data.frame(a = c(NA, NA)),
                            .method = "crisp",
                            .breaks = c(1, 2, 3)),
-                 "Unable to partition column.*because it contains only NA values")
+                 "Unable to partition column `a` because it contains only NA values.")
     expect_error(partition(data.frame(a = c(1:10, Inf)),
                            .method = "crisp",
                            .breaks = c(1, 2, 3)),
-                 "Unable to partition column.*because it contains infinite values")
+                 "Unable to partition column `a` because it contains infinite values.")
 
     # Test .style errors
     expect_error(partition(d, a, .style = "invalid"),
@@ -499,7 +499,7 @@ test_that("partition errors", {
     expect_error(partition(data.frame(a = 1:10), a,
                            .method = "crisp",
                            .breaks = NULL),
-                 "`.breaks` must not be NULL in order to partition numeric column.*a")
+                 "`.breaks` must not be NULL in order to partition numeric column `a`")
 
     # Test invalid column type
     expect_error(partition(data.frame(a = list(1:3, 4:6)), a),
