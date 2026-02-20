@@ -131,7 +131,8 @@ test_that("dig_correlations call args", {
                     y = rnorm(100),
                     z = rnorm(100))
 
-    res <- dig_correlations(x = d,
+    res <- suppressMessages(
+                dig_correlations(x = d,
                             condition = where(is.logical),
                             xvars = x:y,
                             yvars = y:z,
@@ -146,7 +147,7 @@ test_that("dig_correlations call args", {
                             max_support = 0.9,
                             max_results = 100,
                             verbose = TRUE,
-                            threads = 1)
+                            threads = 1))
     expect_true(is_nugget(res, flavour = "correlations"))
     expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_correlations")

@@ -1415,7 +1415,8 @@ test_that("dig return object details", {
                     z = c(1.0,  0.8, 0.6, 0.4, 0.2),
                     w = c(1.0,  0, 0, 0, 0))
 
-    res <- dig(d,
+    res <- suppressMessages(
+            dig(d,
                f = function(condition) list(cond = condition),
                condition = a:d,
                focus = x:z,
@@ -1431,7 +1432,7 @@ test_that("dig return object details", {
                t_norm = "goedel",
                max_results = 1000,
                verbose = TRUE,
-               threads = 1)
+               threads = 1))
 
     expect_true(is_nugget(res))
     expect_true(is.list(res))
