@@ -510,11 +510,19 @@ dig <- function(x,
                    threads = threads)
 
 
-    .msg(verbose,
-         c("Starting to dig for patterns.",
-           "i" = "Number of rows in {.arg {error_context$arg_x}}: {.val {nrow(x)}}.",
-           "i" = "Selected {.val {sum(condition_cols$selected)}} {.arg {error_context$arg_condition}} columns: {.field {names(cols)[condition_cols$selected]}}.",
-           "i" = "Selected {.val {sum(foci_cols$selected)}} {.arg {error_context$arg_focus}} columns: {.field {names(cols)[foci_cols$selected]}}."))
+    if (isTRUE(verbose)) {
+        msgs <- c("Starting to dig for patterns.",
+                  "i" = "Number of rows in {.arg {error_context$arg_x}}: {.val {nrow(x)}}.")
+        if (!is.null(error_context$arg_condition) && error_context$arg_condition != "") {
+            msgs <- c(msgs,
+                     "i" = "Selected {.val {sum(condition_cols$selected)}} {.arg {error_context$arg_condition}} columns: {.field {names(cols)[condition_cols$selected]}}.")
+        }
+        if (!is.null(error_context$arg_focus) && error_context$arg_focus != "") {
+             msgs <- c(msgs,
+                       "i" = "Selected {.val {sum(foci_cols$selected)}} {.arg {error_context$arg_focus}} columns: {.field {names(cols)[foci_cols$selected]}}.")
+        }
+        cli_inform(msgs)
+    }
 
     if (call_function == "dig") {
         res <- dig_(cols,
