@@ -40,10 +40,15 @@ associationsDetailModule <- function(id, rules, meta, data) {
                     )
                 ),
                 shiny::column(width = 8,
-                    shinyWidgets::panel(heading = "Ancestors",
-                        DT::dataTableOutput(shiny::NS(id, "ancestorTable")),
-                        htmltools::br(),
-                        shiny::plotOutput(shiny::NS(id, "ancestorPlot"), height = "500px")
+                    shinyWidgets::panel(heading = "Rule Detail",
+                        shiny::tabsetPanel(
+                            shiny::tabPanel("Contingency"),
+                            shiny::tabPanel("Ancestors",
+                                DT::dataTableOutput(shiny::NS(id, "ancestorTable")),
+                                htmltools::br(),
+                                shiny::plotOutput(shiny::NS(id, "ancestorPlot"), height = "500px")
+                            )
+                        )
                     )
                 )
             )
