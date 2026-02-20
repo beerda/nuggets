@@ -119,10 +119,12 @@ associationsDetailModule <- function(id, rules, meta, data) {
                     rule <- selectedRule()
                     shiny::req(rule)
 
-                    data.frame(`conseq` = c(rule$pp, rule$np),
-                               `¬conseq` = c(rule$pn, rule$nn),
-                               row.names = c("ante", "¬ante"),
-                               check.names = FALSE)
+                    res <- data.frame(c1 = c(rule$pp, rule$np),
+                                      c2 = c(rule$pn, rule$nn))
+                    rownames(res) <- c("ante", "\u00acante")
+                    colnames(res) <- c("conseq", "\u00acconseq")
+
+                    res
                 }, rownames = TRUE)
 
                 output$ancestorTable <- DT::renderDT({
