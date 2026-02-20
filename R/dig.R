@@ -509,6 +509,13 @@ dig <- function(x,
                    verbose = verbose,
                    threads = threads)
 
+
+    .msg(verbose,
+         c("Starting to dig for patterns.",
+           "i" = "Number of rows in {.arg {error_context$arg_x}}: {.val {nrow(x)}}.",
+           "i" = "Selected {.val {sum(condition_cols$selected)}} {.arg {error_context$arg_condition}} columns: {.field {names(cols)[condition_cols$selected]}}.",
+           "i" = "Selected {.val {sum(foci_cols$selected)}} {.arg {error_context$arg_focus}} columns: {.field {names(cols)[foci_cols$selected]}}."))
+
     if (call_function == "dig") {
         res <- dig_(cols,
                     names(cols),

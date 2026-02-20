@@ -17,8 +17,8 @@
 #######################################################################
 
 
-.msg <- function(verbose, message, ...) {
+.msg <- function(verbose, message, ..., .envir = parent.frame()) {
     if (isTRUE(verbose)) {
-        message(message, ...)
+        cli_inform(message, ..., .envir = .envir)
     }
 }

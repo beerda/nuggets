@@ -23,6 +23,7 @@
 ## usethis namespace: start
 #' @importFrom classInt classIntervals
 #' @importFrom cli cli_abort
+#' @importFrom cli cli_inform
 #' @importFrom cli cli_warn
 #' @importFrom dplyr bind_cols
 #' @importFrom dplyr bind_rows
