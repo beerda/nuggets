@@ -58,9 +58,18 @@
 #' @method explore associations
 #' @export
 explore.associations <- function(x, data = NULL, ...) {
+    .require_shiny()
     .must_be_nugget(x, "associations")
     .must_be_data_frame(data, null = TRUE)
-    .require_shiny()
+
+    if (!is.null(data)) {
+        predicates <- c(parse_condition(x$antecedent),
+                        parse_condition(x$consequent))
+        predicates <- unlist(predicates)
+        predicates <- unique(predicates)
+        predicates <- predicates[lengths(predicates) > 0]
+        .must_have_columns(data, predicates, arg_x = "data")
+    }
 
     initial_meta <- tribble(
         ~data_name,          ~long_name,                          ~type,       ~group,              ~round, ~scatter, ~clustering_default,

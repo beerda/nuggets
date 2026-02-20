@@ -370,3 +370,16 @@
 .must_have_column <- ..must_have_column(function(x) TRUE, "")
 .must_have_character_column <- ..must_have_column(is.character, "a character vector")
 .must_have_numeric_column <- ..must_have_column(is.numeric, "a numeric vector")
+
+.must_have_columns <- function(x,
+                               columns,
+                               arg_x = caller_arg(x),
+                               call = caller_env()) {
+    missing <- setdiff(columns, names(x))
+    if (length(missing) > 0) {
+        cli_abort(c("Can't find {.val {length(missing)}} required column{?s} in {.arg {arg_x}}.",
+                    "x" = "{.arg {arg_x}} is missing the following columns: {.field {missing}}",
+                    "i" = "{.arg {arg_x}} has the following columns: {.field {names(x)}}."),
+                  call = call)
+    }
+}
