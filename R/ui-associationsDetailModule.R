@@ -105,11 +105,11 @@ associationsDetailModule <- function(id, rules, meta, data) {
 
                     res <- data.frame(c1 = c(rule$pp, rule$np),
                                       c2 = c(rule$pn, rule$nn))
-                    rownames(res) <- c("ante", "\u00acante")
-                    colnames(res) <- c("conseq", "\u00acconseq")
+                    rownames(res) <- c("<b>ante</b>", "<b>\u00acante</b>")
+                    colnames(res) <- c("<b>conseq</b>", "<b>\u00acconseq</b>")
 
                     res
-                }, rownames = TRUE)
+                }, rownames = TRUE, sanitize.rownames.function = identity, sanitize.colnames.function = identity)
 
                 if (!is.null(data)) {
                     ancestors <- shiny::reactive({
