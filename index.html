@@ -100,6 +100,7 @@
 <h2 id="key-features">Key Features<a class="anchor" aria-label="anchor" href="#key-features"></a>
 </h2>
 <ul>
+<li>Optimized performance for <strong>fast computation</strong>.</li>
 <li>Support for both <strong>categorical</strong> and <strong>numeric data</strong>.</li>
 <li>Provides both <strong>Boolean</strong> and <strong>fuzzy</strong> logic approach.</li>
 <li>Data preparation functions for easy pre-processing phase.</li>
@@ -107,6 +108,38 @@
 <li>
 <strong>Visualization</strong> and pattern post-processing tools.</li>
 <li>Integrated Shiny applications for <strong>interactive exploration</strong> of discovered patterns.</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="fast-on-dense-datasets">Fast on Dense Datasets<a class="anchor" aria-label="anchor" href="#fast-on-dense-datasets"></a>
+</h2>
+<p>A lot of effort has been put into optimizing the performance of the package, especially for dense datasets. The core algorithms are implemented in C++ and use single-instruction multiple-data (SIMD) operations to speed up the operations.</p>
+<p>On a randomly generated dataset with 1 million rows and 15 columns, association rules with at most 5 items in the antecedent, a support above 0.001, and a confidence above 0.5 were searched. The total times, including reading the data from the CSV file, searching for rules, and writing the result back to CSV, on a desktop computer were as follows:</p>
+<ul>
+<li>
+<code>nuggets</code> (R, boolean logic): <strong>1.4 s</strong>
+</li>
+<li>
+<code>arules</code> - ECLAT (R, boolean logic): <strong>2.9 s</strong>
+</li>
+<li>
+<code>arules</code> - Apriori (R, boolean logic): <strong>3.7 s</strong>
+</li>
+</ul>
+<p>Fuzzy variant of association rules, which is much more computationally intensive:</p>
+<ul>
+<li>
+<code>nuggets</code> (R, fuzzy logic): <strong>12.0 s</strong>
+</li>
+</ul>
+<p>For comparison, two Python libraries performed as follows:</p>
+<ul>
+<li>
+<code>cleverminer</code> (Python, boolean logic): <strong>1m 15.0s</strong>
+</li>
+<li>
+<code>mlxtend</code> (Python, boolean logic, frequent itemsets only): <strong>4h 11m 22.5s</strong>
+</li>
 </ul>
 </div>
 <div class="section level2">

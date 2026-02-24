@@ -41,6 +41,7 @@ applications.
 
 ## Key Features
 
+- Optimized performance for **fast computation**.
 - Support for both **categorical** and **numeric data**.
 - Provides both **Boolean** and **fuzzy** logic approach.
 - Data preparation functions for easy pre-processing phase.
@@ -49,6 +50,34 @@ applications.
 - **Visualization** and pattern post-processing tools.
 - Integrated Shiny applications for **interactive exploration** of
   discovered patterns.
+
+## Fast on Dense Datasets
+
+A lot of effort has been put into optimizing the performance of the
+package, especially for dense datasets. The core algorithms are
+implemented in C++ and use single-instruction multiple-data (SIMD)
+operations to speed up the operations.
+
+On a randomly generated dataset with 1 million rows and 15 columns,
+association rules with at most 5 items in the antecedent, a support
+above 0.001, and a confidence above 0.5 were searched. The total times,
+including reading the data from the CSV file, searching for rules, and
+writing the result back to CSV, on a desktop computer were as follows:
+
+- `nuggets` (R, boolean logic): **1.4 s**
+- `arules` - ECLAT (R, boolean logic): **2.9 s**
+- `arules` - Apriori (R, boolean logic): **3.7 s**
+
+Fuzzy variant of association rules, which is much more computationally
+intensive:
+
+- `nuggets` (R, fuzzy logic): **12.0 s**
+
+For comparison, two Python libraries performed as follows:
+
+- `cleverminer` (Python, boolean logic): **1m 15.0s**
+- `mlxtend` (Python, boolean logic, frequent itemsets only): **4h 11m
+  22.5s**
 
 ## Installation
 
