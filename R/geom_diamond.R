@@ -43,7 +43,7 @@
     xlabcoord <- xcoord + params$nudge_x
 
     ycoord <- max(formula_length) - formula_length
-    ycoord <- match(ycoord, sort(unique(ycoord)))   # remove gaps in y-coordinates to make the plot more compact
+    ycoord <- match(ycoord, sort(unique(ycoord))) - 1   # remove gaps in y-coordinates to make the plot more compact
     ylabcoord <- ycoord + params$nudge_y
 
     if (is.null(data$label)) {
