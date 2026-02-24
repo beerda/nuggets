@@ -83,7 +83,7 @@ standard installations of the packages, were as follows:
 
 - `nuggets` (R, boolean logic): **1.4 s**
 - `arules` - ECLAT (R, boolean logic): **2.9 s**
-- `arules` - Apriori (R, boolean logic): **3.7 s**
+- `arules` - Apriori (R, boolean logic): **3.3 s**
 
 Fuzzy variant of association rules, which is much more computationally
 intensive:
