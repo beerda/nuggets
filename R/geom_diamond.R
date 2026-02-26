@@ -73,7 +73,10 @@
 
 
 .geom_diamond_create_edges <- function(data,
-                                       linetype = "solid") {
+                                       linetype = "solid",
+                                       neg_linetype = "31",
+                                       linecolor = "#999999",
+                                       neg_linecolor = "#cc9999") {
     required_cols <- c("condition", "x", "y", "linewidth_orig")
     missing_cols <- setdiff(required_cols, colnames(data))
     if (length(missing_cols) > 0) {
@@ -100,21 +103,19 @@
         edges$alpha <- NA
         edges$group <- 1
         edges$linetype <- linetype
+        edges$linewidth <- 0.5
+        edges$colour <- linecolor
 
         uniq_lw <- unique(data$linewidth_orig)
         if (length(uniq_lw) == 1) {
             edges$linewidth_orig <- uniq_lw
-            edges$colour <- "#000000"
         } else {
             lw <- data$linewidth_orig[edges$row] - data$linewidth_orig[edges$col]
             abslw <- abs(lw)
             edges$linewidth <- 0.5 + 4.5 * (abslw - min(abslw)) / (max(abslw) - min(abslw))
 
-            edges$colour[is.finite(edges$linewidth) & lw < 0] <- "#999999"
-            edges$colour[is.finite(edges$linewidth) & lw > 0] <- "#cc9999"
-            edges$colour[!is.finite(edges$linewidth) | lw == 0] <- "#000000"
-
-            edges$linewidth[!is.finite(edges$linewidth)] <- 0.5
+            edges$colour[is.finite(edges$linewidth) & lw > 0] <- neg_linecolor
+            edges$linetype[is.finite(edges$linewidth) & lw > 0] <- neg_linetype
         }
     }
 
@@ -127,10 +128,17 @@
                                      coord,
                                      na.rm = FALSE,
                                      linetype = "solid",
+                                     neg_linetype = "31",
+                                     linecolor = "#999999",
+                                     neg_linecolor = "#cc9999",
                                      linewidth = 0.5,
                                      nudge_x = 0,
                                      nudge_y = 0.125) {
-    edges <- .geom_diamond_create_edges(data, linetype)
+    edges <- .geom_diamond_create_edges(data,
+                                        linetype = linetype,
+                                        neg_linetype = neg_linetype,
+                                        linecolor = linecolor,
+                                        neg_linecolor = neg_linecolor)
     point_data <- transform(data)
     label_data <- transform(data,
                             colour = "black",
@@ -252,7 +260,10 @@ GeomDiamond <- ggproto(
 #' @param stat Statistical transformation to apply; defaults to `"identity"`.
 #' @param position Position adjustment for the geom; defaults to `"identity"`.
 #' @param na.rm Logical; if `TRUE`, missing values are silently removed.
-#' @param linetype Line type for edges; defaults to `"solid"`.
+#' @param linetype Line type for positive edges; defaults to `"solid"`.
+#' @param neg_linetype Line type for negative edges; defaults to `"31"` (dashed).
+#' @param linecolor Color for positive edges; defaults to `"#999999"`.
+#' @param neg_linecolor Color for negative edges; defaults to `"#cc9999"`.
 #' @param linewidth Width of edges connecting parent and child nodes. If set to
 #'   `NA`, edge widths are determined by the `linewidth` aesthetic. If no
 #'   aesthetic is provided, a default width of `0.5` is used.
@@ -304,6 +315,9 @@ geom_diamond <- function(mapping = NULL,
                          position = "identity",
                          na.rm = FALSE,
                          linetype = "solid",
+                         neg_linetype = "31",
+                         linecolor = "#999999",
+                         neg_linecolor = "#cc9999",
                          linewidth = NA,
                          nudge_x = 0,
                          nudge_y = 0.125,
@@ -319,6 +333,9 @@ geom_diamond <- function(mapping = NULL,
         show.legend = show.legend,
         inherit.aes = inherit.aes,
         params = list(linetype = linetype,
+                      neg_linetype = neg_linetype,
+                      linecolor = linecolor,
+                      neg_linecolor = neg_linecolor,
                       linewidth = linewidth,
                       nudge_x = nudge_x,
                       nudge_y = nudge_y,
