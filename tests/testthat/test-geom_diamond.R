@@ -111,7 +111,7 @@ test_that(".geom_diamond_create_edges", {
     expect_equal(res$linetype,
                  rep("foo", 6))
     expect_equal(res$colour,
-                 rep("#000000", 6))
+                 rep("#999999", 6))
     expect_equal(res$linewidth,
                  rep(0.0, 6))
 })

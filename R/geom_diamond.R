@@ -103,7 +103,6 @@
         edges$alpha <- NA
         edges$group <- 1
         edges$linetype <- linetype
-        edges$linewidth <- 0.5
         edges$colour <- linecolour
 
         uniq_lw <- unique(data$linewidth_orig)
@@ -113,6 +112,7 @@
             lw <- data$linewidth_orig[edges$row] - data$linewidth_orig[edges$col]
             abslw <- abs(lw)
             edges$linewidth <- 0.5 + 4.5 * (abslw - min(abslw)) / (max(abslw) - min(abslw))
+            edges$linewidth[!is.finite(edges$linewidth)] <- 0.5
 
             edges$colour[is.finite(edges$linewidth) & lw > 0] <- neg_linecolour
             edges$linetype[is.finite(edges$linewidth) & lw > 0] <- neg_linetype
@@ -324,22 +324,30 @@ geom_diamond <- function(mapping = NULL,
                          show.legend = NA,
                          inherit.aes = TRUE,
                          ...) {
-    layer(
-        data = data,
-        mapping = mapping,
-        stat = stat,
-        geom = GeomDiamond,
-        position = position,
-        show.legend = show.legend,
-        inherit.aes = inherit.aes,
-        params = list(linetype = linetype,
-                      neg_linetype = neg_linetype,
-                      linecolour = linecolour,
-                      neg_linecolour = neg_linecolour,
-                      linewidth = linewidth,
-                      nudge_x = nudge_x,
-                      nudge_y = nudge_y,
-                      na.rm = na.rm,
-                      ...)
+    list(
+        layer(
+            data = data,
+            mapping = mapping,
+            stat = stat,
+            geom = GeomDiamond,
+            position = position,
+            show.legend = show.legend,
+            inherit.aes = inherit.aes,
+            params = list(linetype = linetype,
+                          neg_linetype = neg_linetype,
+                          linecolour = linecolour,
+                          neg_linecolour = neg_linecolour,
+                          linewidth = linewidth,
+                          nudge_x = nudge_x,
+                          nudge_y = nudge_y,
+                          na.rm = na.rm,
+                          ...)
+        ),
+        theme(
+            axis.text.x = element_blank(),
+            axis.ticks.x = element_blank(),
+            axis.text.y = element_blank(),
+            axis.ticks.y = element_blank()
+        )
     )
 }
