@@ -12,8 +12,8 @@ geom_diamond(
   na.rm = FALSE,
   linetype = "solid",
   neg_linetype = "31",
-  linecolor = "#999999",
-  neg_linecolor = "#cc9999",
+  linecolour = "#999999",
+  neg_linecolour = "#cc9999",
   linewidth = NA,
   nudge_x = 0,
   nudge_y = 0.125,
@@ -37,9 +37,9 @@ geom_diamond(
 
 \item{neg_linetype}{Line type for negative edges; defaults to \code{"31"} (dashed).}
 
-\item{linecolor}{Color for positive edges; defaults to \code{"#999999"}.}
+\item{linecolour}{Color for positive edges; defaults to \code{"#999999"}.}
 
-\item{neg_linecolor}{Color for negative edges; defaults to \code{"#cc9999"}.}
+\item{neg_linecolour}{Color for negative edges; defaults to \code{"#cc9999"}.}
 
 \item{linewidth}{Width of edges connecting parent and child nodes. If set to
 \code{NA}, edge widths are determined by the \code{linewidth} aesthetic. If no
