@@ -44,6 +44,7 @@
 
     ycoord <- max(formula_length) - formula_length
     ycoord <- match(ycoord, sort(unique(ycoord))) - 1   # remove gaps in y-coordinates to make the plot more compact
+    ycoord <- max(ycoord) - ycoord                      # reverse y-coordinates to have the broader conditions at the top
     ylabcoord <- ycoord + params$nudge_y
 
     if (is.null(data$label)) {
@@ -99,7 +100,7 @@
         edges$xend <- data$x[edges$col]
         edges$y <- data$y[edges$row]
         edges$yend <- data$y[edges$col]
-        edges$curvature <- (edges$y - edges$yend - 1) * ifelse(edges$xend > edges$x, -1, 1)
+        edges$curvature <- (edges$yend - edges$y - 1) * ifelse(edges$xend > edges$x, -1, 1)
         edges$alpha <- NA
         edges$group <- 1
         edges$linetype <- linetype

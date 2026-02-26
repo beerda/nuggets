@@ -36,19 +36,19 @@ test_that(".geom_diamond_setup_data (label = null, fill = null)", {
     expect_equal(res$x,
                  c(0.0, -0.5, 0.5, -1.0, 0.0, 1.0))
     expect_equal(res$y,
-                 c(2, 1, 1, 0, 0, 0))
+                 c(0, 1, 1, 2, 2, 2))
     expect_equal(res$xlabel,
                  0.2 + c(0.0, -0.5, 0.5, -1.0, 0.0, 1.0))
     expect_equal(res$ylabel,
-                 -0.3 + c(2, 1, 1, 0, 0, 0))
+                 -0.3 + c(0, 1, 1, 2, 2, 2))
     expect_equal(res$xmin,
                  c(0.0, -0.5, 0.5, -1.0, 0.0, 1.0))
     expect_equal(res$xmax,
                  0.2 + c(0.0, -0.5, 0.5, -1.0, 0.0, 1.0))
     expect_equal(res$ymin,
-                 -0.3 + c(2, 1, 1, 0, 0, 0))
+                 -0.3 + c(0, 1, 1, 2, 2, 2))
     expect_equal(res$ymax,
-                 c(2, 1, 1, 0, 0, 0))
+                 c(0, 1, 1, 2, 2, 2))
     #expect_equal(res$linewidth,
                  #rep(0, 6))
 })
@@ -78,7 +78,7 @@ test_that(".geom_diamond_setup_data (label = non-null, fill = non-null)", {
 
 test_that(".geom_diamond_create_edges", {
     x <- c(0.0, -0.5, 0.5, -1.0, 0.0, 1.0)
-    y <- c(2.0,  1.0, 1.0,  0.0, 0.0, 0.0)
+    y <- c(0.0,  1.0, 1.0,  2.0, 2.0, 2.0)
     d <- data.frame(
         #               1       2        3             4             5             6
         condition = c("{}", "{a=1}", "{b=2}", "{a=1, b=2}", "{b=2, a=3}", "{b=2, a=4}"),

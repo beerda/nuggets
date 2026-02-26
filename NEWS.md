@@ -3,6 +3,7 @@
 - fixed bugs in explore()
 - added plot_contingency()
 - enhanced info and error messages
+- added arguments for line type and colour to geom_diamond()
 
 # nuggets 2.1.2
 - released: 2026-02-04
