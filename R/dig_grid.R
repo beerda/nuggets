@@ -257,9 +257,9 @@ dig_grid <- function(x,
     processF <- function(condition, support, result) {
         isnull <- sapply(result, is.null)
         result <- lapply(result[!isnull], as_tibble)
-        result <- do.call(rbind, result)
+        result <- do.call(bind_rows, result)
 
-        if (!is.null(result)) {
+        if (!is.null(result) && nrow(result) > 0) {
             cond <- format_condition(names(condition))
             gr <- grid[!isnull, ]
             result <- cbind(condition = rep(cond, nrow(gr)),
@@ -351,7 +351,7 @@ dig_grid <- function(x,
                                     arg_threads = error_context$arg_threads,
                                     call = error_context$call))
     digattr <- attributes(res)
-    res <- do.call(rbind, res)
+    res <- do.call(bind_rows, res)
 
     nugget(res,
            flavour = NULL,

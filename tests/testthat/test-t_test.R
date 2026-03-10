@@ -20,7 +20,7 @@
 test_that(".t_test error", {
     expect_warning(res <- .t_test(1, 2),
                    "t.test: error: not enough 'x' observations")
-    expect_null(res)
+    expect_equal(res, list(comment = "error: not enough 'x' observations"))
 })
 
 test_that(".t_test max p-value not reached", {

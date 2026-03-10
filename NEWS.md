@@ -1,9 +1,13 @@
 # nuggets ???
 - released: ???
 - fixed bugs in explore()
+- added contingency table view to explore.associations()
+- added dig_ancestors()
 - added plot_contingency()
 - enhanced info and error messages
 - added arguments for line type and colour to geom_diamond()
+- enhanced dig_*_contrasts() - statistical test errors are now stored in the
+  "comment" column in the returned data frame
 
 # nuggets 2.1.2
 - released: 2026-02-04

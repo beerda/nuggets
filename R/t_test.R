@@ -40,7 +40,7 @@
     if (is.null(fit)) {
         # error
         warn(paste("t.test:", res$comment))
-        return(NULL)
+        return(list(comment = res$comment))
 
     } else if (is.finite(fit$p.value) && fit$p.value > max_p_value) {
         # omit the result

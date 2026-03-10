@@ -20,7 +20,7 @@
 test_that(".wilcox_test error", {
     expect_warning(res <- .wilcox_test(NULL, 2),
                    "wilcox.test: error: 'x' must be numeric")
-    expect_null(res)
+    expect_equal(res, list(comment = "error: 'x' must be numeric"))
 })
 
 test_that(".wilcox_test max p-value not reached", {
