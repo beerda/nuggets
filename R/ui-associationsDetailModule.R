@@ -117,17 +117,7 @@ associationsDetailModule <- function(id, rules, meta, data) {
                         rule <- selectedRule()
                         shiny::req(rule)
 
-                        ante <- parse_condition(rule$antecedent)[[1]]
-                        cons <- parse_condition(rule$consequent)[[1]]
-                        res <- dig_associations(data,
-                                                antecedent = all_of(ante),
-                                                consequent = all_of(cons),
-                                                min_length = 0,
-                                                max_length = Inf,
-                                                min_coverage = 0,
-                                                min_support = 0,
-                                                min_confidence = 0,
-                                                max_results = Inf)
+                        res <- dig_ancestors(rule, data)
                         res <- res[order(res$antecedent_length), , drop = FALSE]
 
                         res

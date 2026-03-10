@@ -383,3 +383,25 @@
                   call = call)
     }
 }
+
+.must_have_n_cols <- function(x,
+                              n,
+                              arg = caller_arg(x),
+                              call = caller_env()) {
+    if (!isTRUE(ncol(x) == n)) {
+        cli_abort(c("{.arg {arg}} must have {.val {n}} column{?s}.",
+                    "x" = "{.arg {arg}} has {.val {ncol(x)}} column{?s}."),
+                  call = call)
+    }
+}
+
+.must_have_n_rows <- function(x,
+                              n,
+                              arg = caller_arg(x),
+                              call = caller_env()) {
+    if (!isTRUE(nrow(x) == n)) {
+        cli_abort(c("{.arg {arg}} must have {.val {n}} row{?s}.",
+                    "x" = "{.arg {arg}} has {.val {nrow(x)}} row{?s}."),
+                  call = call)
+    }
+}
