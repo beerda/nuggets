@@ -44,7 +44,11 @@ reference:
       - add_interest
       - cluster_associations
       - dig_ancestors
-      - explore
+      - explore.associations
+      - explore.baseline_contrasts
+      - explore.complement_contrasts
+      - explore.paired_baseline_contrasts
+      - explore.correlations
       - geom_diamond
       - plot_contingency
       - remove_ill_conditions
