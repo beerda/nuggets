@@ -2,6 +2,8 @@
 - released: ???
 - fixed bugs in explore()
 - added contingency table view to explore.associations()
+- added explore() methods for baseline contrasts, complement contrasts, paired
+  baseline contrasts, and correlations
 - added dig_ancestors()
 - added plot_contingency()
 - enhanced info and error messages
