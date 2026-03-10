@@ -21,16 +21,32 @@
 \method{explore}{paired_baseline_contrasts}(x, data = NULL, ...)
 }
 \arguments{
-\item{x}{An object of S3 class \code{associations}, typically created with
-\code{\link[=dig_associations]{dig_associations()}}.}
+\item{x}{An object of S3 class \code{paired_baseline_contrasts}, typically
+created with \code{\link[=dig_paired_baseline_contrasts]{dig_paired_baseline_contrasts()}}.}
 
 \item{data}{An optional data frame containing the dataset from which the
-rules were mined. Providing this enables additional contextual features in
-the explorer, such as examining supporting records.}
+contrasts were computed. Providing this enables additional contextual
+features in the explorer, such as examining supporting records.}
 
 \item{...}{Currently ignored.}
 }
 \value{
+An object of class \code{shiny.appobj} representing the Shiny application.
+When "printed" in an interactive R session, the application is launched
+immediately in the default web browser.
+
+An object of class \code{shiny.appobj} representing the Shiny application.
+When "printed" in an interactive R session, the application is launched
+immediately in the default web browser.
+
+An object of class \code{shiny.appobj} representing the Shiny application.
+When "printed" in an interactive R session, the application is launched
+immediately in the default web browser.
+
+An object of class \code{shiny.appobj} representing the Shiny application.
+When "printed" in an interactive R session, the application is launched
+immediately in the default web browser.
+
 An object of class \code{shiny.appobj} representing the Shiny application.
 When "printed" in an interactive R session, the application is launched
 immediately in the default web browser.
