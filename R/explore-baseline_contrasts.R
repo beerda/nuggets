@@ -71,21 +71,21 @@ explore.baseline_contrasts <- function(x, data = NULL, ...) {
     }
 
     initial_meta <- tribble(
-        ~data_name,     ~long_name,                ~type,       ~group,           ~round, ~scatter, ~clustering_default,
-        "condition",    "Condition",               "condition", "formula",        NA,     FALSE,    0,
-        "support",      "Support",                 "numeric",   "basic measures", 2,      TRUE,     0,
-        "var",          "Variable",                "character", "formula",        NA,     FALSE,    0,
-        "estimate",     "Estimate",                "numeric",   "test results",   4,      TRUE,     0,
-        "statistic",    "Statistic",               "numeric",   "test results",   4,      TRUE,     0,
-        "p_value",      "P-value",                 "numeric",   "test results",   6,      TRUE,     0,
-        "n",            "N",                       "integer",   "basic measures", NA,     TRUE,     0,
-        "conf_int_lo",  "Conf. Interval (lower)",  "numeric",   "test results",   4,      TRUE,     0,
-        "conf_int_hi",  "Conf. Interval (upper)",  "numeric",   "test results",   4,      TRUE,     0,
-        "alternative",  "Alternative",             "character", "test settings",  NA,     FALSE,    0,
-        "method",       "Method",                  "character", "test settings",  NA,     FALSE,    0,
-        "comment",      "Comment",                 "character", "test results",   NA,     FALSE,    0,
-        "df",           "Degrees of Freedom",      "numeric",   "test results",   2,      TRUE,     0,
-        "stderr",       "Standard Error",          "numeric",   "test results",   4,      TRUE,     0,
+        ~data_name,     ~long_name,                ~type,       ~group,           ~round, ~scatter,
+        "condition",    "Condition",               "condition", "formula",        NA,     FALSE,
+        "var",          "Variable",                "character", "formula",        NA,     FALSE,
+        "estimate",     "Estimate",                "numeric",   "test",            4,      TRUE,
+        "statistic",    "Statistic",               "numeric",   "test",            4,      TRUE,
+        "stderr",       "Standard Error",          "numeric",   "test",            4,      TRUE,
+        "p_value",      "P-value",                 "numeric",   "test",            6,      TRUE,
+        "df",           "Degrees of Freedom",      "numeric",   "test",            2,      TRUE,
+        "conf_int_lo",  "Conf. Interval (lower)",  "numeric",   "test",            4,      TRUE,
+        "conf_int_hi",  "Conf. Interval (upper)",  "numeric",   "test",            4,      TRUE,
+        "alternative",  "Alternative",             "character", "test",           NA,     FALSE,
+        "method",       "Method",                  "character", "test",           NA,     FALSE,
+        "comment",      "Comment",                 "character", "test",           NA,     FALSE,
+        "support",      "Support",                 "numeric",   "basic measures", 2,       TRUE,
+        "n",            "N",                       "integer",   "basic measures", NA,      TRUE,
     )
 
     x$id <- seq_len(nrow(x))
