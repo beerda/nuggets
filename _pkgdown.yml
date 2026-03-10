@@ -44,8 +44,9 @@ reference:
       - add_interest
       - cluster_associations
       - dig_ancestors
-      - explore.associations
+      - explore
       - geom_diamond
+      - plot_contingency
       - remove_ill_conditions
       - which_antichain
 
