@@ -43,6 +43,10 @@ exploreApp <- function(rules,
             return(conditionFilterModule(id = paste0(col, "FilterModule"),
                                          x = rules[[col]],
                                          meta = meta[i, , drop = FALSE]))
+        } else if (meta$type[i] == "variable") {
+            return(variableFilterModule(id = paste0(col, "FilterModule"),
+                                        x = rules[[col]],
+                                        meta = meta[i, , drop = FALSE]))
         } else if (meta$type[i] == "numeric" || meta$type[i] == "integer") {
             return(numericFilterModule(id = paste0(col, "FilterModule"),
                                        x = rules[[col]],

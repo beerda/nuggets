@@ -72,7 +72,7 @@ explore.baseline_contrasts <- function(x, data = NULL, ...) {
     initial_meta <- tribble(
         ~data_name,     ~long_name,                ~type,       ~group,           ~round, ~scatter,
         "condition",    "Condition",               "condition", "formula",        NA,     FALSE,
-        "var",          "Variable",                "character", "formula",        NA,     FALSE,
+        "var",          "Variable",                "variable",  "formula",        NA,     FALSE,
         "estimate",     "Estimate",                "numeric",   "test",            4,      TRUE,
         "statistic",    "Statistic",               "numeric",   "test",            4,      TRUE,
         "stderr",       "Standard Error",          "numeric",   "test",            4,      TRUE,
