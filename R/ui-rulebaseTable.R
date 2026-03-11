@@ -38,7 +38,10 @@ rulebaseTable <- function(meta, rulesAfter, rulesBefore = NULL) {
         length(unique(rules[[col]]))
     }, integer(1))
 
+    nr <- nrow(rules)
+    nc <- length(setdiff(colnames(rules), "id"))
+
     data.frame(c("Number of rules:", "Number of columns:", distinct_condition_names),
-               c(nrow(rules), ncol(rules), distinct_condition_counts),
+               c(nr, nc, distinct_condition_counts),
                stringsAsFactors = FALSE)
 }
