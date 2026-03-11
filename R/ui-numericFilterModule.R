@@ -19,20 +19,7 @@
 
 numericFilterModule <- function(id, x, meta) {
     int <- meta$type == "integer"
-
-    special <- NULL
-    if (any(x == -Inf, na.rm = TRUE)) {
-        special <- c(special, "-Inf")
-    }
-    if (any(is.na(x))) {
-        special <- c(special, "NA")
-    }
-    if (any(is.nan(x), na.rm = TRUE)) {
-        special <- c(special, "NaN")
-    }
-    if (any(x == Inf, na.rm = TRUE)) {
-        special <- c(special, "Inf")
-    }
+    special <- .extract_special_value_names(x)
 
     digits <- NULL
     if (int) {
@@ -43,30 +30,21 @@ numericFilterModule <- function(id, x, meta) {
         x <- as.numeric(x)
     }
 
-    finx <- x
-    finx <- finx[!is.na(finx)]
-    finx <- finx[!is.nan(finx)]
-    finx <- finx[is.finite(finx)]
-
-    rng <- bound_range(finx,
-                       digits = digits,
-                       na_rm = TRUE)
-
-    summaryTable <- quantile(finx, probs = seq(0, 1, 0.25), names = FALSE)
-    summaryTable <- as.data.frame(t(summaryTable))
-    colnames(summaryTable) <- c("min", "Q1", "median", "Q3", "max")
-
-    minX <- min(finx)
-    maxX <- max(finx)
+    finx <- .just_finite_values(x)
+    rng <- bound_range(finx, digits = digits, na_rm = TRUE)
+    finiteSummaryTable <- .summarize_finite(x)
+    specialSummaryTable <- .summarize_special(x)
 
     g <- ggplot(data.frame(x = finx)) + aes(x = x)
     if (int) {
-        g <- g + geom_bar()
+        g <- g + geom_bar(fill = "white", color = "black")
     } else {
         g <- g + geom_histogram(bins = 30, fill = "white", color = "black")
     }
 
     list(ui = function() {
+            histogramPlot <- NULL;
+            filterSliderInput <- NULL;
             specialCheckboxInput <- NULL;
             if (!is.null(special)) {
                 specialCheckboxInput <- shiny::checkboxGroupInput(shiny::NS(id, "special"),
@@ -75,21 +53,27 @@ numericFilterModule <- function(id, x, meta) {
                                                           selected = special,
                                                           inline = TRUE)
             }
-
-            filterTabPanel(title = meta$long_name,
-                           value = meta$data_name,
-                           info = paste0("Filter the rules by choosing a range of values for ",
-                                         tolower(meta$long_name), "."),
-                shiny::tableOutput(shiny::NS(id, "summaryTable")),
-                shiny::plotOutput(shiny::NS(id, "histogramPlot")),
-                shiny::sliderInput(shiny::NS(id, "slider"),
+            if (!is.null(rng)) {
+                # if rng is null then there are no finite values to filter
+                histogramPlot <- shiny::plotOutput(shiny::NS(id, "histogramPlot"))
+                filterSliderInput <- shiny::sliderInput(shiny::NS(id, "slider"),
                             label = tolower(meta$long_name),
                             min = rng[1],
                             max = rng[2],
                             step = if (int) 1 else NULL,
                             value = rng,
                             round = FALSE,
-                            width = "100%"),
+                            width = "100%")
+            }
+
+            filterTabPanel(title = meta$long_name,
+                           value = meta$data_name,
+                           info = paste0("Filter the rules by choosing a range of values for ",
+                                         tolower(meta$long_name), "."),
+                shiny::tableOutput(shiny::NS(id, "finiteSummaryTable")),
+                shiny::tableOutput(shiny::NS(id, "specialSummaryTable")),
+                histogramPlot,
+                filterSliderInput,
                 specialCheckboxInput,
                 htmltools::hr(),
                 shiny::actionButton(shiny::NS(id, "resetButton"), "Reset"),
@@ -99,43 +83,54 @@ numericFilterModule <- function(id, x, meta) {
 
         server = function(reset_all_trigger) {
             shiny::moduleServer(id, function(input, output, session) {
-                output$summaryTable <- shiny::renderTable({
-                    summaryTable
+                output$finiteSummaryTable <- shiny::renderTable({
+                    finiteSummaryTable
                 }, width = "100%", bordered = TRUE, striped = TRUE, align = "c", digits = 2)
 
-                output$histogramPlot <- shiny::renderPlot({
-                    shiny::req(input$slider)
+                output$specialSummaryTable <- shiny::renderTable({
+                    specialSummaryTable
+                }, width = "100%", bordered = TRUE, striped = TRUE, align = "c", digits = 2)
 
-                    val <- input$slider
-                    border <- val
-                    if (int) {
-                        border[1] <- border[1] - 0.5
-                        border[2] <- border[2] + 0.5
-                    }
-                    if (val[1] > minX) {
-                        g <- g +
-                            geom_rect(xmin = -Inf, xmax = border[1], ymin = -Inf, ymax = Inf, fill = "gray", alpha = 0.01) +
-                            geom_vline(xintercept = border[1], linetype = "dashed", color = "red")
-                    }
-                    if (val[2] < maxX) {
-                        g <- g +
-                            geom_rect(xmin = border[2], xmax = Inf, ymin = -Inf, ymax = Inf, fill = "gray", alpha = 0.01) +
-                            geom_vline(xintercept = border[2], linetype = "dashed", color = "red")
-                    }
+                if (!is.null(rng)) {
+                    minX <- min(finx)
+                    maxX <- max(finx)
 
-                    if (int) {
-                        g <- g + scale_x_continuous(breaks = sort(unique(finx)))
-                    } else {
-                        g <- g + scale_x_continuous()
-                    }
+                    output$histogramPlot <- shiny::renderPlot({
+                        shiny::req(input$slider)
 
-                    g + scale_y_continuous(name = "number of rules",
-                                           sec.axis = sec_axis(~ . * 100 / length(x), name = "% of rules")) +
-                        labs(x = tolower(meta$long_name), y = "number of rules")
-                }, res = 96)
+                        val <- input$slider
+                        border <- val
+                        if (int) {
+                            border[1] <- border[1] - 0.5
+                            border[2] <- border[2] + 0.5
+                        }
+                        if (val[1] > minX) {
+                            g <- g +
+                                geom_rect(xmin = -Inf, xmax = border[1], ymin = -Inf, ymax = Inf, fill = "gray", alpha = 0.01) +
+                                geom_vline(xintercept = border[1], linetype = "dashed", color = "red")
+                        }
+                        if (val[2] < maxX) {
+                            g <- g +
+                                geom_rect(xmin = border[2], xmax = Inf, ymin = -Inf, ymax = Inf, fill = "gray", alpha = 0.01) +
+                                geom_vline(xintercept = border[2], linetype = "dashed", color = "red")
+                        }
+
+                        if (int) {
+                            g <- g + scale_x_continuous(breaks = sort(unique(finx)))
+                        } else {
+                            g <- g + scale_x_continuous()
+                        }
+
+                        g + scale_y_continuous(name = "number of rules",
+                                               sec.axis = sec_axis(~ . * 100 / length(x), name = "% of rules")) +
+                            labs(x = tolower(meta$long_name), y = "number of rules")
+                    }, res = 96)
+                }
 
                 shiny::observeEvent(input$resetButton, {
-                    shiny::updateSliderInput("slider", value = rng, session = session)
+                    if (!is.null(rng)) {
+                        shiny::updateSliderInput("slider", value = rng, session = session)
+                    }
                     if (!is.null(special)) {
                         shiny::updateCheckboxGroupInput("special", selected = special, session = session)
                     }
@@ -149,11 +144,14 @@ numericFilterModule <- function(id, x, meta) {
 
         filter = function(input) {
             val <- input[[shiny::NS(id, "slider")]]
+
+            res <- NULL
             if (is.null(val) || length(val) != 2) {
-                return(rep(TRUE, length(x)))
+                res <- rep(FALSE, length(x))
+            } else {
+                res <- !is.na(x) & !is.nan(x) & !is.infinite(x) & x >= val[1] & x <= val[2]
             }
 
-            res <- !is.na(x) & !is.nan(x) & !is.infinite(x) & x >= val[1] & x <= val[2]
             spec <- input[[shiny::NS(id, "special")]]
             if (!is.null(spec)) {
                 if ("NA" %in% spec) {
@@ -174,10 +172,61 @@ numericFilterModule <- function(id, x, meta) {
         },
 
         reset = function(session) {
-            shiny::updateSliderInput(inputId = shiny::NS(id, "slider"), value = rng, session = session)
+            if (!is.null(rng)) {
+                shiny::updateSliderInput(inputId = shiny::NS(id, "slider"), value = rng, session = session)
+            }
             if (!is.null(special)) {
                 shiny::updateCheckboxGroupInput(inputId = shiny::NS(id, "special"), selected = special, session = session)
             }
         }
     )
 }
+
+.extract_special_value_names <- function(x) {
+    special <- NULL
+    if (any(x == -Inf, na.rm = TRUE)) {
+        special <- c(special, "-Inf")
+    }
+    if (any(is.na(x) & !is.nan(x))) {
+        special <- c(special, "NA")
+    }
+    if (any(is.nan(x), na.rm = TRUE)) {
+        special <- c(special, "NaN")
+    }
+    if (any(x == Inf, na.rm = TRUE)) {
+        special <- c(special, "Inf")
+    }
+
+    special
+}
+
+.just_finite_values <- function(x) {
+    x <- x[!is.na(x)]
+    x <- x[!is.nan(x)]
+
+    x[is.finite(x)]
+}
+
+.summarize_finite <- function(x) {
+    finx <- .just_finite_values(x)
+    res <- quantile(finx, probs = seq(0, 1, 0.25), names = FALSE)
+    res <- as.data.frame(t(res))
+    colnames(res) <- c("min", "Q1", "median", "Q3", "max")
+
+    res
+}
+
+.summarize_special <- function(x) {
+    count_ninf <- sum(is.infinite(x) & x < 0)
+    count_na <- sum(is.na(x) & !is.nan(x))
+    count_nan <- sum(is.nan(x))
+    count_pinf <- sum(is.infinite(x) & x > 0)
+
+    data.frame(`# -Inf` = count_ninf,
+               `# NA` = count_na,
+               `# NaN` = count_nan,
+               `# +Inf` = count_pinf,
+               `# finite` = length(x) - count_ninf - count_na - count_nan - count_pinf,
+               check.names = FALSE)
+}
+

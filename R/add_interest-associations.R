@@ -147,14 +147,14 @@ add_interest.associations <- function(x,
     .must_be_in_range(p, c(0, 1))
 
     if (any(c(x$pp, x$pn, x$np, x$nn) < 0)) {
-        cli_abort(c("{.arg x} contains negative counts in columns {.var pp}, {.var pn}, {.var np}, or {.var nn}.",
+        cli_abort(c("{.arg x} contains negative counts in columns {.field pp}, {.field pn}, {.field np}, or {.field nn}.",
                     "x" = "All counts must be non-negative."),
                   call = current_env())
     }
 
     if (any(measures %in% colnames(x))) {
         cli_warn(c("Some of the selected measures are already present in {.arg x} and will be overwritten.",
-                   "i" = "Measures: {.var {intersect(measures, colnames(x))}}."),
+                   "i" = "Measures: {.field {intersect(measures, colnames(x))}}."),
                  call = current_env())
     }
 

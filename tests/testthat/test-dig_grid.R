@@ -538,7 +538,8 @@ test_that("dig_grid call args", {
 
     f <- function(pd) { return(list(res=1)) }
 
-    res <- dig_grid(x = d,
+    res <- suppressMessages(
+                dig_grid(x = d,
                     f = f,
                     condition = where(is.logical),
                     xvars = x:y,
@@ -554,7 +555,7 @@ test_that("dig_grid call args", {
                     max_support = 0.9,
                     max_results = 100L,
                     verbose = TRUE,
-                    threads = 1L)
+                    threads = 1L))
 
     expect_true(is_nugget(res))
     expect_true(is_tibble(res))

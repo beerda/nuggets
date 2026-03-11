@@ -46,7 +46,7 @@ scatterFilterModule <- function(id, rules, meta) {
                         aes(x = .data[[input$scatterX]],
                             y = .data[[input$scatterY]],
                             color = .data[[input$scatterColor]]) +
-                        geom_point(alpha = 0.5) +
+                        geom_point(alpha = 0.5, na.rm = TRUE) +
                         scale_color_continuous(type = "viridis") +
                         theme(legend.position = "bottom")
                 }, res = 96)

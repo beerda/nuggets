@@ -368,8 +368,8 @@ dig <- function(x,
                               call = error_context$call)
     if (!isTRUE(length(disjoint) == 0 || length(disjoint) == ncol(x))) {
         cli_abort(c("The length of {.arg {error_context$arg_disjoint}} must be 0 or must be equal to the number of columns in {.arg {error_context$arg_x}}.",
-                    "x" = "The number of columns in {.arg {error_context$arg_x}} is {ncol(x)}.",
-                    "x" = "The length of {.arg {error_context$arg_disjoint}} is {length(disjoint)}."),
+                    "x" = "The number of columns in {.arg {error_context$arg_x}} is {.val {ncol(x)}}.",
+                    "x" = "The length of {.arg {error_context$arg_disjoint}} is {.val {length(disjoint)}}."),
                   call = error_context$call)
     }
 
@@ -391,9 +391,9 @@ dig <- function(x,
         excluded_predicates <- unique(unlist(excluded))
         excluded_undefined <- setdiff(excluded_predicates, colnames(x))
         if (length(excluded_undefined) > 0) {
-            details <- paste0("Column {.var ", excluded_undefined, "} can't be found.")
+            details <- paste0("Column {.field ", excluded_undefined, "} can't be found.")
             cli_abort(c("Can't find some column names in {.arg {error_context$arg_x}} that correspond to all predicates in {.arg {error_context$arg_excluded}}.",
-                        "i" = "Consider using {.fn remove_ill_conditions()} to remove conditions with undefined predicates.",
+                        "i" = "Consider using {.fun remove_ill_conditions} to remove conditions with undefined predicates.",
                         ..error_details(details)))
         }
         excluded <- lapply(excluded,
@@ -509,6 +509,21 @@ dig <- function(x,
                    verbose = verbose,
                    threads = threads)
 
+
+    if (isTRUE(verbose)) {
+        msgs <- c("Starting to dig for patterns.",
+                  "i" = "Number of rows in {.arg {error_context$arg_x}}: {.val {nrow(x)}}.")
+        if (!is.null(error_context$arg_condition) && error_context$arg_condition != "") {
+            msgs <- c(msgs,
+                     "i" = "Selected {.val {sum(condition_cols$selected)}} {.arg {error_context$arg_condition}} columns: {.field {names(cols)[condition_cols$selected]}}.")
+        }
+        if (!is.null(error_context$arg_focus) && error_context$arg_focus != "") {
+             msgs <- c(msgs,
+                       "i" = "Selected {.val {sum(foci_cols$selected)}} {.arg {error_context$arg_focus}} columns: {.field {names(cols)[foci_cols$selected]}}.")
+        }
+        cli_inform(msgs)
+    }
+
     if (call_function == "dig") {
         res <- dig_(cols,
                     names(cols),
@@ -523,7 +538,7 @@ dig <- function(x,
                                  foci_cols$selected,
                                  config)
     } else {
-        cli_abort("Unknown internal call function {.var {call_function}}.")
+        cli_abort("Unknown internal call function {.fun {call_function}}.")
     }
 
     nugget(res,

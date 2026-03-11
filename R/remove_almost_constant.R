@@ -73,7 +73,7 @@ remove_almost_constant <- function(.data,
                                    .threshold = 1.0,
                                    .na_rm = FALSE,
                                    .verbose = FALSE) {
-    .must_be_data_frame(.data)
+    .must_be_named_data_frame(.data)
     .must_be_double_scalar(.threshold)
     .must_be_in_range(.threshold, c(0, 1))
     .must_be_flag(.verbose)
@@ -101,10 +101,7 @@ remove_almost_constant <- function(.data,
     res <- setdiff(seq_len(ncol(.data)), const)
 
     if (.verbose) {
-        if (is.null(names(.data))) {
-            message("Removing (almost) constant columns: ",
-                    paste(const, collapse = ", "))
-        } else {
+        if (ncol(.data) != length(res)) {
             message("Removing (almost) constant columns: ",
                     paste(names(.data)[const], collapse = ", "))
         }

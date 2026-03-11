@@ -140,15 +140,16 @@ in the form \code{{p1 & p2 & ... & pn}} where \code{p1}, \code{p2}, ..., \code{p
 \item{support}{the support of the condition, i.e., the relative
 frequency of the condition in the dataset \code{x}.}
 \item{var}{the name of the contrast variable.}
-\item{estimate}{the estimate value (see the underlying test.}
+\item{estimate_x}{the estimate value for values satisfying the condition (see the underlying test).}
+\item{estimate_y}{the estimate value for values not satisfying the condition (see the underlying test).}
 \item{statistic}{the statistic of the selected test.}
 \item{p_value}{the p-value of the underlying test.}
 \item{n_x}{the number of rows in the sub-data corresponding to
 the condition.}
 \item{n_y}{the number of rows in the sub-data corresponding to
 the negation of the condition.}
-\item{conf_int_lo}{the lower bound of the confidence interval of the estimate.}
-\item{conf_int_hi}{the upper bound of the confidence interval of the estimate.}
+\item{conf_lo}{the lower bound of the confidence interval of the estimate.}
+\item{conf_hi}{the upper bound of the confidence interval of the estimate.}
 \item{alternative}{a character string indicating the alternative
 hypothesis. The value must be one of \code{"two.sided"}, \code{"greater"}, or
 \code{"less"}.}

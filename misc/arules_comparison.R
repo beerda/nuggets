@@ -5,7 +5,7 @@ library(nuggets)
 set.seed(42344)
 
 m <- 10^6
-n <- 25
+n <- 15
 conf <- 0.5
 
 testIt <- function(m, n) {
@@ -14,12 +14,29 @@ testIt <- function(m, n) {
                 nrow = m,
                 ncol = n)
     colnames(d) <- paste0("V", seq_len(n))
+    d[1,1] <- FALSE
+
+    dfuzz <- d
+    dfuzz[1,1] <- 0.0001
 
     t1time <- 0
     t2time <- 0
     t3time <- 0
+    t4time <- 0
     reps <- 1
     for (x in 1:reps) {
+        t1 <- system.time({
+            rules1 <- apriori(d, parameter = list(minlen = 1,
+                                               maxlen = 6,
+                                               supp = 0.001,
+                                               maxtime = 0,
+                                               target = "frequent itemsets"),
+                           control = list(verbose = FALSE))
+            rules1 <- ruleInduction(rules1, confidence = conf)
+            rules1 <- DATAFRAME(rules1)
+            #rules1 <- data.frame(a=1)
+        })
+
         t2 <- system.time({
             #f <- function(condition) list(condition = format_condition(names(condition)))
             #rules2 <- dig(d,
@@ -36,16 +53,21 @@ testIt <- function(m, n) {
             rules2$rule <- paste0(rules2$antecedent, "=>", rules2$consequent)
         })
 
-        t1 <- system.time({
-            #rules1 <- apriori(d, parameter = list(minlen = 1,
-                                               #maxlen = 6,
-                                               #supp = 0.001,
-                                               #maxtime = 0,
-                                               #target = "frequent itemsets"),
-                           #control = list(verbose = FALSE))
-            #rules1 <- ruleInduction(rules1, confidence = conf)
-            #rules1 <- DATAFRAME(rules1)
-            rules1 <- data.frame(a=1)
+        t4 <- system.time({
+            #f <- function(condition) list(condition = format_condition(names(condition)))
+            #rules2 <- dig(d,
+                          #f = f,
+                          #min_support = 0.001,
+                          #min_length = 1,
+                          #max_length = 6,
+                          #min_focus_support = 0.001)
+            rules4 <- dig_associations(dfuzz,
+                                       min_support = 0.001,
+                                       min_length = 1,
+                                       max_length = 5,
+                                       t_norm = "goedel",
+                                       min_confidence = conf)
+            rules4$rule <- paste0(rules4$antecedent, "=>", rules4$consequent)
         })
 
         t3 <- system.time({
@@ -62,6 +84,7 @@ testIt <- function(m, n) {
         t1time <- t1time + t1["elapsed"]
         t2time <- t2time + t2["elapsed"]
         t3time <- t3time + t3["elapsed"]
+        t4time <- t4time + t4["elapsed"]
     }
 
     data.frame(nrow = m,
@@ -69,9 +92,11 @@ testIt <- function(m, n) {
                apriori_time = t1time / reps,
                eclat_time = t3time / reps,
                nuggets_time = t2time / reps,
+               fuzzy_nuggets_time = t4time / reps,
                apriori_count = nrow(rules1),
                eclat_count = nrow(rules3),
-               nuggets_count = nrow(rules2))
+               nuggets_count = nrow(rules2),
+               fuzzy_nuggets_count = nrow(rules4))
 }
 
 
@@ -82,10 +107,14 @@ testIt <- function(m, n) {
 result <- NULL
 for (i in 4:7) {
 #for (i in 6) {
-    for (j in c(5, 10, 15, 20, 25)) {
+    jj <- c(5, 10, 15, 20, 25)
+    if (i == 7) {
+        jj <- c(5, 10, 15)
+    }
+    for (j in jj) {
     #for (j in c(20, 25)) {
         result <- rbind(result, testIt(10^i, j))
-        saveRDS(result, "comparison_result-2026-01-30.rds")
+        saveRDS(result, "comparison_result-2026-02-08.rds")
     }
     cat("\n---------------------------------------------------------------------\n")
     print(result)

@@ -23,7 +23,6 @@ test_that("dig_baseline_contrasts t", {
     res <- dig_baseline_contrasts(d,
                          condition = where(is.logical),
                          vars = conc:uptake,
-                         verbose = TRUE,
                          min_support = 0.1)
 
     expect_true(is_nugget(res, flavour = "baseline_contrasts"))
@@ -78,7 +77,8 @@ test_that("dig_baseline_contrasts wilcox", {
 test_that("dig_baseline_contrasts call args", {
     d <- partition(CO2, Plant:Treatment)
 
-    res <- dig_baseline_contrasts(d,
+    res <- suppressMessages(
+                dig_baseline_contrasts(d,
                          condition = where(is.logical),
                          vars = conc:uptake,
                          disjoint = var_names(colnames(d)),
@@ -98,7 +98,7 @@ test_that("dig_baseline_contrasts call args", {
                          wilcox_digits_rank = 5,
                          max_results = 100,
                          verbose = TRUE,
-                         threads = 1)
+                         threads = 1))
 
     expect_true(is_nugget(res, flavour = "baseline_contrasts"))
     expect_true(is_tibble(res))

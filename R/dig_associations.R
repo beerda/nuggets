@@ -222,7 +222,6 @@ dig_associations <- function(x,
     antecedent <- enquo(antecedent)
     consequent <- enquo(consequent)
 
-    .msg(verbose, "dig_associations: computing rules")
     res <- .dig(x = x,
                 xname = deparse(substitute(x)),
                 call_function = "dig_associations",
@@ -259,7 +258,6 @@ dig_associations <- function(x,
                                      arg_threads = error_context$arg_threads,
                                      call = error_context$call))
 
-    .msg(verbose, "dig_associations: post-processing")
     digattr <- attributes(res)
     res <- as_tibble(res)
 

@@ -43,6 +43,10 @@ exploreApp <- function(rules,
             return(conditionFilterModule(id = paste0(col, "FilterModule"),
                                          x = rules[[col]],
                                          meta = meta[i, , drop = FALSE]))
+        } else if (meta$type[i] == "variable") {
+            return(variableFilterModule(id = paste0(col, "FilterModule"),
+                                        x = rules[[col]],
+                                        meta = meta[i, , drop = FALSE]))
         } else if (meta$type[i] == "numeric" || meta$type[i] == "integer") {
             return(numericFilterModule(id = paste0(col, "FilterModule"),
                                        x = rules[[col]],
@@ -202,14 +206,15 @@ exploreApp <- function(rules,
                                                 options = shinyWidgets::pickerOptions(container = "body"),
                                                 width = "100%"),
                                     filterTabSet),
-                                shiny::tabPanel("Advanced",
-                                    shiny::tabsetPanel(type = "pills", header = htmltools::tags$hr(),
+                                #shiny::tabPanel("Advanced",
+                                    #shiny::tabsetPanel(type = "pills", header = htmltools::tags$hr(),
                                         scatterFilter$ui()
-                                    )
-                                )
+                                    #)
+                                #)
                             )
                         ),
                         shinyWidgets::panel(heading = "Filtering Summary",
+                            infoBox("Rule base characteristics after filtering / total available."),
                             shiny::uiOutput("numFilteredRules")
                         )
                     )
@@ -230,7 +235,7 @@ exploreApp <- function(rules,
                         shiny::column(width = 8, offset = 2,
                             shinyWidgets::panel(heading = "Metadata",
                                 shiny::tabsetPanel(
-                                    shiny::tabPanel("Rulebase", rulebaseTable(rules, meta)),
+                                    shiny::tabPanel("Rulebase", rulebaseTable(meta, rules)),
                                     shiny::tabPanel("Data", callDataTable(rules, meta)),
                                     shiny::tabPanel("Call", creationParamsTable(rules))
                                 )
@@ -327,7 +332,7 @@ exploreApp <- function(rules,
 
         output$numFilteredRules <- shiny::renderUI({
             r <- rules[rulesFiltering(), rulesProjection(), drop = FALSE]
-            rulebaseTable(r, meta)
+            rulebaseTable(meta, r, rules)
         })
 
         callExtension(extensions,

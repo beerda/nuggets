@@ -28,7 +28,7 @@ test_that("rulebaseTable", {
                        type = c("numeric", "numeric", "condition"),
                        stringsAsFactors = FALSE)
 
-    ui <- rulebaseTable(rules, meta)
+    ui <- rulebaseTable(meta, rules)
     html <- as.character(ui)
 
     expect_match(html, "^<table class=\"info-table")
@@ -38,7 +38,39 @@ test_that("rulebaseTable", {
     expect_match(html, "</table>$")
 
     rules <- data.frame()
-    ui <- rulebaseTable(rules, meta)
+    ui <- rulebaseTable(meta, rules)
+    html <- as.character(ui)
+
+    expect_match(html, "^<table class=\"info-table")
+    expect_match(html, "<td>Number of rules:</td>[^<]*<td>0</td>")
+    expect_match(html, "<td>Number of columns:</td>[^<]*<td>0</td>")
+    expect_match(html, "<td>Number of distinct foobars:</td>[^<]*<td>0</td>")
+    expect_match(html, "</table>$")
+})
+
+test_that("rulebaseTable - rules with id column", {
+    .skip_if_shiny_not_installed()
+
+    rules <- data.frame(id = 1:3,
+                        a = 1:3,
+                        b = 4:6,
+                        cond = c("x", "y", "x"))
+    meta <- data.frame(data_name = c("a", "b", "cond"),
+                       long_name = c("A", "B", "foobar"),
+                       type = c("numeric", "numeric", "condition"),
+                       stringsAsFactors = FALSE)
+
+    ui <- rulebaseTable(meta, rules)
+    html <- as.character(ui)
+
+    expect_match(html, "^<table class=\"info-table")
+    expect_match(html, "<td>Number of rules:</td>[^<]*<td>3</td>")
+    expect_match(html, "<td>Number of columns:</td>[^<]*<td>3</td>")
+    expect_match(html, "<td>Number of distinct foobars:</td>[^<]*<td>2</td>")
+    expect_match(html, "</table>$")
+
+    rules <- data.frame()
+    ui <- rulebaseTable(meta, rules)
     html <- as.character(ui)
 
     expect_match(html, "^<table class=\"info-table")

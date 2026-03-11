@@ -54,13 +54,21 @@
 #' # launch the interactive explorer
 #' explore(rules, data = part)
 #' }
-#' @rdname explore
 #' @method explore associations
 #' @export
 explore.associations <- function(x, data = NULL, ...) {
+    .require_shiny()
     .must_be_nugget(x, "associations")
     .must_be_data_frame(data, null = TRUE)
-    .require_shiny()
+
+    if (!is.null(data)) {
+        predicates <- c(parse_condition(x$antecedent),
+                        parse_condition(x$consequent))
+        predicates <- unlist(predicates)
+        predicates <- unique(predicates)
+        predicates <- predicates[lengths(predicates) > 0]
+        .must_have_columns(data, predicates, arg_x = "data")
+    }
 
     initial_meta <- tribble(
         ~data_name,          ~long_name,                          ~type,       ~group,              ~round, ~scatter, ~clustering_default,
@@ -116,21 +124,20 @@ explore.associations <- function(x, data = NULL, ...) {
                 "To enable full functionality, run",
                 htmltools::span(class = "mono", "explore(rules, data)"),
                 "with the original dataset used to mine the rules."))
-
-    } else {
-        detailWindow <- associationsDetailModule(
-            id = "details", rules = x, meta = meta, data = data)
-
-        extensions[["navbarPage.Metadata.before3"]] <- shiny::tabPanel(
-            "Rule Detail",
-            value = "rule-detail-tab",
-            icon = shiny::icon("magnifying-glass"),
-            detailWindow$ui())
-
-        extensions[["filteredRulesPanel.rulesTable.action"]] <- list(
-            title = "show detailed analysis of the rule",
-            icon = "magnifying-glass")
     }
+
+    detailWindow <- associationsDetailModule(
+        id = "details", rules = x, meta = meta, data = data)
+
+    extensions[["navbarPage.Metadata.before3"]] <- shiny::tabPanel(
+        "Rule Detail",
+        value = "rule-detail-tab",
+        icon = shiny::icon("magnifying-glass"),
+        detailWindow$ui())
+
+    extensions[["filteredRulesPanel.rulesTable.action"]] <- list(
+        title = "show detailed analysis of the rule",
+        icon = "magnifying-glass")
 
     extensions[["server"]] <- function(input,
                                        output,

@@ -50,3 +50,44 @@ test_that("remove_almost_constant variants", {
     res <- remove_almost_constant(d, a1:b2, .threshold = 0.5, .na_rm = TRUE)
     expect_equal(res, as_tibble(d[, c("a1", "a2", "c1", "c2", "d")]))
 })
+
+
+test_that("remove_almost_constant errors", {
+    d <- data.frame(a = 1:10, b = "x", c = TRUE)
+
+    # Test non-data frame input
+    expect_error(remove_almost_constant(as.list(d)),
+                 "`.data` must be a data frame")
+
+    # Test invalid .threshold type
+    expect_error(remove_almost_constant(d, .threshold = "x"),
+                 "`.threshold` must be a double scalar")
+
+    # Test .threshold out of range
+    expect_error(remove_almost_constant(d, .threshold = -0.1),
+                 "`.threshold` must be between 0 and 1")
+    expect_error(remove_almost_constant(d, .threshold = 1.1),
+                 "`.threshold` must be between 0 and 1")
+
+    # Test invalid .verbose type
+    expect_error(remove_almost_constant(d, .verbose = "TRUE"),
+                 "`.verbose` must be a flag")
+})
+
+
+test_that("remove_almost_constant messages", {
+    d <- data.frame(a = 1:10,
+                    b = rep("x", 10),
+                    c = rep(TRUE, 10))
+
+    # Test message when .verbose = TRUE and columns are removed
+    expect_message(remove_almost_constant(d, .threshold = 1.0, .verbose = TRUE),
+                   "Removing \\(almost\\) constant columns: b, c")
+
+    # Test no message when .verbose = FALSE
+    expect_silent(remove_almost_constant(d, .threshold = 1.0, .verbose = FALSE))
+
+    # Test no message when no columns are removed
+    d2 <- data.frame(a = 1:10, b = 11:20, c = rep(c(TRUE, FALSE), 5))
+    expect_silent(remove_almost_constant(d2, .threshold = 1.0, .verbose = TRUE))
+})

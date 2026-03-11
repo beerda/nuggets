@@ -86,9 +86,9 @@ fire <- function(x,
     predicates <- unique(unlist(condition))
     undefined <- setdiff(predicates, colnames(x))
     if (length(undefined) > 0) {
-        details <- paste0("Column {.var ", undefined, "} can't be found.")
+        details <- paste0("Column {.field ", undefined, "} can't be found.")
         cli_abort(c("Can't find some column names in {.arg x} that correspond to all predicates in {.arg condition}.",
-                    "i" = "Consider using {.fn remove_ill_conditions()} to remove conditions with undefined predicates.",
+                    "i" = "Consider using {.fun remove_ill_conditions} to remove conditions with undefined predicates.",
                     ..error_details(details)))
     }
 

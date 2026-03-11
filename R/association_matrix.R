@@ -88,7 +88,7 @@ association_matrix <- function(x,
                       call = error_context$call)
     if (!is.numeric(x[[value_col]])) {
         cli_abort(c("{.arg {error_context$arg_value}} must select a numeric column.",
-                    "x" = "{.arg {error_context$arg_value}} selects column {.var {names(value_col)}} which is of type {.cls {typeof(x[[value_col]])}}."),
+                    "x" = "{.arg {error_context$arg_value}} selects column {.field {names(value_col)}} which is of type {.cls {typeof(x[[value_col]])}}."),
                   call = error_context$call)
     }
 
@@ -104,8 +104,8 @@ association_matrix <- function(x,
         ante <- res[wh[1], "antecedent"]
         cons <- colnames(res)[wh[2]]
         cli_abort(c("Multiple values for the same cell in the association matrix.",
-                    "x" = "Pairs of {.var antecedent} and {.var consequent} must be unique in {.arg {error_context$arg_x}}.",
-                    "i" = "Combination of {.var antecedent} = {.val {ante}} and {.var consequent} = {.val {cons}} occurs multiple times in {.arg {error_context$arg_x}}."),
+                    "x" = "Pairs of {.field antecedent} and {.field consequent} must be unique in {.arg {error_context$arg_x}}.",
+                    "i" = "Combination of {.field antecedent} = {.val {ante}} and {.field consequent} = {.val {cons}} occurs multiple times in {.arg {error_context$arg_x}}."),
                   call = error_context$call)
     }
 

@@ -41,25 +41,37 @@ datatable2 <- function(data,
         options$scrollX <- TRUE
     }
     if (is.null(options$initComplete)) {
-        options$initComplete <- htmlwidgets::JS(sprintf(
-                "function(settings, json){
-             var api = this.api();
-             var tips = %s;
-             api.columns().every(function(i){
-               var th = $(api.column(i).header());
-               th.attr('title', tips[i] || th.text().trim());
-             });
-           }", js_tips))
+        options$initComplete <- htmlwidgets::JS(sprintf(paste0(
+            "function(settings, json) {",
+            "  var api = this.api();",
+            "  var tips = %s;",
+            "  api.columns().every(function(i) {",
+            "    var th = $(api.column(i).header());",
+            "    th.attr('title', tips[i] || th.text().trim());",
+            "  });",
+            "}"), js_tips))
     }
     if (is.null(options$drawCallback)) {
         options$drawCallback = htmlwidgets::JS(
-                "function(settings){
-             var api = this.api();
-             api.columns().every(function(i){
-               var th = $(api.column(i).header());
-               if (!th.attr('title')) th.attr('title', th.text().trim());
-             });
-           }")
+            "function(settings){",
+            "  var api = this.api();",
+            "  api.columns().every(function(i){",
+            "    var th = $(api.column(i).header());",
+            "    if (!th.attr('title')) th.attr('title', th.text().trim());",
+            "  });",
+            "}")
+    }
+    if (is.null(options$rowCallback)) {
+        options$rowCallback = htmlwidgets::JS(
+            "function(row, data, index) {",
+            "  // For each cell in the row",
+            "  $('td', row).each(function(i) {",
+            "    var txt = $(this).text();",
+            "    if (txt === 'NA' || txt === 'NaN' || txt === 'Inf' || txt === '-Inf') {",
+            "      $(this).css({'color': '#856404', 'font-style': 'italic'});",
+            "    }",
+            "  });",
+            "}")
     }
 
     DT::datatable(data = data,

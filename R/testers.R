@@ -59,7 +59,7 @@
             test <- sapply(x, f2)
             if (!isTRUE(all(test))) {
                 types <- sapply(x, function(i) class(i)[1])
-                details <- paste0("Element ", seq_along(types), " is a {.cls ", types, "}.")
+                details <- paste0("Element {.val ", seq_along(types), "} is a {.cls ", types, "}.")
                 details <- details[!test]
                 cli_abort(c("{.arg {arg}} must be a list of {msg}.",
                             ..error_details(details)),
@@ -76,7 +76,7 @@
              call = caller_env()) {
         test <- f(x)
         if (!isTRUE(all(test))) {
-            details <- paste0("Element ", seq_along(x), " equals {.val ", x, "}.")
+            details <- paste0("Element {.val ", seq_along(x), "} equals {.val ", x, "}.")
             details <- details[!test]
             cli_abort(c("{.arg {arg}} must be {msg}.",
                         ..error_details(details)),
@@ -96,7 +96,7 @@
             if (length(x) == 1) {
                 details <- paste0("Value {.val ", x, "} was provided instead.")
             } else {
-                details <- paste0("Element ", seq_along(x), " equals {.val ", x, "}.")
+                details <- paste0("Element {.val ", seq_along(x), "} equals {.val ", x, "}.")
                 details <- details[!test]
             }
             cli_abort(c("{.arg {arg}} must be {msg} {.val {value}}.",
@@ -188,6 +188,10 @@
     .is_just_vector(x) || is.factor(x)
 }
 
+.is_named_data_frame <- function(x) {
+    is.data.frame(x) && !is.null(names(x)) && all(names(x) != "")
+}
+
 .must_be_vector <- ..must_be_type(.is_just_vector, "a plain vector (not a matrix, list, or array)")
 .must_be_vector_or_factor <- ..must_be_type(.is_just_vector_or_factor, "a plain vector or a factor (not a matrix, list, or array)")
 .must_be_integer_vector <- ..must_be_type(is_integer, "an integer vector")
@@ -198,6 +202,7 @@
 .must_be_matrix <- ..must_be_type(is.matrix, "a matrix")
 .must_be_list <- ..must_be_type(is.list, "a list")
 .must_be_data_frame <- ..must_be_type(is.data.frame, "a data frame")
+.must_be_named_data_frame <- ..must_be_type(.is_named_data_frame, "a data frame with non-empty column names")
 
 .must_be_matrix_or_data_frame <- ..must_be_type(function(x) is.matrix(x) || is.data.frame(x),
                                                 "a matrix or a data frame")
@@ -307,8 +312,8 @@
                               arg = caller_arg(x),
                               call = caller_env()) {
     if (!isTRUE(length(x) == value)) {
-        cli_abort(c("{.arg {arg}} must have {value} elements.",
-                    ..error_details("{.arg {arg}} has {length(x)} elements.")),
+        cli_abort(c("{.arg {arg}} must have {.val {value}} elements.",
+                    ..error_details("{.arg {arg}} has {.val {length(x)}} elements.")),
                   call = call)
     }
 }
@@ -320,8 +325,8 @@
                                      call = caller_env()) {
     if (!isTRUE(length(x) == length(y))) {
         cli_abort(c("{.var {name_x}} and {.var {name_y}} must have the same number of elements.",
-                    ..error_details(c("{.var {name_x}} has {length(x)} elements.",
-                                      "{.var {name_y}} has {length(y)} elements."))),
+                    ..error_details(c("{.var {name_x}} has {.val {length(x)}} elements.",
+                                      "{.var {name_y}} has {.val {length(y)}} elements."))),
                     call = call)
     }
 }
@@ -333,7 +338,7 @@
     lengths <- sapply(x, length)
     if (!isTRUE(length(unique(lengths)) <= 1)) {
         test <- duplicated(lengths)
-        details <- paste0("Element ", seq_along(lengths), " has length ", lengths, ".")
+        details <- paste0("Element {.val ", seq_along(lengths), "} has length {.val ", lengths, "}.")
         details <- details[!test]
         cli_abort(c("{.arg {arg}} must be a list of vectors of equal length.",
                     ..error_details(details)),
@@ -349,12 +354,12 @@
              call = caller_env()) {
         col <- x[[column]]
         if (is.null(col)) {
-            cli_abort(c("Column {.var {column}} must be present in {.arg {arg_x}}.",
-                        "i" = "{.arg {arg_x}} has the following columns: {.var {names(x)}}."),
+            cli_abort(c("Column {.field {column}} must be present in {.arg {arg_x}}.",
+                        "i" = "{.arg {arg_x}} has the following columns: {.field {names(x)}}."),
                       call = call)
         } else {
             if (!isTRUE(f(col))) {
-                cli_abort(c("Column {.var {column}} of {.arg {arg_x}} must be {msg}.",
+                cli_abort(c("Column {.field {column}} of {.arg {arg_x}} must be {msg}.",
                             "x" = "You've supplied a {.cls {class(col)}}."),
                           call = call)
             }
@@ -365,3 +370,38 @@
 .must_have_column <- ..must_have_column(function(x) TRUE, "")
 .must_have_character_column <- ..must_have_column(is.character, "a character vector")
 .must_have_numeric_column <- ..must_have_column(is.numeric, "a numeric vector")
+
+.must_have_columns <- function(x,
+                               columns,
+                               arg_x = caller_arg(x),
+                               call = caller_env()) {
+    missing <- setdiff(columns, names(x))
+    if (length(missing) > 0) {
+        cli_abort(c("Can't find {.val {length(missing)}} required column{?s} in {.arg {arg_x}}.",
+                    "x" = "{.arg {arg_x}} is missing the following columns: {.field {missing}}",
+                    "i" = "{.arg {arg_x}} has the following columns: {.field {names(x)}}."),
+                  call = call)
+    }
+}
+
+.must_have_n_cols <- function(x,
+                              n,
+                              arg = caller_arg(x),
+                              call = caller_env()) {
+    if (!isTRUE(ncol(x) == n)) {
+        cli_abort(c("{.arg {arg}} must have {.val {n}} column{?s}.",
+                    "x" = "{.arg {arg}} has {.val {ncol(x)}} column{?s}."),
+                  call = call)
+    }
+}
+
+.must_have_n_rows <- function(x,
+                              n,
+                              arg = caller_arg(x),
+                              call = caller_env()) {
+    if (!isTRUE(nrow(x) == n)) {
+        cli_abort(c("{.arg {arg}} must have {.val {n}} row{?s}.",
+                    "x" = "{.arg {arg}} has {.val {nrow(x)}} row{?s}."),
+                  call = call)
+    }
+}
