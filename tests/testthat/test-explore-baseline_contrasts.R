@@ -2,11 +2,13 @@ test_that("explore.baseline_contrasts()", {
     .skip_if_shiny_not_installed()
 
     d <- partition(mtcars, .breaks = 2, .keep = TRUE)
-    res <- dig_baseline_contrasts(d,
+    res <- suppressWarnings({
+           dig_baseline_contrasts(d,
                                   condition = where(is.logical),
                                   vars = where(is.numeric),
                                   min_support = 0.3,
                                   max_length = 2)
+    })
 
     # test run on some results
     expect_true(is_nugget(res))
