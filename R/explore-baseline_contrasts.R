@@ -92,16 +92,16 @@ explore.baseline_contrasts <- function(x, data = NULL, ...) {
 
     extensions <- list()
 
-    if (is.null(data)) {
-        extensions[["Rules.top"]] <- infoBox(
-            status = "warning",
-            dismissible = TRUE,
-            htmltools::div("You started the explorer with results only.",
-                "Some advanced features are disabled.",
-                "To enable full functionality, run",
-                htmltools::span(class = "mono", "explore(results, data)"),
-                "with the original dataset used to compute the contrasts."))
-    }
+#    if (is.null(data)) {
+#        extensions[["Rules.top"]] <- infoBox(
+#            status = "warning",
+#            dismissible = TRUE,
+#            htmltools::div("You started the explorer with results only.",
+#                "Some advanced features are disabled.",
+#                "To enable full functionality, run",
+#                htmltools::span(class = "mono", "explore(results, data)"),
+#                "with the original dataset used to compute the contrasts."))
+#    }
 
     exploreApp(x,
                title = "Baseline Contrasts",
