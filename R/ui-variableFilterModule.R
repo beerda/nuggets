@@ -34,8 +34,10 @@
 
 
 variableFilterModule <- function(id, x, meta) {
+    x[is.na(x)] <- "(NA)"
     root_name <- "value"
     def <- .create_tree_def_from_variables(x, root_name)
+    histogramPlot <- NULL
     tree <- NULL
     g <- NULL
     if (nrow(def) > 0) {
