@@ -43,8 +43,11 @@ test_that(".create_tree_def_from_variables", {
     expect_equal(res$vid, c("v1", "v2", "v3"))
     expect_equal(res$value, c("a", "b", "c"))
 
-    res_empty <- .create_tree_def_from_variables(character(0), "variable")
-    expect_equal(nrow(res_empty), 0)
+    res <- .create_tree_def_from_variables(c("a", "a", "a", "a"), "variable")
+    expect_equal(nrow(res), 1)
+
+    res <- .create_tree_def_from_variables(character(0), "variable")
+    expect_equal(nrow(res), 0)
 })
 
 test_that("VariableFilterModule - filter", {

@@ -34,7 +34,7 @@
 
 
 variableFilterModule <- function(id, x, meta) {
-    root_name <- "variable"
+    root_name <- "value"
     def <- .create_tree_def_from_variables(x, root_name)
     tree <- NULL
     if (nrow(def) > 0) {
@@ -49,7 +49,7 @@ variableFilterModule <- function(id, x, meta) {
                            info = paste0("Filter the rules by choosing the values for ",
                                         tolower(meta$long_name), "."),
                 shinyWidgets::treeInput(shiny::NS(id, "tree"),
-                          label = NULL,
+                          label = tolower(meta$long_name),
                           choices = tree,
                           selected = root_name,
                           returnValue = "id",
