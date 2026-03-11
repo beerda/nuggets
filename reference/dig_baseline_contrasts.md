@@ -342,7 +342,7 @@ dig_baseline_contrasts(d,
 #> Warning: t.test: error: data are essentially constant
 #> Warning: t.test: error: data are essentially constant
 #> Warning: t.test: error: data are essentially constant
-#> # A tibble: 1,049 × 15
+#> # A tibble: 1,101 × 15
 #>    condition support var   estimate statistic    df  p_value     n conf_lo
 #>    <chr>       <dbl> <chr>    <dbl>     <dbl> <dbl>    <dbl> <int>   <dbl>
 #>  1 {}              1 mpg     20.1       18.9     31 1.53e-18    32  17.9  
@@ -355,7 +355,7 @@ dig_baseline_contrasts(d,
 #>  8 {}              1 vs       0.438      4.91    31 2.78e- 5    32   0.256
 #>  9 {}              1 am       0.406      4.61    31 6.63e- 5    32   0.226
 #> 10 {}              1 gear     3.69      28.3     31 1.07e-23    32   3.42 
-#> # ℹ 1,039 more rows
+#> # ℹ 1,091 more rows
 #> # ℹ 6 more variables: conf_hi <dbl>, stderr <dbl>, alternative <chr>,
 #> #   method <chr>, comment <chr>, condition_length <int>
 ```

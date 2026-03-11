@@ -317,20 +317,20 @@ partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "kmeans")
 partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "kmeans",
           .style_params = list(algorithm = "Lloyd"))
 #> # A tibble: 84 × 8
-#>    Plant Type   Treatment  uptake `conc=(-Inf;212]` `conc=(212;425]`
+#>    Plant Type   Treatment  uptake `conc=(-Inf;300]` `conc=(300;588]`
 #>    <ord> <fct>  <fct>       <dbl> <lgl>             <lgl>           
 #>  1 Qn1   Quebec nonchilled   16   TRUE              FALSE           
 #>  2 Qn1   Quebec nonchilled   30.4 TRUE              FALSE           
-#>  3 Qn1   Quebec nonchilled   34.8 FALSE             TRUE            
+#>  3 Qn1   Quebec nonchilled   34.8 TRUE              FALSE           
 #>  4 Qn1   Quebec nonchilled   37.2 FALSE             TRUE            
-#>  5 Qn1   Quebec nonchilled   35.3 FALSE             FALSE           
+#>  5 Qn1   Quebec nonchilled   35.3 FALSE             TRUE            
 #>  6 Qn1   Quebec nonchilled   39.2 FALSE             FALSE           
 #>  7 Qn1   Quebec nonchilled   39.7 FALSE             FALSE           
 #>  8 Qn2   Quebec nonchilled   13.6 TRUE              FALSE           
 #>  9 Qn2   Quebec nonchilled   27.3 TRUE              FALSE           
-#> 10 Qn2   Quebec nonchilled   37.1 FALSE             TRUE            
+#> 10 Qn2   Quebec nonchilled   37.1 TRUE              FALSE           
 #> # ℹ 74 more rows
-#> # ℹ 2 more variables: `conc=(425;838]` <lgl>, `conc=(838;Inf]` <lgl>
+#> # ℹ 2 more variables: `conc=(588;838]` <lgl>, `conc=(838;Inf]` <lgl>
 
 # Fuzzy triangular transformation (default)
 partition(CO2, conc:uptake, .method = "triangle", .breaks = 3)

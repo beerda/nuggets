@@ -318,8 +318,11 @@ frequency of the condition in the dataset <code>x</code>.</p></dd>
 <dt>var</dt>
 <dd><p>the name of the contrast variable.</p></dd>
 
-<dt>estimate</dt>
-<dd><p>the estimate value (see the underlying test.</p></dd>
+<dt>estimate_x</dt>
+<dd><p>the estimate value for values satisfying the condition (see the underlying test).</p></dd>
+
+<dt>estimate_y</dt>
+<dd><p>the estimate value for values not satisfying the condition (see the underlying test).</p></dd>
 
 <dt>statistic</dt>
 <dd><p>the statistic of the selected test.</p></dd>
@@ -335,10 +338,10 @@ the condition.</p></dd>
 <dd><p>the number of rows in the sub-data corresponding to
 the negation of the condition.</p></dd>
 
-<dt>conf_int_lo</dt>
+<dt>conf_lo</dt>
 <dd><p>the lower bound of the confidence interval of the estimate.</p></dd>
 
-<dt>conf_int_hi</dt>
+<dt>conf_hi</dt>
 <dd><p>the upper bound of the confidence interval of the estimate.</p></dd>
 
 <dt>alternative</dt>
@@ -394,7 +397,7 @@ present (see also <code><a href="https://rdrr.io/r/stats/t.test.html" class="ext
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>t.test: error: data are essentially constant</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 834 × 17</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 846 × 17</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    condition   support var   estimate_x estimate_y statistic    df p_value   n_x</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> {carb=(-In…   0.656 mpg       17.0       25.9       -<span style="color: #BB0000;">4.73</span>  13.8 3.36<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span>    21</span>
@@ -407,7 +410,7 @@ present (see also <code><a href="https://rdrr.io/r/stats/t.test.html" class="ext
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> {carb=(-In…   0.656 gear       3.33       4.36      -<span style="color: #BB0000;">5.22</span>  23.0 2.73<span style="color: #949494;">e</span><span style="color: #BB0000;">-5</span>    21</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> {carb=(-In…   0.656 mpg       18.5       23.1       -<span style="color: #BB0000;">2.12</span>  19.1 4.70<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span>    21</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> {carb=(-In…   0.656 cyl        6.76       5.09       2.98  24.9 6.34<span style="color: #949494;">e</span><span style="color: #BB0000;">-3</span>    21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 824 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 836 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 8 more variables: n_y &lt;int&gt;, conf_lo &lt;dbl&gt;, conf_hi &lt;dbl&gt;, stderr &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   alternative &lt;chr&gt;, method &lt;chr&gt;, comment &lt;chr&gt;, condition_length &lt;int&gt;</span></span>
 </code></pre></div>

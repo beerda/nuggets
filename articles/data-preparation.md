@@ -931,7 +931,6 @@ prepared_data <- mtcars |>
 prepared_data <- remove_almost_constant(prepared_data, 
                                        .threshold = 0.95, 
                                        .verbose = TRUE)
-#> Removing (almost) constant columns:
 ```
 
 ## Finding Tautologies in Data

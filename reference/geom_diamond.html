@@ -83,6 +83,9 @@ aesthetics such as labels, color, and size.</p>
 <span>  position <span class="op">=</span> <span class="st">"identity"</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  linetype <span class="op">=</span> <span class="st">"solid"</span>,</span>
+<span>  neg_linetype <span class="op">=</span> <span class="st">"31"</span>,</span>
+<span>  linecolour <span class="op">=</span> <span class="st">"#999999"</span>,</span>
+<span>  neg_linecolour <span class="op">=</span> <span class="st">"#cc9999"</span>,</span>
 <span>  linewidth <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  nudge_x <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  nudge_y <span class="op">=</span> <span class="fl">0.125</span>,</span>
@@ -117,7 +120,19 @@ aesthetics such as labels, color, and size.</p>
 
 
 <dt id="arg-linetype">linetype<a class="anchor" aria-label="anchor" href="#arg-linetype"></a></dt>
-<dd><p>Line type for edges; defaults to <code>"solid"</code>.</p></dd>
+<dd><p>Line type for positive edges; defaults to <code>"solid"</code>.</p></dd>
+
+
+<dt id="arg-neg-linetype">neg_linetype<a class="anchor" aria-label="anchor" href="#arg-neg-linetype"></a></dt>
+<dd><p>Line type for negative edges; defaults to <code>"31"</code> (dashed).</p></dd>
+
+
+<dt id="arg-linecolour">linecolour<a class="anchor" aria-label="anchor" href="#arg-linecolour"></a></dt>
+<dd><p>Color for positive edges; defaults to <code>"#999999"</code>.</p></dd>
+
+
+<dt id="arg-neg-linecolour">neg_linecolour<a class="anchor" aria-label="anchor" href="#arg-neg-linecolour"></a></dt>
+<dd><p>Color for negative edges; defaults to <code>"#cc9999"</code>.</p></dd>
 
 
 <dt id="arg-linewidth">linewidth<a class="anchor" aria-label="anchor" href="#arg-linewidth"></a></dt>

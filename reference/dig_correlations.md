@@ -176,7 +176,7 @@ dig_correlations(d,
                  xvars = Sepal.Length:Petal.Width,
                  yvars = Sepal.Length:Petal.Width)
 #> # A tibble: 24 × 10
-#>    condition      support xvar  yvar  estimate  p_value method alternative  rows
+#>    condition      support xvar  yvar  estimate  p_value method alternative     n
 #>    <chr>            <dbl> <chr> <chr>    <dbl>    <dbl> <chr>  <chr>       <int>
 #>  1 {}               1     Sepa… Sepa…   -0.118 1.52e- 1 Pears… two.sided     150
 #>  2 {}               1     Sepa… Peta…    0.872 1.04e-47 Pears… two.sided     150
@@ -199,7 +199,7 @@ dig_correlations(iris,
                  xvars = Sepal.Length:Petal.Width,
                  yvars = Sepal.Length:Petal.Width)
 #> # A tibble: 6 × 10
-#>   condition support xvar        yvar  estimate  p_value method alternative  rows
+#>   condition support xvar        yvar  estimate  p_value method alternative     n
 #>   <chr>       <dbl> <chr>       <chr>    <dbl>    <dbl> <chr>  <chr>       <int>
 #> 1 {}              1 Sepal.Leng… Sepa…   -0.118 1.52e- 1 Pears… two.sided     150
 #> 2 {}              1 Sepal.Leng… Peta…    0.872 1.04e-47 Pears… two.sided     150

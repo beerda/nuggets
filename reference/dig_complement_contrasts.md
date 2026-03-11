@@ -233,9 +233,15 @@ columns are always present:
 
   the name of the contrast variable.
 
-- estimate:
+- estimate_x:
 
-  the estimate value (see the underlying test.
+  the estimate value for values satisfying the condition (see the
+  underlying test).
+
+- estimate_y:
+
+  the estimate value for values not satisfying the condition (see the
+  underlying test).
 
 - statistic:
 
@@ -254,11 +260,11 @@ columns are always present:
   the number of rows in the sub-data corresponding to the negation of
   the condition.
 
-- conf_int_lo:
+- conf_lo:
 
   the lower bound of the confidence interval of the estimate.
 
-- conf_int_hi:
+- conf_hi:
 
   the upper bound of the confidence interval of the estimate.
 
@@ -322,7 +328,7 @@ dig_complement_contrasts(d,
 #> Warning: t.test: error: data are essentially constant
 #> Warning: t.test: error: data are essentially constant
 #> Warning: t.test: error: data are essentially constant
-#> # A tibble: 834 × 17
+#> # A tibble: 846 × 17
 #>    condition   support var   estimate_x estimate_y statistic    df p_value   n_x
 #>    <chr>         <dbl> <chr>      <dbl>      <dbl>     <dbl> <dbl>   <dbl> <int>
 #>  1 {carb=(-In…   0.656 mpg       17.0       25.9       -4.73  13.8 3.36e-4    21
@@ -335,7 +341,7 @@ dig_complement_contrasts(d,
 #>  8 {carb=(-In…   0.656 gear       3.33       4.36      -5.22  23.0 2.73e-5    21
 #>  9 {carb=(-In…   0.656 mpg       18.5       23.1       -2.12  19.1 4.70e-2    21
 #> 10 {carb=(-In…   0.656 cyl        6.76       5.09       2.98  24.9 6.34e-3    21
-#> # ℹ 824 more rows
+#> # ℹ 836 more rows
 #> # ℹ 8 more variables: n_y <int>, conf_lo <dbl>, conf_hi <dbl>, stderr <dbl>,
 #> #   alternative <chr>, method <chr>, comment <chr>, condition_length <int>
 ```

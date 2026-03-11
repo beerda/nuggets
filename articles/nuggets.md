@@ -483,7 +483,7 @@ print(corr_result)
 #>  8 {am=0,carb=(-Inf;3.33]}   0.375 hp    disp     0.813 0.00131    
 #>  9 {carb=(-Inf;3.33],vs=0}   0.25  mpg   wt      -0.823 0.0121     
 #> 10 {carb=(-Inf;3.33],vs=0}   0.25  mpg   disp    -0.585 0.128      
-#>    method                               alternative  rows condition_length
+#>    method                               alternative     n condition_length
 #>    <chr>                                <chr>       <int>            <int>
 #>  1 Pearson's product-moment correlation two.sided      20                1
 #>  2 Pearson's product-moment correlation two.sided      20                1

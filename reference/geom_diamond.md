@@ -20,6 +20,9 @@ geom_diamond(
   position = "identity",
   na.rm = FALSE,
   linetype = "solid",
+  neg_linetype = "31",
+  linecolour = "#999999",
+  neg_linecolour = "#cc9999",
   linewidth = NA,
   nudge_x = 0,
   nudge_y = 0.125,
@@ -54,7 +57,19 @@ geom_diamond(
 
 - linetype:
 
-  Line type for edges; defaults to `"solid"`.
+  Line type for positive edges; defaults to `"solid"`.
+
+- neg_linetype:
+
+  Line type for negative edges; defaults to `"31"` (dashed).
+
+- linecolour:
+
+  Color for positive edges; defaults to `"#999999"`.
+
+- neg_linecolour:
+
+  Color for negative edges; defaults to `"#cc9999"`.
 
 - linewidth:
 

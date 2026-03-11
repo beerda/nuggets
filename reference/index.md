@@ -58,12 +58,34 @@ Functions for post-processing of extracted patterns.
 - [`cluster_associations()`](https://beerda.github.io/nuggets/reference/cluster_associations.md)
   : Cluster association rules
 
-- [`explore(`*`<associations>`*`)`](https://beerda.github.io/nuggets/reference/explore.md)
+- [`dig_ancestors()`](https://beerda.github.io/nuggets/reference/dig_ancestors.md)
+  **\[experimental\]** : Dig ancestors of an association rule
+
+- [`explore(`*`<associations>`*`)`](https://beerda.github.io/nuggets/reference/explore.associations.md)
   **\[experimental\]** : Show interactive application to explore
   association rules
 
+- [`explore(`*`<baseline_contrasts>`*`)`](https://beerda.github.io/nuggets/reference/explore.baseline_contrasts.md)
+  **\[experimental\]** : Show interactive application to explore
+  baseline contrasts
+
+- [`explore(`*`<complement_contrasts>`*`)`](https://beerda.github.io/nuggets/reference/explore.complement_contrasts.md)
+  **\[experimental\]** : Show interactive application to explore
+  complement contrasts
+
+- [`explore(`*`<paired_baseline_contrasts>`*`)`](https://beerda.github.io/nuggets/reference/explore.paired_baseline_contrasts.md)
+  **\[experimental\]** : Show interactive application to explore paired
+  baseline contrasts
+
+- [`explore(`*`<correlations>`*`)`](https://beerda.github.io/nuggets/reference/explore.correlations.md)
+  **\[experimental\]** : Show interactive application to explore
+  conditional correlations
+
 - [`geom_diamond()`](https://beerda.github.io/nuggets/reference/geom_diamond.md)
   : Geom for drawing diamond plots of lattice structures
+
+- [`plot_contingency()`](https://beerda.github.io/nuggets/reference/plot_contingency.md)
+  : Plot a mosaic plot for a contingency table
 
 - [`remove_ill_conditions()`](https://beerda.github.io/nuggets/reference/remove_ill_conditions.md)
   : Remove invalid conditions from a list
