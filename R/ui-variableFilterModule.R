@@ -37,10 +37,20 @@ variableFilterModule <- function(id, x, meta) {
     root_name <- "value"
     def <- .create_tree_def_from_variables(x, root_name)
     tree <- NULL
+    g <- NULL
     if (nrow(def) > 0) {
+        histogramPlot <- shiny::plotOutput(shiny::NS(id, "histogramPlot"))
         tree <- shinyWidgets::create_tree(def,
                             levels = c("rname", "value"),
                             levels_id = c("rid", "vid"))
+
+        g <- ggplot(data.frame(x = x)) +
+            aes(y = x) +
+            geom_bar(fill = "white", color = "black") +
+            scale_x_continuous(name = "number of rules",
+                               sec.axis = sec_axis(~ . * 100 / length(x), name = "% of rules")) +
+            labs(y = NULL,
+                 x = tolower(meta$long_name), y = "number of rules")
     }
 
     list(ui = function() {
@@ -48,6 +58,7 @@ variableFilterModule <- function(id, x, meta) {
                            value = meta$data_name,
                            info = paste0("Filter the rules by choosing the values for ",
                                         tolower(meta$long_name), "."),
+                histogramPlot,
                 shinyWidgets::treeInput(shiny::NS(id, "tree"),
                           label = tolower(meta$long_name),
                           choices = tree,
@@ -70,6 +81,9 @@ variableFilterModule <- function(id, x, meta) {
                     reset_all_trigger(Sys.time())
                 })
 
+                if (nrow(def) > 0) {
+                    output$histogramPlot <- shiny::renderPlot({ g }, res = 96)
+                }
             })
         },
 
