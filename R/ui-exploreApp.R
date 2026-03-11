@@ -37,6 +37,14 @@ exploreApp <- function(rules,
                                               rules = rules,
                                               meta = meta)
 
+    var_meta <- meta[meta$type == "variable", , drop = FALSE]
+    variableFilter <- NULL
+    if (nrow(var_meta) > 0) {
+        variableFilter <- variableFilterModule(id = "variableFilterModule",
+                                               rules = rules,
+                                               meta = var_meta)
+    }
+
     filters <- lapply(seq_len(nrow(meta)), function(i) {
         col <- meta$data_name[i]
         if (meta$type[i] == "condition") {
@@ -53,8 +61,14 @@ exploreApp <- function(rules,
     })
     names(filters) <- meta$data_name
     filters <- filters[lengths(filters) != 0]  # drop NULL elements
+    if (!is.null(variableFilter)) {
+        filters <- c(filters, list(variable = variableFilter))
+    }
     filter_choices <- names(filters)
     filter_subtext <- meta$long_name[match(filter_choices, meta$data_name)]
+    if (!is.null(variableFilter)) {
+        filter_subtext[filter_choices == "variable"] <- "Variable"
+    }
     indexes <- which(!is.na(filter_subtext))
     names(filters) <- NULL # tabsetPanel does not like named lists
     filterTabSet <- do.call(shiny::tabsetPanel,

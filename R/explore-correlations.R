@@ -73,8 +73,8 @@ explore.correlations <- function(x, data = NULL, ...) {
     initial_meta <- tribble(
         ~data_name,     ~long_name,                ~type,       ~group,           ~round, ~scatter,
         "condition",    "Condition",               "condition", "formula",        NA,     FALSE,
-        "xvar",         "X Variable",              "character", "formula",        NA,     FALSE,
-        "yvar",         "Y Variable",              "character", "formula",        NA,     FALSE,
+        "xvar",         "X Variable",              "variable",  "formula",        NA,     FALSE,
+        "yvar",         "Y Variable",              "variable",  "formula",        NA,     FALSE,
         "estimate",     "Estimate",                "numeric",   "test",            4,      TRUE,
         "p_value",      "P-value",                 "numeric",   "test",            6,      TRUE,
         "method",       "Method",                  "character", "test",           NA,     FALSE,
