@@ -59,7 +59,6 @@
 #' # launch the interactive explorer
 #' explore(res, data = crispIris)
 #' }
-#' @rdname explore
 #' @method explore paired_baseline_contrasts
 #' @export
 explore.paired_baseline_contrasts <- function(x, data = NULL, ...) {

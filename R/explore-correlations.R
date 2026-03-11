@@ -54,7 +54,6 @@
 #' # launch the interactive explorer
 #' explore(res, data = d)
 #' }
-#' @rdname explore
 #' @method explore correlations
 #' @export
 explore.correlations <- function(x, data = NULL, ...) {

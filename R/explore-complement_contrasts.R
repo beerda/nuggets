@@ -55,7 +55,6 @@
 #' # launch the interactive explorer
 #' explore(res, data = d)
 #' }
-#' @rdname explore
 #' @method explore complement_contrasts
 #' @export
 explore.complement_contrasts <- function(x, data = NULL, ...) {

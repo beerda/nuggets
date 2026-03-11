@@ -54,7 +54,6 @@
 #' # launch the interactive explorer
 #' explore(rules, data = part)
 #' }
-#' @rdname explore
 #' @method explore associations
 #' @export
 explore.associations <- function(x, data = NULL, ...) {

@@ -54,7 +54,6 @@
 #' # launch the interactive explorer
 #' explore(res, data = d)
 #' }
-#' @rdname explore
 #' @method explore baseline_contrasts
 #' @export
 explore.baseline_contrasts <- function(x, data = NULL, ...) {
