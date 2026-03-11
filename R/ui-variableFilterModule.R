@@ -137,6 +137,7 @@ variableFilterModule <- function(id, rules, meta) {
                    def$vid %in% treeInput
 
             sel <- tab[, ids, drop = FALSE]
+            # TRUE only when all variable values of the row are among selected
             rowSums(sel) == rowSums(tab)
         },
 
