@@ -1,6 +1,7 @@
 # nuggets ???
 - released: ???
 - fixed bugs in explore()
+- added special value highlighting in explore()'s table of rules
 - added contingency table view to explore.associations()
 - added explore() methods for baseline contrasts, complement contrasts, paired
   baseline contrasts, and correlations

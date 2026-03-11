@@ -79,7 +79,8 @@ explore.correlations <- function(x, data = NULL, ...) {
         "method",       "Method",                  "character", "test",           NA,     FALSE,
         "alternative",  "Alternative",             "character", "test",           NA,     FALSE,
         "support",      "Support",                 "numeric",   "basic measures",  2,      TRUE,
-        "rows",         "Rows",                    "integer",   "basic measures", NA,      TRUE,
+        "condition_length", "Condition Length",    "integer",   "basic measures", NA,      TRUE,
+        "n",            "N",                       "integer",   "basic measures", NA,      TRUE,
     )
 
     x$id <- seq_len(nrow(x))

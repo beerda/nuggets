@@ -144,7 +144,7 @@ dig_correlations <- function(x,
                     p_value = fit$p.value,
                     method = fit$method,
                     alternative = fit$alternative,
-                    rows = nrow(pd)))
+                    n = nrow(pd)))
     }
 
     res <- dig_grid(x = x,

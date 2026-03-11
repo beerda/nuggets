@@ -37,7 +37,7 @@ test_that("dig_correlations", {
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 12)
     expect_equal(colnames(res),
-                 c("condition", "support", "xvar", "yvar", "estimate", "p_value", "method", "alternative", "rows", "condition_length"))
+                 c("condition", "support", "xvar", "yvar", "estimate", "p_value", "method", "alternative", "n", "condition_length"))
     expect_equal(res$condition,
                  c(rep("{}", 3), rep("{a}", 3), rep("{b}", 3), rep("{a,b}", 3)))
     expect_equal(res$xvar,
@@ -50,7 +50,7 @@ test_that("dig_correlations", {
                  rep("Pearson's product-moment correlation", 12))
     expect_equal(res$alternative,
                  rep("two.sided", 12))
-    expect_equal(res$rows,
+    expect_equal(res$n,
                  c(rep(100, 6), rep(50, 6)))
 })
 
@@ -76,7 +76,7 @@ test_that("dig_correlations with NA", {
     expect_true(is_tibble(res))
     expect_equal(nrow(res), 12)
     expect_equal(colnames(res),
-                 c("condition", "support", "xvar", "yvar", "estimate", "p_value", "method", "alternative", "rows", "condition_length"))
+                 c("condition", "support", "xvar", "yvar", "estimate", "p_value", "method", "alternative", "n", "condition_length"))
     expect_equal(res$condition,
                  c(rep("{}", 3), rep("{a}", 3), rep("{b}", 3), rep("{a,b}", 3)))
     expect_equal(res$xvar,
@@ -89,7 +89,7 @@ test_that("dig_correlations with NA", {
                  rep("Pearson's product-moment correlation", 12))
     expect_equal(res$alternative,
                  rep("two.sided", 12))
-    expect_equal(res$rows,
+    expect_equal(res$n,
                  c(98, 99, 99,
                    98, 99, 99,
                    49, 49, 50,

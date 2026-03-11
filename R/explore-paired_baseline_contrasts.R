@@ -84,12 +84,13 @@ explore.paired_baseline_contrasts <- function(x, data = NULL, ...) {
         "stderr",       "Standard Error",          "numeric",   "test",            4,      TRUE,
         "p_value",      "P-value",                 "numeric",   "test",            6,      TRUE,
         "df",           "Degrees of Freedom",      "numeric",   "test",            2,      TRUE,
-        "conf_int_lo",  "Conf. Interval (lower)",  "numeric",   "test",            4,      TRUE,
-        "conf_int_hi",  "Conf. Interval (upper)",  "numeric",   "test",            4,      TRUE,
+        "conf_lo",      "Conf. Interval (lower)",  "numeric",   "test",            4,      TRUE,
+        "conf_hi",      "Conf. Interval (upper)",  "numeric",   "test",            4,      TRUE,
         "alternative",  "Alternative",             "character", "test",           NA,     FALSE,
         "method",       "Method",                  "character", "test",           NA,     FALSE,
         "comment",      "Comment",                 "character", "test",           NA,     FALSE,
         "support",      "Support",                 "numeric",   "basic measures",  2,      TRUE,
+        "condition_length", "Condition Length",    "integer",   "basic measures", NA,      TRUE,
         "n",            "N",                       "integer",   "basic measures", NA,      TRUE,
     )
 
