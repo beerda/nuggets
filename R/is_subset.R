@@ -37,7 +37,7 @@
 #' * `NA` values are treated as ordinary elements. In particular, `NA` in `x`
 #'   is considered a subset element only if `NA` is also present in `y`.
 #'
-#' @seealso [setdiff()], [intersect()], [union()]
+#' @seealso [base::setdiff()], [base::intersect()], [base::union()]
 #'
 #' @author Michal Burda
 #'
