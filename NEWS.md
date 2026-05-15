@@ -1,5 +1,5 @@
-# nuggets ???
-- released: ???
+# nuggets 2.2.0
+- released: 2026-03-11
 - fixed bugs in explore()
 - added special value highlighting in explore()'s table of rules
 - added contingency table view to explore.associations()

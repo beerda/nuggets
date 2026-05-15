@@ -1,3 +1,4 @@
+- Merge devel into main
 - Update version & date in DESCRIPTION
 - Update NEWS.md
 - Disable debug in src/common.h
@@ -21,6 +22,8 @@
     - Search for deprecate_warn() and replace with deprecate_stop().
       Remove the remaining body of the function and any tests.
     - Search for deprecate_soft() and replace with deprecate_warn().
+- Update devel
+
 
 - To install the release candidate of Rcpp (to fix LTO errors):
     install.packages("Rcpp", repos = "https://RcppCore.github.io/drat")

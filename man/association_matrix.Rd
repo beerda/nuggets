@@ -19,10 +19,12 @@ specifying the column to use for filling the matrix values.}
 
 \item{error_context}{A list of details to be used in error messages.
 It must contain:
-- \code{arg_x}: the name of the \code{x} argument;
-- \code{arg_value}: the name of the \code{value} argument;
-- \code{call}: an environment in which to evaluate the error messages.
-Defaults to the current environment.}
+\itemize{
+\item \code{arg_x}: the name of the \code{x} argument;
+\item \code{arg_value}: the name of the \code{value} argument;
+\item \code{call}: an environment in which to evaluate the error messages.
+Defaults to the current environment.
+}}
 }
 \value{
 A numeric matrix with row names corresponding to antecedents and

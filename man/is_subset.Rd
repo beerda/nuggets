@@ -39,7 +39,7 @@ is_subset(c(NA), 1:5)             # FALSE
 
 }
 \seealso{
-\code{\link[generics:setops]{generics::setdiff()}}, \code{\link[generics:setops]{generics::intersect()}}, \code{\link[generics:setops]{generics::union()}}
+\code{\link[base:setdiff]{base::setdiff()}}, \code{\link[base:intersect]{base::intersect()}}, \code{\link[base:union]{base::union()}}
 }
 \author{
 Michal Burda
