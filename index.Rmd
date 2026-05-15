@@ -95,7 +95,7 @@ To install the stable version of `nuggets` from CRAN, type the following command
 within the R session:
 
 ``` r
-install.packages("nuggets")
+install.packages("nuggets", dependencies = TRUE)
 ```
 
 You can also install the development version of `nuggets` from 
