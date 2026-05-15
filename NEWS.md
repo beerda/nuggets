@@ -1,6 +1,3 @@
-# nuggets 2.3.0
-- released: ???
-
 # nuggets 2.2.0
 - released: 2026-03-11
 - fixed bugs in explore()
