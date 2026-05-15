@@ -85,13 +85,15 @@ To install the stable version of `nuggets` from CRAN, type the following
 command within the R session:
 
 ``` r
-install.packages("nuggets")
+
+install.packages("nuggets", dependencies = TRUE)
 ```
 
 You can also install the development version of `nuggets` from
 [GitHub](https://github.com/) with:
 
 ``` r
+
 install.packages("devtools")
 devtools::install_github("beerda/nuggets")
 ```
@@ -99,6 +101,7 @@ devtools::install_github("beerda/nuggets")
 To start using the package, load it to the R session with:
 
 ``` r
+
 library(nuggets)
 ```
 
@@ -108,6 +111,7 @@ The following example demonstrates how to use `nuggets` to find
 association rules in the built-in `mtcars` dataset:
 
 ``` r
+
 # Preprocess: dichotomize and fuzzify numeric variables
 cars <- mtcars |>
     partition(cyl, vs:gear, .method = "dummy") |>

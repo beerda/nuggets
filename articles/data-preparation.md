@@ -74,6 +74,7 @@ contains information about various car models. For the sake of
 illustration, let us transform the `cyl` column into factor first:
 
 ``` r
+
 # Create a copy to avoid modifying the original dataset
 mtcars_example <- mtcars
 mtcars_example$cyl <- factor(mtcars_example$cyl,
@@ -94,6 +95,7 @@ Factors are transformed to dummy logical columns by the
 function automatically:
 
 ``` r
+
 partition(mtcars_example, cyl)
 #> # A tibble: 32 × 13
 #>      mpg  disp    hp  drat    wt  qsec    vs    am  gear  carb `cyl=four`
@@ -130,6 +132,7 @@ as factors, we can use the
 function with the `.method` argument set to `"dummy"`:
 
 ``` r
+
 partition(mtcars_example, vs:gear, .method = "dummy")
 #> # A tibble: 32 × 15
 #>      mpg cyl    disp    hp  drat    wt  qsec  carb `vs=0` `vs=1` `am=0` `am=1`
@@ -175,6 +178,7 @@ then the vector `c(-Inf, 15, 20, 30, Inf)`, which defines the boundaries
 of these intervals.
 
 ``` r
+
 partition(mtcars_example, mpg, .method = "crisp", .breaks = c(-Inf, 15, 20, 30, Inf))
 #> # A tibble: 32 × 14
 #>    cyl    disp    hp  drat    wt  qsec    vs    am  gear  carb `mpg=(-Inf;15]`
@@ -214,6 +218,7 @@ of intervals to create. For example, the following command divides the
 `disp` values into three intervals of equal width:
 
 ``` r
+
 partition(mtcars_example, disp, .method = "crisp", .breaks = 3)
 #> # A tibble: 32 × 13
 #>      mpg cyl      hp  drat    wt  qsec    vs    am  gear  carb `disp=(-Inf;205]`
@@ -252,6 +257,7 @@ The transformation of the whole `mtcars` dataset to crisp predicates can
 be done as follows:
 
 ``` r
+
 crisp_mtcars <- mtcars_example |>
     partition(cyl, vs:gear, .method = "dummy") |>
     partition(mpg, .method = "crisp", .breaks = c(-Inf, 15, 20, 30, Inf)) |>
@@ -332,6 +338,7 @@ observations, which can be valuable for imbalanced datasets.
 Here are examples using the CO2 dataset:
 
 ``` r
+
 # Equal-width intervals (default)
 partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "equal")
 #> # A tibble: 84 × 8
@@ -363,6 +370,7 @@ partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "equal")
 ```
 
 ``` r
+
 # Quantile-based intervals (equal frequency in each interval)
 partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "quantile")
 #> # A tibble: 84 × 8
@@ -394,6 +402,7 @@ partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "quantile")
 ```
 
 ``` r
+
 # K-means clustering to find natural breakpoints
 partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "kmeans")
 #> # A tibble: 84 × 8
@@ -425,6 +434,7 @@ partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "kmeans")
 ```
 
 ``` r
+
 # Standard deviation-based intervals
 partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "sd")
 #> # A tibble: 84 × 8
@@ -464,6 +474,7 @@ For example, when using k-means clustering, you can specify the
 algorithm:
 
 ``` r
+
 # Use Lloyd's algorithm for k-means
 partition(CO2, conc, .method = "crisp", .breaks = 4, 
           .style = "kmeans", 
@@ -499,6 +510,7 @@ partition(CO2, conc, .method = "crisp", .breaks = 4,
 When using quantile-based intervals, you can control the quantile type:
 
 ``` r
+
 # Use different quantile types (see ?quantile for details)
 partition(CO2, conc, .method = "crisp", .breaks = 4, 
           .style = "quantile", 
@@ -651,6 +663,7 @@ A fuzzy transformation of the whole `mtcars` dataset can be done as
 follows:
 
 ``` r
+
 # Start with a fresh copy of mtcars
 fuzzy_mtcars <- mtcars |>
     mutate(cyl = factor(cyl, levels = c(4, 6, 8), labels = c("four", "six", "eight"))) |>
@@ -792,6 +805,7 @@ in the vector is greater than or equal to a specified threshold (default
 is 1.0, meaning completely constant).
 
 ``` r
+
 # Completely constant vector
 is_almost_constant(c(1, 1, 1, 1, 1))
 #> [1] TRUE
@@ -812,6 +826,7 @@ is_almost_constant(c(1, 1, 1, 2, 2), threshold = 0.8)
 The function also handles `NA` values appropriately:
 
 ``` r
+
 # With NA values - by default NA is treated as a regular value
 is_almost_constant(c(NA, NA, NA, 1, 2), threshold = 0.5)
 #> [1] TRUE
@@ -831,6 +846,7 @@ to work on entire data frames. It tests all selected columns and removes
 those that are almost constant according to the specified threshold.
 
 ``` r
+
 # Create a data frame with some constant and variable columns
 d <- data.frame(
   a1 = 1:10,              # variable
@@ -895,6 +911,7 @@ You can also restrict the check to a subset of columns using tidyselect
 syntax:
 
 ``` r
+
 # Only check columns a1 through b2
 remove_almost_constant(d, a1:b2, .threshold = 0.5, .na_rm = TRUE)
 #> # A tibble: 10 × 5
@@ -921,6 +938,7 @@ significantly speed up the subsequent mining process.
 For example:
 
 ``` r
+
 # Prepare mtcars data with partition - use fresh copy
 prepared_data <- mtcars |>
     mutate(cyl = factor(cyl, levels = c(4, 6, 8), labels = c("four", "six", "eight"))) |>
@@ -972,6 +990,7 @@ iterations to prune the search space in later iterations.
 Basic usage:
 
 ``` r
+
 # Prepare fuzzy data - use fresh copy of mtcars
 fuzzy_mtcars <- mtcars |>
     mutate(cyl = factor(cyl, levels = c(4, 6, 8), labels = c("four", "six", "eight"))) |>
@@ -1032,6 +1051,7 @@ argument of [`dig()`](https://beerda.github.io/nuggets/reference/dig.md)
 or related functions to avoid generating similar conditions:
 
 ``` r
+
 # Convert tautologies to excluded format
 excluded_conditions <- parse_condition(tautologies$antecedent)
 

@@ -5,4 +5,4 @@ to see their documentation.
 
 - generics:
 
-  [`explore`](https://generics.r-lib.org/reference/explore.html)
+  [`explore()`](https://generics.r-lib.org/reference/explore.html)

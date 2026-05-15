@@ -8,11 +8,11 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/beerda/nuggets/blob/v2.2.0/inst/CITATION)
+[`inst/CITATION`](https://github.com/beerda/nuggets/blob/main/inst/CITATION)
 
 Burda M (2024). “nuggets: Data Pattern Extraction Framework in R.” In
 Torra, Vicenc, Narukawa, Yasuo, Kikuchi, Hiroaki (eds.), *Modeling
-Decisions for Artificial Intelligence*, 115–126. ISBN 978-3-031-68208-7,
+Decisions for Artificial Intelligence*, 115–126. ISBN 978-3-031-68208-7.
 [doi:10.1007/978-3-031-68208-7_10](https://doi.org/10.1007/978-3-031-68208-7_10).
 
     @InProceedings{,

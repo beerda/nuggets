@@ -32,3 +32,8 @@ Useful links:
 
 **Maintainer**: Michal Burda <michal.burda@osu.cz>
 ([ORCID](https://orcid.org/0000-0002-4182-4407))
+
+Authors:
+
+- Michal Burda <michal.burda@osu.cz>
+  ([ORCID](https://orcid.org/0000-0002-4182-4407))

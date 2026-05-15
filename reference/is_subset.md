@@ -39,9 +39,9 @@ elements of `x` are also elements of `y`. Returns `FALSE` otherwise.
 
 ## See also
 
-[`generics::setdiff()`](https://generics.r-lib.org/reference/setops.html),
-[`generics::intersect()`](https://generics.r-lib.org/reference/setops.html),
-[`generics::union()`](https://generics.r-lib.org/reference/setops.html)
+[`base::setdiff()`](https://rdrr.io/r/base/sets.html),
+[`base::intersect()`](https://rdrr.io/r/base/sets.html),
+[`base::union()`](https://rdrr.io/r/base/sets.html)
 
 ## Author
 

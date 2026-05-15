@@ -31,10 +31,14 @@ association_matrix(
 
 - error_context:
 
-  A list of details to be used in error messages. It must contain: -
-  `arg_x`: the name of the `x` argument; - `arg_value`: the name of the
-  `value` argument; - `call`: an environment in which to evaluate the
-  error messages. Defaults to the current environment.
+  A list of details to be used in error messages. It must contain:
+
+  - `arg_x`: the name of the `x` argument;
+
+  - `arg_value`: the name of the `value` argument;
+
+  - `call`: an environment in which to evaluate the error messages.
+    Defaults to the current environment.
 
 ## Value
 

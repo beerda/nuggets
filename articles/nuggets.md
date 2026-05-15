@@ -87,6 +87,7 @@ built-in `mtcars` dataset, which we first slightly modify by converting
 the `cyl` column to a factor:
 
 ``` r
+
 # For demonstration, convert 'cyl' column of the mtcars dataset to a factor
 mtcars <- mtcars |>
     mutate(cyl = factor(cyl, levels = c(4, 6, 8), labels = c("four", "six", "eight")))
@@ -103,6 +104,7 @@ Now we can use the
 function to transform all columns into crisp predicates:
 
 ``` r
+
 # Transform the whole dataset to crisp predicates
 crisp_mtcars <- mtcars |>
     partition(cyl, vs:gear, .method = "dummy") |>
@@ -169,6 +171,7 @@ with values in the interval \\\[0,1\]\\. This allows modeling of smooth
 transitions between categories:
 
 ``` r
+
 # Start with fresh mtcars and transform to fuzzy predicates
 fuzzy_mtcars <- mtcars |>
     partition(cyl, vs:gear, .method = "dummy") |>
@@ -339,6 +342,7 @@ vector with
 [`var_names()`](https://beerda.github.io/nuggets/reference/var_names.md):
 
 ``` r
+
 disj <- var_names(colnames(fuzzy_mtcars))
 print(disj)
 #>  [1] "cyl"  "cyl"  "cyl"  "vs"   "vs"   "am"   "am"   "gear" "gear" "gear"
@@ -371,6 +375,7 @@ dataset `fuzzy_mtcars`, such that:
   consequent given antecedent should be at least 80%.
 
 ``` r
+
 result <- dig_associations(fuzzy_mtcars,
                            antecedent = !starts_with("am"),
                            consequent = starts_with("am"),
@@ -383,12 +388,14 @@ The result is a tibble containing the discovered rules. Additional
 quality metrics may be computed:
 
 ``` r
+
 result <- add_interest(result, measures = c("conviction", "leverage"))
 ```
 
 You can arrange the resulting rules, for example, by decreasing support:
 
 ``` r
+
 result <- arrange(result, desc(support))
 print(result)
 #> # A tibble: 526 × 15
@@ -451,6 +458,7 @@ numeric variables in the original `mtcars` data under conditions defined
 by the prepared predicates in `crisp_mtcars`:
 
 ``` r
+
 # Prepare combined dataset with both condition predicates and numeric variables
 combined_mtcars <- cbind(crisp_mtcars, mtcars[, c("mpg", "disp", "hp", "wt")])
 
@@ -522,6 +530,7 @@ significantly different from a baseline value (typically zero) using a
 one-sample statistical test.
 
 ``` r
+
 # Prepare combined dataset with predicates and numeric variables
 combined_mtcars2 <- cbind(crisp_mtcars, 
                           mtcars[, c("mpg", "hp", "wt")])
@@ -573,6 +582,7 @@ differs significantly between elements that satisfy the condition and
 those that don’t.
 
 ``` r
+
 complement_result <- dig_complement_contrasts(combined_mtcars2,
                                              condition = colnames(crisp_mtcars),
                                              vars = c("mpg", "hp", "wt"),
@@ -622,6 +632,7 @@ data.
 significant difference between two paired numeric variables.
 
 ``` r
+
 paired_result <- dig_paired_baseline_contrasts(combined_mtcars2,
                                               condition = colnames(crisp_mtcars),
                                               xvars = c("mpg", "hp"),
@@ -681,6 +692,7 @@ their hierarchical structure. It displays rules as a lattice where
 broader (more general) conditions appear above their descendants:
 
 ``` r
+
 # Search for rules with various confidence levels for visualization
 vis_rules <- dig_associations(fuzzy_mtcars,
                               antecedent = starts_with(c("gear", "vs")),
@@ -767,6 +779,7 @@ function launches an interactive Shiny application for exploring
 discovered patterns. This is particularly useful for association rules:
 
 ``` r
+
 # Search for association rules
 rules <- dig_associations(fuzzy_mtcars,
                          antecedent = everything(),
@@ -806,6 +819,7 @@ The following example replicates the search for association rules using
 a custom callback function with the datasets prepared earlier:
 
 ``` r
+
 # Define thresholds for custom association rules
 min_support <- 0.02
 min_confidence <- 0.8
@@ -884,6 +898,7 @@ Here’s an example that computes custom statistics for pairs of numeric
 variables:
 
 ``` r
+
 # Define callback for grid-based patterns
 grid_callback <- function(d, weights) {
     if (nrow(d) < 5) return(NULL)  # Skip if too few observations
