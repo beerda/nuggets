@@ -79,7 +79,7 @@ test_that("dig_complement_contrasts call args", {
 
     res <- suppressMessages(
                 dig_complement_contrasts(d,
-                         condition = where(is.logical),
+                         condition = 3:11,
                          vars = conc:uptake,
                          disjoint = var_names(colnames(d)),
                          excluded = list("Plant=Qn1"),
@@ -97,7 +97,7 @@ test_that("dig_complement_contrasts call args", {
                          wilcox_correct = FALSE,
                          wilcox_tol_root = 1e-3,
                          wilcox_digits_rank = 5,
-                         max_results = 100,
+                         max_results = 5,
                          verbose = TRUE,
                          threads = 1))
 
@@ -113,10 +113,7 @@ test_that("dig_complement_contrasts call args", {
     expect_equal(attr(res, "call_args")$condition,
                  c("Plant=Qn1", "Plant=Qn2", "Plant=Qn3",
                    "Plant=Qc1", "Plant=Qc3", "Plant=Qc2",
-                   "Plant=Mn3", "Plant=Mn2", "Plant=Mn1",
-                   "Plant=Mc2", "Plant=Mc3", "Plant=Mc1",
-                   "Type=Quebec", "Type=Mississippi",
-                   "Treatment=nonchilled", "Treatment=chilled"))
+                   "Plant=Mn3", "Plant=Mn2", "Plant=Mn1"))
     expect_equal(attr(res, "call_args")$vars, c("conc", "uptake"))
     expect_equal(attr(res, "call_args")$disjoint,
                  c("conc", "uptake", "Plant", "Plant", "Plant",
@@ -138,7 +135,7 @@ test_that("dig_complement_contrasts call args", {
     expect_false(attr(res, "call_args")$wilcox_correct)
     expect_equal(attr(res, "call_args")$wilcox_tol_root, 1e-3)
     expect_equal(attr(res, "call_args")$wilcox_digits_rank, 5)
-    expect_equal(attr(res, "call_args")$max_results, 100)
+    expect_equal(attr(res, "call_args")$max_results, 5)
     expect_equal(attr(res, "call_args")$verbose, TRUE)
     expect_equal(attr(res, "call_args")$threads, 1L)
 })
