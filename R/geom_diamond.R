@@ -17,9 +17,9 @@
 #######################################################################
 
 
-.geom_diamond_setup_data <- function(data, params) {
+.gd_setup_data <- function(data, params) {
     items <- parse_condition(data$condition)
-    formula_length <-vapply(items, length, integer(1))
+    formula_length <- vapply(items, length, integer(1))
     formula <- vapply(items,
                       function(x) paste(sort(x), collapse = ", "),
                       character(1))
@@ -40,12 +40,9 @@
     }
 
     xcoord <- x_dict[formula]
-    xlabcoord <- xcoord + params$nudge_x
-
     ycoord <- max(formula_length) - formula_length
     ycoord <- match(ycoord, sort(unique(ycoord))) - 1   # remove gaps in y-coordinates to make the plot more compact
     ycoord <- max(ycoord) - ycoord                      # reverse y-coordinates to have the broader conditions at the top
-    ylabcoord <- ycoord + params$nudge_y
 
     if (is.null(data$label)) {
         data$label <- formula
@@ -59,13 +56,15 @@
             data$linewidth <- params$linewidth
     }
 
+    xlabcoord <- xcoord + params$nudge_x
+    ylabcoord <- ycoord + params$nudge_y
+
     transform(data,
               formula = formula,
+              formula_length = formula_length,
               linewidth_orig = data$linewidth,
               x = xcoord,
               y = ycoord,
-              xlabel = xlabcoord,
-              ylabel = ylabcoord,
               xmin = pmin(xcoord, xlabcoord),
               xmax = pmax(xcoord, xlabcoord),
               ymin = pmin(ycoord, ylabcoord),
@@ -73,16 +72,45 @@
 }
 
 
-.geom_diamond_create_edges <- function(data,
-                                       linetype = "solid",
-                                       neg_linetype = "31",
-                                       linecolour = "#999999",
-                                       neg_linecolour = "#cc9999") {
-    required_cols <- c("condition", "x", "y", "linewidth_orig")
-    missing_cols <- setdiff(required_cols, colnames(data))
-    if (length(missing_cols) > 0) {
-        stop("Internal error in .geom_diamond_create_edges() - missing data column(s): ",
-             paste(missing_cols, collapse = ", "))
+.gd_new_x <- function(layer2, layer1, nodes, edges) {
+    nodes1 <- which(nodes$y == layer1)
+    nodes2 <- which(nodes$y == layer2)
+    direction <- if (layer1 > layer2) 2:1 else 1:2
+    means <- sapply(nodes1, function(n) {
+        from_nodes <- edges[[direction[1]]]
+        to_nodes <- edges[[direction[2]]]
+        children <- to_nodes[from_nodes == n]
+        median(nodes$x[children])
+    })
+
+    o <- order(means)
+    res <- nodes$x
+    res[nodes1[o]] <- sort(res[nodes1])
+
+    res
+}
+
+
+# return permutation of x coordinates to make the plot edges less likely
+# to cross each other
+.gd_improve_x <- function(nodes, edges) {
+    layers <- sort(unique(nodes$y))
+    iter <- seq_along(layers)[-1]
+
+    for (i in iter) {
+        nodes$x <- .gd_new_x(layers[i-1], layers[i], nodes, edges)
+    }
+    for (i in rev(iter)) {
+        nodes$x <- .gd_new_x(layers[i], layers[i-1], nodes, edges)
+    }
+
+   return(nodes$x)
+}
+
+
+.gd_create_edges <- function(data) {
+    if (is.null(data$condition)) {
+        stop("Internal error in .gd_create_edges() - missing 'condition' column in data")
     }
 
     items <- parse_condition(data$condition)
@@ -93,7 +121,23 @@
     transitive_edges <- (incidence_matrix %*% incidence_matrix) > 0
     incidence_matrix <- incidence_matrix & !transitive_edges
     edges <- which(incidence_matrix, arr.ind = TRUE)
-    edges <- as.data.frame(edges)
+
+    as.data.frame(edges)
+}
+
+
+.gd_format_edges <- function(data,
+                             edges,
+                             linetype = "solid",
+                             neg_linetype = "31",
+                             linecolour = "#999999",
+                             neg_linecolour = "#cc9999") {
+    required_cols <- c("condition", "x", "y", "linewidth_orig")
+    missing_cols <- setdiff(required_cols, colnames(data))
+    if (length(missing_cols) > 0) {
+        stop("Internal error in .gd_format_edges() - missing data column(s): ",
+             paste(missing_cols, collapse = ", "))
+    }
 
     if (nrow(edges) > 0) {
         edges$x <- data$x[edges$row]
@@ -124,22 +168,29 @@
 }
 
 
-.geom_diamond_draw_panel <- function(data,
-                                     panel_params,
-                                     coord,
-                                     na.rm = FALSE,
-                                     linetype = "solid",
-                                     neg_linetype = "31",
-                                     linecolour = "#999999",
-                                     neg_linecolour = "#cc9999",
-                                     linewidth = 0.5,
-                                     nudge_x = 0,
-                                     nudge_y = 0.125) {
-    edges <- .geom_diamond_create_edges(data,
-                                        linetype = linetype,
-                                        neg_linetype = neg_linetype,
-                                        linecolour = linecolour,
-                                        neg_linecolour = neg_linecolour)
+.gd_draw_panel <- function(data,
+                           panel_params,
+                           coord,
+                           na.rm = FALSE,
+                           linetype = "solid",
+                           neg_linetype = "31",
+                           linecolour = "#999999",
+                           neg_linecolour = "#cc9999",
+                           linewidth = 0.5,
+                           nudge_x = 0,
+                           nudge_y = 0.125) {
+    edges <- .gd_create_edges(data)
+
+    data$x <- .gd_improve_x(data[, c("x", "y")], edges)
+    data$xlabel <- data$x + nudge_x
+    data$ylabel <- data$y + nudge_y
+
+    edges <- .gd_format_edges(data,
+                              edges,
+                              linetype = linetype,
+                              neg_linetype = neg_linetype,
+                              linecolour = linecolour,
+                              neg_linecolour = neg_linecolour)
     point_data <- transform(data)
     label_data <- transform(data,
                             colour = "black",
@@ -199,9 +250,9 @@ GeomDiamond <- ggproto(
                            # appear in the legend at all (because the legend is
                            # broken for it)
     ),
-    setup_data = .geom_diamond_setup_data,
+    setup_data = .gd_setup_data,
     draw_key = draw_key_point,
-    draw_panel = .geom_diamond_draw_panel
+    draw_panel = .gd_draw_panel
 )
 
 

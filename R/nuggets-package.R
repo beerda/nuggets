@@ -83,6 +83,7 @@
 #' @importFrom stats aggregate
 #' @importFrom stats cor.test
 #' @importFrom stats kmeans
+#' @importFrom stats median
 #' @importFrom stats na.omit
 #' @importFrom stats pbinom
 #' @importFrom stats quantile

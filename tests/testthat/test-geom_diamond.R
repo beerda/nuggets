@@ -17,14 +17,14 @@
 #######################################################################
 
 
-test_that(".geom_diamond_setup_data (label = null, fill = null)", {
+test_that(".gd_setup_data (label = null, fill = null)", {
     d <- data.frame(
         condition = c("{}", "{a=1}", "{b=2}", "{a=1, b=2}", "{b=2, a=3}", "{b=2, a=4}"),
         stringsAsFactors = FALSE
     )
     params <- list(nudge_x = 0.2, nudge_y = -0.3)
 
-    res <- .geom_diamond_setup_data(d, params)
+    res <- .gd_setup_data(d, params)
     expect_true(is.data.frame(res))
     expect_true(is.null(res$fill))
     expect_equal(res$condition,
@@ -37,10 +37,6 @@ test_that(".geom_diamond_setup_data (label = null, fill = null)", {
                  c(0.0, -0.5, 0.5, -1.0, 0.0, 1.0))
     expect_equal(res$y,
                  c(0, 1, 1, 2, 2, 2))
-    expect_equal(res$xlabel,
-                 0.2 + c(0.0, -0.5, 0.5, -1.0, 0.0, 1.0))
-    expect_equal(res$ylabel,
-                 -0.3 + c(0, 1, 1, 2, 2, 2))
     expect_equal(res$xmin,
                  c(0.0, -0.5, 0.5, -1.0, 0.0, 1.0))
     expect_equal(res$xmax,
@@ -53,7 +49,7 @@ test_that(".geom_diamond_setup_data (label = null, fill = null)", {
                  #rep(0, 6))
 })
 
-test_that(".geom_diamond_setup_data (label = non-null, fill = non-null)", {
+test_that(".gd_setup_data (label = non-null, fill = non-null)", {
     d <- data.frame(
         condition = c("{}", "{a=1}", "{b=2}", "{a=1, b=2}", "{b=2, a=3}", "{b=2, a=4}"),
         label = c("empty", "a1", "b2", "a1b2", "b2a3", "b2a4"),
@@ -62,7 +58,7 @@ test_that(".geom_diamond_setup_data (label = non-null, fill = non-null)", {
     )
     params <- list(nudge_x = 0.2, nudge_y = -0.3)
 
-    res <- .geom_diamond_setup_data(d, params)
+    res <- .gd_setup_data(d, params)
     expect_true(is.data.frame(res))
     expect_equal(res$condition,
                  c("{}", "{a=1}", "{b=2}", "{a=1, b=2}", "{b=2, a=3}", "{b=2, a=4}"))
@@ -76,7 +72,7 @@ test_that(".geom_diamond_setup_data (label = non-null, fill = non-null)", {
                  #c(1, 1.5, 2, 1, 2, 0.5))
 })
 
-test_that(".geom_diamond_create_edges", {
+test_that(".gd_create_edges and .gd_format_edges", {
     x <- c(0.0, -0.5, 0.5, -1.0, 0.0, 1.0)
     y <- c(0.0,  1.0, 1.0,  2.0, 2.0, 2.0)
     d <- data.frame(
@@ -88,7 +84,9 @@ test_that(".geom_diamond_create_edges", {
         stringsAsFactors = FALSE
     )
 
-    res <- .geom_diamond_create_edges(d, linetype = "foo")
+    res <- .gd_create_edges(d)
+    res <- .gd_format_edges(d, res, linetype = "foo")
+
     expect_true(is.data.frame(res))
     expect_equal(res$row,
                  c(1, 1, 2, 3, 3, 3))
@@ -211,7 +209,7 @@ test_that("geom_diamond of single rule with empty condition", {
     })
 })
 
-test_that(".geom_diamond_draw_panel returns gList", {
+test_that(".gd_draw_panel returns gList", {
     pdf(NULL); on.exit(dev.off(), add = TRUE)
 
     # Prepare data that has been processed by setup_data
@@ -239,7 +237,7 @@ test_that(".geom_diamond_draw_panel returns gList", {
     coord <- ggplot2::coord_cartesian()
 
     # Call the function
-    result <- .geom_diamond_draw_panel(d, panel_params, coord)
+    result <- .gd_draw_panel(d, panel_params, coord)
 
     # Verify result is a gList
     expect_true(inherits(result, "gList"))
@@ -248,7 +246,7 @@ test_that(".geom_diamond_draw_panel returns gList", {
     expect_true(length(result) > 0)
 })
 
-test_that(".geom_diamond_draw_panel with edges (no curvature)", {
+test_that(".gd_draw_panel with edges (no curvature)", {
     pdf(NULL); on.exit(dev.off(), add = TRUE)
 
     # Create data with parent-child relationships (no curvature needed)
@@ -274,14 +272,14 @@ test_that(".geom_diamond_draw_panel with edges (no curvature)", {
     panel_params <- list()
     coord <- ggplot2::coord_cartesian()
 
-    result <- .geom_diamond_draw_panel(d, panel_params, coord,
+    result <- .gd_draw_panel(d, panel_params, coord,
                                        linetype = "solid")
 
     expect_true(inherits(result, "gList"))
     expect_true(length(result) > 0)
 })
 
-test_that(".geom_diamond_draw_panel with custom parameters", {
+test_that(".gd_draw_panel with custom parameters", {
     pdf(NULL); on.exit(dev.off(), add = TRUE)
 
     x <- c(0.0, -0.5, 0.5)
@@ -307,7 +305,7 @@ test_that(".geom_diamond_draw_panel with custom parameters", {
     coord <- ggplot2::coord_cartesian()
 
     # Test with custom linewidth and linetype
-    result <- .geom_diamond_draw_panel(d, panel_params, coord,
+    result <- .gd_draw_panel(d, panel_params, coord,
                                        linetype = "dashed",
                                        linewidth = 1.5,
                                        nudge_x = 0.2,
@@ -316,7 +314,7 @@ test_that(".geom_diamond_draw_panel with custom parameters", {
     expect_true(inherits(result, "gList"))
 })
 
-test_that(".geom_diamond_draw_panel with na.rm parameter", {
+test_that(".gd_draw_panel with na.rm parameter", {
     pdf(NULL); on.exit(dev.off(), add = TRUE)
 
     x <- c(0.0, -0.5, 0.5)
@@ -342,15 +340,15 @@ test_that(".geom_diamond_draw_panel with na.rm parameter", {
     coord <- ggplot2::coord_cartesian()
 
     # Test with na.rm = TRUE
-    result <- .geom_diamond_draw_panel(d, panel_params, coord, na.rm = TRUE)
+    result <- .gd_draw_panel(d, panel_params, coord, na.rm = TRUE)
     expect_true(inherits(result, "gList"))
 
     # Test with na.rm = FALSE
-    result <- .geom_diamond_draw_panel(d, panel_params, coord, na.rm = FALSE)
+    result <- .gd_draw_panel(d, panel_params, coord, na.rm = FALSE)
     expect_true(inherits(result, "gList"))
 })
 
-test_that(".geom_diamond_draw_panel with edges having different curvatures", {
+test_that(".gd_draw_panel with edges having different curvatures", {
     pdf(NULL); on.exit(dev.off(), add = TRUE)
 
     # Create a more complex lattice with edges that will have different curvatures
@@ -376,14 +374,14 @@ test_that(".geom_diamond_draw_panel with edges having different curvatures", {
     panel_params <- list()
     coord <- ggplot2::coord_cartesian()
 
-    result <- .geom_diamond_draw_panel(d, panel_params, coord)
+    result <- .gd_draw_panel(d, panel_params, coord)
 
     # Should produce a gList with curves, points, and labels
     expect_true(inherits(result, "gList"))
     expect_true(length(result) > 0)
 })
 
-test_that(".geom_diamond_draw_panel with varying linewidth", {
+test_that(".gd_draw_panel with varying linewidth", {
     pdf(NULL); on.exit(dev.off(), add = TRUE)
 
     # Test with different linewidth values to trigger edge styling
@@ -409,12 +407,12 @@ test_that(".geom_diamond_draw_panel with varying linewidth", {
     panel_params <- list()
     coord <- ggplot2::coord_cartesian()
 
-    result <- .geom_diamond_draw_panel(d, panel_params, coord)
+    result <- .gd_draw_panel(d, panel_params, coord)
 
     expect_true(inherits(result, "gList"))
 })
 
-test_that(".geom_diamond_draw_panel with empty edges", {
+test_that(".gd_draw_panel with empty edges", {
     pdf(NULL); on.exit(dev.off(), add = TRUE)
 
     # Single node with no edges
@@ -438,7 +436,7 @@ test_that(".geom_diamond_draw_panel with empty edges", {
     panel_params <- list()
     coord <- ggplot2::coord_cartesian()
 
-    result <- .geom_diamond_draw_panel(d, panel_params, coord)
+    result <- .gd_draw_panel(d, panel_params, coord)
 
     # Should still return a valid gList (with point and label, but no edges)
     expect_true(inherits(result, "gList"))
