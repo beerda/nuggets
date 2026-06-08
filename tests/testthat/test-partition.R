@@ -115,6 +115,139 @@ test_that("partition basics", {
 })
 
 
+test_that("partition unordered factor subsets", {
+    data <- data.frame(a = factor(c("a", "b", "b", "c", "d")))
+    expect_equal(partition(data,
+                           .keep = FALSE,
+                           .subsets = 1),
+                 tibble("a=a" = c(T, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F),
+                        "a=c" = c(F, F, F, T, F),
+                        "a=d" = c(F, F, F, F, T)))
+
+    expect_equal(partition(data,
+                           .keep = FALSE,
+                           .subsets = 2),
+                 tibble("a=a,b" = c(T, T, T, F, F),
+                        "a=a,c" = c(T, F, F, T, F),
+                        "a=a,d" = c(T, F, F, F, T),
+                        "a=b,c" = c(F, T, T, T, F),
+                        "a=b,d" = c(F, T, T, F, T),
+                        "a=c,d" = c(F, F, F, T, T)))
+
+    expect_equal(partition(data,
+                           .keep = FALSE,
+                           .subsets = 3),
+                 tibble("a=a,b,c" = c(T, T, T, T, F),
+                        "a=a,b,d" = c(T, T, T, F, T),
+                        "a=a,c,d" = c(T, F, F, T, T),
+                        "a=b,c,d" = c(F, T, T, T, T)))
+
+    expect_equal(partition(data,
+                           .keep = FALSE,
+                           .subsets = 1:2),
+                 tibble("a=a" = c(T, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F),
+                        "a=c" = c(F, F, F, T, F),
+                        "a=d" = c(F, F, F, F, T),
+                        "a=a,b" = c(T, T, T, F, F),
+                        "a=a,c" = c(T, F, F, T, F),
+                        "a=a,d" = c(T, F, F, F, T),
+                        "a=b,c" = c(F, T, T, T, F),
+                        "a=b,d" = c(F, T, T, F, T),
+                        "a=c,d" = c(F, F, F, T, T)))
+
+    expect_equal(partition(data,
+                           .keep = FALSE,
+                           .subsets = 1:3),
+                 tibble("a=a" = c(T, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F),
+                        "a=c" = c(F, F, F, T, F),
+                        "a=d" = c(F, F, F, F, T),
+                        "a=a,b" = c(T, T, T, F, F),
+                        "a=a,c" = c(T, F, F, T, F),
+                        "a=a,d" = c(T, F, F, F, T),
+                        "a=b,c" = c(F, T, T, T, F),
+                        "a=b,d" = c(F, T, T, F, T),
+                        "a=c,d" = c(F, F, F, T, T),
+                        "a=a,b,c" = c(T, T, T, T, F),
+                        "a=a,b,d" = c(T, T, T, F, T),
+                        "a=a,c,d" = c(T, F, F, T, T),
+                        "a=b,c,d" = c(F, T, T, T, T)))
+
+    expect_equal(partition(data,
+                           .keep = FALSE,
+                           .subsets = c(1, 3)),
+                 tibble("a=a" = c(T, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F),
+                        "a=c" = c(F, F, F, T, F),
+                        "a=d" = c(F, F, F, F, T),
+                        "a=a,b,c" = c(T, T, T, T, F),
+                        "a=a,b,d" = c(T, T, T, F, T),
+                        "a=a,c,d" = c(T, F, F, T, T),
+                        "a=b,c,d" = c(F, T, T, T, T)))
+})
+
+
+test_that("partition ordered factor subsets", {
+    data <- data.frame(a = factor(c("a", "b", "b", "c", "d"), ordered = TRUE))
+    expect_equal(partition(data,
+                           .keep = FALSE,
+                           .subsets = 1),
+                 tibble("a=a" = c(T, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F),
+                        "a=c" = c(F, F, F, T, F),
+                        "a=d" = c(F, F, F, F, T)))
+
+    expect_equal(partition(data,
+                           .keep = FALSE,
+                           .subsets = 2),
+                 tibble("a=a,b" = c(T, T, T, F, F),
+                        "a=b,c" = c(F, T, T, T, F),
+                        "a=c,d" = c(F, F, F, T, T)))
+
+    expect_equal(partition(data,
+                           .keep = FALSE,
+                           .subsets = 3),
+                 tibble("a=a,b,c" = c(T, T, T, T, F),
+                        "a=b,c,d" = c(F, T, T, T, T)))
+
+    expect_equal(partition(data,
+                           .keep = FALSE,
+                           .subsets = 1:2),
+                 tibble("a=a" = c(T, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F),
+                        "a=c" = c(F, F, F, T, F),
+                        "a=d" = c(F, F, F, F, T),
+                        "a=a,b" = c(T, T, T, F, F),
+                        "a=b,c" = c(F, T, T, T, F),
+                        "a=c,d" = c(F, F, F, T, T)))
+
+    expect_equal(partition(data,
+                           .keep = FALSE,
+                           .subsets = 1:3),
+                 tibble("a=a" = c(T, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F),
+                        "a=c" = c(F, F, F, T, F),
+                        "a=d" = c(F, F, F, F, T),
+                        "a=a,b" = c(T, T, T, F, F),
+                        "a=b,c" = c(F, T, T, T, F),
+                        "a=c,d" = c(F, F, F, T, T),
+                        "a=a,b,c" = c(T, T, T, T, F),
+                        "a=b,c,d" = c(F, T, T, T, T)))
+
+    expect_equal(partition(data,
+                           .keep = FALSE,
+                           .subsets = c(1, 3)),
+                 tibble("a=a" = c(T, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F),
+                        "a=c" = c(F, F, F, T, F),
+                        "a=d" = c(F, F, F, F, T),
+                        "a=a,b,c" = c(T, T, T, T, F),
+                        "a=b,c,d" = c(F, T, T, T, T)))
+})
+
+
 test_that("partition dummy", {
     expect_equal(partition(data.frame(a = 1:3),
                            .keep = FALSE,

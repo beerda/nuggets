@@ -15,6 +15,7 @@ partition(
   .method = "crisp",
   .style = "equal",
   .style_params = list(),
+  .subsets = 1,
   .right = TRUE,
   .span = 1,
   .inc = 1
@@ -53,6 +54,26 @@ a single integer.}
 \item{.style_params}{A named list of parameters passed to the interval
 computation method specified by \code{.style}. Used only if \code{.method = "crisp"}
 and \code{.breaks} is an integer.}
+
+\item{.subsets}{For factor columns, a vector of integers specifying which
+combinations of levels to create. The meaning of this argument depends on
+whether the factor is ordered or not.
+For \strong{unordered} factors, all subsets of the specified sizes are created.
+For example, \code{.subsets = 1} creates sets for each individual level,
+\code{.subsets = 2} creates sets for all pairs of levels, and \code{.subsets = 3}
+creates sets for all triples of levels, etc. If \code{.subsets} is a vector,
+all subset sizes in the vector are used. For example, \code{.subsets = 1:3}
+creates sets for all individual levels (1-subsets), all pairs of levels
+(2-subsets), and all triples of levels.
+For \strong{ordered} factors, subsets are restricted to consecutive levels only.
+That is, only adjacent sequences are used when forming combinations.
+For example,  \code{.subsets = 1} creates sets for each individual level,
+\code{.subsets = 2} creates sets for each pair of consecutive levels, and
+\code{.subsets = 3} creates sets for each triplet of consecutive levels, etc.
+As with unordered factors, if \code{.subsets} is a vector, all specified subset
+sizes are used. For example, \code{.subsets = 1:3} creates sets for all
+individual levels (1-subsets), all pairs of consecutive levels (2-subsets),
+and all triplets of consecutive levels (3-subsets).}
 
 \item{.right}{For \code{"crisp"}, whether intervals are right-closed and
 left-open (\code{TRUE}), or left-closed and right-open (\code{FALSE}).}

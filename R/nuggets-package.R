@@ -104,6 +104,7 @@
 #' @importFrom tidyselect everything
 #' @importFrom tidyselect where
 #' @importFrom utils citation
+#' @importFrom utils combn
 #' @importFrom utils packageDescription
 #' @useDynLib nuggets, .registration = TRUE
 ## usethis namespace: end

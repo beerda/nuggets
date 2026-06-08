@@ -1,5 +1,8 @@
 # nuggets 2.3.0
 - released: ???
+- enhanced placement of nodes in geom_diamond() to reduce edge crossing
+- added .subsets argument to partition() that enables partitioning by subsets of
+  factor levels
 
 # nuggets 2.2.0
 - released: 2026-03-11

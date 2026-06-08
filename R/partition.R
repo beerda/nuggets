@@ -159,6 +159,25 @@
 #' @param .style_params A named list of parameters passed to the interval
 #'   computation method specified by `.style`. Used only if `.method = "crisp"`
 #'   and `.breaks` is an integer.
+#' @param .subsets For factor columns, a vector of integers specifying which
+#'   combinations of levels to create. The meaning of this argument depends on
+#'   whether the factor is ordered or not.
+#'   For **unordered** factors, all subsets of the specified sizes are created.
+#'   For example, `.subsets = 1` creates sets for each individual level,
+#'   `.subsets = 2` creates sets for all pairs of levels, and `.subsets = 3`
+#'   creates sets for all triples of levels, etc. If `.subsets` is a vector,
+#'   all subset sizes in the vector are used. For example, `.subsets = 1:3`
+#'   creates sets for all individual levels (1-subsets), all pairs of levels
+#'   (2-subsets), and all triples of levels.
+#'   For **ordered** factors, subsets are restricted to consecutive levels only.
+#'   That is, only adjacent sequences are used when forming combinations.
+#'   For example,  `.subsets = 1` creates sets for each individual level,
+#'   `.subsets = 2` creates sets for each pair of consecutive levels, and
+#'   `.subsets = 3` creates sets for each triplet of consecutive levels, etc.
+#'   As with unordered factors, if `.subsets` is a vector, all specified subset
+#'   sizes are used. For example, `.subsets = 1:3` creates sets for all
+#'   individual levels (1-subsets), all pairs of consecutive levels (2-subsets),
+#'   and all triplets of consecutive levels (3-subsets).
 #' @param .right For `"crisp"`, whether intervals are right-closed and
 #'   left-open (`TRUE`), or left-closed and right-open (`FALSE`).
 #' @param .span Number of consecutive breaks forming a set. For `"crisp"`,
@@ -217,6 +236,7 @@ partition <- function(.data,
                       .method = "crisp",
                       .style = "equal",
                       .style_params = list(),
+                      .subsets = 1,
                       .right = TRUE,
                       .span = 1,
                       .inc = 1) {
@@ -229,9 +249,16 @@ partition <- function(.data,
     .must_be_enum(.style, c("equal", "quantile", "kmeans", "sd", "hclust", "bclust",
                             "fisher", "jenks", "dpih", "headtails", "maximum", "box"))
     .must_be_list(.style_params)
+
+    .must_be_integerish_vector(.subsets)
+    .must_not_be_empty(.subsets)
+    .must_be_greater_eq(.subsets, 1)
+
     .must_be_flag(.right)
+
     .must_be_integerish_scalar(.span)
     .must_be_greater_eq(.span, 1)
+
     .must_be_integerish_scalar(.inc)
     .must_be_greater_eq(.inc, 1)
 
@@ -241,6 +268,7 @@ partition <- function(.data,
                   call = current_env())
     }
 
+    .subsets <- sort(unique(as.integer(.subsets)))
     emptydf <- as_tibble(data.frame(matrix(NA, nrow = nrow(.data), ncol = 0)))
     call <- current_env()
 
@@ -287,11 +315,11 @@ partition <- function(.data,
             colnames(res) <- paste0(colname, "=", c("T", "F"))
 
         } else if (is.factor(x)) {
-            res <- .partition_factor(x, colname)
+            res <- .partition_factor(x, colname, .subsets)
 
         } else if (is.numeric(x)) {
             if (.method == "dummy") {
-                res <- .partition_factor(as.factor(x), colname)
+                res <- .partition_factor(as.ordered(x), colname, .subsets)
 
             } else if (is.null(.breaks)) {
                 cli_abort(c("{.arg .breaks} must not be NULL in order to partition numeric column {.field {colname}}."),
@@ -339,9 +367,37 @@ partition <- function(.data,
 }
 
 
-.partition_factor <- function(x, colname) {
-    res <- lapply(levels(x), function(lev) !is.na(x) & x == lev)
-    names(res) <- paste0(colname, "=", .sanitize_predicate_name(levels(x)))
+.generate_seq <- function(len, m, FUN) {
+    starts <- seq(from = 1, to = len - m + 1)
+    lapply(starts, function(i) FUN(i:(i + m - 1)))
+}
+
+
+.generate_comb <- function(len, m, FUN) {
+    combn(x = len, m = m, FUN = FUN, simplify = FALSE)
+}
+
+
+.partition_factor <- function(x, colname, subsets) {
+    items <- lapply(levels(x), function(lev) !is.na(x) & x == lev)
+    names(items) <- .sanitize_predicate_name(levels(x))
+
+    inner_fun <- function(i) {
+        r <- list(Reduce(`|`, items[i]))
+        names(r) <- paste0(names(items)[i], collapse = ",")
+
+        r
+    }
+
+    fun <- if (is.ordered(x)) .generate_seq else .generate_comb
+    res <- list()
+    for (s in subsets) {
+        new_comb <- fun(length(items), s, inner_fun)
+        new_comb <- do.call(c, new_comb)
+        res <- c(res, new_comb)
+    }
+
+    names(res) <- paste0(colname, "=", names(res))
 
     as_tibble(res)
 }

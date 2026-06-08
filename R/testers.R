@@ -136,6 +136,17 @@
 }
 
 
+.must_not_be_empty <- function(x,
+                               arg = caller_arg(x),
+                               call = caller_env()) {
+    if (length(x) == 0) {
+        cli_abort(c("{.arg {arg}} must not be empty.",
+                    "x" = "{.arg {arg}} has length {.val 0}."),
+                  call = call)
+    }
+}
+
+
 .must_inherit <- function(x,
                           clazz,
                           null = FALSE,

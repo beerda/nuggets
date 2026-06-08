@@ -556,6 +556,20 @@ test_that(".must_not_be_null", {
 })
 
 
+# Test .must_not_be_empty
+test_that(".must_not_be_empty", {
+    # Valid cases
+    expect_no_error(.must_not_be_empty(1:5))
+    expect_no_error(.must_not_be_empty(c("a", "b")))
+
+    # Error cases
+    expect_error(.must_not_be_empty(integer(0)), "must not be empty")
+    expect_error(.must_not_be_empty(character(0)), "must not be empty")
+    expect_error(.must_not_be_empty(list()), "must not be empty")
+    expect_error(.must_not_be_empty(matrix(0, nrow = 0, ncol = 2)), "must not be empty")
+})
+
+
 # Test .must_inherit
 test_that(".must_inherit", {
     # Valid cases
