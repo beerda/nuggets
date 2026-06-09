@@ -17,60 +17,124 @@
 #######################################################################
 
 
-#' @title Convert columns of a data frame to Boolean or fuzzy sets (triangular, trapezoidal, or raised-cosine)
+#' @title Convert data-frame columns into Boolean or fuzzy predicates
 #'
 #' @description
-#' Transform selected columns of a data frame into either dummy logical
-#' variables or membership degrees of fuzzy sets, while leaving all remaining
-#' columns unchanged. Each transformed column typically produces multiple new
-#' columns in the output.
+#' Transform selected columns of a data frame into Boolean predicates
+#' (logical indicator columns) or fuzzy predicates (numeric membership degrees
+#' between 0 and 1), while leaving all unselected columns unchanged.
 #'
-#' These transformations are most often used as a preprocessing step before
-#' calling [dig()] or one of its derivatives, such as
+#' The function is a general-purpose transformation utility, but it is
+#' primarily intended as a preprocessing step for predicate-based pattern
+#' discovery with [dig()] and related functions such as
 #' [dig_correlations()], [dig_paired_baseline_contrasts()],
-#' or [dig_associations()].
+#' and [dig_associations()].
 #'
-#' The transformation depends on the column type:
-#' - **logical** column `x` is expanded into two logical columns:
-#'   `x=TRUE` and `x=FALSE`;
-#' - **factor** column `x` with levels `l1`, `l2`, `l3` becomes three
-#'   logical columns: `x=l1`, `x=l2`, and `x=l3`;
-#' - **numeric** column `x` is transformed according to `.method`:
-#'   - `.method = "dummy"`: the column is treated as a factor with one level
-#'     per unique value, then expanded into dummy columns;
-#'   - `.method = "crisp"`: the column is discretized into intervals (defined
-#'     by `.breaks`, `.style`, and `.style_params`) and expanded into dummy
-#'     columns representing those intervals;
-#'   - `.method = "triangle"` or `.method = "raisedcos"`: the column is
-#'     converted into one or more fuzzy sets, each represented by membership
-#'     degrees in \eqn{[0,1]} (triangular or raised-cosine shaped).
+#' Depending on the type of each selected column, `partition()` creates one or
+#' more derived columns:
+#' - **logical** columns become predicates for `TRUE` and `FALSE`;
+#' - **factor** columns become predicates for selected subsets of levels;
+#' - **numeric** columns are transformed according to `.method` into dummy,
+#'   crisp, or fuzzy predicates.
 #'
-#' Details of numeric transformations are controlled by `.breaks`, `.labels`,
-#' `.style`, `.style_params`, `.right`, `.span`, and `.inc`.
+#' The selectors supplied in `.what` and `...` are combined using standard
+#' tidyselect rules. Duplicate selections are removed by the selection
+#' mechanism. Selection may be empty; in that case, `.data` is returned
+#' unchanged as a tibble.
+#'
+#' Generated columns are appended after the retained original columns.
+#' By default, the original selected columns are removed (`.keep = FALSE`);
+#' unselected columns are always preserved.
+#'
+#' Predicate names are sanitized to make them suitable as column names.
+#' Sanitization is applied to original column names and to individual factor
+#' level names.
 #'
 #' @details
-#' * Crisp partitioning is efficient and works well when attributes have
-#'   distinct categories or clear boundaries.
-#' * Fuzzy partitioning is recommended for modeling gradual changes or
-#'   uncertainty, allowing smooth category transitions at a higher
-#'   computational cost.
+#' `partition()` converts selected variables into a predicate representation
+#' useful for searching for relationships, associations, and other patterns.
+#'
+#' For logical and factor inputs, the result consists of logical columns.
+#' For numeric inputs, the result depends on `.method`:
+#' - `"dummy"` creates logical predicates for observed numeric values treated
+#'   as ordered categories;
+#' - `"crisp"` creates logical interval predicates;
+#' - `"triangle"` and `"raisedcos"` create numeric membership degrees in
+#'   \eqn{[0,1]}.
+#'
+#' Missing values do not belong to ordinary generated predicates. If `.na = TRUE`
+#' and a transformed source column contains at least one missing value, an
+#' additional logical predicate `x=NA` is added.
+#'
+#' For numeric inputs other than `.method = "dummy"`, `.breaks` must be
+#' supplied. If it is a numeric vector, it is sorted automatically.
+#'
+#' @section Logical columns:
+#'
+#' A logical column `x` is expanded into two logical predicates:
+#' - `x=T` for rows where `x` is `TRUE`;
+#' - `x=F` for rows where `x` is `FALSE`.
+#'
+#' Missing values are excluded from both predicates. If `.na = TRUE` and the
+#' column contains missing values, `x=NA` is added.
+#'
+#' For logical columns, `.breaks`, `.labels`, `.method`, `.style`,
+#' `.style_params`, `.subsets`, `.right`, `.span`, and `.inc` are ignored.
+#'
+#' @section Factor columns:
+#'
+#' A factor column is expanded into logical predicates representing subsets of
+#' its levels. The subset sizes are controlled by `.subsets`.
+#'
+#' For an **unordered** factor, all subsets of the requested sizes are created.
+#' For an **ordered** factor, only subsets formed by consecutive levels are
+#' created.
+#'
+#' For example, if `x` has levels `a`, `b`, `c`, `d`:
+#' - `.subsets = 1` creates predicates for `a`, `b`, `c`, and `d`;
+#' - `.subsets = 2` creates all pairs if `x` is unordered;
+#' - `.subsets = 2` creates only `a,b`, `b,c`, `c,d` if `x` is ordered.
+#'
+#' Subset sizes equal to the total number of levels are rejected, because they
+#' would produce a predicate that is always `TRUE` for all non-missing values.
+#'
+#' If `.na = TRUE` and the factor contains missing values, `x=NA` is added.
+#'
+#' For factor columns, `.breaks`, `.labels`, `.method`, `.style`,
+#' `.style_params`, `.right`, `.span`, and `.inc` are ignored.
+#'
+#' @section Numeric columns with `.method = "dummy"`:
+#'
+#' A numeric column is treated as an ordered categorical variable with one
+#' category for each observed value, and is then partitioned like an ordered
+#' factor.
+#'
+#' Thus, `.subsets = 1` creates predicates for individual values, `.subsets = 2`
+#' creates predicates for consecutive pairs of values, and so on.
+#'
+#' This method can generate many predicates when the column has many distinct
+#' values.
+#'
+#' If `.na = TRUE` and the column contains missing values, `x=NA` is added.
+#'
+#' For numeric columns with `.method = "dummy"`, `.breaks`, `.labels`,
+#' `.style`, `.style_params`, `.right`, `.span`, and `.inc` are ignored.
 #'
 #' @section Crisp transformation of numeric data:
 #'
-#' For `.method = "crisp"`, numeric columns are discretized into a set of
-#' dummy logical variables, each representing one interval of values.
+#' For `.method = "crisp"`, a numeric column is transformed into logical
+#' predicates representing intervals.
 #'
-#' * If `.breaks` is an integer, it specifies the number of intervals into
-#'   which the column should be divided. The intervals are determined using
-#'   the `.style` and `.style_params` arguments, allowing not only equal-width
-#'   but also data-driven breakpoints (e.g., quantile or k-means based).
-#'   The first and last intervals automatically extend to infinity.
-#' * If `.breaks` is a numeric vector, it specifies interval boundaries
-#'   directly. Infinite values are allowed.
+#' If `.breaks` is a single integer, it specifies the number of output
+#' intervals. Breakpoints are computed automatically according to `.style`
+#' and `.style_params`, and the outermost intervals are extended to `-Inf`
+#' and `Inf`.
 #'
-#' The `.style` argument defines *how* breakpoints are computed when
-#' `.breaks` is an integer. Supported methods (from
-#' [classInt::classIntervals()]) include:
+#' If `.breaks` is a numeric vector, it directly specifies the sequence of
+#' break boundaries used to construct the interval predicates.
+#'
+#' Supported values of `.style` correspond to methods in
+#' [classInt::classIntervals()]:
 #'
 #' - `"equal"` – equal-width intervals across the column range (default);
 #' - `"quantile"` – equal-frequency intervals (see [quantile()] for additional
@@ -98,99 +162,161 @@
 #' `.style_params = list(algorithm = "Lloyd")` to request Lloyd's algorithm
 #' for k-means clustering.
 #'
-#' With `.span = 1` and `.inc = 1`, the generated intervals are consecutive
-#' and non-overlapping. For example, with
-#' `.breaks = c(1, 3, 5, 7, 9, 11)` and `.right = TRUE`,
-#' the intervals are \eqn{(1;3]}, \eqn{(3;5]}, \eqn{(5;7]}, \eqn{(7;9]},
-#' and \eqn{(9;11]}. If `.right = FALSE`, the intervals are left-closed:
-#' \eqn{[1;3)}, \eqn{[3;5)}, etc.
+#' The argument `.right` controls interval closure:
+#' - if `TRUE`, intervals are left-open and right-closed, e.g. \eqn{(1;3]};
+#' - if `FALSE`, intervals are left-closed and right-open, e.g. \eqn{[1;3)}.
 #'
-#' Larger `.span` values produce overlapping intervals. For example, with
-#' `.span = 2`, `.inc = 1`, and `.right = TRUE`, intervals are
-#' \eqn{(1;5]}, \eqn{(3;7]}, \eqn{(5;9]}, \eqn{(7;11]}.
+#' The argument `.span` controls how many consecutive elementary intervals are
+#' merged into each predicate. The argument `.inc` controls by how many break
+#' positions the construction window is shifted between successive predicates.
 #'
-#' The `.inc` argument controls how far the window shifts along `.breaks`.
-#' * `.span = 1`, `.inc = 2` → \eqn{(1;3]}, \eqn{(5;7]}, \eqn{(9;11]}.
-#' * `.span = 2`, `.inc = 3` → \eqn{(1;5]}, \eqn{(9;11]}.
+#' With `.span = 1` and `.inc = 1`, the resulting intervals are consecutive and
+#' non-overlapping. Larger `.span` values produce wider, overlapping intervals;
+#' larger `.inc` values skip some possible windows.
 #'
 #' @section Fuzzy transformation of numeric data:
 #'
-#' For `.method = "triangle"` or `.method = "raisedcos"`, numeric columns are
-#' converted into fuzzy membership degrees in \eqn{[0,1]}.
+#' For `.method = "triangle"` or `.method = "raisedcos"`, a numeric column is
+#' transformed into fuzzy predicates represented by membership degrees in
+#' \eqn{[0,1]}.
 #'
-#' * If `.breaks` is an integer, it specifies the number of fuzzy sets.
-#' * If `.breaks` is a numeric vector, it directly defines fuzzy set
-#'   boundaries. Infinite values produce open-ended sets.
+#' If `.breaks` is a single integer, it specifies the number of fuzzy sets.
+#' If `.breaks` is a numeric vector, it specifies the sequence of boundary
+#' points from which fuzzy predicates are constructed.
 #'
-#' With `.span = 1`, each fuzzy set is defined by three consecutive breaks:
-#' membership is 0 outside the outer breaks, rises to 1 at the middle break,
-#' then decreases back to 0 — yielding triangular or raised-cosine sets.
+#' The argument `.span` controls shape:
+#' - with `.span = 1`, predicates are triangular (`"triangle"`) or
+#'   raised-cosine (`"raisedcos"`);
+#' - with `.span > 1`, predicates are trapezoidal, with a rising edge,
+#'   a plateau, and a falling edge.
 #'
-#' With `.span > 1`, fuzzy sets use four consecutive breaks: membership
-#' increases between the first two, remains 1 between the middle two, and
-#' decreases between the last two — creating trapezoidal sets. Border shapes
-#' are linear for `.method = "triangle"` and cosine for `.method = "raisedcos"`.
+#' The argument `.inc` controls by how many break positions the construction
+#' window is shifted between successive predicates.
 #'
-#' The `.inc` argument defines the step between break windows:
-#' * `.span = 1`, `.inc = 1` → \eqn{(1;3;5)}, \eqn{(3;5;7)}, \eqn{(5;7;9)}, \eqn{(7;9;11)}.
-#' * `.span = 2`, `.inc = 1` → \eqn{(1;3;5;7)}, \eqn{(3;5;7;9)}, \eqn{(5;7;9;11)}.
-#' * `.span = 1`, `.inc = 3` → \eqn{(1;3;5)}, \eqn{(7;9;11)}.
+#' The method `"triangle"` uses linear slopes; `"raisedcos"` uses
+#' cosine-smoothed slopes.
 #'
-#' @param .data A data frame to be processed.
-#' @param .what A tidyselect expression (see
-#'   [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
-#'   selecting the columns to transform.
+#' If `.breaks` includes `-Inf` or `Inf`, the corresponding boundary predicates
+#' become open-ended.
+#'
+#' @param .data A data frame to be transformed.
+#' @param .what A tidyselect expression selecting columns to transform.
 #' @param ... Additional tidyselect expressions selecting more columns.
-#' @param .breaks Ignored if `.method = "dummy"`. For other methods, either
-#'   an integer (number of intervals/sets) or a numeric vector of breakpoints.
-#' @param .labels Optional character vector with labels used for new column
-#'   names. If `NULL`, labels are generated automatically.
-#' @param .na If `TRUE`, adds an extra logical column for each source column
-#'   containing `NA` values (e.g., `x=NA`).
-#' @param .keep If `TRUE`, keep original columns in the output.
-#' @param .method Transformation method for numeric columns: `"dummy"`,
-#'   `"crisp"`, `"triangle"`, or `"raisedcos"`.
-#' @param .style Controls how breakpoints are determined when `.breaks` is an
-#'   integer. Values correspond to methods in [classInt::classIntervals()],
-#'   e.g., `"equal"`, `"quantile"`, `"kmeans"`, `"sd"`, `"hclust"`, `"bclust"`,
-#'   `"fisher"`, `"jenks"`, `"dpih"`, `"headtails"`, `"maximum"`, `"box"`.
-#'   Defaults to `"equal"`. Used only if `.method = "crisp"` and `.breaks` is
-#'   a single integer.
-#' @param .style_params A named list of parameters passed to the interval
-#'   computation method specified by `.style`. Used only if `.method = "crisp"`
-#'   and `.breaks` is an integer.
-#' @param .subsets For factor columns, a vector of integers specifying which
-#'   combinations of levels to create. The meaning of this argument depends on
-#'   whether the factor is ordered or not.
-#'   For **unordered** factors, all subsets of the specified sizes are created.
-#'   For example, `.subsets = 1` creates sets for each individual level,
-#'   `.subsets = 2` creates sets for all pairs of levels, and `.subsets = 3`
-#'   creates sets for all triples of levels, etc. If `.subsets` is a vector,
-#'   all subset sizes in the vector are used. For example, `.subsets = 1:3`
-#'   creates sets for all individual levels (1-subsets), all pairs of levels
-#'   (2-subsets), and all triples of levels.
-#'   For **ordered** factors, subsets are restricted to consecutive levels only.
-#'   That is, only adjacent sequences are used when forming combinations.
-#'   For example,  `.subsets = 1` creates sets for each individual level,
-#'   `.subsets = 2` creates sets for each pair of consecutive levels, and
-#'   `.subsets = 3` creates sets for each triplet of consecutive levels, etc.
-#'   As with unordered factors, if `.subsets` is a vector, all specified subset
-#'   sizes are used. For example, `.subsets = 1:3` creates sets for all
-#'   individual levels (1-subsets), all pairs of consecutive levels (2-subsets),
-#'   and all triplets of consecutive levels (3-subsets).
-#' @param .right For `"crisp"`, whether intervals are right-closed and
-#'   left-open (`TRUE`), or left-closed and right-open (`FALSE`).
-#' @param .span Number of consecutive breaks forming a set. For `"crisp"`,
-#'   controls interval width. For `"triangle"`/`"raisedcos"`, `.span = 1`
-#'   produces triangular sets, `.span = 2` trapezoidal sets.
-#' @param .inc Step size for shifting breaks when generating successive sets.
-#'   With `.inc = 1`, all possible sets are created; larger values skip sets.
+#'   All selectors from `.what` and `...` are combined using standard
+#'   tidyselect behavior.
+#' @param .breaks For numeric columns with `.method = "crisp"`,
+#'   `"triangle"`, or `"raisedcos"`, either:
+#'   - a single integer, interpreted as the number of output intervals
+#'     (`"crisp"`) or fuzzy sets (`"triangle"`, `"raisedcos"`), or
+#'   - a numeric vector of breakpoints.
 #'
-#' @return A tibble with `.data` transformed into Boolean or fuzzy predicates.
+#'   Ignored for logical columns, factor columns, and numeric columns with
+#'   `.method = "dummy"`. If `.method != "dummy"` for a numeric column and
+#'   `.breaks` is `NULL`, an error is raised.
+#' @param .labels Optional character vector used to name numeric interval or
+#'   fuzzy predicates. If `NULL`, labels are generated automatically.
+#'
+#'   Used only for numeric columns with `.method = "crisp"`, `"triangle"`,
+#'   or `"raisedcos"`. Ignored otherwise.
+#' @param .na If `TRUE`, add a logical predicate `x=NA` for each transformed
+#'   source column that contains at least one missing value.
+#' @param .keep If `TRUE`, keep the original selected columns in the output.
+#'   If `FALSE`, remove them after transformation. Unselected columns are
+#'   always preserved.
+#' @param .method Transformation method for selected numeric columns:
+#'   - `"dummy"` – treat numeric values as ordered categories and create
+#'     logical predicates;
+#'   - `"crisp"` – create logical interval predicates;
+#'   - `"triangle"` – create fuzzy predicates with linear slopes;
+#'   - `"raisedcos"` – create fuzzy predicates with cosine-smoothed slopes.
+#'
+#'   Ignored for logical and factor columns.
+#' @param .style Method used to compute breakpoints when `.method = "crisp"`
+#'   and `.breaks` is a single integer. Supported values correspond to methods
+#'   in [classInt::classIntervals()], e.g., `"equal"`, `"quantile"`, `"kmeans"`,
+#'   `"sd"`, `"hclust"`, `"bclust"`, `"fisher"`, `"jenks"`, `"dpih"`,
+#'   `"headtails"`, `"maximum"`, `"box"`.  Defaults to `"equal"`.
+#'
+#'   Ignored for logical columns, factor columns, numeric columns with
+#'   `.method = "dummy"`, and numeric columns where `.breaks` is a vector.
+#' @param .style_params A named list of additional parameters passed to the
+#'   breakpoint computation method specified by `.style`.
+#'
+#'   Used only when `.method = "crisp"` and `.breaks` is a single integer.
+#' @param .subsets For factor columns, and for numeric columns with
+#'   `.method = "dummy"`, an integer vector specifying the sizes of level
+#'   subsets for which predicates should be created.
+#'
+#'   For unordered factors, all subsets of the requested sizes are created.
+#'   For ordered factors, and for numeric columns with `.method = "dummy"`,
+#'   only subsets of consecutive values are created.
+#'
+#'   Subset sizes equal to the total number of available levels are rejected,
+#'   because they would produce a predicate that is always `TRUE` for all
+#'   non-missing values.
+#'
+#'   Ignored for logical columns and for numeric columns with `.method =
+#'   "crisp"`, `"triangle"`, or `"raisedcos"`.
+#' @param .right For numeric columns with `.method = "crisp"`, whether
+#'   intervals are right-closed and left-open (`TRUE`) or left-closed and
+#'   right-open (`FALSE`). Ignored otherwise.
+#' @param .span For numeric columns:
+#'   - with `.method = "crisp"`, the number of consecutive elementary
+#'     intervals merged into one predicate;
+#'   - with `.method = "triangle"` or `"raisedcos"`, controls whether fuzzy
+#'     predicates are triangular (`.span = 1`) or trapezoidal (`.span > 1`).
+#'
+#'   Ignored for logical columns, factor columns, and numeric columns with
+#'   `.method = "dummy"`.
+#' @param .inc For numeric columns with `.method = "crisp"`, `"triangle"`, or
+#'   `"raisedcos"`, the number of break positions by which the construction
+#'   window is shifted between successive predicates.
+#'
+#'   Ignored for logical columns, factor columns, and numeric columns with
+#'   `.method = "dummy"`.
+#'
+#' @return
+#' A tibble in which selected columns have been replaced or supplemented by
+#' generated Boolean or fuzzy predicates.
+#'
+#' If `.keep = FALSE`, the original selected columns are removed. If
+#' `.keep = TRUE`, they are retained. Unselected columns are always preserved.
+#' Generated predicate columns are appended after the retained original columns.
 #'
 #' @author Michal Burda
 #'
 #' @examples
+#' # Logical column -> predicates for TRUE and FALSE
+#' x <- tibble::tibble(a = c(TRUE, FALSE, NA, TRUE))
+#' partition(x, a)
+#'
+#' # Factor column -> predicates for individual levels
+#' x <- tibble::tibble(a = factor(c("low", "medium", "high", NA)))
+#' partition(x, a)
+#'
+#' # Unordered factor -> predicates for all pairs of levels
+#' x <- tibble::tibble(a = factor(c("a", "b", "c", "a")))
+#' partition(x, a, .subsets = 2)
+#'
+#' # Ordered factor -> only consecutive subsets are created
+#' x <- tibble::tibble(a = ordered(c("low", "medium", "high", "medium"),
+#'                                 levels = c("low", "medium", "high")))
+#' partition(x, a, .subsets = 2)
+#'
+#' # Keep original selected columns
+#' partition(CO2, Plant, .keep = TRUE)
+#'
+#' # Suppress explicit NA predicate
+#' x <- tibble::tibble(a = c(TRUE, FALSE, NA))
+#' partition(x, a, .na = FALSE)
+#'
+#' # Numeric data treated as ordered categories
+#' x <- tibble::tibble(a = c(1, 2, 2, 3, 4))
+#' partition(x, a, .method = "dummy")
+#'
+#' # Numeric data treated as ordered categories with consecutive pairs
+#' partition(x, a, .method = "dummy", .subsets = 2)
+#'
 #' # Crisp transformation using equal-width bins
 #' partition(CO2, conc, .method = "crisp", .breaks = 4)
 #'
@@ -200,21 +326,47 @@
 #' # Crisp transformation using k-means clustering for breakpoints
 #' partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "kmeans")
 #'
-#' # Crisp transformation using Lloyd algorithm for k-means clustering for breakpoints
+#' # Crisp transformation using Lloyd algorithm for k-means breakpoints
 #' partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "kmeans",
 #'           .style_params = list(algorithm = "Lloyd"))
 #'
-#' # Fuzzy triangular transformation (default)
+#' # Crisp transformation with manually specified breaks
+#' partition(CO2, conc, .method = "crisp",
+#'           .breaks = c(-Inf, 200, 500, 800, Inf))
+#'
+#' # Crisp transformation with overlapping intervals
+#' partition(CO2, conc, .method = "crisp",
+#'           .breaks = c(1, 3, 5, 7, 9, 11),
+#'           .span = 2, .inc = 1)
+#'
+#' # Crisp transformation with left-closed, right-open intervals
+#' partition(CO2, conc, .method = "crisp", .breaks = 4, .right = FALSE)
+#'
+#' # Fuzzy triangular transformation
 #' partition(CO2, conc:uptake, .method = "triangle", .breaks = 3)
 #'
-#' # Raised-cosine fuzzy sets
+#' # Raised-cosine fuzzy predicates
 #' partition(CO2, conc:uptake, .method = "raisedcos", .breaks = 3)
 #'
-#' # Overlapping trapezoidal fuzzy sets (Ruspini condition)
+#' # Trapezoidal fuzzy predicates
+#' partition(CO2, conc:uptake, .method = "triangle", .breaks = 3, .span = 2)
+#'
+#' # Overlapping trapezoidal fuzzy predicates (Ruspini condition)
 #' partition(CO2, conc:uptake, .method = "triangle", .breaks = 3,
 #'           .span = 2, .inc = 2)
 #'
-#' # Different settings per column
+#' # Fuzzy transformation with manually specified breaks
+#' partition(CO2, uptake,
+#'           .method = "triangle",
+#'           .breaks = c(-Inf, 7.7, 28.3, 45.5, Inf))
+#'
+#' # Fuzzy transformation with custom labels
+#' partition(CO2, uptake,
+#'           .method = "triangle",
+#'           .breaks = c(-Inf, 7.7, 28.3, 45.5, Inf),
+#'           .labels = c("low", "medium", "high"))
+#'
+#' # Different settings can be applied in successive calls
 #' CO2 |>
 #'   partition(Plant:Treatment) |>
 #'   partition(conc,
@@ -444,7 +596,7 @@ partition <- function(.data,
                 if (length(br) != n) {
                     stop("fatal in .prepare_crisp()")
                 }
-                cli_abort(c("If {.arg .breaks} is non-scalar, the length of {.arg .labels} must be equal to (length({.arg .breaks}) - {.arg .span} - 1) / {.arg .inc} + 1.",
+                cli_abort(c("If {.arg .breaks} is non-scalar, the length of {.arg .labels} must be equal to 1 + (length({.arg .breaks}) - {.arg .span} - 1) / {.arg .inc}.",
                             "i"="The length of {.arg .labels} is {.val {length(labels)}}.",
                             "i"="The length of {.arg .breaks} is {.val {length(breaks)}}.",
                             "i"="The value of {.arg .span} is {.val {span}}.",

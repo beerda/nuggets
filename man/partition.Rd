@@ -2,7 +2,7 @@
 % Please edit documentation in R/partition.R
 \name{partition}
 \alias{partition}
-\title{Convert columns of a data frame to Boolean or fuzzy sets (triangular, trapezoidal, or raised-cosine)}
+\title{Convert data-frame columns into Boolean or fuzzy predicates}
 \usage{
 partition(
   .data,
@@ -22,132 +22,239 @@ partition(
 )
 }
 \arguments{
-\item{.data}{A data frame to be processed.}
+\item{.data}{A data frame to be transformed.}
 
-\item{.what}{A tidyselect expression (see
-\href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
-selecting the columns to transform.}
+\item{.what}{A tidyselect expression selecting columns to transform.}
 
-\item{...}{Additional tidyselect expressions selecting more columns.}
+\item{...}{Additional tidyselect expressions selecting more columns.
+All selectors from \code{.what} and \code{...} are combined using standard
+tidyselect behavior.}
 
-\item{.breaks}{Ignored if \code{.method = "dummy"}. For other methods, either
-an integer (number of intervals/sets) or a numeric vector of breakpoints.}
+\item{.breaks}{For numeric columns with \code{.method = "crisp"},
+\code{"triangle"}, or \code{"raisedcos"}, either:
+\itemize{
+\item a single integer, interpreted as the number of output intervals
+(\code{"crisp"}) or fuzzy sets (\code{"triangle"}, \code{"raisedcos"}), or
+\item a numeric vector of breakpoints.
+}
 
-\item{.labels}{Optional character vector with labels used for new column
-names. If \code{NULL}, labels are generated automatically.}
+Ignored for logical columns, factor columns, and numeric columns with
+\code{.method = "dummy"}. If \code{.method != "dummy"} for a numeric column and
+\code{.breaks} is \code{NULL}, an error is raised.}
 
-\item{.na}{If \code{TRUE}, adds an extra logical column for each source column
-containing \code{NA} values (e.g., \code{x=NA}).}
+\item{.labels}{Optional character vector used to name numeric interval or
+fuzzy predicates. If \code{NULL}, labels are generated automatically.
 
-\item{.keep}{If \code{TRUE}, keep original columns in the output.}
+Used only for numeric columns with \code{.method = "crisp"}, \code{"triangle"},
+or \code{"raisedcos"}. Ignored otherwise.}
 
-\item{.method}{Transformation method for numeric columns: \code{"dummy"},
-\code{"crisp"}, \code{"triangle"}, or \code{"raisedcos"}.}
+\item{.na}{If \code{TRUE}, add a logical predicate \code{x=NA} for each transformed
+source column that contains at least one missing value.}
 
-\item{.style}{Controls how breakpoints are determined when \code{.breaks} is an
-integer. Values correspond to methods in \code{\link[classInt:classIntervals]{classInt::classIntervals()}},
-e.g., \code{"equal"}, \code{"quantile"}, \code{"kmeans"}, \code{"sd"}, \code{"hclust"}, \code{"bclust"},
-\code{"fisher"}, \code{"jenks"}, \code{"dpih"}, \code{"headtails"}, \code{"maximum"}, \code{"box"}.
-Defaults to \code{"equal"}. Used only if \code{.method = "crisp"} and \code{.breaks} is
-a single integer.}
+\item{.keep}{If \code{TRUE}, keep the original selected columns in the output.
+If \code{FALSE}, remove them after transformation. Unselected columns are
+always preserved.}
 
-\item{.style_params}{A named list of parameters passed to the interval
-computation method specified by \code{.style}. Used only if \code{.method = "crisp"}
-and \code{.breaks} is an integer.}
+\item{.method}{Transformation method for selected numeric columns:
+\itemize{
+\item \code{"dummy"} – treat numeric values as ordered categories and create
+logical predicates;
+\item \code{"crisp"} – create logical interval predicates;
+\item \code{"triangle"} – create fuzzy predicates with linear slopes;
+\item \code{"raisedcos"} – create fuzzy predicates with cosine-smoothed slopes.
+}
 
-\item{.subsets}{For factor columns, a vector of integers specifying which
-combinations of levels to create. The meaning of this argument depends on
-whether the factor is ordered or not.
-For \strong{unordered} factors, all subsets of the specified sizes are created.
-For example, \code{.subsets = 1} creates sets for each individual level,
-\code{.subsets = 2} creates sets for all pairs of levels, and \code{.subsets = 3}
-creates sets for all triples of levels, etc. If \code{.subsets} is a vector,
-all subset sizes in the vector are used. For example, \code{.subsets = 1:3}
-creates sets for all individual levels (1-subsets), all pairs of levels
-(2-subsets), and all triples of levels.
-For \strong{ordered} factors, subsets are restricted to consecutive levels only.
-That is, only adjacent sequences are used when forming combinations.
-For example,  \code{.subsets = 1} creates sets for each individual level,
-\code{.subsets = 2} creates sets for each pair of consecutive levels, and
-\code{.subsets = 3} creates sets for each triplet of consecutive levels, etc.
-As with unordered factors, if \code{.subsets} is a vector, all specified subset
-sizes are used. For example, \code{.subsets = 1:3} creates sets for all
-individual levels (1-subsets), all pairs of consecutive levels (2-subsets),
-and all triplets of consecutive levels (3-subsets).}
+Ignored for logical and factor columns.}
 
-\item{.right}{For \code{"crisp"}, whether intervals are right-closed and
-left-open (\code{TRUE}), or left-closed and right-open (\code{FALSE}).}
+\item{.style}{Method used to compute breakpoints when \code{.method = "crisp"}
+and \code{.breaks} is a single integer. Supported values correspond to methods
+in \code{\link[classInt:classIntervals]{classInt::classIntervals()}}, e.g., \code{"equal"}, \code{"quantile"}, \code{"kmeans"},
+\code{"sd"}, \code{"hclust"}, \code{"bclust"}, \code{"fisher"}, \code{"jenks"}, \code{"dpih"},
+\code{"headtails"}, \code{"maximum"}, \code{"box"}.  Defaults to \code{"equal"}.
 
-\item{.span}{Number of consecutive breaks forming a set. For \code{"crisp"},
-controls interval width. For \code{"triangle"}/\code{"raisedcos"}, \code{.span = 1}
-produces triangular sets, \code{.span = 2} trapezoidal sets.}
+Ignored for logical columns, factor columns, numeric columns with
+\code{.method = "dummy"}, and numeric columns where \code{.breaks} is a vector.}
 
-\item{.inc}{Step size for shifting breaks when generating successive sets.
-With \code{.inc = 1}, all possible sets are created; larger values skip sets.}
+\item{.style_params}{A named list of additional parameters passed to the
+breakpoint computation method specified by \code{.style}.
+
+Used only when \code{.method = "crisp"} and \code{.breaks} is a single integer.}
+
+\item{.subsets}{For factor columns, and for numeric columns with
+\code{.method = "dummy"}, an integer vector specifying the sizes of level
+subsets for which predicates should be created.
+
+For unordered factors, all subsets of the requested sizes are created.
+For ordered factors, and for numeric columns with \code{.method = "dummy"},
+only subsets of consecutive values are created.
+
+Subset sizes equal to the total number of available levels are rejected,
+because they would produce a predicate that is always \code{TRUE} for all
+non-missing values.
+
+Ignored for logical columns and for numeric columns with \code{.method = "crisp"}, \code{"triangle"}, or \code{"raisedcos"}.}
+
+\item{.right}{For numeric columns with \code{.method = "crisp"}, whether
+intervals are right-closed and left-open (\code{TRUE}) or left-closed and
+right-open (\code{FALSE}). Ignored otherwise.}
+
+\item{.span}{For numeric columns:
+\itemize{
+\item with \code{.method = "crisp"}, the number of consecutive elementary
+intervals merged into one predicate;
+\item with \code{.method = "triangle"} or \code{"raisedcos"}, controls whether fuzzy
+predicates are triangular (\code{.span = 1}) or trapezoidal (\code{.span > 1}).
+}
+
+Ignored for logical columns, factor columns, and numeric columns with
+\code{.method = "dummy"}.}
+
+\item{.inc}{For numeric columns with \code{.method = "crisp"}, \code{"triangle"}, or
+\code{"raisedcos"}, the number of break positions by which the construction
+window is shifted between successive predicates.
+
+Ignored for logical columns, factor columns, and numeric columns with
+\code{.method = "dummy"}.}
 }
 \value{
-A tibble with \code{.data} transformed into Boolean or fuzzy predicates.
+A tibble in which selected columns have been replaced or supplemented by
+generated Boolean or fuzzy predicates.
+
+If \code{.keep = FALSE}, the original selected columns are removed. If
+\code{.keep = TRUE}, they are retained. Unselected columns are always preserved.
+Generated predicate columns are appended after the retained original columns.
 }
 \description{
-Transform selected columns of a data frame into either dummy logical
-variables or membership degrees of fuzzy sets, while leaving all remaining
-columns unchanged. Each transformed column typically produces multiple new
-columns in the output.
+Transform selected columns of a data frame into Boolean predicates
+(logical indicator columns) or fuzzy predicates (numeric membership degrees
+between 0 and 1), while leaving all unselected columns unchanged.
 
-These transformations are most often used as a preprocessing step before
-calling \code{\link[=dig]{dig()}} or one of its derivatives, such as
+The function is a general-purpose transformation utility, but it is
+primarily intended as a preprocessing step for predicate-based pattern
+discovery with \code{\link[=dig]{dig()}} and related functions such as
 \code{\link[=dig_correlations]{dig_correlations()}}, \code{\link[=dig_paired_baseline_contrasts]{dig_paired_baseline_contrasts()}},
-or \code{\link[=dig_associations]{dig_associations()}}.
+and \code{\link[=dig_associations]{dig_associations()}}.
 
-The transformation depends on the column type:
+Depending on the type of each selected column, \code{partition()} creates one or
+more derived columns:
 \itemize{
-\item \strong{logical} column \code{x} is expanded into two logical columns:
-\code{x=TRUE} and \code{x=FALSE};
-\item \strong{factor} column \code{x} with levels \code{l1}, \code{l2}, \code{l3} becomes three
-logical columns: \code{x=l1}, \code{x=l2}, and \code{x=l3};
-\item \strong{numeric} column \code{x} is transformed according to \code{.method}:
-\itemize{
-\item \code{.method = "dummy"}: the column is treated as a factor with one level
-per unique value, then expanded into dummy columns;
-\item \code{.method = "crisp"}: the column is discretized into intervals (defined
-by \code{.breaks}, \code{.style}, and \code{.style_params}) and expanded into dummy
-columns representing those intervals;
-\item \code{.method = "triangle"} or \code{.method = "raisedcos"}: the column is
-converted into one or more fuzzy sets, each represented by membership
-degrees in \eqn{[0,1]} (triangular or raised-cosine shaped).
-}
+\item \strong{logical} columns become predicates for \code{TRUE} and \code{FALSE};
+\item \strong{factor} columns become predicates for selected subsets of levels;
+\item \strong{numeric} columns are transformed according to \code{.method} into dummy,
+crisp, or fuzzy predicates.
 }
 
-Details of numeric transformations are controlled by \code{.breaks}, \code{.labels},
-\code{.style}, \code{.style_params}, \code{.right}, \code{.span}, and \code{.inc}.
+The selectors supplied in \code{.what} and \code{...} are combined using standard
+tidyselect rules. Duplicate selections are removed by the selection
+mechanism. Selection may be empty; in that case, \code{.data} is returned
+unchanged as a tibble.
+
+Generated columns are appended after the retained original columns.
+By default, the original selected columns are removed (\code{.keep = FALSE});
+unselected columns are always preserved.
+
+Predicate names are sanitized to make them suitable as column names.
+Sanitization is applied to original column names and to individual factor
+level names.
 }
 \details{
+\code{partition()} converts selected variables into a predicate representation
+useful for searching for relationships, associations, and other patterns.
+
+For logical and factor inputs, the result consists of logical columns.
+For numeric inputs, the result depends on \code{.method}:
 \itemize{
-\item Crisp partitioning is efficient and works well when attributes have
-distinct categories or clear boundaries.
-\item Fuzzy partitioning is recommended for modeling gradual changes or
-uncertainty, allowing smooth category transitions at a higher
-computational cost.
+\item \code{"dummy"} creates logical predicates for observed numeric values treated
+as ordered categories;
+\item \code{"crisp"} creates logical interval predicates;
+\item \code{"triangle"} and \code{"raisedcos"} create numeric membership degrees in
+\eqn{[0,1]}.
 }
+
+Missing values do not belong to ordinary generated predicates. If \code{.na = TRUE}
+and a transformed source column contains at least one missing value, an
+additional logical predicate \code{x=NA} is added.
+
+For numeric inputs other than \code{.method = "dummy"}, \code{.breaks} must be
+supplied. If it is a numeric vector, it is sorted automatically.
 }
+\section{Logical columns}{
+
+
+A logical column \code{x} is expanded into two logical predicates:
+\itemize{
+\item \code{x=T} for rows where \code{x} is \code{TRUE};
+\item \code{x=F} for rows where \code{x} is \code{FALSE}.
+}
+
+Missing values are excluded from both predicates. If \code{.na = TRUE} and the
+column contains missing values, \code{x=NA} is added.
+
+For logical columns, \code{.breaks}, \code{.labels}, \code{.method}, \code{.style},
+\code{.style_params}, \code{.subsets}, \code{.right}, \code{.span}, and \code{.inc} are ignored.
+}
+
+\section{Factor columns}{
+
+
+A factor column is expanded into logical predicates representing subsets of
+its levels. The subset sizes are controlled by \code{.subsets}.
+
+For an \strong{unordered} factor, all subsets of the requested sizes are created.
+For an \strong{ordered} factor, only subsets formed by consecutive levels are
+created.
+
+For example, if \code{x} has levels \code{a}, \code{b}, \code{c}, \code{d}:
+\itemize{
+\item \code{.subsets = 1} creates predicates for \code{a}, \code{b}, \code{c}, and \code{d};
+\item \code{.subsets = 2} creates all pairs if \code{x} is unordered;
+\item \code{.subsets = 2} creates only \verb{a,b}, \verb{b,c}, \verb{c,d} if \code{x} is ordered.
+}
+
+Subset sizes equal to the total number of levels are rejected, because they
+would produce a predicate that is always \code{TRUE} for all non-missing values.
+
+If \code{.na = TRUE} and the factor contains missing values, \code{x=NA} is added.
+
+For factor columns, \code{.breaks}, \code{.labels}, \code{.method}, \code{.style},
+\code{.style_params}, \code{.right}, \code{.span}, and \code{.inc} are ignored.
+}
+
+\section{Numeric columns with \code{.method = "dummy"}}{
+
+
+A numeric column is treated as an ordered categorical variable with one
+category for each observed value, and is then partitioned like an ordered
+factor.
+
+Thus, \code{.subsets = 1} creates predicates for individual values, \code{.subsets = 2}
+creates predicates for consecutive pairs of values, and so on.
+
+This method can generate many predicates when the column has many distinct
+values.
+
+If \code{.na = TRUE} and the column contains missing values, \code{x=NA} is added.
+
+For numeric columns with \code{.method = "dummy"}, \code{.breaks}, \code{.labels},
+\code{.style}, \code{.style_params}, \code{.right}, \code{.span}, and \code{.inc} are ignored.
+}
+
 \section{Crisp transformation of numeric data}{
 
 
-For \code{.method = "crisp"}, numeric columns are discretized into a set of
-dummy logical variables, each representing one interval of values.
-\itemize{
-\item If \code{.breaks} is an integer, it specifies the number of intervals into
-which the column should be divided. The intervals are determined using
-the \code{.style} and \code{.style_params} arguments, allowing not only equal-width
-but also data-driven breakpoints (e.g., quantile or k-means based).
-The first and last intervals automatically extend to infinity.
-\item If \code{.breaks} is a numeric vector, it specifies interval boundaries
-directly. Infinite values are allowed.
-}
+For \code{.method = "crisp"}, a numeric column is transformed into logical
+predicates representing intervals.
 
-The \code{.style} argument defines \emph{how} breakpoints are computed when
-\code{.breaks} is an integer. Supported methods (from
-\code{\link[classInt:classIntervals]{classInt::classIntervals()}}) include:
+If \code{.breaks} is a single integer, it specifies the number of output
+intervals. Breakpoints are computed automatically according to \code{.style}
+and \code{.style_params}, and the outermost intervals are extended to \code{-Inf}
+and \code{Inf}.
+
+If \code{.breaks} is a numeric vector, it directly specifies the sequence of
+break boundaries used to construct the interval predicates.
+
+Supported values of \code{.style} correspond to methods in
+\code{\link[classInt:classIntervals]{classInt::classIntervals()}}:
 \itemize{
 \item \code{"equal"} – equal-width intervals across the column range (default);
 \item \code{"quantile"} – equal-frequency intervals (see \code{\link[=quantile]{quantile()}} for additional
@@ -176,53 +283,82 @@ respective algorithm in \code{\link[classInt:classIntervals]{classInt::classInte
 \code{.style_params = list(algorithm = "Lloyd")} to request Lloyd's algorithm
 for k-means clustering.
 
-With \code{.span = 1} and \code{.inc = 1}, the generated intervals are consecutive
-and non-overlapping. For example, with
-\code{.breaks = c(1, 3, 5, 7, 9, 11)} and \code{.right = TRUE},
-the intervals are \eqn{(1;3]}, \eqn{(3;5]}, \eqn{(5;7]}, \eqn{(7;9]},
-and \eqn{(9;11]}. If \code{.right = FALSE}, the intervals are left-closed:
-\eqn{[1;3)}, \eqn{[3;5)}, etc.
-
-Larger \code{.span} values produce overlapping intervals. For example, with
-\code{.span = 2}, \code{.inc = 1}, and \code{.right = TRUE}, intervals are
-\eqn{(1;5]}, \eqn{(3;7]}, \eqn{(5;9]}, \eqn{(7;11]}.
-
-The \code{.inc} argument controls how far the window shifts along \code{.breaks}.
+The argument \code{.right} controls interval closure:
 \itemize{
-\item \code{.span = 1}, \code{.inc = 2} → \eqn{(1;3]}, \eqn{(5;7]}, \eqn{(9;11]}.
-\item \code{.span = 2}, \code{.inc = 3} → \eqn{(1;5]}, \eqn{(9;11]}.
+\item if \code{TRUE}, intervals are left-open and right-closed, e.g. \eqn{(1;3]};
+\item if \code{FALSE}, intervals are left-closed and right-open, e.g. \eqn{[1;3)}.
 }
+
+The argument \code{.span} controls how many consecutive elementary intervals are
+merged into each predicate. The argument \code{.inc} controls by how many break
+positions the construction window is shifted between successive predicates.
+
+With \code{.span = 1} and \code{.inc = 1}, the resulting intervals are consecutive and
+non-overlapping. Larger \code{.span} values produce wider, overlapping intervals;
+larger \code{.inc} values skip some possible windows.
 }
 
 \section{Fuzzy transformation of numeric data}{
 
 
-For \code{.method = "triangle"} or \code{.method = "raisedcos"}, numeric columns are
-converted into fuzzy membership degrees in \eqn{[0,1]}.
+For \code{.method = "triangle"} or \code{.method = "raisedcos"}, a numeric column is
+transformed into fuzzy predicates represented by membership degrees in
+\eqn{[0,1]}.
+
+If \code{.breaks} is a single integer, it specifies the number of fuzzy sets.
+If \code{.breaks} is a numeric vector, it specifies the sequence of boundary
+points from which fuzzy predicates are constructed.
+
+The argument \code{.span} controls shape:
 \itemize{
-\item If \code{.breaks} is an integer, it specifies the number of fuzzy sets.
-\item If \code{.breaks} is a numeric vector, it directly defines fuzzy set
-boundaries. Infinite values produce open-ended sets.
+\item with \code{.span = 1}, predicates are triangular (\code{"triangle"}) or
+raised-cosine (\code{"raisedcos"});
+\item with \code{.span > 1}, predicates are trapezoidal, with a rising edge,
+a plateau, and a falling edge.
 }
 
-With \code{.span = 1}, each fuzzy set is defined by three consecutive breaks:
-membership is 0 outside the outer breaks, rises to 1 at the middle break,
-then decreases back to 0 — yielding triangular or raised-cosine sets.
+The argument \code{.inc} controls by how many break positions the construction
+window is shifted between successive predicates.
 
-With \code{.span > 1}, fuzzy sets use four consecutive breaks: membership
-increases between the first two, remains 1 between the middle two, and
-decreases between the last two — creating trapezoidal sets. Border shapes
-are linear for \code{.method = "triangle"} and cosine for \code{.method = "raisedcos"}.
+The method \code{"triangle"} uses linear slopes; \code{"raisedcos"} uses
+cosine-smoothed slopes.
 
-The \code{.inc} argument defines the step between break windows:
-\itemize{
-\item \code{.span = 1}, \code{.inc = 1} → \eqn{(1;3;5)}, \eqn{(3;5;7)}, \eqn{(5;7;9)}, \eqn{(7;9;11)}.
-\item \code{.span = 2}, \code{.inc = 1} → \eqn{(1;3;5;7)}, \eqn{(3;5;7;9)}, \eqn{(5;7;9;11)}.
-\item \code{.span = 1}, \code{.inc = 3} → \eqn{(1;3;5)}, \eqn{(7;9;11)}.
-}
+If \code{.breaks} includes \code{-Inf} or \code{Inf}, the corresponding boundary predicates
+become open-ended.
 }
 
 \examples{
+# Logical column -> predicates for TRUE and FALSE
+x <- tibble::tibble(a = c(TRUE, FALSE, NA, TRUE))
+partition(x, a)
+
+# Factor column -> predicates for individual levels
+x <- tibble::tibble(a = factor(c("low", "medium", "high", NA)))
+partition(x, a)
+
+# Unordered factor -> predicates for all pairs of levels
+x <- tibble::tibble(a = factor(c("a", "b", "c", "a")))
+partition(x, a, .subsets = 2)
+
+# Ordered factor -> only consecutive subsets are created
+x <- tibble::tibble(a = ordered(c("low", "medium", "high", "medium"),
+                                levels = c("low", "medium", "high")))
+partition(x, a, .subsets = 2)
+
+# Keep original selected columns
+partition(CO2, Plant, .keep = TRUE)
+
+# Suppress explicit NA predicate
+x <- tibble::tibble(a = c(TRUE, FALSE, NA))
+partition(x, a, .na = FALSE)
+
+# Numeric data treated as ordered categories
+x <- tibble::tibble(a = c(1, 2, 2, 3, 4))
+partition(x, a, .method = "dummy")
+
+# Numeric data treated as ordered categories with consecutive pairs
+partition(x, a, .method = "dummy", .subsets = 2)
+
 # Crisp transformation using equal-width bins
 partition(CO2, conc, .method = "crisp", .breaks = 4)
 
@@ -232,21 +368,47 @@ partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "quantile")
 # Crisp transformation using k-means clustering for breakpoints
 partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "kmeans")
 
-# Crisp transformation using Lloyd algorithm for k-means clustering for breakpoints
+# Crisp transformation using Lloyd algorithm for k-means breakpoints
 partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "kmeans",
           .style_params = list(algorithm = "Lloyd"))
 
-# Fuzzy triangular transformation (default)
+# Crisp transformation with manually specified breaks
+partition(CO2, conc, .method = "crisp",
+          .breaks = c(-Inf, 200, 500, 800, Inf))
+
+# Crisp transformation with overlapping intervals
+partition(CO2, conc, .method = "crisp",
+          .breaks = c(1, 3, 5, 7, 9, 11),
+          .span = 2, .inc = 1)
+
+# Crisp transformation with left-closed, right-open intervals
+partition(CO2, conc, .method = "crisp", .breaks = 4, .right = FALSE)
+
+# Fuzzy triangular transformation
 partition(CO2, conc:uptake, .method = "triangle", .breaks = 3)
 
-# Raised-cosine fuzzy sets
+# Raised-cosine fuzzy predicates
 partition(CO2, conc:uptake, .method = "raisedcos", .breaks = 3)
 
-# Overlapping trapezoidal fuzzy sets (Ruspini condition)
+# Trapezoidal fuzzy predicates
+partition(CO2, conc:uptake, .method = "triangle", .breaks = 3, .span = 2)
+
+# Overlapping trapezoidal fuzzy predicates (Ruspini condition)
 partition(CO2, conc:uptake, .method = "triangle", .breaks = 3,
           .span = 2, .inc = 2)
 
-# Different settings per column
+# Fuzzy transformation with manually specified breaks
+partition(CO2, uptake,
+          .method = "triangle",
+          .breaks = c(-Inf, 7.7, 28.3, 45.5, Inf))
+
+# Fuzzy transformation with custom labels
+partition(CO2, uptake,
+          .method = "triangle",
+          .breaks = c(-Inf, 7.7, 28.3, 45.5, Inf),
+          .labels = c("low", "medium", "high"))
+
+# Different settings can be applied in successive calls
 CO2 |>
   partition(Plant:Treatment) |>
   partition(conc,
