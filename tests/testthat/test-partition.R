@@ -698,5 +698,8 @@ test_that("partition errors", {
                            .labels = c("a", "b")),
                  "If `.breaks` is non-scalar, the length of `.labels` must be equal to")
 
+    # Test too large .subsets value
+    expect_error(partition(data.frame(a = factor(c("a", "b", "c"))), a, .subsets = 3),
+                 "is too large for column")
 })
 

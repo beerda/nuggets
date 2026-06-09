@@ -392,6 +392,12 @@ partition <- function(.data,
     fun <- if (is.ordered(x)) .generate_seq else .generate_comb
     res <- list()
     for (s in subsets) {
+        if (s >= length(items)) {
+            cli_abort(c("Subset size {.val {s}} defined by {.arg .subsets} is too large for column {.field {colname}}.",
+                       "i"="Column {.field {colname}} has only {.val {length(items)}} level{?s}.",
+                       "i"="Maximum subset size for this column is {.val {length(items) - 1}}."),
+                      call = current_env())
+        }
         new_comb <- fun(length(items), s, inner_fun)
         new_comb <- do.call(c, new_comb)
         res <- c(res, new_comb)
