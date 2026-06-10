@@ -5,7 +5,7 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="NA"><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
+</script><script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="NA"><meta property="og:image" content="https://beerda.github.io/nuggets/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,25 +48,23 @@
       <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/RELEASE_HOWTO.md" class="external-link"><code>RELEASE_HOWTO.md</code></a></small>
     </div>
 
-<ul><li><p>Merge devel into main</p></li>
-<li><p>Update version &amp; date in DESCRIPTION</p></li>
-<li><p>Update NEWS.md</p></li>
-<li><p>Disable debug in src/common.h</p></li>
-<li><p>Update Github actions: usethis::use_github_action(“check-standard”) usethis::use_github_action(“test-coverage”)</p></li>
-<li><p>Test: devtools::spell_check() rhub::rhub_check() devtools::check_win_release() devtools::check_win_oldrelease() devtools::check_win_devel() devtools::check_mac_release()</p></li>
-<li><p>Release: devtools::release()</p></li>
-<li>
-<p>After release:</p>
+<ul><li>Merge devel into main: git checkout main git pull origin main git merge devel git push origin main</li>
+<li>Update version &amp; date in DESCRIPTION</li>
+<li>Update NEWS.md</li>
+<li>Disable debug in src/common.h</li>
+<li>Update Github actions: usethis::use_github_action(“check-standard”) usethis::use_github_action(“test-coverage”)</li>
+<li>Test: devtools::spell_check() rhub::rhub_check() devtools::check_win_release() devtools::check_win_oldrelease() devtools::check_win_devel() devtools::check_mac_release()</li>
+<li>Release: devtools::release()</li>
+<li>After release:
 <ul><li>commit CRAN-SUBMISSION and make GIT tag &amp; release</li>
 </ul></li>
-<li>
-<p>Prepare for next development iteration:</p>
+<li>Prepare for next development iteration:
 <ul><li>Search for deprecate_stop() and consider if you’re ready to the remove the function completely.</li>
 <li>Search for deprecate_warn() and replace with deprecate_stop(). Remove the remaining body of the function and any tests.</li>
 <li>Search for deprecate_soft() and replace with deprecate_warn().</li>
 </ul></li>
-<li><p>Update devel</p></li>
-<li><p>To install the release candidate of Rcpp (to fix LTO errors): install.packages(“Rcpp”, repos = “<a href="https://RcppCore.github.io/drat" class="external-link uri">https://RcppCore.github.io/drat</a>”)</p></li>
+<li>Update devel: git checkout devel git pull origin devel git merge main git push origin devel</li>
+<li>To install the release candidate of Rcpp (to fix LTO errors): install.packages(“Rcpp”, repos = “<a href="https://RcppCore.github.io/drat" class="external-link uri">https://RcppCore.github.io/drat</a>”)</li>
 </ul></main></div>
 
 

@@ -1,5 +1,14 @@
 # Changelog
 
+## nuggets 2.2.1
+
+- released: 2026-06-10
+- fixed failing unit tests because of upstream fixes in R’s
+  wilcox.test()
+- enhanced placement of nodes in geom_diamond() to reduce edge crossing
+- added .subsets argument to partition() that enables partitioning by
+  subsets of factor levels
+
 ## nuggets 2.2.0
 
 - released: 2026-03-11

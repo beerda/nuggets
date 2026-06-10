@@ -8,8 +8,7 @@ pattern extraction.
 - [`is_almost_constant()`](https://beerda.github.io/nuggets/reference/is_almost_constant.md)
   : Test whether a vector is almost constant
 - [`partition()`](https://beerda.github.io/nuggets/reference/partition.md)
-  : Convert columns of a data frame to Boolean or fuzzy sets
-  (triangular, trapezoidal, or raised-cosine)
+  : Convert data-frame columns into Boolean or fuzzy predicates
 - [`remove_almost_constant()`](https://beerda.github.io/nuggets/reference/remove_almost_constant.md)
   : Remove almost constant columns from a data frame
 - [`dig_tautologies()`](https://beerda.github.io/nuggets/reference/dig_tautologies.md)
