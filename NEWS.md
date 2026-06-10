@@ -1,3 +1,6 @@
+# nuggets 2.3.0
+- released: ???
+
 # nuggets 2.2.1
 - released: 2026-06-10
 - fixed failing unit tests because of upstream fixes in R's wilcox.test()

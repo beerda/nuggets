@@ -3,6 +3,7 @@
     git pull origin main
     git merge devel
     git push origin main
+- Create release issue: usethis::use_release_issue()
 - Update version & date in DESCRIPTION
 - Update NEWS.md
 - Disable debug in src/common.h
@@ -17,7 +18,7 @@
     devtools::check_win_devel()
     devtools::check_mac_release()
 - Release:
-    devtools::release()
+    devtools::submit_cran()
 - After release:
     - commit CRAN-SUBMISSION and make GIT tag & release
 - Prepare for next development iteration:
