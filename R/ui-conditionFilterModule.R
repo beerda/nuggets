@@ -83,20 +83,19 @@
     shinyWidgets::create_tree(def, levels = lev, levels_id = id)
 }
 
-.create_filtering_table <- function(x, pred, def) {
-    m <- matrix(FALSE, nrow = length(x), ncol = nrow(def))
-    for (row in seq_along(x)) {
-        m[row, ] <- def$predicate %in% pred[[row]]
-    }
+.create_filtering_table <- function(pred, def) {
+    res <- vapply(seq_along(pred),
+                  function(row) { def$predicate %in% pred[[row]] },
+                  logical(nrow(def)))
 
-    m
+    t(res)
 }
 
 conditionFilterModule <- function(id, x, meta) {
     root_name <- "predicate"
     pred <- parse_condition(x)
     def <- .parse_tree_def_from_condition(pred, root_name = root_name)
-    tab <- .create_filtering_table(x, pred, def)
+    tab <- .create_filtering_table(pred, def)
     tree <- .create_tree_from_def(def)
     empty_cond <- vapply(pred, length, integer(1)) == 0
 
