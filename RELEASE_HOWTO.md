@@ -1,4 +1,8 @@
-- Merge devel into main
+- Merge devel into main:
+    git checkout main
+    git pull origin main
+    git merge devel
+    git push origin main
 - Update version & date in DESCRIPTION
 - Update NEWS.md
 - Disable debug in src/common.h
@@ -22,9 +26,11 @@
     - Search for deprecate_warn() and replace with deprecate_stop().
       Remove the remaining body of the function and any tests.
     - Search for deprecate_soft() and replace with deprecate_warn().
-- Update devel
-
-
+- Update devel:
+    git checkout devel
+    git pull origin devel
+    git merge main
+    git push origin devel
 - To install the release candidate of Rcpp (to fix LTO errors):
     install.packages("Rcpp", repos = "https://RcppCore.github.io/drat")
     
