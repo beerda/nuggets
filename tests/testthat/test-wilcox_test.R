@@ -35,12 +35,12 @@ test_that(".wilcox_test one-sample", {
     res <- .wilcox_test(x = x,
                         mu = 0,
                         alternative = "two.sided",
-                        exact = FALSE)
+                        exact = TRUE)
 
     expect_true(is.list(res))
     expect_equal(length(res), 9)
     expect_equal(res$estimate, 0)
-    expect_equal(res$statistic, 105)
+    expect_equal(res$statistic, 115)
     expect_equal(res$p_value, 1)
     expect_equal(res$n, 21)
     expect_equal(res$conf_lo, -3, tolerance = 1e-4)
@@ -57,13 +57,13 @@ test_that(".wilcox_test paired", {
     res <- .wilcox_test(x = x,
                         y = y,
                         paired = TRUE,
-                        exact = FALSE,
+                        exact = TRUE,
                         alternative = "two.sided")
 
     expect_true(is.list(res))
     expect_equal(length(res), 9)
     expect_equal(res$estimate, 0)
-    expect_equal(res$statistic, 105, tolerance = 1e-4)
+    expect_equal(res$statistic, 115, tolerance = 1e-4)
     expect_equal(res$p_value, 1.0, tolerance = 1e-3)
     expect_equal(res$n, 20)
     expect_equal(res$conf_lo, -6, tolerance = 1e-4)
