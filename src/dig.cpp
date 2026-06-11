@@ -99,6 +99,37 @@ long countLogicalValues(const List& data)
 }
 
 
+enum DigRunType {
+    RT_DENSE,
+    RT_SPARSE,
+    RT_GOEDEL,
+    RT_GOGUEN,
+    RT_LUKASIEWICZ
+};
+
+
+DigRunType getDigRunType(const List& data,
+                         const Config& config)
+{
+    if (dataAreAllLogical(data)) {
+        long count = countLogicalValues(data);
+        LogicalVector vec = data[0];
+        if (count * BITCHAIN_SPARSENESS_LIMIT < data.size() * vec.size())
+            return DigRunType::RT_SPARSE;
+        else
+            return DigRunType::RT_DENSE;
+    }
+    else if (config.getTNorm() == TNorm::GOEDEL)
+        return DigRunType::RT_GOEDEL;
+    else if (config.getTNorm() == TNorm::GOGUEN)
+        return DigRunType::RT_GOGUEN;
+    else if (config.getTNorm() == TNorm::LUKASIEWICZ)
+        return DigRunType::RT_LUKASIEWICZ;
+    else
+        stop("internal error in getDigRunType()");
+}
+
+
 template <typename CHAIN>
 List runDig(const List& data,
             const LogicalVector& isCondition,
@@ -131,28 +162,25 @@ List dig_(const List& data,
 {
     START_TIMER(bt, "dig_");
 
-    bool allLogical = dataAreAllLogical(data);
     Config config(confList, namesVector);
     List result;
 
-    if (allLogical) {
-        long count = countLogicalValues(data);
-        LogicalVector vec = data[0];
-        if (count * BITCHAIN_SPARSENESS_LIMIT < data.size() * vec.size()) {
-            result = runDig<BIT_CHAIN_SPARSE>(data, isCondition, isFocus, callback, config);
-        }
-        else {
+    switch (getDigRunType(data, config)) {
+        case DigRunType::RT_DENSE:
             result = runDig<BIT_CHAIN_DENSE>(data, isCondition, isFocus, callback, config);
-        }
-    }
-    else if (config.getTNorm() == TNorm::GOEDEL) {
-        result = runDig<GOEDEL_CHAIN>(data, isCondition, isFocus, callback, config);
-    }
-    else if (config.getTNorm() == TNorm::GOGUEN) {
-        result = runDig<GOGUEN_CHAIN>(data, isCondition, isFocus, callback, config);
-    }
-    else if (config.getTNorm() == TNorm::LUKASIEWICZ) {
-        result = runDig<LUKASIEWICZ_CHAIN>(data, isCondition, isFocus, callback, config);
+            break;
+        case DigRunType::RT_SPARSE:
+            result = runDig<BIT_CHAIN_SPARSE>(data, isCondition, isFocus, callback, config);
+            break;
+        case DigRunType::RT_GOEDEL:
+            result = runDig<GOEDEL_CHAIN>(data, isCondition, isFocus, callback, config);
+            break;
+        case DigRunType::RT_GOGUEN:
+            result = runDig<GOGUEN_CHAIN>(data, isCondition, isFocus, callback, config);
+            break;
+        case DigRunType::RT_LUKASIEWICZ:
+            result = runDig<LUKASIEWICZ_CHAIN>(data, isCondition, isFocus, callback, config);
+            break;
     }
 
     STOP_TIMER(bt);
@@ -193,28 +221,25 @@ List dig_associations_(const List& data,
 {
     START_TIMER(bt, "dig_associations_");
 
-    bool allLogical = dataAreAllLogical(data);
     Config config(confList, namesVector);
     List result;
 
-    if (allLogical) {
-        long count = countLogicalValues(data);
-        LogicalVector vec = data[0];
-        if (count * BITCHAIN_SPARSENESS_LIMIT < data.size() * vec.size()) {
-            result = runDigAssoc<BIT_CHAIN_SPARSE>(data, isCondition, isFocus, config);
-        }
-        else {
+    switch (getDigRunType(data, config)) {
+        case DigRunType::RT_DENSE:
             result = runDigAssoc<BIT_CHAIN_DENSE>(data, isCondition, isFocus, config);
-        }
-    }
-    else if (config.getTNorm() == TNorm::GOEDEL) {
-        result = runDigAssoc<GOEDEL_CHAIN>(data, isCondition, isFocus, config);
-    }
-    else if (config.getTNorm() == TNorm::GOGUEN) {
-        result = runDigAssoc<GOGUEN_CHAIN>(data, isCondition, isFocus, config);
-    }
-    else if (config.getTNorm() == TNorm::LUKASIEWICZ) {
-        result = runDigAssoc<LUKASIEWICZ_CHAIN>(data, isCondition, isFocus, config);
+            break;
+        case DigRunType::RT_SPARSE:
+            result = runDigAssoc<BIT_CHAIN_SPARSE>(data, isCondition, isFocus, config);
+            break;
+        case DigRunType::RT_GOEDEL:
+            result = runDigAssoc<GOEDEL_CHAIN>(data, isCondition, isFocus, config);
+            break;
+        case DigRunType::RT_GOGUEN:
+            result = runDigAssoc<GOGUEN_CHAIN>(data, isCondition, isFocus, config);
+            break;
+        case DigRunType::RT_LUKASIEWICZ:
+            result = runDigAssoc<LUKASIEWICZ_CHAIN>(data, isCondition, isFocus, config);
+            break;
     }
 
     STOP_TIMER(bt);
