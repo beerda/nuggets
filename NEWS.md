@@ -1,5 +1,7 @@
 # nuggets 2.3.0
 - released: ???
+- implemented sparse bit chain for fast computation of dig() on sparse crisp
+  data
 
 # nuggets 2.2.1
 - released: 2026-06-10
@@ -54,7 +56,8 @@
 
 # nuggets 2.0.2
 - released: 2025-10-31
-- attempt to fix rchk protection stack imbalance in CombinatorialProgress constructor
+- attempt to fix rchk protection stack imbalance in CombinatorialProgress
+  constructor
 - created vignette "Data Preparation"
 - updated main vignette
 

@@ -20,6 +20,7 @@
 #include "common.h"
 #include "timer.h"
 #include "dig/BitChain.h"
+#include "dig/SparseBitChain.h"
 #include "dig/FloatChain.h"
 #include "dig/CallbackCaller.h"
 #include "dig/AssocStorage.h"
@@ -28,7 +29,8 @@
 #include "dig/Digger.h"
 
 
-#define BIT_CHAIN BitChain
+#define BIT_CHAIN_DENSE BitChain
+#define BIT_CHAIN_SPARSE SparseBitChain
 
 #ifdef __arm64__
     // MacOS
@@ -62,6 +64,38 @@ bool dataAreAllLogical(const List& data)
     }
 
     return allLogical;
+}
+
+
+long countLogicalValues(const List& data)
+{
+    using batch_type = xsimd::batch<int32_t>;
+    constexpr R_xlen_t simd_size = (R_xlen_t)batch_type::size;
+    constexpr R_xlen_t chunk = R_xlen_t(1) << 32;
+    long count = 0;
+
+    for (R_xlen_t i = 0; i < data.size(); ++i) {
+        LogicalVector vec = data[i];
+        const int* raw = vec.begin();
+        const R_xlen_t n = vec.size();
+        const R_xlen_t n_simd = n - n % simd_size;
+
+        R_xlen_t j = 0;
+        for (; j < n_simd; ) {
+            batch_type acc(0);
+            const R_xlen_t end = std::min(j + chunk, n_simd);
+            for (; j < end; j += simd_size) {
+                acc += batch_type::load_unaligned(raw + j);
+            }
+            count += xsimd::reduce_add(acc);
+        }
+
+        for (; j < n; ++j) {
+            count += raw[j];
+        }
+    }
+
+    return count;
 }
 
 
@@ -102,7 +136,14 @@ List dig_(const List& data,
     List result;
 
     if (allLogical) {
-        result = runDig<BIT_CHAIN>(data, isCondition, isFocus, callback, config);
+        long count = countLogicalValues(data);
+        LogicalVector vec = data[0];
+        if (count * BITCHAIN_SPARSENESS_LIMIT < data.size() * vec.size()) {
+            result = runDig<BIT_CHAIN_SPARSE>(data, isCondition, isFocus, callback, config);
+        }
+        else {
+            result = runDig<BIT_CHAIN_DENSE>(data, isCondition, isFocus, callback, config);
+        }
     }
     else if (config.getTNorm() == TNorm::GOEDEL) {
         result = runDig<GOEDEL_CHAIN>(data, isCondition, isFocus, callback, config);
@@ -157,7 +198,14 @@ List dig_associations_(const List& data,
     List result;
 
     if (allLogical) {
-        result = runDigAssoc<BIT_CHAIN>(data, isCondition, isFocus, config);
+        long count = countLogicalValues(data);
+        LogicalVector vec = data[0];
+        if (count * BITCHAIN_SPARSENESS_LIMIT < data.size() * vec.size()) {
+            result = runDigAssoc<BIT_CHAIN_SPARSE>(data, isCondition, isFocus, config);
+        }
+        else {
+            result = runDigAssoc<BIT_CHAIN_DENSE>(data, isCondition, isFocus, config);
+        }
     }
     else if (config.getTNorm() == TNorm::GOEDEL) {
         result = runDigAssoc<GOEDEL_CHAIN>(data, isCondition, isFocus, config);
