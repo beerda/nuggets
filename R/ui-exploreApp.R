@@ -87,11 +87,27 @@ exploreApp <- function(rules,
                 table.info-table {border: none;}
                 table.info-table td {padding-bottom: 5px; padding-left: 5px; text-align: right; vertical-align: top;}
                 table.info-table th {text-align: center; vertical-align: center; padding-top: 5px; padding-bottom: 5px; padding-left: 5px;}
-                table.info-table.left td {text-align: left;}
-                table.info-table.center td {text-align: center;}
                 table.info-table td:first-child {font-weight: bold; text-align: left; padding-right: 10px;}
                 table.info-table th:first-child {font-weight: bold; text-align: left; padding-right: 10px;}
+
+                /* first column aligned left, inner columns center, last column right */
+                table.info-table.lcr td {text-align: center;}
+                table.info-table.lcr td:first-child {text-align: left;}
+                table.info-table.lcr td:last-child {text-align: right;}
+                table.info-table.lcr th {text-align: center;}
+                table.info-table.lcr th:first-child {text-align: left;}
+                table.info-table.lcr th:last-child {text-align: right;}
+
+                /* first column aligned left, inner columns right, last column right */
+                table.info-table.lrr td {text-align: right;}
+                table.info-table.lrr td:first-child {text-align: left;}
+                table.info-table.lrr th {text-align: right;}
+                table.info-table.lrr th:first-child {text-align: left;}
+
+                table.info-table.left td {text-align: left;}
+                table.info-table.center td {text-align: center;}
                 table.info-table.hlrows tbody tr:nth-child(odd) {background-color: #f5f5f5;}
+                table.info-table.leftnobold td:first-child {font-weight: normal}
 
                 nav.navbar { margin-bottom: 15px; }
                 .grayed { opacity: 0.3; pointer-events: none; }

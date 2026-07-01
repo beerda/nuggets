@@ -53,14 +53,38 @@ associationsClusterModule <- function(id, rules, meta, data) {
                         ),
                     ),
                     shinyWidgets::panel(heading = "Results",
-                        shiny::fluidRow(
-                            shiny::column(width = 12,
-                                infoBox(paste("The plot identifies which antecedent groups are strongly",
-                                              "associated with certain consequents.",
-                                              "Each row is an antecedent group, each column is a consequent.",
-                                              "Balloon color shows the aggregated interest measure, size represents support.",
-                                              "Groups with the strongest associations appear in the top-left corner.")),
-                                shiny::plotOutput(shiny::NS(id, "clusteringPlot"), height = "500px")
+                        shiny::tabsetPanel(
+                            shiny::tabPanel("Plot",
+                                shiny::fluidRow(
+                                    shiny::column(width = 12,
+                                        infoBox(paste("The plot identifies which antecedent groups are strongly",
+                                                      "associated with certain consequents.",
+                                                      "Each row is an antecedent group, each column is a consequent.",
+                                                      "Balloon color shows the aggregated interest measure, size represents support.",
+                                                      "Groups with the strongest associations appear in the top-left corner.")),
+                                        shiny::plotOutput(shiny::NS(id, "clusteringPlot"), height = "500px")
+                                    )
+                                )
+                            ),
+                            shiny::tabPanel("Total Measures",
+                                shiny::fluidRow(
+                                    shiny::column(width = 6,
+                                        shiny::plotOutput(shiny::NS(id, "totalSsPlot"), height = "125px")
+                                    ),
+                                    shiny::column(width = 6,
+                                        shiny::uiOutput(shiny::NS(id, "totalMeasuresTable"))
+                                    )
+                                )
+                            ),
+                            shiny::tabPanel("Cluster Measures",
+                                shiny::fluidRow(
+                                    shiny::column(width = 6,
+                                        shiny::plotOutput(shiny::NS(id, "clusterMsPlot"), height = "350px")
+                                    ),
+                                    shiny::column(width = 6,
+                                        shiny::uiOutput(shiny::NS(id, "clusterMeasuresTable"))
+                                    )
+                                )
                             )
                         )
                     ),
@@ -100,6 +124,96 @@ associationsClusterModule <- function(id, rules, meta, data) {
                     })
                 })
 
+                output$totalMeasuresTable <- shiny::renderUI({
+                    clu <- clustering()
+                    if (is.null(clu)) {
+                        return(NULL)
+                    }
+
+                    nn <- c("between cluster sum of squares:",
+                            "within cluster sum of squares:",
+                            "total sum of squares:")
+                    vv <- c(attr(clu, "between_ss"),
+                            attr(clu, "within_ss"),
+                            attr(clu, "total_ss"))
+                    df <- data.frame(measure = nn,
+                                     value = .format_percent(vv, vv[3], digits = 2),
+                                     check.names = FALSE,
+                                     stringsAsFactors = FALSE)
+
+                    infoTable(df, header = TRUE, class = "hlrows leftnobold lrr")
+                })
+
+                output$clusterMeasuresTable <- shiny::renderUI({
+                    clu <- clustering()
+                    if (is.null(clu)) {
+                        return(NULL)
+                    }
+
+                    sizes <- attr(clu, "cluster_size")
+                    nn <- c(paste0("#", seq_along(sizes)), "total")
+                    ss <- attr(clu, "cluster_within_ss")
+                    ss <- c(ss, sum(ss))
+                    ss <- round(ss, 2)
+                    sizes <- c(sizes, sum(sizes))
+                    df <- data.frame(cluster = nn,
+                                     size = .format_percent(sizes, sizes[length(sizes)], digits = 0),
+                                     `sum of squares` = .format_percent(ss, ss[length(ss)], digits = 2),
+                                     `mean of squares` = round(ss / sizes, 2),
+                                     check.names = FALSE,
+                                     stringsAsFactors = FALSE)
+
+                    infoTable(df, header = TRUE, class = "hlrows leftnobold lrr")
+                })
+
+                output$totalSsPlot <- shiny::renderPlot({
+                    clu <- clustering()
+                    if (is.null(clu)) {
+                        return(NULL)
+                    }
+
+                    withinss <- attr(clu, "within_ss")
+                    betweenss <- attr(clu, "between_ss")
+
+                    df <- data.frame(ss = c("within", "between"),
+                                     const = 1,
+                                     value = c(withinss, betweenss))
+                    ggplot(df) +
+                        aes(x = value, y = const, fill = ss) +
+                        geom_bar(stat = "identity", position = position_stack(reverse = TRUE), orientation = "y") +
+                        labs(title = "sum of squares", x = NULL, y = NULL, fill = NULL) +
+                        scale_x_continuous(expand = c(0, 0)) +
+                        scale_y_continuous(expand = c(0, 0)) +
+                        theme(legend.position = "bottom",
+                              axis.text.y = element_blank(),
+                              axis.ticks.y = element_blank(),
+                              plot.title = element_text(hjust = 0.5),
+                              panel.background = element_blank())
+                }, res = 96)
+
+                output$clusterMsPlot <- shiny::renderPlot({
+                    clu <- clustering()
+                    if (is.null(clu)) {
+                        return(NULL)
+                    }
+
+                    sizes <- attr(clu, "cluster_size")
+                    nn <- paste0("#", seq_along(sizes))
+                    ms <- attr(clu, "cluster_within_ss") / sizes
+
+                    df <- data.frame(name = factor(nn, levels = nn),
+                                     sizes = sizes,
+                                     ms = ms)
+                    ggplot(df) +
+                        aes(y = name, x = sizes, fill = ms) +
+                        geom_bar(stat = "identity", position = position_stack(reverse = TRUE), orientation = "y") +
+                        labs(title = NULL, y = NULL, x = "size", fill = "mean of sq.") +
+                        scale_x_continuous(expand = c(0, 0)) +
+                        scale_y_discrete(expand = c(0, 0), limits = rev) +
+                        theme(legend.position = "bottom",
+                              plot.title = element_text(hjust = 0.5))
+                }, res = 96)
+
                 output$clusteringPlot <- shiny::renderPlot({
                     clu <- clustering()
                     if (is.null(clu)) {
@@ -107,7 +221,7 @@ associationsClusterModule <- function(id, rules, meta, data) {
                     }
 
                     clu$cluster_label <- paste0(clu$cluster_label,
-                                                " #", clu$cluster)
+                                                "#", clu$cluster)
                     clu$cluster_label <- factor(clu$cluster_label,
                                                 levels = unique(clu$cluster_label))
 
@@ -131,7 +245,7 @@ associationsClusterModule <- function(id, rules, meta, data) {
                     k <- length(unique(clu$cluster))
                     tabs <- lapply(seq_len(k), function(i) {
                         shiny::tabPanel(
-                            title = paste("#", i),
+                            title = paste0("#", i),
                             value = i)
                     })
 
