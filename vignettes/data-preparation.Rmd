@@ -851,7 +851,7 @@ package:
 1. **`partition()`**: The primary function for transforming data into crisp or 
    fuzzy predicates, with support for various partitioning methods including:
    - Logical and factor columns: automatic expansion into dummy predicates,
-     with the ability to merge factor levels using the `.subsets` argument
+     with the ability to merge factor levels
    - Numeric columns: crisp (Boolean) partitioning with configurable intervals
    - Triangular and raised-cosine fuzzy sets
    - Trapezoidal fuzzy sets using `.span` and `.inc` parameters
