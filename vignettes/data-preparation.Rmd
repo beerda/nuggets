@@ -58,25 +58,28 @@ uncertainty in data, but it is more computationally demanding.
 
 
 
-## Preparation of Crisp (Boolean) Predicates
+## Preparation of Predicates from Logical Columns
 
-For patterns based on crisp conditions, the data columns that would serve as
-predicates in conditions have to be transformed to logical (`TRUE`/`FALSE`)
-columns. The `partition()` function handles all types of input columns:
-
-- **logical** columns are automatically expanded into predicates for `TRUE` and
-  `FALSE`;
-- **factor** columns are expanded into predicates for subsets of their levels;
-- **numeric** columns are transformed according to the `.method` argument.
+Logical columns are automatically transformed to dummy logical columns
+by the `partition()` function without the need to specify any additional arguments.
+A logical column `x` is expanded into two predicates: `x=T` for rows where `x`
+is `TRUE` and `x=F` for rows where `x` is `FALSE`. Missing values are excluded
+from both predicates.
 
 The `partition()` function requires the dataset as its first argument and a
 *tidyselect* selection expression to select the columns to be transformed.
 
+```{r}
+# Create a simple dataset with a logical column
+x <- tibble::tibble(flag = c(TRUE, FALSE, NA, TRUE, FALSE))
+partition(x, flag)
+```
 
-### Logical and Factor Columns
 
-Logical and factor columns are automatically transformed to dummy logical columns
-by the `partition()` function without the need to specify any additional arguments.
+## Preparation of Predicates from Factors
+
+Factor columns are expanded into logical predicates representing subsets of
+their levels. By default, one predicate per level is created (`.subsets = 1`).
 
 For example, consider the built-in `mtcars` dataset. This dataset contains
 information about various car models. For the sake of illustration,
@@ -98,11 +101,9 @@ automatically:
 partition(mtcars_example, cyl)
 ```
 
-By default, `partition()` creates one predicate per factor level (i.e.,
-`.subsets = 1`). However, it is also possible to create predicates that
-represent **merged factor levels** by setting the `.subsets` argument to
-larger values. This is useful when you want to explore patterns involving
-combinations of categories.
+It is also possible to create predicates that represent **merged factor levels**
+by setting the `.subsets` argument to larger values. This is useful when you
+want to explore patterns involving combinations of categories.
 
 The `.subsets` argument specifies the sizes of level subsets for which
 predicates should be created:
@@ -113,7 +114,7 @@ predicates should be created:
 - Subset sizes equal to the total number of levels are rejected, because they
   would produce a predicate that is always `TRUE` for all non-missing values.
 
-For example, with an unordered factor having levels `a`, `b`, `c`:
+For example, with an unordered factor:
 
 ```{r}
 # Create an unordered factor
@@ -155,7 +156,7 @@ in general.
 For more details on factor column handling, see `?partition`.
 
 
-### Numeric Columns
+## Preparation of Crisp Predicates from Numeric Columns
 
 For numeric columns, the `partition()` function requires the `.method` argument
 to specify the method of partitioning:
@@ -303,7 +304,7 @@ reflect the structure of your data, leading to more interpretable patterns in
 subsequent analysis.
 
 
-## Preparation of Triangular and Raised-Cosine Fuzzy Predicates
+## Preparation of Fuzzy Predicates from Numeric Columns
 
 In many real-world datasets, numeric attributes do not lend themselves to
 clear-cut, crisp boundaries. For example, deciding whether a car has "low
@@ -518,7 +519,7 @@ and interpretability.
 
 
 
-## Preparation of Trapezoidal Fuzzy Predicates
+### Trapezoidal Fuzzy Predicates
 
 The triangular and raised cosine membership functions are often sufficient to
 capture gradual transitions in numeric data. However, in some situations it is
@@ -850,11 +851,13 @@ package:
 
 1. **`partition()`**: The primary function for transforming data into crisp or 
    fuzzy predicates, with support for various partitioning methods including:
-   - Logical and factor columns: automatic expansion into dummy predicates,
-     with the ability to merge factor levels
-   - Numeric columns: crisp (Boolean) partitioning with configurable intervals
-   - Triangular and raised-cosine fuzzy sets
-   - Trapezoidal fuzzy sets using `.span` and `.inc` parameters
+   - Logical columns: automatic expansion into `TRUE`/`FALSE` predicates
+   - Factor columns: expansion into predicates for level subsets, with the
+     ability to merge factor levels using the `.subsets` argument
+   - Numeric columns (crisp): interval-based Boolean partitioning with
+     configurable breakpoints and data-driven `.style` methods
+   - Numeric columns (fuzzy): triangular, raised-cosine, and trapezoidal
+     fuzzy sets using `.span` and `.inc` parameters
 
 2. **`is_almost_constant()`** and **`remove_almost_constant()`**: Utility 
    functions for identifying and removing uninformative columns that have low 
