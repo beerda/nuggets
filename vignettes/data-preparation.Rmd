@@ -56,6 +56,18 @@ option is simpler and faster, and it is the recommended option for most
 applications. The second option is more flexible and allows to model
 uncertainty in data, but it is more computationally demanding.
 
+Throughout this section, we use a modified version of the built-in `mtcars`
+dataset for illustration. We transform the `cyl` column into a factor and
+the `vs` column into a logical:
+
+```{r}
+mtcars_example <- mtcars
+mtcars_example$cyl <- factor(mtcars_example$cyl,
+                     levels= c(4, 6, 8),
+                     labels = c("four", "six", "eight"))
+mtcars_example$vs <- as.logical(mtcars_example$vs)
+head(mtcars_example)
+```
 
 
 ## Preparation of Predicates from Logical Columns
@@ -68,11 +80,11 @@ from both predicates.
 
 The `partition()` function requires the dataset as its first argument and a
 *tidyselect* selection expression to select the columns to be transformed.
+For example, the `vs` column in `mtcars_example` is a logical column indicating
+the engine type (V-shaped or straight):
 
 ```{r}
-# Create a simple dataset with a logical column
-x <- tibble::tibble(flag = c(TRUE, FALSE, NA, TRUE, FALSE))
-partition(x, flag)
+partition(mtcars_example, vs)
 ```
 
 
@@ -81,20 +93,8 @@ partition(x, flag)
 Factor columns are expanded into logical predicates representing subsets of
 their levels. By default, one predicate per level is created (`.subsets = 1`).
 
-For example, consider the built-in `mtcars` dataset. This dataset contains
-information about various car models. For the sake of illustration,
-let us transform the `cyl` column into factor first:
-
-```{r}
-# Create a copy to avoid modifying the original dataset
-mtcars_example <- mtcars
-mtcars_example$cyl <- factor(mtcars_example$cyl,
-                     levels= c(4, 6, 8),
-                     labels = c("four", "six", "eight"))
-head(mtcars_example)
-```
-
-Factors are transformed to dummy logical columns by the `partition()` function
+The `cyl` column in `mtcars_example` is a factor with three levels. Factors
+are transformed to dummy logical columns by the `partition()` function
 automatically:
 
 ```{r}
@@ -114,37 +114,35 @@ predicates should be created:
 - Subset sizes equal to the total number of levels are rejected, because they
   would produce a predicate that is always `TRUE` for all non-missing values.
 
-For example, with an unordered factor:
+For example, `cyl` is an unordered factor with three levels:
 
 ```{r}
-# Create an unordered factor
-x <- tibble::tibble(color = factor(c("red", "green", "blue", "red", "green")))
-
 # Default: one predicate per level
-partition(x, color)
+partition(mtcars_example, cyl)
 
 # Merge pairs of levels - all pairs are created for unordered factors
-partition(x, color, .subsets = 2)
+partition(mtcars_example, cyl, .subsets = 2)
 
 # Create both individual and merged predicates
-partition(x, color, .subsets = c(1, 2))
+partition(mtcars_example, cyl, .subsets = c(1, 2))
 ```
 
-For ordered factors, only consecutive levels are merged:
+For ordered factors, only consecutive levels are merged. To illustrate,
+let us create an ordered version of the `cyl` column:
 
 ```{r}
-# Create an ordered factor
-x <- tibble::tibble(size = ordered(c("small", "medium", "large", "medium"),
-                                   levels = c("small", "medium", "large")))
+mtcars_example$cyl_ord <- ordered(mtcars$cyl,
+                                  levels = c(4, 6, 8),
+                                  labels = c("four", "six", "eight"))
 
 # Default: one predicate per level
-partition(x, size)
+partition(mtcars_example, cyl_ord)
 
 # Only consecutive pairs are created for ordered factors
-partition(x, size, .subsets = 2)
+partition(mtcars_example, cyl_ord, .subsets = 2)
 
 # Both individual levels and consecutive pairs
-partition(x, size, .subsets = c(1, 2))
+partition(mtcars_example, cyl_ord, .subsets = c(1, 2))
 ```
 
 This feature can be very useful for discovering patterns where multiple
@@ -170,13 +168,13 @@ to specify the method of partitioning:
 - there exist other methods of partitioning of numeric columns. These
   methods create fuzzy predicates and are described in the next section.
 
-The `vs`, `am`, and `gear` columns in `mtcars` are numeric but actually represent
+The `am` and `gear` columns in `mtcars_example` are numeric but actually represent
 categories. To transform them to dummy logical columns in the same way as
 factors, we can use the `partition()` function with the `.method` argument set to
 `"dummy"`:
 
 ```{r}
-partition(mtcars_example, vs:gear, .method = "dummy")
+partition(mtcars_example, am:gear, .method = "dummy")
 ```
 
 The `mpg` column is numeric and therefore cannot be transformed directly into
@@ -218,7 +216,8 @@ as follows:
 
 ```{r}
 crisp_mtcars <- mtcars_example |>
-    partition(cyl, vs:gear, .method = "dummy") |>
+    partition(cyl, cyl_ord, am:gear, .method = "dummy") |>
+    partition(vs) |>
     partition(mpg, .method = "crisp", .breaks = c(-Inf, 15, 20, 30, Inf)) |>
     partition(disp:carb, .method = "crisp", .breaks = 3) 
 
