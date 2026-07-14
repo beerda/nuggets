@@ -2,9 +2,10 @@ pandoc: 3.8.3
 pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
+  association-rules: association-rules.html
   data-preparation: data-preparation.html
   nuggets: nuggets.html
-last_built: 2026-07-14T06:13Z
+last_built: 2026-07-14T13:50Z
 urls:
   reference: https://beerda.github.io/nuggets/reference
   article: https://beerda.github.io/nuggets/articles

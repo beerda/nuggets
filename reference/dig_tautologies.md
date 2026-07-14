@@ -138,5 +138,20 @@ dig_tautologies(d,
                 antecedent = everything(),
                 consequent = everything(),
                 min_confidence = 0.99)
-#> # A tibble: 0 × 0
+#> # A tibble: 732 × 13
+#>    antecedent  consequent support confidence coverage conseq_support  lift count
+#>    <chr>       <chr>        <dbl>      <dbl>    <dbl>          <dbl> <dbl> <dbl>
+#>  1 {gear=(-In… {carb=(-I…   0.844          1    0.844          0.938  1.07    27
+#>  2 {am=(-Inf;… {carb=(-I…   0.594          1    0.594          0.938  1.07    19
+#>  3 {am=(-Inf;… {gear=(-I…   0.594          1    0.594          0.844  1.19    19
+#>  4 {cyl=(-Inf… {disp=(-I…   0.562          1    0.562          0.562  1.78    18
+#>  5 {cyl=(-Inf… {hp=(-Inf…   0.562          1    0.562          0.781  1.28    18
+#>  6 {cyl=(-Inf… {wt=(-Inf…   0.562          1    0.562          0.656  1.52    18
+#>  7 {disp=(-In… {hp=(-Inf…   0.562          1    0.562          0.781  1.28    18
+#>  8 {disp=(-In… {wt=(-Inf…   0.562          1    0.562          0.656  1.52    18
+#>  9 {disp=(-In… {cyl=(-In…   0.562          1    0.562          0.562  1.78    18
+#> 10 {vs=(-Inf;… {qsec=(-I…   0.562          1    0.562          0.719  1.39    18
+#> # ℹ 722 more rows
+#> # ℹ 5 more variables: antecedent_length <int>, pp <dbl>, pn <dbl>, np <dbl>,
+#> #   nn <dbl>
 ```

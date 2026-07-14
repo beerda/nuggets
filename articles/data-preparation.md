@@ -1265,7 +1265,32 @@ tautologies <- dig_tautologies(
 )
 
 print(tautologies)
-#> # A tibble: 0 × 0
+#> # A tibble: 54 × 13
+#>    antecedent            consequent  support confidence coverage conseq_support
+#>    <chr>                 <chr>         <dbl>      <dbl>    <dbl>          <dbl>
+#>  1 {gear=3}              {am=0}        0.469      1        0.469          0.594
+#>  2 {cyl=eight}           {vs=0}        0.438      1        0.438          0.562
+#>  3 {disp=(272;472;Inf)}  {vs=0}        0.177      1        0.177          0.562
+#>  4 {disp=(272;472;Inf)}  {cyl=eight}   0.177      1        0.177          0.438
+#>  5 {gear=5}              {am=1}        0.156      1        0.156          0.406
+#>  6 {mpg=(22.2;33.9;Inf)} {cyl=four}    0.135      1        0.135          0.344
+#>  7 {wt=(3.47;5.42;Inf)}  {am=0}        0.123      0.987    0.125          0.594
+#>  8 {wt=(3.47;5.42;Inf)}  {vs=0}        0.125      1        0.125          0.562
+#>  9 {wt=(3.47;5.42;Inf)}  {gear=3}      0.123      0.987    0.125          0.469
+#> 10 {wt=(3.47;5.42;Inf)}  {cyl=eight}   0.125      1        0.125          0.438
+#>     lift count antecedent_length    pp     pn    np    nn
+#>    <dbl> <dbl>             <int> <dbl>  <dbl> <dbl> <dbl>
+#>  1  1.68 15                    1 15    0       4     13  
+#>  2  1.78 14                    1 14    0       4     14  
+#>  3  1.78  5.68                 1  5.68 0      12.3   14  
+#>  4  2.29  5.68                 1  5.68 0       8.32  18  
+#>  5  2.46  5                    1  5    0       8     19  
+#>  6  2.91  4.32                 1  4.32 0       6.68  21  
+#>  7  1.66  3.93                 1  3.93 0.0513 15.1   12.9
+#>  8  1.78  3.98                 1  3.98 0      14.0   14  
+#>  9  2.11  3.93                 1  3.93 0.0513 11.1   16.9
+#> 10  2.29  3.98                 1  3.98 0      10.0   18  
+#> # ℹ 44 more rows
 ```
 
 The function returns a tibble in the same format as
