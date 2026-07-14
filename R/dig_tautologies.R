@@ -154,12 +154,10 @@ dig_tautologies <- function(x,
             digattr <- attributes(res)
         }
 
-        if (nrow(res) <= 0) {
-            break
+        if (nrow(res) > 0) {
+            result <- rbind(result, res)
+            tautologies <- c(tautologies, parse_condition(res$antecedent, res$consequent))
         }
-
-        result <- rbind(result, res)
-        tautologies <- c(tautologies, parse_condition(res$antecedent, res$consequent))
         len <- len + 1
     }
 
