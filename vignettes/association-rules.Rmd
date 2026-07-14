@@ -302,26 +302,99 @@ The `p` parameter represents the null-hypothesis probability used in the
 binomial-test-based quantifiers (`lci`, `uci`, `dlci`, `duci`, `lce`, `uce`).
 
 
-# Parallel Computation
+# Excluding Tautologies from the Search
 
-For large datasets, you can speed up the search using multiple threads
-with the `threads` argument:
- 
-```{r, eval=FALSE}
-rules_parallel <- dig_associations(crisp_co2,
+In real-world datasets, some rules are trivially true or nearly so — for
+example, rules that follow directly from the structure of the data (e.g.,
+`engine_type=electric => fuel_type=electricity`). Such rules are called
+**tautologies**. While technically valid, they are often uninteresting and
+can clutter results or slow down the search.
+
+The `excluded` argument of `dig_associations()` allows you to specify a
+list of predicate combinations that should never appear together in the
+antecedent of a generated rule. Any rule whose antecedent contains all
+predicates from an excluded combination is suppressed. Note that the term
+"tautology" here is used broadly — any rule you consider uninteresting
+(regardless of whether its confidence is exactly 1) can be excluded this
+way.
+
+
+## Finding Tautologies with `dig_tautologies()`
+
+The `dig_tautologies()` function is specifically designed to find rules
+with very high confidence. It searches iteratively, using tautologies found
+in earlier iterations to prune the search space in later iterations. For a
+detailed description, see the `vignette("data-preparation")`.
+
+```{r}
+disj <- var_names(colnames(crisp_co2))
+
+tautologies <- dig_tautologies(crisp_co2,
+                               antecedent = everything(),
+                               consequent = everything(),
+                               disjoint = disj,
+                               min_confidence = 0.95,
+                               min_support = 0.05,
+                               max_length = 2)
+tautologies
+```
+
+
+## Using Tautologies to Filter Association Rules
+
+Once tautologies are identified, convert them to the format expected by the
+`excluded` argument using `parse_condition()`, and pass them to
+`dig_associations()`:
+
+```{r}
+# Convert tautologies to the excluded format
+excluded_conds <- parse_condition(tautologies$antecedent,
+                                  tautologies$consequent)
+
+# Search for rules while excluding tautological patterns
+rules_filtered <- dig_associations(crisp_co2,
                                    antecedent = !starts_with("uptake"),
                                    consequent = starts_with("uptake"),
-                                   min_support = 0.05,
-                                   min_confidence = 0.6,
-                                   threads = 4)
+                                   disjoint = disj,
+                                   excluded = excluded_conds,
+                                   min_support = 0.1,
+                                   min_confidence = 0.8)
+rules_filtered
 ```
+
+By excluding known tautologies, the search focuses on genuinely interesting
+patterns and can run significantly faster on large datasets.
+
+
+## Manually Specifying Exclusions
+
+You can also construct the `excluded` list manually. Each element is a
+character vector of predicate names that must not co-occur in the
+antecedent:
+
+```{r}
+# Exclude rules where "Type=Quebec" and "Treatment=chilled" appear together
+manual_excluded <- list(c("Type=Quebec", "Treatment=chilled"))
+
+rules_manual <- dig_associations(crisp_co2,
+                                 antecedent = !starts_with("uptake"),
+                                 consequent = starts_with("uptake"),
+                                 disjoint = disj,
+                                 excluded = manual_excluded,
+                                 min_support = 0.1,
+                                 min_confidence = 0.8)
+rules_manual
+```
+
+This is useful when you have domain knowledge about which combinations are
+trivial or undesirable, without needing to run `dig_tautologies()` first.
 
 
 # Summary
 
 This vignette demonstrated how to search for association rules using the
 `nuggets` package:
- 
+
 1. **Data preparation** with `partition()` transforms raw data into crisp
    or fuzzy predicates suitable for rule mining (see `vignette("data-preparation")`
    for details).
@@ -341,7 +414,10 @@ This vignette demonstrated how to search for association rules using the
    rules from multiple perspectives (conviction, leverage, Jaccard, GUHA
    quantifiers, and many more).
 
-6. **Performance** can be managed with `max_results` and `threads`.
+6. **Excluding tautologies** with the `excluded` argument and
+   `dig_tautologies()` removes trivial or uninteresting rules and speeds up
+   the search.
 
 For further details, consult the function documentation:
-`dig_associations()`, `add_interest()`, `partition()`, `var_names()`.
+`dig_associations()`, `add_interest()`, `dig_tautologies()`,
+`parse_condition()`, `partition()`, `var_names()`.
