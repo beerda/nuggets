@@ -8,6 +8,14 @@ template:
 news:
   cran_dates: false
 
+articles:
+  - title: "Get started"
+    navbar:
+    contents:
+      - nuggets
+      - data-preparation
+      - association-rules
+
 reference:
   - title: "Data Preparation"
     desc: >
