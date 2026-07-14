@@ -56,25 +56,108 @@ option is simpler and faster, and it is the recommended option for most
 applications. The second option is more flexible and allows to model
 uncertainty in data, but it is more computationally demanding.
 
+Throughout this section, we use a modified version of the built-in `mtcars`
+dataset for illustration. We transform the `cyl` column into a factor and
+the `vs` column into a logical:
+
+```{r}
+mtcars_example <- mtcars
+mtcars_example$cyl <- factor(mtcars_example$cyl,
+                     levels= c(4, 6, 8),
+                     labels = c("four", "six", "eight"))
+mtcars_example$vs <- as.logical(mtcars_example$vs)
+head(mtcars_example)
+```
 
 
-## Preparation of Crisp (Boolean) Predicates
+## Preparation of Predicates from Logical Columns
 
-For patterns based on crisp conditions, the data columns that would serve as
-predicates in conditions have to be transformed to logical (`TRUE`/`FALSE`)
-columns. That can be done in two ways:
+Logical columns are automatically transformed to dummy logical columns
+by the `partition()` function without the need to specify any additional arguments.
+A logical column `x` is expanded into two predicates: `x=T` for rows where `x`
+is `TRUE` and `x=F` for rows where `x` is `FALSE`. Missing values are excluded
+from both predicates.
 
-- numeric columns can be transformed to factors with a selected number of
-  levels, and then
-- factors can be transformed to dummy logical columns.
-
-Both operations can be done with the help of the `partition()` function. The
-`partition()` function requires the dataset as its first argument and a
+The `partition()` function requires the dataset as its first argument and a
 *tidyselect* selection expression to select the columns to be transformed.
+For example, the `vs` column in `mtcars_example` is a logical column indicating
+the engine type (V-shaped or straight):
 
-Factors and logical columns are automatically transformed to dummy logical columns
-by the `partition()` function. For numeric columns, the `partition()` function
-requires the `.method` argument to specify the method of partitioning:
+```{r}
+partition(mtcars_example, vs)
+```
+
+
+## Preparation of Predicates from Factors
+
+Factor columns are expanded into logical predicates representing subsets of
+their levels. By default, one predicate per level is created (`.subsets = 1`).
+
+The `cyl` column in `mtcars_example` is a factor with three levels. Factors
+are transformed to dummy logical columns by the `partition()` function
+automatically:
+
+```{r}
+partition(mtcars_example, cyl)
+```
+
+It is also possible to create predicates that represent **merged factor levels**
+by setting the `.subsets` argument to larger values. This is useful when you
+want to explore patterns involving combinations of categories.
+
+The `.subsets` argument specifies the sizes of level subsets for which
+predicates should be created:
+
+- For **unordered** factors, all subsets of the requested sizes are created.
+- For **ordered** factors, only subsets formed by **consecutive** levels are
+  created.
+- Subset sizes equal to the total number of levels are rejected, because they
+  would produce a predicate that is always `TRUE` for all non-missing values.
+
+For example, `cyl` is an unordered factor with three levels:
+
+```{r}
+# Default: one predicate per level
+partition(mtcars_example, cyl)
+
+# Merge pairs of levels - all pairs are created for unordered factors
+partition(mtcars_example, cyl, .subsets = 2)
+
+# Create both individual and merged predicates
+partition(mtcars_example, cyl, .subsets = c(1, 2))
+```
+
+For ordered factors, only consecutive levels are merged. To illustrate,
+let us create an ordered version of the `cyl` column:
+
+```{r}
+mtcars_example$cyl_ord <- ordered(mtcars$cyl,
+                                  levels = c(4, 6, 8),
+                                  labels = c("four", "six", "eight"))
+
+# Default: one predicate per level
+partition(mtcars_example, cyl_ord)
+
+# Only consecutive pairs are created for ordered factors
+partition(mtcars_example, cyl_ord, .subsets = 2)
+
+# Both individual levels and consecutive pairs
+partition(mtcars_example, cyl_ord, .subsets = c(1, 2))
+```
+
+This feature can be very useful for discovering patterns where multiple
+categories together form a meaningful group. For instance, in a dataset
+with an education level factor, merging "bachelor" and "master" into a
+single predicate might reveal patterns associated with "higher education"
+in general.
+
+For more details on factor column handling, see `?partition`.
+
+
+## Preparation of Crisp Predicates from Numeric Columns
+
+For numeric columns, the `partition()` function requires the `.method` argument
+to specify the method of partitioning:
 
 - `.method = "dummy"` transforms numeric columns to factors and then to dummy
   logical columns. That effectively creates a separate logical column for each
@@ -85,33 +168,13 @@ requires the `.method` argument to specify the method of partitioning:
 - there exist other methods of partitioning of numeric columns. These
   methods create fuzzy predicates and are described in the next section.
 
-For example, consider the built-in `mtcars` dataset. This dataset contains
-information about various car models. For the sake of illustration,
-let us transform the `cyl` column into factor first:
-
-```{r}
-# Create a copy to avoid modifying the original dataset
-mtcars_example <- mtcars
-mtcars_example$cyl <- factor(mtcars_example$cyl,
-                     levels= c(4, 6, 8),
-                     labels = c("four", "six", "eight"))
-head(mtcars_example)
-```
-
-Factors are transformed to dummy logical columns by the `partition()` function
-automatically:
-
-```{r}
-partition(mtcars_example, cyl)
-```
-
-The `vs`, `am`, and `gear` columns are numeric but actually represent
+The `am` and `gear` columns in `mtcars_example` are numeric but actually represent
 categories. To transform them to dummy logical columns in the same way as
 factors, we can use the `partition()` function with the `.method` argument set to
 `"dummy"`:
 
 ```{r}
-partition(mtcars_example, vs:gear, .method = "dummy")
+partition(mtcars_example, am:gear, .method = "dummy")
 ```
 
 The `mpg` column is numeric and therefore cannot be transformed directly into
@@ -153,7 +216,8 @@ as follows:
 
 ```{r}
 crisp_mtcars <- mtcars_example |>
-    partition(cyl, vs:gear, .method = "dummy") |>
+    partition(cyl, cyl_ord, am:gear, .method = "dummy") |>
+    partition(vs) |>
     partition(mpg, .method = "crisp", .breaks = c(-Inf, 15, 20, 30, Inf)) |>
     partition(disp:carb, .method = "crisp", .breaks = 3) 
 
@@ -239,7 +303,7 @@ reflect the structure of your data, leading to more interpretable patterns in
 subsequent analysis.
 
 
-## Preparation of Triangular and Raised-Cosine Fuzzy Predicates
+## Preparation of Fuzzy Predicates from Numeric Columns
 
 In many real-world datasets, numeric attributes do not lend themselves to
 clear-cut, crisp boundaries. For example, deciding whether a car has "low
@@ -454,7 +518,7 @@ and interpretability.
 
 
 
-## Preparation of Trapezoidal Fuzzy Predicates
+### Trapezoidal Fuzzy Predicates
 
 The triangular and raised cosine membership functions are often sufficient to
 capture gradual transitions in numeric data. However, in some situations it is
@@ -786,9 +850,13 @@ package:
 
 1. **`partition()`**: The primary function for transforming data into crisp or 
    fuzzy predicates, with support for various partitioning methods including:
-   - Crisp (Boolean) partitioning with configurable intervals
-   - Triangular and raised-cosine fuzzy sets
-   - Trapezoidal fuzzy sets using `.span` and `.inc` parameters
+   - Logical columns: automatic expansion into `TRUE`/`FALSE` predicates
+   - Factor columns: expansion into predicates for level subsets, with the
+     ability to merge factor levels using the `.subsets` argument
+   - Numeric columns (crisp): interval-based Boolean partitioning with
+     configurable breakpoints and data-driven `.style` methods
+   - Numeric columns (fuzzy): triangular, raised-cosine, and trapezoidal
+     fuzzy sets using `.span` and `.inc` parameters
 
 2. **`is_almost_constant()`** and **`remove_almost_constant()`**: Utility 
    functions for identifying and removing uninformative columns that have low 
