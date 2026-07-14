@@ -111,6 +111,19 @@ dig_tautologies <- function(x,
     result <- NULL
     len <- 0
 
+    if (max_length == Inf) {
+        cols <- .convert_data_to_list(x,
+                                      error_context = list(arg_x = "x",
+                                                           call = current_env()))
+        ante_cols <- .extract_cols(cols,
+                                        !!antecedent,
+                                        allow_numeric = TRUE,
+                                        allow_empty = TRUE,
+                                        error_context = list(arg_selection = "antecedent",
+                                                             call = current_env()))
+        max_length <- sum(ante_cols$selected)
+    }
+
     digattr <- NULL
     while (len <= max_length) {
         maxres <- max_results
