@@ -19,6 +19,8 @@
 
 test_that("parse_condition", {
     expect_equal(parse_condition(), list())
+    expect_equal(parse_condition(NULL), list())
+    expect_equal(parse_condition(NULL, NULL), list())
     expect_equal(parse_condition(character(0)), list())
     expect_equal(parse_condition("{}"), list(character(0)))
     expect_equal(parse_condition("{,}"), list(character(0)))
