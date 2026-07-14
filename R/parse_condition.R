@@ -66,6 +66,11 @@ parse_condition <- function(...,
         return(list())
     }
 
+    nulls <- sapply(dots, is.null)
+    if (all(nulls)) {
+        return(list())
+    }
+
     test <- sapply(dots, is.character)
     if (!isTRUE(all(test))) {
         types <- sapply(dots, function(i) class(i)[1])
