@@ -53,7 +53,7 @@ Association rules are evaluated using several quality measures:
   a positive association.
 
 The `nuggets` package supports searching for association rules in both
-**crisp** (Boolean) and **fuzzy** data through the [`dig_associations()`]
+**crisp** (Boolean) and **fuzzy** data through the `dig_associations()`
 function.
 
 
@@ -70,7 +70,7 @@ head(CO2)
 ```
 
 Before searching for association rules, data must be transformed into
-predicates (logical or fuzzy columns). We use the [`partition()`] function
+predicates (logical or fuzzy columns). We use the `partition()` function
 for this purpose. For a detailed explanation of data preparation techniques,
 see the `vignette("data-preparation")`.
 
@@ -107,7 +107,7 @@ head(fuzzy_co2, n = 3)
 
 # Basic Association Rule Search
 
-The simplest use of [`dig_associations()`] searches for all rules that
+The simplest use of `dig_associations()` searches for all rules that
 meet given minimum support and confidence thresholds.
 
 ```{r}
@@ -145,13 +145,13 @@ rules_uptake
 
 # Using the Disjoint Argument
 
-When data is prepared with [`partition()`], a single original variable is
+When data is prepared with `partition()`, a single original variable is
 often expanded into multiple predicates (e.g., `conc=(-Inf,200]` and
 `conc=(200,500]`). These predicates from the same variable should not
 appear together in the same antecedent, as their conjunction would be
 contradictory or redundant.
-The `disjoint` argument prevents this. By default, [`dig_associations()`]
-uses [`var_names()`] on the column names to create groups of mutually
+The `disjoint` argument prevents this. By default, `dig_associations()`
+uses `var_names()` on the column names to create groups of mutually
 exclusive predicates.
 
 You can also provide a custom disjoint vector:
@@ -210,7 +210,7 @@ rules_limited
 # Fuzzy Association Rules
 
 When the data contains fuzzy predicates (numeric columns with values in
-$[0, 1]$), [`dig_associations()`] computes fuzzy support using a
+$[0, 1]$), `dig_associations()` computes fuzzy support using a
 **t-norm** for conjunction. The `t_norm` argument specifies which t-norm
 to use:
 
@@ -249,10 +249,10 @@ while the Łukasiewicz t-norm is the most strict.
 
 # Computing Additional Interest Measures
 
-The [`add_interest()`] function computes additional interestingness measures
+The `add_interest()` function computes additional interestingness measures
 for association rules beyond the basic support, confidence, and lift.
 It uses the contingency table columns (`pp`, `pn`, `np`, `nn`) that are
-automatically included in the output of [`dig_associations()`].
+automatically included in the output of `dig_associations()`.
 
 ```{r}
 # Add selected interest measures
@@ -287,7 +287,7 @@ rules_smoothed |>
 
 ## GUHA Quantifiers
 
-[`add_interest()`] also supports GUHA (General Unary Hypothesis Automaton)
+`add_interest()` also supports GUHA (General Unary Hypothesis Automaton)
 quantifiers, including statistical tests based on the binomial distribution:
 
 ```{r}
@@ -322,26 +322,26 @@ rules_parallel <- dig_associations(crisp_co2,
 This vignette demonstrated how to search for association rules using the
 `nuggets` package:
  
-1. **Data preparation** with [`partition()`] transforms raw data into crisp
+1. **Data preparation** with `partition()` transforms raw data into crisp
    or fuzzy predicates suitable for rule mining (see `vignette("data-preparation")`
    for details).
 
-2. **Basic search** with [`dig_associations()`] finds rules meeting minimum
+2. **Basic search** with `dig_associations()` finds rules meeting minimum
    support and confidence thresholds.
 
 3. **Controlling the search space**: use `antecedent`/`consequent` to
    constrain which predicates appear on each side, `disjoint` to prevent
-   contradictory combinations via [`var_names()`], and `min_length`/`max_length`
+   contradictory combinations via `var_names()`, and `min_length`/`max_length`
    to control rule complexity.
 
 4. **Fuzzy rules** extend the approach to graded membership using t-norms
    (`"goguen"`, `"goedel"`, `"lukas"`).
 
-5. **Interest measures** can be added with [`add_interest()`] to evaluate
+5. **Interest measures** can be added with `add_interest()` to evaluate
    rules from multiple perspectives (conviction, leverage, Jaccard, GUHA
    quantifiers, and many more).
 
 6. **Performance** can be managed with `max_results` and `threads`.
 
 For further details, consult the function documentation:
-[`dig_associations()`], [`add_interest()`], [`partition()`], [`var_names()`].
+`dig_associations()`, `add_interest()`, `partition()`, `var_names()`.
