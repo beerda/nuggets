@@ -35,61 +35,70 @@ recommended option for most applications. The second option is more
 flexible and allows to model uncertainty in data, but it is more
 computationally demanding.
 
-### Preparation of Crisp (Boolean) Predicates
-
-For patterns based on crisp conditions, the data columns that would
-serve as predicates in conditions have to be transformed to logical
-(`TRUE`/`FALSE`) columns. That can be done in two ways:
-
-- numeric columns can be transformed to factors with a selected number
-  of levels, and then
-- factors can be transformed to dummy logical columns.
-
-Both operations can be done with the help of the
-[`partition()`](https://beerda.github.io/nuggets/reference/partition.md)
-function. The
-[`partition()`](https://beerda.github.io/nuggets/reference/partition.md)
-function requires the dataset as its first argument and a *tidyselect*
-selection expression to select the columns to be transformed.
-
-Factors and logical columns are automatically transformed to dummy
-logical columns by the
-[`partition()`](https://beerda.github.io/nuggets/reference/partition.md)
-function. For numeric columns, the
-[`partition()`](https://beerda.github.io/nuggets/reference/partition.md)
-function requires the `.method` argument to specify the method of
-partitioning:
-
-- `.method = "dummy"` transforms numeric columns to factors and then to
-  dummy logical columns. That effectively creates a separate logical
-  column for each distinct value of the numeric column.
-- `.method = "crisp"` transforms numeric columns to crisp predicates by
-  dividing the range of values into intervals and coding the values into
-  dummy logical columns according to the intervals.
-- there exist other methods of partitioning of numeric columns. These
-  methods create fuzzy predicates and are described in the next section.
-
-For example, consider the built-in `mtcars` dataset. This dataset
-contains information about various car models. For the sake of
-illustration, let us transform the `cyl` column into factor first:
+Throughout this section, we use a modified version of the built-in
+`mtcars` dataset for illustration. We transform the `cyl` column into a
+factor and the `vs` column into a logical:
 
 ``` r
 
-# Create a copy to avoid modifying the original dataset
 mtcars_example <- mtcars
 mtcars_example$cyl <- factor(mtcars_example$cyl,
                      levels= c(4, 6, 8),
                      labels = c("four", "six", "eight"))
+mtcars_example$vs <- as.logical(mtcars_example$vs)
 head(mtcars_example)
-#>                    mpg   cyl disp  hp drat    wt  qsec vs am gear carb
-#> Mazda RX4         21.0   six  160 110 3.90 2.620 16.46  0  1    4    4
-#> Mazda RX4 Wag     21.0   six  160 110 3.90 2.875 17.02  0  1    4    4
-#> Datsun 710        22.8  four  108  93 3.85 2.320 18.61  1  1    4    1
-#> Hornet 4 Drive    21.4   six  258 110 3.08 3.215 19.44  1  0    3    1
-#> Hornet Sportabout 18.7 eight  360 175 3.15 3.440 17.02  0  0    3    2
-#> Valiant           18.1   six  225 105 2.76 3.460 20.22  1  0    3    1
+#>                    mpg   cyl disp  hp drat    wt  qsec    vs am gear carb
+#> Mazda RX4         21.0   six  160 110 3.90 2.620 16.46 FALSE  1    4    4
+#> Mazda RX4 Wag     21.0   six  160 110 3.90 2.875 17.02 FALSE  1    4    4
+#> Datsun 710        22.8  four  108  93 3.85 2.320 18.61  TRUE  1    4    1
+#> Hornet 4 Drive    21.4   six  258 110 3.08 3.215 19.44  TRUE  0    3    1
+#> Hornet Sportabout 18.7 eight  360 175 3.15 3.440 17.02 FALSE  0    3    2
+#> Valiant           18.1   six  225 105 2.76 3.460 20.22  TRUE  0    3    1
 ```
 
+### Preparation of Predicates from Logical Columns
+
+Logical columns are automatically transformed to dummy logical columns
+by the
+[`partition()`](https://beerda.github.io/nuggets/reference/partition.md)
+function without the need to specify any additional arguments. A logical
+column `x` is expanded into two predicates: `x=T` for rows where `x` is
+`TRUE` and `x=F` for rows where `x` is `FALSE`. Missing values are
+excluded from both predicates.
+
+The
+[`partition()`](https://beerda.github.io/nuggets/reference/partition.md)
+function requires the dataset as its first argument and a *tidyselect*
+selection expression to select the columns to be transformed. For
+example, the `vs` column in `mtcars_example` is a logical column
+indicating the engine type (V-shaped or straight):
+
+``` r
+
+partition(mtcars_example, vs)
+#> # A tibble: 32 × 12
+#>      mpg cyl    disp    hp  drat    wt  qsec    am  gear  carb `vs=T` `vs=F`
+#>    <dbl> <fct> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <lgl>  <lgl> 
+#>  1  21   six    160    110  3.9   2.62  16.5     1     4     4 FALSE  TRUE  
+#>  2  21   six    160    110  3.9   2.88  17.0     1     4     4 FALSE  TRUE  
+#>  3  22.8 four   108     93  3.85  2.32  18.6     1     4     1 TRUE   FALSE 
+#>  4  21.4 six    258    110  3.08  3.22  19.4     0     3     1 TRUE   FALSE 
+#>  5  18.7 eight  360    175  3.15  3.44  17.0     0     3     2 FALSE  TRUE  
+#>  6  18.1 six    225    105  2.76  3.46  20.2     0     3     1 TRUE   FALSE 
+#>  7  14.3 eight  360    245  3.21  3.57  15.8     0     3     4 FALSE  TRUE  
+#>  8  24.4 four   147.    62  3.69  3.19  20       0     4     2 TRUE   FALSE 
+#>  9  22.8 four   141.    95  3.92  3.15  22.9     0     4     2 TRUE   FALSE 
+#> 10  19.2 six    168.   123  3.92  3.44  18.3     0     4     4 TRUE   FALSE 
+#> # ℹ 22 more rows
+```
+
+### Preparation of Predicates from Factors
+
+Factor columns are expanded into logical predicates representing subsets
+of their levels. By default, one predicate per level is created
+(`.subsets = 1`).
+
+The `cyl` column in `mtcars_example` is a factor with three levels.
 Factors are transformed to dummy logical columns by the
 [`partition()`](https://beerda.github.io/nuggets/reference/partition.md)
 function automatically:
@@ -98,18 +107,18 @@ function automatically:
 
 partition(mtcars_example, cyl)
 #> # A tibble: 32 × 13
-#>      mpg  disp    hp  drat    wt  qsec    vs    am  gear  carb `cyl=four`
-#>    <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <lgl>     
-#>  1  21    160    110  3.9   2.62  16.5     0     1     4     4 FALSE     
-#>  2  21    160    110  3.9   2.88  17.0     0     1     4     4 FALSE     
-#>  3  22.8  108     93  3.85  2.32  18.6     1     1     4     1 TRUE      
-#>  4  21.4  258    110  3.08  3.22  19.4     1     0     3     1 FALSE     
-#>  5  18.7  360    175  3.15  3.44  17.0     0     0     3     2 FALSE     
-#>  6  18.1  225    105  2.76  3.46  20.2     1     0     3     1 FALSE     
-#>  7  14.3  360    245  3.21  3.57  15.8     0     0     3     4 FALSE     
-#>  8  24.4  147.    62  3.69  3.19  20       1     0     4     2 TRUE      
-#>  9  22.8  141.    95  3.92  3.15  22.9     1     0     4     2 TRUE      
-#> 10  19.2  168.   123  3.92  3.44  18.3     1     0     4     4 FALSE     
+#>      mpg  disp    hp  drat    wt  qsec vs       am  gear  carb `cyl=four`
+#>    <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <lgl> <dbl> <dbl> <dbl> <lgl>     
+#>  1  21    160    110  3.9   2.62  16.5 FALSE     1     4     4 FALSE     
+#>  2  21    160    110  3.9   2.88  17.0 FALSE     1     4     4 FALSE     
+#>  3  22.8  108     93  3.85  2.32  18.6 TRUE      1     4     1 TRUE      
+#>  4  21.4  258    110  3.08  3.22  19.4 TRUE      0     3     1 FALSE     
+#>  5  18.7  360    175  3.15  3.44  17.0 FALSE     0     3     2 FALSE     
+#>  6  18.1  225    105  2.76  3.46  20.2 TRUE      0     3     1 FALSE     
+#>  7  14.3  360    245  3.21  3.57  15.8 FALSE     0     3     4 FALSE     
+#>  8  24.4  147.    62  3.69  3.19  20   TRUE      0     4     2 TRUE      
+#>  9  22.8  141.    95  3.92  3.15  22.9 TRUE      0     4     2 TRUE      
+#> 10  19.2  168.   123  3.92  3.44  18.3 TRUE      0     4     4 FALSE     
 #>    `cyl=six` `cyl=eight`
 #>    <lgl>     <lgl>      
 #>  1 TRUE      FALSE      
@@ -125,28 +134,270 @@ partition(mtcars_example, cyl)
 #> # ℹ 22 more rows
 ```
 
-The `vs`, `am`, and `gear` columns are numeric but actually represent
-categories. To transform them to dummy logical columns in the same way
-as factors, we can use the
+It is also possible to create predicates that represent **merged factor
+levels** by setting the `.subsets` argument to larger values. This is
+useful when you want to explore patterns involving combinations of
+categories.
+
+The `.subsets` argument specifies the sizes of level subsets for which
+predicates should be created:
+
+- For **unordered** factors, all subsets of the requested sizes are
+  created.
+- For **ordered** factors, only subsets formed by **consecutive** levels
+  are created.
+- Subset sizes equal to the total number of levels are rejected, because
+  they would produce a predicate that is always `TRUE` for all
+  non-missing values.
+
+For example, `cyl` is an unordered factor with three levels:
+
+``` r
+
+# Default: one predicate per level
+partition(mtcars_example, cyl)
+#> # A tibble: 32 × 13
+#>      mpg  disp    hp  drat    wt  qsec vs       am  gear  carb `cyl=four`
+#>    <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <lgl> <dbl> <dbl> <dbl> <lgl>     
+#>  1  21    160    110  3.9   2.62  16.5 FALSE     1     4     4 FALSE     
+#>  2  21    160    110  3.9   2.88  17.0 FALSE     1     4     4 FALSE     
+#>  3  22.8  108     93  3.85  2.32  18.6 TRUE      1     4     1 TRUE      
+#>  4  21.4  258    110  3.08  3.22  19.4 TRUE      0     3     1 FALSE     
+#>  5  18.7  360    175  3.15  3.44  17.0 FALSE     0     3     2 FALSE     
+#>  6  18.1  225    105  2.76  3.46  20.2 TRUE      0     3     1 FALSE     
+#>  7  14.3  360    245  3.21  3.57  15.8 FALSE     0     3     4 FALSE     
+#>  8  24.4  147.    62  3.69  3.19  20   TRUE      0     4     2 TRUE      
+#>  9  22.8  141.    95  3.92  3.15  22.9 TRUE      0     4     2 TRUE      
+#> 10  19.2  168.   123  3.92  3.44  18.3 TRUE      0     4     4 FALSE     
+#>    `cyl=six` `cyl=eight`
+#>    <lgl>     <lgl>      
+#>  1 TRUE      FALSE      
+#>  2 TRUE      FALSE      
+#>  3 FALSE     FALSE      
+#>  4 TRUE      FALSE      
+#>  5 FALSE     TRUE       
+#>  6 TRUE      FALSE      
+#>  7 FALSE     TRUE       
+#>  8 FALSE     FALSE      
+#>  9 FALSE     FALSE      
+#> 10 TRUE      FALSE      
+#> # ℹ 22 more rows
+
+# Merge pairs of levels - all pairs are created for unordered factors
+partition(mtcars_example, cyl, .subsets = 2)
+#> # A tibble: 32 × 13
+#>      mpg  disp    hp  drat    wt  qsec vs       am  gear  carb `cyl=four,six`
+#>    <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <lgl> <dbl> <dbl> <dbl> <lgl>         
+#>  1  21    160    110  3.9   2.62  16.5 FALSE     1     4     4 TRUE          
+#>  2  21    160    110  3.9   2.88  17.0 FALSE     1     4     4 TRUE          
+#>  3  22.8  108     93  3.85  2.32  18.6 TRUE      1     4     1 TRUE          
+#>  4  21.4  258    110  3.08  3.22  19.4 TRUE      0     3     1 TRUE          
+#>  5  18.7  360    175  3.15  3.44  17.0 FALSE     0     3     2 FALSE         
+#>  6  18.1  225    105  2.76  3.46  20.2 TRUE      0     3     1 TRUE          
+#>  7  14.3  360    245  3.21  3.57  15.8 FALSE     0     3     4 FALSE         
+#>  8  24.4  147.    62  3.69  3.19  20   TRUE      0     4     2 TRUE          
+#>  9  22.8  141.    95  3.92  3.15  22.9 TRUE      0     4     2 TRUE          
+#> 10  19.2  168.   123  3.92  3.44  18.3 TRUE      0     4     4 TRUE          
+#>    `cyl=four,eight` `cyl=six,eight`
+#>    <lgl>            <lgl>          
+#>  1 FALSE            TRUE           
+#>  2 FALSE            TRUE           
+#>  3 TRUE             FALSE          
+#>  4 FALSE            TRUE           
+#>  5 TRUE             TRUE           
+#>  6 FALSE            TRUE           
+#>  7 TRUE             TRUE           
+#>  8 TRUE             FALSE          
+#>  9 TRUE             FALSE          
+#> 10 FALSE            TRUE           
+#> # ℹ 22 more rows
+
+# Create both individual and merged predicates
+partition(mtcars_example, cyl, .subsets = c(1, 2))
+#> # A tibble: 32 × 16
+#>      mpg  disp    hp  drat    wt  qsec vs       am  gear  carb `cyl=four`
+#>    <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <lgl> <dbl> <dbl> <dbl> <lgl>     
+#>  1  21    160    110  3.9   2.62  16.5 FALSE     1     4     4 FALSE     
+#>  2  21    160    110  3.9   2.88  17.0 FALSE     1     4     4 FALSE     
+#>  3  22.8  108     93  3.85  2.32  18.6 TRUE      1     4     1 TRUE      
+#>  4  21.4  258    110  3.08  3.22  19.4 TRUE      0     3     1 FALSE     
+#>  5  18.7  360    175  3.15  3.44  17.0 FALSE     0     3     2 FALSE     
+#>  6  18.1  225    105  2.76  3.46  20.2 TRUE      0     3     1 FALSE     
+#>  7  14.3  360    245  3.21  3.57  15.8 FALSE     0     3     4 FALSE     
+#>  8  24.4  147.    62  3.69  3.19  20   TRUE      0     4     2 TRUE      
+#>  9  22.8  141.    95  3.92  3.15  22.9 TRUE      0     4     2 TRUE      
+#> 10  19.2  168.   123  3.92  3.44  18.3 TRUE      0     4     4 FALSE     
+#>    `cyl=six` `cyl=eight` `cyl=four,six` `cyl=four,eight` `cyl=six,eight`
+#>    <lgl>     <lgl>       <lgl>          <lgl>            <lgl>          
+#>  1 TRUE      FALSE       TRUE           FALSE            TRUE           
+#>  2 TRUE      FALSE       TRUE           FALSE            TRUE           
+#>  3 FALSE     FALSE       TRUE           TRUE             FALSE          
+#>  4 TRUE      FALSE       TRUE           FALSE            TRUE           
+#>  5 FALSE     TRUE        FALSE          TRUE             TRUE           
+#>  6 TRUE      FALSE       TRUE           FALSE            TRUE           
+#>  7 FALSE     TRUE        FALSE          TRUE             TRUE           
+#>  8 FALSE     FALSE       TRUE           TRUE             FALSE          
+#>  9 FALSE     FALSE       TRUE           TRUE             FALSE          
+#> 10 TRUE      FALSE       TRUE           FALSE            TRUE           
+#> # ℹ 22 more rows
+```
+
+For ordered factors, only consecutive levels are merged. To illustrate,
+let us create an ordered version of the `cyl` column:
+
+``` r
+
+mtcars_example$cyl_ord <- ordered(mtcars$cyl,
+                                  levels = c(4, 6, 8),
+                                  labels = c("four", "six", "eight"))
+
+# Default: one predicate per level
+partition(mtcars_example, cyl_ord)
+#> # A tibble: 32 × 14
+#>      mpg cyl    disp    hp  drat    wt  qsec vs       am  gear  carb
+#>    <dbl> <fct> <dbl> <dbl> <dbl> <dbl> <dbl> <lgl> <dbl> <dbl> <dbl>
+#>  1  21   six    160    110  3.9   2.62  16.5 FALSE     1     4     4
+#>  2  21   six    160    110  3.9   2.88  17.0 FALSE     1     4     4
+#>  3  22.8 four   108     93  3.85  2.32  18.6 TRUE      1     4     1
+#>  4  21.4 six    258    110  3.08  3.22  19.4 TRUE      0     3     1
+#>  5  18.7 eight  360    175  3.15  3.44  17.0 FALSE     0     3     2
+#>  6  18.1 six    225    105  2.76  3.46  20.2 TRUE      0     3     1
+#>  7  14.3 eight  360    245  3.21  3.57  15.8 FALSE     0     3     4
+#>  8  24.4 four   147.    62  3.69  3.19  20   TRUE      0     4     2
+#>  9  22.8 four   141.    95  3.92  3.15  22.9 TRUE      0     4     2
+#> 10  19.2 six    168.   123  3.92  3.44  18.3 TRUE      0     4     4
+#>    `cyl_ord=four` `cyl_ord=six` `cyl_ord=eight`
+#>    <lgl>          <lgl>         <lgl>          
+#>  1 FALSE          TRUE          FALSE          
+#>  2 FALSE          TRUE          FALSE          
+#>  3 TRUE           FALSE         FALSE          
+#>  4 FALSE          TRUE          FALSE          
+#>  5 FALSE          FALSE         TRUE           
+#>  6 FALSE          TRUE          FALSE          
+#>  7 FALSE          FALSE         TRUE           
+#>  8 TRUE           FALSE         FALSE          
+#>  9 TRUE           FALSE         FALSE          
+#> 10 FALSE          TRUE          FALSE          
+#> # ℹ 22 more rows
+
+# Only consecutive pairs are created for ordered factors
+partition(mtcars_example, cyl_ord, .subsets = 2)
+#> # A tibble: 32 × 13
+#>      mpg cyl    disp    hp  drat    wt  qsec vs       am  gear  carb
+#>    <dbl> <fct> <dbl> <dbl> <dbl> <dbl> <dbl> <lgl> <dbl> <dbl> <dbl>
+#>  1  21   six    160    110  3.9   2.62  16.5 FALSE     1     4     4
+#>  2  21   six    160    110  3.9   2.88  17.0 FALSE     1     4     4
+#>  3  22.8 four   108     93  3.85  2.32  18.6 TRUE      1     4     1
+#>  4  21.4 six    258    110  3.08  3.22  19.4 TRUE      0     3     1
+#>  5  18.7 eight  360    175  3.15  3.44  17.0 FALSE     0     3     2
+#>  6  18.1 six    225    105  2.76  3.46  20.2 TRUE      0     3     1
+#>  7  14.3 eight  360    245  3.21  3.57  15.8 FALSE     0     3     4
+#>  8  24.4 four   147.    62  3.69  3.19  20   TRUE      0     4     2
+#>  9  22.8 four   141.    95  3.92  3.15  22.9 TRUE      0     4     2
+#> 10  19.2 six    168.   123  3.92  3.44  18.3 TRUE      0     4     4
+#>    `cyl_ord=four,six` `cyl_ord=six,eight`
+#>    <lgl>              <lgl>              
+#>  1 TRUE               TRUE               
+#>  2 TRUE               TRUE               
+#>  3 TRUE               FALSE              
+#>  4 TRUE               TRUE               
+#>  5 FALSE              TRUE               
+#>  6 TRUE               TRUE               
+#>  7 FALSE              TRUE               
+#>  8 TRUE               FALSE              
+#>  9 TRUE               FALSE              
+#> 10 TRUE               TRUE               
+#> # ℹ 22 more rows
+
+# Both individual levels and consecutive pairs
+partition(mtcars_example, cyl_ord, .subsets = c(1, 2))
+#> # A tibble: 32 × 16
+#>      mpg cyl    disp    hp  drat    wt  qsec vs       am  gear  carb
+#>    <dbl> <fct> <dbl> <dbl> <dbl> <dbl> <dbl> <lgl> <dbl> <dbl> <dbl>
+#>  1  21   six    160    110  3.9   2.62  16.5 FALSE     1     4     4
+#>  2  21   six    160    110  3.9   2.88  17.0 FALSE     1     4     4
+#>  3  22.8 four   108     93  3.85  2.32  18.6 TRUE      1     4     1
+#>  4  21.4 six    258    110  3.08  3.22  19.4 TRUE      0     3     1
+#>  5  18.7 eight  360    175  3.15  3.44  17.0 FALSE     0     3     2
+#>  6  18.1 six    225    105  2.76  3.46  20.2 TRUE      0     3     1
+#>  7  14.3 eight  360    245  3.21  3.57  15.8 FALSE     0     3     4
+#>  8  24.4 four   147.    62  3.69  3.19  20   TRUE      0     4     2
+#>  9  22.8 four   141.    95  3.92  3.15  22.9 TRUE      0     4     2
+#> 10  19.2 six    168.   123  3.92  3.44  18.3 TRUE      0     4     4
+#>    `cyl_ord=four` `cyl_ord=six` `cyl_ord=eight` `cyl_ord=four,six`
+#>    <lgl>          <lgl>         <lgl>           <lgl>             
+#>  1 FALSE          TRUE          FALSE           TRUE              
+#>  2 FALSE          TRUE          FALSE           TRUE              
+#>  3 TRUE           FALSE         FALSE           TRUE              
+#>  4 FALSE          TRUE          FALSE           TRUE              
+#>  5 FALSE          FALSE         TRUE            FALSE             
+#>  6 FALSE          TRUE          FALSE           TRUE              
+#>  7 FALSE          FALSE         TRUE            FALSE             
+#>  8 TRUE           FALSE         FALSE           TRUE              
+#>  9 TRUE           FALSE         FALSE           TRUE              
+#> 10 FALSE          TRUE          FALSE           TRUE              
+#>    `cyl_ord=six,eight`
+#>    <lgl>              
+#>  1 TRUE               
+#>  2 TRUE               
+#>  3 FALSE              
+#>  4 TRUE               
+#>  5 TRUE               
+#>  6 TRUE               
+#>  7 TRUE               
+#>  8 FALSE              
+#>  9 FALSE              
+#> 10 TRUE               
+#> # ℹ 22 more rows
+```
+
+This feature can be very useful for discovering patterns where multiple
+categories together form a meaningful group. For instance, in a dataset
+with an education level factor, merging “bachelor” and “master” into a
+single predicate might reveal patterns associated with “higher
+education” in general.
+
+For more details on factor column handling, see
+[`?partition`](https://beerda.github.io/nuggets/reference/partition.md).
+
+### Preparation of Crisp Predicates from Numeric Columns
+
+For numeric columns, the
+[`partition()`](https://beerda.github.io/nuggets/reference/partition.md)
+function requires the `.method` argument to specify the method of
+partitioning:
+
+- `.method = "dummy"` transforms numeric columns to factors and then to
+  dummy logical columns. That effectively creates a separate logical
+  column for each distinct value of the numeric column.
+- `.method = "crisp"` transforms numeric columns to crisp predicates by
+  dividing the range of values into intervals and coding the values into
+  dummy logical columns according to the intervals.
+- there exist other methods of partitioning of numeric columns. These
+  methods create fuzzy predicates and are described in the next section.
+
+The `am` and `gear` columns in `mtcars_example` are numeric but actually
+represent categories. To transform them to dummy logical columns in the
+same way as factors, we can use the
 [`partition()`](https://beerda.github.io/nuggets/reference/partition.md)
 function with the `.method` argument set to `"dummy"`:
 
 ``` r
 
-partition(mtcars_example, vs:gear, .method = "dummy")
+partition(mtcars_example, am:gear, .method = "dummy")
 #> # A tibble: 32 × 15
-#>      mpg cyl    disp    hp  drat    wt  qsec  carb `vs=0` `vs=1` `am=0` `am=1`
-#>    <dbl> <fct> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <lgl>  <lgl>  <lgl>  <lgl> 
-#>  1  21   six    160    110  3.9   2.62  16.5     4 TRUE   FALSE  FALSE  TRUE  
-#>  2  21   six    160    110  3.9   2.88  17.0     4 TRUE   FALSE  FALSE  TRUE  
-#>  3  22.8 four   108     93  3.85  2.32  18.6     1 FALSE  TRUE   FALSE  TRUE  
-#>  4  21.4 six    258    110  3.08  3.22  19.4     1 FALSE  TRUE   TRUE   FALSE 
-#>  5  18.7 eight  360    175  3.15  3.44  17.0     2 TRUE   FALSE  TRUE   FALSE 
-#>  6  18.1 six    225    105  2.76  3.46  20.2     1 FALSE  TRUE   TRUE   FALSE 
-#>  7  14.3 eight  360    245  3.21  3.57  15.8     4 TRUE   FALSE  TRUE   FALSE 
-#>  8  24.4 four   147.    62  3.69  3.19  20       2 FALSE  TRUE   TRUE   FALSE 
-#>  9  22.8 four   141.    95  3.92  3.15  22.9     2 FALSE  TRUE   TRUE   FALSE 
-#> 10  19.2 six    168.   123  3.92  3.44  18.3     4 FALSE  TRUE   TRUE   FALSE 
+#>      mpg cyl    disp    hp  drat    wt  qsec vs     carb cyl_ord `am=0` `am=1`
+#>    <dbl> <fct> <dbl> <dbl> <dbl> <dbl> <dbl> <lgl> <dbl> <ord>   <lgl>  <lgl> 
+#>  1  21   six    160    110  3.9   2.62  16.5 FALSE     4 six     FALSE  TRUE  
+#>  2  21   six    160    110  3.9   2.88  17.0 FALSE     4 six     FALSE  TRUE  
+#>  3  22.8 four   108     93  3.85  2.32  18.6 TRUE      1 four    FALSE  TRUE  
+#>  4  21.4 six    258    110  3.08  3.22  19.4 TRUE      1 six     TRUE   FALSE 
+#>  5  18.7 eight  360    175  3.15  3.44  17.0 FALSE     2 eight   TRUE   FALSE 
+#>  6  18.1 six    225    105  2.76  3.46  20.2 TRUE      1 six     TRUE   FALSE 
+#>  7  14.3 eight  360    245  3.21  3.57  15.8 FALSE     4 eight   TRUE   FALSE 
+#>  8  24.4 four   147.    62  3.69  3.19  20   TRUE      2 four    TRUE   FALSE 
+#>  9  22.8 four   141.    95  3.92  3.15  22.9 TRUE      2 four    TRUE   FALSE 
+#> 10  19.2 six    168.   123  3.92  3.44  18.3 TRUE      4 six     TRUE   FALSE 
 #>    `gear=3` `gear=4` `gear=5`
 #>    <lgl>    <lgl>    <lgl>   
 #>  1 FALSE    TRUE     FALSE   
@@ -180,31 +431,31 @@ of these intervals.
 ``` r
 
 partition(mtcars_example, mpg, .method = "crisp", .breaks = c(-Inf, 15, 20, 30, Inf))
-#> # A tibble: 32 × 14
-#>    cyl    disp    hp  drat    wt  qsec    vs    am  gear  carb `mpg=(-Inf;15]`
-#>    <fct> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <lgl>          
-#>  1 six    160    110  3.9   2.62  16.5     0     1     4     4 FALSE          
-#>  2 six    160    110  3.9   2.88  17.0     0     1     4     4 FALSE          
-#>  3 four   108     93  3.85  2.32  18.6     1     1     4     1 FALSE          
-#>  4 six    258    110  3.08  3.22  19.4     1     0     3     1 FALSE          
-#>  5 eight  360    175  3.15  3.44  17.0     0     0     3     2 FALSE          
-#>  6 six    225    105  2.76  3.46  20.2     1     0     3     1 FALSE          
-#>  7 eight  360    245  3.21  3.57  15.8     0     0     3     4 TRUE           
-#>  8 four   147.    62  3.69  3.19  20       1     0     4     2 FALSE          
-#>  9 four   141.    95  3.92  3.15  22.9     1     0     4     2 FALSE          
-#> 10 six    168.   123  3.92  3.44  18.3     1     0     4     4 FALSE          
-#>    `mpg=(15;20]` `mpg=(20;30]` `mpg=(30;Inf]`
-#>    <lgl>         <lgl>         <lgl>         
-#>  1 FALSE         TRUE          FALSE         
-#>  2 FALSE         TRUE          FALSE         
-#>  3 FALSE         TRUE          FALSE         
-#>  4 FALSE         TRUE          FALSE         
-#>  5 TRUE          FALSE         FALSE         
-#>  6 TRUE          FALSE         FALSE         
-#>  7 FALSE         FALSE         FALSE         
-#>  8 FALSE         TRUE          FALSE         
-#>  9 FALSE         TRUE          FALSE         
-#> 10 TRUE          FALSE         FALSE         
+#> # A tibble: 32 × 15
+#>    cyl    disp    hp  drat    wt  qsec vs       am  gear  carb cyl_ord
+#>    <fct> <dbl> <dbl> <dbl> <dbl> <dbl> <lgl> <dbl> <dbl> <dbl> <ord>  
+#>  1 six    160    110  3.9   2.62  16.5 FALSE     1     4     4 six    
+#>  2 six    160    110  3.9   2.88  17.0 FALSE     1     4     4 six    
+#>  3 four   108     93  3.85  2.32  18.6 TRUE      1     4     1 four   
+#>  4 six    258    110  3.08  3.22  19.4 TRUE      0     3     1 six    
+#>  5 eight  360    175  3.15  3.44  17.0 FALSE     0     3     2 eight  
+#>  6 six    225    105  2.76  3.46  20.2 TRUE      0     3     1 six    
+#>  7 eight  360    245  3.21  3.57  15.8 FALSE     0     3     4 eight  
+#>  8 four   147.    62  3.69  3.19  20   TRUE      0     4     2 four   
+#>  9 four   141.    95  3.92  3.15  22.9 TRUE      0     4     2 four   
+#> 10 six    168.   123  3.92  3.44  18.3 TRUE      0     4     4 six    
+#>    `mpg=(-Inf;15]` `mpg=(15;20]` `mpg=(20;30]` `mpg=(30;Inf]`
+#>    <lgl>           <lgl>         <lgl>         <lgl>         
+#>  1 FALSE           FALSE         TRUE          FALSE         
+#>  2 FALSE           FALSE         TRUE          FALSE         
+#>  3 FALSE           FALSE         TRUE          FALSE         
+#>  4 FALSE           FALSE         TRUE          FALSE         
+#>  5 FALSE           TRUE          FALSE         FALSE         
+#>  6 FALSE           TRUE          FALSE         FALSE         
+#>  7 TRUE            FALSE         FALSE         FALSE         
+#>  8 FALSE           FALSE         TRUE          FALSE         
+#>  9 FALSE           FALSE         TRUE          FALSE         
+#> 10 FALSE           TRUE          FALSE         FALSE         
 #> # ℹ 22 more rows
 ```
 
@@ -220,31 +471,31 @@ of intervals to create. For example, the following command divides the
 ``` r
 
 partition(mtcars_example, disp, .method = "crisp", .breaks = 3)
-#> # A tibble: 32 × 13
-#>      mpg cyl      hp  drat    wt  qsec    vs    am  gear  carb `disp=(-Inf;205]`
-#>    <dbl> <fct> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <lgl>            
-#>  1  21   six     110  3.9   2.62  16.5     0     1     4     4 TRUE             
-#>  2  21   six     110  3.9   2.88  17.0     0     1     4     4 TRUE             
-#>  3  22.8 four     93  3.85  2.32  18.6     1     1     4     1 TRUE             
-#>  4  21.4 six     110  3.08  3.22  19.4     1     0     3     1 FALSE            
-#>  5  18.7 eight   175  3.15  3.44  17.0     0     0     3     2 FALSE            
-#>  6  18.1 six     105  2.76  3.46  20.2     1     0     3     1 FALSE            
-#>  7  14.3 eight   245  3.21  3.57  15.8     0     0     3     4 FALSE            
-#>  8  24.4 four     62  3.69  3.19  20       1     0     4     2 TRUE             
-#>  9  22.8 four     95  3.92  3.15  22.9     1     0     4     2 TRUE             
-#> 10  19.2 six     123  3.92  3.44  18.3     1     0     4     4 TRUE             
-#>    `disp=(205;338]` `disp=(338;Inf]`
-#>    <lgl>            <lgl>           
-#>  1 FALSE            FALSE           
-#>  2 FALSE            FALSE           
-#>  3 FALSE            FALSE           
-#>  4 TRUE             FALSE           
-#>  5 FALSE            TRUE            
-#>  6 TRUE             FALSE           
-#>  7 FALSE            TRUE            
-#>  8 FALSE            FALSE           
-#>  9 FALSE            FALSE           
-#> 10 FALSE            FALSE           
+#> # A tibble: 32 × 14
+#>      mpg cyl      hp  drat    wt  qsec vs       am  gear  carb cyl_ord
+#>    <dbl> <fct> <dbl> <dbl> <dbl> <dbl> <lgl> <dbl> <dbl> <dbl> <ord>  
+#>  1  21   six     110  3.9   2.62  16.5 FALSE     1     4     4 six    
+#>  2  21   six     110  3.9   2.88  17.0 FALSE     1     4     4 six    
+#>  3  22.8 four     93  3.85  2.32  18.6 TRUE      1     4     1 four   
+#>  4  21.4 six     110  3.08  3.22  19.4 TRUE      0     3     1 six    
+#>  5  18.7 eight   175  3.15  3.44  17.0 FALSE     0     3     2 eight  
+#>  6  18.1 six     105  2.76  3.46  20.2 TRUE      0     3     1 six    
+#>  7  14.3 eight   245  3.21  3.57  15.8 FALSE     0     3     4 eight  
+#>  8  24.4 four     62  3.69  3.19  20   TRUE      0     4     2 four   
+#>  9  22.8 four     95  3.92  3.15  22.9 TRUE      0     4     2 four   
+#> 10  19.2 six     123  3.92  3.44  18.3 TRUE      0     4     4 six    
+#>    `disp=(-Inf;205]` `disp=(205;338]` `disp=(338;Inf]`
+#>    <lgl>             <lgl>            <lgl>           
+#>  1 TRUE              FALSE            FALSE           
+#>  2 TRUE              FALSE            FALSE           
+#>  3 TRUE              FALSE            FALSE           
+#>  4 FALSE             TRUE             FALSE           
+#>  5 FALSE             FALSE            TRUE            
+#>  6 FALSE             TRUE             FALSE           
+#>  7 FALSE             FALSE            TRUE            
+#>  8 TRUE              FALSE            FALSE           
+#>  9 TRUE              FALSE            FALSE           
+#> 10 TRUE              FALSE            FALSE           
 #> # ℹ 22 more rows
 ```
 
@@ -259,47 +510,48 @@ be done as follows:
 ``` r
 
 crisp_mtcars <- mtcars_example |>
-    partition(cyl, vs:gear, .method = "dummy") |>
+    partition(cyl, cyl_ord, am:gear, .method = "dummy") |>
+    partition(vs) |>
     partition(mpg, .method = "crisp", .breaks = c(-Inf, 15, 20, 30, Inf)) |>
     partition(disp:carb, .method = "crisp", .breaks = 3) 
 
 head(crisp_mtcars, n = 3)
-#> # A tibble: 3 × 32
-#>   `cyl=four` `cyl=six` `cyl=eight` `vs=0` `vs=1` `am=0` `am=1` `gear=3` `gear=4`
-#>   <lgl>      <lgl>     <lgl>       <lgl>  <lgl>  <lgl>  <lgl>  <lgl>    <lgl>   
-#> 1 FALSE      TRUE      FALSE       TRUE   FALSE  FALSE  TRUE   FALSE    TRUE    
-#> 2 FALSE      TRUE      FALSE       TRUE   FALSE  FALSE  TRUE   FALSE    TRUE    
-#> 3 TRUE       FALSE     FALSE       FALSE  TRUE   FALSE  TRUE   FALSE    TRUE    
-#>   `gear=5` `mpg=(-Inf;15]` `mpg=(15;20]` `mpg=(20;30]` `mpg=(30;Inf]`
-#>   <lgl>    <lgl>           <lgl>         <lgl>         <lgl>         
-#> 1 FALSE    FALSE           FALSE         TRUE          FALSE         
-#> 2 FALSE    FALSE           FALSE         TRUE          FALSE         
-#> 3 FALSE    FALSE           FALSE         TRUE          FALSE         
-#>   `disp=(-Inf;205]` `disp=(205;338]` `disp=(338;Inf]` `hp=(-Inf;146]`
-#>   <lgl>             <lgl>            <lgl>            <lgl>          
-#> 1 TRUE              FALSE            FALSE            TRUE           
-#> 2 TRUE              FALSE            FALSE            TRUE           
-#> 3 TRUE              FALSE            FALSE            TRUE           
-#>   `hp=(146;241]` `hp=(241;Inf]` `drat=(-Inf;3.48]` `drat=(3.48;4.21]`
-#>   <lgl>          <lgl>          <lgl>              <lgl>             
-#> 1 FALSE          FALSE          FALSE              TRUE              
-#> 2 FALSE          FALSE          FALSE              TRUE              
-#> 3 FALSE          FALSE          FALSE              TRUE              
-#>   `drat=(4.21;Inf]` `wt=(-Inf;2.82]` `wt=(2.82;4.12]` `wt=(4.12;Inf]`
-#>   <lgl>             <lgl>            <lgl>            <lgl>          
-#> 1 FALSE             TRUE             FALSE            FALSE          
-#> 2 FALSE             FALSE            TRUE             FALSE          
-#> 3 FALSE             TRUE             FALSE            FALSE          
-#>   `qsec=(-Inf;17.3]` `qsec=(17.3;20.1]` `qsec=(20.1;Inf]` `carb=(-Inf;3.33]`
-#>   <lgl>              <lgl>              <lgl>             <lgl>             
-#> 1 TRUE               FALSE              FALSE             FALSE             
-#> 2 TRUE               FALSE              FALSE             FALSE             
-#> 3 FALSE              TRUE               FALSE             TRUE              
-#>   `carb=(3.33;5.67]` `carb=(5.67;Inf]`
-#>   <lgl>              <lgl>            
-#> 1 TRUE               FALSE            
-#> 2 TRUE               FALSE            
-#> 3 FALSE              FALSE
+#> # A tibble: 3 × 35
+#>   `cyl=four` `cyl=six` `cyl=eight` `cyl_ord=four` `cyl_ord=six` `cyl_ord=eight`
+#>   <lgl>      <lgl>     <lgl>       <lgl>          <lgl>         <lgl>          
+#> 1 FALSE      TRUE      FALSE       FALSE          TRUE          FALSE          
+#> 2 FALSE      TRUE      FALSE       FALSE          TRUE          FALSE          
+#> 3 TRUE       FALSE     FALSE       TRUE           FALSE         FALSE          
+#>   `am=0` `am=1` `gear=3` `gear=4` `gear=5` `vs=T` `vs=F` `mpg=(-Inf;15]`
+#>   <lgl>  <lgl>  <lgl>    <lgl>    <lgl>    <lgl>  <lgl>  <lgl>          
+#> 1 FALSE  TRUE   FALSE    TRUE     FALSE    FALSE  TRUE   FALSE          
+#> 2 FALSE  TRUE   FALSE    TRUE     FALSE    FALSE  TRUE   FALSE          
+#> 3 FALSE  TRUE   FALSE    TRUE     FALSE    TRUE   FALSE  FALSE          
+#>   `mpg=(15;20]` `mpg=(20;30]` `mpg=(30;Inf]` `disp=(-Inf;205]` `disp=(205;338]`
+#>   <lgl>         <lgl>         <lgl>          <lgl>             <lgl>           
+#> 1 FALSE         TRUE          FALSE          TRUE              FALSE           
+#> 2 FALSE         TRUE          FALSE          TRUE              FALSE           
+#> 3 FALSE         TRUE          FALSE          TRUE              FALSE           
+#>   `disp=(338;Inf]` `hp=(-Inf;146]` `hp=(146;241]` `hp=(241;Inf]`
+#>   <lgl>            <lgl>           <lgl>          <lgl>         
+#> 1 FALSE            TRUE            FALSE          FALSE         
+#> 2 FALSE            TRUE            FALSE          FALSE         
+#> 3 FALSE            TRUE            FALSE          FALSE         
+#>   `drat=(-Inf;3.48]` `drat=(3.48;4.21]` `drat=(4.21;Inf]` `wt=(-Inf;2.82]`
+#>   <lgl>              <lgl>              <lgl>             <lgl>           
+#> 1 FALSE              TRUE               FALSE             TRUE            
+#> 2 FALSE              TRUE               FALSE             FALSE           
+#> 3 FALSE              TRUE               FALSE             TRUE            
+#>   `wt=(2.82;4.12]` `wt=(4.12;Inf]` `qsec=(-Inf;17.3]` `qsec=(17.3;20.1]`
+#>   <lgl>            <lgl>           <lgl>              <lgl>             
+#> 1 FALSE            FALSE           TRUE               FALSE             
+#> 2 TRUE             FALSE           TRUE               FALSE             
+#> 3 FALSE            FALSE           FALSE              TRUE              
+#>   `qsec=(20.1;Inf]` `carb=(-Inf;3.33]` `carb=(3.33;5.67]` `carb=(5.67;Inf]`
+#>   <lgl>             <lgl>              <lgl>              <lgl>            
+#> 1 FALSE             FALSE              TRUE               FALSE            
+#> 2 FALSE             FALSE              TRUE               FALSE            
+#> 3 FALSE             TRUE               FALSE              FALSE
 ```
 
 Now all columns are logical and can be used as predicates in crisp
@@ -547,7 +799,7 @@ These data-driven methods can produce more meaningful intervals that
 better reflect the structure of your data, leading to more interpretable
 patterns in subsequent analysis.
 
-### Preparation of Triangular and Raised-Cosine Fuzzy Predicates
+### Preparation of Fuzzy Predicates from Numeric Columns
 
 In many real-world datasets, numeric attributes do not lend themselves
 to clear-cut, crisp boundaries. For example, deciding whether a car has
@@ -607,7 +859,7 @@ illustration of triangular and raised cosine membership functions for
 
 ![Comparison of triangular and raised cosine membership functions for
 .breaks = c(-10, 0, 10)
-](data-preparation_files/figure-html/unnamed-chunk-15-1.png)
+](data-preparation_files/figure-html/unnamed-chunk-18-1.png)
 
 Comparison of triangular and raised cosine membership functions for
 `.breaks = c(-10, 0, 10)`
@@ -620,7 +872,7 @@ these fuzzy sets:
 
 ![Fuzzy sets with triangular membership functions for .breaks = c(-10,
 -5, 0, 5, 10)
-](data-preparation_files/figure-html/unnamed-chunk-16-1.png)
+](data-preparation_files/figure-html/unnamed-chunk-19-1.png)
 
 Fuzzy sets with triangular membership functions for
 `partition(x, .method = "triangle", .breaks = c(-10, -5, 0, 5, 10))`
@@ -632,7 +884,7 @@ the `.breaks` vector:
 
 ![Fuzzy sets with triangular membership functions for .breaks = c(-Inf,
 -5, 0, 5, Inf)
-](data-preparation_files/figure-html/unnamed-chunk-17-1.png)
+](data-preparation_files/figure-html/unnamed-chunk-20-1.png)
 
 Fuzzy sets with triangular membership functions for
 `partition(x, .method = "triangle", .breaks = c(-Inf, -5, 0, 5, Inf))`
@@ -643,7 +895,7 @@ to create. For example, `.breaks = 4` creates partitioning with four
 fuzzy sets:
 
 ![Fuzzy sets with triangular membership functions for .breaks = 4
-](data-preparation_files/figure-html/unnamed-chunk-18-1.png)
+](data-preparation_files/figure-html/unnamed-chunk-21-1.png)
 
 Fuzzy sets with triangular membership functions for
 `partition(x, .method = "triangle", .breaks = 4)`
@@ -654,7 +906,7 @@ following figure shows five raised cosine fuzzy sets defined by
 
 ![Fuzzy sets with raised cosine membership functions for .breaks =
 c(-Inf, -10, -5, 0, 5, 10, Inf)
-](data-preparation_files/figure-html/unnamed-chunk-19-1.png)
+](data-preparation_files/figure-html/unnamed-chunk-22-1.png)
 
 Fuzzy sets with raised cosine membership functions for
 `partition(x, .method = "raisedcos", .breaks = c(-Inf, -10, -5, 0, 5, 10, Inf))`
@@ -721,7 +973,7 @@ columns are now represented by fuzzy sets. This combination allows both
 crisp and fuzzy predicates to be used together in pattern discovery,
 offering more flexibility and interpretability.
 
-### Preparation of Trapezoidal Fuzzy Predicates
+#### Trapezoidal Fuzzy Predicates
 
 The triangular and raised cosine membership functions are often
 sufficient to capture gradual transitions in numeric data. However, in
@@ -751,7 +1003,7 @@ intervals. The following figure is the result of setting `.span = 2` and
 
 ![Fuzzy sets with triangular membership functions for .span = 2, .breaks
 = c(-10, -5, 5, 10)\`
-](data-preparation_files/figure-html/unnamed-chunk-21-1.png)
+](data-preparation_files/figure-html/unnamed-chunk-24-1.png)
 
 Fuzzy sets with triangular membership functions for
 `partition(x, .method = "triangle", .span = 2, .breaks = c(-10, -5, 5, 10))`
@@ -765,7 +1017,7 @@ Consider the following example that shows the effect of setting
 
 ![Fuzzy sets with triangular membership functions for .inc = 1, .span =
 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15)\`
-](data-preparation_files/figure-html/unnamed-chunk-22-1.png)
+](data-preparation_files/figure-html/unnamed-chunk-25-1.png)
 
 Fuzzy sets with triangular membership functions for
 `partition(x, .method = "triangle", .inc = 1, .span = 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15))`
@@ -777,7 +1029,7 @@ after each created fuzzy set:
 
 ![Fuzzy sets with triangular membership functions for .inc = 3, .span =
 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15)\`
-](data-preparation_files/figure-html/unnamed-chunk-23-1.png)
+](data-preparation_files/figure-html/unnamed-chunk-26-1.png)
 
 Fuzzy sets with triangular membership functions for
 `partition(x, .method = "triangle", .inc = 3, .span = 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15))`
@@ -1079,9 +1331,14 @@ This vignette covered the essential data preparation techniques in the
     The primary function for transforming data into crisp or fuzzy
     predicates, with support for various partitioning methods including:
 
-    - Crisp (Boolean) partitioning with configurable intervals
-    - Triangular and raised-cosine fuzzy sets
-    - Trapezoidal fuzzy sets using `.span` and `.inc` parameters
+    - Logical columns: automatic expansion into `TRUE`/`FALSE`
+      predicates
+    - Factor columns: expansion into predicates for level subsets, with
+      the ability to merge factor levels using the `.subsets` argument
+    - Numeric columns (crisp): interval-based Boolean partitioning with
+      configurable breakpoints and data-driven `.style` methods
+    - Numeric columns (fuzzy): triangular, raised-cosine, and
+      trapezoidal fuzzy sets using `.span` and `.inc` parameters
 
 2.  **[`is_almost_constant()`](https://beerda.github.io/nuggets/reference/is_almost_constant.md)**
     and
