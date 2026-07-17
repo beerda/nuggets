@@ -15,11 +15,9 @@ knitr::opts_chunk$set(
 ```
 
 ```{r, include=FALSE}
-library(nuggets)
-library(dplyr)
-
 options(tibble.width = Inf)
 ```
+
 
 
 # Introduction
@@ -55,6 +53,14 @@ Association rules are evaluated using several quality measures:
 The `nuggets` package supports searching for association rules in both
 **crisp** (Boolean) and **fuzzy** data through the `dig_associations()`
 function.
+
+Before using the package, the required libraries must be loaded:
+
+```{r, message=FALSE}
+library(nuggets)
+library(dplyr)    # for data manipulation
+```
+
 
 
 # Data Preparation
@@ -114,13 +120,26 @@ meet given minimum support and confidence thresholds.
 rules <- dig_associations(crisp_co2,
                           min_support = 0.1,
                           min_confidence = 0.8)
-rules
+head(rules)
 ```
 
 The result is a tibble containing found rules with their quality measures:
 `antecedent`, `consequent`, `support`, `confidence`, `coverage`,
 `consequent_support`, `lift`, `length`, and the contingency table
 columns (`pp`, `pn`, `np`, `nn`).
+
+For instance, the first rule represents the following association rule:
+
+```{r, include=FALSE}
+to_logical <- function(x) {
+    x <- gsub("{", "", x, fixed = TRUE)
+    x <- gsub("}", "", x, fixed = TRUE)
+    x <- gsub(",", " & ", x, fixed = TRUE)
+}
+```
+
+> `r paste0("> ", to_logical(rules$antecedent[1]), " $\\Rightarrow$ ", to_logical(rules$consequent[1]))`
+
 
 
 # Specifying Antecedent and Consequent
@@ -139,7 +158,7 @@ rules_uptake <- dig_associations(crisp_co2,
                                  consequent = starts_with("uptake"),
                                  min_support = 0.1,
                                  min_confidence = 0.8)
-rules_uptake
+head(rules_uptake, n = 3)
 ```
 
 
@@ -149,24 +168,27 @@ When data is prepared with `partition()`, a single original variable is
 often expanded into multiple predicates (e.g., `conc=(-Inf,200]` and
 `conc=(200,500]`). These predicates from the same variable should not
 appear together in the same antecedent, as their conjunction would be
-contradictory or redundant.
-The `disjoint` argument prevents this. By default, `dig_associations()`
-uses `var_names()` on the column names to create groups of mutually
-exclusive predicates.
+contradictory or redundant. 
+
+The `disjoint` argument prevents this. It accepts a character vector of
+size equal to the number of columns in the input data such that each unique
+value in the vector corresponds to a group of mutually exclusive predicates.
+
+By default, `dig_associations()` uses `var_names()` on the column names to
+create the disjoint vector automatically. This works well for data prepared
+with `partition()`.
 
 You can also provide a custom disjoint vector:
 
 ```{r}
 disj <- var_names(colnames(crisp_co2))
-head(disj)
+disj
 
-rules_disj <- dig_associations(crisp_co2,
-                               antecedent = !starts_with("uptake"),
-                               consequent = starts_with("uptake"),
-                               disjoint = disj,
-                               min_support = 0.1,
-                               min_confidence = 0.8)
-rules_disj
+rules <- dig_associations(crisp_co2,
+                          disjoint = disj,
+                          min_support = 0.1,
+                          min_confidence = 0.8)
+head(rules, n = 3)
 ```
 
 
@@ -177,14 +199,12 @@ in the antecedent:
 
 ```{r}
 # Find only rules with exactly 2 predicates in the antecedent
-rules_len2 <- dig_associations(crisp_co2,
-                               antecedent = !starts_with("uptake"),
-                               consequent = starts_with("uptake"),
-                               min_length = 2,
-                               max_length = 2,
-                               min_support = 0.1,
-                               min_confidence = 0.8)
-rules_len2
+rules <- dig_associations(crisp_co2,
+                          min_length = 2,
+                          max_length = 2,
+                          min_support = 0.1,
+                          min_confidence = 0.8)
+head(rules, n = 3)
 ```
 
 Setting `min_length = 0` generates rules with an empty antecedent,
@@ -197,26 +217,24 @@ For large datasets, the number of possible rules can be enormous. The
 `max_results` argument limits the total number of rules generated:
 
 ```{r}
-rules_limited <- dig_associations(crisp_co2,
-                                  antecedent = !starts_with("uptake"),
-                                  consequent = starts_with("uptake"),
-                                  min_support = 0.05,
-                                  min_confidence = 0.6,
-                                  max_results = 20)
-rules_limited
+rules <- dig_associations(crisp_co2,
+                          min_support = 0.05,
+                          min_confidence = 0.6,
+                          max_results = 5)
+nrow(rules)
 ```
 
 
 # Fuzzy Association Rules
 
 When the data contains fuzzy predicates (numeric columns with values in
-$[0, 1]$), `dig_associations()` computes fuzzy support using a
+[0, 1]), `dig_associations()` computes fuzzy support using a
 **t-norm** for conjunction. The `t_norm` argument specifies which t-norm
 to use:
 
-- `"goguen"` (default): the product t-norm — multiplies membership degrees
-- `"goedel"`: the minimum t-norm — takes the minimum of membership degrees
-- `"lukas"`: the Łukasiewicz t-norm — $\max(0, a + b - 1)$
+- `"goguen"` (default): the product t-norm - multiplies membership degrees
+- `"goedel"`: the minimum t-norm - takes the minimum of membership degrees
+- `"lukas"`: the Łukasiewicz t-norm = max(0, a + b - 1)
 
 ```{r}
 # Fuzzy rules using the product t-norm (default)
@@ -226,25 +244,14 @@ fuzzy_rules <- dig_associations(fuzzy_co2,
                                 min_support = 0.05,
                                 min_confidence = 0.6,
                                 t_norm = "goguen")
-fuzzy_rules
-```
-
-Comparing different t-norms:
-
-```{r}
-# Using the Goedel (minimum) t-norm
-fuzzy_rules_goedel <- dig_associations(fuzzy_co2,
-                                       antecedent = !starts_with("uptake"),
-                                       consequent = starts_with("uptake"),
-                                       min_support = 0.05,
-                                       min_confidence = 0.6,
-                                       t_norm = "goedel")
-nrow(fuzzy_rules_goedel)
+head(fuzzy_rules, n = 3)
 ```
 
 The choice of t-norm affects how strictly the conjunction is evaluated.
 The Gödel t-norm is the least strict (produces higher support values),
-while the Łukasiewicz t-norm is the most strict.
+while the Łukasiewicz t-norm is the most strict. Note also that handling fuzzy data is
+generally much more slower and memory demanding than crisp data, especially 
+for large datasets.
 
 
 # Computing Additional Interest Measures
@@ -259,7 +266,8 @@ automatically included in the output of `dig_associations()`.
 rules_enriched <- rules_uptake |>
     add_interest(measures = c("conviction", "leverage", "jaccard"))
 rules_enriched |>
-    select(antecedent, consequent, confidence, conviction, leverage, jaccard)
+    select(antecedent, consequent, confidence, conviction, leverage, jaccard) |>
+    head(n = 3)
 ```
 
 You can compute all available measures at once by omitting the `measures`
@@ -270,6 +278,15 @@ rules_all_measures <- rules_uptake |>
     add_interest()
 colnames(rules_all_measures)
 ```
+
+See the documentation of `add_interest()` for a complete list of supported
+quality measures:
+
+```{r, eval=FALSE}
+?add_interest
+```
+
+
 
 ## Smoothing
 
@@ -282,7 +299,8 @@ rules_smoothed <- rules_uptake |>
     add_interest(measures = c("odds_ratio", "conviction"),
                  smooth_counts = 0.5)
 rules_smoothed |>
-    select(antecedent, consequent, confidence, odds_ratio, conviction)
+    select(antecedent, consequent, confidence, odds_ratio, conviction) |>
+    head(n = 3)
 ```
 
 ## GUHA Quantifiers
@@ -295,7 +313,8 @@ rules_guha <- rules_uptake |>
     add_interest(measures = c("dfi", "fe", "lci"),
                  p = 0.5)
 rules_guha |>
-    select(antecedent, consequent, confidence, dfi, fe, lci)
+    select(antecedent, consequent, confidence, dfi, fe, lci) |>
+    head(n = 3)
 ```
 
 The `p` parameter represents the null-hypothesis probability used in the
@@ -311,12 +330,10 @@ example, rules that follow directly from the structure of the data (e.g.,
 can clutter results or slow down the search.
 
 The `excluded` argument of `dig_associations()` allows you to specify a
-list of predicate combinations that should never appear together in the
-antecedent of a generated rule. Any rule whose antecedent contains all
-predicates from an excluded combination is suppressed. Note that the term
-"tautology" here is used broadly — any rule you consider uninteresting
-(regardless of whether its confidence is exactly 1) can be excluded this
-way.
+list of predicate combinations that should never appear together in
+generated rules. Note that the term "tautology" here is used broadly - any rule
+you consider uninteresting (regardless of whether its confidence is exactly 1)
+can be excluded this way.
 
 
 ## Finding Tautologies with `dig_tautologies()`
@@ -327,12 +344,9 @@ in earlier iterations to prune the search space in later iterations. For a
 detailed description, see the `vignette("data-preparation")`.
 
 ```{r}
-disj <- var_names(colnames(crisp_co2))
-
 tautologies <- dig_tautologies(crisp_co2,
                                antecedent = everything(),
                                consequent = everything(),
-                               disjoint = disj,
                                min_confidence = 0.95,
                                min_support = 0.05,
                                max_length = 2)
@@ -355,7 +369,6 @@ excluded_conds <- parse_condition(tautologies$antecedent,
 rules_filtered <- dig_associations(crisp_co2,
                                    antecedent = !starts_with("uptake"),
                                    consequent = starts_with("uptake"),
-                                   disjoint = disj,
                                    excluded = excluded_conds,
                                    min_support = 0.1,
                                    min_confidence = 0.8)
@@ -369,17 +382,15 @@ patterns and can run significantly faster on large datasets.
 ## Manually Specifying Exclusions
 
 You can also construct the `excluded` list manually. Each element is a
-character vector of predicate names that must not co-occur in the
-antecedent:
+character vector of elements that should not appear together in a rule:
 
 ```{r}
-# Exclude rules where "Type=Quebec" and "Treatment=chilled" appear together
-manual_excluded <- list(c("Type=Quebec", "Treatment=chilled"))
+# Filter out rules by tautology "Treatment=chilled => Type=Mississippi"
+manual_excluded <- list(c("Treatment=chilled", "Type=Mississippi"))
 
 rules_manual <- dig_associations(crisp_co2,
                                  antecedent = !starts_with("uptake"),
                                  consequent = starts_with("uptake"),
-                                 disjoint = disj,
                                  excluded = manual_excluded,
                                  min_support = 0.1,
                                  min_confidence = 0.8)
