@@ -126,6 +126,10 @@ lift greater than 1 indicates a positive association.</li>
 rules in both <strong>crisp</strong> (Boolean) and
 <strong>fuzzy</strong> data through the <code><a href="../reference/dig_associations.html">dig_associations()</a></code>
 function.</p>
+<p>Before using the package, the required libraries must be loaded:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://beerda.github.io/nuggets/">nuggets</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>    <span class="co"># for data manipulation</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="data-preparation">Data Preparation<a class="anchor" aria-label="anchor" href="#data-preparation"></a>
@@ -137,7 +141,7 @@ observations and includes information about the plant’s origin
 (<code>Type</code>), treatment (<code>Treatment</code>), ambient CO2
 concentration (<code>conc</code>), and CO2 uptake rate
 (<code>uptake</code>).</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">CO2</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Plant   Type  Treatment conc uptake</span></span>
 <span><span class="co">#&gt; 1   Qn1 Quebec nonchilled   95   16.0</span></span>
@@ -157,9 +161,9 @@ explanation of data preparation techniques, see the
 <p>We prepare a crisp version of the dataset by transforming factors
 into dummy variables and numeric columns into interval-based logical
 predicates:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">crisp_co2</span> <span class="op">&lt;-</span> <span class="va">CO2</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">Plant</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">Plant</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">Type</span>, <span class="va">Treatment</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">conc</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">200</span>, <span class="fl">500</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">uptake</span>, .method <span class="op">=</span> <span class="st">"crisp"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">20</span>, <span class="fl">35</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span></span>
@@ -187,9 +191,9 @@ predicates:</p>
 </h3>
 <p>For a fuzzy version, we transform numeric columns into fuzzy
 predicates using triangular membership functions:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fuzzy_co2</span> <span class="op">&lt;-</span> <span class="va">CO2</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">Plant</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">Plant</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">Type</span>, <span class="va">Treatment</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">conc</span>, .method <span class="op">=</span> <span class="st">"triangle"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">95</span>, <span class="fl">500</span>, <span class="fl">1000</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">uptake</span>, .method <span class="op">=</span> <span class="st">"triangle"</span>, .breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="fl">10</span>, <span class="fl">25</span>, <span class="fl">40</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span></span>
@@ -218,81 +222,49 @@ predicates using triangular membership functions:</p>
 </h2>
 <p>The simplest use of <code><a href="../reference/dig_associations.html">dig_associations()</a></code> searches for all
 rules that meet given minimum support and confidence thresholds.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rules</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">crisp_co2</span>,</span>
 <span>                          min_support <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>                          min_confidence <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
-<span><span class="va">rules</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 19 × 13</span></span></span>
-<span><span class="co">#&gt;    antecedent                                             consequent            </span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> {Type=Quebec,conc=(500;Inf]}                           {uptake=(35;Inf]}     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> {Treatment=nonchilled,Type=Mississippi,conc=(200;500]} {uptake=(20;35]}      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> {Treatment=chilled,Type=Mississippi}                   {uptake=(-Inf;20]}    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> {Treatment=chilled,Type=Mississippi,conc=(200;500]}    {uptake=(-Inf;20]}    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> {Type=Mississippi,conc=(200;500],uptake=(-Inf;20]}     {Treatment=chilled}   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> {Type=Mississippi,conc=(200;500],uptake=(20;35]}       {Treatment=nonchilled}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> {Type=Mississippi,uptake=(20;35]}                      {Treatment=nonchilled}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> {Type=Mississippi,conc=(-Inf;200]}                     {uptake=(-Inf;20]}    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> {Treatment=nonchilled,conc=(200;500],uptake=(20;35]}   {Type=Mississippi}    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> {Treatment=nonchilled,uptake=(35;Inf]}                 {Type=Quebec}         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> {Treatment=chilled,conc=(200;500],uptake=(-Inf;20]}    {Type=Mississippi}    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> {Treatment=chilled,uptake=(-Inf;20]}                   {Type=Mississippi}    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> {Treatment=chilled,uptake=(35;Inf]}                    {Type=Quebec}         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> {conc=(200;500],uptake=(-Inf;20]}                      {Type=Mississippi}    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> {conc=(200;500],uptake=(-Inf;20]}                      {Treatment=chilled}   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span> {conc=(200;500],uptake=(35;Inf]}                       {Type=Quebec}         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span> {uptake=(-Inf;20]}                                     {Type=Mississippi}    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">18</span> {uptake=(35;Inf]}                                      {Type=Quebec}         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">19</span> {conc=(500;Inf],uptake=(35;Inf]}                       {Type=Quebec}         </span></span>
-<span><span class="co">#&gt;    support confidence coverage conseq_support  lift count antecedent_length</span></span>
-<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>   0.143      1        0.143          0.298  3.36    12                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>   0.107      1        0.107          0.345  2.90     9                 3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>   0.226      0.905    0.25           0.357  2.53    19                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>   0.107      1        0.107          0.357  2.8      9                 3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>   0.107      1        0.107          0.5    2        9                 3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>   0.107      1        0.107          0.5    2        9                 3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>   0.179      0.882    0.202          0.5    1.76    15                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>   0.131      0.917    0.143          0.357  2.57    11                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>   0.107      0.9      0.119          0.5    1.8      9                 3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>   0.167      0.933    0.179          0.5    1.87    14                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span>   0.107      1        0.107          0.5    2        9                 3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span>   0.226      0.864    0.262          0.5    1.73    19                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span>   0.119      1        0.119          0.5    2       10                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span>   0.107      1        0.107          0.5    2        9                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span>   0.107      1        0.107          0.5    2        9                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span>   0.143      1        0.143          0.5    2       12                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span>   0.286      0.8      0.357          0.5    1.6     24                 1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">18</span>   0.286      0.96     0.298          0.5    1.92    24                 1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">19</span>   0.143      0.923    0.155          0.5    1.85    12                 2</span></span>
-<span><span class="co">#&gt;       pp    pn    np    nn</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>    12     0    13    59</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     9     0    20    55</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>    19     2    11    52</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     9     0    21    54</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     9     0    33    42</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     9     0    33    42</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>    15     2    27    40</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>    11     1    19    53</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     9     1    33    41</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>    14     1    28    41</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span>     9     0    33    42</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span>    19     3    23    39</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span>    10     0    32    42</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span>     9     0    33    42</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span>     9     0    33    42</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span>    12     0    30    42</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span>    24     6    18    36</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">18</span>    24     1    18    41</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">19</span>    12     1    30    41</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rules</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 13</span></span></span>
+<span><span class="co">#&gt;   antecedent                                             consequent            </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> {Type=Quebec,conc=(500;Inf]}                           {uptake=(35;Inf]}     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> {Treatment=nonchilled,Type=Mississippi,conc=(200;500]} {uptake=(20;35]}      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> {Treatment=chilled,Type=Mississippi}                   {uptake=(-Inf;20]}    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> {Treatment=chilled,Type=Mississippi,conc=(200;500]}    {uptake=(-Inf;20]}    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> {Type=Mississippi,conc=(200;500],uptake=(-Inf;20]}     {Treatment=chilled}   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> {Type=Mississippi,conc=(200;500],uptake=(20;35]}       {Treatment=nonchilled}</span></span>
+<span><span class="co">#&gt;   support confidence coverage conseq_support  lift count antecedent_length    pp</span></span>
+<span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   0.143      1        0.143          0.298  3.36    12                 2    12</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   0.107      1        0.107          0.345  2.90     9                 3     9</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   0.226      0.905    0.25           0.357  2.53    19                 2    19</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>   0.107      1        0.107          0.357  2.8      9                 3     9</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>   0.107      1        0.107          0.5    2        9                 3     9</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>   0.107      1        0.107          0.5    2        9                 3     9</span></span>
+<span><span class="co">#&gt;      pn    np    nn</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     0    13    59</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     0    20    55</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     2    11    52</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     0    21    54</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     0    33    42</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>     0    33    42</span></span></code></pre></div>
 <p>The result is a tibble containing found rules with their quality
 measures: <code>antecedent</code>, <code>consequent</code>,
 <code>support</code>, <code>confidence</code>, <code>coverage</code>,
 <code>consequent_support</code>, <code>lift</code>, <code>length</code>,
 and the contingency table columns (<code>pp</code>, <code>pn</code>,
 <code>np</code>, <code>nn</code>).</p>
+<p>For instance, the first rule represents the following association
+rule:</p>
+<blockquote>
+<blockquote>
+<p>Type=Quebec &amp; conc=(500;Inf] <span class="math inline">\(\Rightarrow\)</span> uptake=(35;Inf]</p>
+</blockquote>
+</blockquote>
 </div>
 <div class="section level2">
 <h2 id="specifying-antecedent-and-consequent">Specifying Antecedent and Consequent<a class="anchor" aria-label="anchor" href="#specifying-antecedent-and-consequent"></a>
@@ -304,35 +276,29 @@ accept <a href="https://tidyselect.r-lib.org/articles/syntax.html" class="extern
 expressions.</p>
 <p>For example, to find rules that predict the <code>uptake</code> rate
 from all other variables:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rules_uptake</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">crisp_co2</span>,</span>
-<span>                                 antecedent <span class="op">=</span> <span class="op">!</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
-<span>                                 consequent <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
+<span>                                 antecedent <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
+<span>                                 consequent <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
 <span>                                 min_support <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>                                 min_confidence <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
-<span><span class="va">rules_uptake</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 13</span></span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rules_uptake</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 13</span></span></span>
 <span><span class="co">#&gt;   antecedent                                             consequent        </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> {Type=Quebec,conc=(500;Inf]}                           {uptake=(35;Inf]} </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> {Treatment=nonchilled,Type=Mississippi,conc=(200;500]} {uptake=(20;35]}  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> {Treatment=chilled,Type=Mississippi}                   {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> {Treatment=chilled,Type=Mississippi,conc=(200;500]}    {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> {Type=Mississippi,conc=(-Inf;200]}                     {uptake=(-Inf;20]}</span></span>
 <span><span class="co">#&gt;   support confidence coverage conseq_support  lift count antecedent_length    pp</span></span>
 <span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   0.143      1        0.143          0.298  3.36    12                 2    12</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   0.107      1        0.107          0.345  2.90     9                 3     9</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   0.226      0.905    0.25           0.357  2.53    19                 2    19</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>   0.107      1        0.107          0.357  2.8      9                 3     9</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>   0.131      0.917    0.143          0.357  2.57    11                 2    11</span></span>
 <span><span class="co">#&gt;      pn    np    nn</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     0    13    59</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     0    20    55</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     2    11    52</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     0    21    54</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     1    19    53</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     2    11    52</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="using-the-disjoint-argument">Using the Disjoint Argument<a class="anchor" aria-label="anchor" href="#using-the-disjoint-argument"></a>
@@ -341,72 +307,69 @@ from all other variables:</p>
 original variable is often expanded into multiple predicates (e.g.,
 <code>conc=(-Inf,200]</code> and <code>conc=(200,500]</code>). These
 predicates from the same variable should not appear together in the same
-antecedent, as their conjunction would be contradictory or redundant.
-The <code>disjoint</code> argument prevents this. By default,
-<code><a href="../reference/dig_associations.html">dig_associations()</a></code> uses <code><a href="../reference/var_names.html">var_names()</a></code> on the
-column names to create groups of mutually exclusive predicates.</p>
+antecedent, as their conjunction would be contradictory or
+redundant.</p>
+<p>The <code>disjoint</code> argument prevents this. It accepts a
+character vector of size equal to the number of columns in the input
+data such that each unique value in the vector corresponds to a group of
+mutually exclusive predicates.</p>
+<p>By default, <code><a href="../reference/dig_associations.html">dig_associations()</a></code> uses
+<code><a href="../reference/var_names.html">var_names()</a></code> on the column names to create the disjoint
+vector automatically. This works well for data prepared with
+<code><a href="../reference/partition.html">partition()</a></code>.</p>
 <p>You can also provide a custom disjoint vector:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">disj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/var_names.html">var_names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">crisp_co2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">disj</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Type"      "Type"      "Treatment" "Treatment" "conc"      "conc"</span></span>
+<span><span class="va">disj</span></span>
+<span><span class="co">#&gt;  [1] "Type"      "Type"      "Treatment" "Treatment" "conc"      "conc"     </span></span>
+<span><span class="co">#&gt;  [7] "conc"      "uptake"    "uptake"    "uptake"</span></span>
 <span></span>
-<span><span class="va">rules_disj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">crisp_co2</span>,</span>
-<span>                               antecedent <span class="op">=</span> <span class="op">!</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
-<span>                               consequent <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
-<span>                               disjoint <span class="op">=</span> <span class="va">disj</span>,</span>
-<span>                               min_support <span class="op">=</span> <span class="fl">0.1</span>,</span>
-<span>                               min_confidence <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
-<span><span class="va">rules_disj</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 13</span></span></span>
+<span><span class="va">rules</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">crisp_co2</span>,</span>
+<span>                          disjoint <span class="op">=</span> <span class="va">disj</span>,</span>
+<span>                          min_support <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>                          min_confidence <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rules</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 13</span></span></span>
 <span><span class="co">#&gt;   antecedent                                             consequent        </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> {Type=Quebec,conc=(500;Inf]}                           {uptake=(35;Inf]} </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> {Treatment=nonchilled,Type=Mississippi,conc=(200;500]} {uptake=(20;35]}  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> {Treatment=chilled,Type=Mississippi}                   {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> {Treatment=chilled,Type=Mississippi,conc=(200;500]}    {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> {Type=Mississippi,conc=(-Inf;200]}                     {uptake=(-Inf;20]}</span></span>
 <span><span class="co">#&gt;   support confidence coverage conseq_support  lift count antecedent_length    pp</span></span>
 <span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   0.143      1        0.143          0.298  3.36    12                 2    12</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   0.107      1        0.107          0.345  2.90     9                 3     9</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   0.226      0.905    0.25           0.357  2.53    19                 2    19</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>   0.107      1        0.107          0.357  2.8      9                 3     9</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>   0.131      0.917    0.143          0.357  2.57    11                 2    11</span></span>
 <span><span class="co">#&gt;      pn    np    nn</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     0    13    59</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     0    20    55</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     2    11    52</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     0    21    54</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     1    19    53</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     2    11    52</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="controlling-rule-length">Controlling Rule Length<a class="anchor" aria-label="anchor" href="#controlling-rule-length"></a>
 </h2>
 <p>The <code>min_length</code> and <code>max_length</code> arguments
 control the number of predicates in the antecedent:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Find only rules with exactly 2 predicates in the antecedent</span></span>
-<span><span class="va">rules_len2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">crisp_co2</span>,</span>
-<span>                               antecedent <span class="op">=</span> <span class="op">!</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
-<span>                               consequent <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
-<span>                               min_length <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>                               max_length <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>                               min_support <span class="op">=</span> <span class="fl">0.1</span>,</span>
-<span>                               min_confidence <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
-<span><span class="va">rules_len2</span></span>
+<span><span class="va">rules</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">crisp_co2</span>,</span>
+<span>                          min_length <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>                          max_length <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>                          min_support <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>                          min_confidence <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rules</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 13</span></span></span>
-<span><span class="co">#&gt;   antecedent                           consequent         support confidence</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> {Type=Quebec,conc=(500;Inf]}         {uptake=(35;Inf]}    0.143      1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> {Treatment=chilled,Type=Mississippi} {uptake=(-Inf;20]}   0.226      0.905</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> {Type=Mississippi,conc=(-Inf;200]}   {uptake=(-Inf;20]}   0.131      0.917</span></span>
+<span><span class="co">#&gt;   antecedent                           consequent             support confidence</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> {Type=Quebec,conc=(500;Inf]}         {uptake=(35;Inf]}        0.143      1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> {Treatment=chilled,Type=Mississippi} {uptake=(-Inf;20]}       0.226      0.905</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> {Type=Mississippi,uptake=(20;35]}    {Treatment=nonchilled}   0.179      0.882</span></span>
 <span><span class="co">#&gt;   coverage conseq_support  lift count antecedent_length    pp    pn    np    nn</span></span>
 <span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>    0.143          0.298  3.36    12                 2    12     0    13    59</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>    0.25           0.357  2.53    19                 2    19     2    11    52</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>    0.143          0.357  2.57    11                 2    11     1    19    53</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>    0.202          0.5    1.76    15                 2    15     2    27    40</span></span></code></pre></div>
 <p>Setting <code>min_length = 0</code> generates rules with an empty
 antecedent, which effectively computes the support of each consequent
 alone.</p>
@@ -417,152 +380,62 @@ alone.</p>
 <p>For large datasets, the number of possible rules can be enormous. The
 <code>max_results</code> argument limits the total number of rules
 generated:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">rules_limited</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">crisp_co2</span>,</span>
-<span>                                  antecedent <span class="op">=</span> <span class="op">!</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
-<span>                                  consequent <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
-<span>                                  min_support <span class="op">=</span> <span class="fl">0.05</span>,</span>
-<span>                                  min_confidence <span class="op">=</span> <span class="fl">0.6</span>,</span>
-<span>                                  max_results <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
-<span><span class="va">rules_limited</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 17 × 13</span></span></span>
-<span><span class="co">#&gt;    antecedent                                              consequent        </span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> {Treatment=nonchilled,Type=Quebec}                      {uptake=(35;Inf]} </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> {Treatment=nonchilled,Type=Quebec,conc=(200;500]}       {uptake=(35;Inf]} </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> {Treatment=nonchilled,Type=Quebec,conc=(500;Inf]}       {uptake=(35;Inf]} </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> {Treatment=chilled,Type=Quebec,conc=(500;Inf]}          {uptake=(35;Inf]} </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> {Type=Quebec,conc=(200;500]}                            {uptake=(35;Inf]} </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> {Type=Quebec,conc=(500;Inf]}                            {uptake=(35;Inf]} </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> {Treatment=nonchilled,Type=Mississippi}                 {uptake=(20;35]}  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> {Treatment=nonchilled,Type=Mississippi,conc=(200;500]}  {uptake=(20;35]}  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> {Treatment=nonchilled,Type=Mississippi,conc=(-Inf;200]} {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> {Treatment=nonchilled,Type=Mississippi,conc=(500;Inf]}  {uptake=(20;35]}  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> {Treatment=chilled,Type=Mississippi}                    {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> {Treatment=chilled,Type=Mississippi,conc=(200;500]}     {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> {Treatment=chilled,Type=Mississippi,conc=(-Inf;200]}    {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> {Type=Mississippi,conc=(-Inf;200]}                      {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> {Treatment=nonchilled,conc=(-Inf;200]}                  {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span> {Treatment=chilled,conc=(-Inf;200]}                     {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span> {conc=(-Inf;200]}                                       {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt;    support confidence coverage conseq_support  lift count antecedent_length</span></span>
-<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  0.167       0.667   0.25            0.298  2.24    14                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  0.095<span style="text-decoration: underline;">2</span>      0.889   0.107           0.298  2.99     8                 3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  0.071<span style="text-decoration: underline;">4</span>      1       0.071<span style="text-decoration: underline;">4</span>          0.298  3.36     6                 3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  0.071<span style="text-decoration: underline;">4</span>      1       0.071<span style="text-decoration: underline;">4</span>          0.298  3.36     6                 3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  0.143       0.667   0.214           0.298  2.24    12                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  0.143       1       0.143           0.298  3.36    12                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  0.179       0.714   0.25            0.345  2.07    15                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  0.107       1       0.107           0.345  2.90     9                 3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  0.059<span style="text-decoration: underline;">5</span>      0.833   0.071<span style="text-decoration: underline;">4</span>          0.357  2.33     5                 3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  0.059<span style="text-decoration: underline;">5</span>      0.833   0.071<span style="text-decoration: underline;">4</span>          0.345  2.41     5                 3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span>  0.226       0.905   0.25            0.357  2.53    19                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span>  0.107       1       0.107           0.357  2.8      9                 3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span>  0.071<span style="text-decoration: underline;">4</span>      1       0.071<span style="text-decoration: underline;">4</span>          0.357  2.8      6                 3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span>  0.131       0.917   0.143           0.357  2.57    11                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span>  0.095<span style="text-decoration: underline;">2</span>      0.667   0.143           0.357  1.87     8                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span>  0.107       0.75    0.143           0.357  2.1      9                 2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span>  0.202       0.708   0.286           0.357  1.98    17                 1</span></span>
-<span><span class="co">#&gt;       pp    pn    np    nn</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>    14     7    11    52</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     8     1    17    58</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     6     0    19    59</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     6     0    19    59</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>    12     6    13    53</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>    12     0    13    59</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>    15     6    14    49</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     9     0    20    55</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     5     1    25    53</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     5     1    24    54</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span>    19     2    11    52</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span>     9     0    21    54</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span>     6     0    24    54</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span>    11     1    19    53</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span>     8     4    22    50</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span>     9     3    21    51</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span>    17     7    13    47</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rules</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">crisp_co2</span>,</span>
+<span>                          min_support <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>                          min_confidence <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>                          max_results <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">rules</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 5</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="fuzzy-association-rules">Fuzzy Association Rules<a class="anchor" aria-label="anchor" href="#fuzzy-association-rules"></a>
 </h2>
 <p>When the data contains fuzzy predicates (numeric columns with values
-in <span class="math inline">\([0, 1]\)</span>),
-<code><a href="../reference/dig_associations.html">dig_associations()</a></code> computes fuzzy support using a
-<strong>t-norm</strong> for conjunction. The <code>t_norm</code>
+in [0, 1]), <code><a href="../reference/dig_associations.html">dig_associations()</a></code> computes fuzzy support using
+a <strong>t-norm</strong> for conjunction. The <code>t_norm</code>
 argument specifies which t-norm to use:</p>
 <ul>
 <li>
-<code>"goguen"</code> (default): the product t-norm — multiplies
+<code>"goguen"</code> (default): the product t-norm - multiplies
 membership degrees</li>
 <li>
-<code>"goedel"</code>: the minimum t-norm — takes the minimum of
+<code>"goedel"</code>: the minimum t-norm - takes the minimum of
 membership degrees</li>
 <li>
-<code>"lukas"</code>: the Łukasiewicz t-norm — <span class="math inline">\(\max(0, a + b - 1)\)</span>
-</li>
+<code>"lukas"</code>: the Łukasiewicz t-norm = max(0, a + b -
+1)</li>
 </ul>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Fuzzy rules using the product t-norm (default)</span></span>
 <span><span class="va">fuzzy_rules</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">fuzzy_co2</span>,</span>
-<span>                                antecedent <span class="op">=</span> <span class="op">!</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
-<span>                                consequent <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
+<span>                                antecedent <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
+<span>                                consequent <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
 <span>                                min_support <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>                                min_confidence <span class="op">=</span> <span class="fl">0.6</span>,</span>
 <span>                                t_norm <span class="op">=</span> <span class="st">"goguen"</span><span class="op">)</span></span>
-<span><span class="va">fuzzy_rules</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 13</span></span></span>
-<span><span class="co">#&gt;    antecedent                                                </span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> {Type=Quebec}                                             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> {Treatment=nonchilled,Type=Quebec}                        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> {Treatment=nonchilled,Type=Quebec,conc=(95;500;1000)}     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> {Treatment=chilled,Type=Quebec,conc=(95;500;1000)}        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> {Type=Quebec,conc=(95;500;1000)}                          </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> {Type=Quebec,conc=(500;1000;Inf)}                         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> {Treatment=nonchilled,Type=Mississippi,conc=(95;500;1000)}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> {Treatment=chilled,Type=Mississippi}                      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> {Treatment=chilled,Type=Mississippi,conc=(-Inf;95;500)}   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> {Treatment=nonchilled,conc=(500;1000;Inf)}                </span></span>
-<span><span class="co">#&gt;    consequent            support confidence coverage conseq_support  lift count</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> {uptake=(25;40;Inf)}   0.320       0.639   0.5             0.380  1.68 26.8 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> {uptake=(25;40;Inf)}   0.177       0.709   0.25            0.380  1.87 14.9 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> {uptake=(25;40;Inf)}   0.089<span style="text-decoration: underline;">4</span>      0.876   0.102           0.380  2.31  7.51</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> {uptake=(25;40;Inf)}   0.072<span style="text-decoration: underline;">3</span>      0.708   0.102           0.380  1.87  6.07</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> {uptake=(25;40;Inf)}   0.162       0.792   0.204           0.380  2.09 13.6 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> {uptake=(25;40;Inf)}   0.092<span style="text-decoration: underline;">9</span>      0.963   0.096<span style="text-decoration: underline;">4</span>          0.380  2.54  7.80</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> {uptake=(10;25;40)}    0.068<span style="text-decoration: underline;">3</span>      0.669   0.102           0.370  1.81  5.74</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> {uptake=(-Inf;10;25)}  0.151       0.605   0.25            0.251  2.41 12.7 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> {uptake=(-Inf;10;25)}  0.074<span style="text-decoration: underline;">9</span>      0.751   0.099<span style="text-decoration: underline;">6</span>          0.251  3.00  6.29</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> {uptake=(25;40;Inf)}   0.068<span style="text-decoration: underline;">1</span>      0.706   0.096<span style="text-decoration: underline;">4</span>          0.380  1.86  5.72</span></span>
-<span><span class="co">#&gt;    antecedent_length    pp     pn    np    nn</span></span>
-<span><span class="co">#&gt;                <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>                 1 26.8  15.2    5.03  37.0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>                 2 14.9   6.11  17.0   46.0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>                 3  7.51  1.07  24.4   51.1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>                 3  6.07  2.51  25.8   49.6</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>                 2 13.6   3.57  18.3   48.5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>                 2  7.80  0.300 24.1   51.8</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>                 3  5.74  2.84  25.3   50.1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>                 2 12.7   8.29   8.35  54.6</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>                 3  6.29  2.08  14.8   60.9</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>                 2  5.72  2.38  26.2   49.7</span></span></code></pre></div>
-<p>Comparing different t-norms:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Using the Goedel (minimum) t-norm</span></span>
-<span><span class="va">fuzzy_rules_goedel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">fuzzy_co2</span>,</span>
-<span>                                       antecedent <span class="op">=</span> <span class="op">!</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
-<span>                                       consequent <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
-<span>                                       min_support <span class="op">=</span> <span class="fl">0.05</span>,</span>
-<span>                                       min_confidence <span class="op">=</span> <span class="fl">0.6</span>,</span>
-<span>                                       t_norm <span class="op">=</span> <span class="st">"goedel"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">fuzzy_rules_goedel</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 19</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">fuzzy_rules</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 13</span></span></span>
+<span><span class="co">#&gt;   antecedent                                            consequent          </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> {Type=Quebec}                                         {uptake=(25;40;Inf)}</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> {Treatment=nonchilled,Type=Quebec}                    {uptake=(25;40;Inf)}</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> {Treatment=nonchilled,Type=Quebec,conc=(95;500;1000)} {uptake=(25;40;Inf)}</span></span>
+<span><span class="co">#&gt;   support confidence coverage conseq_support  lift count antecedent_length    pp</span></span>
+<span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>  0.320       0.639    0.5            0.380  1.68 26.8                  1 26.8 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>  0.177       0.709    0.25           0.380  1.87 14.9                  2 14.9 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>  0.089<span style="text-decoration: underline;">4</span>      0.876    0.102          0.380  2.31  7.51                 3  7.51</span></span>
+<span><span class="co">#&gt;      pn    np    nn</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 15.2   5.03  37.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>  6.11 17.0   46.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>  1.07 24.4   51.1</span></span></code></pre></div>
 <p>The choice of t-norm affects how strictly the conjunction is
 evaluated. The Gödel t-norm is the least strict (produces higher support
-values), while the Łukasiewicz t-norm is the most strict.</p>
+values), while the Łukasiewicz t-norm is the most strict. Note also that
+handling fuzzy data is generally much more slower and memory demanding
+than crisp data, especially for large datasets.</p>
 </div>
 <div class="section level2">
 <h2 id="computing-additional-interest-measures">Computing Additional Interest Measures<a class="anchor" aria-label="anchor" href="#computing-additional-interest-measures"></a>
@@ -578,22 +451,19 @@ that are automatically included in the output of
 <span><span class="va">rules_enriched</span> <span class="op">&lt;-</span> <span class="va">rules_uptake</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/add_interest.html">add_interest</a></span><span class="op">(</span>measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"conviction"</span>, <span class="st">"leverage"</span>, <span class="st">"jaccard"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">rules_enriched</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu">select</span><span class="op">(</span><span class="va">antecedent</span>, <span class="va">consequent</span>, <span class="va">confidence</span>, <span class="va">conviction</span>, <span class="va">leverage</span>, <span class="va">jaccard</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 6</span></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">antecedent</span>, <span class="va">consequent</span>, <span class="va">confidence</span>, <span class="va">conviction</span>, <span class="va">leverage</span>, <span class="va">jaccard</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   antecedent                                             consequent        </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> {Type=Quebec,conc=(500;Inf]}                           {uptake=(35;Inf]} </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> {Treatment=nonchilled,Type=Mississippi,conc=(200;500]} {uptake=(20;35]}  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> {Treatment=chilled,Type=Mississippi}                   {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> {Treatment=chilled,Type=Mississippi,conc=(200;500]}    {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> {Type=Mississippi,conc=(-Inf;200]}                     {uptake=(-Inf;20]}</span></span>
 <span><span class="co">#&gt;   confidence conviction leverage jaccard</span></span>
 <span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>      1         <span style="color: #BB0000;">Inf</span>      0.100    0.48 </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>      1         <span style="color: #BB0000;">Inf</span>      0.070<span style="text-decoration: underline;">2</span>   0.310</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>      0.905       6.75   0.137    0.594</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>      1         <span style="color: #BB0000;">Inf</span>      0.068<span style="text-decoration: underline;">9</span>   0.3  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>      0.917       7.71   0.079<span style="text-decoration: underline;">9</span>   0.355</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>      0.905       6.75   0.137    0.594</span></span></code></pre></div>
 <p>You can compute all available measures at once by omitting the
 <code>measures</code> argument:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
@@ -619,6 +489,10 @@ that are automatically included in the output of
 <span><span class="co">#&gt; [49] "dfi"                  "fe"                   "lci"                 </span></span>
 <span><span class="co">#&gt; [52] "dlci"                 "lce"                  "uci"                 </span></span>
 <span><span class="co">#&gt; [55] "duci"                 "uce"</span></span></code></pre></div>
+<p>See the documentation of <code><a href="../reference/add_interest.html">add_interest()</a></code> for a complete
+list of supported quality measures:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">?</span><span class="va">add_interest</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="smoothing">Smoothing<a class="anchor" aria-label="anchor" href="#smoothing"></a>
 </h3>
@@ -626,27 +500,24 @@ that are automatically included in the output of
 are zero (e.g., division by zero). The <code>smooth_counts</code>
 argument applies Laplace smoothing to the counts before computing the
 measures:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rules_smoothed</span> <span class="op">&lt;-</span> <span class="va">rules_uptake</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/add_interest.html">add_interest</a></span><span class="op">(</span>measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"odds_ratio"</span>, <span class="st">"conviction"</span><span class="op">)</span>,</span>
 <span>                 smooth_counts <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span><span class="va">rules_smoothed</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu">select</span><span class="op">(</span><span class="va">antecedent</span>, <span class="va">consequent</span>, <span class="va">confidence</span>, <span class="va">odds_ratio</span>, <span class="va">conviction</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 5</span></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">antecedent</span>, <span class="va">consequent</span>, <span class="va">confidence</span>, <span class="va">odds_ratio</span>, <span class="va">conviction</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
 <span><span class="co">#&gt;   antecedent                                             consequent        </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> {Type=Quebec,conc=(500;Inf]}                           {uptake=(35;Inf]} </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> {Treatment=nonchilled,Type=Mississippi,conc=(200;500]} {uptake=(20;35]}  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> {Treatment=chilled,Type=Mississippi}                   {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> {Treatment=chilled,Type=Mississippi,conc=(200;500]}    {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> {Type=Mississippi,conc=(-Inf;200]}                     {uptake=(-Inf;20]}</span></span>
 <span><span class="co">#&gt;   confidence odds_ratio conviction</span></span>
 <span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>      1          110.       18.1 </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>      1           51.4      13.0 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>      0.905       35.6       5.63</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>      1           48.2      12.8 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>      0.917       21.0       5.54</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>      0.905       35.6       5.63</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="guha-quantifiers">GUHA Quantifiers<a class="anchor" aria-label="anchor" href="#guha-quantifiers"></a>
@@ -654,27 +525,24 @@ measures:</p>
 <p><code><a href="../reference/add_interest.html">add_interest()</a></code> also supports GUHA (General Unary
 Hypothesis Automaton) quantifiers, including statistical tests based on
 the binomial distribution:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rules_guha</span> <span class="op">&lt;-</span> <span class="va">rules_uptake</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/add_interest.html">add_interest</a></span><span class="op">(</span>measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dfi"</span>, <span class="st">"fe"</span>, <span class="st">"lci"</span><span class="op">)</span>,</span>
 <span>                 p <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span><span class="va">rules_guha</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu">select</span><span class="op">(</span><span class="va">antecedent</span>, <span class="va">consequent</span>, <span class="va">confidence</span>, <span class="va">dfi</span>, <span class="va">fe</span>, <span class="va">lci</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 6</span></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">antecedent</span>, <span class="va">consequent</span>, <span class="va">confidence</span>, <span class="va">dfi</span>, <span class="va">fe</span>, <span class="va">lci</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   antecedent                                             consequent        </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> {Type=Quebec,conc=(500;Inf]}                           {uptake=(35;Inf]} </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> {Treatment=nonchilled,Type=Mississippi,conc=(200;500]} {uptake=(20;35]}  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> {Treatment=chilled,Type=Mississippi}                   {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> {Treatment=chilled,Type=Mississippi,conc=(200;500]}    {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> {Type=Mississippi,conc=(-Inf;200]}                     {uptake=(-Inf;20]}</span></span>
 <span><span class="co">#&gt;   confidence   dfi    fe      lci</span></span>
 <span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>      1     0.48  0.845 0.000<span style="text-decoration: underline;">244</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>      1     0.310 0.762 0.001<span style="text-decoration: underline;">95</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>      0.905 0.594 0.845 0.000<span style="text-decoration: underline;">111</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>      1     0.3   0.75  0.001<span style="text-decoration: underline;">95</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>      0.917 0.355 0.762 0.003<span style="text-decoration: underline;">17</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>      0.905 0.594 0.845 0.000<span style="text-decoration: underline;">111</span></span></span></code></pre></div>
 <p>The <code>p</code> parameter represents the null-hypothesis
 probability used in the binomial-test-based quantifiers
 (<code>lci</code>, <code>uci</code>, <code>dlci</code>,
@@ -692,11 +560,9 @@ valid, they are often uninteresting and can clutter results or slow down
 the search.</p>
 <p>The <code>excluded</code> argument of <code><a href="../reference/dig_associations.html">dig_associations()</a></code>
 allows you to specify a list of predicate combinations that should never
-appear together in the antecedent of a generated rule. Any rule whose
-antecedent contains all predicates from an excluded combination is
-suppressed. Note that the term “tautology” here is used broadly — any
-rule you consider uninteresting (regardless of whether its confidence is
-exactly 1) can be excluded this way.</p>
+appear together in generated rules. Note that the term “tautology” here
+is used broadly - any rule you consider uninteresting (regardless of
+whether its confidence is exactly 1) can be excluded this way.</p>
 <div class="section level3">
 <h3 id="finding-tautologies-with-dig_tautologies">Finding Tautologies with <code>dig_tautologies()</code><a class="anchor" aria-label="anchor" href="#finding-tautologies-with-dig_tautologies"></a>
 </h3>
@@ -705,13 +571,10 @@ to find rules with very high confidence. It searches iteratively, using
 tautologies found in earlier iterations to prune the search space in
 later iterations. For a detailed description, see the
 <code><a href="../articles/data-preparation.html">vignette("data-preparation")</a></code>.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">disj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/var_names.html">var_names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">crisp_co2</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">tautologies</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_tautologies.html">dig_tautologies</a></span><span class="op">(</span><span class="va">crisp_co2</span>,</span>
-<span>                               antecedent <span class="op">=</span> <span class="fu">everything</span><span class="op">(</span><span class="op">)</span>,</span>
-<span>                               consequent <span class="op">=</span> <span class="fu">everything</span><span class="op">(</span><span class="op">)</span>,</span>
-<span>                               disjoint <span class="op">=</span> <span class="va">disj</span>,</span>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tautologies</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_tautologies.html">dig_tautologies</a></span><span class="op">(</span><span class="va">crisp_co2</span>,</span>
+<span>                               antecedent <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>                               consequent <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>                               min_confidence <span class="op">=</span> <span class="fl">0.95</span>,</span>
 <span>                               min_support <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>                               max_length <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
@@ -741,16 +604,15 @@ later iterations. For a detailed description, see the
 by the <code>excluded</code> argument using
 <code><a href="../reference/parse_condition.html">parse_condition()</a></code>, and pass them to
 <code><a href="../reference/dig_associations.html">dig_associations()</a></code>:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Convert tautologies to the excluded format</span></span>
 <span><span class="va">excluded_conds</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/parse_condition.html">parse_condition</a></span><span class="op">(</span><span class="va">tautologies</span><span class="op">$</span><span class="va">antecedent</span>,</span>
 <span>                                  <span class="va">tautologies</span><span class="op">$</span><span class="va">consequent</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Search for rules while excluding tautological patterns</span></span>
 <span><span class="va">rules_filtered</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">crisp_co2</span>,</span>
-<span>                                   antecedent <span class="op">=</span> <span class="op">!</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
-<span>                                   consequent <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
-<span>                                   disjoint <span class="op">=</span> <span class="va">disj</span>,</span>
+<span>                                   antecedent <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
+<span>                                   consequent <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
 <span>                                   excluded <span class="op">=</span> <span class="va">excluded_conds</span>,</span>
 <span>                                   min_support <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>                                   min_confidence <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
@@ -785,16 +647,15 @@ datasets.</p>
 <h3 id="manually-specifying-exclusions">Manually Specifying Exclusions<a class="anchor" aria-label="anchor" href="#manually-specifying-exclusions"></a>
 </h3>
 <p>You can also construct the <code>excluded</code> list manually. Each
-element is a character vector of predicate names that must not co-occur
-in the antecedent:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Exclude rules where "Type=Quebec" and "Treatment=chilled" appear together</span></span>
-<span><span class="va">manual_excluded</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Type=Quebec"</span>, <span class="st">"Treatment=chilled"</span><span class="op">)</span><span class="op">)</span></span>
+element is a character vector of elements that should not appear
+together in a rule:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Filter out rules by tautology "Treatment=chilled =&gt; Type=Mississippi"</span></span>
+<span><span class="va">manual_excluded</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Treatment=chilled"</span>, <span class="st">"Type=Mississippi"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">rules_manual</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">crisp_co2</span>,</span>
-<span>                                 antecedent <span class="op">=</span> <span class="op">!</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
-<span>                                 consequent <span class="op">=</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
-<span>                                 disjoint <span class="op">=</span> <span class="va">disj</span>,</span>
+<span>                                 antecedent <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
+<span>                                 consequent <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
 <span>                                 excluded <span class="op">=</span> <span class="va">manual_excluded</span>,</span>
 <span>                                 min_support <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>                                 min_confidence <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>

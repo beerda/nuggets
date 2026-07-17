@@ -25,6 +25,17 @@ which handles both crisp and fuzzy transformations. Additional utility
 functions help identify and remove uninformative columns and detect
 tautologies in the data.
 
+Before going further, ensure that all packages required for this
+vignette are loaded:
+
+``` r
+
+library(nuggets)
+library(dplyr)    # for data manipulation
+library(tidyr)    # for even more data manipulation
+library(ggplot2)  # for graphical visualization
+```
+
 ## Data Preparation with `partition()`
 
 For patterns based on crisp conditions, the data columns that serve as
@@ -859,7 +870,7 @@ illustration of triangular and raised cosine membership functions for
 
 ![Comparison of triangular and raised cosine membership functions for
 .breaks = c(-10, 0, 10)
-](data-preparation_files/figure-html/unnamed-chunk-18-1.png)
+](data-preparation_files/figure-html/unnamed-chunk-19-1.png)
 
 Comparison of triangular and raised cosine membership functions for
 `.breaks = c(-10, 0, 10)`
@@ -872,7 +883,7 @@ these fuzzy sets:
 
 ![Fuzzy sets with triangular membership functions for .breaks = c(-10,
 -5, 0, 5, 10)
-](data-preparation_files/figure-html/unnamed-chunk-19-1.png)
+](data-preparation_files/figure-html/unnamed-chunk-20-1.png)
 
 Fuzzy sets with triangular membership functions for
 `partition(x, .method = "triangle", .breaks = c(-10, -5, 0, 5, 10))`
@@ -884,7 +895,7 @@ the `.breaks` vector:
 
 ![Fuzzy sets with triangular membership functions for .breaks = c(-Inf,
 -5, 0, 5, Inf)
-](data-preparation_files/figure-html/unnamed-chunk-20-1.png)
+](data-preparation_files/figure-html/unnamed-chunk-21-1.png)
 
 Fuzzy sets with triangular membership functions for
 `partition(x, .method = "triangle", .breaks = c(-Inf, -5, 0, 5, Inf))`
@@ -895,7 +906,7 @@ to create. For example, `.breaks = 4` creates partitioning with four
 fuzzy sets:
 
 ![Fuzzy sets with triangular membership functions for .breaks = 4
-](data-preparation_files/figure-html/unnamed-chunk-21-1.png)
+](data-preparation_files/figure-html/unnamed-chunk-22-1.png)
 
 Fuzzy sets with triangular membership functions for
 `partition(x, .method = "triangle", .breaks = 4)`
@@ -906,7 +917,7 @@ following figure shows five raised cosine fuzzy sets defined by
 
 ![Fuzzy sets with raised cosine membership functions for .breaks =
 c(-Inf, -10, -5, 0, 5, 10, Inf)
-](data-preparation_files/figure-html/unnamed-chunk-22-1.png)
+](data-preparation_files/figure-html/unnamed-chunk-23-1.png)
 
 Fuzzy sets with raised cosine membership functions for
 `partition(x, .method = "raisedcos", .breaks = c(-Inf, -10, -5, 0, 5, 10, Inf))`
@@ -1003,7 +1014,7 @@ intervals. The following figure is the result of setting `.span = 2` and
 
 ![Fuzzy sets with triangular membership functions for .span = 2, .breaks
 = c(-10, -5, 5, 10)\`
-](data-preparation_files/figure-html/unnamed-chunk-24-1.png)
+](data-preparation_files/figure-html/unnamed-chunk-25-1.png)
 
 Fuzzy sets with triangular membership functions for
 `partition(x, .method = "triangle", .span = 2, .breaks = c(-10, -5, 5, 10))`
@@ -1017,7 +1028,7 @@ Consider the following example that shows the effect of setting
 
 ![Fuzzy sets with triangular membership functions for .inc = 1, .span =
 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15)\`
-](data-preparation_files/figure-html/unnamed-chunk-25-1.png)
+](data-preparation_files/figure-html/unnamed-chunk-26-1.png)
 
 Fuzzy sets with triangular membership functions for
 `partition(x, .method = "triangle", .inc = 1, .span = 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15))`
@@ -1029,7 +1040,7 @@ after each created fuzzy set:
 
 ![Fuzzy sets with triangular membership functions for .inc = 3, .span =
 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15)\`
-](data-preparation_files/figure-html/unnamed-chunk-26-1.png)
+](data-preparation_files/figure-html/unnamed-chunk-27-1.png)
 
 Fuzzy sets with triangular membership functions for
 `partition(x, .method = "triangle", .inc = 3, .span = 2, .breaks = c(-15, -10, -5, 0, 5, 10, 15))`
