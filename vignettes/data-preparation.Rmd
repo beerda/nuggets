@@ -15,11 +15,6 @@ knitr::opts_chunk$set(
 ```
 
 ```{r, include=FALSE}
-library(nuggets)
-library(dplyr)
-library(ggplot2)
-library(tidyr)
-
 options(tibble.width = Inf)
 ```
 
@@ -45,6 +40,16 @@ The package provides two main approaches for data preparation:
 The primary function for data preparation is `partition()`, which handles both 
 crisp and fuzzy transformations. Additional utility functions help identify and 
 remove uninformative columns and detect tautologies in the data.
+
+Before going further, ensure that all packages required for this vignette are 
+loaded:
+
+```{r, message=FALSE}
+library(nuggets)
+library(dplyr)    # for data manipulation
+library(tidyr)    # for even more data manipulation
+library(ggplot2)  # for graphical visualization
+```
 
 
 # Data Preparation with `partition()`
