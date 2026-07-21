@@ -49,7 +49,6 @@ public:
      */
     BaseChain(double sum)
         : sum(sum),
-          deduced(),
           clause(),
           predicateType(CONDITION),
           cached(false)
@@ -66,7 +65,6 @@ public:
      */
     BaseChain(size_t id, PredicateType type, double sum)
         : sum(sum),
-          deduced(),
           clause({ id }),
           predicateType(type),
           cached(false)
@@ -81,7 +79,6 @@ public:
      */
     BaseChain(const BaseChain& a, const BaseChain& b)
         : sum(0),
-          deduced(),
           clause(mergeClauses(a.clause, b.clause)),
           predicateType(b.predicateType),
           cached(false)
@@ -101,7 +98,6 @@ public:
      */
     BaseChain(const BaseChain& a, const BaseChain& b, const double sum)
         : sum(sum),
-          deduced(),
           clause(mergeClauses(a.clause, b.clause)),
           predicateType(PredicateType::FOCUS),
           cached(true)
@@ -155,32 +151,14 @@ public:
     inline void setSum(double newSum)
     { sum = newSum; }
 
-    inline vector<size_t>& getMutableDeduced()
-    { return deduced; }
-
-    inline bool deduces(const size_t id) const
-    {
-        bool result = std::find(deduced.begin(), deduced.end(), id) != deduced.end();
-
-        return result;
-    }
-
-    inline bool deducesItself() const
-    {
-        for (size_t predicate : clause) {
-            if (deduces(predicate)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     /**
      * Returns the type of the predicate represented by this chain.
      */
     inline PredicateType getPredicateType() const
     { return predicateType; }
+
+    inline void setPredicateType(PredicateType newType)
+    { predicateType = newType; }
 
     inline bool isCached() const
     { return cached; }
@@ -226,11 +204,6 @@ protected:
      * fuzzy data) of the chain.
      */
     double sum;
-
-    /**
-     * The vector of predicate IDs that are deduced by clause of this chain.
-     */
-    vector<size_t> deduced;
 
     /**
      * The clause of the chain, i.e., the vector of predicate ids.

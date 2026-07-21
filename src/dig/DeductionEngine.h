@@ -74,6 +74,14 @@ public:
     }
 
     /**
+     * Checks whether the engine has any implications stored.
+     *
+     * @return True if the engine has no implications, false otherwise.
+     */
+    bool empty() const
+    { return consequents.empty(); }
+
+    /**
      * Deduces all predicates that can be inferred from the given initial
      * predicates and the implications stored in the engine.
      *

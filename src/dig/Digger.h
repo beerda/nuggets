@@ -28,7 +28,7 @@
 #include "ChainCollection.h"
 #include "Selector.h"
 #include "Cache.h"
-#include "TautologyTree.h"
+#include "DeductionEngine.h"
 
 
 template <typename CHAIN, typename STORAGE>
@@ -45,7 +45,7 @@ public:
           predicateSums(data.size() + 1),
           selectorSingleton(initialCollection.focusCount()),
           cache(data.size() + 1),
-          tree(initialCollection),
+          deductionEngine(data.size() + 1, config.getExcluded()),
           progress(nullptr)
     {
         BLOCK_TIMER(t, "Digger::Constructor");
@@ -53,8 +53,6 @@ public:
             size_t id = chain.getClause().back();
             predicateSums[id] = chain.getSum();
         }
-
-        tree.addTautologies(config.getExcluded());
     }
 
     // Disable copy
@@ -71,16 +69,12 @@ public:
 
         ChainCollection<CHAIN> filteredCollection;
         filteredCollection.reserve(initialCollection.size());
-
         CHAIN emptyChain(config.getNrow());
-        tree.updateDeduction(emptyChain);
 
         for (size_t i = 0; i < initialCollection.size(); ++i) {
             CHAIN& chain = initialCollection[i];
             addSumToCache(chain);
-            if (isNonRedundant(emptyChain, chain)
-                    && isNonTautological(emptyChain, chain)
-                    && isCandidate(chain)) {
+            if (isNonRedundant(emptyChain, chain) && isCandidate(chain)) {
                 filteredCollection.append(std::move(chain));
             }
         }
@@ -111,13 +105,12 @@ private:
     vector<double> predicateSums;
     Selector selectorSingleton;
     Cache cache;
-    TautologyTree<CHAIN> tree;
+    DeductionEngine deductionEngine;
     CombinatorialProgress* progress;
 
     void processChildrenChains(const CHAIN& chain, ChainCollection<CHAIN>& collection)
     {
         if (!config.hasFilterEmptyFoci() || collection.hasFoci()) {
-
             if (isStorable(chain)) {
                 BLOCK_INC_TIMER(st, t, "Digger::processChildrenChains - store");
 
@@ -139,10 +132,6 @@ private:
 
                     {
                         BLOCK_INC_TIMER(st, t, "Digger::processChildrenChains - for loop");
-
-                        tree.updateDeduction(chain);
-                        if (chain.deducesItself())
-                            continue;
 
                         if (isExtendable(chain)) {
                             // need conjunction with everything
@@ -182,6 +171,7 @@ private:
         target.reserve(parent.size() - begin + bothLen);
         for (size_t i = begin; i < parent.size(); ++i) {
             CHAIN& secondChain = parent[i];
+
             if (secondChain.isCached()) {
                 combineByCache(target, conditionChain, secondChain);
             }
@@ -203,8 +193,7 @@ private:
         if (isNonRedundant(conditionChain, secondChain)) {
             CHAIN newChain(conditionChain, secondChain);
             addSumToCache(newChain);
-            if (isNonTautological(conditionChain, secondChain)
-                    && isCandidate(newChain)) {
+            if (isCandidate(newChain)) {
                 target.append(std::move(newChain));
             }
         }
@@ -216,12 +205,11 @@ private:
     {
         BLOCK_INC_TIMER(st, t, "Digger::combineByCache");
 
-        if (isNonRedundant(conditionChain, secondChain)
-                && isNonTautological(conditionChain, secondChain)) {
+        if (isNonRedundant(conditionChain, secondChain)) {
             CHAIN newChain(conditionChain, secondChain, 0);
             double sum = getSumFromCache(newChain);
 
-            // not being in cache means that the conjunction is not frequent
+            // not being in the cache means that the conjunction is redundant
             if (sum != Cache::NOT_IN_CACHE) {
                 newChain.setSum(sum);
                 if (isCandidate(newChain)) {
@@ -236,29 +224,14 @@ private:
         if (parent.getClause().size() > 0) {
             size_t pref = parent.getClause().back();
             size_t curr = chain.getClause().back();
-
             if (pref == curr) {
                 // Filter of focus even if disjoint is not defined
                 // (should never happen as we always have disjoint defined)
                 return false;
             }
-
             if (config.hasDisjoint() && config.getDisjoint()[pref] == config.getDisjoint()[curr]) {
                 // It is enough to check the last element of the prefix because
                 // previous elements were already checked in parent tasks
-                //cout << "redundant: " << parent.clauseAsString() << " , " << chain.clauseAsString() << endl;
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    inline bool isNonTautological(const CHAIN& parent, const CHAIN& chain) const
-    {
-        if (config.hasFilterExcluded()) {
-            size_t curr = chain.getClause().back();
-            if (parent.deduces(curr)) {
                 return false;
             }
         }
@@ -268,29 +241,34 @@ private:
 
     inline bool isCandidate(const CHAIN& chain) const
     {
-        //cout << "chain.getSum() = " << chain.getSum() << " config.getMinSum() = " << config.getMinSum() << endl;
-        if (chain.isCondition() && chain.getSum() >= config.getMinSum())
+        if (chain.isCondition() && chain.getSum() >= config.getMinSum()) {
             return true;
-
-        if (chain.isFocus() && chain.getSum() >= config.getMinFocusSum())
+        }
+        if (chain.isFocus() && chain.getSum() >= config.getMinFocusSum()) {
             return true;
+        }
 
         return false;
     }
 
     inline bool isExtendable(const CHAIN& chain) const
     {
-        return chain.getClause().size() < config.getMaxLength()
+        bool res = chain.getClause().size() < config.getMaxLength()
             && chain.getSum() >= config.getMinSum()
             && storage.size() < config.getMaxResults();
+
+        return res;
     }
 
-    inline bool isStorable(const CHAIN& chain) const
+    inline bool isStorable(const CHAIN& chain)
     {
-        return chain.getClause().size() >= config.getMinLength()
+        bool res = chain.getClause().size() >= config.getMinLength()
             && chain.getSum() >= config.getMinSum()
             && chain.getSum() <= config.getMaxSum()
-            && storage.size() < config.getMaxResults();
+            && storage.size() < config.getMaxResults()
+            && !deductionEngine.hasRedundant(chain.getClause());
+
+        return res;
     }
 
     inline bool isStorable(const Selector& selector) const
@@ -298,12 +276,14 @@ private:
 
     inline const Selector& initializeSelectorOfStorable(const CHAIN& chain, const ChainCollection<CHAIN>& collection)
     {
-        bool constant = config.getMinConditionalFocusSupport() <= 0.0;
+        bool constant = (config.getMinConditionalFocusSupport() <= 0.0)
+                && deductionEngine.empty();
         selectorSingleton.initialize(collection.focusCount(), constant);
         if (!constant) {
             for (size_t i = 0; i < collection.focusCount(); ++i) {
                 const CHAIN& focus = collection[i + collection.firstFocusIndex()];
-                if (1.0 * focus.getSum() / chain.getSum() < config.getMinConditionalFocusSupport()) {
+                if ((1.0 * focus.getSum() / chain.getSum() < config.getMinConditionalFocusSupport())
+                        || deductionEngine.isDerivableWithout(chain.getClause(), focus.getClause().back())) {
                     selectorSingleton.unselect(i);
                 }
             }

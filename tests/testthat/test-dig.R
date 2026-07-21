@@ -1188,6 +1188,97 @@ test_that("exclude tautology 1", {
 })
 
 
+test_that("exclude tautology in full combinations", {
+    getPermutations <- function(x) {
+        if (length(x) == 1) {
+            return(x)
+        }
+        else {
+            res <- matrix(nrow = 0, ncol = length(x))
+            for (i in seq_along(x)) {
+                res <- rbind(res, cbind(x[i], Recall(x[-i])))
+            }
+            return(res)
+        }
+    }
+
+    f <- function(condition, foci_supports) {
+        paste(paste(sort(names(condition)), collapse = "&"),
+              "|",
+              paste(sort(names(foci_supports)), collapse = ","))
+    }
+
+    orig_data <- data.frame(a = rep(T, 10),
+                            b = rep(T, 10),
+                            c = rep(T, 10))
+
+    permutations <- getPermutations(seq_len(ncol(orig_data)))
+
+    # loop through all permutations of columns
+    for (row in seq_len(nrow(permutations))) {
+        d <- orig_data[, permutations[row, ], drop = FALSE]
+
+        # full list of combinations
+        res <- dig(d,
+                   f = f,
+                   condition = everything(),
+                   focus = everything(),
+                   filter_empty_foci = FALSE,
+                   excluded = NULL,
+                   min_support = 0.0001)
+        res <- unlist(res)
+        expect_equal(sort(res),
+                     sort(c(" | a,b,c",
+                            "a | b,c", "b | a,c", "c | a,b",
+                            "a&b | c", "a&c | b", "b&c | a",
+                            "a&b&c | ")))
+
+        # filter empty foci only
+        res <- dig(d,
+                   f = f,
+                   condition = everything(),
+                   focus = everything(),
+                   filter_empty_foci = TRUE,
+                   excluded = NULL,
+                   min_support = 0.0001)
+        res <- unlist(res)
+        expect_equal(sort(res),
+                     sort(c(" | a,b,c",
+                            "a | b,c", "b | a,c", "c | a,b",
+                            "a&b | c", "a&c | b", "b&c | a")))
+
+        # filter by tautology (a => b)
+        res <- dig(d,
+                   f = f,
+                   condition = everything(),
+                   focus = everything(),
+                   filter_empty_foci = FALSE,
+                   excluded = list(c("a", "b")),
+                   min_support = 0.0001)
+        res <- unlist(res)
+        expect_equal(info = as.character(row),
+                     sort(res),
+                     sort(c(" | a,b,c",
+                            "a | c", "b | a,c", "c | a,b",
+                            "a&c | ", "b&c | a")))
+
+        # filter by tautology (a => b) and empty foci
+        res <- dig(d,
+                   f = f,
+                   condition = everything(),
+                   focus = everything(),
+                   filter_empty_foci = TRUE,
+                   excluded = list(c("a", "b")),
+                   min_support = 0.0001)
+        res <- unlist(res)
+        expect_equal(sort(res),
+                     sort(c(" | a,b,c",
+                            "a | c", "b | a,c", "c | a,b",
+                            "b&c | a")))
+    }
+})
+
+
 test_that("t-norm goedel", {
     c1 <- c(0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
     c2 <- c(0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
