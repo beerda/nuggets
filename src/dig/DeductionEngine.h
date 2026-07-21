@@ -47,18 +47,21 @@ public:
     DeductionEngine(const size_t numPredicates, const List& implications)
         : emptyAntecedentImplications(),
           appearsIn(numPredicates),
+          producedBy(numPredicates),
           consequents(implications.size()),
           needs(implications.size()),
           remaining(implications.size()),
           remainingStamp(implications.size(), 0),
           actualPredicateStamp(numPredicates, 0),
-          queryId(0)
+          queryId(0),
+          numPredicates(numPredicates)
     {
         for (R_xlen_t i = 0; i < implications.size(); ++i) {
             IntegerVector implication = implications[i];
-            vector<size_t> antecedent = createAntecedent(implication);
+            Clause antecedent = createAntecedent(implication);
             needs[i] = antecedent.size();
             consequents[i] = createConsequent(implication);
+            producedBy[consequents[i]].push_back(i);
 
             if (antecedent.empty()) {
                 emptyAntecedentImplications.push_back(i);
@@ -78,7 +81,8 @@ public:
      * @return A vector of predicate IDs that can be deduced from the initial
      *     predicates and the implications.
      */
-    Clause deduce(const vector<size_t>& initial) {
+    Clause deduce(const vector<size_t>& initial)
+    {
         queryId++;
         Clause result;
         vector<size_t> unprocessed;
@@ -91,14 +95,14 @@ public:
             }
         };
 
-        // process the initial predicates
-        for (size_t predicate : initial) {
-            addPredicate(predicate);
-        }
-
         // process empty-antecedent implications
         for (size_t i : emptyAntecedentImplications) {
             addPredicate(consequents[i]);
+        }
+
+        // process the initial predicates
+        for (size_t predicate : initial) {
+            addPredicate(predicate);
         }
 
         while (!unprocessed.empty()) {
@@ -125,6 +129,96 @@ public:
         return result;
     }
 
+    /**
+     * Checks whether the target predicate can be deduced from the initial
+     * predicates and the implications stored in the engine. If the target
+     * predicate is one of the initial predicates, it is removed from the
+     * initial predicates before checking.
+     *
+     * @param initial A vector of predicate IDs that are initially known to be true.
+     * @param target The predicate ID to check for (may be present
+     *     in the initial predicates).
+     * @return True if the target predicate can be deduced from the initial
+     *     predicates and the implications, false otherwise.
+     */
+    bool isDerivableWithout(const vector<size_t>& initial, const size_t target)
+    {
+        if (producedBy[target].empty()) {
+            // no implications produce the target, so it cannot be redundant
+            return false;
+        }
+
+        queryId++;
+        vector<size_t> unprocessed;
+
+        auto addPredicate = [&](size_t predicate) {
+            if (actualPredicateStamp[predicate] != queryId) {
+                actualPredicateStamp[predicate] = queryId;
+                unprocessed.push_back(predicate);
+            }
+        };
+
+        // process empty-antecedent implications
+        for (size_t i : emptyAntecedentImplications) {
+            if (consequents[i] == target) {
+                // the target can be deduced from an empty antecedent, so it is redundant
+                return true;
+            }
+            addPredicate(consequents[i]);
+        }
+
+        // process the initial predicates
+        for (size_t predicate : initial) {
+            if (predicate != target)
+                addPredicate(predicate);
+        }
+
+        while (!unprocessed.empty()) {
+            size_t predicate = unprocessed.back();
+            unprocessed.pop_back();
+
+            // for each implication that has this predicate in its antecedent...
+            for (size_t i : appearsIn[predicate]) {
+                if (remainingStamp[i] != queryId) {
+                    // first time this implication is processed in this query,
+                    // so reset the remaining count
+                    remainingStamp[i] = queryId;
+                    remaining[i] = needs[i];
+                }
+
+                remaining[i]--;
+
+                if (remaining[i] == 0) {
+                    if (consequents[i] == target) {
+                        // the target can be deduced, so it is redundant
+                        return true;
+                    }
+                    addPredicate(consequents[i]);
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks whether any of the initial predicates can be deduced from the
+     * other initial predicates and the implications stored in the engine.
+     *
+     * @param initial A vector of predicate IDs that are initially known to be true.
+     * @return True if any of the initial predicates can be deduced from the
+     *    other initial predicates and the implications, false otherwise.
+     */
+    bool hasRedundant(const vector<size_t>& initial)
+    {
+        for (size_t predicate : initial) {
+            if (isDerivableWithout(initial, predicate)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 private:
     /**
      * Vector of indices of implications that have an empty antecedent, i.e.,
@@ -137,6 +231,12 @@ private:
      * predicate in their antecedent.
      */
     vector<vector<size_t>> appearsIn;
+
+    /**
+     * For each predicate, a list of indices of implications that have this
+     * predicate as their consequent.
+     */
+    vector<vector<size_t>> producedBy;
 
     /*
      * Consequent of the i-th implication
@@ -181,14 +281,22 @@ private:
     size_t queryId;
 
     /**
+     * The maximum number of predicates in the data. It makes sure that
+     * predicate with ID >= numPredicates is not used in the implications.
+     */
+    size_t numPredicates;
+
+    /**
      * Creates the antecedent of an implication from the given IntegerVector.
      */
-    static vector<size_t> createAntecedent(const IntegerVector& implication)
+    static Clause createAntecedent(const IntegerVector& implication)
     {
-        vector<size_t> antecedent(implication.size() - 1);
+        Clause antecedent(implication.size() - 1);
         for (R_xlen_t j = 0; j < implication.size() - 1; j++) {
             antecedent[j] = implication[j];
         }
+        antecedent.sortAndUnique();
+
         return antecedent;
     }
 

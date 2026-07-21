@@ -64,6 +64,12 @@ public:
     inline void sort()
     { std::sort(begin(), end()); }
 
+    inline void sortAndUnique()
+    {
+        std::sort(begin(), end());
+        erase(std::unique(begin(), end()), end());
+    }
+
     inline bool contains(size_t predicate) const
     { return std::find(begin(), end(), predicate) != end(); }
 
