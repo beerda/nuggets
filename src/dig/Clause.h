@@ -64,6 +64,9 @@ public:
     inline void sort()
     { std::sort(begin(), end()); }
 
+    inline bool contains(size_t predicate) const
+    { return std::find(begin(), end(), predicate) != end(); }
+
     inline string toString() const
     {
         stringstream res;
