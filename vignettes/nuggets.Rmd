@@ -184,7 +184,7 @@ in depth, including:
   - `is_almost_constant()` and `remove_almost_constant()` to identify and 
     filter uninformative columns
   - `dig_tautologies()` to find always-true or almost-always-true rules that
-    serve as axioms for pruning search spaces via the `excluded` argument
+    can be used to prune search spaces
   
 - **Custom labels** for predicates to make discovered patterns more interpretable
 
@@ -319,53 +319,6 @@ print(result)
 This example illustrates the typical workflow for mining association rules with
 `nuggets`. The same structure and arguments apply when analyzing either fuzzy or
 Boolean datasets.
-
-### Excluding Tautologies from the Search
-
-When the dataset contains predicates that are near-always implied by others, the
-search may generate many rules whose antecedent or consequent is trivially
-deducible. These can be pruned automatically using the `excluded` argument.
-
-The `excluded` argument accepts a list of character vectors, where each vector
-encodes one known implication (axiom): all but the last element form the
-antecedent and the last element is the consequent. The axioms are used to prune
-generated rules via the modus ponens inference rule:
-
-- A rule is pruned if its antecedent contains a predicate that can be deduced
-  from the remaining antecedent predicates using the axioms, possibly via a
-  chain of multiple axiom applications (transitive deduction). Such a predicate
-  is redundant.
-- A rule's consequent is pruned (the whole rule is excluded) if it can be
-  deduced from the rule's antecedent using the axioms, possibly via a chain of
-  multiple axiom applications (transitive deduction).
-
-The list of axioms can be discovered automatically using `dig_tautologies()`.
-Use `parse_condition(antecedent, consequent)` to convert the result into the
-format expected by `excluded`:
-
-```{r, eval=FALSE}
-# Discover near-tautological rules as axioms
-tautologies <- dig_tautologies(fuzzy_mtcars,
-                               antecedent = everything(),
-                               consequent = everything(),
-                               disjoint = disj,
-                               min_confidence = 0.99)
-
-# Convert to axiom format
-axioms <- parse_condition(tautologies$antecedent, tautologies$consequent)
-
-# Use in subsequent pattern search
-result_pruned <- dig_associations(fuzzy_mtcars,
-                                  antecedent = !starts_with("am"),
-                                  consequent = starts_with("am"),
-                                  disjoint = disj,
-                                  excluded = axioms,
-                                  min_support = 0.02,
-                                  min_confidence = 0.8)
-```
-
-This approach eliminates trivially deducible rules and helps focus on genuinely
-informative patterns.
 
 
 
