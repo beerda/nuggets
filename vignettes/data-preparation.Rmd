@@ -811,7 +811,9 @@ containing rules with their quality measures (support, confidence, etc.).
 Key parameters for `dig_tautologies()` include:
 
 - **`antecedent`** and **`consequent`**: Tidyselect expressions defining which 
-  columns can appear on each side of the rule.
+  columns can appear on each side of the rule. These correspond to `condition`
+  and `focus` in the general `dig()` function; the terms are interchangeable
+  across the `dig_*()` family.
   
 - **`disjoint`**: A vector specifying mutually exclusive predicates (predicates 
   that should not appear together in the same condition).
@@ -822,7 +824,7 @@ Key parameters for `dig_tautologies()` include:
 - **`min_support`**: The minimum support threshold. This ensures the tautology 
   is based on a sufficient number of observations.
   
-- **`max_length`**: The maximum number of predicates in the antecedent.
+- **`max_length`**: The maximum number of predicates in the antecedent (condition).
 
 - **`t_norm`**: The t-norm to use for fuzzy conjunction (`"goedel"`, `"goguen"`, 
   or `"lukas"`).
@@ -831,16 +833,18 @@ Key parameters for `dig_tautologies()` include:
 ## Using Tautologies to Filter Searches
 
 Once you've identified tautologies (axioms), you can use them with the `excluded`
-argument of `dig()` or related functions. The `excluded` argument accepts a list
-of known **implications (axioms)** in the format produced by `parse_condition()`.
+argument of `dig()` or related functions such as `dig_associations()`. The
+`excluded` argument accepts a list of known **implications (axioms)** in the
+format produced by `parse_condition()`.
 Each axiom is a character vector where all elements except the last form the
-antecedent and the last element is the consequent: `c(ant1, ant2, ..., antn, cons)`.
+condition (antecedent) and the last element is the focus (consequent):
+`c(cond1, cond2, ..., condn, focus)`.
 
 The axioms are used to prune the search via the modus ponens inference rule:
-- A rule's consequent is excluded if it can be deduced from the rule's antecedent
-  using the axioms (transitive deduction).
-- A predicate in the antecedent is removed if it can be deduced from the remaining
-  antecedent predicates using the axioms (it is redundant).
+- A focus (consequent) is excluded if it can be deduced from the condition
+  (antecedent) using the axioms (transitive deduction).
+- A rule is pruned entirely if any predicate in the condition (antecedent) can
+  be deduced from the remaining condition predicates using the axioms.
 
 To convert `dig_tautologies()` results to the `excluded` format, pass both the
 antecedent *and* the consequent columns to `parse_condition()`:
