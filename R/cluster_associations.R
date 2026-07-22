@@ -195,6 +195,10 @@ cluster_associations <- function(x,
     attr(res, "cluster_antecedents") <- split_ante
     attr(res, "cluster_size") <- clust_size
     attr(res, "consequent") <- uniq_consequent
+    attr(res, "cluster_within_ss") <- fit$withinss
+    attr(res, "within_ss") <- fit$tot.withinss
+    attr(res, "between_ss") <- fit$betweenss
+    attr(res, "total_ss") <- fit$tots
 
     res
 }

@@ -21,10 +21,11 @@ SOURCES=RcppExports.cpp \
 	test-dig-Cache.cpp \
 	test-dig-ChainCollection.cpp \
 	test-dig-Config.cpp \
+	test-dig-DeductionEngine.cpp \
 	test-dig-FloatChain.cpp \
 	test-dig-FubitChain.cpp \
 	test-dig-Selector.cpp \
-	test-dig-TautologyTree.cpp
+	test-dig-SparseBitChain.cpp \
 
 # Obtain the object files
 OBJECTS=$(SOURCES:.cpp=.o)

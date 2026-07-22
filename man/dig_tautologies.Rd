@@ -82,18 +82,19 @@ classes and which is a tibble with found tautologies in the format equal to
 the output of \code{\link[=dig_associations]{dig_associations()}}.
 }
 \description{
-This function finds tautologies in a dataset, i.e., rules of the form
-\verb{\{a1 & a2 & ... & an\} => \{c\}} where \code{a1}, \code{a2}, ..., \code{an} are
-antecedents and \code{c} is a consequent. The intent of searching for
-tautologies is to find rules that are always true, which may be
-used for filtering of further generated conditions. The resulting
-rules may be used as a basis for the list of \code{excluded} formulae
-(see the \code{excluded} argument of \code{\link[=dig]{dig()}}).
+This function finds tautologies (data-driven axioms) in a dataset, i.e.,
+rules of the form \verb{\{a1 & a2 & ... & an\} => \{c\}} where \code{a1}, \code{a2}, ..., \code{an}
+are antecedents and \code{c} is a consequent that holds with very high confidence.
+Such rules can serve as axioms for pruning further pattern searches: the
+resulting list of rules can be passed directly to the \code{excluded} argument of
+\code{\link[=dig]{dig()}}, \code{\link[=dig_associations]{dig_associations()}}, or related functions via
+\code{parse_condition(result$antecedent, result$consequent)}.
 
-The search for tautologies is performed by iteratively
-searching for rules with increasing length of the antecedent.
-Rules found in previous iterations are used as \code{excluded}
-argument in the next iteration.
+The search is performed by iteratively searching for rules with increasing
+length of the antecedent. Rules found in previous iterations are used as
+axioms (the \code{excluded} argument) in the next iteration, so that rules whose
+consequent can already be deduced from a shorter antecedent are not reported
+again.
 }
 \examples{
 d <- partition(mtcars, .breaks = 2)

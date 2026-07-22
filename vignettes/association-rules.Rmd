@@ -321,27 +321,37 @@ The `p` parameter represents the null-hypothesis probability used in the
 binomial-test-based quantifiers (`lci`, `uci`, `dlci`, `duci`, `lce`, `uce`).
 
 
-# Excluding Tautologies from the Search
+# Excluding Redundant and Entailed Rules
 
 In real-world datasets, some rules are trivially true or nearly so — for
 example, rules that follow directly from the structure of the data (e.g.,
-`engine_type=electric => fuel_type=electricity`). Such rules are called
-**tautologies**. While technically valid, they are often uninteresting and
-can clutter results or slow down the search.
+`engine_type=electric => fuel_type=electricity`). Such near-certain rules are
+called **tautologies**, and are also referred to as **implications** (because
+they describe an `A => C` relationship that almost always holds) or **axioms**
+(because they can be assumed and used as starting assumptions for pruning). In
+classical logic, a *tautology* is strictly always true; here the term is used
+loosely for rules whose confidence is very high in the data. This distinction
+is a matter of logical philosophy and does not affect how the functions work.
 
-The `excluded` argument of `dig_associations()` allows you to specify a
-list of predicate combinations that should never appear together in
-generated rules. Note that the term "tautology" here is used broadly - any rule
-you consider uninteresting (regardless of whether its confidence is exactly 1)
-can be excluded this way.
+The `excluded` argument of `dig_associations()` accepts a list of known
+**implications (axioms)**. Each axiom is a character vector where all elements
+except the last form the antecedent and the last element is the consequent:
+`c(ant1, ant2, ..., antn, cons)`. The axioms are used to prune generated rules
+via the **modus ponens** inference rule:
+
+- A rule's consequent is excluded if it can be deduced from the rule's
+  antecedent using the axioms (possibly via a chain of axiom applications).
+- A rule is pruned entirely if any predicate in the antecedent can be deduced
+  from the remaining antecedent predicates via the axioms (it would be
+  redundant).
 
 
-## Finding Tautologies with `dig_tautologies()`
+## Finding Near-Tautologies with `dig_tautologies()`
 
 The `dig_tautologies()` function is specifically designed to find rules
-with very high confidence. It searches iteratively, using tautologies found
-in earlier iterations to prune the search space in later iterations. For a
-detailed description, see the `vignette("data-preparation")`.
+with very high confidence (near-tautologies / axioms). It searches iteratively,
+using rules found in earlier iterations to prune the search space in later
+iterations, so that only the most concise axioms are returned.
 
 ```{r}
 tautologies <- dig_tautologies(crisp_co2,
@@ -354,18 +364,20 @@ tautologies
 ```
 
 
-## Using Tautologies to Filter Association Rules
+## Using Axioms to Filter Association Rules
 
-Once tautologies are identified, convert them to the format expected by the
-`excluded` argument using `parse_condition()`, and pass them to
+Once axioms (near-tautologies) are identified, convert them to the format
+expected by the `excluded` argument using `parse_condition()`, passing both
+the antecedent and the consequent columns, and pass them to
 `dig_associations()`:
 
 ```{r}
-# Convert tautologies to the excluded format
+# Convert tautologies to the excluded (axioms) format
 excluded_conds <- parse_condition(tautologies$antecedent,
                                   tautologies$consequent)
 
-# Search for rules while excluding tautological patterns
+# Search for rules while excluding entailed patterns
+>>>>>>> devel
 rules_filtered <- dig_associations(crisp_co2,
                                    antecedent = !starts_with("uptake"),
                                    consequent = starts_with("uptake"),
@@ -375,17 +387,24 @@ rules_filtered <- dig_associations(crisp_co2,
 rules_filtered
 ```
 
-By excluding known tautologies, the search focuses on genuinely interesting
-patterns and can run significantly faster on large datasets.
+By providing known axioms, the search skips rules whose consequent can be
+deduced from their antecedent, and also prunes rules that contain redundant
+antecedent predicates (deducible from the remaining antecedent predicates).
+This focuses the results on genuinely interesting patterns and can run
+significantly faster on large datasets.
 
 
-## Manually Specifying Exclusions
+## Manually Specifying Axioms
 
 You can also construct the `excluded` list manually. Each element is a
-character vector of elements that should not appear together in a rule:
+character vector representing an implication (axiom): all elements except the
+last form the antecedent and the last element is the consequent:
 
 ```{r}
-# Filter out rules by tautology "Treatment=chilled => Type=Mississippi"
+# Axiom: "Treatment=chilled => Type=Mississippi"
+# Any rule whose consequent is "Type=Mississippi" and whose antecedent contains
+# "Treatment=chilled" will be excluded, because the consequent is deducible
+# from the antecedent via this axiom.
 manual_excluded <- list(c("Treatment=chilled", "Type=Mississippi"))
 
 rules_manual <- dig_associations(crisp_co2,
@@ -397,8 +416,8 @@ rules_manual <- dig_associations(crisp_co2,
 rules_manual
 ```
 
-This is useful when you have domain knowledge about which combinations are
-trivial or undesirable, without needing to run `dig_tautologies()` first.
+This is useful when you have domain knowledge about which implications are
+trivially true or undesirable, without needing to run `dig_tautologies()` first.
 
 
 # Summary
@@ -425,9 +444,12 @@ This vignette demonstrated how to search for association rules using the
    rules from multiple perspectives (conviction, leverage, Jaccard, GUHA
    quantifiers, and many more).
 
-6. **Excluding tautologies** with the `excluded` argument and
-   `dig_tautologies()` removes trivial or uninteresting rules and speeds up
-   the search.
+6. **Excluding entailed rules** with the `excluded` argument and
+   `dig_tautologies()` removes rules whose consequent is deducible from the
+   antecedent via known axioms (near-tautologies / implications), and also
+   prunes rules with redundant antecedent predicates (deducible from the
+   remaining predicates). This speeds up the search and
+   focuses results on genuinely interesting patterns.
 
 For further details, consult the function documentation:
 `dig_associations()`, `add_interest()`, `dig_tautologies()`,

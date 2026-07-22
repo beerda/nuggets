@@ -1,3 +1,10 @@
+# nuggets 2.2.2
+- released: 2026-07-22
+- optimized dig() on sparse crisp data (by implementing sparse bit chain)
+- added clustering characteristics to explore() for association rules
+- fixed handling of axioms in dig() and dig_*() function (arg "excluded")
+- fixed handling of NA values in partition()
+
 # nuggets 2.2.1
 - released: 2026-06-10
 - fixed failing unit tests because of upstream fixes in R's wilcox.test()
@@ -51,7 +58,8 @@
 
 # nuggets 2.0.2
 - released: 2025-10-31
-- attempt to fix rchk protection stack imbalance in CombinatorialProgress constructor
+- attempt to fix rchk protection stack imbalance in CombinatorialProgress
+  constructor
 - created vignette "Data Preparation"
 - updated main vignette
 

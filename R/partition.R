@@ -490,8 +490,13 @@ partition <- function(.data,
 
             } else {
                 pp <- .prepare_fuzzy(x, colname, .breaks, .labels, .span, .inc, call)
-                f <- if (.method == "triangle") triangle_ else raisedcos_
-                res <- .partition_numeric(x, pp, colname, f)
+                f1 <- if (.method == "triangle") triangle_ else raisedcos_
+                f2 <- function(x, br) {
+                    res <- f1(x, br)
+                    res[is.na(res)] <- 0
+                    res
+                }
+                res <- .partition_numeric(x, pp, colname, f2)
             }
 
         } else {
@@ -622,7 +627,7 @@ partition <- function(.data,
 
 
 .determine_crisp_breaks <- function(x, n, style, style_params, right, span, inc) {
-    args <- list(var = x,
+    args <- list(var = na.omit(x),
                  n = span + (n - 1) * inc,
                  style = style,
                  intervalClosure = if (right) "right" else "left",

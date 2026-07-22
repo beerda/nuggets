@@ -51,6 +51,7 @@
 #' @importFrom ggplot2 ggproto
 #' @importFrom ggplot2 labs
 #' @importFrom ggplot2 layer
+#' @importFrom ggplot2 position_stack
 #' @importFrom ggplot2 scale_color_continuous
 #' @importFrom ggplot2 scale_x_continuous
 #' @importFrom ggplot2 scale_y_continuous

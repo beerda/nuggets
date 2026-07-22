@@ -59,6 +59,21 @@ test_that("partition basics", {
                         "a=b" = c(F, T, T, F),
                         "a=c" = c(F, F, F, T)))
 
+    expect_equal(partition(data.frame(a = factor(c("a", "b", "b", "c", NA))),
+                           .na = TRUE,
+                           .keep = FALSE),
+                 tibble("a=a" = c(T, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F),
+                        "a=c" = c(F, F, F, T, F),
+                        "a=NA" = c(F, F, F, F, T)))
+
+    expect_equal(partition(data.frame(a = factor(c("a", "b", "b", "c", NA))),
+                           .na = FALSE,
+                           .keep = FALSE),
+                 tibble("a=a" = c(T, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F),
+                        "a=c" = c(F, F, F, T, F)))
+
     expect_equal(partition(data.frame(a = factor(c("a=a", "{b}", "{b}", "c,d"))),
                            .keep = FALSE),
                  tibble("a=a_a" = c(T, F, F, F),
@@ -116,135 +131,214 @@ test_that("partition basics", {
 
 
 test_that("partition unordered factor subsets", {
-    data <- data.frame(a = factor(c("a", "b", "b", "c", "d")))
+    data <- data.frame(a = factor(c("a", "b", "b", "c", "d", NA)))
     expect_equal(partition(data,
+                           .na = TRUE,
                            .keep = FALSE,
                            .subsets = 1),
-                 tibble("a=a" = c(T, F, F, F, F),
-                        "a=b" = c(F, T, T, F, F),
-                        "a=c" = c(F, F, F, T, F),
-                        "a=d" = c(F, F, F, F, T)))
+                 tibble("a=a" = c(T, F, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F, F),
+                        "a=c" = c(F, F, F, T, F, F),
+                        "a=d" = c(F, F, F, F, T, F),
+                        "a=NA" = c(F, F, F, F, F, T)))
 
     expect_equal(partition(data,
+                           .na = FALSE,
+                           .keep = FALSE,
+                           .subsets = 1),
+                 tibble("a=a" = c(T, F, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F, F),
+                        "a=c" = c(F, F, F, T, F, F),
+                        "a=d" = c(F, F, F, F, T, F)))
+
+    expect_equal(partition(data,
+                           .na = TRUE,
                            .keep = FALSE,
                            .subsets = 2),
-                 tibble("a=a,b" = c(T, T, T, F, F),
-                        "a=a,c" = c(T, F, F, T, F),
-                        "a=a,d" = c(T, F, F, F, T),
-                        "a=b,c" = c(F, T, T, T, F),
-                        "a=b,d" = c(F, T, T, F, T),
-                        "a=c,d" = c(F, F, F, T, T)))
+                 tibble("a=a,b" = c(T, T, T, F, F, F),
+                        "a=a,c" = c(T, F, F, T, F, F),
+                        "a=a,d" = c(T, F, F, F, T, F),
+                        "a=b,c" = c(F, T, T, T, F, F),
+                        "a=b,d" = c(F, T, T, F, T, F),
+                        "a=c,d" = c(F, F, F, T, T, F),
+                        "a=NA" = c(F, F, F, F, F, T)))
 
     expect_equal(partition(data,
+                           .na = FALSE,
+                           .keep = FALSE,
+                           .subsets = 2),
+                 tibble("a=a,b" = c(T, T, T, F, F, F),
+                        "a=a,c" = c(T, F, F, T, F, F),
+                        "a=a,d" = c(T, F, F, F, T, F),
+                        "a=b,c" = c(F, T, T, T, F, F),
+                        "a=b,d" = c(F, T, T, F, T, F),
+                        "a=c,d" = c(F, F, F, T, T, F)))
+
+    expect_equal(partition(data,
+                           .na = FALSE,
                            .keep = FALSE,
                            .subsets = 3),
-                 tibble("a=a,b,c" = c(T, T, T, T, F),
-                        "a=a,b,d" = c(T, T, T, F, T),
-                        "a=a,c,d" = c(T, F, F, T, T),
-                        "a=b,c,d" = c(F, T, T, T, T)))
+                 tibble("a=a,b,c" = c(T, T, T, T, F, F),
+                        "a=a,b,d" = c(T, T, T, F, T, F),
+                        "a=a,c,d" = c(T, F, F, T, T, F),
+                        "a=b,c,d" = c(F, T, T, T, T, F)))
 
     expect_equal(partition(data,
+                           .na = FALSE,
                            .keep = FALSE,
                            .subsets = 1:2),
-                 tibble("a=a" = c(T, F, F, F, F),
-                        "a=b" = c(F, T, T, F, F),
-                        "a=c" = c(F, F, F, T, F),
-                        "a=d" = c(F, F, F, F, T),
-                        "a=a,b" = c(T, T, T, F, F),
-                        "a=a,c" = c(T, F, F, T, F),
-                        "a=a,d" = c(T, F, F, F, T),
-                        "a=b,c" = c(F, T, T, T, F),
-                        "a=b,d" = c(F, T, T, F, T),
-                        "a=c,d" = c(F, F, F, T, T)))
+                 tibble("a=a" = c(T, F, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F, F),
+                        "a=c" = c(F, F, F, T, F, F),
+                        "a=d" = c(F, F, F, F, T, F),
+                        "a=a,b" = c(T, T, T, F, F, F),
+                        "a=a,c" = c(T, F, F, T, F, F),
+                        "a=a,d" = c(T, F, F, F, T, F),
+                        "a=b,c" = c(F, T, T, T, F, F),
+                        "a=b,d" = c(F, T, T, F, T, F),
+                        "a=c,d" = c(F, F, F, T, T, F)))
 
     expect_equal(partition(data,
+                           .na = FALSE,
                            .keep = FALSE,
                            .subsets = 1:3),
-                 tibble("a=a" = c(T, F, F, F, F),
-                        "a=b" = c(F, T, T, F, F),
-                        "a=c" = c(F, F, F, T, F),
-                        "a=d" = c(F, F, F, F, T),
-                        "a=a,b" = c(T, T, T, F, F),
-                        "a=a,c" = c(T, F, F, T, F),
-                        "a=a,d" = c(T, F, F, F, T),
-                        "a=b,c" = c(F, T, T, T, F),
-                        "a=b,d" = c(F, T, T, F, T),
-                        "a=c,d" = c(F, F, F, T, T),
-                        "a=a,b,c" = c(T, T, T, T, F),
-                        "a=a,b,d" = c(T, T, T, F, T),
-                        "a=a,c,d" = c(T, F, F, T, T),
-                        "a=b,c,d" = c(F, T, T, T, T)))
+                 tibble("a=a" = c(T, F, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F, F),
+                        "a=c" = c(F, F, F, T, F, F),
+                        "a=d" = c(F, F, F, F, T, F),
+                        "a=a,b" = c(T, T, T, F, F, F),
+                        "a=a,c" = c(T, F, F, T, F, F),
+                        "a=a,d" = c(T, F, F, F, T, F),
+                        "a=b,c" = c(F, T, T, T, F, F),
+                        "a=b,d" = c(F, T, T, F, T, F),
+                        "a=c,d" = c(F, F, F, T, T, F),
+                        "a=a,b,c" = c(T, T, T, T, F, F),
+                        "a=a,b,d" = c(T, T, T, F, T, F),
+                        "a=a,c,d" = c(T, F, F, T, T, F),
+                        "a=b,c,d" = c(F, T, T, T, T, F)))
 
     expect_equal(partition(data,
+                           .na = TRUE,
+                           .keep = FALSE,
+                           .subsets = 1:3),
+                 tibble("a=a" = c(T, F, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F, F),
+                        "a=c" = c(F, F, F, T, F, F),
+                        "a=d" = c(F, F, F, F, T, F),
+                        "a=a,b" = c(T, T, T, F, F, F),
+                        "a=a,c" = c(T, F, F, T, F, F),
+                        "a=a,d" = c(T, F, F, F, T, F),
+                        "a=b,c" = c(F, T, T, T, F, F),
+                        "a=b,d" = c(F, T, T, F, T, F),
+                        "a=c,d" = c(F, F, F, T, T, F),
+                        "a=a,b,c" = c(T, T, T, T, F, F),
+                        "a=a,b,d" = c(T, T, T, F, T, F),
+                        "a=a,c,d" = c(T, F, F, T, T, F),
+                        "a=b,c,d" = c(F, T, T, T, T, F),
+                        "a=NA" = c(F, F, F, F, F, T)))
+
+    expect_equal(partition(data,
+                           .na = FALSE,
                            .keep = FALSE,
                            .subsets = c(1, 3)),
-                 tibble("a=a" = c(T, F, F, F, F),
-                        "a=b" = c(F, T, T, F, F),
-                        "a=c" = c(F, F, F, T, F),
-                        "a=d" = c(F, F, F, F, T),
-                        "a=a,b,c" = c(T, T, T, T, F),
-                        "a=a,b,d" = c(T, T, T, F, T),
-                        "a=a,c,d" = c(T, F, F, T, T),
-                        "a=b,c,d" = c(F, T, T, T, T)))
+                 tibble("a=a" = c(T, F, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F, F),
+                        "a=c" = c(F, F, F, T, F, F),
+                        "a=d" = c(F, F, F, F, T, F),
+                        "a=a,b,c" = c(T, T, T, T, F, F),
+                        "a=a,b,d" = c(T, T, T, F, T, F),
+                        "a=a,c,d" = c(T, F, F, T, T, F),
+                        "a=b,c,d" = c(F, T, T, T, T, F)))
 })
 
 
 test_that("partition ordered factor subsets", {
-    data <- data.frame(a = factor(c("a", "b", "b", "c", "d"), ordered = TRUE))
+    data <- data.frame(a = factor(c("a", "b", "b", "c", "d", NA), ordered = TRUE))
     expect_equal(partition(data,
+                           .na = FALSE,
                            .keep = FALSE,
                            .subsets = 1),
-                 tibble("a=a" = c(T, F, F, F, F),
-                        "a=b" = c(F, T, T, F, F),
-                        "a=c" = c(F, F, F, T, F),
-                        "a=d" = c(F, F, F, F, T)))
+                 tibble("a=a" = c(T, F, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F, F),
+                        "a=c" = c(F, F, F, T, F, F),
+                        "a=d" = c(F, F, F, F, T, F)))
 
     expect_equal(partition(data,
+                           .na = TRUE,
+                           .keep = FALSE,
+                           .subsets = 1),
+                 tibble("a=a" = c(T, F, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F, F),
+                        "a=c" = c(F, F, F, T, F, F),
+                        "a=d" = c(F, F, F, F, T, F),
+                        "a=NA" = c(F, F, F, F, F, T)))
+
+    expect_equal(partition(data,
+                           .na = FALSE,
                            .keep = FALSE,
                            .subsets = 2),
-                 tibble("a=a,b" = c(T, T, T, F, F),
-                        "a=b,c" = c(F, T, T, T, F),
-                        "a=c,d" = c(F, F, F, T, T)))
+                 tibble("a=a,b" = c(T, T, T, F, F, F),
+                        "a=b,c" = c(F, T, T, T, F, F),
+                        "a=c,d" = c(F, F, F, T, T, F)))
 
     expect_equal(partition(data,
+                           .na = FALSE,
                            .keep = FALSE,
                            .subsets = 3),
-                 tibble("a=a,b,c" = c(T, T, T, T, F),
-                        "a=b,c,d" = c(F, T, T, T, T)))
+                 tibble("a=a,b,c" = c(T, T, T, T, F, F),
+                        "a=b,c,d" = c(F, T, T, T, T, F)))
 
     expect_equal(partition(data,
+                           .na = FALSE,
                            .keep = FALSE,
                            .subsets = 1:2),
-                 tibble("a=a" = c(T, F, F, F, F),
-                        "a=b" = c(F, T, T, F, F),
-                        "a=c" = c(F, F, F, T, F),
-                        "a=d" = c(F, F, F, F, T),
-                        "a=a,b" = c(T, T, T, F, F),
-                        "a=b,c" = c(F, T, T, T, F),
-                        "a=c,d" = c(F, F, F, T, T)))
+                 tibble("a=a" = c(T, F, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F, F),
+                        "a=c" = c(F, F, F, T, F, F),
+                        "a=d" = c(F, F, F, F, T, F),
+                        "a=a,b" = c(T, T, T, F, F, F),
+                        "a=b,c" = c(F, T, T, T, F, F),
+                        "a=c,d" = c(F, F, F, T, T, F)))
 
     expect_equal(partition(data,
+                           .na = FALSE,
                            .keep = FALSE,
                            .subsets = 1:3),
-                 tibble("a=a" = c(T, F, F, F, F),
-                        "a=b" = c(F, T, T, F, F),
-                        "a=c" = c(F, F, F, T, F),
-                        "a=d" = c(F, F, F, F, T),
-                        "a=a,b" = c(T, T, T, F, F),
-                        "a=b,c" = c(F, T, T, T, F),
-                        "a=c,d" = c(F, F, F, T, T),
-                        "a=a,b,c" = c(T, T, T, T, F),
-                        "a=b,c,d" = c(F, T, T, T, T)))
+                 tibble("a=a" = c(T, F, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F, F),
+                        "a=c" = c(F, F, F, T, F, F),
+                        "a=d" = c(F, F, F, F, T, F),
+                        "a=a,b" = c(T, T, T, F, F, F),
+                        "a=b,c" = c(F, T, T, T, F, F),
+                        "a=c,d" = c(F, F, F, T, T, F),
+                        "a=a,b,c" = c(T, T, T, T, F, F),
+                        "a=b,c,d" = c(F, T, T, T, T, F)))
 
     expect_equal(partition(data,
+                           .na = TRUE,
+                           .keep = FALSE,
+                           .subsets = 1:3),
+                 tibble("a=a" = c(T, F, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F, F),
+                        "a=c" = c(F, F, F, T, F, F),
+                        "a=d" = c(F, F, F, F, T, F),
+                        "a=a,b" = c(T, T, T, F, F, F),
+                        "a=b,c" = c(F, T, T, T, F, F),
+                        "a=c,d" = c(F, F, F, T, T, F),
+                        "a=a,b,c" = c(T, T, T, T, F, F),
+                        "a=b,c,d" = c(F, T, T, T, T, F),
+                        "a=NA" = c(F, F, F, F, F, T)))
+
+    expect_equal(partition(data,
+                           .na = FALSE,
                            .keep = FALSE,
                            .subsets = c(1, 3)),
-                 tibble("a=a" = c(T, F, F, F, F),
-                        "a=b" = c(F, T, T, F, F),
-                        "a=c" = c(F, F, F, T, F),
-                        "a=d" = c(F, F, F, F, T),
-                        "a=a,b,c" = c(T, T, T, T, F),
-                        "a=b,c,d" = c(F, T, T, T, T)))
+                 tibble("a=a" = c(T, F, F, F, F, F),
+                        "a=b" = c(F, T, T, F, F, F),
+                        "a=c" = c(F, F, F, T, F, F),
+                        "a=d" = c(F, F, F, F, T, F),
+                        "a=a,b,c" = c(T, T, T, T, F, F),
+                        "a=b,c,d" = c(F, T, T, T, T, F)))
 })
 
 
@@ -418,40 +512,63 @@ test_that("partition crisp", {
 
 
 test_that("partition crisp styles", {
-    x <- c(1.0, 2.2, 2.4, 2.6, 3, 4, 5, 6, 9)
+    x <- c(1.0, 2.2, 2.4, 2.6, 3, 4, 5, 6, 9, NA)
     expect_equal(partition(data.frame(a = x),
                            .breaks = 2,
                            .keep = FALSE,
+                           .na = FALSE,
                            .method = "crisp",
                            .style = "equal"),
-                 tibble("a=(-Inf;5]" = c(T,T,T,T,T,T,T,F,F),
-                        "a=(5;Inf]"  = c(F,F,F,F,F,F,F,T,T)))
+                 tibble("a=(-Inf;5]" = c(T,T,T,T,T,T,T,F,F,F),
+                        "a=(5;Inf]"  = c(F,F,F,F,F,F,F,T,T,F)))
 
     expect_equal(partition(data.frame(a = x),
                            .breaks = 2,
                            .keep = FALSE,
+                           .na = TRUE,
+                           .method = "crisp",
+                           .style = "equal"),
+                 tibble("a=(-Inf;5]" = c(T,T,T,T,T,T,T,F,F,F),
+                        "a=(5;Inf]"  = c(F,F,F,F,F,F,F,T,T,F),
+                        "a=NA" = c(F,F,F,F,F,F,F,F,F,T)))
+
+    expect_equal(partition(data.frame(a = x),
+                           .breaks = 2,
+                           .keep = FALSE,
+                           .na = FALSE,
                            .method = "crisp",
                            .style = "quantile"),
-                 tibble("a=(-Inf;3]" = c(T,T,T,T,T,F,F,F,F),
-                        "a=(3;Inf]"  = c(F,F,F,F,F,T,T,T,T)))
+                 tibble("a=(-Inf;3]" = c(T,T,T,T,T,F,F,F,F,F),
+                        "a=(3;Inf]"  = c(F,F,F,F,F,T,T,T,T,F)))
 
     expect_equal(partition(data.frame(a = x),
                            .breaks = 2,
                            .keep = FALSE,
+                           .na = FALSE,
                            .method = "crisp",
                            .style = "kmeans"),
-                 tibble("a=(-Inf;4.5]" = c(T,T,T,T,T,T,F,F,F),
-                        "a=(4.5;Inf]"  = c(F,F,F,F,F,F,T,T,T)))
+                 tibble("a=(-Inf;4.5]" = c(T,T,T,T,T,T,F,F,F,F),
+                        "a=(4.5;Inf]"  = c(F,F,F,F,F,F,T,T,T,F)))
 })
 
 
 test_that("partition triangle", {
-    expect_equal(partition(data.frame(a = 0:10),
+    expect_equal(partition(data.frame(a = c(0:10, NA)),
                            .breaks = 2,
+                           .na = FALSE,
                            .keep = FALSE,
                            .method = "triangle"),
-                 tibble("a=(-Inf;0;10)" = seq(1, 0, length.out = 11),
-                        "a=(0;10;Inf)"  = seq(0, 1, length.out = 11)))
+                 tibble("a=(-Inf;0;10)" = c(seq(1, 0, length.out = 11), 0),
+                        "a=(0;10;Inf)"  = c(seq(0, 1, length.out = 11), 0)))
+
+    expect_equal(partition(data.frame(a = c(0:10, NA)),
+                           .breaks = 2,
+                           .na = TRUE,
+                           .keep = FALSE,
+                           .method = "triangle"),
+                 tibble("a=(-Inf;0;10)" = c(seq(1, 0, length.out = 11), 0),
+                        "a=(0;10;Inf)"  = c(seq(0, 1, length.out = 11), 0),
+                        "a=NA" = c(rep(FALSE, 11), TRUE)))
 
     expect_equal(partition(data.frame(a = 0:10),
                            .breaks = 3,
@@ -530,8 +647,9 @@ test_that("partition triangle", {
 
 
 test_that("partition raisedcos", {
-    res <- partition(data.frame(a = 0:10),
+    res <- partition(data.frame(a = c(0:10, NA)),
                      .breaks = 2,
+                     .na = FALSE,
                      .keep = FALSE,
                      .method = "raisedcos")
 
@@ -539,11 +657,29 @@ test_that("partition raisedcos", {
     expect_equal(res[[1]],
                  c(1.00000000, 0.97552826, 0.90450850, 0.79389263, 0.65450850,
                    0.50000000, 0.34549150, 0.20610737, 0.09549150, 0.02447174,
-                   0.00000000))
+                   0.00000000, 0))
     expect_equal(res[[2]],
                  c(0.00000000, 0.02447174, 0.09549150, 0.20610737, 0.34549150,
                    0.50000000, 0.65450850, 0.79389263, 0.90450850, 0.97552826,
-                   1.00000000))
+                   1.00000000, 0))
+
+    res <- partition(data.frame(a = c(0:10, NA)),
+                     .breaks = 2,
+                     .na = TRUE,
+                     .keep = FALSE,
+                     .method = "raisedcos")
+
+    expect_equal(names(res), c("a=(-Inf;0;10)", "a=(0;10;Inf)", "a=NA"))
+    expect_equal(res[[1]],
+                 c(1.00000000, 0.97552826, 0.90450850, 0.79389263, 0.65450850,
+                   0.50000000, 0.34549150, 0.20610737, 0.09549150, 0.02447174,
+                   0.00000000, 0))
+    expect_equal(res[[2]],
+                 c(0.00000000, 0.02447174, 0.09549150, 0.20610737, 0.34549150,
+                   0.50000000, 0.65450850, 0.79389263, 0.90450850, 0.97552826,
+                   1.00000000, 0))
+    expect_equal(res[[3]],
+                 c(rep(FALSE, 11), TRUE))
 
     expect_error(partition(data.frame(a = 0:10),
                            .breaks = 1,
