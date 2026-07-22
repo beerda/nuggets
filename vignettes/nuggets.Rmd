@@ -183,8 +183,10 @@ in depth, including:
 - **Quality control utilities** to improve pattern mining:
   - `is_almost_constant()` and `remove_almost_constant()` to identify and 
     filter uninformative columns
-  - `dig_tautologies()` to find always-true or almost-always-true rules that
-    can be used to prune search spaces
+  - `dig_tautologies()` to find tautologies — rules with very high confidence,
+    also called *implications* or *axioms* in logic — which can be passed to
+    the `excluded` argument of `dig()`, `dig_associations()`, and related
+    functions to prune redundant or logically entailed rules from the search
   
 - **Custom labels** for predicates to make discovered patterns more interpretable
 
@@ -319,6 +321,58 @@ print(result)
 This example illustrates the typical workflow for mining association rules with
 `nuggets`. The same structure and arguments apply when analyzing either fuzzy or
 Boolean datasets.
+
+
+### Pruning Rules with the `excluded` Argument
+
+The `excluded` argument accepts a list of known implications (also called *axioms*
+or *tautologies*), each represented as a character vector. In each vector, all but
+the last element form the antecedent of the implication, and the last element is
+its consequent.
+
+> **Note on terminology:** `dig_associations()` uses the terms *antecedent* and
+> *consequent* for the left-hand and right-hand sides of a rule, respectively.
+> The general `dig()` function and most other functions use the equivalent terms
+> *condition* and *focus*. These refer to the same concepts.
+
+The axioms are used to prune generated rules via the modus ponens inference rule:
+
+- A rule's antecedent is pruned if it contains a predicate that can be deduced
+  from the remaining antecedent predicates using the axioms (possibly via a chain
+  of axiom applications). Such a predicate is *redundant* — it follows logically
+  from the others.
+- A rule is excluded entirely if its consequent can be deduced from its antecedent
+  using the axioms — such a rule is itself a tautology (implication/axiom).
+
+The most common source of axioms is `dig_tautologies()`, whose output can be
+converted with `parse_condition()`:
+
+```{r}
+# Find tautologies (high-confidence rules that hold almost universally)
+taut <- dig_tautologies(fuzzy_mtcars,
+                        antecedent = everything(),
+                        consequent = everything(),
+                        disjoint = disj,
+                        min_confidence = 0.99)
+print(taut)
+
+# Convert tautologies to the axiom format expected by excluded
+axioms <- parse_condition(taut$antecedent, taut$consequent)
+
+# Search for association rules, pruning those entailed by the tautologies
+result_pruned <- dig_associations(fuzzy_mtcars,
+                                  antecedent = !starts_with("am"),
+                                  consequent = starts_with("am"),
+                                  disjoint = disj,
+                                  excluded = axioms,
+                                  min_support = 0.02,
+                                  min_confidence = 0.8)
+print(result_pruned)
+```
+
+By passing axioms via `excluded`, the search avoids generating rules that are
+already explained by the known tautologies, which reduces redundancy and can
+speed up the search.
 
 
 
