@@ -35,7 +35,7 @@ numericFilterModule <- function(id, x, meta) {
     finiteSummaryTable <- .summarize_finite(x)
     specialSummaryTable <- .summarize_special(x)
 
-    g <- ggplot(data.frame(x = finx)) + aes(x = x)
+    g <- ggplot(data.frame(x = finx)) + aes(x = .data[["x"]])
     if (int) {
         g <- g + geom_bar(fill = "white", color = "black")
     } else {

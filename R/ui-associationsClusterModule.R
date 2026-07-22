@@ -179,7 +179,9 @@ associationsClusterModule <- function(id, rules, meta, data) {
                                      const = 1,
                                      value = c(withinss, betweenss))
                     ggplot(df) +
-                        aes(x = value, y = const, fill = ss) +
+                        aes(x = .data[["value"]],
+                            y = .data[["const"]],
+                            fill = .data[["ss"]]) +
                         geom_bar(stat = "identity", position = position_stack(reverse = TRUE), orientation = "y") +
                         labs(title = "sum of squares", x = NULL, y = NULL, fill = NULL) +
                         scale_x_continuous(expand = c(0, 0)) +
@@ -205,7 +207,9 @@ associationsClusterModule <- function(id, rules, meta, data) {
                                      sizes = sizes,
                                      ms = ms)
                     ggplot(df) +
-                        aes(y = name, x = sizes, fill = ms) +
+                        aes(y = .data[["name"]],
+                            x = .data[["sizes"]],
+                            fill = .data[["ms"]]) +
                         geom_bar(stat = "identity", position = position_stack(reverse = TRUE), orientation = "y") +
                         labs(title = NULL, y = NULL, x = "size", fill = "mean of sq.") +
                         scale_x_continuous(expand = c(0, 0)) +

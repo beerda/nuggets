@@ -47,7 +47,7 @@ variableFilterModule <- function(id, x, meta) {
                             levels_id = c("rid", "vid"))
 
         g <- ggplot(data.frame(x = x)) +
-            aes(y = x) +
+            aes(y = .data[["x"]]) +
             geom_bar(fill = "white", color = "black") +
             scale_x_continuous(name = "number of rules",
                                sec.axis = sec_axis(~ . * 100 / length(x), name = "% of rules")) +
