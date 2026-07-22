@@ -341,8 +341,9 @@ via the **modus ponens** inference rule:
 
 - A rule's consequent is excluded if it can be deduced from the rule's
   antecedent using the axioms (possibly via a chain of axiom applications).
-- A predicate in the antecedent is removed if it can be deduced from the
-  remaining antecedent predicates via the axioms (it is redundant).
+- A rule is pruned entirely if any predicate in the antecedent can be deduced
+  from the remaining antecedent predicates via the axioms (it would be
+  redundant).
 
 
 ## Finding Near-Tautologies with `dig_tautologies()`
@@ -386,7 +387,8 @@ rules_filtered
 ```
 
 By providing known axioms, the search skips rules whose consequent can be
-deduced from their antecedent, and removes redundant predicates from antecedents.
+deduced from their antecedent, and also prunes rules that contain redundant
+antecedent predicates (deducible from the remaining antecedent predicates).
 This focuses the results on genuinely interesting patterns and can run
 significantly faster on large datasets.
 
@@ -444,7 +446,8 @@ This vignette demonstrated how to search for association rules using the
 6. **Excluding entailed rules** with the `excluded` argument and
    `dig_tautologies()` removes rules whose consequent is deducible from the
    antecedent via known axioms (near-tautologies / implications), and also
-   removes redundant antecedent predicates. This speeds up the search and
+   prunes rules with redundant antecedent predicates (deducible from the
+   remaining predicates). This speeds up the search and
    focuses results on genuinely interesting patterns.
 
 For further details, consult the function documentation:
