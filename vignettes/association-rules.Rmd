@@ -377,7 +377,6 @@ excluded_conds <- parse_condition(tautologies$antecedent,
                                   tautologies$consequent)
 
 # Search for rules while excluding entailed patterns
->>>>>>> devel
 rules_filtered <- dig_associations(crisp_co2,
                                    antecedent = !starts_with("uptake"),
                                    consequent = starts_with("uptake"),
