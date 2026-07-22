@@ -20,18 +20,19 @@
 #' @title Find tautologies or "almost tautologies" in a dataset
 #'
 #' @description
-#' This function finds tautologies in a dataset, i.e., rules of the form
-#' `{a1 & a2 & ... & an} => {c}` where `a1`, `a2`, ..., `an` are
-#' antecedents and `c` is a consequent. The intent of searching for
-#' tautologies is to find rules that are always true, which may be
-#' used for filtering of further generated conditions. The resulting
-#' rules may be used as a basis for the list of `excluded` formulae
-#' (see the `excluded` argument of [dig()]).
+#' This function finds tautologies (data-driven axioms) in a dataset, i.e.,
+#' rules of the form `{a1 & a2 & ... & an} => {c}` where `a1`, `a2`, ..., `an`
+#' are antecedents and `c` is a consequent that holds with very high confidence.
+#' Such rules can serve as axioms for pruning further pattern searches: the
+#' resulting list of rules can be passed directly to the `excluded` argument of
+#' [dig()], [dig_associations()], or related functions via
+#' `parse_condition(result$antecedent, result$consequent)`.
 #'
-#' The search for tautologies is performed by iteratively
-#' searching for rules with increasing length of the antecedent.
-#' Rules found in previous iterations are used as `excluded`
-#' argument in the next iteration.
+#' The search is performed by iteratively searching for rules with increasing
+#' length of the antecedent. Rules found in previous iterations are used as
+#' axioms (the `excluded` argument) in the next iteration, so that rules whose
+#' consequent can already be deduced from a shorter antecedent are not reported
+#' again.
 #'
 #' @param x a matrix or data frame with data to search in. The matrix must be
 #'      numeric (double) or logical. If `x` is a data frame then each column

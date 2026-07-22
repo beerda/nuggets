@@ -82,9 +82,16 @@ present together in a single condition NOR in a single combination of
 \code{\link[=partition]{partition()}}, using the \code{\link[=var_names]{var_names()}} function on \code{x}'s column names
 is a convenient way to create the \code{disjoint} vector.}
 
-\item{excluded}{NULL or a list of character vectors, where each character vector
-contains the names of columns that must not appear together in a single
-condition.}
+\item{excluded}{\code{NULL} or a list of character vectors, each representing a
+known implication (axiom). In each vector, all but the last element
+form the antecedent and the last element is the consequent. The axioms
+are used to prune generated conditions via the modus ponens inference
+rule: a condition is pruned if it contains a predicate that can be
+deduced from the remaining condition predicates using any axiom.
+Specifically, a condition is pruned if it contains all antecedent
+predicates of some axiom together with the consequent of that axiom,
+since the consequent is then redundant. The list of axioms can be
+obtained, for example, from \code{\link[=dig_tautologies]{dig_tautologies()}}.}
 
 \item{allow}{a character string specifying which columns are allowed to be
 selected by \code{xvars} and \code{yvars} arguments. Possible values are:

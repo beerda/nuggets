@@ -184,7 +184,7 @@ in depth, including:
   - `is_almost_constant()` and `remove_almost_constant()` to identify and 
     filter uninformative columns
   - `dig_tautologies()` to find always-true or almost-always-true rules that
-    can be used to prune search spaces
+    serve as axioms for pruning search spaces via the `excluded` argument
   
 - **Custom labels** for predicates to make discovered patterns more interpretable
 

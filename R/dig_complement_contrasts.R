@@ -57,9 +57,16 @@
 #'      present together in a single condition. If `x` is prepared with
 #'      [partition()], using the [var_names()] function on `x`'s column names
 #'      is a convenient way to create the `disjoint` vector.
-#' @param excluded NULL or a list of character vectors, where each character vector
-#'      contains the names of columns that must not appear together in a single
-#'      condition.
+#' @param excluded `NULL` or a list of character vectors, each representing a
+#'      known implication (axiom). In each vector, all but the last element
+#'      form the antecedent and the last element is the consequent. The axioms
+#'      are used to prune generated conditions via the modus ponens inference
+#'      rule: a condition is pruned if it contains a predicate that can be
+#'      deduced from the remaining condition predicates using any axiom.
+#'      Specifically, a condition is pruned if it contains all antecedent
+#'      predicates of some axiom together with the consequent of that axiom,
+#'      since the consequent is then redundant. The list of axioms can be
+#'      obtained, for example, from [dig_tautologies()].
 #' @param min_length the minimum size (the minimum number of predicates) of the
 #'      condition to be generated (must be greater or equal to 0). If 0, the
 #'      empty condition is generated in the first place.

@@ -44,7 +44,8 @@ The package provides two main approaches for data preparation:
 
 The primary function for data preparation is `partition()`, which handles both 
 crisp and fuzzy transformations. Additional utility functions help identify and 
-remove uninformative columns and detect tautologies in the data.
+remove uninformative columns and discover tautological rules that can serve as
+axioms for pruning subsequent pattern searches.
 
 
 # Data Preparation with `partition()`
@@ -669,15 +670,16 @@ prepared_data <- remove_almost_constant(prepared_data,
 
 
 
-# Finding Tautologies in Data
+# Finding Tautologies and Using Axioms for Pruning
 
 After preparing your data with `partition()` or other methods, it can be useful 
 to identify tautologies—rules that are always or almost always true in your 
 dataset. The `dig_tautologies()` function helps find such patterns, which can 
-then be used to filter out redundant conditions in subsequent pattern discovery.
+then serve as **axioms** for pruning redundant conditions in subsequent pattern
+discovery via the `excluded` argument.
 
 
-## What are Tautologies?
+## What are Tautologies (Axioms)?
 
 A tautology in this context is a rule of the form `{a1 & a2 & ... & an} => {c}` 
 where the antecedent (left side) almost always implies the consequent (right side). 
@@ -687,17 +689,18 @@ For example, in a dataset about vehicles, you might discover:
 - `engine_type=electric => fuel_type=electricity` (confidence ≈ 1.0)
 - `manual_transmission=TRUE => automatic_transmission=FALSE` (confidence = 1.0)
 
-Such tautological rules, while true, may not provide interesting insights for 
-further analysis. Identifying them allows you to exclude similar conditions 
-from more complex pattern searches.
+Once discovered, such rules can be treated as axioms: logical implications that 
+are assumed to always hold. They are passed to the `excluded` argument of `dig()`, 
+`dig_associations()`, and related functions to prune rules that are trivially 
+deducible via modus ponens.
 
 
 ## Using `dig_tautologies()`
 
 The `dig_tautologies()` function works similarly to `dig_associations()`, but 
-is specifically optimized for finding rules with very high confidence. It 
-searches iteratively, using tautologies found in earlier iterations to prune 
-the search space in later iterations.
+is specifically designed for finding rules with very high confidence. It 
+searches iteratively, using tautologies found in earlier iterations as axioms 
+to prune the search space in later iterations.
 
 Basic usage:
 
@@ -752,14 +755,28 @@ Key parameters for `dig_tautologies()` include:
   or `"lukas"`).
 
 
-## Using Tautologies to Filter Searches
+## Using Tautologies as Axioms to Filter Searches
 
-Once you've identified tautologies, you can use them with the `excluded` 
-argument of `dig()` or related functions to avoid generating similar conditions:
+Once you've identified tautologies, you convert them to the axiom format 
+expected by the `excluded` argument using `parse_condition(antecedent, consequent)`,
+and pass the result to `dig()` or related functions.
+
+The `excluded` argument accepts a list of character vectors, where each vector 
+encodes one axiom: the last element is the consequent and all preceding elements 
+are the antecedent. Rules are pruned via modus ponens:
+
+- A rule's condition (antecedent) is pruned if it contains a predicate that can 
+  be deduced from the other condition predicates using any axiom. This happens 
+  when the condition contains all antecedent predicates of some axiom together 
+  with the consequent—the consequent is then redundant.
+  
+- A rule's focus (consequent) is pruned if it can be deduced from the condition 
+  predicates. This happens when the condition contains all antecedent predicates 
+  of some axiom and the focus equals the consequent of that axiom.
 
 ```{r, eval=FALSE}
-# Convert tautologies to excluded format
-excluded_conditions <- parse_condition(tautologies$antecedent)
+# Convert tautologies to axiom format for the excluded argument
+axioms <- parse_condition(tautologies$antecedent, tautologies$consequent)
 
 # Use in subsequent pattern search
 results <- dig_associations(
@@ -767,14 +784,14 @@ results <- dig_associations(
     antecedent = !starts_with("am"),
     consequent = starts_with("am"),
     disjoint = disj,
-    excluded = excluded_conditions,  # Exclude tautological patterns
+    excluded = axioms,  # Prune rules deducible from known axioms
     min_support = 0.1,
     min_confidence = 0.8
 )
 ```
 
 This approach can significantly reduce computation time and help focus on more 
-interesting patterns.
+interesting, non-trivial patterns.
 
 
 
@@ -794,8 +811,11 @@ package:
    functions for identifying and removing uninformative columns that have low 
    variability.
 
-3. **`dig_tautologies()`**: A function for finding tautological rules in your 
-   data, which can be used to filter subsequent pattern searches.
+3. **`dig_tautologies()`**: A function for finding tautological rules (axioms) in
+   your data. The results can be converted to the format expected by the
+   `excluded` argument of `dig()` and related functions via
+   `parse_condition(result$antecedent, result$consequent)`, enabling
+   modus-ponens-based pruning of trivially deducible rules.
 
 With these tools, you can effectively prepare your data for pattern discovery 
 using the various `dig_*()` functions provided by the `nuggets` package. For 

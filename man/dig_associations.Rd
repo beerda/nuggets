@@ -49,9 +49,24 @@ present together in a single condition. If \code{x} is prepared with
 \code{\link[=partition]{partition()}}, using the \code{\link[=var_names]{var_names()}} function on \code{x}'s column names
 is a convenient way to create the \code{disjoint} vector.}
 
-\item{excluded}{NULL or a list of character vectors, where each character vector
-contains the names of columns that must not appear together in a single
-antecedent.}
+\item{excluded}{\code{NULL} or a list of character vectors, each representing a
+known implication (axiom). In each vector, all but the last element
+form the antecedent and the last element is the consequent. The axioms
+are used to prune generated rules via the modus ponens inference rule:
+\itemize{
+\item A rule is pruned if its antecedent contains a predicate that
+can be deduced from the remaining antecedent predicates using any
+axiom. Specifically, a rule is pruned if its antecedent contains
+all antecedent predicates of some axiom together with the
+consequent of that axiom, since the consequent is then redundant.
+\item A rule's consequent is pruned (the whole rule is excluded) if
+it can be deduced from the rule's antecedent using any axiom.
+Specifically, a rule is pruned if its antecedent contains all
+antecedent predicates of some axiom and the rule's consequent
+equals the consequent of that axiom.
+}
+The list of axioms can be obtained, for example, from
+\code{\link[=dig_tautologies]{dig_tautologies()}}.}
 
 \item{min_length}{the minimum length, i.e., the minimum number of predicates in the
 antecedent, of a rule to be generated. Value must be greater or equal to 0.
