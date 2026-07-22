@@ -81,15 +81,13 @@
 #'      are used to prune generated rules via the modus ponens inference rule:
 #'      \itemize{
 #'        \item A rule is pruned if its antecedent contains a predicate that
-#'          can be deduced from the remaining antecedent predicates using any
-#'          axiom. Specifically, a rule is pruned if its antecedent contains
-#'          all antecedent predicates of some axiom together with the
-#'          consequent of that axiom, since the consequent is then redundant.
+#'          can be deduced from the remaining antecedent predicates using the
+#'          axioms, possibly via a chain of multiple axiom applications
+#'          (transitive deduction). Such a predicate is redundant.
 #'        \item A rule's consequent is pruned (the whole rule is excluded) if
-#'          it can be deduced from the rule's antecedent using any axiom.
-#'          Specifically, a rule is pruned if its antecedent contains all
-#'          antecedent predicates of some axiom and the rule's consequent
-#'          equals the consequent of that axiom.
+#'          it can be deduced from the rule's antecedent using the axioms,
+#'          possibly via a chain of multiple axiom applications (transitive
+#'          deduction).
 #'      }
 #'      The list of axioms can be obtained, for example, from
 #'      [dig_tautologies()].

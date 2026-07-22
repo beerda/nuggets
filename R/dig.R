@@ -113,14 +113,12 @@
 #'   to prune generated rules via the modus ponens inference rule:
 #'   \itemize{
 #'     \item A condition is pruned if it contains a predicate that can be
-#'       deduced from the remaining condition predicates using any axiom.
-#'       Specifically, a condition is pruned if it contains all antecedent
-#'       predicates of some axiom together with the consequent of that axiom,
-#'       since the consequent is then redundant.
+#'       deduced from the remaining condition predicates using the axioms,
+#'       possibly via a chain of multiple axiom applications (transitive
+#'       deduction). Such a predicate is redundant.
 #'     \item A focus is pruned if it can be deduced from the condition
-#'       predicates using any axiom. Specifically, a focus is pruned if
-#'       the condition contains all antecedent predicates of some axiom
-#'       and the focus equals the consequent of that axiom.
+#'       predicates using the axioms, possibly via a chain of multiple
+#'       axiom applications (transitive deduction).
 #'   }
 #'   The list of axioms can be obtained, for example, from [dig_tautologies()].
 #' @param min_length Minimum number of predicates in a condition required to

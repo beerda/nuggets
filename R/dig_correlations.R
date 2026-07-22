@@ -59,10 +59,9 @@
 #'      form the antecedent and the last element is the consequent. The axioms
 #'      are used to prune generated conditions via the modus ponens inference
 #'      rule: a condition is pruned if it contains a predicate that can be
-#'      deduced from the remaining condition predicates using any axiom.
-#'      Specifically, a condition is pruned if it contains all antecedent
-#'      predicates of some axiom together with the consequent of that axiom,
-#'      since the consequent is then redundant. The list of axioms can be
+#'      deduced from the remaining condition predicates using the axioms,
+#'      possibly via a chain of multiple axiom applications (transitive
+#'      deduction). Such a predicate is redundant. The list of axioms can be
 #'      obtained, for example, from [dig_tautologies()].
 #'      to be used for the test. One of `"pearson"`, `"kendall"`, or `"spearman"`
 #' @param alternative indicates the alternative hypothesis and must be one of
