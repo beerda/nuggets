@@ -110,9 +110,22 @@ dig_associations(
 
 - excluded:
 
-  NULL or a list of character vectors, where each character vector
-  contains the names of columns that must not appear together in a
-  single antecedent.
+  `NULL` or a list of character vectors, each representing a known
+  implication (axiom). In each vector, all but the last element form the
+  antecedent and the last element is the consequent. The axioms are used
+  to prune generated rules via the modus ponens inference rule:
+
+  - A rule is pruned if its antecedent contains a predicate that can be
+    deduced from the remaining antecedent predicates using the axioms,
+    possibly via a chain of multiple axiom applications (transitive
+    deduction). Such a predicate is redundant.
+
+  - A rule's consequent is pruned (the whole rule is excluded) if it can
+    be deduced from the rule's antecedent using the axioms, possibly via
+    a chain of multiple axiom applications (transitive deduction).
+
+  The list of axioms can be obtained, for example, from
+  [`dig_tautologies()`](https://beerda.github.io/nuggets/reference/dig_tautologies.md).
 
 - min_length:
 

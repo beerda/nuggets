@@ -51,7 +51,7 @@ both the condition and the focus hold.
 
     <a class="navbar-brand me-2" href="../index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -183,14 +183,17 @@ names to construct <code>disjoint</code>.</p></dd>
 
 
 <dt id="arg-excluded">excluded<a class="anchor" aria-label="anchor" href="#arg-excluded"></a></dt>
-<dd><p><code>NULL</code> or a list of character vectors, each representing an
-implication formula. In each vector, all but the last element form the
-antecedent and the last element is the consequent. These formulae are
-treated as <em>tautologies</em> and used to filter out generated conditions. If
-a condition contains both the antecedent and the consequent of any such
-formula, it is not passed to the callback function <code>f</code>. Likewise, if a
-condition contains the antecedent, the corresponding focus (the consequent)
-is not passed to <code>f</code>.</p></dd>
+<dd><p><code>NULL</code> or a list of character vectors, each representing a
+known implication (axiom). In each vector, all but the last element form
+the antecedent and the last element is the consequent. The axioms are used
+to prune generated rules via the modus ponens inference rule:</p><ul><li><p>A condition is pruned if it contains a predicate that can be
+deduced from the remaining condition predicates using the axioms,
+possibly via a chain of multiple axiom applications (transitive
+deduction). Such a predicate is redundant.</p></li>
+<li><p>A focus is pruned if it can be deduced from the condition
+predicates using the axioms, possibly via a chain of multiple
+axiom applications (transitive deduction).</p></li>
+</ul><p>The list of axioms can be obtained, for example, from <code><a href="dig_tautologies.html">dig_tautologies()</a></code>.</p></dd>
 
 
 <dt id="arg-min-length">min_length<a class="anchor" aria-label="anchor" href="#arg-min-length"></a></dt>

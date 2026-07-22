@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,12 +50,13 @@
     </div>
 
 <ul><li>Merge devel into main: git checkout main git pull origin main git merge devel git push origin main</li>
+<li>Create release issue: usethis::use_release_issue()</li>
 <li>Update version &amp; date in DESCRIPTION</li>
 <li>Update NEWS.md</li>
 <li>Disable debug in src/common.h</li>
 <li>Update Github actions: usethis::use_github_action(“check-standard”) usethis::use_github_action(“test-coverage”)</li>
 <li>Test: devtools::spell_check() rhub::rhub_check() devtools::check_win_release() devtools::check_win_oldrelease() devtools::check_win_devel() devtools::check_mac_release()</li>
-<li>Release: devtools::release()</li>
+<li>Release: devtools::submit_cran()</li>
 <li>After release:
 <ul><li>commit CRAN-SUBMISSION and make GIT tag &amp; release</li>
 </ul></li>

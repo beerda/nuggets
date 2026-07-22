@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -1240,19 +1240,26 @@ pattern discovery.</p>
 <div class="section level3">
 <h3 id="what-are-tautologies">What are Tautologies?<a class="anchor" aria-label="anchor" href="#what-are-tautologies"></a>
 </h3>
-<p>A tautology in this context is a rule of the form
-<code>{a1 &amp; a2 &amp; ... &amp; an} =&gt; {c}</code> where the
-antecedent (left side) almost always implies the consequent (right
-side). These are rules that hold with very high confidence in your
-specific dataset.</p>
+<p>In logic, a <em>tautology</em> is a formula that is always true
+regardless of data. In practice, <code><a href="../reference/dig_tautologies.html">dig_tautologies()</a></code> finds
+rules with very high — but not necessarily perfect — confidence in the
+dataset. Such empirically near-certain rules are often called
+<strong>implications</strong> (because they describe an
+<code>A =&gt; C</code> relationship that almost always holds) or
+<strong>axioms</strong> (because they can be assumed to hold and used as
+starting assumptions for pruning). The terms <em>tautology</em>,
+<em>implication</em>, and <em>axiom</em> are used interchangeably in the
+<code>nuggets</code> documentation; the precise distinction is a matter
+of logical philosophy and does not affect how the functions work.</p>
 <p>For example, in a dataset about vehicles, you might discover: -
 <code>engine_type=electric =&gt; fuel_type=electricity</code>
 (confidence ≈ 1.0) -
 <code>manual_transmission=TRUE =&gt; automatic_transmission=FALSE</code>
 (confidence = 1.0)</p>
-<p>Such tautological rules, while true, may not provide interesting
-insights for further analysis. Identifying them allows you to exclude
-similar conditions from more complex pattern searches.</p>
+<p>Such rules may or may not provide interesting insights on their own.
+However, they are useful as axioms: knowing them allows subsequent
+searches to skip redundant or entailed patterns, which both reduces
+clutter and speeds up the search.</p>
 </div>
 <div class="section level3">
 <h3 id="using-dig_tautologies">Using <code>dig_tautologies()</code><a class="anchor" aria-label="anchor" href="#using-dig_tautologies"></a>
@@ -1286,7 +1293,7 @@ later iterations.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tautologies</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 54 × 13</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 59 × 13</span></span></span>
 <span><span class="co">#&gt;    antecedent            consequent  support confidence coverage conseq_support</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> {gear=3}              {am=0}        0.469      1        0.469          0.594</span></span>
@@ -1311,7 +1318,7 @@ later iterations.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  1.78  3.98                 1  3.98 0      14.0   14  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  2.11  3.93                 1  3.93 0.051<span style="text-decoration: underline;">3</span> 11.1   16.9</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  2.29  3.98                 1  3.98 0      10.0   18  </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 44 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 49 more rows</span></span></span></code></pre></div>
 <p>The function returns a tibble in the same format as
 <code><a href="../reference/dig_associations.html">dig_associations()</a></code>, containing rules with their quality
 measures (support, confidence, etc.).</p>
@@ -1343,12 +1350,28 @@ conjunction (<code>"goedel"</code>, <code>"goguen"</code>, or
 <div class="section level3">
 <h3 id="using-tautologies-to-filter-searches">Using Tautologies to Filter Searches<a class="anchor" aria-label="anchor" href="#using-tautologies-to-filter-searches"></a>
 </h3>
-<p>Once you’ve identified tautologies, you can use them with the
-<code>excluded</code> argument of <code><a href="../reference/dig.html">dig()</a></code> or related
-functions to avoid generating similar conditions:</p>
+<p>Once you’ve identified tautologies (axioms), you can use them with
+the <code>excluded</code> argument of <code><a href="../reference/dig.html">dig()</a></code> or related
+functions such as <code><a href="../reference/dig_associations.html">dig_associations()</a></code>. The
+<code>excluded</code> argument accepts a list of known
+<strong>implications (axioms)</strong> in the format produced by
+<code><a href="../reference/parse_condition.html">parse_condition()</a></code>. Each axiom is a character vector where
+all elements except the last form the condition (i.e. the antecedent in
+<code><a href="../reference/dig_associations.html">dig_associations()</a></code>) and the last element is the focus
+(i.e. the consequent in <code><a href="../reference/dig_associations.html">dig_associations()</a></code>):
+<code>c(cond1, cond2, ..., condn, focus)</code>.</p>
+<p>The axioms are used to prune the search via the modus ponens
+inference rule: - A focus (consequent) is excluded if it can be deduced
+from the condition (antecedent) using the axioms (transitive deduction).
+- A rule is pruned entirely if any predicate in the condition
+(antecedent) can be deduced from the remaining condition predicates
+using the axioms.</p>
+<p>To convert <code><a href="../reference/dig_tautologies.html">dig_tautologies()</a></code> results to the
+<code>excluded</code> format, pass both the antecedent <em>and</em> the
+consequent columns to <code><a href="../reference/parse_condition.html">parse_condition()</a></code>:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Convert tautologies to excluded format</span></span>
-<span><span class="va">excluded_conditions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/parse_condition.html">parse_condition</a></span><span class="op">(</span><span class="va">tautologies</span><span class="op">$</span><span class="va">antecedent</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Convert tautologies to the excluded (axioms) format</span></span>
+<span><span class="va">excluded_conditions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/parse_condition.html">parse_condition</a></span><span class="op">(</span><span class="va">tautologies</span><span class="op">$</span><span class="va">antecedent</span>, <span class="va">tautologies</span><span class="op">$</span><span class="va">consequent</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Use in subsequent pattern search</span></span>
 <span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span></span>
@@ -1356,12 +1379,12 @@ functions to avoid generating similar conditions:</p>
 <span>    antecedent <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"am"</span><span class="op">)</span>,</span>
 <span>    consequent <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"am"</span><span class="op">)</span>,</span>
 <span>    disjoint <span class="op">=</span> <span class="va">disj</span>,</span>
-<span>    excluded <span class="op">=</span> <span class="va">excluded_conditions</span>,  <span class="co"># Exclude tautological patterns</span></span>
+<span>    excluded <span class="op">=</span> <span class="va">excluded_conditions</span>,</span>
 <span>    min_support <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>    min_confidence <span class="op">=</span> <span class="fl">0.8</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>This approach can significantly reduce computation time and help
-focus on more interesting patterns.</p>
+focus on genuinely interesting patterns.</p>
 </div>
 </div>
 <div class="section level2">
@@ -1393,8 +1416,11 @@ parameters</li>
 functions for identifying and removing uninformative columns that have
 low variability.</p></li>
 <li><p><strong><code><a href="../reference/dig_tautologies.html">dig_tautologies()</a></code></strong>: A function for
-finding tautological rules in your data, which can be used to filter
-subsequent pattern searches.</p></li>
+finding data-driven implications (axioms / near-tautologies) in your
+data. The results can be passed to the <code>excluded</code> argument of
+<code><a href="../reference/dig.html">dig()</a></code> and related functions to prune the search space via
+modus ponens, speeding up discovery and focusing on genuinely
+interesting patterns.</p></li>
 </ol>
 <p>With these tools, you can effectively prepare your data for pattern
 discovery using the various <code>dig_*()</code> functions provided by

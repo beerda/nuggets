@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,58 +50,79 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.2.2" id="nuggets-222">nuggets 2.2.2<a class="anchor" aria-label="anchor" href="#nuggets-222"></a></h2>
+<ul><li>released: 2026-07-22</li>
+<li>optimized <code><a href="../reference/dig.html">dig()</a></code> on sparse crisp data (by implementing sparse bit chain)</li>
+<li>added clustering characteristics to <code><a href="https://generics.r-lib.org/reference/explore.html" class="external-link">explore()</a></code> for association rules</li>
+<li>fixed handling of axioms in <code><a href="../reference/dig.html">dig()</a></code> and <code>dig_*()</code> function (arg <code>excluded</code>)</li>
+<li>fixed handling of NA values in <code><a href="../reference/partition.html">partition()</a></code>
+</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.2.1" id="nuggets-221">nuggets 2.2.1<a class="anchor" aria-label="anchor" href="#nuggets-221"></a></h2>
 <ul><li>released: 2026-06-10</li>
-<li>fixed failing unit tests because of upstream fixes in R’s wilcox.test()</li>
-<li>enhanced placement of nodes in geom_diamond() to reduce edge crossing</li>
-<li>added .subsets argument to partition() that enables partitioning by subsets of factor levels</li>
+<li>fixed failing unit tests because of upstream fixes in R’s <code><a href="https://rdrr.io/r/stats/wilcox.test.html" class="external-link">wilcox.test()</a></code>
+</li>
+<li>enhanced placement of nodes in <code><a href="../reference/geom_diamond.html">geom_diamond()</a></code> to reduce edge crossing</li>
+<li>added <code>.subsets</code> argument to <code><a href="../reference/partition.html">partition()</a></code> that enables partitioning by subsets of factor levels</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.2.0" id="nuggets-220">nuggets 2.2.0<a class="anchor" aria-label="anchor" href="#nuggets-220"></a></h2>
 <ul><li>released: 2026-03-11</li>
-<li>fixed bugs in explore()</li>
-<li>added special value highlighting in explore()’s table of rules</li>
-<li>added contingency table view to explore.associations()</li>
-<li>added explore() methods for baseline contrasts, complement contrasts, paired baseline contrasts, and correlations</li>
-<li>added dig_ancestors()</li>
-<li>added plot_contingency()</li>
+<li>fixed bugs in <code><a href="https://generics.r-lib.org/reference/explore.html" class="external-link">explore()</a></code>
+</li>
+<li>added special value highlighting in <code><a href="https://generics.r-lib.org/reference/explore.html" class="external-link">explore()</a></code>’s table of rules</li>
+<li>added contingency table view to <code><a href="../reference/explore.associations.html">explore.associations()</a></code>
+</li>
+<li>added <code><a href="https://generics.r-lib.org/reference/explore.html" class="external-link">explore()</a></code> methods for baseline contrasts, complement contrasts, paired baseline contrasts, and correlations</li>
+<li>added <code><a href="../reference/dig_ancestors.html">dig_ancestors()</a></code>
+</li>
+<li>added <code><a href="../reference/plot_contingency.html">plot_contingency()</a></code>
+</li>
 <li>enhanced info and error messages</li>
-<li>added arguments for line type and colour to geom_diamond()</li>
-<li>enhanced dig_*_contrasts() - statistical test errors are now stored in the “comment” column in the returned data frame</li>
+<li>added arguments for line type and colour to <code><a href="../reference/geom_diamond.html">geom_diamond()</a></code>
+</li>
+<li>enhanced <code>dig_*_contrasts()</code> - statistical test errors are now stored in the <code>"comment"</code> column in the returned data frame</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.1.2" id="nuggets-212">nuggets 2.1.2<a class="anchor" aria-label="anchor" href="#nuggets-212"></a></h2>
 <ul><li>released: 2026-02-04</li>
-<li>added is_logicalish()</li>
+<li>added <code><a href="../reference/is_logicalish.html">is_logicalish()</a></code> to check if a vector is logical or can be coerced to logical</li>
 <li>fixed issue with required version of R (&gt;= 4.4.0)</li>
-<li>fixed critical bug in explore()</li>
+<li>fixed critical bug in <code><a href="https://generics.r-lib.org/reference/explore.html" class="external-link">explore()</a></code>
+</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.1.1" id="nuggets-211">nuggets 2.1.1<a class="anchor" aria-label="anchor" href="#nuggets-211"></a></h2>
 <ul><li>released: 2026-02-03</li>
 <li>performance improvements</li>
 <li>updated XSIMD library to 14.0.0</li>
-<li>moved Shiny-related packages (shiny, shinyjs, shinyWidgets, DT, htmltools, htmlwidgets, jsonlite) from Imports to Suggests</li>
-<li>removed deprecated measures argument from dig_associations() and dig_tautologies()</li>
-<li>deprecated argument contingency_table in dig_associations() and dig_tautologies()</li>
+<li>moved Shiny-related packages (shiny, shinyjs, shinyWidgets, DT, htmltools, htmlwidgets, jsonlite) from <code>Imports</code> to <code>Suggests</code>
+</li>
+<li>removed deprecated measures argument from <code><a href="../reference/dig_associations.html">dig_associations()</a></code> and <code><a href="../reference/dig_tautologies.html">dig_tautologies()</a></code>
+</li>
+<li>deprecated argument <code>contingency_table</code> in <code><a href="../reference/dig_associations.html">dig_associations()</a></code> and <code><a href="../reference/dig_tautologies.html">dig_tautologies()</a></code>
+</li>
 <li>removed dependency on BH and RcppThread</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.1.0" id="nuggets-210">nuggets 2.1.0<a class="anchor" aria-label="anchor" href="#nuggets-210"></a></h2>
 <ul><li>released: 2025-11-05</li>
-<li>added cluster_associations()</li>
-<li>added add_interest() for associations flavour of nugget to compute additional interest measures (GUHA and arules measures)</li>
-<li>deprecated measures argument in dig_associations() and dig_tautologies()</li>
-<li>parse_condition() rewritten in C++ for better performance</li>
-<li>enhanced UI layout of explore() for associations</li>
-<li>added “Cluster” tab to explore() for associations</li>
-<li>added selection of columns to show in explore() for associations</li>
-<li>fixed rchk protection stack imbalance in CombinatorialProgress constructor</li>
+<li>added <code><a href="../reference/cluster_associations.html">cluster_associations()</a></code> to cluster association rules</li>
+<li>added <code><a href="../reference/add_interest.html">add_interest()</a></code> for associations flavour of nugget to compute additional interest measures (GUHA and arules measures)</li>
+<li>deprecated measures argument in <code><a href="../reference/dig_associations.html">dig_associations()</a></code> and <code><a href="../reference/dig_tautologies.html">dig_tautologies()</a></code>
+</li>
+<li>
+<code><a href="../reference/parse_condition.html">parse_condition()</a></code> rewritten in C++ for better performance</li>
+<li>enhanced UI layout of <code><a href="https://generics.r-lib.org/reference/explore.html" class="external-link">explore()</a></code> for associations</li>
+<li>added “Cluster” tab to <code><a href="https://generics.r-lib.org/reference/explore.html" class="external-link">explore()</a></code> for associations</li>
+<li>added selection of columns to show in <code><a href="https://generics.r-lib.org/reference/explore.html" class="external-link">explore()</a></code> for associations</li>
+<li>fixed rchk protection stack imbalance in <code>CombinatorialProgress</code> constructor</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.0.2" id="nuggets-202">nuggets 2.0.2<a class="anchor" aria-label="anchor" href="#nuggets-202"></a></h2>
 <ul><li>released: 2025-10-31</li>
-<li>attempt to fix rchk protection stack imbalance in CombinatorialProgress constructor</li>
+<li>attempt to fix rchk protection stack imbalance in <code>CombinatorialProgress</code> constructor</li>
 <li>created vignette “Data Preparation”</li>
 <li>updated main vignette</li>
 </ul></div>
@@ -109,39 +130,62 @@
 <h2 class="pkg-version" data-toc-text="2.0.1" id="nuggets-201">nuggets 2.0.1<a class="anchor" aria-label="anchor" href="#nuggets-201"></a></h2>
 <ul><li>released: 2025-10-13</li>
 <li>fixed problem with C++20 and testthat by downgrading system requirements to C++17</li>
-<li>added association_matrix()</li>
+<li>added <code><a href="../reference/association_matrix.html">association_matrix()</a></code>
+</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.0.0" id="nuggets-200">nuggets 2.0.0<a class="anchor" aria-label="anchor" href="#nuggets-200"></a></h2>
 <ul><li>released: 2025-10-13</li>
-<li>completely rewritten the core algorithm in dig()</li>
-<li>all dig_*() functions now return nugget S3 objects</li>
-<li>added is_almost_constant(), remove_almost_constant(), parse_condition(), fire(), is_condition(), remove_ill_conditions(), shorten_condition()</li>
-<li>added dig_tautologies()</li>
-<li>added geom_diamond()</li>
-<li>added .span and .inc arguments to partition()</li>
-<li>added various styles (quantile, k-means, hclust, bclust, …) of crisp partitioning to partition()</li>
-<li>added explore() function for interactive exploration of patterns</li>
-<li>added exclude argument to dig() and other dig_*() functions</li>
-<li>added support for the disjoint parameter to var_grid() and dig_grid()</li>
-<li>added progress bar to the dig() function</li>
-<li>added “dummy” method to partition()</li>
+<li>completely rewritten the core algorithm in <code><a href="../reference/dig.html">dig()</a></code>
+</li>
+<li>all <code>dig_*()</code> functions now return nugget S3 objects</li>
+<li>added <code><a href="../reference/is_almost_constant.html">is_almost_constant()</a></code>, <code><a href="../reference/remove_almost_constant.html">remove_almost_constant()</a></code>, <code><a href="../reference/parse_condition.html">parse_condition()</a></code>, <code><a href="../reference/fire.html">fire()</a></code>, <code><a href="../reference/is_condition.html">is_condition()</a></code>, <code><a href="../reference/remove_ill_conditions.html">remove_ill_conditions()</a></code>, <code><a href="../reference/shorten_condition.html">shorten_condition()</a></code>
+</li>
+<li>added <code><a href="../reference/dig_tautologies.html">dig_tautologies()</a></code>
+</li>
+<li>added <code><a href="../reference/geom_diamond.html">geom_diamond()</a></code>
+</li>
+<li>added <code>.span</code> and <code>.inc</code> arguments to <code><a href="../reference/partition.html">partition()</a></code>
+</li>
+<li>added various styles (quantile, k-means, hclust, bclust, …) of crisp partitioning to <code><a href="../reference/partition.html">partition()</a></code>
+</li>
+<li>added <code><a href="https://generics.r-lib.org/reference/explore.html" class="external-link">explore()</a></code> function for interactive exploration of patterns</li>
+<li>added <code>exclude</code> argument to <code><a href="../reference/dig.html">dig()</a></code> and other <code>dig_*()</code> functions</li>
+<li>added support for the disjoint parameter to <code><a href="../reference/var_grid.html">var_grid()</a></code> and <code><a href="../reference/dig_grid.html">dig_grid()</a></code>
+</li>
+<li>added progress bar to the <code><a href="../reference/dig.html">dig()</a></code> function</li>
+<li>added <code>"dummy"</code> method to <code><a href="../reference/partition.html">partition()</a></code>
+</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.4.0" id="nuggets-140">nuggets 1.4.0<a class="anchor" aria-label="anchor" href="#nuggets-140"></a></h2>
 <ul><li>released: 2025-01-08</li>
-<li>added var_names(), dig_baseline_contrasts(), dig_complement_contrasts()</li>
-<li>dig_contrasts() renamed to dig_paired_baseline_contrasts()</li>
-<li>dig_implications() renamed to dig_associations()</li>
-<li>dichotomize() is deprecated (use partition() instead)</li>
-<li>added max_support argument to dig()</li>
-<li>added max_results argument to dig()</li>
-<li>optimized performance of dig()</li>
-<li>added min_conditional_focus_support argument to dig()</li>
-<li>fixed handling of NULL returned by a callback function in dig_grid()</li>
-<li>argument d of the callback function in dig_grid() renamed to pd</li>
-<li>added handling of nd argument of the callback function in dig_grid()</li>
-<li>added max_p_value argument to dig_paired_baseline_contrasts()</li>
+<li>added <code><a href="../reference/var_names.html">var_names()</a></code>, <code><a href="../reference/dig_baseline_contrasts.html">dig_baseline_contrasts()</a></code>, <code><a href="../reference/dig_complement_contrasts.html">dig_complement_contrasts()</a></code>
+</li>
+<li>
+<code>dig_contrasts()</code> renamed to <code><a href="../reference/dig_paired_baseline_contrasts.html">dig_paired_baseline_contrasts()</a></code>
+</li>
+<li>
+<code>dig_implications()</code> renamed to <code><a href="../reference/dig_associations.html">dig_associations()</a></code>
+</li>
+<li>
+<code>dichotomize()</code> is deprecated (use <code><a href="../reference/partition.html">partition()</a></code> instead)</li>
+<li>added <code>max_support</code> argument to <code><a href="../reference/dig.html">dig()</a></code>
+</li>
+<li>added <code>max_results</code> argument to <code><a href="../reference/dig.html">dig()</a></code>
+</li>
+<li>optimized performance of <code><a href="../reference/dig.html">dig()</a></code>
+</li>
+<li>added <code>min_conditional_focus_support</code> argument to <code><a href="../reference/dig.html">dig()</a></code>
+</li>
+<li>fixed handling of NULL returned by a callback function in <code><a href="../reference/dig_grid.html">dig_grid()</a></code>
+</li>
+<li>argument <code>d</code> of the callback function in <code><a href="../reference/dig_grid.html">dig_grid()</a></code> renamed to <code>pd</code>
+</li>
+<li>added handling of <code>nd</code> argument of the callback function in <code><a href="../reference/dig_grid.html">dig_grid()</a></code>
+</li>
+<li>added <code>max_p_value</code> argument to <code><a href="../reference/dig_paired_baseline_contrasts.html">dig_paired_baseline_contrasts()</a></code>
+</li>
 <li>improved error messages</li>
 <li>added nuggets vignette</li>
 <li>started using lifecycle and pkgdown</li>
@@ -149,32 +193,40 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.3.0" id="nuggets-130">nuggets 1.3.0<a class="anchor" aria-label="anchor" href="#nuggets-130"></a></h2>
 <ul><li>released: 2024-11-13</li>
-<li>added is_degree(), dig_contrasts(), partition()</li>
-<li>implemented fuzzy variant of dig_grid()</li>
-<li>fixed crash when mixing logical (crisp) and numeric (fuzzy) inputs to dig()</li>
+<li>added <code><a href="../reference/is_degree.html">is_degree()</a></code>, <code>dig_contrasts()</code>, <code><a href="../reference/partition.html">partition()</a></code>
+</li>
+<li>implemented fuzzy variant of <code><a href="../reference/dig_grid.html">dig_grid()</a></code>
+</li>
+<li>fixed crash when mixing logical (crisp) and numeric (fuzzy) inputs to <code><a href="../reference/dig.html">dig()</a></code>
+</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.0" id="nuggets-120">nuggets 1.2.0<a class="anchor" aria-label="anchor" href="#nuggets-120"></a></h2>
 <ul><li>released: 2024-10-11</li>
-<li>added var_grid(), dig_grid()</li>
-<li>added the measures argument to dig_implications()</li>
+<li>added <code><a href="../reference/var_grid.html">var_grid()</a></code>, <code><a href="../reference/dig_grid.html">dig_grid()</a></code>
+</li>
+<li>added the measures argument to <code>dig_implications()</code>
+</li>
 <li>fixed contingency table arguments computation (pp, pn, np, nn) - previously, they were computed as relative frequencies, now they are computed as counts</li>
-<li>fixed new-delete-type-mismatch ASAN error caused by wrong implementation of AlignedAllocator</li>
+<li>fixed new-delete-type-mismatch ASAN error caused by wrong implementation of <code>AlignedAllocator</code>
+</li>
 <li>fixed memory leaks</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.1.0" id="nuggets-110">nuggets 1.1.0<a class="anchor" aria-label="anchor" href="#nuggets-110"></a></h2>
 <ul><li>released: 2024-10-08</li>
-<li>added .other argument to dichotomize()</li>
-<li>fixed handling of xvars, yvars tidy-selectors in dig_correlations()</li>
+<li>added <code>.other</code> argument to <code>dichotomize()</code>
+</li>
+<li>fixed handling of <code>xvars</code>, <code>yvars</code> tidy-selectors in <code><a href="../reference/dig_correlations.html">dig_correlations()</a></code>)</li>
 <li>added filtering of foci by their support</li>
 <li>added handling of callback function arguments related to contingency tables (pp, pn, np, nn arguments)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.2" id="nuggets-102">nuggets 1.0.2<a class="anchor" aria-label="anchor" href="#nuggets-102"></a></h2>
 <ul><li>released: 2024-01-09</li>
-<li>fixed handling of arguments min_coverage and min_support in dig_implications()</li>
-<li>attempt to fix LTO error related to run_testthat_tests() - fixed by using an RC version of Rcpp (1.0.11.6)</li>
+<li>fixed handling of arguments <code>min_coverage</code> and <code>min_support</code> in <code>dig_implications()</code>
+</li>
+<li>attempt to fix LTO error related to <code>run_testthat_tests()</code> - fixed by using an RC version of Rcpp (1.0.11.6)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.1" id="nuggets-101">nuggets 1.0.1<a class="anchor" aria-label="anchor" href="#nuggets-101"></a></h2>
@@ -185,7 +237,8 @@
 <h2 class="pkg-version" data-toc-text="1.0.0" id="nuggets-100">nuggets 1.0.0<a class="anchor" aria-label="anchor" href="#nuggets-100"></a></h2>
 <ul><li>released: 2023-11-28</li>
 <li>first version of the package</li>
-<li>implemented: dichotomize(), dig(), dig_implications(), dig_correlations(), which_antichain(), format_condition(), is_subset()</li>
+<li>implemented: <code>dichotomize()</code>, <code><a href="../reference/dig.html">dig()</a></code>, <code>dig_implications()</code>, <code><a href="../reference/dig_correlations.html">dig_correlations()</a></code>, <code><a href="../reference/which_antichain.html">which_antichain()</a></code>, <code><a href="../reference/format_condition.html">format_condition()</a></code>, <code><a href="../reference/is_subset.html">is_subset()</a></code>
+</li>
 </ul></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

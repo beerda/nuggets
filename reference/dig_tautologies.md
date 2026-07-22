@@ -1,17 +1,21 @@
 # Find tautologies or "almost tautologies" in a dataset
 
-This function finds tautologies in a dataset, i.e., rules of the form
-`{a1 & a2 & ... & an} => {c}` where `a1`, `a2`, ..., `an` are
-antecedents and `c` is a consequent. The intent of searching for
-tautologies is to find rules that are always true, which may be used for
-filtering of further generated conditions. The resulting rules may be
-used as a basis for the list of `excluded` formulae (see the `excluded`
-argument of
-[`dig()`](https://beerda.github.io/nuggets/reference/dig.md)).
+This function finds tautologies (data-driven axioms) in a dataset, i.e.,
+rules of the form `{a1 & a2 & ... & an} => {c}` where `a1`, `a2`, ...,
+`an` are antecedents and `c` is a consequent that holds with very high
+confidence. Such rules can serve as axioms for pruning further pattern
+searches: the resulting list of rules can be passed directly to the
+`excluded` argument of
+[`dig()`](https://beerda.github.io/nuggets/reference/dig.md),
+[`dig_associations()`](https://beerda.github.io/nuggets/reference/dig_associations.md),
+or related functions via
+`parse_condition(result$antecedent, result$consequent)`.
 
-The search for tautologies is performed by iteratively searching for
-rules with increasing length of the antecedent. Rules found in previous
-iterations are used as `excluded` argument in the next iteration.
+The search is performed by iteratively searching for rules with
+increasing length of the antecedent. Rules found in previous iterations
+are used as axioms (the `excluded` argument) in the next iteration, so
+that rules whose consequent can already be deduced from a shorter
+antecedent are not reported again.
 
 ## Usage
 
@@ -138,7 +142,7 @@ dig_tautologies(d,
                 antecedent = everything(),
                 consequent = everything(),
                 min_confidence = 0.99)
-#> # A tibble: 732 × 13
+#> # A tibble: 575 × 13
 #>    antecedent  consequent support confidence coverage conseq_support  lift count
 #>    <chr>       <chr>        <dbl>      <dbl>    <dbl>          <dbl> <dbl> <dbl>
 #>  1 {gear=(-In… {carb=(-I…   0.844          1    0.844          0.938  1.07    27
@@ -151,7 +155,7 @@ dig_tautologies(d,
 #>  8 {disp=(-In… {wt=(-Inf…   0.562          1    0.562          0.656  1.52    18
 #>  9 {disp=(-In… {cyl=(-In…   0.562          1    0.562          0.562  1.78    18
 #> 10 {vs=(-Inf;… {qsec=(-I…   0.562          1    0.562          0.719  1.39    18
-#> # ℹ 722 more rows
+#> # ℹ 565 more rows
 #> # ℹ 5 more variables: antecedent_length <int>, pp <dbl>, pn <dbl>, np <dbl>,
 #> #   nn <dbl>
 ```

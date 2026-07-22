@@ -2,6 +2,7 @@
 
 - Merge devel into main: git checkout main git pull origin main git
   merge devel git push origin main
+- Create release issue: usethis::use_release_issue()
 - Update version & date in DESCRIPTION
 - Update NEWS.md
 - Disable debug in src/common.h
@@ -10,7 +11,7 @@
 - Test: devtools::spell_check() rhub::rhub_check()
   devtools::check_win_release() devtools::check_win_oldrelease()
   devtools::check_win_devel() devtools::check_mac_release()
-- Release: devtools::release()
+- Release: devtools::submit_cran()
 - After release:
   - commit CRAN-SUBMISSION and make GIT tag & release
 - Prepare for next development iteration:

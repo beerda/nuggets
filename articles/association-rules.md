@@ -499,30 +499,42 @@ The `p` parameter represents the null-hypothesis probability used in the
 binomial-test-based quantifiers (`lci`, `uci`, `dlci`, `duci`, `lce`,
 `uce`).
 
-## Excluding Tautologies from the Search
+## Excluding Redundant and Entailed Rules
 
 In real-world datasets, some rules are trivially true or nearly so — for
 example, rules that follow directly from the structure of the data
-(e.g., `engine_type=electric => fuel_type=electricity`). Such rules are
-called **tautologies**. While technically valid, they are often
-uninteresting and can clutter results or slow down the search.
+(e.g., `engine_type=electric => fuel_type=electricity`). Such
+near-certain rules are called **tautologies**, and are also referred to
+as **implications** (because they describe an `A => C` relationship that
+almost always holds) or **axioms** (because they can be assumed and used
+as starting assumptions for pruning). In classical logic, a *tautology*
+is strictly always true; here the term is used loosely for rules whose
+confidence is very high in the data. This distinction is a matter of
+logical philosophy and does not affect how the functions work.
 
 The `excluded` argument of
 [`dig_associations()`](https://beerda.github.io/nuggets/reference/dig_associations.md)
-allows you to specify a list of predicate combinations that should never
-appear together in generated rules. Note that the term “tautology” here
-is used broadly - any rule you consider uninteresting (regardless of
-whether its confidence is exactly 1) can be excluded this way.
+accepts a list of known **implications (axioms)**. Each axiom is a
+character vector where all elements except the last form the antecedent
+and the last element is the consequent:
+`c(ant1, ant2, ..., antn, cons)`. The axioms are used to prune generated
+rules via the **modus ponens** inference rule:
 
-### Finding Tautologies with `dig_tautologies()`
+- A rule’s consequent is excluded if it can be deduced from the rule’s
+  antecedent using the axioms (possibly via a chain of axiom
+  applications).
+- A rule is pruned entirely if any predicate in the antecedent can be
+  deduced from the remaining antecedent predicates via the axioms (it
+  would be redundant).
+
+### Finding Near-Tautologies with `dig_tautologies()`
 
 The
 [`dig_tautologies()`](https://beerda.github.io/nuggets/reference/dig_tautologies.md)
 function is specifically designed to find rules with very high
-confidence. It searches iteratively, using tautologies found in earlier
-iterations to prune the search space in later iterations. For a detailed
-description, see the
-[`vignette("data-preparation")`](https://beerda.github.io/nuggets/articles/data-preparation.md).
+confidence (near-tautologies / axioms). It searches iteratively, using
+rules found in earlier iterations to prune the search space in later
+iterations, so that only the most concise axioms are returned.
 
 ``` r
 
@@ -533,40 +545,42 @@ tautologies <- dig_tautologies(crisp_co2,
                                min_support = 0.05,
                                max_length = 2)
 tautologies
-#> # A tibble: 6 × 13
+#> # A tibble: 7 × 13
 #>   antecedent                              consequent          support confidence
 #>   <chr>                                   <chr>                 <dbl>      <dbl>
 #> 1 {uptake=(35;Inf]}                       {Type=Quebec}        0.286        0.96
 #> 2 {Type=Quebec,uptake=(-Inf;20]}          {conc=(-Inf;200]}    0.0714       1   
-#> 3 {Treatment=nonchilled,uptake=(-Inf;20]} {conc=(-Inf;200]}    0.0952       1   
-#> 4 {conc=(200;500],uptake=(-Inf;20]}       {Type=Mississippi}   0.107        1   
-#> 5 {conc=(200;500],uptake=(-Inf;20]}       {Treatment=chilled}  0.107        1   
-#> 6 {conc=(500;Inf],uptake=(20;35]}         {Type=Mississippi}   0.0833       1   
+#> 3 {Type=Quebec,conc=(500;Inf]}            {uptake=(35;Inf]}    0.143        1   
+#> 4 {Treatment=nonchilled,uptake=(-Inf;20]} {conc=(-Inf;200]}    0.0952       1   
+#> 5 {conc=(200;500],uptake=(-Inf;20]}       {Type=Mississippi}   0.107        1   
+#> 6 {conc=(200;500],uptake=(-Inf;20]}       {Treatment=chilled}  0.107        1   
+#> 7 {conc=(500;Inf],uptake=(20;35]}         {Type=Mississippi}   0.0833       1   
 #>   coverage conseq_support  lift count antecedent_length    pp    pn    np    nn
 #>      <dbl>          <dbl> <dbl> <dbl>             <int> <dbl> <dbl> <dbl> <dbl>
 #> 1   0.298           0.5    1.92    24                 1    24     1    18    41
 #> 2   0.0714          0.286  3.5      6                 2     6     0    18    60
-#> 3   0.0952          0.286  3.5      8                 2     8     0    16    60
-#> 4   0.107           0.5    2        9                 2     9     0    33    42
+#> 3   0.143           0.298  3.36    12                 2    12     0    13    59
+#> 4   0.0952          0.286  3.5      8                 2     8     0    16    60
 #> 5   0.107           0.5    2        9                 2     9     0    33    42
-#> 6   0.0833          0.5    2        7                 2     7     0    35    42
+#> 6   0.107           0.5    2        9                 2     9     0    33    42
+#> 7   0.0833          0.5    2        7                 2     7     0    35    42
 ```
 
-### Using Tautologies to Filter Association Rules
+### Using Axioms to Filter Association Rules
 
-Once tautologies are identified, convert them to the format expected by
-the `excluded` argument using
+Once axioms (near-tautologies) are identified, convert them to the
+format expected by the `excluded` argument using
 [`parse_condition()`](https://beerda.github.io/nuggets/reference/parse_condition.md),
-and pass them to
+passing both the antecedent and the consequent columns, and pass them to
 [`dig_associations()`](https://beerda.github.io/nuggets/reference/dig_associations.md):
 
 ``` r
 
-# Convert tautologies to the excluded format
+# Convert tautologies to the excluded (axioms) format
 excluded_conds <- parse_condition(tautologies$antecedent,
                                   tautologies$consequent)
 
-# Search for rules while excluding tautological patterns
+# Search for rules while excluding entailed patterns
 rules_filtered <- dig_associations(crisp_co2,
                                    antecedent = !starts_with("uptake"),
                                    consequent = starts_with("uptake"),
@@ -574,41 +588,46 @@ rules_filtered <- dig_associations(crisp_co2,
                                    min_support = 0.1,
                                    min_confidence = 0.8)
 rules_filtered
-#> # A tibble: 5 × 13
+#> # A tibble: 4 × 13
 #>   antecedent                                             consequent        
 #>   <chr>                                                  <chr>             
-#> 1 {Type=Quebec,conc=(500;Inf]}                           {uptake=(35;Inf]} 
-#> 2 {Treatment=nonchilled,Type=Mississippi,conc=(200;500]} {uptake=(20;35]}  
-#> 3 {Treatment=chilled,Type=Mississippi}                   {uptake=(-Inf;20]}
-#> 4 {Treatment=chilled,Type=Mississippi,conc=(200;500]}    {uptake=(-Inf;20]}
-#> 5 {Type=Mississippi,conc=(-Inf;200]}                     {uptake=(-Inf;20]}
+#> 1 {Treatment=nonchilled,Type=Mississippi,conc=(200;500]} {uptake=(20;35]}  
+#> 2 {Treatment=chilled,Type=Mississippi}                   {uptake=(-Inf;20]}
+#> 3 {Treatment=chilled,Type=Mississippi,conc=(200;500]}    {uptake=(-Inf;20]}
+#> 4 {Type=Mississippi,conc=(-Inf;200]}                     {uptake=(-Inf;20]}
 #>   support confidence coverage conseq_support  lift count antecedent_length    pp
 #>     <dbl>      <dbl>    <dbl>          <dbl> <dbl> <dbl>             <int> <dbl>
-#> 1   0.143      1        0.143          0.298  3.36    12                 2    12
-#> 2   0.107      1        0.107          0.345  2.90     9                 3     9
-#> 3   0.226      0.905    0.25           0.357  2.53    19                 2    19
-#> 4   0.107      1        0.107          0.357  2.8      9                 3     9
-#> 5   0.131      0.917    0.143          0.357  2.57    11                 2    11
+#> 1   0.107      1        0.107          0.345  2.90     9                 3     9
+#> 2   0.226      0.905    0.25           0.357  2.53    19                 2    19
+#> 3   0.107      1        0.107          0.357  2.8      9                 3     9
+#> 4   0.131      0.917    0.143          0.357  2.57    11                 2    11
 #>      pn    np    nn
 #>   <dbl> <dbl> <dbl>
-#> 1     0    13    59
-#> 2     0    20    55
-#> 3     2    11    52
-#> 4     0    21    54
-#> 5     1    19    53
+#> 1     0    20    55
+#> 2     2    11    52
+#> 3     0    21    54
+#> 4     1    19    53
 ```
 
-By excluding known tautologies, the search focuses on genuinely
-interesting patterns and can run significantly faster on large datasets.
+By providing known axioms, the search skips rules whose consequent can
+be deduced from their antecedent, and also prunes rules that contain
+redundant antecedent predicates (deducible from the remaining antecedent
+predicates). This focuses the results on genuinely interesting patterns
+and can run significantly faster on large datasets.
 
-### Manually Specifying Exclusions
+### Manually Specifying Axioms
 
 You can also construct the `excluded` list manually. Each element is a
-character vector of elements that should not appear together in a rule:
+character vector representing an implication (axiom): all elements
+except the last form the antecedent and the last element is the
+consequent:
 
 ``` r
 
-# Filter out rules by tautology "Treatment=chilled => Type=Mississippi"
+# Axiom: "Treatment=chilled => Type=Mississippi"
+# Any rule whose consequent is "Type=Mississippi" and whose antecedent contains
+# "Treatment=chilled" will be excluded, because the consequent is deducible
+# from the antecedent via this axiom.
 manual_excluded <- list(c("Treatment=chilled", "Type=Mississippi"))
 
 rules_manual <- dig_associations(crisp_co2,
@@ -618,32 +637,26 @@ rules_manual <- dig_associations(crisp_co2,
                                  min_support = 0.1,
                                  min_confidence = 0.8)
 rules_manual
-#> # A tibble: 5 × 13
+#> # A tibble: 3 × 13
 #>   antecedent                                             consequent        
 #>   <chr>                                                  <chr>             
 #> 1 {Type=Quebec,conc=(500;Inf]}                           {uptake=(35;Inf]} 
 #> 2 {Treatment=nonchilled,Type=Mississippi,conc=(200;500]} {uptake=(20;35]}  
-#> 3 {Treatment=chilled,Type=Mississippi}                   {uptake=(-Inf;20]}
-#> 4 {Treatment=chilled,Type=Mississippi,conc=(200;500]}    {uptake=(-Inf;20]}
-#> 5 {Type=Mississippi,conc=(-Inf;200]}                     {uptake=(-Inf;20]}
+#> 3 {Type=Mississippi,conc=(-Inf;200]}                     {uptake=(-Inf;20]}
 #>   support confidence coverage conseq_support  lift count antecedent_length    pp
 #>     <dbl>      <dbl>    <dbl>          <dbl> <dbl> <dbl>             <int> <dbl>
 #> 1   0.143      1        0.143          0.298  3.36    12                 2    12
 #> 2   0.107      1        0.107          0.345  2.90     9                 3     9
-#> 3   0.226      0.905    0.25           0.357  2.53    19                 2    19
-#> 4   0.107      1        0.107          0.357  2.8      9                 3     9
-#> 5   0.131      0.917    0.143          0.357  2.57    11                 2    11
+#> 3   0.131      0.917    0.143          0.357  2.57    11                 2    11
 #>      pn    np    nn
 #>   <dbl> <dbl> <dbl>
 #> 1     0    13    59
 #> 2     0    20    55
-#> 3     2    11    52
-#> 4     0    21    54
-#> 5     1    19    53
+#> 3     1    19    53
 ```
 
-This is useful when you have domain knowledge about which combinations
-are trivial or undesirable, without needing to run
+This is useful when you have domain knowledge about which implications
+are trivially true or undesirable, without needing to run
 [`dig_tautologies()`](https://beerda.github.io/nuggets/reference/dig_tautologies.md)
 first.
 
@@ -677,9 +690,13 @@ This vignette demonstrated how to search for association rules using the
     to evaluate rules from multiple perspectives (conviction, leverage,
     Jaccard, GUHA quantifiers, and many more).
 
-6.  **Excluding tautologies** with the `excluded` argument and
+6.  **Excluding entailed rules** with the `excluded` argument and
     [`dig_tautologies()`](https://beerda.github.io/nuggets/reference/dig_tautologies.md)
-    removes trivial or uninteresting rules and speeds up the search.
+    removes rules whose consequent is deducible from the antecedent via
+    known axioms (near-tautologies / implications), and also prunes
+    rules with redundant antecedent predicates (deducible from the
+    remaining predicates). This speeds up the search and focuses results
+    on genuinely interesting patterns.
 
 For further details, consult the function documentation:
 [`dig_associations()`](https://beerda.github.io/nuggets/reference/dig_associations.md),

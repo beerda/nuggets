@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nuggets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -550,27 +550,43 @@ probability used in the binomial-test-based quantifiers
 </div>
 </div>
 <div class="section level2">
-<h2 id="excluding-tautologies-from-the-search">Excluding Tautologies from the Search<a class="anchor" aria-label="anchor" href="#excluding-tautologies-from-the-search"></a>
+<h2 id="excluding-redundant-and-entailed-rules">Excluding Redundant and Entailed Rules<a class="anchor" aria-label="anchor" href="#excluding-redundant-and-entailed-rules"></a>
 </h2>
 <p>In real-world datasets, some rules are trivially true or nearly so —
 for example, rules that follow directly from the structure of the data
 (e.g., <code>engine_type=electric =&gt; fuel_type=electricity</code>).
-Such rules are called <strong>tautologies</strong>. While technically
-valid, they are often uninteresting and can clutter results or slow down
-the search.</p>
+Such near-certain rules are called <strong>tautologies</strong>, and are
+also referred to as <strong>implications</strong> (because they describe
+an <code>A =&gt; C</code> relationship that almost always holds) or
+<strong>axioms</strong> (because they can be assumed and used as
+starting assumptions for pruning). In classical logic, a
+<em>tautology</em> is strictly always true; here the term is used
+loosely for rules whose confidence is very high in the data. This
+distinction is a matter of logical philosophy and does not affect how
+the functions work.</p>
 <p>The <code>excluded</code> argument of <code><a href="../reference/dig_associations.html">dig_associations()</a></code>
-allows you to specify a list of predicate combinations that should never
-appear together in generated rules. Note that the term “tautology” here
-is used broadly - any rule you consider uninteresting (regardless of
-whether its confidence is exactly 1) can be excluded this way.</p>
+accepts a list of known <strong>implications (axioms)</strong>. Each
+axiom is a character vector where all elements except the last form the
+antecedent and the last element is the consequent:
+<code>c(ant1, ant2, ..., antn, cons)</code>. The axioms are used to
+prune generated rules via the <strong>modus ponens</strong> inference
+rule:</p>
+<ul>
+<li>A rule’s consequent is excluded if it can be deduced from the rule’s
+antecedent using the axioms (possibly via a chain of axiom
+applications).</li>
+<li>A rule is pruned entirely if any predicate in the antecedent can be
+deduced from the remaining antecedent predicates via the axioms (it
+would be redundant).</li>
+</ul>
 <div class="section level3">
-<h3 id="finding-tautologies-with-dig_tautologies">Finding Tautologies with <code>dig_tautologies()</code><a class="anchor" aria-label="anchor" href="#finding-tautologies-with-dig_tautologies"></a>
+<h3 id="finding-near-tautologies-with-dig_tautologies">Finding Near-Tautologies with <code>dig_tautologies()</code><a class="anchor" aria-label="anchor" href="#finding-near-tautologies-with-dig_tautologies"></a>
 </h3>
 <p>The <code><a href="../reference/dig_tautologies.html">dig_tautologies()</a></code> function is specifically designed
-to find rules with very high confidence. It searches iteratively, using
-tautologies found in earlier iterations to prune the search space in
-later iterations. For a detailed description, see the
-<code><a href="../articles/data-preparation.html">vignette("data-preparation")</a></code>.</p>
+to find rules with very high confidence (near-tautologies / axioms). It
+searches iteratively, using rules found in earlier iterations to prune
+the search space in later iterations, so that only the most concise
+axioms are returned.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tautologies</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_tautologies.html">dig_tautologies</a></span><span class="op">(</span><span class="va">crisp_co2</span>,</span>
 <span>                               antecedent <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -579,37 +595,40 @@ later iterations. For a detailed description, see the
 <span>                               min_support <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>                               max_length <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="va">tautologies</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 13</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 7 × 13</span></span></span>
 <span><span class="co">#&gt;   antecedent                              consequent          support confidence</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> {uptake=(35;Inf]}                       {Type=Quebec}        0.286        0.96</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> {Type=Quebec,uptake=(-Inf;20]}          {conc=(-Inf;200]}    0.071<span style="text-decoration: underline;">4</span>       1   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> {Treatment=nonchilled,uptake=(-Inf;20]} {conc=(-Inf;200]}    0.095<span style="text-decoration: underline;">2</span>       1   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> {conc=(200;500],uptake=(-Inf;20]}       {Type=Mississippi}   0.107        1   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> {conc=(200;500],uptake=(-Inf;20]}       {Treatment=chilled}  0.107        1   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> {conc=(500;Inf],uptake=(20;35]}         {Type=Mississippi}   0.083<span style="text-decoration: underline;">3</span>       1   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> {Type=Quebec,conc=(500;Inf]}            {uptake=(35;Inf]}    0.143        1   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> {Treatment=nonchilled,uptake=(-Inf;20]} {conc=(-Inf;200]}    0.095<span style="text-decoration: underline;">2</span>       1   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> {conc=(200;500],uptake=(-Inf;20]}       {Type=Mississippi}   0.107        1   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> {conc=(200;500],uptake=(-Inf;20]}       {Treatment=chilled}  0.107        1   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> {conc=(500;Inf],uptake=(20;35]}         {Type=Mississippi}   0.083<span style="text-decoration: underline;">3</span>       1   </span></span>
 <span><span class="co">#&gt;   coverage conseq_support  lift count antecedent_length    pp    pn    np    nn</span></span>
 <span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   0.298           0.5    1.92    24                 1    24     1    18    41</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   0.071<span style="text-decoration: underline;">4</span>          0.286  3.5      6                 2     6     0    18    60</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   0.095<span style="text-decoration: underline;">2</span>          0.286  3.5      8                 2     8     0    16    60</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>   0.107           0.5    2        9                 2     9     0    33    42</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   0.143           0.298  3.36    12                 2    12     0    13    59</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>   0.095<span style="text-decoration: underline;">2</span>          0.286  3.5      8                 2     8     0    16    60</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>   0.107           0.5    2        9                 2     9     0    33    42</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>   0.083<span style="text-decoration: underline;">3</span>          0.5    2        7                 2     7     0    35    42</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>   0.107           0.5    2        9                 2     9     0    33    42</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span>   0.083<span style="text-decoration: underline;">3</span>          0.5    2        7                 2     7     0    35    42</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="using-tautologies-to-filter-association-rules">Using Tautologies to Filter Association Rules<a class="anchor" aria-label="anchor" href="#using-tautologies-to-filter-association-rules"></a>
+<h3 id="using-axioms-to-filter-association-rules">Using Axioms to Filter Association Rules<a class="anchor" aria-label="anchor" href="#using-axioms-to-filter-association-rules"></a>
 </h3>
-<p>Once tautologies are identified, convert them to the format expected
-by the <code>excluded</code> argument using
-<code><a href="../reference/parse_condition.html">parse_condition()</a></code>, and pass them to
+<p>Once axioms (near-tautologies) are identified, convert them to the
+format expected by the <code>excluded</code> argument using
+<code><a href="../reference/parse_condition.html">parse_condition()</a></code>, passing both the antecedent and the
+consequent columns, and pass them to
 <code><a href="../reference/dig_associations.html">dig_associations()</a></code>:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Convert tautologies to the excluded format</span></span>
+<code class="sourceCode R"><span><span class="co"># Convert tautologies to the excluded (axioms) format</span></span>
 <span><span class="va">excluded_conds</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/parse_condition.html">parse_condition</a></span><span class="op">(</span><span class="va">tautologies</span><span class="op">$</span><span class="va">antecedent</span>,</span>
 <span>                                  <span class="va">tautologies</span><span class="op">$</span><span class="va">consequent</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Search for rules while excluding tautological patterns</span></span>
+<span><span class="co"># Search for rules while excluding entailed patterns</span></span>
 <span><span class="va">rules_filtered</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">crisp_co2</span>,</span>
 <span>                                   antecedent <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
 <span>                                   consequent <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"uptake"</span><span class="op">)</span>,</span>
@@ -617,40 +636,43 @@ by the <code>excluded</code> argument using
 <span>                                   min_support <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>                                   min_confidence <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
 <span><span class="va">rules_filtered</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 13</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 13</span></span></span>
 <span><span class="co">#&gt;   antecedent                                             consequent        </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> {Type=Quebec,conc=(500;Inf]}                           {uptake=(35;Inf]} </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> {Treatment=nonchilled,Type=Mississippi,conc=(200;500]} {uptake=(20;35]}  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> {Treatment=chilled,Type=Mississippi}                   {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> {Treatment=chilled,Type=Mississippi,conc=(200;500]}    {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> {Type=Mississippi,conc=(-Inf;200]}                     {uptake=(-Inf;20]}</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> {Treatment=nonchilled,Type=Mississippi,conc=(200;500]} {uptake=(20;35]}  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> {Treatment=chilled,Type=Mississippi}                   {uptake=(-Inf;20]}</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> {Treatment=chilled,Type=Mississippi,conc=(200;500]}    {uptake=(-Inf;20]}</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> {Type=Mississippi,conc=(-Inf;200]}                     {uptake=(-Inf;20]}</span></span>
 <span><span class="co">#&gt;   support confidence coverage conseq_support  lift count antecedent_length    pp</span></span>
 <span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   0.143      1        0.143          0.298  3.36    12                 2    12</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   0.107      1        0.107          0.345  2.90     9                 3     9</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   0.226      0.905    0.25           0.357  2.53    19                 2    19</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>   0.107      1        0.107          0.357  2.8      9                 3     9</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>   0.131      0.917    0.143          0.357  2.57    11                 2    11</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   0.107      1        0.107          0.345  2.90     9                 3     9</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   0.226      0.905    0.25           0.357  2.53    19                 2    19</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   0.107      1        0.107          0.357  2.8      9                 3     9</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>   0.131      0.917    0.143          0.357  2.57    11                 2    11</span></span>
 <span><span class="co">#&gt;      pn    np    nn</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     0    13    59</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     0    20    55</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     2    11    52</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     0    21    54</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     1    19    53</span></span></code></pre></div>
-<p>By excluding known tautologies, the search focuses on genuinely
-interesting patterns and can run significantly faster on large
-datasets.</p>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     0    20    55</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     2    11    52</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     0    21    54</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     1    19    53</span></span></code></pre></div>
+<p>By providing known axioms, the search skips rules whose consequent
+can be deduced from their antecedent, and also prunes rules that contain
+redundant antecedent predicates (deducible from the remaining antecedent
+predicates). This focuses the results on genuinely interesting patterns
+and can run significantly faster on large datasets.</p>
 </div>
 <div class="section level3">
-<h3 id="manually-specifying-exclusions">Manually Specifying Exclusions<a class="anchor" aria-label="anchor" href="#manually-specifying-exclusions"></a>
+<h3 id="manually-specifying-axioms">Manually Specifying Axioms<a class="anchor" aria-label="anchor" href="#manually-specifying-axioms"></a>
 </h3>
 <p>You can also construct the <code>excluded</code> list manually. Each
-element is a character vector of elements that should not appear
-together in a rule:</p>
+element is a character vector representing an implication (axiom): all
+elements except the last form the antecedent and the last element is the
+consequent:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Filter out rules by tautology "Treatment=chilled =&gt; Type=Mississippi"</span></span>
+<code class="sourceCode R"><span><span class="co"># Axiom: "Treatment=chilled =&gt; Type=Mississippi"</span></span>
+<span><span class="co"># Any rule whose consequent is "Type=Mississippi" and whose antecedent contains</span></span>
+<span><span class="co"># "Treatment=chilled" will be excluded, because the consequent is deducible</span></span>
+<span><span class="co"># from the antecedent via this axiom.</span></span>
 <span><span class="va">manual_excluded</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Treatment=chilled"</span>, <span class="st">"Type=Mississippi"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">rules_manual</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dig_associations.html">dig_associations</a></span><span class="op">(</span><span class="va">crisp_co2</span>,</span>
@@ -660,30 +682,24 @@ together in a rule:</p>
 <span>                                 min_support <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>                                 min_confidence <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
 <span><span class="va">rules_manual</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 13</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 13</span></span></span>
 <span><span class="co">#&gt;   antecedent                                             consequent        </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> {Type=Quebec,conc=(500;Inf]}                           {uptake=(35;Inf]} </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> {Treatment=nonchilled,Type=Mississippi,conc=(200;500]} {uptake=(20;35]}  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> {Treatment=chilled,Type=Mississippi}                   {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> {Treatment=chilled,Type=Mississippi,conc=(200;500]}    {uptake=(-Inf;20]}</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> {Type=Mississippi,conc=(-Inf;200]}                     {uptake=(-Inf;20]}</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> {Type=Mississippi,conc=(-Inf;200]}                     {uptake=(-Inf;20]}</span></span>
 <span><span class="co">#&gt;   support confidence coverage conseq_support  lift count antecedent_length    pp</span></span>
 <span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   0.143      1        0.143          0.298  3.36    12                 2    12</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   0.107      1        0.107          0.345  2.90     9                 3     9</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   0.226      0.905    0.25           0.357  2.53    19                 2    19</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>   0.107      1        0.107          0.357  2.8      9                 3     9</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>   0.131      0.917    0.143          0.357  2.57    11                 2    11</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   0.131      0.917    0.143          0.357  2.57    11                 2    11</span></span>
 <span><span class="co">#&gt;      pn    np    nn</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     0    13    59</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     0    20    55</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     2    11    52</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     0    21    54</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     1    19    53</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     1    19    53</span></span></code></pre></div>
 <p>This is useful when you have domain knowledge about which
-combinations are trivial or undesirable, without needing to run
+implications are trivially true or undesirable, without needing to run
 <code><a href="../reference/dig_tautologies.html">dig_tautologies()</a></code> first.</p>
 </div>
 </div>
@@ -713,10 +729,13 @@ membership using t-norms (<code>"goguen"</code>, <code>"goedel"</code>,
 <code><a href="../reference/add_interest.html">add_interest()</a></code> to evaluate rules from multiple perspectives
 (conviction, leverage, Jaccard, GUHA quantifiers, and many
 more).</p></li>
-<li><p><strong>Excluding tautologies</strong> with the
+<li><p><strong>Excluding entailed rules</strong> with the
 <code>excluded</code> argument and <code><a href="../reference/dig_tautologies.html">dig_tautologies()</a></code>
-removes trivial or uninteresting rules and speeds up the
-search.</p></li>
+removes rules whose consequent is deducible from the antecedent via
+known axioms (near-tautologies / implications), and also prunes rules
+with redundant antecedent predicates (deducible from the remaining
+predicates). This speeds up the search and focuses results on genuinely
+interesting patterns.</p></li>
 </ol>
 <p>For further details, consult the function documentation:
 <code><a href="../reference/dig_associations.html">dig_associations()</a></code>, <code><a href="../reference/add_interest.html">add_interest()</a></code>,

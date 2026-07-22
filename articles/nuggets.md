@@ -261,8 +261,8 @@ vignette covers these capabilities in depth, including:
     [`remove_almost_constant()`](https://beerda.github.io/nuggets/reference/remove_almost_constant.md)
     to identify and filter uninformative columns
   - [`dig_tautologies()`](https://beerda.github.io/nuggets/reference/dig_tautologies.md)
-    to find always-true or almost-always-true rules that can be used to
-    prune search spaces
+    to find data-driven implications (axioms / near-tautologies) that
+    can be used to prune search spaces via the `excluded` argument
 - **Custom labels** for predicates to make discovered patterns more
   interpretable
 

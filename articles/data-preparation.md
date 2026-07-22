@@ -1226,19 +1226,27 @@ redundant conditions in subsequent pattern discovery.
 
 ### What are Tautologies?
 
-A tautology in this context is a rule of the form
-`{a1 & a2 & ... & an} => {c}` where the antecedent (left side) almost
-always implies the consequent (right side). These are rules that hold
-with very high confidence in your specific dataset.
+In logic, a *tautology* is a formula that is always true regardless of
+data. In practice,
+[`dig_tautologies()`](https://beerda.github.io/nuggets/reference/dig_tautologies.md)
+finds rules with very high — but not necessarily perfect — confidence in
+the dataset. Such empirically near-certain rules are often called
+**implications** (because they describe an `A => C` relationship that
+almost always holds) or **axioms** (because they can be assumed to hold
+and used as starting assumptions for pruning). The terms *tautology*,
+*implication*, and *axiom* are used interchangeably in the `nuggets`
+documentation; the precise distinction is a matter of logical philosophy
+and does not affect how the functions work.
 
 For example, in a dataset about vehicles, you might discover: -
 `engine_type=electric => fuel_type=electricity` (confidence ≈ 1.0) -
 `manual_transmission=TRUE => automatic_transmission=FALSE` (confidence =
 1.0)
 
-Such tautological rules, while true, may not provide interesting
-insights for further analysis. Identifying them allows you to exclude
-similar conditions from more complex pattern searches.
+Such rules may or may not provide interesting insights on their own.
+However, they are useful as axioms: knowing them allows subsequent
+searches to skip redundant or entailed patterns, which both reduces
+clutter and speeds up the search.
 
 ### Using `dig_tautologies()`
 
@@ -1276,7 +1284,7 @@ tautologies <- dig_tautologies(
 )
 
 print(tautologies)
-#> # A tibble: 54 × 13
+#> # A tibble: 59 × 13
 #>    antecedent            consequent  support confidence coverage conseq_support
 #>    <chr>                 <chr>         <dbl>      <dbl>    <dbl>          <dbl>
 #>  1 {gear=3}              {am=0}        0.469      1        0.469          0.594
@@ -1301,7 +1309,7 @@ print(tautologies)
 #>  8  1.78  3.98                 1  3.98 0      14.0   14  
 #>  9  2.11  3.93                 1  3.93 0.0513 11.1   16.9
 #> 10  2.29  3.98                 1  3.98 0      10.0   18  
-#> # ℹ 44 more rows
+#> # ℹ 49 more rows
 ```
 
 The function returns a tibble in the same format as
@@ -1334,14 +1342,37 @@ include:
 
 ### Using Tautologies to Filter Searches
 
-Once you’ve identified tautologies, you can use them with the `excluded`
-argument of [`dig()`](https://beerda.github.io/nuggets/reference/dig.md)
-or related functions to avoid generating similar conditions:
+Once you’ve identified tautologies (axioms), you can use them with the
+`excluded` argument of
+[`dig()`](https://beerda.github.io/nuggets/reference/dig.md) or related
+functions such as
+[`dig_associations()`](https://beerda.github.io/nuggets/reference/dig_associations.md).
+The `excluded` argument accepts a list of known **implications
+(axioms)** in the format produced by
+[`parse_condition()`](https://beerda.github.io/nuggets/reference/parse_condition.md).
+Each axiom is a character vector where all elements except the last form
+the condition (i.e. the antecedent in
+[`dig_associations()`](https://beerda.github.io/nuggets/reference/dig_associations.md))
+and the last element is the focus (i.e. the consequent in
+[`dig_associations()`](https://beerda.github.io/nuggets/reference/dig_associations.md)):
+`c(cond1, cond2, ..., condn, focus)`.
+
+The axioms are used to prune the search via the modus ponens inference
+rule: - A focus (consequent) is excluded if it can be deduced from the
+condition (antecedent) using the axioms (transitive deduction). - A rule
+is pruned entirely if any predicate in the condition (antecedent) can be
+deduced from the remaining condition predicates using the axioms.
+
+To convert
+[`dig_tautologies()`](https://beerda.github.io/nuggets/reference/dig_tautologies.md)
+results to the `excluded` format, pass both the antecedent *and* the
+consequent columns to
+[`parse_condition()`](https://beerda.github.io/nuggets/reference/parse_condition.md):
 
 ``` r
 
-# Convert tautologies to excluded format
-excluded_conditions <- parse_condition(tautologies$antecedent)
+# Convert tautologies to the excluded (axioms) format
+excluded_conditions <- parse_condition(tautologies$antecedent, tautologies$consequent)
 
 # Use in subsequent pattern search
 results <- dig_associations(
@@ -1349,14 +1380,14 @@ results <- dig_associations(
     antecedent = !starts_with("am"),
     consequent = starts_with("am"),
     disjoint = disj,
-    excluded = excluded_conditions,  # Exclude tautological patterns
+    excluded = excluded_conditions,
     min_support = 0.1,
     min_confidence = 0.8
 )
 ```
 
 This approach can significantly reduce computation time and help focus
-on more interesting patterns.
+on genuinely interesting patterns.
 
 ## Summary
 
@@ -1383,8 +1414,13 @@ This vignette covered the essential data preparation techniques in the
     that have low variability.
 
 3.  **[`dig_tautologies()`](https://beerda.github.io/nuggets/reference/dig_tautologies.md)**:
-    A function for finding tautological rules in your data, which can be
-    used to filter subsequent pattern searches.
+    A function for finding data-driven implications (axioms /
+    near-tautologies) in your data. The results can be passed to the
+    `excluded` argument of
+    [`dig()`](https://beerda.github.io/nuggets/reference/dig.md) and
+    related functions to prune the search space via modus ponens,
+    speeding up discovery and focusing on genuinely interesting
+    patterns.
 
 With these tools, you can effectively prepare your data for pattern
 discovery using the various `dig_*()` functions provided by the
