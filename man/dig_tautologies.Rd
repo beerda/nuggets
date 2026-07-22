@@ -101,6 +101,7 @@ d <- partition(mtcars, .breaks = 2)
 dig_tautologies(d,
                 antecedent = everything(),
                 consequent = everything(),
+                max_length = 3,
                 min_confidence = 0.99)
 }
 \author{

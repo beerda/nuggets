@@ -85,6 +85,7 @@
 #' dig_tautologies(d,
 #'                 antecedent = everything(),
 #'                 consequent = everything(),
+#'                 max_length = 3,
 #'                 min_confidence = 0.99)
 #' @export
 dig_tautologies <- function(x,
