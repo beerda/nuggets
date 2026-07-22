@@ -1,7 +1,6 @@
-# nuggets 2.3.0
-- released: ???
-- implemented sparse bit chain for fast computation of dig() on sparse crisp
-  data
+# nuggets 2.2.2
+- released: 2026-07-22
+- optimized dig() on sparse crisp data (by implementing sparse bit chain)
 - added clustering characteristics to explore() for association rules
 - fixed handling of axioms in dig() and dig_*() function (arg "excluded")
 - fixed handling of NA values in partition()
