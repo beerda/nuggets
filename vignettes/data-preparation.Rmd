@@ -738,12 +738,13 @@ prepared_data <- remove_almost_constant(prepared_data,
 
 
 
-# Finding Tautologies in Data
+# Finding Tautologies and Using Them as Axioms
 
 After preparing your data with `partition()` or other methods, it can be useful 
 to identify tautologies—rules that are always or almost always true in your 
 dataset. The `dig_tautologies()` function helps find such patterns, which can 
-then be used to filter out redundant conditions in subsequent pattern discovery.
+then be used as **axioms** to prune redundant conditions in subsequent pattern
+discovery.
 
 
 ## What are Tautologies?
@@ -756,9 +757,18 @@ For example, in a dataset about vehicles, you might discover:
 - `engine_type=electric => fuel_type=electricity` (confidence ≈ 1.0)
 - `manual_transmission=TRUE => automatic_transmission=FALSE` (confidence = 1.0)
 
-Such tautological rules, while true, may not provide interesting insights for 
-further analysis. Identifying them allows you to exclude similar conditions 
-from more complex pattern searches.
+Such tautological rules can be treated as **axioms**: known implications that
+the framework uses to prune uninteresting or redundant patterns via
+**modus ponens**. Two types of pruning are applied (transitively, possibly via
+a chain of multiple axiom applications):
+
+- **Condition pruning**: a condition is dropped if it contains all antecedent
+  predicates of some axiom together with the consequent of that axiom, since
+  the consequent is then redundant (it can be deduced from the remaining
+  predicates).
+- **Focus/consequent pruning**: a focus (or rule consequent) is dropped if it
+  equals the consequent of some axiom whose antecedent predicates are all
+  present in the condition (the focus is already implied by the condition).
 
 
 ## Using `dig_tautologies()`
@@ -823,12 +833,14 @@ Key parameters for `dig_tautologies()` include:
 
 ## Using Tautologies to Filter Searches
 
-Once you've identified tautologies, you can use them with the `excluded` 
-argument of `dig()` or related functions to avoid generating similar conditions:
+Once you've identified tautologies, convert them to the axiom format expected
+by the `excluded` argument using `parse_condition()`, and pass them to
+`dig()` or related functions:
 
 ```{r, eval=FALSE}
-# Convert tautologies to excluded format
-excluded_conditions <- parse_condition(tautologies$antecedent)
+# Convert tautologies to axiom format
+excluded_conditions <- parse_condition(tautologies$antecedent,
+                                       tautologies$consequent)
 
 # Use in subsequent pattern search
 results <- dig_associations(

@@ -329,11 +329,20 @@ example, rules that follow directly from the structure of the data (e.g.,
 **tautologies**. While technically valid, they are often uninteresting and
 can clutter results or slow down the search.
 
-The `excluded` argument of `dig_associations()` allows you to specify a
-list of predicate combinations that should never appear together in
-generated rules. Note that the term "tautology" here is used broadly - any rule
-you consider uninteresting (regardless of whether its confidence is exactly 1)
-can be excluded this way.
+The `excluded` argument of `dig_associations()` accepts a list of known
+implications (axioms), where each element is a character vector of the form
+`c(a1, a2, ..., an, c)` encoding the axiom `a1 & a2 & ... & an => c` (the
+last element is the consequent). These axioms are used to prune rules via
+**modus ponens** — transitively, possibly via a chain of multiple axiom
+applications:
+
+- **Condition pruning**: a condition is dropped if it contains all antecedent
+  predicates of some axiom together with the consequent of that axiom, since
+  the consequent is then redundant (it can be deduced from the remaining
+  predicates).
+- **Focus/consequent pruning**: a focus (or rule consequent) is dropped if it
+  equals the consequent of some axiom whose antecedent predicates are all
+  present in the condition (the focus is already implied by the condition).
 
 
 ## Finding Tautologies with `dig_tautologies()`
@@ -356,12 +365,12 @@ tautologies
 
 ## Using Tautologies to Filter Association Rules
 
-Once tautologies are identified, convert them to the format expected by the
-`excluded` argument using `parse_condition()`, and pass them to
+Once tautologies are identified, convert them to the axiom format expected by
+the `excluded` argument using `parse_condition()`, and pass them to
 `dig_associations()`:
 
 ```{r}
-# Convert tautologies to the excluded format
+# Convert tautologies to axiom format
 excluded_conds <- parse_condition(tautologies$antecedent,
                                   tautologies$consequent)
 
@@ -382,7 +391,7 @@ patterns and can run significantly faster on large datasets.
 ## Manually Specifying Exclusions
 
 You can also construct the `excluded` list manually. Each element is a
-character vector of elements that should not appear together in a rule:
+character vector `c(a1, ..., an, c)` encoding the axiom `a1 & ... & an => c`:
 
 ```{r}
 # Filter out rules by tautology "Treatment=chilled => Type=Mississippi"
