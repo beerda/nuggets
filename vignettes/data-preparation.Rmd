@@ -811,9 +811,7 @@ containing rules with their quality measures (support, confidence, etc.).
 Key parameters for `dig_tautologies()` include:
 
 - **`antecedent`** and **`consequent`**: Tidyselect expressions defining which 
-  columns can appear on each side of the rule. These correspond to `condition`
-  and `focus` in the general `dig()` function; the terms are interchangeable
-  across the `dig_*()` family.
+  columns can appear on each side of the rule.
   
 - **`disjoint`**: A vector specifying mutually exclusive predicates (predicates 
   that should not appear together in the same condition).
@@ -824,7 +822,7 @@ Key parameters for `dig_tautologies()` include:
 - **`min_support`**: The minimum support threshold. This ensures the tautology 
   is based on a sufficient number of observations.
   
-- **`max_length`**: The maximum number of predicates in the antecedent (condition).
+- **`max_length`**: The maximum number of predicates in the antecedent.
 
 - **`t_norm`**: The t-norm to use for fuzzy conjunction (`"goedel"`, `"goguen"`, 
   or `"lukas"`).
@@ -837,7 +835,8 @@ argument of `dig()` or related functions such as `dig_associations()`. The
 `excluded` argument accepts a list of known **implications (axioms)** in the
 format produced by `parse_condition()`.
 Each axiom is a character vector where all elements except the last form the
-condition (antecedent) and the last element is the focus (consequent):
+condition (i.e. the antecedent in `dig_associations()`) and the last element is
+the focus (i.e. the consequent in `dig_associations()`):
 `c(cond1, cond2, ..., condn, focus)`.
 
 The axioms are used to prune the search via the modus ponens inference rule:
