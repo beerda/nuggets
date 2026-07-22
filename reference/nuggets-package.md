@@ -24,9 +24,9 @@ Useful links:
 
 - <https://beerda.github.io/nuggets/>
 
-- <https://github.com/beerda/nuggets/>
+- <https://github.com/beerda/nuggets>
 
-- Report bugs at <https://github.com/beerda/nuggets/issues/>
+- Report bugs at <https://github.com/beerda/nuggets/issues>
 
 ## Author
 
