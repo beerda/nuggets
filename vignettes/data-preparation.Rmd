@@ -766,13 +766,13 @@ encodes one axiom: the last element is the consequent and all preceding elements
 are the antecedent. Rules are pruned via modus ponens:
 
 - A rule's condition (antecedent) is pruned if it contains a predicate that can 
-  be deduced from the other condition predicates using any axiom. This happens 
-  when the condition contains all antecedent predicates of some axiom together 
-  with the consequent—the consequent is then redundant.
+  be deduced from the other condition predicates using the axioms, possibly via 
+  a chain of multiple axiom applications (transitive deduction). Such a predicate
+  is redundant.
   
 - A rule's focus (consequent) is pruned if it can be deduced from the condition 
-  predicates. This happens when the condition contains all antecedent predicates 
-  of some axiom and the focus equals the consequent of that axiom.
+  predicates using the axioms, possibly via a chain of multiple axiom applications
+  (transitive deduction).
 
 ```{r, eval=FALSE}
 # Convert tautologies to axiom format for the excluded argument
