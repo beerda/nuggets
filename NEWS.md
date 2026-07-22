@@ -2,6 +2,7 @@
 - released: ???
 - implemented sparse bit chain for fast computation of dig() on sparse crisp
   data
+- fixed handling of axioms in dig() and dig_*() function (arg "excluded")
 - added clustering characteristics to explore() for association rules
 
 # nuggets 2.2.1
