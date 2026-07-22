@@ -14,8 +14,8 @@ A framework for systematic exploration of association rules (Agrawal et al., 199
 Useful links:
 \itemize{
   \item \url{https://beerda.github.io/nuggets/}
-  \item \url{https://github.com/beerda/nuggets/}
-  \item Report bugs at \url{https://github.com/beerda/nuggets/issues/}
+  \item \url{https://github.com/beerda/nuggets}
+  \item Report bugs at \url{https://github.com/beerda/nuggets/issues}
 }
 
 }
