@@ -107,14 +107,20 @@
 #'   groups of predicates. Columns in the same group cannot appear together in
 #'   a condition. With data from [partition()], use [var_names()] on column
 #'   names to construct `disjoint`.
-#' @param excluded `NULL` or a list of character vectors, each representing an
-#'   implication formula. In each vector, all but the last element form the
-#'   antecedent and the last element is the consequent. These formulae are
-#'   treated as *tautologies* and used to filter out generated conditions. If
-#'   a condition contains both the antecedent and the consequent of any such
-#'   formula, it is not passed to the callback function `f`. Likewise, if a
-#'   condition contains the antecedent, the corresponding focus (the consequent)
-#'   is not passed to `f`.
+#' @param excluded `NULL` or a list of character vectors, each representing a
+#'   known implication (axiom). In each vector, all but the last element form
+#'   the antecedent and the last element is the consequent. The axioms are used
+#'   to prune generated rules via the modus ponens inference rule:
+#'   \itemize{
+#'     \item A condition is pruned if it contains a predicate that can be
+#'       deduced from the remaining condition predicates using the axioms,
+#'       possibly via a chain of multiple axiom applications (transitive
+#'       deduction). Such a predicate is redundant.
+#'     \item A focus is pruned if it can be deduced from the condition
+#'       predicates using the axioms, possibly via a chain of multiple
+#'       axiom applications (transitive deduction).
+#'   }
+#'   The list of axioms can be obtained, for example, from [dig_tautologies()].
 #' @param min_length Minimum number of predicates in a condition required to
 #'   trigger the callback `f`. Must be \eqn{\ge 0}. If set to 0, the empty
 #'   condition also triggers the callback.

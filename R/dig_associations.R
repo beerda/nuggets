@@ -75,9 +75,22 @@
 #'      present together in a single condition. If `x` is prepared with
 #'      [partition()], using the [var_names()] function on `x`'s column names
 #'      is a convenient way to create the `disjoint` vector.
-#' @param excluded NULL or a list of character vectors, where each character vector
-#'      contains the names of columns that must not appear together in a single
-#'      antecedent.
+#' @param excluded `NULL` or a list of character vectors, each representing a
+#'      known implication (axiom). In each vector, all but the last element
+#'      form the antecedent and the last element is the consequent. The axioms
+#'      are used to prune generated rules via the modus ponens inference rule:
+#'      \itemize{
+#'        \item A rule is pruned if its antecedent contains a predicate that
+#'          can be deduced from the remaining antecedent predicates using the
+#'          axioms, possibly via a chain of multiple axiom applications
+#'          (transitive deduction). Such a predicate is redundant.
+#'        \item A rule's consequent is pruned (the whole rule is excluded) if
+#'          it can be deduced from the rule's antecedent using the axioms,
+#'          possibly via a chain of multiple axiom applications (transitive
+#'          deduction).
+#'      }
+#'      The list of axioms can be obtained, for example, from
+#'      [dig_tautologies()].
 #' @param min_length the minimum length, i.e., the minimum number of predicates in the
 #'      antecedent, of a rule to be generated. Value must be greater or equal to 0.
 #'       If 0, rules with empty antecedent are generated in the first place.
