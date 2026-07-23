@@ -139,6 +139,9 @@
 #' @return An S3 object, which is an instance of `nugget` class, and which is
 #'      a tibble with found patterns. Each row represents a single call of
 #'      the callback function `f`.
+#'      The `nugget` object also contains metadata about the search
+#'      process that are stored in attributes of the list, which can be
+#'      accessed using [attributes()].
 #' @author Michal Burda
 #' @seealso [dig()], [var_grid()]; see also [dig_correlations()] and
 #'     [dig_paired_baseline_contrasts()], as they are using this function internally.

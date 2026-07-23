@@ -147,7 +147,7 @@ List runDig(const List& data,
     BLOCK_TIMER(bt, "runDig - run");
     digger.run();
 
-    return storage.getResult();
+    return digger.getResult();
 }
 
 
@@ -207,7 +207,7 @@ List runDigAssoc(const List& data,
     digger.run();
     STOP_TIMER(t2);
 
-    return storage.getResult();
+    return digger.getResult();
 }
 
 

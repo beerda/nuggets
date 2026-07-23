@@ -1,6 +1,7 @@
 # nuggets 2.3.0
 - released: ???
 - added `permute()`
+- added `"search_stats"` attribute to each result of `dig*()` functions
 
 # nuggets 2.2.2
 - released: 2026-07-22

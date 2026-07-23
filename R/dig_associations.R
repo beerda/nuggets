@@ -142,8 +142,12 @@
 #'          \item `arg_verbose` - name of the argument `verbose`
 #'          \item `arg_threads` - name of the argument `threads`
 #'      }
-#' @returns An S3 object, which is an instance of `associations` and `nugget`
-#'     classes, and which is a tibble with found patterns and computed quality measures.
+#' @return An S3 object, which is an instance of `associations` and `nugget`
+#'     classes, and which is a tibble with found patterns and computed quality
+#'     measures.
+#'     The `nugget` object also contains metadata about the search
+#'     process that are stored in attributes of the list, which can be
+#'     accessed using [attributes()].
 #' @author Michal Burda
 #' @seealso [partition()], [var_names()], [dig()]
 #' @examples

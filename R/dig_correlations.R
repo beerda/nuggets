@@ -96,6 +96,9 @@
 #' @param threads the number of threads to use for parallel computation.
 #' @return An S3 object which is an instance of `correlations` and `nugget`
 #'      classes and which is tibble with found patterns.
+#'      The `nugget` object also contains metadata about the search
+#'      process that are stored in attributes of the list, which can be
+#'      accessed using [attributes()].
 #' @author Michal Burda
 #' @seealso [dig()], [stats::cor.test()]
 #' @examples

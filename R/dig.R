@@ -194,7 +194,11 @@
 #'     \item `arg_threads` – name of the argument `threads`
 #'     \item `call` – environment in which to evaluate error messages
 #'   }
-#' @returns A list of results returned by the callback function `f`.
+#' @return An S3 object of class `nugget`, which is a list of objects returned
+#'     by the callback `f`. The list may be empty if no conditions satisfied the
+#'     filtering criteria. The `nugget` object also contains metadata about the
+#'     search process that are stored in attributes of the list, which can be
+#'     accessed using [attributes()].
 #' @seealso [partition()], [var_names()], [dig_grid()]
 #' @author Michal Burda
 #'

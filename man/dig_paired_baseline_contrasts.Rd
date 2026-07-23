@@ -167,6 +167,9 @@ For the \code{"t"} method, the following additional columns are also
 present (see also \code{\link[=t.test]{t.test()}}):
 \item{df}{the degrees of freedom of the t test.}
 \item{stderr}{the standard error of the mean difference.}
+The \code{nugget} object also contains metadata about the search
+process that are stored in attributes of the list, which can be
+accessed using \code{\link[=attributes]{attributes()}}.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}

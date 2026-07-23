@@ -156,6 +156,9 @@ string
 An S3 object, which is an instance of \code{nugget} class, and which is
 a tibble with found patterns. Each row represents a single call of
 the callback function \code{f}.
+The \code{nugget} object also contains metadata about the search
+process that are stored in attributes of the list, which can be
+accessed using \code{\link[=attributes]{attributes()}}.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}

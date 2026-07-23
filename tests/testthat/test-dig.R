@@ -1623,6 +1623,12 @@ test_that("dig return object details", {
     expect_equal(attr(res, "call_args")$max_results, 1000)
     expect_equal(attr(res, "call_args")$verbose, TRUE)
     expect_equal(attr(res, "call_args")$threads, 1)
+    expect_true(is.list(attr(res, "search_stats")))
+    expect_true(attr(res, "search_stats")$runtime_millis > 0.0)
+    expect_true(attr(res, "search_stats")$computed_conjunctions >= 0)
+    expect_true(attr(res, "search_stats")$cached_conjunctions >= 0)
+    expect_equal(attr(res, "search_stats")$total_conjunctions,
+                 attr(res, "search_stats")$computed_conjunctions + attr(res, "search_stats")$cached_conjunctions)
 })
 
 

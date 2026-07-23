@@ -163,7 +163,11 @@ than those of \code{dig()}. The list must contain:
 }}
 }
 \value{
-A list of results returned by the callback function \code{f}.
+An S3 object of class \code{nugget}, which is a list of objects returned
+by the callback \code{f}. The list may be empty if no conditions satisfied the
+filtering criteria. The \code{nugget} object also contains metadata about the
+search process that are stored in attributes of the list, which can be
+accessed using \code{\link[=attributes]{attributes()}}.
 }
 \description{
 A general function for searching for patterns of a custom type. The function

@@ -78,8 +78,8 @@ to \code{Inf} will generate all possible conditions.}
 }
 \value{
 An S3 object which is an instance of \code{associations} and \code{nugget}
-classes and which is a tibble with found tautologies in the format equal to
-the output of \code{\link[=dig_associations]{dig_associations()}}.
+classes and which is a tibble with found tautologies in the format equal
+to the output of \code{\link[=dig_associations]{dig_associations()}}.
 }
 \description{
 This function finds tautologies (data-driven axioms) in a dataset, i.e.,

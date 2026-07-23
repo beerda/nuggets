@@ -23,12 +23,13 @@
 
 #include "../common.h"
 #include "../timer.h"
-#include "Config.h"
-#include "CombinatorialProgress.h"
-#include "ChainCollection.h"
-#include "Selector.h"
 #include "Cache.h"
+#include "Config.h"
+#include "ChainCollection.h"
+#include "CombinatorialProgress.h"
 #include "DeductionEngine.h"
+#include "SearchStats.h"
+#include "Selector.h"
 
 
 template <typename CHAIN, typename STORAGE>
@@ -41,6 +42,7 @@ public:
            STORAGE& storage)
         : storage(storage),
           config(config),
+          searchStats(),
           initialCollection(data, isCondition, isFocus),
           predicateSums(data.size() + 1),
           selectorSingleton(initialCollection.focusCount()),
@@ -65,6 +67,7 @@ public:
 
     void run()
     {
+        searchStats.startTimer();
         START_TIMER(t, "Digger::run");
 
         ChainCollection<CHAIN> filteredCollection;
@@ -96,11 +99,21 @@ public:
 
         // free the protection from R's garbage collector
         UNPROTECT(1);
+        searchStats.stopTimer();
+    }
+
+    List getResult() const
+    {
+        List result = storage.getResult();
+        result.attr("search_stats") = searchStats.asR();
+
+        return result;
     }
 
 private:
     STORAGE& storage;
     const Config& config;
+    SearchStats searchStats;
     ChainCollection<CHAIN> initialCollection;
     vector<double> predicateSums;
     Selector selectorSingleton;
@@ -191,6 +204,7 @@ private:
                 && (!isDerivableConditionOnly(conditionChain, secondChain))
                 && (!isDerivableFocusOnly(conditionChain, secondChain))) {
             CHAIN newChain(conditionChain, secondChain);
+            searchStats.incrementComputedConjunctions();
             addSumToCache(newChain);
             if (isCandidate(newChain)) {
                 target.append(std::move(newChain));
@@ -209,6 +223,7 @@ private:
                 // the secondChain is cached and therefore not condition-only
                 && (!isDerivableFocusOnly(conditionChain, secondChain))) {
             CHAIN newChain(conditionChain, secondChain, 0);
+            searchStats.incrementCachedConjunctions();
             double sum = getSumFromCache(newChain);
 
             // not being in the cache means that the conjunction is redundant
