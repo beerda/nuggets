@@ -26,6 +26,20 @@
 
 class Config {
 public:
+    // Disable copy
+    Config(const Config&) = delete;
+    Config& operator=(const Config&) = delete;
+
+    // Allow move
+    Config(Config&&) = default;
+    Config& operator=(Config&&) = default;
+
+    /**
+     * Constructs a new Config object from the given configuration list and names vector.
+     *
+     * @param configuration A list containing configuration parameters.
+     * @param namesVector A character vector containing names for predicates.
+     */
     Config(const List& configuration, const CharacterVector& namesVector)
     {
         BLOCK_TIMER(bt, "Config::Config - load config");
