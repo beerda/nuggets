@@ -188,6 +188,7 @@ private:
         BLOCK_INC_TIMER(st, t, "Digger::combineByConjunction");
 
         if (isNonRedundant(conditionChain, secondChain)
+                && (!isDerivableConditionOnly(conditionChain, secondChain))
                 && (!isDerivableFocusOnly(conditionChain, secondChain))) {
             CHAIN newChain(conditionChain, secondChain);
             addSumToCache(newChain);
@@ -204,6 +205,8 @@ private:
         BLOCK_INC_TIMER(st, t, "Digger::combineByCache");
 
         if (isNonRedundant(conditionChain, secondChain)
+                // no need to test for isDerivableConditionOnly here, because
+                // the secondChain is cached and therefore not condition-only
                 && (!isDerivableFocusOnly(conditionChain, secondChain))) {
             CHAIN newChain(conditionChain, secondChain, 0);
             double sum = getSumFromCache(newChain);
@@ -216,6 +219,16 @@ private:
                 }
             }
         }
+    }
+
+    inline bool isDerivableConditionOnly(const CHAIN& conditionChain, const CHAIN& secondChain)
+    {
+        if (secondChain.isConditionOnly()) {
+            return deductionEngine.isDerivableWithout(conditionChain.getClause(),
+                                                      secondChain.getClause().back());
+        }
+
+        return false;
     }
 
     inline bool isDerivableFocusOnly(const CHAIN& conditionChain, const CHAIN& secondChain)
