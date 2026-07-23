@@ -22,7 +22,7 @@ searchStatsTable <- function(rules) {
     if (is.null(aa)) {
         df <- data.frame()
     } else {
-        df <- data.frame(c("Run time [ms]:",
+        df <- data.frame(c("Search run time [ms]:",
                            "Computed conjunctions:",
                            "Cached conjunctions:",
                            "Total conjunctions:"),
@@ -33,5 +33,5 @@ searchStatsTable <- function(rules) {
                          stringsAsFactors = FALSE)
     }
 
-    infoTable(df)
+    infoTable(df, class = "hlrows")
 }
