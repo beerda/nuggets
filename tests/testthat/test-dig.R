@@ -1189,19 +1189,6 @@ test_that("exclude tautology 1", {
 
 
 test_that("exclude tautology in full combinations", {
-    getPermutations <- function(x) {
-        if (length(x) == 1) {
-            return(x)
-        }
-        else {
-            res <- matrix(nrow = 0, ncol = length(x))
-            for (i in seq_along(x)) {
-                res <- rbind(res, cbind(x[i], Recall(x[-i])))
-            }
-            return(res)
-        }
-    }
-
     f <- function(condition, foci_supports) {
         paste(paste(sort(names(condition)), collapse = "&"),
               "|",
@@ -1212,7 +1199,7 @@ test_that("exclude tautology in full combinations", {
                             b = rep(T, 10),
                             c = rep(T, 10))
 
-    permutations <- getPermutations(seq_len(ncol(orig_data)))
+    permutations <- permute(seq_len(ncol(orig_data)))
 
     # loop through all permutations of columns
     for (row in seq_len(nrow(permutations))) {

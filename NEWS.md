@@ -1,3 +1,7 @@
+# nuggets 2.3.0
+- released: ???
+- added `permute()`
+
 # nuggets 2.2.2
 - released: 2026-07-22
 - optimized `dig()` on sparse crisp data (by implementing sparse bit chain)
