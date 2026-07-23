@@ -125,11 +125,9 @@ private:
             if (isExtendable(chain)) {
                 for (size_t i = 0; i < collection.conditionCount(); ++i) {
                     ChainCollection<CHAIN> childCollection;
-
                     CHAIN& chain = collection[i];
                     auto batch = progress->createBatch(chain.getClause().size(),
                                                        collection.conditionCount() - i - 1);
-
                     {
                         BLOCK_INC_TIMER(st, t, "Digger::processChildrenChains - for loop");
 
@@ -145,7 +143,6 @@ private:
                             // do not need childCollection at all
                         }
                     }
-
                     processChildrenChains(chain, childCollection);
                 }
             }
@@ -190,7 +187,8 @@ private:
     {
         BLOCK_INC_TIMER(st, t, "Digger::combineByConjunction");
 
-        if (isNonRedundant(conditionChain, secondChain)) {
+        if (isNonRedundant(conditionChain, secondChain)
+                && (!isDerivableFocusOnly(conditionChain, secondChain))) {
             CHAIN newChain(conditionChain, secondChain);
             addSumToCache(newChain);
             if (isCandidate(newChain)) {
@@ -205,7 +203,8 @@ private:
     {
         BLOCK_INC_TIMER(st, t, "Digger::combineByCache");
 
-        if (isNonRedundant(conditionChain, secondChain)) {
+        if (isNonRedundant(conditionChain, secondChain)
+                && (!isDerivableFocusOnly(conditionChain, secondChain))) {
             CHAIN newChain(conditionChain, secondChain, 0);
             double sum = getSumFromCache(newChain);
 
@@ -217,6 +216,16 @@ private:
                 }
             }
         }
+    }
+
+    inline bool isDerivableFocusOnly(const CHAIN& conditionChain, const CHAIN& secondChain)
+    {
+        if (secondChain.isFocusOnly()) {
+            return deductionEngine.isDerivableWithout(conditionChain.getClause(),
+                                                      secondChain.getClause().back());
+        }
+
+        return false;
     }
 
     inline bool isNonRedundant(const CHAIN& parent, const CHAIN& chain) const

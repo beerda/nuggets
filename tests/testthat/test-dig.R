@@ -1274,33 +1274,20 @@ test_that("complex exclude tautology test", {
     }
 
     excl <- list(c("a", "b", "c"),
-                 c("c", "d"),
-                 c("e", "f"),
-                 c("f", "e"))
+                 c("c", "d"))
 
     orig_data <- data.frame(a = rep(T, 10),
                             b = rep(T, 10),
                             c = rep(T, 10),
                             d = rep(T, 10),
-                            e = rep(T, 10),
-                            f = rep(T, 10))
+                            e = rep(T, 10))
 
     permutations <- permute(seq_len(ncol(orig_data)))
-
-    expected <- sort(c(" | a,b,c,d,e,f",
-                       "a | b,c,d,e,f", "b | a,c,d,e,f", "c | a,b,e,f", "d | a,b,c,e,f", "e | a,b,c,d", "f | a,b,c,d",
-                       "a&b | e,f", "a&c | b,e,f", "a&d | b,c,e,f", "a&e | b,c,d", "a&f | b,c,d",
-                       "b&c | a,e,f", "b&d | a,c,e,f", "b&e | a,c,d", "b&f | a,c,d",
-                       "c&e | a,b", "c&f | a,b",
-                       "d&e | a,b,c", "d&f | a,b,c",
-                       "a&c&e | b", "a&c&f | b", "a&d&e | b,c", "a&d&f | b,c",
-                       "b&c&e | a", "b&c&f | a", "b&d&e | a,c", "b&d&f | a,c"))
 
     # loop through all permutations of columns
     for (row in seq_len(nrow(permutations))) {
         d <- orig_data[, permutations[row, ], drop = FALSE]
 
-        # full list of combinations
         res <- dig(d,
                    f = f,
                    condition = everything(),
@@ -1308,8 +1295,60 @@ test_that("complex exclude tautology test", {
                    filter_empty_foci = TRUE,
                    excluded = excl,
                    min_support = 0.0001)
-        res <- unlist(res)
-        expect_equal(sort(res), expected)
+        res <- sort(unlist(res))
+        expect_equal(res,
+                     sort(c(" | a,b,c,d,e",
+                            "a | b,c,d,e", "b | a,c,d,e", "c | a,b,e", "d | a,b,c,e", "e | a,b,c,d",
+                            "a&b | e", "a&c | b,e", "a&d | b,c,e", "a&e | b,c,d",
+                            "b&c | a,e", "b&d | a,c,e", "b&e | a,c,d",
+                            "c&e | a,b",
+                            "d&e | a,b,c",
+                            "a&c&e | b", "a&d&e | b,c",
+                            "b&c&e | a", "b&d&e | a,c")))
+
+        res <- dig(d,
+                   f = f,
+                   condition = c(a, b, c),
+                   focus = everything(),
+                   filter_empty_foci = TRUE,
+                   excluded = excl,
+                   min_support = 0.0001)
+        res <- sort(unlist(res))
+        expect_equal(res,
+                     sort(c(" | a,b,c,d,e",
+                            "a | b,c,d,e", "b | a,c,d,e", "c | a,b,e",
+                            "a&b | e", "a&c | b,e",
+                            "b&c | a,e")))
+
+        res <- dig(d,
+                   f = f,
+                   condition = everything(),
+                   focus = c(d, e),
+                   filter_empty_foci = TRUE,
+                   excluded = excl,
+                   min_support = 0.0001)
+        res <- sort(unlist(res))
+        expect_equal(res,
+                     sort(c(" | d,e",
+                            "a | d,e", "b | d,e", "c | e", "d | e", "e | d",
+                            "a&b | e", "a&c | e", "a&d | e", "a&e | d",
+                            "b&c | e", "b&d | e", "b&e | d")))
+
+        res <- dig(d,
+                   f = f,
+                   condition = c(a, b, c),
+                   focus = c(d, e),
+                   filter_empty_foci = TRUE,
+                   excluded = excl,
+                   min_support = 0.0001)
+        res <- sort(unlist(res))
+        expect_equal(res,
+                     sort(c(" | d,e",
+                            "a | d,e", "b | d,e", "c | e",
+                            "a&b | e", "a&c | e",
+                            "b&c | e")),
+                     info = as.character(row))
+
     }
 })
 

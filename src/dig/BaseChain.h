@@ -177,6 +177,20 @@ public:
     inline bool isCondition() const
     { return predicateType != FOCUS; }
 
+    /**
+     * Returns TRUE if the predicate may appear only in the condition (antecedent),
+     * i.e., if the chain is of type CONDITION.
+     */
+    inline bool isConditionOnly() const
+    { return predicateType == CONDITION; }
+
+    /**
+     * Returns TRUE if the predicate may appear only in the focus (consequent),
+     * i.e., if the chain is of type FOCUS.
+     */
+    inline bool isFocusOnly() const
+    { return predicateType == FOCUS; }
+
     inline static Clause mergeClauses(const Clause& a, const Clause& b)
     {
         BLOCK_INC_TIMER(st, t, "BaseChain::mergeClauses");
