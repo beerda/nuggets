@@ -77,7 +77,9 @@ public:
         for (size_t i = 0; i < initialCollection.size(); ++i) {
             CHAIN& chain = initialCollection[i];
             addSumToCache(chain);
-            if (isNonRedundant(emptyChain, chain) && isCandidate(chain)) {
+            if (isNonRedundant(emptyChain, chain)
+                    && isCandidate(chain)
+                    && !isDerivableFromAxioms(chain)) {
                 filteredCollection.append(std::move(chain));
             }
         }
@@ -234,6 +236,12 @@ private:
                 }
             }
         }
+    }
+
+    inline bool isDerivableFromAxioms(const CHAIN& chain)
+    {
+        return deductionEngine.isDerivableWithout(Clause(),
+                                                  chain.getClause().back());
     }
 
     inline bool isDerivableConditionOnly(const CHAIN& conditionChain, const CHAIN& secondChain)

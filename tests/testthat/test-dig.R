@@ -1234,6 +1234,21 @@ test_that("exclude tautology in full combinations", {
                             "a | b,c", "b | a,c", "c | a,b",
                             "a&b | c", "a&c | b", "b&c | a")))
 
+        # filter by tautology ( => a)
+        res <- dig(d,
+                   f = f,
+                   condition = everything(),
+                   focus = everything(),
+                   filter_empty_foci = FALSE,
+                   excluded = list(c("a")),
+                   min_support = 0.0001)
+        res <- unlist(res)
+        expect_equal(sort(res),
+                     sort(c(" | b,c",
+                            "b | c", "c | b",
+                            "b&c | ")))
+
+
         # filter by tautology (a => b)
         res <- dig(d,
                    f = f,
@@ -1349,6 +1364,96 @@ test_that("complex exclude tautology test", {
                             "b&c | e")),
                      info = as.character(row))
 
+    }
+})
+
+
+test_that("complex exclude tautology test based on condition/focus variants", {
+    f <- function(condition, foci_supports) {
+        res <- list()
+        for (focus in names(foci_supports)) {
+            res <- c(res,
+                     paste(paste0("c_", sort(names(condition)), collapse = " "), "|", paste0("f_", focus)))
+        }
+
+        res
+    }
+
+    excl <- list(c("a", "b"))
+
+    orig_expected <- c("c_ | f_a", "c_ | f_b", "c_ | f_c", "c_ | f_d", "c_ | f_e",
+                       "c_a | f_c", "c_a | f_d", "c_a | f_e",
+                       "c_b | f_a", "c_b | f_c", "c_b | f_d", "c_b | f_e",
+                       "c_c | f_a", "c_c | f_b", "c_c | f_d", "c_c | f_e",
+                       "c_d | f_a", "c_d | f_b", "c_d | f_c", "c_d | f_e",
+                       "c_a c_c | f_d", "c_a c_c | f_e",
+                       "c_a c_d | f_c", "c_a c_d | f_e",
+                       "c_b c_c | f_a", "c_b c_c | f_d", "c_b c_c | f_e",
+                       "c_b c_d | f_a", "c_b c_d | f_c", "c_b c_d | f_e",
+                       "c_c c_d | f_a", "c_c c_d | f_b", "c_c c_d | f_e",
+                       "c_a c_c c_d | f_e",
+                       "c_b c_c c_d | f_a", "c_b c_c c_d | f_e")
+
+    orig_data <- data.frame(a = rep(T, 10),
+                            b = rep(T, 10),
+                            c = rep(T, 10),
+                            d = rep(T, 10),
+                            e = rep(T, 10))
+
+    permutations <- permute(seq_len(ncol(orig_data)))
+    selected_permutations <- seq(from = 1,
+                                 to = nrow(permutations),
+                                 length.out = min(10, nrow(permutations)))
+    selected_permutations <- unique(round(selected_permutations))
+
+    # Uncomment this for all permutations:
+    # selected_permutations <- seq_len(nrow(permutations))
+
+    # loop through all permutations of columns
+    for (row in selected_permutations) {
+        d <- orig_data[, permutations[row, ], drop = FALSE]
+
+        for (a_type in 1:3) {
+            for (b_type in 1:3) {
+                for (c_type in 1:3) {
+                    for (d_type in 1:3) {
+                        cond <- NULL
+                        focus <- "e"
+                        if (a_type == 1 || a_type == 2) cond <- c(cond, "a")
+                        if (a_type == 2 || a_type == 3) focus <- c(focus, "a")
+                        if (b_type == 1 || b_type == 2) cond <- c(cond, "b")
+                        if (b_type == 2 || b_type == 3) focus <- c(focus, "b")
+                        if (c_type == 1 || c_type == 2) cond <- c(cond, "c")
+                        if (c_type == 2 || c_type == 3) focus <- c(focus, "c")
+                        if (d_type == 1 || d_type == 2) cond <- c(cond, "d")
+                        if (d_type == 2 || d_type == 3) focus <- c(focus, "d")
+
+                        res <- dig(d,
+                                   f = f,
+                                   condition = all_of(cond),
+                                   focus = all_of(focus),
+                                   filter_empty_foci = TRUE,
+                                   excluded = excl,
+                                   min_support = 0.0001)
+                        res <- sort(unlist(res))
+
+                        expected <- orig_expected
+                        if (!"a" %in% cond) expected <- expected[!grepl("c_a", expected)]
+                        if (!"b" %in% cond) expected <- expected[!grepl("c_b", expected)]
+                        if (!"c" %in% cond) expected <- expected[!grepl("c_c", expected)]
+                        if (!"d" %in% cond) expected <- expected[!grepl("c_d", expected)]
+                        if (!"a" %in% focus) expected <- expected[!grepl("f_a", expected)]
+                        if (!"b" %in% focus) expected <- expected[!grepl("f_b", expected)]
+                        if (!"c" %in% focus) expected <- expected[!grepl("f_c", expected)]
+                        if (!"d" %in% focus) expected <- expected[!grepl("f_d", expected)]
+                        if (!"e" %in% focus) expected <- expected[!grepl("f_e", expected)]
+
+                        expect_equal(res, sort(expected),
+                                     info = paste0("row=", row, ", a_type=", a_type, ", b_type=", b_type, ", c_type=", c_type))
+                    }
+                }
+            }
+        }
     }
 })
 
