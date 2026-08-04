@@ -32,9 +32,30 @@
 #include "Selector.h"
 
 
+/**
+ * A class that implements the main search algorithm for discovering rules in
+ * the data. It takes a chain type (CHAIN) and a storage type (STORAGE) as
+ * template parameters. The CHAIN type must be a descendant of the BaseChain
+ * class, and the STORAGE type must implement the store() method for storing
+ * discovered rules and the getResult() method for retrieving the final results.
+ * The Digger class is responsible for traversing the search space of chains,
+ * applying filters and conditions, and storing the valid rules in the provided
+ * storage.
+ */
 template <typename CHAIN, typename STORAGE>
 class Digger {
 public:
+    /**
+     * Constructs a new Digger instance with the given configuration, data, and
+     * storage.
+     *
+     * @param config The configuration object containing search parameters.
+     * @param data The input data as a List of LogicalVector or NumericVector.
+     * @param isCondition A LogicalVector indicating which predicates are
+     *     conditions.
+     * @param isFocus A LogicalVector indicating which predicates are foci.
+     * @param storage The storage object for storing discovered rules.
+     */
     Digger(const Config& config,
            const List& data,
            const LogicalVector& isCondition,
@@ -65,6 +86,13 @@ public:
     Digger(Digger&&) = default;
     Digger& operator=(Digger&&) = default;
 
+    /**
+     * Runs the search algorithm to discover rules in the data. It filters the
+     * initial collection of chains, processes child chains recursively, and
+     * stores valid rules in the provided storage. The search progress is
+     * displayed using a progress bar, and the search statistics are collected
+     * during the execution.
+     */
     void run()
     {
         searchStats.startTimer();
@@ -104,6 +132,13 @@ public:
         searchStats.stopTimer();
     }
 
+    /**
+     * Returns the final results of the search as a List of discovered rules and
+     * search statistics stored as an attribute "search_stats".
+     *
+     * @return A List containing the discovered rules and search statistics
+     *     stored as an attribute "search_stats".
+     */
     List getResult() const
     {
         List result = storage.getResult();
@@ -178,7 +213,8 @@ private:
             begin = parent.firstFocusIndex();
         }
 
-        size_t bothLen = (conditionChainIndex > parent.firstFocusIndex()) ? conditionChainIndex - parent.firstFocusIndex() : 0;
+        size_t bothLen = (conditionChainIndex > parent.firstFocusIndex())
+            ? conditionChainIndex - parent.firstFocusIndex() : 0;
 
         target.reserve(parent.size() - begin + bothLen);
         for (size_t i = begin; i < parent.size(); ++i) {
@@ -244,7 +280,8 @@ private:
                                                   chain.getClause().back());
     }
 
-    inline bool isDerivableConditionOnly(const CHAIN& conditionChain, const CHAIN& secondChain)
+    inline bool isDerivableConditionOnly(
+            const CHAIN& conditionChain, const CHAIN& secondChain)
     {
         if (secondChain.isConditionOnly()) {
             return deductionEngine.isDerivableWithout(conditionChain.getClause(),
@@ -254,7 +291,8 @@ private:
         return false;
     }
 
-    inline bool isDerivableFocusOnly(const CHAIN& conditionChain, const CHAIN& secondChain)
+    inline bool isDerivableFocusOnly(
+            const CHAIN& conditionChain, const CHAIN& secondChain)
     {
         if (secondChain.isFocusOnly()) {
             return deductionEngine.isDerivableWithout(conditionChain.getClause(),
@@ -319,7 +357,8 @@ private:
     inline bool isStorable(const Selector& selector) const
     { return (!config.hasFilterEmptyFoci() || selector.getSelectedCount() > 0); }
 
-    inline const Selector& initializeSelectorOfStorable(const CHAIN& chain, const ChainCollection<CHAIN>& collection)
+    inline const Selector& initializeSelectorOfStorable(
+            const CHAIN& chain, const ChainCollection<CHAIN>& collection)
     {
         bool constant = (config.getMinConditionalFocusSupport() <= 0.0)
                 && deductionEngine.empty();
