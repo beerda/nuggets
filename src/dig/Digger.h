@@ -148,16 +148,78 @@ public:
     }
 
 private:
+    /**
+     * The storage object for storing discovered rules.
+     */
     STORAGE& storage;
+
+    /**
+     * The configuration object containing search parameters.
+     */
     const Config& config;
+
+    /**
+     * The search statistics object for collecting statistics during the search.
+     */
     SearchStats searchStats;
+
+    /**
+     * The initial collection of chains to be processed. Each chain represents
+     * a predicate and its associated data, which correspond to input data
+     * column.
+     */
     ChainCollection<CHAIN> initialCollection;
+
+    /**
+     * A vector that stores the sums of TRUEs (for binary data) or membership degrees
+     * (for fuzzy data) for each predicate in the data. The index of the vector
+     * corresponds to the predicate ID, and the value at that index represents
+     * the sum of TRUEs or membership degrees for that predicate.
+     * The vector is indexed from 1 to match R's indexing convention, with
+     * index 0 reserved for the empty chain.
+     */
     vector<double> predicateSums;
+
+    /**
+     * A singleton Selector object used to avoid unnecessary allocations during
+     * the search process.
+     */
     Selector selectorSingleton;
+
+    /**
+     * A cache object used to store computed sums of chains to avoid redundant
+     * calculations during the search process. The cache is indexed by the
+     * Clause object (itemset) and stores the corresponding sum of TRUEs or
+     * membership degrees.
+     */
     Cache cache;
+
+    /**
+     * A deduction engine used to check whether a predicate can be derived from
+     * the initial axioms. It is used to filter out redundant chains during the
+     * search process. The axioms come from the config.getExcluded() list.
+     */
     DeductionEngine deductionEngine;
+
+    /**
+     * A pointer to a CombinatorialProgress object used to track the progress of
+     * the search process. It provides a progress bar and allows for incremental
+     * updates of the search progress. The progress object is created and deleted
+     * dynamically during the search process.
+     */
     CombinatorialProgress* progress;
 
+    /**
+     * Processes the child chains of a given chain recursively. It takes a chain
+     * as a prefix and creates new chains by combining the prefix with each of
+     * the remaining chains in the collection. The mehtod calls recursively
+     * itself to process the child chains of each newly created chain.
+     *
+     * @param chain The prefix chain to be combined with the remaining chains in
+     *     the collection.
+     * @param collection The collection of chains to be combined with the prefix
+     *     chain.
+     */
     void processChildrenChains(const CHAIN& chain, ChainCollection<CHAIN>& collection)
     {
         if (!config.hasFilterEmptyFoci() || collection.hasFoci()) {
@@ -199,6 +261,26 @@ private:
         }
     }
 
+    /**
+     * Take a parent chain collection and combine the condition chain at the
+     * given index with other chains in the collection. The resulting chains are
+     * stored in the target collection. The method can be configured to combine
+     * only with foci chains or with also other chains in the collection.
+     *
+     * If onlyFoci is false, the selected chain is combined with all chains that
+     * come after it in the collection, and also with all foci chains that come
+     * before it in the collection. This ensures that all possible combinations
+     * of chains are considered, while avoiding redundant combinations.
+     *
+     * If onlyFoci is true, the selected chain is combined with all foci.
+     *
+     * @param target The target collection to store the resulting chains.
+     * @param parent The parent collection containing the chains to be combined.
+     * @param conditionChainIndex The index of the condition chain in the parent
+     *     collection to be combined with other chains.
+     * @param onlyFoci A boolean flag indicating whether to combine only with foci
+     *    chains (true) or with all chains in the collection (false).
+     */
     void combine(ChainCollection<CHAIN>& target,
                  ChainCollection<CHAIN>& parent,
                  const size_t conditionChainIndex,
@@ -232,6 +314,14 @@ private:
         }
     }
 
+    /**
+     * Combines two chains by computing truth values of their conjunction and
+     * storing the resulting chain in the target collection.
+     *
+     * @param target The target collection to store the resulting chain.
+     * @param conditionChain The first chain to be combined.
+     * @param secondChain The second chain to be combined.
+     */
     inline void combineByConjunction(ChainCollection<CHAIN>& target,
                               const CHAIN& conditionChain,
                               const CHAIN& secondChain)
@@ -250,6 +340,14 @@ private:
         }
     }
 
+    /**
+     * Combines two chains by retrieving the sum of their conjunction from the
+     * cache and storing the resulting chain in the target collection.
+     *
+     * @param target The target collection to store the resulting chain.
+     * @param conditionChain The first chain to be combined.
+     * @param secondChain The second chain to be combined.
+     */
     inline void combineByCache(ChainCollection<CHAIN>& target,
                         const CHAIN& conditionChain,
                         const CHAIN& secondChain)
@@ -274,12 +372,42 @@ private:
         }
     }
 
+    /**
+     * Checks if the last predicate of the Clause stored in the given chain can
+     * be derived from the initial axioms in the deduction engine. If the
+     * predicate can be derived, it means that the chain is redundant and should
+     * not be considered for further processing. By initial axioms we mean
+     * implications with an empty antecedent.
+     *
+     * This check is used to filter out redundant predicates during the creation
+     * of the initial collection of chains, ensuring that only non-redundant
+     * chains are processed further in the search algorithm.
+     *
+     * @param chain The chain to be checked for derivability from the initial
+     *     axioms.
+     * @return true if the last predicate of the Clause in the chain can be
+     *     derived from the initial axioms, false otherwise.
+     */
     inline bool isDerivableFromAxioms(const CHAIN& chain)
     {
         return deductionEngine.isDerivableWithout(Clause(),
                                                   chain.getClause().back());
     }
 
+    /**
+     * If the second chain is condition-only (not both condition and focus),
+     * this method checks if the last predicate of the Clause stored in the
+     * second chain can be derived from initial axioms and predicates of the
+     * Clause stored in the first chain.
+     *
+     * @param conditionChain The first chain, whose predicates are used as
+     *     initial axioms for the derivation check.
+     * @param secondChain The second chain to be checked for derivability.
+     * @return true if the second chain is condition-only and the last predicate
+     *     of the Clause in the second chain can be derived from the initial
+     *     axioms and predicates of the Clause in the first chain, false
+     *     otherwise.
+     */
     inline bool isDerivableConditionOnly(
             const CHAIN& conditionChain, const CHAIN& secondChain)
     {
@@ -291,6 +419,20 @@ private:
         return false;
     }
 
+    /**
+     * If the second chain is focus-only (not both condition and focus),
+     * this method checks if the last predicate of the Clause stored in the
+     * second chain can be derived from initial axioms and predicates of the
+     * Clause stored in the first chain.
+     *
+     * @param conditionChain The first chain, whose predicates are used as
+     *     initial axioms for the derivation check.
+     * @param secondChain The second chain to be checked for derivability.
+     * @return true if the second chain is focus-only and the last predicate
+     *     of the Clause in the second chain can be derived from the initial
+     *     axioms and predicates of the Clause in the first chain, false
+     *     otherwise.
+     */
     inline bool isDerivableFocusOnly(
             const CHAIN& conditionChain, const CHAIN& secondChain)
     {
@@ -302,6 +444,20 @@ private:
         return false;
     }
 
+    /**
+     * Checks if the last predicate of the Clause stored in the given chain is
+     * non-redundant with respect to the last predicate of the Clause stored in
+     * the parent chain. Two predicates are considered redundant if they belong
+     * to the same disjoint set, as defined in the configuration. If the parent
+     * chain is empty, the method returns true, indicating that the chain is
+     * non-redundant.
+     *
+     * @param parent The parent chain to compare against.
+     * @param chain The chain to be checked for non-redundancy.
+     * @return true if the last predicate of the Clause in the chain is
+     *     non-redundant with respect to the last predicate of the Clause in the
+     *     parent chain, false otherwise.
+     */
     inline bool isNonRedundant(const CHAIN& parent, const CHAIN& chain) const
     {
         if (parent.getClause().size() > 0) {
@@ -322,6 +478,16 @@ private:
         return true;
     }
 
+    /**
+     * Checks if the given chain is a candidate for further processing.
+     * A chain is considered a candidate if it is either a condition
+     * chain with a sum greater than or equal to the minimum sum specified in
+     * the configuration, or a focus chain with a sum greater than or equal to
+     * the minimum focus sum specified in the configuration.
+     *
+     * @param chain The chain to be checked for candidacy.
+     * @return true if the chain is a candidate for storage, false otherwise.
+     */
     inline bool isCandidate(const CHAIN& chain) const
     {
         if (chain.isCondition() && chain.getSum() >= config.getMinSum()) {
@@ -334,6 +500,12 @@ private:
         return false;
     }
 
+    /**
+     * Checks if the given chain can be extended further based on its properties.
+     *
+     * @param chain The chain to be checked for extendability.
+     * @return true if the chain can be extended further, false otherwise.
+     */
     inline bool isExtendable(const CHAIN& chain) const
     {
         bool res = chain.getClause().size() < config.getMaxLength()
@@ -343,6 +515,12 @@ private:
         return res;
     }
 
+    /**
+     * Checks if the given chain is storable based on its properties.
+     *
+     * @param chain The chain to be checked for storability.
+     * @return true if the chain is storable, false otherwise.
+     */
     inline bool isStorable(const CHAIN& chain)
     {
         bool res = chain.getClause().size() >= config.getMinLength()
@@ -354,9 +532,25 @@ private:
         return res;
     }
 
+    /**
+     * Checks if the given selector is storable based on its properties.
+     *
+     * @param selector The selector to be checked for storability.
+     * @return true if the selector is storable, false otherwise.
+     */
     inline bool isStorable(const Selector& selector) const
     { return (!config.hasFilterEmptyFoci() || selector.getSelectedCount() > 0); }
 
+    /**
+     * Initializes the singleton Selector object for the given chain and
+     * collection. The selector determines which foci in the collection are
+     * selected for storage based on the support, derivability and other
+     * criteria.
+     *
+     * @param chain The chain for which the selector is being initialized.
+     * @param collection The collection of chains to be used for initializing the selector.
+     * @return A reference to the initialized singleton Selector object.
+     */
     inline const Selector& initializeSelectorOfStorable(
             const CHAIN& chain, const ChainCollection<CHAIN>& collection)
     {
@@ -376,6 +570,13 @@ private:
         return selectorSingleton;
     }
 
+    /**
+     * Adds the sum of the given chain to the cache. The chain is cloned and sorted
+     * before being added to the cache to ensure that the cache is indexed by a
+     * consistent representation of the chain's Clause.
+     *
+     * @param chain The chain whose sum is to be added to the cache.
+     */
     inline void addSumToCache(const CHAIN& chain)
     {
         BLOCK_INC_TIMER(st, t, "Digger::addSumToCache");
@@ -385,6 +586,13 @@ private:
         cache.add(clause, chain.getSum());
     }
 
+    /**
+     * Retrieves the sum of the given chain from the cache. The chain is cloned and
+     * sorted before being used to look up the sum in the cache to ensure that the
+     * cache is indexed by a consistent representation of the chain's Clause.
+     *
+     * @param chain The chain whose sum is to be retrieved from the cache.
+     */
     inline double getSumFromCache(const CHAIN& chain) const
     {
         BLOCK_INC_TIMER(st, t, "Digger::getSumFromCache");

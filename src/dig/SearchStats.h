@@ -22,6 +22,10 @@
 #include "../common.h"
 
 
+/**
+ * Tracks statistics of the search process, including runtime and counts of
+ * computed and cached conjunctions.
+ */
 class SearchStats {
 public:
     // Disable copy
@@ -32,23 +36,44 @@ public:
     SearchStats(SearchStats&&) = default;
     SearchStats& operator=(SearchStats&&) = default;
 
+    /**
+     * Constructs a new SearchStats instance with initial values.
+     */
     SearchStats()
         : computedConjunctions(0),
           cachedConjunctions(0)
     { }
 
+    /**
+     * Starts the timer for measuring runtime.
+     */
     inline void startTimer()
     {  start = std::chrono::steady_clock::now(); }
 
+    /**
+     * Stops the timer for measuring runtime.
+     */
     inline void stopTimer()
     {  stop = std::chrono::steady_clock::now(); }
 
+    /**
+     * Increments the count of computed conjunctions.
+     */
     inline void incrementComputedConjunctions()
     { computedConjunctions++; }
 
+    /**
+     * Increments the count of cached conjunctions.
+     */
     inline void incrementCachedConjunctions()
     { cachedConjunctions++; }
 
+    /**
+     * Returns the search statistics as an R List, including runtime in milliseconds,
+     * counts of computed and cached conjunctions, and total conjunctions.
+     *
+     * @return A List containing the search statistics.
+     */
     inline List asR() const
     {
         double runtime = std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count()
@@ -61,8 +86,24 @@ public:
     }
 
 private:
+    /**
+     * The starting time point of the search process.
+     */
     std::chrono::steady_clock::time_point start;
+
+    /**
+     * The stopping time point of the search process.
+     */
     std::chrono::steady_clock::time_point stop;
+
+    /**
+     * The count of conjunctions that were computed during the search process.
+     */
     size_t computedConjunctions;
+
+    /**
+     * The count of conjunctions that were retrieved from the cache during the
+     * search process.
+     */
     size_t cachedConjunctions;
 };

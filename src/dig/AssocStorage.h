@@ -25,10 +25,23 @@
 #include "Selector.h"
 
 
+/**
+ * A class applicable for STORAGE template parameter of Digger. It is the storage
+ * for discovered association rules. For each condition/focus combination, an
+ * association rule is created and stored in the rules vector. Association
+ * rule is represented by an antecedent, consequent, and various statistics.
+ */
 template <typename CHAIN>
 class AssocStorage {
+    /**
+     * The initial capacity of the rules vector. It is used to reserve memory for
+     * the rules vector to avoid frequent reallocations during the search process.
+     */
     static constexpr size_t INITIAL_RESULT_CAPACITY = 1024;
 
+    /**
+     * A structure representing an association rule.
+     */
     struct Rule {
         double focusSum;
         double chainSum;
@@ -39,6 +52,11 @@ class AssocStorage {
     };
 
 public:
+    /**
+     * Constructs a new AssocStorage instance with the given configuration.
+     *
+     * @param config The configuration object containing search parameters.
+     */
     AssocStorage(const Config& config)
         : rules(),
           config(config)
@@ -58,6 +76,12 @@ public:
     AssocStorage(AssocStorage&&) = default;
     AssocStorage& operator=(AssocStorage&&) = default;
 
+    /**
+     * For given condition chain and collection of focus chains, creates
+     * association rules and stores them in the rules vector. Condition chain
+     * represents the antecedent of the rule, and each focus chain represents a
+     * consequent.
+     */
     void store(const CHAIN& chain,
                const ChainCollection<CHAIN>& collection,
                const Selector& selector,
@@ -87,9 +111,22 @@ public:
         }
     }
 
+    /**
+     * Returns the number of stored association rules.
+     */
     inline size_t size() const
     { return rules.size(); }
 
+    /**
+     * Returns the stored association rules as a List of R vectors. Each vector
+     * corresponds to a property of the rules, such as antecedent, consequent,
+     * support, confidence, coverage, etc. A single rule is represented by the
+     * values at the same index in each vector. The list may be easily
+     * transformed into a data frame in R with columns corresponding to the
+     * list elements.
+     *
+     * @return A List containing the stored association rules as R vectors.
+     */
     inline List getResult() const
     {
         CharacterVector antecedentVec(rules.size());
@@ -142,9 +179,21 @@ public:
     }
 
 private:
+    /**
+     * A vector of stored association rules.
+     */
     vector<Rule> rules;
+
+    /**
+     * The configuration object.
+     */
     const Config& config;
 
+    /**
+     * Formats the condition (antecedent) of a chain as a string representation.
+     * The condition is represented as a set of predicate names enclosed in
+     * curly braces.
+     */
     string formatCondition(const CHAIN& chain) const
     {
         const Clause& clause = chain.getClause();

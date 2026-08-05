@@ -25,6 +25,13 @@
 #include <vector>
 
 
+/**
+ * A class that implements a deduction engine for inferring predicates based on
+ * a set of implications. The engine can deduce predicates from a given set of
+ * initial predicates and check for redundancy among the initial predicates.
+ * It uses a forward-chaining algorithm to efficiently deduce new predicates
+ * based on the implications provided during construction.
+ */
 class DeductionEngine {
 public:
     // Disable copy

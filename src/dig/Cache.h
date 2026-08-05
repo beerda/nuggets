@@ -30,12 +30,28 @@
  */
 class Cache {
 public:
+    /**
+     * Constant representing a value that indicates that a Clause is not in the cache.
+     * This value is used to differentiate between Clauses that have been added to
+     * the cache and those that have not. When a Clause is not found in the cache,
+     * the get() method will return this constant value.
+     */
     static constexpr double NOT_IN_CACHE = -1.0;
 
     /**
      * Representation of a node in the cache tree
      */
     struct Node {
+        /**
+         * Constructs a new Node with the given predicate ID, sum, and sibling
+         * pointer.
+         *
+         * @param pid The predicate ID associated with this node.
+         * @param sum The sum of TRUEs or membership degrees for the Clause
+         *     represented by this node.
+         * @param sibling A pointer to the sibling node in the tree. This allows
+         *     for traversal of nodes at the same level.
+         */
         Node(size_t pid, double sum, Node* sibling)
             : predicateId(pid),
               sum(sum),
@@ -43,12 +59,23 @@ public:
               sibling(sibling)
         { }
 
+        /**
+         * Destructor for the Node class. It recursively deletes the child and
+         * sibling nodes to free up memory used by the cache tree.
+         */
         ~Node()
         {
             delete child;
             delete sibling;
         }
 
+        /**
+         * Returns the total number of nodes in the subtree rooted at this node,
+         * including this node itself. This method is useful for determining the
+         * size of the cache tree.
+         *
+         * @return The total number of nodes in the subtree rooted at this node.
+         */
         size_t size() const
         {
             size_t total = 1; // count this node
@@ -61,9 +88,25 @@ public:
             return total;
         }
 
+        /**
+         * The predicate ID associated with this node.
+         */
         size_t predicateId;
+
+        /**
+         * The sum of TRUEs or membership degrees for the Clause represented by
+         * this node.
+         */
         double sum;
+
+        /**
+         * Pointer to the child node in the tree.
+         */
         Node* child;
+
+        /**
+         * Pointer to the sibling node in the tree.
+         */
         Node* sibling;
     };
 
@@ -71,6 +114,10 @@ public:
      * Construct new cache of itemsets. It is assumed that predicates have
      * IDs starting from 1 (as in R), so the last predicate's ID is equal to
      * the number of predicates.
+     *
+     * @param rootSize The number of predicates in the data. This determines the
+     *    size of the root level of the cache tree, where each predicate ID
+     *    corresponds to a root node in the tree.
      */
     Cache(size_t rootSize)
         : rootSize(rootSize)
@@ -89,6 +136,10 @@ public:
     Cache(Cache&& other) = default;
     Cache& operator=(Cache&& other) = default;
 
+    /**
+     * Destructor for the Cache class. It deletes all nodes in the cache tree,
+     * freeing up memory used by the cache.
+     */
     ~Cache()
     {
         for (size_t i = 0; i < rootSize; ++i) {
@@ -97,6 +148,15 @@ public:
         delete[] children;
     }
 
+    /**
+     * Adds a Clause and its associated sum to the cache. The Clause is expected
+     * to be sorted in ascending order. If the Clause is already present in the
+     * cache, an exception is thrown.
+     *
+     * @param clause The Clause (itemset) to be added to the cache.
+     * @param sum The sum of TRUEs or membership degrees associated with the
+     *     Clause.
+     */
     void add(const Clause& clause, double sum)
     {
         if (clause.empty())
@@ -131,6 +191,15 @@ public:
         }
     }
 
+    /**
+     * Retrieves the sum associated with a Clause from the cache. If the Clause
+     * is not found in the cache, the method returns NOT_IN_CACHE. The Clause is
+     * expected to be sorted in ascending order.
+     *
+     * @param clause The Clause (itemset) for which to retrieve the sum.
+     * @return The sum of TRUEs or membership degrees associated with the Clause,
+     *     or NOT_IN_CACHE if the Clause is not found in the cache.
+     */
     double get(const Clause& clause) const
     {
         if (clause.empty()) {
@@ -144,6 +213,13 @@ public:
         return node->sum;
     }
 
+    /**
+     * Returns the total number of nodes in the cache tree, including all root
+     * nodes and their descendants. This method is useful for determining the
+     * size of the cache.
+     *
+     * @return The total number of nodes in the cache tree.
+     */
     size_t size() const
     {
         size_t total = 0;
@@ -156,9 +232,31 @@ public:
     }
 
 private:
+    /**
+     * The number of predicates in the data. This determines the size of the root
+     * level of the cache tree, where each predicate ID corresponds to a root
+     * node in the tree.
+     */
     size_t rootSize;
-    Node** children; // array of root nodes for each predicate ID
 
+    /**
+     * An array of pointers to the root nodes of the cache tree, where each index
+     * corresponds to a predicate ID. The root nodes represent the first level
+     * of the cache tree, and each root node may have child nodes representing
+     * Clauses that include the corresponding predicate.
+     */
+    Node** children;
+
+    /**
+     * Recursively finds the node corresponding to a Clause in the cache tree.
+     * If the node does not exist, it is created. The method traverses the tree
+     * based on the predicate IDs in the Clause, creating new nodes as needed.
+     *
+     * @param begin An iterator pointing to the beginning of the Clause.
+     * @param end An iterator pointing to the end of the Clause.
+     * @param node A pointer to the current node in the cache tree.
+     * @return A pointer to the node corresponding to the Clause in the cache tree.
+     */
     inline Node* find(Clause::const_iterator begin,
                       Clause::const_iterator end,
                       Node* node) const

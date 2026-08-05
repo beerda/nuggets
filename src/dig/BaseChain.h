@@ -26,11 +26,31 @@
 
 /**
  * Base class for representation of a predicate and the corresponding chain
- * of values.
+ * of values. Descendants of this class can be used as the CHAIN template
+ * parameter of Digger.
+ *
+ * BaseChain handles the common functionality of chains, such as storing the
+ * clause (vector of predicate ids), the sum of TRUEs or membership degrees,
+ * and the predicate type (condition, focus, or both). Constructors are provided
+ * for creating chains from a single predicate, combining two chains, and
+ * creating an empty chain or chain with cached sum. (Chain with cached sum
+ * does not contain raw data, but only the sum of TRUEs or membership degrees,
+ * and as such, it is not suitable for further combination with other chains.)
  */
 class BaseChain {
 public:
-    static inline PredicateType createPredicateType(const bool isCondition, const bool isFocus)
+    /**
+     * Creates a predicate type based on the given boolean flags indicating
+     * whether the predicate is a condition and/or a focus. If both flags are
+     * false, an invalid_argument exception is thrown.
+     *
+     * @param isCondition A boolean flag indicating whether the predicate is
+     *     a condition.
+     * @param isFocus A boolean flag indicating whether the predicate is a focus.
+     * @return The corresponding PredicateType based on the flags.
+     */
+    static inline PredicateType createPredicateType(
+            const bool isCondition, const bool isFocus)
     {
         if (isCondition && isFocus) {
             return BOTH;
@@ -46,13 +66,21 @@ public:
     /**
      * Default constructor that creates an empty chain of type CONDITION with
      * empty clause.
+     *
+     * @param sum The sum of TRUEs (for binary data) or membership degrees
+     *     (for fuzzy data) of the chain.
      */
     BaseChain(double sum)
         : sum(sum),
           clause(),
           predicateType(CONDITION),
           cached(false)
-    { }
+    {
+        IF_DEBUG(
+            if (sum < 0.0)
+                throw invalid_argument("BaseChain: sum cannot be negative");
+        )
+    }
 
     /**
      * Constructor that creates a chain with the specified id, type and sum.
@@ -68,7 +96,12 @@ public:
           clause({ id }),
           predicateType(type),
           cached(false)
-    { }
+    {
+        IF_DEBUG(
+            if (sum < 0.0)
+                throw invalid_argument("BaseChain: sum cannot be negative");
+        )
+    }
 
     /**
      * Constructor that creates a chain by combining two chains with
@@ -95,6 +128,8 @@ public:
      *
      * @param a The first chain.
      * @param b The second chain.
+     * @param sum The sum of TRUEs (for binary data) or membership degrees
+     *     (for fuzzy data) of the chain.
      */
     BaseChain(const BaseChain& a, const BaseChain& b, const double sum)
         : sum(sum),
@@ -108,6 +143,9 @@ public:
 
             if (b.predicateType != PredicateType::BOTH)
                 throw invalid_argument("BaseChain: illegal conversion to FOCUS");
+
+            if (sum < 0.0)
+                throw invalid_argument("BaseChain: sum cannot be negative");
         )
     }
 
@@ -121,6 +159,9 @@ public:
 
     /**
      * Comparison (equality) operator.
+     *
+     * @param other The other BaseChain to compare with.
+     * @return True if the two BaseChains are equal and false otherwise.
      */
     inline bool operator==(const BaseChain& other) const
     {
@@ -131,12 +172,17 @@ public:
 
     /**
      * Comparison (inequality) operator.
+     *
+     * @param other The other BaseChain to compare with.
+     * @return True if the two BaseChains are not equal and false otherwise.
      */
     inline bool operator!=(const BaseChain& other) const
     { return !(*this == other); }
 
     /**
      * Returns the clause of the chain, i.e., the vector of predicate ids.
+     *
+     * @return The clause of the chain.
      */
     inline const Clause& getClause() const
     { return clause; }
@@ -144,28 +190,58 @@ public:
     /**
      * Returns the sum of TRUEs (for binary data) or membership degrees (for
      * fuzzy data) of the chain.
+     *
+     * @return The sum of TRUEs or membership degrees of the chain.
      */
     inline double getSum() const
     { return sum; }
 
+    /**
+     * Sets the sum of TRUEs (for binary data) or membership degrees (for
+     * fuzzy data) of the chain.
+     *
+     * @param newSum The new sum of TRUEs or membership degrees to set for the chain.
+     */
     inline void setSum(double newSum)
-    { sum = newSum; }
+    {
+        IF_DEBUG(
+            if (newSum < 0.0)
+                throw invalid_argument("BaseChain: sum cannot be negative");
+        )
+        sum = newSum;
+    }
 
     /**
      * Returns the type of the predicate represented by this chain.
+     *
+     * @return The type of the predicate (where it may appear - in condition,
+     *     focus, or in both positions).
      */
     inline PredicateType getPredicateType() const
     { return predicateType; }
 
+    /**
+      * Sets the type of the predicate represented by this chain.
+      *
+      * @param newType The new type of the predicate to set for the chain.
+      */
     inline void setPredicateType(PredicateType newType)
     { predicateType = newType; }
 
+    /**
+     * Returns TRUE if the sum is obtained from cache instead of being computed
+     * from data chains.
+     *
+     * @return True if the sum is obtained from cache, false otherwise.
+     */
     inline bool isCached() const
     { return cached; }
 
     /**
      * Returns TRUE if the predicate may appear in the focus (consequent),
      * i.e., if the chain is of type FOCUS or BOTH.
+     *
+     * @return True if the predicate may appear in the focus, false otherwise.
      */
     inline bool isFocus() const
     { return predicateType != CONDITION; }
@@ -173,6 +249,8 @@ public:
     /**
      * Returns TRUE if the predicate may appear in the condition (antecedent),
      * i.e., if the chain is of type CONDITION or BOTH.
+     *
+     * @return True if the predicate may appear in the condition, false otherwise.
      */
     inline bool isCondition() const
     { return predicateType != FOCUS; }
@@ -180,6 +258,8 @@ public:
     /**
      * Returns TRUE if the predicate may appear only in the condition (antecedent),
      * i.e., if the chain is of type CONDITION.
+     *
+     * @return True if the predicate may appear only in the condition, false otherwise.
      */
     inline bool isConditionOnly() const
     { return predicateType == CONDITION; }
@@ -187,10 +267,21 @@ public:
     /**
      * Returns TRUE if the predicate may appear only in the focus (consequent),
      * i.e., if the chain is of type FOCUS.
+     *
+     * @return True if the predicate may appear only in the focus, false otherwise.
      */
     inline bool isFocusOnly() const
     { return predicateType == FOCUS; }
 
+    /**
+     * Merges two clauses into a new clause by combining the predicate ids from
+     * both clauses. The clauses are expected to have the same size and identical
+     * prefixes, except for the last predicate id.
+     *
+     * @param a The first clause to merge.
+     * @param b The second clause to merge.
+     * @return A new clause containing the merged predicate ids from both clauses.
+     */
     inline static Clause mergeClauses(const Clause& a, const Clause& b)
     {
         BLOCK_INC_TIMER(st, t, "BaseChain::mergeClauses");

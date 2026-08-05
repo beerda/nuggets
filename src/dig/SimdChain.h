@@ -25,16 +25,37 @@
 #include "BaseChain.h"
 
 
+/**
+ * Implementation of a SIMD-accelerated chain of membership degrees.
+ *
+ * This class can be used as the CHAIN template parameter of Digger.
+ */
 template <TNorm TNORM>
 class SimdChain : public BaseChain {
 public:
-    // number of floats that fit into the SIMD register
+    /**
+     * Number of floats that fit into an AVX SIMD register.
+     */
     constexpr static size_t N_PACKED = 8;
 
+    /**
+     * Default constructor that creates an empty chain of type CONDITION with
+     * empty clause.
+     *
+     * @param sum The sum of membership degrees of the chain.
+     */
     SimdChain(float sum)
         : BaseChain(sum)
     { }
 
+    /**
+     * Constructor that creates a chain with the specified id, type and values.
+     *
+     * @param id The id of the predicate.
+     * @param type The type of the predicate (where it may appear - in
+     *     condition, focus, or in both positions).
+     * @param vec The logical values of the predicate.
+     */
     SimdChain(size_t id, PredicateType type, const LogicalVector& vec)
         : BaseChain(id, type, 0),
           data(vec.size(), 0.0)
@@ -48,6 +69,14 @@ public:
         setSum();
     }
 
+    /**
+     * Constructor that creates a chain with the specified id, type and values.
+     *
+     * @param id The id of the predicate.
+     * @param type The type of the predicate (where it may appear - in
+     *     condition, focus, or in both positions).
+     * @param vec The numeric membership degrees of the predicate.
+     */
     SimdChain(size_t id, PredicateType type, const NumericVector& vec)
         : BaseChain(id, type, 0),
           data(vec.size())
@@ -59,6 +88,13 @@ public:
         setSum();
     }
 
+    /**
+     * Constructor that creates a chain by combining two chains with
+     * a conjunction.
+     *
+     * @param a The first chain.
+     * @param b The second chain.
+     */
     SimdChain(const SimdChain& a, const SimdChain& b)
         : BaseChain(a, b),
           data(a.data.size())
@@ -120,6 +156,16 @@ public:
         setSum();
     }
 
+    /**
+     * Constructor that creates a chain by combining two chains with
+     * a conjunction. This constructor is used when the sum is
+     * already known and does not need to be computed from the conjunction of the
+     * two chains. Therefore, the chain is marked as cached.
+     *
+     * @param a The first chain.
+     * @param b The second chain.
+     * @param sum The cached sum of membership degrees.
+     */
     SimdChain(const SimdChain& a, const SimdChain& b, const double sum)
         : BaseChain(a, b, sum),
           data()
@@ -133,24 +179,60 @@ public:
     SimdChain(SimdChain&& other) = default;
     SimdChain& operator=(SimdChain&& other) = default;
 
+    /**
+     * Compares this chain with another chain for equality.
+     *
+     * @return TRUE if both chains contain the same metadata and values.
+     */
     inline bool operator==(const SimdChain& other) const
     { return BaseChain::operator==(other) && (data == other.data); }
 
+    /**
+     * Compares this chain with another chain for inequality.
+     *
+     * @return TRUE if the chains differ.
+     */
     inline bool operator!=(const SimdChain& other) const
     { return !(*this == other); }
 
+    /**
+     * Returns the membership degree at the specified index without bounds
+     * checking.
+     *
+     * @return The membership degree at the specified index.
+     */
     inline float operator[](const size_t index) const
     { return data[index]; }
 
+    /**
+     * Returns the membership degree at the specified index.
+     *
+     * @return The membership degree at the specified index.
+     */
     inline float at(const size_t index) const
     { return data.at(index); }
 
+    /**
+     * Returns the number of values in the chain.
+     *
+     * @return The number of values in the chain.
+     */
     inline size_t size() const
     { return data.size(); }
 
+    /**
+     * Checks whether the chain has no values.
+     *
+     * @return TRUE if the chain is empty.
+     */
     inline bool empty() const
     { return data.empty(); }
 
+    /**
+     * Returns a string representation of the chain.
+     *
+     * @return The string representation of the chain.
+     */
     inline string toString() const
     {
         stringstream res;
@@ -163,8 +245,14 @@ public:
     }
 
 private:
+    /**
+     * Aligned storage of membership degrees used by AVX operations.
+     */
     AlignedVector<float> data;
 
+    /**
+     * Computes and stores the sum of membership degrees using AVX.
+     */
     inline void setSum()
     {
         __m256 sumv = _mm256_set1_ps(0.0f);

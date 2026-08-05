@@ -22,12 +22,19 @@
 #include "../common.h"
 
 
+/**
+ * Clause is a class that represents a conjunction of predicates by storing their
+ * IDs in a vector.
+ */
 class Clause : public vector<size_t> {
 private:
     // Copy constructor is private, use clone() for public copy
     Clause(const Clause& other) = default;
 
 public:
+    /**
+     * Default constructor for Clause. Initializes an empty Clause.
+     */
     Clause() = default;
 
     // Disable copy (use clone() to copy)
@@ -37,17 +44,38 @@ public:
     Clause(Clause&& other) = default;
     Clause& operator=(Clause&& other) = default;
 
+    /**
+     * Constructs a Clause with a specified number of predicates.
+     *
+     * @param n The number of predicates in the Clause.
+     */
     Clause(size_t n)
         : vector<size_t>(n)
     { }
 
+    /**
+     * Constructs a Clause from an initializer list of predicate IDs.
+     *
+     * @param init An initializer list containing the predicate IDs.
+     */
     Clause(initializer_list<size_t> init)
         : vector<size_t>(init)
     { }
 
+    /**
+     * Creates a copy of the current Clause.
+     *
+     * @return A new Clause that is a copy of the current Clause.
+     */
     Clause clone() const
     { return Clause(*this); }
 
+    /**
+     * Comparison (equality) operator for Clause.
+     *
+     * @param other The other Clause to compare with.
+     * @return True if the two Clauses are equal, false otherwise.
+     */
     bool operator==(const Clause& other) const
     {
         if (size() != other.size())
@@ -61,18 +89,37 @@ public:
         return true;
     }
 
+    /**
+     * Sorts the predicate IDs in the Clause in ascending order.
+     */
     inline void sort()
     { std::sort(begin(), end()); }
 
+    /**
+     * Sorts the predicate IDs in the Clause in ascending order and removes
+     * duplicate predicate IDs.
+     */
     inline void sortAndUnique()
     {
         std::sort(begin(), end());
         erase(std::unique(begin(), end()), end());
     }
 
+    /**
+     * Checks if the Clause contains a specific predicate ID.
+     *
+     * @param predicate The predicate ID to check for.
+     * @return True if the Clause contains the specified predicate ID, false otherwise.
+     */
     inline bool contains(size_t predicate) const
     { return std::find(begin(), end(), predicate) != end(); }
 
+    /**
+     * Returns a string representation of the Clause in the format
+     * "{predicate1,predicate2,...}".
+     *
+     * @return A string representation of the Clause.
+     */
     inline string toString() const
     {
         stringstream res;
