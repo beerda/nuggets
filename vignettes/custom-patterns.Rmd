@@ -32,14 +32,15 @@ functions such as `dig_associations()` and `dig_correlations()`. Use it when
 you want to keep the search over conditions, but define your own evaluation
 logic.
 
-This vignette focuses on how to write the callback function and how to control
-the search. For preparation of crisp and fuzzy predicates, see
-`vignette("data-preparation")`. For ready-made pattern types, also see
-`vignette("association-rules")` and `vignette("nuggets")`.
+This vignette focuses on how to use the `dig()` function: how to write the
+callback function and how to control the search. For preparation of crisp and
+fuzzy predicates, see `vignette("data-preparation")`.
+
+Examples in this vignette require loading the following packages:
 
 ```{r, message = FALSE}
 library(nuggets)
-library(dplyr)
+library(dplyr)     # for data manipulation
 ```
 
 
