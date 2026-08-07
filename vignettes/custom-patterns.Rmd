@@ -260,15 +260,9 @@ remaining focus and returns only those foci that pass the support and confidence
 thresholds:
 
 ```{r}
-fuzzy_mtcars <- mtcars |>
-    mutate(cyl = factor(cyl, levels = c(4, 6, 8), labels = c("four", "six", "eight"))) |>
-    partition(cyl, vs:gear, .method = "dummy") |>
-    partition(mpg, .method = "triangle", .breaks = c(-Inf, 15, 20, 30, Inf)) |>
-    partition(disp:carb, .method = "triangle", .breaks = 3)
+iris_disj <- var_names(colnames(crisp_iris))
 
-mtcars_disj <- var_names(colnames(fuzzy_mtcars))
-
-min_support <- 0.02
+min_support <- 0.1
 min_confidence <- 0.8
 
 rule_callback <- function(condition, pp, support) {
@@ -288,11 +282,11 @@ rule_callback <- function(condition, pp, support) {
 }
 
 rule_result <- dig(
-    x = fuzzy_mtcars,
+    x = crisp_iris,
     f = rule_callback,
-    condition = !starts_with("am"),
-    focus = starts_with("am"),
-    disjoint = mtcars_disj,
+    condition = !starts_with("Species"),
+    focus = starts_with("Species"),
+    disjoint = iris_disj,
     min_length = 1,
     min_support = min_support,
     min_focus_support = min_support,
