@@ -79,10 +79,11 @@ excluded from both predicates.
 
 The
 [`partition()`](https://beerda.github.io/nuggets/reference/partition.md)
-function requires the dataset as its first argument and a *tidyselect*
-selection expression to select the columns to be transformed. For
-example, the `vs` column in `mtcars_example` is a logical column
-indicating the engine type (V-shaped or straight):
+function requires the dataset as its first argument and a [tidyselect
+expression](https://tidyselect.r-lib.org/reference/language.html) to
+select the columns to be transformed. For example, the `vs` column in
+`mtcars_example` is a logical column indicating the engine type
+(V-shaped or straight):
 
 ``` r
 
@@ -1170,7 +1171,8 @@ remove_almost_constant(d, .threshold = 0.5, .na_rm = TRUE)
 #> 10    10    NA
 ```
 
-You can also restrict the check to a subset of columns using tidyselect
+You can also restrict the check to a subset of columns using [tidyselect
+expression](https://tidyselect.r-lib.org/reference/language.html)
 syntax:
 
 ``` r
@@ -1424,5 +1426,14 @@ This vignette covered the essential data preparation techniques in the
 
 With these tools, you can effectively prepare your data for pattern
 discovery using the various `dig_*()` functions provided by the
-`nuggets` package. For information on pattern discovery itself, see the
-main “Getting Started” vignette and the function documentation.
+`nuggets` package. For information on pattern discovery itself, see:
+
+- [`vignette("nuggets")`](https://beerda.github.io/nuggets/articles/nuggets.md)
+  for an overview of the package and its main workflows,
+- [`vignette("association-rules")`](https://beerda.github.io/nuggets/articles/association-rules.md)
+  for a specialized pattern family based on the
+  [`dig_associations()`](https://beerda.github.io/nuggets/reference/dig_associations.md)
+  function,
+- [`vignette("custom-patterns")`](https://beerda.github.io/nuggets/articles/custom-patterns.md)
+  for defining custom pattern types with
+  [`dig()`](https://beerda.github.io/nuggets/reference/dig.md).

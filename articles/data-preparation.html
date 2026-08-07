@@ -47,6 +47,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/data-preparation.html">Data Preparation</a></li>
     <li><a class="dropdown-item" href="../articles/association-rules.html">Association Rules</a></li>
+    <li><a class="dropdown-item" href="../articles/custom-patterns.html">Custom Pattern Search with dig()</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -79,7 +80,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Data Preparation</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/v2.2.2/vignettes/data-preparation.Rmd" class="external-link"><code>vignettes/data-preparation.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/vignettes/data-preparation.Rmd" class="external-link"><code>vignettes/data-preparation.Rmd</code></a></small>
       <div class="d-none name"><code>data-preparation.Rmd</code></div>
     </div>
 
@@ -156,10 +157,10 @@ expanded into two predicates: <code>x=T</code> for rows where
 <code>x</code> is <code>FALSE</code>. Missing values are excluded from
 both predicates.</p>
 <p>The <code><a href="../reference/partition.html">partition()</a></code> function requires the dataset as its
-first argument and a <em>tidyselect</em> selection expression to select
-the columns to be transformed. For example, the <code>vs</code> column
-in <code>mtcars_example</code> is a logical column indicating the engine
-type (V-shaped or straight):</p>
+first argument and a <a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">tidyselect
+expression</a> to select the columns to be transformed. For example, the
+<code>vs</code> column in <code>mtcars_example</code> is a logical
+column indicating the engine type (V-shaped or straight):</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/partition.html">partition</a></span><span class="op">(</span><span class="va">mtcars_example</span>, <span class="va">vs</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 12</span></span></span>
@@ -1191,8 +1192,8 @@ according to the specified threshold.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     8     8</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     9     9</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>    10    <span style="color: #BB0000;">NA</span></span></span></code></pre></div>
-<p>You can also restrict the check to a subset of columns using
-tidyselect syntax:</p>
+<p>You can also restrict the check to a subset of columns using <a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">tidyselect
+expression</a> syntax:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Only check columns a1 through b2</span></span>
 <span><span class="fu"><a href="../reference/remove_almost_constant.html">remove_almost_constant</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">a1</span><span class="op">:</span><span class="va">b2</span>, .threshold <span class="op">=</span> <span class="fl">0.5</span>, .na_rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -1425,8 +1426,18 @@ interesting patterns.</p></li>
 <p>With these tools, you can effectively prepare your data for pattern
 discovery using the various <code>dig_*()</code> functions provided by
 the <code>nuggets</code> package. For information on pattern discovery
-itself, see the main “Getting Started” vignette and the function
-documentation.</p>
+itself, see:</p>
+<ul>
+<li>
+<code><a href="../articles/nuggets.html">vignette("nuggets")</a></code> for an overview of the package and
+its main workflows,</li>
+<li>
+<code><a href="../articles/association-rules.html">vignette("association-rules")</a></code> for a specialized pattern
+family based on the <code><a href="../reference/dig_associations.html">dig_associations()</a></code> function,</li>
+<li>
+<code><a href="../articles/custom-patterns.html">vignette("custom-patterns")</a></code> for defining custom pattern
+types with <code><a href="../reference/dig.html">dig()</a></code>.</li>
+</ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

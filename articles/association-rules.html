@@ -47,6 +47,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/data-preparation.html">Data Preparation</a></li>
     <li><a class="dropdown-item" href="../articles/association-rules.html">Association Rules</a></li>
+    <li><a class="dropdown-item" href="../articles/custom-patterns.html">Custom Pattern Search with dig()</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -79,7 +80,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Association Rules</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/v2.2.2/vignettes/association-rules.Rmd" class="external-link"><code>vignettes/association-rules.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/vignettes/association-rules.Rmd" class="external-link"><code>vignettes/association-rules.Rmd</code></a></small>
       <div class="d-none name"><code>association-rules.Rmd</code></div>
     </div>
 
@@ -272,8 +273,8 @@ rule:</p>
 <p>In many applications, you want to constrain which predicates can
 appear on each side of the rule. This is done with the
 <code>antecedent</code> and <code>consequent</code> arguments, which
-accept <a href="https://tidyselect.r-lib.org/articles/syntax.html" class="external-link">tidyselect</a>
-expressions.</p>
+accept <a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">tidyselect
+expression</a> expressions.</p>
 <p>For example, to find rules that predict the <code>uptake</code> rate
 from all other variables:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -741,6 +742,8 @@ interesting patterns.</p></li>
 <code><a href="../reference/dig_associations.html">dig_associations()</a></code>, <code><a href="../reference/add_interest.html">add_interest()</a></code>,
 <code><a href="../reference/dig_tautologies.html">dig_tautologies()</a></code>, <code><a href="../reference/parse_condition.html">parse_condition()</a></code>,
 <code><a href="../reference/partition.html">partition()</a></code>, <code><a href="../reference/var_names.html">var_names()</a></code>.</p>
+<p>For more advanced usage with custom pattern types, see
+<code><a href="../articles/custom-patterns.html">vignette("custom-patterns")</a></code>.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

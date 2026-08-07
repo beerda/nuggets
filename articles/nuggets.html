@@ -47,6 +47,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/data-preparation.html">Data Preparation</a></li>
     <li><a class="dropdown-item" href="../articles/association-rules.html">Association Rules</a></li>
+    <li><a class="dropdown-item" href="../articles/custom-patterns.html">Custom Pattern Search with dig()</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -79,7 +80,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>nuggets: Get Started</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/v2.2.2/vignettes/nuggets.Rmd" class="external-link"><code>vignettes/nuggets.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/vignettes/nuggets.Rmd" class="external-link"><code>vignettes/nuggets.Rmd</code></a></small>
       <div class="d-none name"><code>nuggets.Rmd</code></div>
     </div>
 
@@ -467,8 +468,8 @@ rules. Its main arguments are:</p>
 <code>x</code>: the data matrix or data frame (logical or
 numeric);</li>
 <li>
-<code>antecedent</code>, <code>consequent</code>: tidyselect
-expressions selecting columns for each side of the rule;</li>
+<code>antecedent</code>, <code>consequent</code>: <a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">tidyselect
+expressions</a> selecting columns for each side of the rule;</li>
 <li>
 <code>disjoint</code>: a vector defining mutually exclusive
 predicates;</li>
@@ -1113,6 +1114,12 @@ pairs</li>
 <ul>
 <li>Explore the <a href="data-preparation.html">Data Preparation
 vignette</a> for advanced preprocessing techniques</li>
+<li>Explore the <a href="association-rules.html">Association Rules
+vignette</a> for a specialized pattern family</li>
+<li>Explore the <a href="custom-patterns.html">Custom Patterns
+vignette</a> for defining your own pattern types with
+<code><a href="../reference/dig.html">dig()</a></code>
+</li>
 <li>Review function documentation (e.g., <code><a href="../reference/dig_associations.html">?dig_associations</a></code>)
 for detailed parameter descriptions</li>
 <li>Experiment with your own datasets to discover meaningful

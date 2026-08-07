@@ -356,8 +356,9 @@ The
 function searches for association rules. Its main arguments are:
 
 - `x`: the data matrix or data frame (logical or numeric);
-- `antecedent`, `consequent`: tidyselect expressions selecting columns
-  for each side of the rule;
+- `antecedent`, `consequent`: [tidyselect
+  expressions](https://tidyselect.r-lib.org/reference/language.html)
+  selecting columns for each side of the rule;
 - `disjoint`: a vector defining mutually exclusive predicates;
 - rule filtering thresholds such as `min_support`, `min_confidence`,
   `min_coverage`, and limits like `min_length`, `max_length`;
@@ -1015,6 +1016,13 @@ of conditions. Key takeaways:
 - Explore the [Data Preparation
   vignette](https://beerda.github.io/nuggets/articles/data-preparation.md)
   for advanced preprocessing techniques
+- Explore the [Association Rules
+  vignette](https://beerda.github.io/nuggets/articles/association-rules.md)
+  for a specialized pattern family
+- Explore the [Custom Patterns
+  vignette](https://beerda.github.io/nuggets/articles/custom-patterns.md)
+  for defining your own pattern types with
+  [`dig()`](https://beerda.github.io/nuggets/reference/dig.md)
 - Review function documentation (e.g.,
   [`?dig_associations`](https://beerda.github.io/nuggets/reference/dig_associations.md))
   for detailed parameter descriptions

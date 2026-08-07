@@ -192,8 +192,8 @@ For instance, the first rule represents the following association rule:
 
 In many applications, you want to constrain which predicates can appear
 on each side of the rule. This is done with the `antecedent` and
-`consequent` arguments, which accept
-[tidyselect](https://tidyselect.r-lib.org/articles/syntax.html)
+`consequent` arguments, which accept [tidyselect
+expression](https://tidyselect.r-lib.org/reference/language.html)
 expressions.
 
 For example, to find rules that predict the `uptake` rate from all other
@@ -705,3 +705,6 @@ For further details, consult the function documentation:
 [`parse_condition()`](https://beerda.github.io/nuggets/reference/parse_condition.md),
 [`partition()`](https://beerda.github.io/nuggets/reference/partition.md),
 [`var_names()`](https://beerda.github.io/nuggets/reference/var_names.md).
+
+For more advanced usage with custom pattern types, see
+[`vignette("custom-patterns")`](https://beerda.github.io/nuggets/articles/custom-patterns.md).
