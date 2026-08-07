@@ -70,6 +70,15 @@
 #' - `support`: a numeric scalar value of relative frequency of rows satisfying \eqn{C},
 #'   \eqn{supp = sum / |R|}.
 #'
+#' - `indices`: an integer vector of row indices of rows satisfying \eqn{C} for
+#'   logical data, or the indices of rows with non-zero truth degrees for fuzzy
+#'   data, \eqn{indices = \{r \in R : \mu_C(r) > 0\}}.
+#'
+#' - `weights`: a numeric vector of truth degrees of \eqn{C} for each row in
+#'   \eqn{R}, \eqn{weights[r] = \mu C(r)}. Logical data is treated as a special
+#'   case of fuzzy data, where \eqn{\mu_C(r)} is 1 for rows satisfying \eqn{C}
+#'   and 0 otherwise.
+#'
 #' - `pp`, `pn`, `np`, `nn`: a numeric vector of entries of a contingency table
 #'   for \eqn{C} and \eqn{F}, satisfying the Ruspini condition
 #'   \eqn{pp + pn + np + nn = |R|}.
