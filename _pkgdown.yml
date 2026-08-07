@@ -15,6 +15,7 @@ articles:
       - nuggets
       - data-preparation
       - association-rules
+      - custom-patterns
 
 reference:
   - title: "Data Preparation"

@@ -1,0 +1,501 @@
+---
+title: "Custom Pattern Search with dig()"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Custom Pattern Search with dig()}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = "#>"
+)
+```
+
+```{r, include = FALSE}
+options(tibble.width = Inf)
+```
+
+
+
+# Introduction
+
+`dig()` is the general function behind custom pattern search in the `nuggets`
+package. It searches for patterns of a custom type by generating conditions as
+elementary conjunctions of predicates and by executing a user-defined callback
+function on each generated condition.
+
+This makes `dig()` the low-level building block behind more specialized
+functions such as `dig_associations()` and `dig_correlations()`. Use it when
+you want to keep the search over conditions, but define your own evaluation
+logic.
+
+This vignette focuses on how to use the `dig()` function: how to write the
+callback function and how to control the search. For preparation of crisp and
+fuzzy predicates, see `vignette("data-preparation")`.
+
+Examples in this vignette require loading the following packages:
+
+```{r, message = FALSE}
+library(nuggets)
+library(dplyr)     # for data manipulation
+```
+
+
+
+# A Small Working Dataset
+
+`dig()` expects a matrix or data frame whose columns are logical predicates or
+numeric fuzzy predicates. We will use `iris` and prepare a small crisp predicate
+dataset that is rich enough for the first examples below:
+
+```{r}
+crisp_iris <- iris |>
+    partition(Species) |>
+    partition(Sepal.Length:Petal.Width, .method = "crisp", .breaks = 3)
+
+head(crisp_iris, n = 3)
+```
+
+The commands above create crisp predicates for the four numeric columns of
+`iris`, plus the three species predicates. The preparation step is intentionally
+brief here; the dedicated `vignette("data-preparation")` explains `partition()`,
+fuzzy predicates, and breakpoints in detail.
+
+
+
+# A Simple `dig()` Call
+
+The `dig()` function generates conditions from the selected predicates in
+a recursive manner. It starts with the empty condition and adds one predicate at
+a time, up to the specified `max_length`. Meanwhile, it evaluates the generated
+condition and tests whether it meets the minimum support requirement. By support
+we mean the relative frequency of rows satisfying the condition. If the condition
+is frequent enough, `dig()` calls the user-defined callback function with the
+generated condition and other information. The callback can then compute any 
+output you want. The `dig()` function collects those outputs and returns them as
+a list.
+
+The simplest callback function can handle just the generated condition.
+In the following example, the callback generates some debug output and
+returns the formatted condition:
+
+```{r}
+simple_callback <- function(condition) {
+    str(condition)
+    cat("------\n")
+    
+    list(condition = format_condition(names(condition)))
+}
+
+simple_result <- dig(x = crisp_iris,
+                     f = simple_callback,
+                     condition = starts_with("Sepal"),
+                     min_length = 0,
+                     max_length = 2,
+                     min_support = 0.2)
+```
+
+As you can see from the debug output issued by the `str()` call within the
+callback, `dig()` enumerates all conditions that can be formed from the selected
+predicates  (in this case, all predicates starting with "Sepal") and that meet
+the minimum support requirement. The callback receives each condition in the
+form of a named integer vector, where the names  are the predicate names and the
+values are the column indices in the original data frame. The callback then
+returns a named list with the formatted condition. All callback results are
+collected into a list and returned by `dig()`:
+
+```{r}
+str(simple_result)
+```
+
+As you can see, the result is a list of named lists, one for each condition that
+was generated and passed to the callback. You can flatten the result into
+a tibble with `dplyr`'s `bind_rows()`:
+
+```{r}
+bind_rows(simple_result)
+```
+
+Note also the attributes of the result list. They contain information about the
+search, such as the search statistics and the arguments that were passed to
+`dig()`. You can use this information for debugging or for reproducing the search
+later. For example, you can obtain the vector of predicate names that were used
+to generate conditions with:
+
+```{r}
+attributes(simple_result)$call_args$condition
+```
+
+This simple example illustrates the basic workflow:
+
+1. choose which predicates may form conditions;
+2. set the search parameters (length, support, etc.);
+3. define a callback function that computes the desired output for each condition;
+4. let `dig()` enumerate conditions and collect callback results.
+
+
+
+# Condition and Focus
+
+The simple example above only used the predicates for generating conditions.
+In many cases, you will also want to evaluate other predicates within each
+generated condition. For example, you may want to know how often each species
+occurs within a condition. That's where the *foci* (plural of *focus*) come into 
+play.
+
+Condition and focus predicates are selected separately with the `condition` and `
+focus` arguments of `dig()`. These arguments accept
+[tidyselect expressions](https://tidyselect.r-lib.org/reference/language.html)
+for selecting columns of the input data frame `x`.
+
+
+## Using Foci
+
+Foci are predicates that are not used to generate conditions, but are evaluated
+within each generated condition. You can select foci with the `focus` argument
+of `dig()`. The callback function can then receive information about how often
+each focus occurs within the generated condition. This is useful, e.g., for
+finding conditions that are strongly associated with certain foci.
+
+For instance, let us define a callback that provides the number of occurences
+of each species within each generated condition:
+
+```{r}
+focus_callback <- function(condition, sum, pp) { 
+    str(list(condition = condition,
+             sum = sum,
+             species = pp))
+    cat("------\n")
+
+    NULL
+}
+
+focus_result <- dig(x = crisp_iris,
+                    f = focus_callback,
+                    condition = starts_with("Sepal"),
+                    focus = starts_with("Species"),
+                    min_length = 2,
+                    max_length = 2,
+                    max_results = 1)
+```
+
+We have defined a callback that, besides `condition`, also receives `sum`  and 
+`pp`. The `sum` argument provides the number of rows satisfying the generated
+condition, and the `pp` argument contains the number of rows that satisfy both
+the generated condition and each focus predicate. In this case, the focus
+predicates are the species predicates, so `pp` tells us how many rows of each
+species satisfy the generated condition.
+
+Also note that we are using a neat trick that is useful during development of
+the callback: we set `max_results = 1` to stop the search after the first
+condition that meets the criteria. This allows us to see the output of the
+callback without waiting for the entire search to complete, which can be
+time-consuming for large datasets or complex conditions.
+
+So far, our callback only prints the information to the console and returns 
+`NULL`. Once we understand the structure of the data we receive, we can modify 
+the callback to return a list of patterns, where each pattern contains the 
+formatted condition, a single species, the count of data rows satisfying the
+condition, and the count of the species within that condition:
+
+```{r}
+focus_callback <- function(condition, sum, pp) { 
+    species_names <- names(pp)
+    species_counts <- as.integer(pp)
+
+    lapply(seq_along(species_names), function(i) {
+        list(condition = format_condition(names(condition)),
+             species = species_names[i],
+             condition_count = sum,
+             species_count = species_counts[i])
+    })
+}
+    
+focus_result <- dig(x = crisp_iris,
+                    f = focus_callback,
+                    condition = starts_with("Sepal"),
+                    focus = starts_with("Species"),
+                    min_length = 0,
+                    max_length = 2) 
+```
+
+The result of `dig()` is a list of lists, where each inner list corresponds to 
+a species within a generated condition. We use `unlist(recursive = FALSE)` to 
+flatten the list of lists into a single list of patterns, and then `bind_rows()` 
+to convert it into a tibble for easier viewing:
+
+```{r}
+focus_result |>
+    unlist(recursive = FALSE) |>
+    bind_rows() |>
+    head(n = 6)
+```
+
+
+## Filtering Foci
+
+As discussed in the previous section, `dig()` evaluates the focus predicates 
+within each generated condition. You may or may not want to keep all foci for 
+each condition. Some patterns may require all foci to be evaluated every time,
+while others may only require a subset of foci to be considered that are
+sufficiently frequent within the condition. Therefore, `dig()` provides several 
+arguments to filter foci based on their support:
+
+- `min_focus_support`: minimum support of a focus within a condition. I.e., the 
+  relative frequency of rows satisfying both the condition and the focus must be 
+  at least this value for the focus to be kept. Foci with support below this
+  threshold are filtered out.
+- `min_conditional_focus_support`: minimum conditional support of a focus within
+  a condition. I.e., the relative frequency of rows satisfying both the condition
+  and the focus, divided by the number of rows satisfying the condition, must be
+  at least this value for the focus to be kept. Foci with conditional support
+  below this threshold are filtered out.
+  
+The focus filtering may result in some conditions having no remaining foci.
+If you want to skip the callback for such conditions, set `filter_empty_foci = TRUE`. 
+Otherwise, the callback will be called with empty focus information. Filtering
+empty foci also improves performance, because it also stops early the evaluation
+of longer conditions that would not have any remaining foci anyway.
+
+The following example shows how this can be used to emulate association-rule
+search with a custom callback. Association rules are implications of the form
+"if condition then focus". Condition is named the *antecedent* and focus is named
+the *consequent*. The callback computes the confidence of each 
+antecedent-consequent pair, filters the pairs based on minimum support and
+confidence, and returns a list of rules:
+
+```{r}
+min_support <- 0.1
+min_confidence <- 0.8
+
+rule_callback <- function(condition, pp, support) {
+    conf <- pp / support / nrow(crisp_iris)
+    sel <- !is.na(conf) & conf >= min_confidence & !is.na(pp) & pp >= min_support
+    conf <- conf[sel]
+    supp <- pp[sel] / nrow(crisp_iris)
+
+    lapply(seq_along(conf), function(i) {
+        list(antecedent = format_condition(names(condition)),
+             consequent = names(conf)[[i]],
+             antecedent_support = support,
+             rule_support = supp[[i]],
+             confidence = conf[[i]]
+        )
+    })
+}
+
+rule_result <- dig(x = crisp_iris,
+                   f = rule_callback,
+                   condition = !starts_with("Species"),
+                   focus = starts_with("Species"),
+                   min_length = 1,
+                   min_support = min_support,
+                   min_focus_support = min_support,
+                   min_conditional_focus_support = min_confidence,
+                   filter_empty_foci = TRUE) |>
+    unlist(recursive = FALSE) |>
+    bind_rows() |>
+    arrange(desc(confidence))
+
+head(rule_result, n = 6)
+```
+
+This is a useful illustration of focus filtering, but association rules already
+have a dedicated implementation: `dig_associations()` searches for them more
+efficiently. For that purpose, prefer `dig_associations()` and see
+`vignette("association-rules")`.
+
+
+
+
+# What the Callback Function Can Receive
+
+As seen in the previous section, the callback function `f` may obtain not only
+the generated condition, but also other information. The amount of received
+information is controlled by declaring the arguments of the callback function. `dig()`
+inspects the callback function argument names and computes only the requested
+values. This is important for performance, because some values are expensive to
+compute and may not be needed for every search.
+
+The callback function may declare any subset of the following arguments:
+
+- `condition`: named integer vector of column indices representing the generated
+  condition.
+- `sum`: number of rows satisfying the condition for logical data, or the sum
+  of truth degrees for fuzzy data.
+- `support`: relative frequency of the condition, i.e., `sum / nrow(x)`.
+- `indices`: row indices of the original dataset `x` satisfying the condition
+  in crisp searches or the indices of rows with non-zero truth degrees in fuzzy
+  searches.
+- `weights`: per-row truth degrees of the condition in dataset `x`; logical
+  (crisp) data is treated as 0/1 weights.
+- `pp`, `pn`, `np`, `nn`: contingency-table entries for foci. The *i*-th* entry 
+  of each vector corresponds to the *i*-th focus predicate. The
+  entries are defined as follows:
+  - `pp`: sum of truth degrees of rows satisfying both the condition and the focus
+    (**p**ositive condition, **p**ositive focus),
+  - `pn`: sum of truth degrees of rows satisfying the condition but not the focus,
+    (**p**ositive condition, **n**egative focus),
+  - `np`: sum of truth degrees of rows satisfying the focus but not the condition,
+    (**n**egative condition, **p**ositive focus),
+  - `nn`: sum of truth degrees of rows satisfying neither (**n**egative condition,
+    **n**egative focus).
+    
+In practice:
+
+- use `condition` when you need condition predicate names,
+- use `support` or `sum` for condition-level filtering or ranking,
+- use `indices` when you want to compute something on the original rows,
+- use `weights` for custom fuzzy summaries,
+- use `pp`, `pn`, `np`, and `nn` when your pattern depends on foci and their
+  frequency within the condition.
+  
+Note: only declare the arguments you need. For example, if you don't need foci,
+don't declare `pp`, `pn`, `np`, or `nn`. This will save computation time,
+especially for large datasets or complex conditions. The most expensive values
+to compute are `indices` and `weights`. They require scanning the entire dataset
+for each generated condition. So avoid them if not needed.
+
+
+
+# Advanced Examples
+
+
+## Example: Fixed-Variable Correlations
+
+`dig_correlations()` searches over both generated conditions and combinations of
+numeric variables. A simpler custom variant can be built directly with `dig()`
+when the two variables are fixed in advance and only the condition should vary.
+
+Here we search for conditions under which `Sepal.Length` and `Petal.Length`
+correlate strongly. The callback receives `indices`, uses them to select the
+corresponding rows from the original `iris` data, and runs `cor.test()` on that
+sub-data:
+
+```{r}
+correlation_callback <- function(condition, support, indices) {
+    if (length(indices) < 10) {
+        return(NULL)
+    }
+    fit <- cor.test(iris$Sepal.Length[indices],
+                    iris$Petal.Length[indices],
+                    method = "pearson")
+
+    list(condition = format_condition(names(condition)),
+         support = support,
+         correlation = unname(fit$estimate),
+         p_value = fit$p.value,
+         n = length(indices))
+}
+
+correlation_result <- dig(x = crisp_iris,
+                          f = correlation_callback,
+                          condition = everything(),
+                          min_length = 1,
+                          max_length = 2,
+                          min_support = 0.1) |>
+    bind_rows() |>
+    arrange(desc(abs(correlation)))
+
+head(correlation_result, n = 6)
+```
+
+This example follows the same idea as `dig_correlations()`:
+
+- generate conditions,
+- evaluate a statistic on the sub-data induced by each condition,
+- return one row per successful evaluation.
+
+The difference is that `dig()` leaves the statistic entirely in your hands.
+That is useful when you want to fix the variables, apply a custom test, return
+additional diagnostics, or combine several criteria in one callback.
+
+
+
+## Example: Handling Fuzzy Data
+
+For fuzzy searches, conditions are no longer simply satisfied or not satisfied.
+Instead, each row has a truth degree in the interval $[0,1]$. In that setting,
+`indices` and `weights` play different roles:
+
+- `indices` tell you which rows have a non-zero truth degree for the condition,
+- `weights` tell you on scale $[0, 1]$ how strongly each row satisfies the condition.
+
+The following example prepares fuzzy predicates from `iris` and then compares
+an unweighted summary based on `indices` with a weighted summary based on
+`weights`:
+
+```{r}
+fuzzy_iris <- iris |>
+    partition(Species) |>
+    partition(Sepal.Length:Petal.Width, .method = "triangle", .breaks = 3)
+
+head(fuzzy_iris, n = 3)
+
+fuzzy_callback <- function(condition, indices, weights) {
+    if (length(indices) < 20) {
+        return(NULL)
+    }
+
+    list(condition = format_condition(names(condition)),
+         nonzero_rows = sum(indices),
+         weighted_support = sum(weights) / nrow(fuzzy_iris),
+         mean_petal_length_by_indices = mean(iris$Petal.Length[indices]),
+         mean_petal_length_by_weights = weighted.mean(iris$Petal.Length, weights))
+}
+
+fuzzy_result <- dig(x = fuzzy_iris,
+                    f = fuzzy_callback,
+                    condition = starts_with("Sepal"),
+                    min_length = 1,
+                    max_length = 1,
+                    min_support = 0.2) |>
+    bind_rows()
+
+fuzzy_result
+```
+
+The unweighted mean based on `indices` treats all rows with non-zero membership
+equally. The weighted mean based on `weights` respects the fuzzy truth degrees,
+so rows that satisfy the condition more strongly contribute more. This is the
+main practical difference: `indices` identify the relevant rows, while
+`weights` quantify the strength of their membership.
+
+
+
+# Practical Notes
+
+- Condition predicates are used to generate conditions, while focus predicates 
+  are evaluated within each generated condition. Use `condition` and `focus`
+  arguments to select them separately.
+- The result of `dig()` is a list. When each callback returns one named list,
+  `bind_rows()` is a convenient way to flatten it into a tibble.
+- If the callback returns multiple patterns per condition, return a list of
+  named lists and flatten the result afterwards.
+- Use only the arguments you need in the callback function. This saves 
+  computation time, especially for large datasets or complex conditions.
+- For fuzzy searches, use `weights` when truth degrees matter, and `indices`
+  when you only need the rows with non-zero membership.
+
+
+
+# Summary
+
+`dig()` is the most flexible search interface in `nuggets`. It lets you:
+
+1. generate conditions from selected predicates,
+2. optionally evaluate focus predicates within each condition,
+3. receive only the callback inputs you need,
+4. define your own pattern logic, statistics, and output format.
+
+Use `dig()` when the built-in search functions are close to what you need, but
+not exact. For related material, see:
+
+- `vignette("data-preparation")` for creating crisp and fuzzy predicates from
+  raw data,
+- `vignette("association-rules")` for searching for association rules with
+  `dig_associations()`,  
+- `vignette("nuggets")` for an overview of the package and its main workflows.

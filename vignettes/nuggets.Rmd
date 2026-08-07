@@ -276,7 +276,7 @@ The `dig_associations()` function searches for association rules. Its main
 arguments are:
 
 - `x`: the data matrix or data frame (logical or numeric);
-- `antecedent`, `consequent`: tidyselect expressions selecting columns for each
+- `antecedent`, `consequent`: [tidyselect expressions](https://tidyselect.r-lib.org/reference/language.html) selecting columns for each
   side of the rule;
 - `disjoint`: a vector defining mutually exclusive predicates;
 - rule filtering thresholds such as `min_support`, `min_confidence`,
@@ -694,6 +694,8 @@ This vignette has introduced the core functionality of the `nuggets` package for
 ## Next Steps
 
 - Explore the [Data Preparation vignette](data-preparation.html) for advanced preprocessing techniques
+- Explore the [Association Rules vignette](association-rules.html) for a specialized pattern family
+- Explore the [Custom Patterns vignette](custom-patterns.html) for defining your own pattern types with `dig()`
 - Review function documentation (e.g., `?dig_associations`) for detailed parameter descriptions
 - Experiment with your own datasets to discover meaningful patterns
 - Use interactive exploration (`explore()`) to gain insights into discovered patterns
