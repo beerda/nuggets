@@ -84,7 +84,7 @@ is `TRUE` and `x=F` for rows where `x` is `FALSE`. Missing values are excluded
 from both predicates.
 
 The `partition()` function requires the dataset as its first argument and a
-*tidyselect* selection expression to select the columns to be transformed.
+[tidyselect expression](https://tidyselect.r-lib.org/reference/language.html) to select the columns to be transformed.
 For example, the `vs` column in `mtcars_example` is a logical column indicating
 the engine type (V-shaped or straight):
 
@@ -708,7 +708,7 @@ remove_almost_constant(d, .threshold = 0.5, .na_rm = FALSE)
 remove_almost_constant(d, .threshold = 0.5, .na_rm = TRUE)
 ```
 
-You can also restrict the check to a subset of columns using tidyselect syntax:
+You can also restrict the check to a subset of columns using [tidyselect expression](https://tidyselect.r-lib.org/reference/language.html) syntax:
 
 ```{r}
 # Only check columns a1 through b2
@@ -897,5 +897,9 @@ package:
 
 With these tools, you can effectively prepare your data for pattern discovery 
 using the various `dig_*()` functions provided by the `nuggets` package. For 
-information on pattern discovery itself, see the main "Getting Started" vignette 
-and the function documentation.
+information on pattern discovery itself, see:
+
+- `vignette("nuggets")` for an overview of the package and its main workflows,
+- `vignette("association-rules")` for a specialized pattern family based on the
+  `dig_associations()` function,
+- `vignette("custom-patterns")` for defining custom pattern types with `dig()`.

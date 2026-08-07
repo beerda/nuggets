@@ -147,7 +147,7 @@ to_logical <- function(x) {
 In many applications, you want to constrain which predicates can appear on
 each side of the rule. This is done with the `antecedent` and `consequent`
 arguments, which accept
-[tidyselect](https://tidyselect.r-lib.org/articles/syntax.html) expressions.
+[tidyselect expression](https://tidyselect.r-lib.org/reference/language.html) expressions.
 
 For example, to find rules that predict the `uptake` rate from all other
 variables:
@@ -453,3 +453,6 @@ This vignette demonstrated how to search for association rules using the
 For further details, consult the function documentation:
 `dig_associations()`, `add_interest()`, `dig_tautologies()`,
 `parse_condition()`, `partition()`, `var_names()`.
+
+For more advanced usage with custom pattern types, see
+`vignette("custom-patterns")`.
