@@ -48,8 +48,8 @@ library(dplyr)     # for data manipulation
 # A Small Working Dataset
 
 `dig()` expects a matrix or data frame whose columns are logical predicates or
-numeric fuzzy predicates. We will use `iris` and prepare two small predicate data
-sets that are rich enough for the examples below:
+numeric fuzzy predicates. We will use `iris` and prepare a small crisp predicate
+dataset that is rich enough for the first examples below:
 
 ```{r}
 crisp_iris <- iris |>
@@ -57,18 +57,12 @@ crisp_iris <- iris |>
     partition(Sepal.Length:Petal.Width, .method = "crisp", .breaks = 3)
 
 head(crisp_iris, n = 3)
-
-fuzzy_iris <- iris |>
-    partition(Species) |>
-    partition(Sepal.Length:Petal.Width, .method = "triangle", .breaks = 3)
-
-head(fuzzy_iris, n = 3)
 ```
 
-The commands above create crisp and fuzzy predicates for the four numeric columns
-of `iris`, plus the three species predicates. The preparation step is
-intentionally brief here; the dedicated `vignette("data-preparation")` explains
-`partition()`, fuzzy predicates, and breakpoints in detail.
+The commands above create crisp predicates for the four numeric columns of
+`iris`, plus the three species predicates. The preparation step is intentionally
+brief here; the dedicated `vignette("data-preparation")` explains `partition()`,
+fuzzy predicates, and breakpoints in detail.
 
 
 
@@ -260,6 +254,62 @@ Otherwise, the callback will be called with empty focus information. Filtering
 empty foci also improves performance, because it also stops early the evaluation
 of longer conditions that would not have any remaining foci anyway.
 
+The following example shows how this can be used to emulate association-rule
+search with a custom callback. The callback computes the confidence of each
+remaining focus and returns only those foci that pass the support and confidence
+thresholds:
+
+```{r}
+fuzzy_mtcars <- mtcars |>
+    mutate(cyl = factor(cyl, levels = c(4, 6, 8), labels = c("four", "six", "eight"))) |>
+    partition(cyl, vs:gear, .method = "dummy") |>
+    partition(mpg, .method = "triangle", .breaks = c(-Inf, 15, 20, 30, Inf)) |>
+    partition(disp:carb, .method = "triangle", .breaks = 3)
+
+mtcars_disj <- var_names(colnames(fuzzy_mtcars))
+
+min_support <- 0.02
+min_confidence <- 0.8
+
+rule_callback <- function(condition, pp, support) {
+    conf <- pp / support
+    sel <- !is.na(conf) & conf >= min_confidence & !is.na(pp) & pp >= min_support
+    conf <- conf[sel]
+    supp <- pp[sel]
+
+    lapply(seq_along(conf), function(i) {
+        list(
+            antecedent = format_condition(names(condition)),
+            consequent = names(conf)[[i]],
+            support = supp[[i]],
+            confidence = conf[[i]]
+        )
+    })
+}
+
+rule_result <- dig(
+    x = fuzzy_mtcars,
+    f = rule_callback,
+    condition = !starts_with("am"),
+    focus = starts_with("am"),
+    disjoint = mtcars_disj,
+    min_length = 1,
+    min_support = min_support,
+    min_focus_support = min_support,
+    min_conditional_focus_support = min_confidence,
+    filter_empty_foci = TRUE
+) |>
+    unlist(recursive = FALSE) |>
+    bind_rows() |>
+    arrange(desc(support))
+
+rule_result
+```
+
+This is a useful illustration of focus filtering, but association rules already
+have a dedicated implementation: `dig_associations()` searches for them more
+efficiently. For that purpose, prefer `dig_associations()` and see
+`vignette("association-rules")`.
 
 
 
@@ -413,13 +463,69 @@ additional diagnostics, or combine several criteria in one callback.
 
 
 
+# Handling Fuzzy Data
+
+For fuzzy searches, conditions are no longer simply satisfied or not satisfied.
+Instead, each row has a truth degree in the interval $[0,1]$. In that setting,
+`indices` and `weights` play different roles:
+
+- `indices` tell you which rows have a non-zero truth degree for the condition,
+- `weights` tell you how strongly each row satisfies the condition.
+
+The following example prepares fuzzy predicates from `iris` and then compares
+an unweighted summary based on `indices` with a weighted summary based on
+`weights`:
+
+```{r}
+fuzzy_iris <- iris |>
+    partition(Species) |>
+    partition(Sepal.Length:Petal.Width, .method = "triangle", .breaks = 3)
+
+head(fuzzy_iris, n = 3)
+
+fuzzy_callback <- function(condition, indices, weights) {
+    if (length(indices) < 20) {
+        return(NULL)
+    }
+
+    list(
+        condition = format_condition(names(condition)),
+        nonzero_rows = length(indices),
+        weighted_support = sum(weights) / nrow(fuzzy_iris),
+        mean_petal_length_by_indices = mean(iris$Petal.Length[indices]),
+        mean_petal_length_by_weights = weighted.mean(iris$Petal.Length, weights)
+    )
+}
+
+fuzzy_result <- dig(
+    x = fuzzy_iris,
+    f = fuzzy_callback,
+    condition = starts_with("Sepal"),
+    min_length = 1,
+    max_length = 1,
+    min_support = 0.2
+) |>
+    bind_rows()
+
+fuzzy_result
+```
+
+The unweighted mean based on `indices` treats all rows with non-zero membership
+equally. The weighted mean based on `weights` respects the fuzzy truth degrees,
+so rows that satisfy the condition more strongly contribute more. This is the
+main practical difference: `indices` identify the relevant rows, while
+`weights` quantify the strength of their membership.
+
+
+
 # Practical Notes
 
 - Use `var_names(colnames(x))` to build `disjoint` for data prepared with
   `partition()`.
 - Use `excluded` together with `dig_tautologies()` and `parse_condition()` when
   you want to prune redundant conditions implied by known axioms.
-- For fuzzy searches, request `weights` in the callback instead of `indices`.
+- For fuzzy searches, use `weights` when truth degrees matter, and `indices`
+  when you only need the rows with non-zero membership.
 - The result of `dig()` is a list. When each callback returns one named list,
   `bind_rows()` is a convenient way to flatten it into a tibble.
 - If the callback returns multiple patterns per condition, return a list of
