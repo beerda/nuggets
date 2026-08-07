@@ -23,8 +23,8 @@ reference:
       Functions for transformation of input data into the format suitable for
       pattern extraction.
     contents:
-      - is_almost_constant
       - partition
+      - is_almost_constant
       - remove_almost_constant
       - dig_tautologies
 
@@ -49,8 +49,8 @@ reference:
     desc: >
       Functions for post-processing of extracted patterns.
     contents:
-      - association_matrix
       - add_interest
+      - association_matrix
       - cluster_associations
       - dig_ancestors
       - explore.associations
