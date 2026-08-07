@@ -152,6 +152,8 @@ generated condition. For example, you may want to know how often each species
 occurs within a condition. That's where the *foci* (plural of *focus*) come into 
 play.
 
+## Using Foci
+
 Foci are predicates that are not used to generate conditions, but are evaluated
 within each generated condition. You can select foci with the `focus` argument
 of `dig()`. The callback function can then receive information about how often
@@ -231,6 +233,34 @@ focus_result |>
     bind_rows() |>
     head(n = 6)
 ```
+
+
+## Filtering Foci
+
+As discussed in the previous section, `dig()` evaluates the focus predicates 
+within each generated condition. You may or may not want to keep all foci for 
+each condition. Some patterns may require all foci to be evaluated every time,
+while others may only require a subset of foci to be considered that are
+sufficiently frequent within the condition. Therefore, `dig()` provides several 
+arguments to filter foci based on their support:
+
+- `min_focus_support`: minimum support of a focus within a condition. I.e., the 
+  relative frequency of rows satisfying both the condition and the focus must be 
+  at least this value for the focus to be kept. Foci with support below this
+  threshold are filtered out.
+- `min_conditional_focus_support`: minimum conditional support of a focus within
+  a condition. I.e., the relative frequency of rows satisfying both the condition
+  and the focus, divided by the number of rows satisfying the condition, must be
+  at least this value for the focus to be kept. Foci with conditional support
+  below this threshold are filtered out.
+  
+The focus filtering may result in some conditions having no remaining foci.
+If you want to skip the callback for such conditions, set `filter_empty_foci = TRUE`. 
+Otherwise, the callback will be called with empty focus information. Filtering
+empty foci also improves performance, because it also stops early the evaluation
+of longer conditions that would not have any remaining foci anyway.
+
+
 
 
 
