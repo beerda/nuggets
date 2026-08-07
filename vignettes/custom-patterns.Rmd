@@ -146,6 +146,12 @@ generated condition. For example, you may want to know how often each species
 occurs within a condition. That's where the *foci* (plural of *focus*) come into 
 play.
 
+Condition and focus predicates are selected separately with the `condition` and `
+focus` arguments of `dig()`. These arguments accept
+[tidyselect expressions](https://tidyselect.r-lib.org/reference/language.html)
+for selecting columns of the input data frame `x`.
+
+
 ## Using Foci
 
 Foci are predicates that are not used to generate conditions, but are evaluated
@@ -255,49 +261,46 @@ empty foci also improves performance, because it also stops early the evaluation
 of longer conditions that would not have any remaining foci anyway.
 
 The following example shows how this can be used to emulate association-rule
-search with a custom callback. The callback computes the confidence of each
-remaining focus and returns only those foci that pass the support and confidence
-thresholds:
+search with a custom callback. Association rules are implications of the form
+"if condition then focus". Condition is named the *antecedent* and focus is named
+the *consequent*. The callback computes the confidence of each 
+antecedent-consequent pair, filters the pairs based on minimum support and
+confidence, and returns a list of rules:
 
 ```{r}
-iris_disj <- var_names(colnames(crisp_iris))
-
 min_support <- 0.1
 min_confidence <- 0.8
 
 rule_callback <- function(condition, pp, support) {
-    conf <- pp / support
+    conf <- pp / support / nrow(crisp_iris)
     sel <- !is.na(conf) & conf >= min_confidence & !is.na(pp) & pp >= min_support
     conf <- conf[sel]
-    supp <- pp[sel]
+    supp <- pp[sel] / nrow(crisp_iris)
 
     lapply(seq_along(conf), function(i) {
-        list(
-            antecedent = format_condition(names(condition)),
-            consequent = names(conf)[[i]],
-            support = supp[[i]],
-            confidence = conf[[i]]
+        list(antecedent = format_condition(names(condition)),
+             consequent = names(conf)[[i]],
+             antecedent_support = support,
+             rule_support = supp[[i]],
+             confidence = conf[[i]]
         )
     })
 }
 
-rule_result <- dig(
-    x = crisp_iris,
-    f = rule_callback,
-    condition = !starts_with("Species"),
-    focus = starts_with("Species"),
-    disjoint = iris_disj,
-    min_length = 1,
-    min_support = min_support,
-    min_focus_support = min_support,
-    min_conditional_focus_support = min_confidence,
-    filter_empty_foci = TRUE
-) |>
+rule_result <- dig(x = crisp_iris,
+                   f = rule_callback,
+                   condition = !starts_with("Species"),
+                   focus = starts_with("Species"),
+                   min_length = 1,
+                   min_support = min_support,
+                   min_focus_support = min_support,
+                   min_conditional_focus_support = min_confidence,
+                   filter_empty_foci = TRUE) |>
     unlist(recursive = FALSE) |>
     bind_rows() |>
-    arrange(desc(support))
+    arrange(desc(confidence))
 
-rule_result
+head(rule_result, n = 6)
 ```
 
 This is a useful illustration of focus filtering, but association rules already
@@ -358,46 +361,10 @@ for each generated condition. So avoid them if not needed.
 
 
 
-# Main Arguments of `dig()`
-
-The `dig()` function exposes the full condition-generation engine. The most
-important arguments are:
-
-- `x`: matrix or data frame containing logical or fuzzy predicates.
-- `f`: callback function executed for each generated condition.
-- `condition`:
-  [tidyselect expression](https://tidyselect.r-lib.org/reference/language.html)
-  specifying which columns of `x` may appear in generated conditions.
-- `focus`: 
-  [tidyselect expression](https://tidyselect.r-lib.org/reference/language.html)
-  specifying which columns of `x` are evaluated as foci within each condition.
-- `disjoint`: vector defining groups of mutually exclusive predicates; predicates
-  from the same group are not combined in one condition.
-- `excluded`: list of known implications (axioms) used for pruning; each element
-  is a character vector where all but the last value form the antecedent and
-  the last value is the consequent.
-- `min_length` and `max_length`: minimum and maximum number of predicates in a
-  generated condition.
-- `min_support` and `max_support`: support range for conditions that should
-  trigger the callback.
-- `min_focus_support`: minimum support of a focus inside a condition.
-- `min_conditional_focus_support`: minimum conditional support of a focus within
-  a condition.
-- `filter_empty_foci`: if `TRUE`, skip callback calls for conditions that have
-  no remaining foci after focus filtering.
-- `t_norm`: conjunction operator for fuzzy data (`"goedel"`, `"goguen"`, or
-  `"lukas"`).
-- `max_results`: maximum number of callback results to store before stopping.
-- `verbose`: print progress messages.
-- `error_context`: helper for wrapper authors so that errors refer to caller-side
-  argument names; most interactive uses can ignore it.
-
-Two arguments are especially important for performance: `min_support` and
-`max_length`. Together they strongly control the size of the search space.
+# Advanced Examples
 
 
-
-# A More Advanced Example: Fixed-Variable Correlations
+## Example: Fixed-Variable Correlations
 
 `dig_correlations()` searches over both generated conditions and combinations of
 numeric variables. A simpler custom variant can be built directly with `dig()`
@@ -409,36 +376,27 @@ corresponding rows from the original `iris` data, and runs `cor.test()` on that
 sub-data:
 
 ```{r}
-fixed_xy <- iris[, c("Sepal.Length", "Petal.Length")]
-
 correlation_callback <- function(condition, support, indices) {
     if (length(indices) < 10) {
         return(NULL)
     }
+    fit <- cor.test(iris$Sepal.Length[indices],
+                    iris$Petal.Length[indices],
+                    method = "pearson")
 
-    fit <- cor.test(
-        fixed_xy$Sepal.Length[indices],
-        fixed_xy$Petal.Length[indices],
-        method = "pearson"
-    )
-
-    list(
-        condition = format_condition(names(condition)),
-        support = support,
-        correlation = unname(fit$estimate),
-        p_value = fit$p.value,
-        n = length(indices)
-    )
+    list(condition = format_condition(names(condition)),
+         support = support,
+         correlation = unname(fit$estimate),
+         p_value = fit$p.value,
+         n = length(indices))
 }
 
-correlation_result <- dig(
-    x = crisp_iris,
-    f = correlation_callback,
-    condition = everything(),
-    min_length = 1,
-    max_length = 2,
-    min_support = 0.1
-) |>
+correlation_result <- dig(x = crisp_iris,
+                          f = correlation_callback,
+                          condition = everything(),
+                          min_length = 1,
+                          max_length = 2,
+                          min_support = 0.1) |>
     bind_rows() |>
     arrange(desc(abs(correlation)))
 
@@ -457,14 +415,14 @@ additional diagnostics, or combine several criteria in one callback.
 
 
 
-# Handling Fuzzy Data
+## Example: Handling Fuzzy Data
 
 For fuzzy searches, conditions are no longer simply satisfied or not satisfied.
 Instead, each row has a truth degree in the interval $[0,1]$. In that setting,
 `indices` and `weights` play different roles:
 
 - `indices` tell you which rows have a non-zero truth degree for the condition,
-- `weights` tell you how strongly each row satisfies the condition.
+- `weights` tell you on scale $[0, 1]$ how strongly each row satisfies the condition.
 
 The following example prepares fuzzy predicates from `iris` and then compares
 an unweighted summary based on `indices` with a weighted summary based on
@@ -482,23 +440,19 @@ fuzzy_callback <- function(condition, indices, weights) {
         return(NULL)
     }
 
-    list(
-        condition = format_condition(names(condition)),
-        nonzero_rows = length(indices),
-        weighted_support = sum(weights) / nrow(fuzzy_iris),
-        mean_petal_length_by_indices = mean(iris$Petal.Length[indices]),
-        mean_petal_length_by_weights = weighted.mean(iris$Petal.Length, weights)
-    )
+    list(condition = format_condition(names(condition)),
+         nonzero_rows = sum(indices),
+         weighted_support = sum(weights) / nrow(fuzzy_iris),
+         mean_petal_length_by_indices = mean(iris$Petal.Length[indices]),
+         mean_petal_length_by_weights = weighted.mean(iris$Petal.Length, weights))
 }
 
-fuzzy_result <- dig(
-    x = fuzzy_iris,
-    f = fuzzy_callback,
-    condition = starts_with("Sepal"),
-    min_length = 1,
-    max_length = 1,
-    min_support = 0.2
-) |>
+fuzzy_result <- dig(x = fuzzy_iris,
+                    f = fuzzy_callback,
+                    condition = starts_with("Sepal"),
+                    min_length = 1,
+                    max_length = 1,
+                    min_support = 0.2) |>
     bind_rows()
 
 fuzzy_result
@@ -514,16 +468,17 @@ main practical difference: `indices` identify the relevant rows, while
 
 # Practical Notes
 
-- Use `var_names(colnames(x))` to build `disjoint` for data prepared with
-  `partition()`.
-- Use `excluded` together with `dig_tautologies()` and `parse_condition()` when
-  you want to prune redundant conditions implied by known axioms.
-- For fuzzy searches, use `weights` when truth degrees matter, and `indices`
-  when you only need the rows with non-zero membership.
+- Condition predicates are used to generate conditions, while focus predicates 
+  are evaluated within each generated condition. Use `condition` and `focus`
+  arguments to select them separately.
 - The result of `dig()` is a list. When each callback returns one named list,
   `bind_rows()` is a convenient way to flatten it into a tibble.
 - If the callback returns multiple patterns per condition, return a list of
   named lists and flatten the result afterwards.
+- Use only the arguments you need in the callback function. This saves 
+  computation time, especially for large datasets or complex conditions.
+- For fuzzy searches, use `weights` when truth degrees matter, and `indices`
+  when you only need the rows with non-zero membership.
 
 
 
@@ -539,7 +494,8 @@ main practical difference: `indices` identify the relevant rows, while
 Use `dig()` when the built-in search functions are close to what you need, but
 not exact. For related material, see:
 
-- `vignette("data-preparation")` for creating crisp and fuzzy predicates,
-- `vignette("association-rules")` for a specialized pattern family based on the
-  same search principles,
+- `vignette("data-preparation")` for creating crisp and fuzzy predicates from
+  raw data,
+- `vignette("association-rules")` for searching for association rules with
+  `dig_associations()`,  
 - `vignette("nuggets")` for an overview of the package and its main workflows.
