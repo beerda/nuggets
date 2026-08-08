@@ -49,8 +49,7 @@ library(nuggets)
 library(dplyr)     # for data manipulation
 ```
 
-For a broader overview of the package workflow, see `vignette("nuggets")`. For
-preparing predicate columns, see `vignette("data-preparation")`.
+For a broader overview of the package workflow, see `vignette("nuggets")`.
 
 
 # A Small Working Dataset
@@ -68,12 +67,10 @@ In the next example, we:
 
 ```{r}
 iris_corr <- iris |>
-    mutate(
-        long_sepal = Sepal.Length >= median(Sepal.Length),
-        wide_petal = Petal.Width >= median(Petal.Width),
-        sepal_ratio = Sepal.Length / Sepal.Width,
-        petal_ratio = Petal.Length / Petal.Width
-    ) |>
+    mutate(long_sepal = Sepal.Length >= median(Sepal.Length),
+           wide_petal = Petal.Width >= median(Petal.Width),
+           sepal_ratio = Sepal.Length / Sepal.Width,
+           petal_ratio = Petal.Length / Petal.Width) |>
     partition(Species)
 
 head(iris_corr, n = 3)
@@ -83,6 +80,9 @@ The dummy columns created from `Species` and the logical helper columns can be
 used to generate conditions, while the original and derived numeric columns can
 be used in the correlation tests.
 
+For more information on preparing data for pattern extraction, see
+`vignette("data-preparation")`.
+
 
 # Basic Conditional Correlation Search
 
@@ -90,17 +90,17 @@ The simplest search chooses condition predicates and numeric variables, then
 limits the condition length and support:
 
 ```{r}
-corr_basic <- dig_correlations(
-    iris_corr,
-    condition = where(is.logical),
-    xvars = c(Sepal.Length, Sepal.Width, sepal_ratio),
-    yvars = c(Petal.Length, Petal.Width, petal_ratio),
-    min_length = 1,
-    max_length = 1,
-    min_support = 0.2
-)
+corr_basic <- dig_correlations(iris_corr,
+                               condition = where(is.logical),
+                               xvars = c(Sepal.Length, Sepal.Width, sepal_ratio),
+                               yvars = c(Petal.Length, Petal.Width, petal_ratio),
+                               min_length = 0,
+                               max_length = 2,
+                               min_support = 0.2)
 
-head(corr_basic, n = 6)
+corr_basic |>
+    arrange(desc(abs(estimate))) |>
+    head(n = 6)
 ```
 
 The result is a tibble where each row represents one discovered pattern. The
@@ -114,63 +114,31 @@ main columns are:
 - `n` - number of rows in the corresponding sub-data.
 
 
-# Selecting Conditions and Variables
+# Controlling the Search Space
 
 The `condition`, `xvars`, and `yvars` arguments accept
 [tidyselect expressions](https://tidyselect.r-lib.org/reference/language.html).
 This makes it easy to restrict the search to specific groups of columns.
 
+As with other `dig_*()` functions, the search can be controlled with
+`min_length`, `max_length`, `min_support`, `max_support`, and `max_results`.
+
 For example, the following search uses only species predicates as conditions
 and correlates all sepal variables against all petal variables:
 
 ```{r}
-corr_species <- dig_correlations(
-    iris_corr,
-    condition = starts_with("Species"),
-    xvars = starts_with("Sepal"),
-    yvars = starts_with("Petal"),
-    min_length = 1,
-    max_length = 1,
-    min_support = 0.3
-)
+corr_species <- dig_correlations(iris_corr,
+                                 condition = starts_with("Species"),
+                                 xvars = starts_with("Sepal"),
+                                 yvars = starts_with("Petal"),
+                                 min_length = 1,
+                                 max_length = 1,
+                                 min_support = 0.3)
 
 head(corr_species, n = 6)
 ```
 
-This pattern is useful when you want to separate *which subgroups define the
-context* from *which numeric variables are tested inside that context*.
 
-
-# Controlling the Search Space
-
-As with other `dig_*()` functions, the search can be controlled with
-`min_length`, `max_length`, `min_support`, `max_support`, and `max_results`.
-
-When condition predicates come from `partition()`, it is also useful to create a
-vector of disjoint groups with `var_names()`. Predicates from the same original
-variable should not appear together in a single condition.
-
-```{r}
-disj <- var_names(colnames(iris_corr))
-disj[1:8]
-
-corr_limited <- dig_correlations(
-    iris_corr,
-    condition = where(is.logical),
-    xvars = c(Sepal.Length, Sepal.Width),
-    yvars = c(Petal.Length, Petal.Width),
-    disjoint = disj,
-    min_length = 1,
-    max_length = 2,
-    min_support = 0.2,
-    max_results = 8
-)
-
-corr_limited
-```
-
-In larger searches, `max_results` is especially useful because the number of
-candidate conditions can grow quickly.
 
 
 # Choosing the Correlation Method
@@ -187,19 +155,20 @@ with the corresponding `method` argument. The `estimate`, `statistic`,
 `p_value`, and confidence-interval columns in the result map directly to the
 values returned by `cor.test()`.
 
-Here is the same basic search with Spearman correlation:
+Here is the same basic search with Spearman correlation. As we are O.K. with
+non-exact p-values, we can set `exact = FALSE` (otherwise a warning is issued 
+for small sub-data sizes):
 
 ```{r}
-corr_spearman <- dig_correlations(
-    iris_corr,
-    condition = where(is.logical),
-    xvars = c(Sepal.Length, Sepal.Width),
-    yvars = c(Petal.Length, Petal.Width),
-    method = "spearman",
-    min_length = 1,
-    max_length = 1,
-    min_support = 0.2
-)
+corr_spearman <- dig_correlations(iris_corr,
+                                  condition = where(is.logical),
+                                  xvars = c(Sepal.Length, Sepal.Width),
+                                  yvars = c(Petal.Length, Petal.Width),
+                                  method = "spearman",
+                                  exact = FALSE,
+                                  min_length = 1,
+                                  max_length = 1,
+                                  min_support = 0.2)
 
 head(corr_spearman, n = 6)
 ```
