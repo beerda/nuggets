@@ -193,7 +193,8 @@ Use shiny, shinyjs, shinyWidgets, DT for UI components
 - Vignettes in `vignettes/*.Rmd`
 - Package website built with pkgdown
 - C++ code:
-  - Use block comment /\*\* … \*/ with newline after “/\*\*”
+  - Always use block comments “/\*\* … \*/” with newline after “/\*\*”
+    even for class attributes
   - Always put @param for each arg, use @result in all non-void method
     comments
 
@@ -208,6 +209,7 @@ Use shiny, shinyjs, shinyWidgets, DT for UI components
 - If mentioning tidyselect expressions, use a link: [tidyselect
   expression](https://tidyselect.r-lib.org/reference/language.html)
 - Read documentation comments in R files to understand the package
+- Make a list of vignettes up-to-date in index.Rmd and README.Rmd
 
 ## Common Tasks
 
