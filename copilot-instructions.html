@@ -175,6 +175,7 @@
 </li>
 <li>Add roxygen2 documentation above exported functions</li>
 <li>Internal functions should have clear comments</li>
+<li>Document each class, each method, and each attribute</li>
 </ul></li>
 <li>
 <strong>Testing</strong>:
@@ -252,12 +253,27 @@
 </div>
 <div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a></h2>
-<ul><li>Use roxygen2 for all documentation</li>
+<ul><li>Use roxygen2 for all documentation of R functions</li>
 <li>Run <code>devtools::document()</code> to regenerate man/*.Rd files</li>
 <li>README.md is generated from README.Rmd - edit the .Rmd file</li>
 <li>Vignettes in <code>vignettes/*.Rmd</code>
 </li>
 <li>Package website built with pkgdown</li>
+<li>C++ code:
+<ul><li>Use block comment /** … */ with newline after “/**”</li>
+<li>Always put @param for each arg, use @result in all non-void method comments</li>
+</ul></li>
+</ul></div>
+<div class="section level2">
+<h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a></h2>
+<ul><li>Look at other vignettes for template</li>
+<li>Write introduction, summary</li>
+<li>In the beginning, initialize some example dataset that will be used later</li>
+<li>Provide links to other vignettes where appropriate</li>
+<li>Load the required libraries in the introduction</li>
+<li>If mentioning tidyselect expressions, use a link: <a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">tidyselect expression</a>
+</li>
+<li>Read documentation comments in R files to understand the package</li>
 </ul></div>
 <div class="section level2">
 <h2 id="common-tasks">Common Tasks<a class="anchor" aria-label="anchor" href="#common-tasks"></a></h2>
