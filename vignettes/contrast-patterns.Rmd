@@ -1,0 +1,337 @@
+---
+title: "Contrast Patterns"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Contrast Patterns}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r, include = FALSE}
+options(tibble.width = Inf)
+```
+
+
+# Introduction
+
+**Contrast patterns** identify conditions under which numeric variables show
+statistically significant differences. In `nuggets`, this family is represented
+by three related functions:
+
+- `dig_baseline_contrasts()` for testing whether a variable differs from a
+  chosen baseline value under a condition,
+- `dig_complement_contrasts()` for comparing rows satisfying a condition with
+  the remaining rows,
+- `dig_paired_baseline_contrasts()` for comparing two paired variables inside
+  a condition.
+
+These pattern families answer different questions:
+
+- *Is a variable unusually high or low in some subgroup?*
+- *Does a subgroup differ from the rest of the data?*
+- *Do two paired measurements differ inside a subgroup?*
+
+Before going further, load the packages used in this vignette:
+
+```{r, message = FALSE}
+library(nuggets)
+library(dplyr)     # for data manipulation
+```
+
+For the overall package workflow, see `vignette("nuggets")`. For creating
+predicate columns, see `vignette("data-preparation")`.
+
+
+# A Small Working Dataset
+
+To demonstrate all three contrast types, we prepare a version of `iris` that
+contains:
+
+- logical columns that can define conditions,
+- numeric variables that can be compared by the contrast functions,
+- derived variables whose interpretation is easy to explain.
+
+```{r}
+iris_contrasts <- iris |>
+    mutate(
+        long_sepal = Sepal.Length >= median(Sepal.Length),
+        wide_petal = Petal.Width >= median(Petal.Width),
+        length_gap = Sepal.Length - Petal.Length,
+        width_gap = Sepal.Width - Petal.Width,
+        sepal_ratio = Sepal.Length / Sepal.Width,
+        petal_ratio = Petal.Length / Petal.Width
+    ) |>
+    partition(Species)
+
+head(iris_contrasts, n = 3)
+```
+
+The `Species` factor is expanded into dummy predicates, while the logical helper
+columns remain available as additional condition predicates. The numeric columns
+are then used as the variables being tested.
+
+
+# Selecting Conditions and Variables
+
+The contrast functions use slightly different argument names, but they all rely
+on the same idea:
+
+- `condition` selects columns from which conditions are generated,
+- `vars` selects numeric variables for one-sample or two-sample contrasts,
+- `xvars` and `yvars` select paired numeric variables.
+
+These arguments accept
+[tidyselect expressions](https://tidyselect.r-lib.org/reference/language.html),
+so you can target specific sets of predicates and variables without manually
+listing every column.
+
+
+# Baseline Contrasts
+
+**Baseline contrasts** search for conditions under which a numeric variable
+differs from a chosen baseline value `h0`.
+
+The basic scheme is:
+
+> *var* != *h0* | *condition*
+
+Here we test whether two derived gap variables differ from zero inside the
+discovered subgroups:
+
+```{r}
+baseline_result <- dig_baseline_contrasts(
+    iris_contrasts,
+    condition = where(is.logical),
+    vars = c(length_gap, width_gap),
+    min_length = 1,
+    max_length = 2,
+    min_support = 0.2,
+    method = "t",
+    max_p_value = 0.01
+)
+
+head(baseline_result, n = 6)
+```
+
+This result tells us under which conditions the mean gap is significantly
+different from zero. Typical output columns are:
+
+- `condition`, `support`,
+- `var`,
+- `estimate`,
+- `statistic`, `p_value`,
+- `n`,
+- confidence-interval bounds and test metadata.
+
+
+## Non-parametric Baseline Contrasts
+
+If you prefer a rank-based one-sample test, use `method = "wilcox"`:
+
+```{r}
+baseline_wilcox <- dig_baseline_contrasts(
+    iris_contrasts,
+    condition = starts_with("Species"),
+    vars = length_gap,
+    min_length = 1,
+    max_length = 1,
+    min_support = 0.2,
+    method = "wilcox",
+    max_p_value = 0.01
+)
+
+baseline_wilcox
+```
+
+This is useful when you want a method that is less sensitive to departures from
+normality.
+
+
+# Complement Contrasts
+
+**Complement contrasts** compare a subgroup with the rest of the dataset. Their
+scheme is:
+
+> (*var* | *condition*) != (*var* | not *condition*)
+
+This is often the most natural contrast pattern when you want to know whether a
+condition identifies an unusual subgroup.
+
+```{r}
+complement_result <- dig_complement_contrasts(
+    iris_contrasts,
+    condition = where(is.logical),
+    vars = c(Sepal.Length, Petal.Length, petal_ratio),
+    min_length = 1,
+    max_length = 2,
+    min_support = 0.2,
+    method = "t",
+    max_p_value = 0.01
+)
+
+head(complement_result, n = 6)
+```
+
+The output contains separate estimates for the subgroup and its complement:
+
+- `estimate_x` for rows satisfying the condition,
+- `estimate_y` for rows not satisfying the condition,
+- `n_x` and `n_y` for the corresponding sample sizes.
+
+
+## Comparing Variability Instead of Location
+
+`dig_complement_contrasts()` also supports `method = "var"` for testing whether
+the variability in one group differs from the variability in its complement.
+
+```{r}
+complement_var <- dig_complement_contrasts(
+    iris_contrasts,
+    condition = starts_with("Species"),
+    vars = Petal.Length,
+    min_length = 1,
+    max_length = 1,
+    min_support = 0.2,
+    method = "var",
+    max_p_value = 0.01
+)
+
+complement_var
+```
+
+This is helpful when a subgroup is not mainly distinguished by a higher or
+lower mean, but by being more or less variable.
+
+
+# Paired Baseline Contrasts
+
+**Paired baseline contrasts** compare two numeric variables observed on the same
+rows under generated conditions.
+
+The scheme is:
+
+> (*xvar* - *yvar*) != 0 | *condition*
+
+This is appropriate for paired measurements such as "before vs after", "left vs
+right", or two alternative measurements recorded for the same case.
+
+```{r}
+paired_result <- dig_paired_baseline_contrasts(
+    iris_contrasts,
+    condition = where(is.logical),
+    xvars = c(Sepal.Length, Sepal.Width),
+    yvars = c(Petal.Length, Petal.Width),
+    min_length = 1,
+    max_length = 1,
+    min_support = 0.2,
+    method = "t",
+    max_p_value = 0.01
+)
+
+head(paired_result, n = 6)
+```
+
+The result reports the condition, the selected variable pair (`xvar`, `yvar`),
+the estimated difference, test statistic, p-value, and sample size.
+
+
+## Non-parametric Paired Contrasts
+
+For a paired rank-based alternative, use the Wilcoxon signed-rank test:
+
+```{r}
+paired_wilcox <- dig_paired_baseline_contrasts(
+    iris_contrasts,
+    condition = starts_with("Species"),
+    xvars = Sepal.Length,
+    yvars = Petal.Length,
+    min_length = 1,
+    max_length = 1,
+    min_support = 0.2,
+    method = "wilcox",
+    max_p_value = 0.01
+)
+
+paired_wilcox
+```
+
+
+# Controlling the Search
+
+All three contrast functions support the usual search controls:
+
+- `min_length`, `max_length` for condition complexity,
+- `min_support`, `max_support` for subgroup size,
+- `max_results` to stop long searches early,
+- `max_p_value` to keep only statistically significant results.
+
+As with other pattern-mining functions in `nuggets`, it is useful to keep track
+of mutually exclusive predicates with `var_names()`:
+
+```{r}
+disj <- var_names(colnames(iris_contrasts))
+disj[1:8]
+```
+
+For datasets prepared with `partition()`, this helps prevent contradictory
+conditions built from predicates originating from the same variable.
+
+
+# Which Contrast Family Should You Use?
+
+The three contrast types complement each other:
+
+- use **baseline contrasts** when you have a meaningful reference value,
+- use **complement contrasts** when you want to compare a subgroup with the
+  rest of the data,
+- use **paired baseline contrasts** when two measurements belong to the same
+  observational units.
+
+In practice, it is often useful to start with complement contrasts to locate
+interesting subgroups, then refine the analysis with baseline or paired
+contrasts depending on the scientific question.
+
+
+# Related Tools
+
+The contrast functions focus on built-in statistical tests. If you need custom
+statistics under generated conditions, `dig()` and `dig_grid()` provide the
+general framework; see `vignette("custom-patterns")`.
+
+Conditional correlations are another related pattern family for subgroup-based
+analysis of numeric variables; see `vignette("conditional-correlations")`.
+
+For interactive inspection of discovered patterns, you can use:
+
+```{r, eval = FALSE}
+explore(complement_result, iris_contrasts)
+```
+
+
+# Summary
+
+This vignette introduced the main contrast-pattern workflows in `nuggets`:
+
+1. **Baseline contrasts** test whether a variable differs from a reference
+   value under a condition.
+2. **Complement contrasts** compare a subgroup with the remaining data.
+3. **Paired baseline contrasts** compare two paired variables within a subgroup.
+4. **Search controls** such as support, condition length, and p-value thresholds
+   help keep the result focused and interpretable.
+5. **Tidyselect-based column selection** makes it easy to describe both the
+   condition predicates and the tested variables.
+
+For related material, see:
+
+- `vignette("data-preparation")` for preparing predicate columns,
+- `vignette("conditional-correlations")` for subgroup-based correlation
+  analysis,
+- `vignette("custom-patterns")` for custom statistical pattern searches,
+- `vignette("nuggets")` for the package overview.

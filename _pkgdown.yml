@@ -15,6 +15,8 @@ articles:
       - nuggets
       - data-preparation
       - association-rules
+      - conditional-correlations
+      - contrast-patterns
       - custom-patterns
 
 reference:

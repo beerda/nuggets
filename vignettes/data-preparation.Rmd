@@ -902,4 +902,8 @@ information on pattern discovery itself, see:
 - `vignette("nuggets")` for an overview of the package and its main workflows,
 - `vignette("association-rules")` for a specialized pattern family based on the
   `dig_associations()` function,
+- `vignette("conditional-correlations")` for subgroup-based correlation
+  analysis on numeric variables,
+- `vignette("contrast-patterns")` for subgroup-based statistical comparisons
+  of numeric variables,
 - `vignette("custom-patterns")` for defining custom pattern types with `dig()`.
