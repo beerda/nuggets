@@ -1,0 +1,295 @@
+---
+title: "Conditional Correlations"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Conditional Correlations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r, include = FALSE}
+options(tibble.width = Inf)
+```
+
+
+# Introduction
+
+**Conditional correlations** identify conditions under which two numeric
+variables are strongly related. In `nuggets`, the basic scheme is:
+
+> *xvar* ~ *yvar* | *condition*
+
+This reads as: the variables `xvar` and `yvar` are highly correlated in the
+sub-data satisfying the given condition.
+
+For example:
+
+> `study_time ~ test_score | hard_exam`
+
+This means that for difficult exams, the amount of study time is strongly
+related to the obtained test score.
+
+The `dig_correlations()` function searches over generated conditions and
+computes correlations for all selected combinations of numeric variables. It
+supports the standard correlation methods implemented by
+[`stats::cor.test()`](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/cor.test.html),
+namely Pearson, Kendall, and Spearman correlations.
+
+Before going further, load the packages used in this vignette:
+
+```{r, message = FALSE}
+library(nuggets)
+library(dplyr)     # for data manipulation
+```
+
+For a broader overview of the package workflow, see `vignette("nuggets")`.
+
+
+# A Small Working Dataset
+
+`dig_correlations()` expects **logical condition columns** and **numeric
+variables** to correlate. The built-in `iris` dataset is convenient for this,
+because it already contains several numeric measurements and one factor column
+that can be transformed into condition predicates.
+
+In the next example, we:
+
+- convert `Species` into dummy logical predicates with `partition()`,
+- add two logical helper conditions,
+- add two derived numeric variables that will be useful in examples.
+
+```{r}
+iris_corr <- iris |>
+    mutate(long_sepal = Sepal.Length >= median(Sepal.Length),
+           wide_petal = Petal.Width >= median(Petal.Width),
+           sepal_ratio = Sepal.Length / Sepal.Width,
+           petal_ratio = Petal.Length / Petal.Width) |>
+    partition(Species)
+
+head(iris_corr, n = 3)
+```
+
+The dummy columns created from `Species` and the logical helper columns can be
+used to generate conditions, while the original and derived numeric columns can
+be used in the correlation tests.
+
+For more information on preparing data for pattern extraction, see
+`vignette("data-preparation")`.
+
+
+# Basic Conditional Correlation Search
+
+The simplest search chooses condition predicates and numeric variables, then
+limits the condition length and support:
+
+```{r}
+corr_basic <- dig_correlations(iris_corr,
+                               condition = where(is.logical),
+                               xvars = c(Sepal.Length, Sepal.Width, sepal_ratio),
+                               yvars = c(Petal.Length, Petal.Width, petal_ratio),
+                               min_length = 0,
+                               max_length = 2,
+                               min_support = 0.2)
+
+corr_basic |>
+    arrange(desc(abs(estimate))) |>
+    head(n = 6)
+```
+
+The result is a tibble where each row represents one discovered pattern. The
+main columns are:
+
+- `condition` - the generated condition,
+- `support` - relative frequency of the condition,
+- `xvar`, `yvar` - the correlated variable pair,
+- `estimate` - the correlation coefficient,
+- `p_value` - significance of the test,
+- `n` - number of rows in the corresponding sub-data,
+- `alternative`, `method` - additional information about the test.
+
+
+# Controlling the Search Space
+
+The `condition`, `xvars`, and `yvars` arguments accept
+[tidyselect expressions](https://tidyselect.r-lib.org/reference/language.html).
+This makes it easy to restrict the search to specific groups of columns.
+
+As with other `dig_*()` functions, the search can be controlled with
+`min_length`, `max_length`, `min_support`, `max_support`, and `max_results`.
+
+For example, the following search uses only species predicates as conditions
+and correlates all sepal variables against all petal variables:
+
+```{r}
+corr_species <- dig_correlations(iris_corr,
+                                 condition = starts_with("Species"),
+                                 xvars = starts_with("Sepal"),
+                                 yvars = starts_with("Petal"),
+                                 min_length = 1,
+                                 max_length = 1,
+                                 min_support = 0.3)
+
+head(corr_species, n = 6)
+```
+
+
+
+
+# Choosing the Correlation Method
+
+The `method` argument selects which correlation coefficient is used:
+
+- `"pearson"` for linear relationships,
+- `"spearman"` for monotone relationships based on ranks,
+- `"kendall"` for rank-based association with Kendall's tau.
+
+Under the hood, every combination uses
+[`stats::cor.test()`](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/cor.test.html)
+with the corresponding `method` argument. The `estimate`, `statistic`,
+`p_value`, and confidence-interval columns in the result map directly to the
+values returned by `cor.test()`.
+
+Here is the same basic search with Spearman correlation. As we are O.K. with
+non-exact p-values, we can set `exact = FALSE` (otherwise a warning is issued 
+for small sub-data sizes):
+
+```{r}
+corr_spearman <- dig_correlations(iris_corr,
+                                  condition = where(is.logical),
+                                  xvars = c(Sepal.Length, Sepal.Width),
+                                  yvars = c(Petal.Length, Petal.Width),
+                                  method = "spearman",
+                                  exact = FALSE,
+                                  min_length = 1,
+                                  max_length = 1,
+                                  min_support = 0.2)
+
+head(corr_spearman, n = 6)
+```
+
+If you are interested specifically in positive or negative relationships, use
+the `alternative` argument with values `"greater"` or `"less"`.
+
+
+# Correlations on the Whole Dataset
+
+If `condition = NULL`, `dig_correlations()` computes correlations on the whole
+dataset only. This is useful when you want the same output structure without
+searching over conditions.
+
+```{r}
+corr_whole <- dig_correlations(
+    iris_corr,
+    condition = NULL,
+    xvars = starts_with("Sepal"),
+    yvars = starts_with("Petal")
+)
+
+corr_whole
+```
+
+This is effectively a convenient way to compute a structured set of pairwise
+correlation tests between selected columns.
+
+
+# Notes on Interpretation
+
+When reading discovered correlations, it is useful to keep the following points
+in mind:
+
+- a large absolute `estimate` indicates a stronger relationship,
+- `p_value` reflects statistical evidence for the chosen alternative, but 
+  should be interpreted with caution due to multiple comparisons (see below),
+- `support` and `n` describe how much data contributed to the pattern,
+- longer conditions describe more specific contexts, but usually with smaller
+  support.
+
+Conditional correlations are therefore most useful when the relationship
+between two variables changes across subgroups and would be hidden in a
+single global correlation.
+
+
+## Multiple Comparisons
+
+When `dig_correlations()` is applied to a dataset, it simultaneously tests
+correlations for a potentially large number of condition–variable-pair
+combinations. Each test produces a `p_value`, but interpreting any individual
+`p_value` as if it were the result of a single pre-planned test is misleading:
+if hundreds of tests are performed at level 0.05, several false discoveries are
+expected by chance alone.
+
+The patterns returned by `dig_correlations()` are therefore best understood as
+**generated hypotheses** - promising associations that deserve further
+scrutiny - rather than as confirmed findings. This is known as the problem of
+*simultaneous statistical inference* or *multiple comparisons*.
+
+A standard remedy is to **adjust the p-values** to control either the
+family-wise error rate (FWER) or the false discovery rate (FDR):
+
+- **FWER-controlling methods** (e.g. Bonferroni, Holm) ensure that the
+  probability of making *any* false discovery across all tests stays below a
+  chosen threshold. They are conservative when the number of tests is large.
+- **FDR-controlling methods** (e.g. Benjamini–Hochberg, abbreviated BH) allow
+  a small *proportion* of discoveries to be false positives. This is less
+  stringent than FWER control and retains more patterns in exploratory analyses.
+
+R's built-in `p.adjust()` function supports both families. The example below
+applies Holm correction (FWER) and Benjamini–Hochberg correction (FDR) to the
+result of a search:
+
+```{r}
+corr_basic$p_holm <- p.adjust(corr_basic$p_value, method = "holm")
+corr_basic$p_bh   <- p.adjust(corr_basic$p_value, method = "BH")
+
+corr_basic[, c("condition", "xvar", "yvar", "p_value", "p_holm", "p_bh")]
+```
+
+After adjustment, you can filter by the corrected p-values:
+
+```{r}
+corr_basic[corr_basic$p_bh < 0.05, ]
+```
+
+In a large exploratory search you may prefer the FDR approach (BH) because it
+keeps more patterns visible while still limiting the expected fraction of false
+discoveries. Use FWER control (Holm) when you need stronger guarantees.
+
+
+# Related Tools
+
+`dig_correlations()` is a specialized wrapper around `dig_grid()`. If you need
+custom statistics on pairs of variables under generated conditions, see
+`vignette("custom-patterns")` for the more general workflow.
+
+For interactive inspection of discovered patterns, you can also use:
+
+```{r, eval = FALSE}
+explore(corr_basic, iris_corr)
+```
+
+
+# Summary
+
+This vignette showed how to search for conditional correlations with
+`nuggets`:
+
+1. prepare logical condition predicates and numeric variables in one dataset,
+2. use `dig_correlations()` to search over generated conditions,
+3. select condition and variable columns with tidyselect expressions,
+4. control the search with support, condition length, and result limits,
+5. choose a correlation method appropriate for the data and interpretation.
+
+For related material, see:
+
+- `vignette("data-preparation")` for creating condition predicates,
+- `vignette("contrast-patterns")` for condition-dependent statistical
+  differences,
+- `vignette("custom-patterns")` for custom grid-based analyses,
+- `vignette("nuggets")` for the package overview.

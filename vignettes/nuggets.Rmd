@@ -366,6 +366,9 @@ columns, preventing conflicts in the search algorithm.
 The result shows conditions under which specific pairs of variables exhibit 
 strong correlations, along with correlation coefficients and p-values.
 
+For a more detailed walkthrough, see the
+[Conditional Correlations vignette](conditional-correlations.html).
+
 
 ## Contrast Patterns
 
@@ -455,6 +458,9 @@ This example performs paired t-tests to compare two variables within the same
 rows under specific conditions. Here, it tests whether `mpg` differs from `wt`
 (and `hp` from `wt`) in various subgroups. This is useful for detecting
 context-dependent relationships between paired measurements.
+
+For a more detailed walkthrough of all three contrast families, see the
+[Contrast Patterns vignette](contrast-patterns.html).
 
 
 # Post-processing and Visualization
@@ -695,6 +701,8 @@ This vignette has introduced the core functionality of the `nuggets` package for
 
 - Explore the [Data Preparation vignette](data-preparation.html) for advanced preprocessing techniques
 - Explore the [Association Rules vignette](association-rules.html) for a specialized pattern family
+- Explore the [Conditional Correlations vignette](conditional-correlations.html) for subgroup-based correlation analysis
+- Explore the [Contrast Patterns vignette](contrast-patterns.html) for baseline, complement, and paired contrasts
 - Explore the [Custom Patterns vignette](custom-patterns.html) for defining your own pattern types with `dig()`
 - Review function documentation (e.g., `?dig_associations`) for detailed parameter descriptions
 - Experiment with your own datasets to discover meaningful patterns
