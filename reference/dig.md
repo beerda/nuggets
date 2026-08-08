@@ -248,7 +248,11 @@ dig(
 
 ## Value
 
-A list of results returned by the callback function `f`.
+An S3 object of class `nugget`, which is a list of objects returned by
+the callback `f`. The list may be empty if no conditions satisfied the
+filtering criteria. The `nugget` object also contains metadata about the
+search process that are stored in attributes of the list, which can be
+accessed using [`attributes()`](https://rdrr.io/r/base/attributes.html).
 
 ## Details
 
@@ -346,6 +350,19 @@ dig(x = d,
 #> 
 #> [[6]]
 #> [1] "{Petal.Width=(-Inf;1.3]}"
+#> 
+#> attr(,"search_stats")
+#> attr(,"search_stats")$runtime_millis
+#> [1] 0.302
+#> 
+#> attr(,"search_stats")$computed_conjunctions
+#> [1] 6
+#> 
+#> attr(,"search_stats")$cached_conjunctions
+#> [1] 0
+#> 
+#> attr(,"search_stats")$total_conjunctions
+#> [1] 6
 #> 
 #> attr(,"class")
 #> [1] "nugget" "list"  

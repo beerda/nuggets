@@ -118,6 +118,8 @@ Other functions that can be useful in the pattern extraction process.
   Create a nugget object of a given flavour
 - [`parse_condition()`](https://beerda.github.io/nuggets/reference/parse_condition.md)
   : Convert condition strings into lists of predicate vectors
+- [`permute()`](https://beerda.github.io/nuggets/reference/permute.md) :
+  Generate all permutations of a vector
 - [`shorten_condition()`](https://beerda.github.io/nuggets/reference/shorten_condition.md)
   : Shorten predicates within conditions
 - [`values()`](https://beerda.github.io/nuggets/reference/values.md) :

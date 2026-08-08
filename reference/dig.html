@@ -308,7 +308,11 @@ than those of <code>dig()</code>. The list must contain:</p><ul><li><p><code>arg
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list of results returned by the callback function <code>f</code>.</p>
+    <p>An S3 object of class <code>nugget</code>, which is a list of objects returned
+by the callback <code>f</code>. The list may be empty if no conditions satisfied the
+filtering criteria. The <code>nugget</code> object also contains metadata about the
+search process that are stored in attributes of the list, which can be
+accessed using <code><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -390,6 +394,19 @@ The \(i\)-th elements of these vectors correspond to the \(i\)-th focus
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[6]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{Petal.Width=(-Inf;1.3]}"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"search_stats")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"search_stats")$runtime_millis</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.302</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"search_stats")$computed_conjunctions</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"search_stats")$cached_conjunctions</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"search_stats")$total_conjunctions</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "nugget" "list"  </span>

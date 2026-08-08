@@ -271,7 +271,10 @@ string</p></li>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>An S3 object, which is an instance of <code>nugget</code> class, and which is
 a tibble with found patterns. Each row represents a single call of
-the callback function <code>f</code>.</p>
+the callback function <code>f</code>.
+The <code>nugget</code> object also contains metadata about the search
+process that are stored in attributes of the list, which can be
+accessed using <code><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

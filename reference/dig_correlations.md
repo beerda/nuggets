@@ -160,7 +160,10 @@ dig_correlations(
 ## Value
 
 An S3 object which is an instance of `correlations` and `nugget` classes
-and which is tibble with found patterns.
+and which is tibble with found patterns. The `nugget` object also
+contains metadata about the search process that are stored in attributes
+of the list, which can be accessed using
+[`attributes()`](https://rdrr.io/r/base/attributes.html).
 
 ## See also
 

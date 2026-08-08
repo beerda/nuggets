@@ -1,5 +1,15 @@
 # Changelog
 
+## nuggets 2.2.3
+
+- released: ???
+- added
+  [`permute()`](https://beerda.github.io/nuggets/reference/permute.md)
+- improved filtering by axioms specified in `excluded` argument of
+  `dig*()`
+- added `"search_stats"` attribute to each result of `dig*()` functions
+- improved documentation
+
 ## nuggets 2.2.2
 
 - released: 2026-07-22

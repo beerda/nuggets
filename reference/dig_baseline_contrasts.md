@@ -275,6 +275,10 @@ For the `"t"` method, the following additional columns are also present
 
   the standard error of the mean.
 
+The `nugget` object also contains metadata about the search process that
+are stored in attributes of the list, which can be accessed using
+[`attributes()`](https://rdrr.io/r/base/attributes.html).
+
 ## See also
 
 [`dig_paired_baseline_contrasts()`](https://beerda.github.io/nuggets/reference/dig_paired_baseline_contrasts.md),

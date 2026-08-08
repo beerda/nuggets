@@ -229,7 +229,9 @@ dig_associations(
 
 An S3 object, which is an instance of `associations` and `nugget`
 classes, and which is a tibble with found patterns and computed quality
-measures.
+measures. The `nugget` object also contains metadata about the search
+process that are stored in attributes of the list, which can be accessed
+using [`attributes()`](https://rdrr.io/r/base/attributes.html).
 
 ## See also
 
