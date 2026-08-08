@@ -103,7 +103,9 @@ The basic scheme is:
 > *var* != *h0* | *condition*
 
 Here we test whether two derived gap variables differ from zero inside the
-discovered subgroups:
+discovered subgroups. With `method = "t"`, the underlying test is
+[`stats::t.test()`](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/t.test.html)
+(one-sample, testing whether the mean equals `h0`):
 
 ```{r}
 baseline_result <- dig_baseline_contrasts(
@@ -133,7 +135,10 @@ different from zero. Typical output columns are:
 
 ## Non-parametric Baseline Contrasts
 
-If you prefer a rank-based one-sample test, use `method = "wilcox"`:
+If you prefer a rank-based one-sample test, use `method = "wilcox"`. This
+applies
+[`stats::wilcox.test()`](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/wilcox.test.html)
+(Wilcoxon signed-rank test), which tests whether the pseudo-median equals `h0`:
 
 ```{r}
 baseline_wilcox <- dig_baseline_contrasts(
@@ -162,7 +167,11 @@ scheme is:
 > (*var* | *condition*) != (*var* | not *condition*)
 
 This is often the most natural contrast pattern when you want to know whether a
-condition identifies an unusual subgroup.
+condition identifies an unusual subgroup. With `method = "t"`, the underlying
+test is
+[`stats::t.test()`](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/t.test.html)
+(two-sample Welch t-test, comparing the means of the condition subgroup and its
+complement):
 
 ```{r}
 complement_result <- dig_complement_contrasts(
@@ -190,6 +199,9 @@ The output contains separate estimates for the subgroup and its complement:
 
 `dig_complement_contrasts()` also supports `method = "var"` for testing whether
 the variability in one group differs from the variability in its complement.
+This uses
+[`stats::var.test()`](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/var.test.html)
+(F-test of equality of variances):
 
 ```{r}
 complement_var <- dig_complement_contrasts(
@@ -220,7 +232,10 @@ The scheme is:
 > (*xvar* - *yvar*) != 0 | *condition*
 
 This is appropriate for paired measurements such as "before vs after", "left vs
-right", or two alternative measurements recorded for the same case.
+right", or two alternative measurements recorded for the same case. With
+`method = "t"`, the underlying test is
+[`stats::t.test()`](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/t.test.html)
+(paired t-test, testing whether the mean difference equals zero):
 
 ```{r}
 paired_result <- dig_paired_baseline_contrasts(
@@ -244,7 +259,11 @@ the estimated difference, test statistic, p-value, and sample size.
 
 ## Non-parametric Paired Contrasts
 
-For a paired rank-based alternative, use the Wilcoxon signed-rank test:
+For a paired rank-based alternative, use the Wilcoxon signed-rank test by
+setting `method = "wilcox"`. This calls
+[`stats::wilcox.test()`](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/wilcox.test.html)
+with `paired = TRUE`, testing whether the pseudo-median of the pairwise
+differences equals zero:
 
 ```{r}
 paired_wilcox <- dig_paired_baseline_contrasts(

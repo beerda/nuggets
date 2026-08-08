@@ -38,7 +38,8 @@ related to the obtained test score.
 
 The `dig_correlations()` function searches over generated conditions and
 computes correlations for all selected combinations of numeric variables. It
-supports the standard correlation methods implemented by `stats::cor.test()`,
+supports the standard correlation methods implemented by
+[`stats::cor.test()`](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/cor.test.html),
 namely Pearson, Kendall, and Spearman correlations.
 
 Before going further, load the packages used in this vignette:
@@ -179,6 +180,12 @@ The `method` argument selects which correlation coefficient is used:
 - `"pearson"` for linear relationships,
 - `"spearman"` for monotone relationships based on ranks,
 - `"kendall"` for rank-based association with Kendall's tau.
+
+Under the hood, every combination uses
+[`stats::cor.test()`](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/cor.test.html)
+with the corresponding `method` argument. The `estimate`, `statistic`,
+`p_value`, and confidence-interval columns in the result map directly to the
+values returned by `cor.test()`.
 
 Here is the same basic search with Spearman correlation:
 
