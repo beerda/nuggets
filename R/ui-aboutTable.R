@@ -21,7 +21,11 @@ aboutTable <- function(pkg) {
     descr <- packageDescription(pkg)
 
     author <- descr[["Authors@R"]]
-    author <- eval(parse(text = author))
+    if (is.null(author)) {
+        author <- descr[["Author"]]
+    } else {
+        author <- eval(parse(text = author))
+    }
     author <- format(author, style = "text")
     author <- shiny::markdown(author)
 

@@ -22,15 +22,19 @@
 
 /**
  * A class for computing binomial coefficients C(n, k) = n! / (k! * (n - k)!).
- * This table is used to efficiently compute the number of combinations
- * for a given number of elements and levels in the combinatorial tree.
+ * The class uses a dynamic programming approach to compute and cache the values
+ * of binomial coefficients in a 2D table. The table is initialized with
+ * a maximum size (dimension) specified during construction, allowing for
+ * efficient retrieval of previously computed values. The get() method provides
+ * access to the binomial coefficient for given n and k, while ensuring that the
+ * values are computed only once and stored for future use.
  */
 class BinomialCoefficients {
 public:
     /**
-     * Constructor that initializes the table with a given maximum size.
-     * The table can compute binomial coefficients for n and k
-     * where 0 <= k <= n <= maxN.
+     * Constructor that initializes the class for computing binomial coefficients
+     * with a given maximum size. The class can compute binomial coefficients
+     * for n and k where 0 <= k <= n <= maxN.
      *
      * @param maxN Maximum size of the table (dimension).
      */
@@ -40,7 +44,7 @@ public:
     { std::fill_n(table, dimension * dimension, 0); }
 
     /**
-     * Destructor that cleans up the allocated memory for the table.
+     * Destructor that cleans up the allocated memory.
      */
     ~BinomialCoefficients()
     { delete[] table; }
@@ -56,22 +60,54 @@ public:
      */
     inline size_t get(const size_t n, const size_t k) const
     {
-        if (n > dimension) {
+        if (n > dimension)
             throw std::out_of_range("BinomialCoefficients::get: index out of range");
-        }
 
-        if (n < k) return 0;
+        if (n < k)
+            return 0;
 
         return compute(n, k);
     }
 
 private:
+    /**
+     * The dimension of the table, which is the maximum value of n for which
+     * binomial coefficients can be computed.
+     */
     size_t dimension;
+
+    /**
+     * A pointer to the dynamically allocated table that stores the computed
+     * values of binomial coefficients. The table is initialized with zeros and
+     * is used to cache the results of previously computed values for efficient
+     * retrieval. The size of the table is dimension * dimension, allowing for
+     * storage of all combinations of n and k up to the specified maximum size.
+     *
+     * The table is a 1D array that stores the computed values of C(n, k) in a
+     * flattened 2D format, where the value for C(n, k) is stored at index
+     * n * dimension + k.
+     */
     size_t* table;
 
+    /**
+     * Returns a reference to the cached value of C(n, k) in the table.
+     *
+     * @param n The number of elements.
+     * @param k The number of selected elements.
+     * @return A reference to the cached value of C(n, k) in the table
+     */
     inline size_t& lookup(const size_t n, const size_t k) const
     { return table[n * dimension + k]; }
 
+    /**
+     * Computes the binomial coefficient C(n, k) using a recursive approach with
+     * memoization. The method checks if the value has already been computed and
+     * stored in the table. If not, it computes the value recursively.
+     *
+     * @param n The number of elements.
+     * @param k The number of selected elements.
+     * @return The computed value of C(n, k).
+     */
     inline size_t compute(const size_t n, const size_t k) const
     {
         if (k == 0 || k == n)

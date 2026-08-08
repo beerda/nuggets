@@ -22,8 +22,16 @@
 #include "../common.h"
 
 
+/**
+ * Tracks the selected elements of a fixed-size collection.
+ */
 class Selector {
 public:
+    /**
+     * Creates a selector with storage for the specified number of elements.
+     *
+     * @param size The number of elements that may be selected.
+     */
     Selector(const size_t size)
         : n(0), selectedCount(0), pruned(size), constantlyTrue(false)
     { }
@@ -36,6 +44,13 @@ public:
     Selector(const Selector&) = delete;
     Selector& operator=(const Selector&) = delete;
 
+    /**
+     * Initializes the selector.
+     *
+     * @param size The number of selected elements.
+     * @param isConstantlyTrue Whether all elements should be treated as selected
+     *     without tracking them individually.
+     */
     inline void initialize(const size_t size, const bool isConstantlyTrue)
     {
         n = size;
@@ -46,6 +61,11 @@ public:
         }
     }
 
+    /**
+     * Removes an element from the selection.
+     *
+     * @param index The index of the element to unselect.
+     */
     inline void unselect(const size_t index)
     {
         if (constantlyTrue) {
@@ -57,6 +77,11 @@ public:
         pruned[index] = true;
     }
 
+    /**
+     * Checks whether an element is selected.
+     *
+     * @return TRUE if the element at the specified index is selected.
+     */
     inline bool isSelected(const size_t index) const
     {
         if (constantlyTrue) {
@@ -65,15 +90,40 @@ public:
         return !pruned[index];
     }
 
+    /**
+     * Returns the number of elements managed by the selector.
+     *
+     * @return The number of elements managed by the selector.
+     */
     inline size_t size() const
     { return n; }
 
+    /**
+     * Returns the number of selected elements.
+     *
+     * @return The number of selected elements.
+     */
     inline size_t getSelectedCount() const
     { return selectedCount; }
 
 private:
+    /**
+     * Number of elements managed by the selector.
+     */
     size_t n;
+
+    /**
+     * Number of elements that remain selected.
+     */
     size_t selectedCount;
+
+    /**
+     * Flags indicating which elements have been unselected.
+     */
     vector<short> pruned;
+
+    /**
+     * Whether all elements are implicitly selected.
+     */
     bool constantlyTrue;
 };

@@ -157,6 +157,9 @@
 #'      present (see also [t.test()]):
 #'      \item{df}{the degrees of freedom of the t test.}
 #'      \item{stderr}{the standard error of the mean difference.}
+#'      The `nugget` object also contains metadata about the search
+#'      process that are stored in attributes of the list, which can be
+#'      accessed using [attributes()].
 #' @author Michal Burda
 #' @seealso [dig_baseline_contrasts()], [dig_complement_contrasts()],
 #'      [dig()], [dig_grid()],

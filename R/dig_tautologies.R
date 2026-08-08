@@ -77,8 +77,8 @@
 #' @param verbose a logical value indicating whether to print progress messages.
 #' @param threads the number of threads to use for parallel computation.
 #' @returns An S3 object which is an instance of `associations` and `nugget`
-#'      classes and which is a tibble with found tautologies in the format equal to
-#'      the output of [dig_associations()].
+#'      classes and which is a tibble with found tautologies in the format equal
+#'      to the output of [dig_associations()].
 #' @author Michal Burda
 #' @examples
 #' d <- partition(mtcars, .breaks = 2)

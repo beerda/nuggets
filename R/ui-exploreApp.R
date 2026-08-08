@@ -253,7 +253,8 @@ exploreApp <- function(rules,
                                 shiny::tabsetPanel(
                                     shiny::tabPanel("Rulebase", rulebaseTable(meta, rules)),
                                     shiny::tabPanel("Data", callDataTable(rules, meta)),
-                                    shiny::tabPanel("Call", creationParamsTable(rules))
+                                    shiny::tabPanel("Call", creationParamsTable(rules)),
+                                    shiny::tabPanel("Search statistics", searchStatsTable(rules))
                                 )
                             )
                         )

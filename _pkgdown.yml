@@ -79,6 +79,7 @@ reference:
       - is_subset
       - nugget
       - parse_condition
+      - permute
       - shorten_condition
       - values
       - var_grid
