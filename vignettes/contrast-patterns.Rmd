@@ -299,6 +299,61 @@ interesting subgroups, then refine the analysis with baseline or paired
 contrasts depending on the scientific question.
 
 
+# Notes on Interpretation
+
+When reading discovered contrast patterns, keep the following points in mind:
+
+- a large absolute `estimate` indicates a stronger effect,
+- `p_value` reflects statistical evidence for the chosen alternative,
+- `support` and `n` describe how much data contributed to the pattern,
+- longer conditions describe more specific subgroups, but usually with smaller
+  support.
+
+
+## Multiple Comparisons
+
+A typical contrast-pattern search tests many condition–variable combinations
+simultaneously. When hundreds of tests are run at level 0.05, several spurious
+discoveries are expected by chance alone, even if no true effect exists.
+
+The patterns returned by the `dig_*_contrasts()` functions are therefore best
+understood as **generated hypotheses** — promising associations that deserve
+further scrutiny — rather than as confirmed findings. This is known as the
+problem of *simultaneous statistical inference* or *multiple comparisons*.
+
+A standard remedy is to **adjust the p-values** to control either the
+family-wise error rate (FWER) or the false discovery rate (FDR):
+
+- **FWER-controlling methods** (e.g. Bonferroni, Holm) ensure that the
+  probability of making *any* false discovery across all tests stays below a
+  chosen threshold. They are conservative when the number of tests is large.
+- **FDR-controlling methods** (e.g. Benjamini–Hochberg, abbreviated BH) allow
+  a small *proportion* of discoveries to be false positives. This is less
+  stringent than FWER control and retains more patterns in exploratory analyses.
+
+R's built-in `p.adjust()` function supports both families. The example below
+applies Holm correction (FWER) and Benjamini–Hochberg correction (FDR) to the
+result of a complement-contrast search:
+
+```{r}
+complement_result$p_holm <- p.adjust(complement_result$p_value, method = "holm")
+complement_result$p_bh   <- p.adjust(complement_result$p_value, method = "BH")
+
+complement_result[, c("condition", "x_name", "p_value", "p_holm", "p_bh")]
+```
+
+After adjustment, you can filter by the corrected p-values:
+
+```{r}
+complement_result[complement_result$p_bh < 0.05, ]
+```
+
+In a large exploratory search you may prefer the FDR approach (BH) because it
+keeps more patterns visible while still limiting the expected fraction of false
+discoveries. Use FWER control (Holm) when you need stronger guarantees, for
+instance before acting on a specific finding.
+
+
 # Related Tools
 
 The contrast functions focus on built-in statistical tests. If you need custom
