@@ -1434,6 +1434,10 @@ discovery using the various `dig_*()` functions provided by the
   for a specialized pattern family based on the
   [`dig_associations()`](https://beerda.github.io/nuggets/reference/dig_associations.md)
   function,
+- [`vignette("conditional-correlations")`](https://beerda.github.io/nuggets/articles/conditional-correlations.md)
+  for subgroup-based correlation analysis on numeric variables,
+- [`vignette("contrast-patterns")`](https://beerda.github.io/nuggets/articles/contrast-patterns.md)
+  for subgroup-based statistical comparisons of numeric variables,
 - [`vignette("custom-patterns")`](https://beerda.github.io/nuggets/articles/custom-patterns.md)
   for defining custom pattern types with
   [`dig()`](https://beerda.github.io/nuggets/reference/dig.md).

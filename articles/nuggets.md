@@ -518,6 +518,9 @@ The result shows conditions under which specific pairs of variables
 exhibit strong correlations, along with correlation coefficients and
 p-values.
 
+For a more detailed walkthrough, see the [Conditional Correlations
+vignette](https://beerda.github.io/nuggets/articles/conditional-correlations.md).
+
 ### Contrast Patterns
 
 Contrast patterns identify conditions under which numeric variables show
@@ -677,6 +680,10 @@ same rows under specific conditions. Here, it tests whether `mpg`
 differs from `wt` (and `hp` from `wt`) in various subgroups. This is
 useful for detecting context-dependent relationships between paired
 measurements.
+
+For a more detailed walkthrough of all three contrast families, see the
+[Contrast Patterns
+vignette](https://beerda.github.io/nuggets/articles/contrast-patterns.md).
 
 ## Post-processing and Visualization
 
@@ -1019,6 +1026,12 @@ of conditions. Key takeaways:
 - Explore the [Association Rules
   vignette](https://beerda.github.io/nuggets/articles/association-rules.md)
   for a specialized pattern family
+- Explore the [Conditional Correlations
+  vignette](https://beerda.github.io/nuggets/articles/conditional-correlations.md)
+  for subgroup-based correlation analysis
+- Explore the [Contrast Patterns
+  vignette](https://beerda.github.io/nuggets/articles/contrast-patterns.md)
+  for baseline, complement, and paired contrasts
 - Explore the [Custom Patterns
   vignette](https://beerda.github.io/nuggets/articles/custom-patterns.md)
   for defining your own pattern types with
