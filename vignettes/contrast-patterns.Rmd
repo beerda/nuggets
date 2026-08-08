@@ -45,8 +45,7 @@ library(nuggets)
 library(dplyr)     # for data manipulation
 ```
 
-For the overall package workflow, see `vignette("nuggets")`. For creating
-predicate columns, see `vignette("data-preparation")`.
+For the overall package workflow, see `vignette("nuggets")`. 
 
 
 # A Small Working Dataset
@@ -60,14 +59,12 @@ contains:
 
 ```{r}
 iris_contrasts <- iris |>
-    mutate(
-        long_sepal = Sepal.Length >= median(Sepal.Length),
-        wide_petal = Petal.Width >= median(Petal.Width),
-        length_gap = Sepal.Length - Petal.Length,
-        width_gap = Sepal.Width - Petal.Width,
-        sepal_ratio = Sepal.Length / Sepal.Width,
-        petal_ratio = Petal.Length / Petal.Width
-    ) |>
+    mutate(long_sepal = Sepal.Length >= median(Sepal.Length),
+           wide_petal = Petal.Width >= median(Petal.Width),
+           length_gap = Sepal.Length - Petal.Length,
+           width_gap = Sepal.Width - Petal.Width,
+           sepal_ratio = Sepal.Length / Sepal.Width,
+           petal_ratio = Petal.Length / Petal.Width) |>
     partition(Species)
 
 head(iris_contrasts, n = 3)
@@ -76,6 +73,8 @@ head(iris_contrasts, n = 3)
 The `Species` factor is expanded into dummy predicates, while the logical helper
 columns remain available as additional condition predicates. The numeric columns
 are then used as the variables being tested.
+
+For more information on creating predicate columns, see `vignette("data-preparation")`.
 
 
 # Selecting Conditions and Variables
@@ -108,29 +107,33 @@ discovered subgroups. With `method = "t"`, the underlying test is
 (one-sample, testing whether the mean equals `h0`):
 
 ```{r}
-baseline_result <- dig_baseline_contrasts(
-    iris_contrasts,
-    condition = where(is.logical),
-    vars = c(length_gap, width_gap),
-    min_length = 1,
-    max_length = 2,
-    min_support = 0.2,
-    method = "t",
-    max_p_value = 0.01
-)
+baseline_result <- dig_baseline_contrasts(iris_contrasts,
+                                          condition = where(is.logical),
+                                          vars = c(length_gap, width_gap),
+                                          min_length = 1,
+                                          max_length = 2,
+                                          min_support = 0.2,
+                                          method = "t",
+                                          max_p_value = 0.01)
 
 head(baseline_result, n = 6)
 ```
 
 This result tells us under which conditions the mean gap is significantly
-different from zero. Typical output columns are:
+different from zero.
 
-- `condition`, `support`,
-- `var`,
-- `estimate`,
-- `statistic`, `p_value`,
-- `n`,
-- confidence-interval bounds and test metadata.
+- `condition` - the generated condition,
+`support` - relative frequency of the condition,
+- `var` - the tested variable,
+- `estimate` - the estimated mean difference from the baseline,
+- `statistic` - the test statistic (determined by `method` argument),
+- `df` - degrees of freedom for the test,
+- `p_value` - significance of the test,
+- `n` - number of rows in the corresponding sub-data,
+- `conf_lo`, `conf_hi` - confidence-interval bounds,
+- `stderr` - standard error of the estimate,
+- `condition_length` - number of predicates in the condition,
+- `alternative`, `method`, `comment` - additional information about the test.
 
 
 ## Non-parametric Baseline Contrasts
@@ -174,24 +177,24 @@ test is
 complement):
 
 ```{r}
-complement_result <- dig_complement_contrasts(
-    iris_contrasts,
-    condition = where(is.logical),
-    vars = c(Sepal.Length, Petal.Length, petal_ratio),
-    min_length = 1,
-    max_length = 2,
-    min_support = 0.2,
-    method = "t",
-    max_p_value = 0.01
-)
+complement_result <- dig_complement_contrasts(iris_contrasts,
+                                              condition = where(is.logical),
+                                              vars = c(Sepal.Length, Petal.Length, petal_ratio),
+                                              min_length = 1,
+                                              max_length = 2,
+                                              min_support = 0.2,
+                                              method = "t",
+                                              max_p_value = 0.01)
 
 head(complement_result, n = 6)
 ```
 
 The output contains separate estimates for the subgroup and its complement:
 
-- `estimate_x` for rows satisfying the condition,
-- `estimate_y` for rows not satisfying the condition,
+- `estimate_x` average (or median) value of selected variable for rows satisfying
+  the condition,
+- `estimate_y` average (or median) value of selected variable for rows not
+  satisfying the condition,
 - `n_x` and `n_y` for the corresponding sample sizes.
 
 
@@ -323,7 +326,8 @@ contrasts depending on the scientific question.
 When reading discovered contrast patterns, keep the following points in mind:
 
 - a large absolute `estimate` indicates a stronger effect,
-- `p_value` reflects statistical evidence for the chosen alternative,
+- `p_value` reflects statistical evidence for the chosen alternative, but 
+  should be interpreted with caution due to multiple comparisons (see below),
 - `support` and `n` describe how much data contributed to the pattern,
 - longer conditions describe more specific subgroups, but usually with smaller
   support.
@@ -358,7 +362,7 @@ result of a complement-contrast search:
 complement_result$p_holm <- p.adjust(complement_result$p_value, method = "holm")
 complement_result$p_bh   <- p.adjust(complement_result$p_value, method = "BH")
 
-complement_result[, c("condition", "x_name", "p_value", "p_holm", "p_bh")]
+complement_result[, c("condition", "var", "p_value", "p_holm", "p_bh")]
 ```
 
 After adjustment, you can filter by the corrected p-values:

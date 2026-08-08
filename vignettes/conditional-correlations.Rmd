@@ -111,7 +111,8 @@ main columns are:
 - `xvar`, `yvar` - the correlated variable pair,
 - `estimate` - the correlation coefficient,
 - `p_value` - significance of the test,
-- `n` - number of rows in the corresponding sub-data.
+- `n` - number of rows in the corresponding sub-data,
+- `alternative`, `method` - additional information about the test.
 
 
 # Controlling the Search Space
@@ -204,7 +205,8 @@ When reading discovered correlations, it is useful to keep the following points
 in mind:
 
 - a large absolute `estimate` indicates a stronger relationship,
-- `p_value` reflects statistical evidence for the chosen alternative,
+- `p_value` reflects statistical evidence for the chosen alternative, but 
+  should be interpreted with caution due to multiple comparisons (see below),
 - `support` and `n` describe how much data contributed to the pattern,
 - longer conditions describe more specific contexts, but usually with smaller
   support.
@@ -246,7 +248,7 @@ result of a search:
 corr_basic$p_holm <- p.adjust(corr_basic$p_value, method = "holm")
 corr_basic$p_bh   <- p.adjust(corr_basic$p_value, method = "BH")
 
-corr_basic[, c("condition", "x_name", "y_name", "p_value", "p_holm", "p_bh")]
+corr_basic[, c("condition", "xvar", "yvar", "p_value", "p_holm", "p_bh")]
 ```
 
 After adjustment, you can filter by the corrected p-values:
@@ -257,8 +259,7 @@ corr_basic[corr_basic$p_bh < 0.05, ]
 
 In a large exploratory search you may prefer the FDR approach (BH) because it
 keeps more patterns visible while still limiting the expected fraction of false
-discoveries. Use FWER control (Holm) when you need stronger guarantees, for
-instance before acting on a specific finding.
+discoveries. Use FWER control (Holm) when you need stronger guarantees.
 
 
 # Related Tools
