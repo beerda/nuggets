@@ -144,16 +144,14 @@ applies
 (Wilcoxon signed-rank test), which tests whether the pseudo-median equals `h0`:
 
 ```{r}
-baseline_wilcox <- dig_baseline_contrasts(
-    iris_contrasts,
-    condition = starts_with("Species"),
-    vars = length_gap,
-    min_length = 1,
-    max_length = 1,
-    min_support = 0.2,
-    method = "wilcox",
-    max_p_value = 0.01
-)
+baseline_wilcox <- dig_baseline_contrasts(iris_contrasts,
+                                          condition = starts_with("Species"),
+                                          vars = length_gap,
+                                          min_length = 1,
+                                          max_length = 1,
+                                          min_support = 0.2,
+                                          method = "wilcox",
+                                          max_p_value = 0.01)
 
 baseline_wilcox
 ```
@@ -207,16 +205,14 @@ This uses
 (F-test of equality of variances):
 
 ```{r}
-complement_var <- dig_complement_contrasts(
-    iris_contrasts,
-    condition = starts_with("Species"),
-    vars = Petal.Length,
-    min_length = 1,
-    max_length = 1,
-    min_support = 0.2,
-    method = "var",
-    max_p_value = 0.01
-)
+complement_var <- dig_complement_contrasts(iris_contrasts,
+                                           condition = starts_with("Species"),
+                                           vars = Petal.Length,
+                                           min_length = 1,
+                                           max_length = 1,
+                                           min_support = 0.2,
+                                           method = "var",
+                                           max_p_value = 0.01)
 
 complement_var
 ```
@@ -241,17 +237,15 @@ right", or two alternative measurements recorded for the same case. With
 (paired t-test, testing whether the mean difference equals zero):
 
 ```{r}
-paired_result <- dig_paired_baseline_contrasts(
-    iris_contrasts,
-    condition = where(is.logical),
-    xvars = c(Sepal.Length, Sepal.Width),
-    yvars = c(Petal.Length, Petal.Width),
-    min_length = 1,
-    max_length = 1,
-    min_support = 0.2,
-    method = "t",
-    max_p_value = 0.01
-)
+paired_result <- dig_paired_baseline_contrasts(iris_contrasts,
+                                               condition = where(is.logical),
+                                               xvars = c(Sepal.Length, Sepal.Width),
+                                               yvars = c(Petal.Length, Petal.Width),
+                                               min_length = 1,
+                                               max_length = 1,
+                                               min_support = 0.2,
+                                               method = "t",
+                                               max_p_value = 0.01)
 
 head(paired_result, n = 6)
 ```
@@ -269,17 +263,15 @@ with `paired = TRUE`, testing whether the pseudo-median of the pairwise
 differences equals zero:
 
 ```{r}
-paired_wilcox <- dig_paired_baseline_contrasts(
-    iris_contrasts,
-    condition = starts_with("Species"),
-    xvars = Sepal.Length,
-    yvars = Petal.Length,
-    min_length = 1,
-    max_length = 1,
-    min_support = 0.2,
-    method = "wilcox",
-    max_p_value = 0.01
-)
+paired_wilcox <- dig_paired_baseline_contrasts(iris_contrasts,
+                                               condition = starts_with("Species"),
+                                               xvars = Sepal.Length,
+                                               yvars = Petal.Length,
+                                               min_length = 1,
+                                               max_length = 1,
+                                               min_support = 0.2,
+                                               method = "wilcox",
+                                               max_p_value = 0.01)
 
 paired_wilcox
 ```
@@ -294,16 +286,6 @@ All three contrast functions support the usual search controls:
 - `max_results` to stop long searches early,
 - `max_p_value` to keep only statistically significant results.
 
-As with other pattern-mining functions in `nuggets`, it is useful to keep track
-of mutually exclusive predicates with `var_names()`:
-
-```{r}
-disj <- var_names(colnames(iris_contrasts))
-disj[1:8]
-```
-
-For datasets prepared with `partition()`, this helps prevent contradictory
-conditions built from predicates originating from the same variable.
 
 
 # Which Contrast Family Should You Use?
@@ -340,8 +322,8 @@ simultaneously. When hundreds of tests are run at level 0.05, several spurious
 discoveries are expected by chance alone, even if no true effect exists.
 
 The patterns returned by the `dig_*_contrasts()` functions are therefore best
-understood as **generated hypotheses** — promising associations that deserve
-further scrutiny — rather than as confirmed findings. This is known as the
+understood as **generated hypotheses** - promising associations that deserve
+further scrutiny - rather than as confirmed findings. This is known as the
 problem of *simultaneous statistical inference* or *multiple comparisons*.
 
 A standard remedy is to **adjust the p-values** to control either the
@@ -373,8 +355,7 @@ complement_result[complement_result$p_bh < 0.05, ]
 
 In a large exploratory search you may prefer the FDR approach (BH) because it
 keeps more patterns visible while still limiting the expected fraction of false
-discoveries. Use FWER control (Holm) when you need stronger guarantees, for
-instance before acting on a specific finding.
+discoveries. Use FWER control (Holm) when you need stronger guarantees.
 
 
 # Related Tools

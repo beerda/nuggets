@@ -226,8 +226,8 @@ if hundreds of tests are performed at level 0.05, several false discoveries are
 expected by chance alone.
 
 The patterns returned by `dig_correlations()` are therefore best understood as
-**generated hypotheses** — promising associations that deserve further
-scrutiny — rather than as confirmed findings. This is known as the problem of
+**generated hypotheses** - promising associations that deserve further
+scrutiny - rather than as confirmed findings. This is known as the problem of
 *simultaneous statistical inference* or *multiple comparisons*.
 
 A standard remedy is to **adjust the p-values** to control either the
