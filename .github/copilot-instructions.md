@@ -94,6 +94,7 @@ devtools::build()
    - Use Rcpp attributes for exported functions: `// [[Rcpp::export]]`
    - Add roxygen2 documentation above exported functions
    - Internal functions should have clear comments
+   - Document each class, each method, and each attribute
 
 4. **Testing**:
    - C++ unit tests use testthat framework
@@ -165,11 +166,25 @@ The package includes Shiny applications for interactive exploration:
 
 ## Documentation
 
-- Use roxygen2 for all documentation
+- Use roxygen2 for all documentation of R functions
 - Run `devtools::document()` to regenerate man/*.Rd files
 - README.md is generated from README.Rmd - edit the .Rmd file
 - Vignettes in `vignettes/*.Rmd`
 - Package website built with pkgdown
+- C++ code:
+    - Use block comment /** ... */ with newline after "/**"
+    - Always put @param for each arg, use @result in all non-void method comments
+    
+## Vignettes
+
+- Look at other vignettes for template
+- Write introduction, summary
+- In the beginning, initialize some example dataset that will be used later
+- Provide links to other vignettes where appropriate
+- Load the required libraries in the introduction
+- If mentioning tidyselect expressions, use a link:
+  [tidyselect expression](https://tidyselect.r-lib.org/reference/language.html)
+- Read documentation comments in R files to understand the package
 
 ## Common Tasks
 
