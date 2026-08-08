@@ -101,6 +101,23 @@ For comparison, two Python libraries performed as follows:
 Read the [full documentation of the nuggets
 package](https://beerda.github.io/nuggets/).
 
+## Vignettes
+
+The package currently includes the following vignettes:
+
+- [nuggets: Get
+  Started](https://beerda.github.io/nuggets/articles/nuggets.html)
+- [Data
+  Preparation](https://beerda.github.io/nuggets/articles/data-preparation.html)
+- [Association
+  Rules](https://beerda.github.io/nuggets/articles/association-rules.html)
+- [Conditional
+  Correlations](https://beerda.github.io/nuggets/articles/conditional-correlations.html)
+- [Contrast
+  Patterns](https://beerda.github.io/nuggets/articles/contrast-patterns.html)
+- [Custom Pattern Search with
+  dig()](https://beerda.github.io/nuggets/articles/custom-patterns.html)
+
 ## Installation
 
 To install the stable version of `nuggets` from CRAN, type the following
