@@ -177,7 +177,7 @@ str(simple_result)
 #>  $ :List of 1
 #>   ..$ condition: chr "{Sepal.Width=(-Inf;2.8]}"
 #>  - attr(*, "search_stats")=List of 4
-#>   ..$ runtime_millis       : num 10.1
+#>   ..$ runtime_millis       : num 9.32
 #>   ..$ computed_conjunctions: num 4
 #>   ..$ cached_conjunctions  : num 0
 #>   ..$ total_conjunctions   : num 4

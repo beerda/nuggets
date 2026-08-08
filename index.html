@@ -84,39 +84,48 @@
 </div>
 <!-- badges: start -->
 
-<p><code>nuggets</code> is a package for <a href="https://www.r-project.org/" class="external-link">R statistical computing environment</a> providing a framework for systematic exploration of <strong>association rules</strong> (<a href="https://www.vldb.org/conf/1994/P487.PDF" class="external-link">Agrawal (1994)</a>), <strong>contrast patterns</strong> (<a href="https://doi.org/10.48550/arXiv.2209.13556" class="external-link">Chen (2022)</a>), <strong>emerging patterns</strong> (<a href="https://doi.org/10.1145/312129.312191" class="external-link">Dong (1999)</a>), <strong>subgroup discovery</strong> (<a href="https://doi.org/10.1002/widm.1144" class="external-link">Atzmueller (2015)</a>), and <strong>conditional correlations</strong> (<a href="https://doi.org/10.1007/978-3-642-66943-9" class="external-link">Hájek (1978)</a>). User-defined functions may also be supplied to guide custom pattern searches.</p>
-<p>Supports both <strong>crisp</strong> (Boolean) and <strong>fuzzy</strong> data. Generates candidate conditions expressed as elementary conjunctions, evaluates them on a dataset, and inspects the induced sub-data for statistical, logical, or structural properties such as associations, correlations, or contrasts. Includes methods for <strong>visualization</strong> of logical structures and supports <strong>interactive exploration</strong> through integrated Shiny applications.</p>
+<p><em>Fast and extensible pattern mining in R - fuzzy association rules, conditional correlations, and contrast patterns</em></p>
+<p><code>nuggets</code> is a package for <a href="https://www.r-project.org/" class="external-link">R</a> providing a fast and extensible framework for discovering interesting patterns in tabular data. It can find association rules, contrasts, subgroup patterns, conditional correlations, and other patterns defined by user-specified evaluation functions. Both Boolean and fuzzy predicates are supported. Efficient implementation enables pattern discovery on large and dense data sets. Package includes methods for <strong>visualization</strong> and supports <strong>interactive exploration</strong> through integrated Shiny applications.</p>
 <div class="section level2">
 <h2 id="what-patterns-can-you-discover">What Patterns Can You Discover?<a class="anchor" aria-label="anchor" href="#what-patterns-can-you-discover"></a>
 </h2>
 <ul>
 <li>
-<strong>Association Rules</strong>: <em>“University educated people in middle age working in IT have high income”</em> – identify conditions that strongly predict specific outcomes</li>
+<strong>Association Rules</strong>: <em>“University educated people in middle age working in IT have high income”</em> - identify conditions that strongly predict specific outcomes.</li>
 <li>
-<strong>Conditional Correlations</strong>: <em>“Study time correlates with test score on hard exams”</em> – discover relationships between variables that only hold under certain conditions<br>
-</li>
+<strong>Conditional Correlations</strong>: <em>“Study time correlates with test score on hard exams”</em> - discover relationships between variables that only hold under certain conditions .</li>
 <li>
-<strong>Complement Contrasts</strong>: <em>“Smokers have lower life expectancy than non-smokers”</em> – find subgroups with significantly different characteristics from the rest</li>
+<strong>Complement Contrasts</strong>: <em>“Smokers have lower life expectancy than non-smokers”</em> - find subgroups with significantly different characteristics from the rest.</li>
 <li>
-<strong>Baseline Contrasts</strong>: <em>“Measurement error differs from zero when using tool A”</em> – detect when a variable deviates significantly from a baseline under specific conditions</li>
+<strong>Baseline Contrasts</strong>: <em>“Measurement error differs from zero when using tool A”</em> - detect when a variable deviates significantly from a baseline under specific conditions.</li>
 <li>
-<strong>Paired Contrasts</strong>: <em>“Ice cream sales exceed tea sales on sunny days”</em> – compare paired measurements within specific contexts</li>
+<strong>Paired Contrasts</strong>: <em>“Ice cream sales exceed tea sales on sunny days”</em> – compare paired measurements within specific contexts.</li>
 <li>
-<strong>Custom Patterns</strong>: Define your own evaluation functions for specialized pattern mining</li>
+<strong>Custom Patterns</strong>: Define your own evaluation functions for specialized pattern mining.</li>
 </ul>
 </div>
 <div class="section level2">
-<h2 id="key-features">Key Features<a class="anchor" aria-label="anchor" href="#key-features"></a>
+<h2 id="why-nuggets">Why nuggets?<a class="anchor" aria-label="anchor" href="#why-nuggets"></a>
 </h2>
+<p><code>arules</code> is the established R framework for transaction-based association-rule and frequent-itemset mining. The <code>nuggets</code> package takes a broader approach: it searches combinations of conditions and evaluates the observations they select. This makes association rules just one of several types of patterns that can be discovered.</p>
+<p>Key advantages of <code>nuggets</code> include:</p>
 <ul>
-<li>Optimized performance for <strong>fast computation</strong>.</li>
-<li>Support for both <strong>categorical</strong> and <strong>numeric data</strong>.</li>
-<li>Provides both <strong>Boolean</strong> and <strong>fuzzy</strong> logic approach.</li>
-<li>Data preparation functions for easy pre-processing phase.</li>
-<li>Functions for examining <strong>associations</strong>, <strong>conditional correlations</strong>, and <strong>contrasts</strong> among data variables.</li>
 <li>
-<strong>Visualization</strong> and pattern post-processing tools.</li>
-<li>Integrated Shiny applications for <strong>interactive exploration</strong> of discovered patterns.</li>
+<strong>Beyond association rules</strong> - discover associations, contrasts, subgroup patterns, conditional correlations, and other patterns defined by your own evaluation function.</li>
+<li>
+<strong>Boolean and fuzzy predicates</strong> - work with both crisp conditions and fuzzy predicates, allowing patterns to express gradual concepts such as <em>young</em>, <em>high income</em>, or <em>strongly associated</em>.</li>
+<li>
+<strong>Works naturally with ordinary data frames</strong> - search directly in tabular R data rather than requiring the data to be converted into a transaction representation first.</li>
+<li>
+<strong>Numeric and categorical data</strong> - combine conditions on different types of variables and, where appropriate, use <code><a href="reference/partition.html">partition()</a></code> to construct meaningful predicates from numeric or factor variables.</li>
+<li>
+<strong>Extensible pattern discovery</strong> - <code><a href="reference/dig.html">dig()</a></code> provides a general mechanism for searching candidate conditions and evaluating the resulting subsets of observations with arbitrary user-defined functions.</li>
+<li>
+<strong>Fast pattern search</strong> - implemented in C++ with performance in mind, including efficient processing of large and dense datasets.</li>
+<li>
+<strong>Visualization</strong> - unique tools for visualizing discovered patterns and their relationships.</li>
+<li>
+<strong>Interactive exploration</strong> - inspect and explore discovered patterns using the package’s Shiny app.</li>
 </ul>
 </div>
 <div class="section level2">
@@ -149,19 +158,6 @@
 <li>
 <code>mlxtend</code> (Python, boolean logic, frequent itemsets only): <strong>4h 11m 22.5s</strong>
 </li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
-</h2>
-<p>The package currently includes the following vignettes:</p>
-<ul>
-<li><a href="https://beerda.github.io/nuggets/articles/nuggets.html">nuggets: Get Started</a></li>
-<li><a href="https://beerda.github.io/nuggets/articles/data-preparation.html">Data Preparation</a></li>
-<li><a href="https://beerda.github.io/nuggets/articles/association-rules.html">Association Rules</a></li>
-<li><a href="https://beerda.github.io/nuggets/articles/conditional-correlations.html">Conditional Correlations</a></li>
-<li><a href="https://beerda.github.io/nuggets/articles/contrast-patterns.html">Contrast Patterns</a></li>
-<li><a href="https://beerda.github.io/nuggets/articles/custom-patterns.html">Custom Pattern Search with dig()</a></li>
 </ul>
 </div>
 <div class="section level2">
@@ -204,6 +200,19 @@
 <p><img src="reference/figures/assoc_explorer1.png" width="100%"></p>
 </div>
 <div class="section level2">
+<h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
+</h2>
+<p>The package currently includes the following vignettes:</p>
+<ul>
+<li><a href="https://beerda.github.io/nuggets/articles/nuggets.html">nuggets: Get Started</a></li>
+<li><a href="https://beerda.github.io/nuggets/articles/data-preparation.html">Data Preparation</a></li>
+<li><a href="https://beerda.github.io/nuggets/articles/association-rules.html">Association Rules</a></li>
+<li><a href="https://beerda.github.io/nuggets/articles/conditional-correlations.html">Conditional Correlations</a></li>
+<li><a href="https://beerda.github.io/nuggets/articles/contrast-patterns.html">Contrast Patterns</a></li>
+<li><a href="https://beerda.github.io/nuggets/articles/custom-patterns.html">Custom Pattern Search with dig()</a></li>
+</ul>
+</div>
+<div class="section level2">
 <h2 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
 </h2>
 <p>Contributions, suggestions, and bug reports are welcome. Please submit <a href="https://github.com/beerda/nuggets/issues/" class="external-link">issues</a> on <a href="https://github.com/" class="external-link">GitHub</a>.</p>
@@ -213,6 +222,11 @@
 </h2>
 <p>This package is licensed under the GPL-3 license.</p>
 <p>It includes third-party code licensed under BSD-2-Clause, BSD-3-Clause, and GPL-2 or later licenses. See <code>inst/COPYRIGHTS</code> for details.</p>
+</div>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<p>Burda, M. <a href="https://doi.org/10.1016/j.asoc.2026.114661" class="external-link">Accelerating Pattern Mining on Fuzzy Data by Packing Truth Values into Blocks of Bits</a>. <em>Applied Soft Computing</em>. 2026, <strong>191</strong> (April 2026), ISSN 1568-4946.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

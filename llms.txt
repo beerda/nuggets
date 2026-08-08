@@ -1,55 +1,71 @@
 # nuggets
 
-`nuggets` is a package for [R statistical computing
-environment](https://www.r-project.org/) providing a framework for
-systematic exploration of **association rules** ([Agrawal
-(1994)](https://www.vldb.org/conf/1994/P487.PDF)), **contrast patterns**
-([Chen (2022)](https://doi.org/10.48550/arXiv.2209.13556)), **emerging
-patterns** ([Dong (1999)](https://doi.org/10.1145/312129.312191)),
-**subgroup discovery** ([Atzmueller
-(2015)](https://doi.org/10.1002/widm.1144)), and **conditional
-correlations** ([Hájek
-(1978)](https://doi.org/10.1007/978-3-642-66943-9)). User-defined
-functions may also be supplied to guide custom pattern searches.
+*Fast and extensible pattern mining in R - fuzzy association rules,
+conditional correlations, and contrast patterns*
 
-Supports both **crisp** (Boolean) and **fuzzy** data. Generates
-candidate conditions expressed as elementary conjunctions, evaluates
-them on a dataset, and inspects the induced sub-data for statistical,
-logical, or structural properties such as associations, correlations, or
-contrasts. Includes methods for **visualization** of logical structures
-and supports **interactive exploration** through integrated Shiny
-applications.
+`nuggets` is a package for [R](https://www.r-project.org/) providing a
+fast and extensible framework for discovering interesting patterns in
+tabular data. It can find association rules, contrasts, subgroup
+patterns, conditional correlations, and other patterns defined by
+user-specified evaluation functions. Both Boolean and fuzzy predicates
+are supported. Efficient implementation enables pattern discovery on
+large and dense data sets. Package includes methods for
+**visualization** and supports **interactive exploration** through
+integrated Shiny applications.
 
 ## What Patterns Can You Discover?
 
 - **Association Rules**: *“University educated people in middle age
-  working in IT have high income”* – identify conditions that strongly
-  predict specific outcomes
+  working in IT have high income”* - identify conditions that strongly
+  predict specific outcomes.
 - **Conditional Correlations**: *“Study time correlates with test score
-  on hard exams”* – discover relationships between variables that only
-  hold under certain conditions  
+  on hard exams”* - discover relationships between variables that only
+  hold under certain conditions .
 - **Complement Contrasts**: *“Smokers have lower life expectancy than
-  non-smokers”* – find subgroups with significantly different
-  characteristics from the rest
+  non-smokers”* - find subgroups with significantly different
+  characteristics from the rest.
 - **Baseline Contrasts**: *“Measurement error differs from zero when
-  using tool A”* – detect when a variable deviates significantly from a
-  baseline under specific conditions
+  using tool A”* - detect when a variable deviates significantly from a
+  baseline under specific conditions.
 - **Paired Contrasts**: *“Ice cream sales exceed tea sales on sunny
-  days”* – compare paired measurements within specific contexts
+  days”* – compare paired measurements within specific contexts.
 - **Custom Patterns**: Define your own evaluation functions for
-  specialized pattern mining
+  specialized pattern mining.
 
-## Key Features
+## Why nuggets?
 
-- Optimized performance for **fast computation**.
-- Support for both **categorical** and **numeric data**.
-- Provides both **Boolean** and **fuzzy** logic approach.
-- Data preparation functions for easy pre-processing phase.
-- Functions for examining **associations**, **conditional
-  correlations**, and **contrasts** among data variables.
-- **Visualization** and pattern post-processing tools.
-- Integrated Shiny applications for **interactive exploration** of
-  discovered patterns.
+`arules` is the established R framework for transaction-based
+association-rule and frequent-itemset mining. The `nuggets` package
+takes a broader approach: it searches combinations of conditions and
+evaluates the observations they select. This makes association rules
+just one of several types of patterns that can be discovered.
+
+Key advantages of `nuggets` include:
+
+- **Beyond association rules** - discover associations, contrasts,
+  subgroup patterns, conditional correlations, and other patterns
+  defined by your own evaluation function.
+- **Boolean and fuzzy predicates** - work with both crisp conditions and
+  fuzzy predicates, allowing patterns to express gradual concepts such
+  as *young*, *high income*, or *strongly associated*.
+- **Works naturally with ordinary data frames** - search directly in
+  tabular R data rather than requiring the data to be converted into a
+  transaction representation first.
+- **Numeric and categorical data** - combine conditions on different
+  types of variables and, where appropriate, use
+  [`partition()`](https://beerda.github.io/nuggets/reference/partition.md)
+  to construct meaningful predicates from numeric or factor variables.
+- **Extensible pattern discovery** -
+  [`dig()`](https://beerda.github.io/nuggets/reference/dig.md) provides
+  a general mechanism for searching candidate conditions and evaluating
+  the resulting subsets of observations with arbitrary user-defined
+  functions.
+- **Fast pattern search** - implemented in C++ with performance in mind,
+  including efficient processing of large and dense datasets.
+- **Visualization** - unique tools for visualizing discovered patterns
+  and their relationships.
+- **Interactive exploration** - inspect and explore discovered patterns
+  using the package’s Shiny app.
 
 ## Fast on Dense Datasets
 
@@ -78,23 +94,6 @@ For comparison, two Python libraries performed as follows:
 - `cleverminer` (Python, boolean logic): **1m 15.0s**
 - `mlxtend` (Python, boolean logic, frequent itemsets only): **4h 11m
   22.5s**
-
-## Vignettes
-
-The package currently includes the following vignettes:
-
-- [nuggets: Get
-  Started](https://beerda.github.io/nuggets/articles/nuggets.html)
-- [Data
-  Preparation](https://beerda.github.io/nuggets/articles/data-preparation.html)
-- [Association
-  Rules](https://beerda.github.io/nuggets/articles/association-rules.html)
-- [Conditional
-  Correlations](https://beerda.github.io/nuggets/articles/conditional-correlations.html)
-- [Contrast
-  Patterns](https://beerda.github.io/nuggets/articles/contrast-patterns.html)
-- [Custom Pattern Search with
-  dig()](https://beerda.github.io/nuggets/articles/custom-patterns.html)
 
 ## Installation
 
@@ -151,6 +150,23 @@ explore(rules, cars)
 
 ![](reference/figures/assoc_explorer1.png)
 
+## Vignettes
+
+The package currently includes the following vignettes:
+
+- [nuggets: Get
+  Started](https://beerda.github.io/nuggets/articles/nuggets.html)
+- [Data
+  Preparation](https://beerda.github.io/nuggets/articles/data-preparation.html)
+- [Association
+  Rules](https://beerda.github.io/nuggets/articles/association-rules.html)
+- [Conditional
+  Correlations](https://beerda.github.io/nuggets/articles/conditional-correlations.html)
+- [Contrast
+  Patterns](https://beerda.github.io/nuggets/articles/contrast-patterns.html)
+- [Custom Pattern Search with
+  dig()](https://beerda.github.io/nuggets/articles/custom-patterns.html)
+
 ## Contributing
 
 Contributions, suggestions, and bug reports are welcome. Please submit
@@ -163,6 +179,12 @@ This package is licensed under the GPL-3 license.
 
 It includes third-party code licensed under BSD-2-Clause, BSD-3-Clause,
 and GPL-2 or later licenses. See `inst/COPYRIGHTS` for details.
+
+## References
+
+Burda, M. [Accelerating Pattern Mining on Fuzzy Data by Packing Truth
+Values into Blocks of Bits](https://doi.org/10.1016/j.asoc.2026.114661).
+*Applied Soft Computing*. 2026, **191** (April 2026), ISSN 1568-4946.
 
 # Package index
 
