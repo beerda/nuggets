@@ -1,0 +1,141 @@
+---
+title: "Performance Comparison of `nuggets` and `arules`"
+author: "Michal Burda"
+output: html_document
+---
+
+```{r, setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(tidyverse)
+library(patchwork)
+
+preprocess <- function(d) {
+    d |>
+        pivot_longer(cols = c("nuggets", "arules_apriori", "arules_eclat"),
+                     names_to = "method",
+                     values_to = "time")  |>
+        mutate(time = time / 1e6,  # convert nanoseconds to milli-seconds
+               method = dplyr::recode(method,
+                                "nuggets" = "nuggets",
+                                "arules_apriori" = "apriori (arules)",
+                                "arules_eclat" = "eclat (arules)"),
+               method = factor(method)) 
+}
+
+dense_rows <- readRDS("result_dense_rows.rds") |> preprocess()
+dense_cols <- readRDS("result_dense_cols.rds") |> preprocess()
+sparse_rows <- readRDS("result_sparse_rows.rds") |> preprocess()
+sparse_cols <- readRDS("result_sparse_cols.rds") |> preprocess()
+```
+
+
+# Dense data
+
+```{r, fig.width=10, fig.height=5}
+p1 <- ggplot(dense_rows) +
+    aes(x = rows, y = time, color = method) +
+    geom_point() +
+    geom_line() +
+    #scale_x_log10() +
+    #scale_y_log10() +
+    labs(x = "Number of data rows",
+         y = "Time [milliseconds]",
+         color = "Method")
+
+p2 <- ggplot(dense_rows) +
+    aes(x = rows, y = time, color = method) +
+    geom_point() +
+    geom_line() +
+    scale_x_log10() +
+    scale_y_log10() +
+    labs(x = "Number of data rows",
+         y = "Time [milliseconds]",
+         color = "Method")
+
+p1 + p2 +
+    plot_annotation(title = "Comparison by number of data rows (left: linear scales, right: log scales)") +
+    plot_layout(ncol = 2, guides = "collect") & theme(legend.position = "bottom") 
+```
+
+```{r, fig.width=10, fig.height=5}
+p1 <- ggplot(dense_cols) +
+    aes(x = cols, y = time, color = method) +
+    geom_point() +
+    geom_line() +
+    #scale_x_log10() +
+    #scale_y_log10() +
+    labs(x = "Number of data columns",
+         y = "Time [milliseconds]",
+         color = "Method")
+
+p2 <- ggplot(dense_cols) +
+    aes(x = cols, y = time, color = method) +
+    geom_point() +
+    geom_line() +
+    scale_x_log10() +
+    scale_y_log10() +
+    labs(x = "Number of data columns",
+         y = "Time [milliseconds]",
+         color = "Method")
+
+p1 + p2 +
+    plot_annotation(title = "Comparison by number of data columns (left: linear scales, right: log scales)") +
+    plot_layout(ncol = 2, guides = "collect") & theme(legend.position = "bottom") 
+```
+
+
+# Sparse data
+
+```{r}
+p1 <- ggplot(sparse_rows) +
+    aes(x = rows, y = time, color = method) +
+    geom_point() +
+    geom_line() +
+    #scale_x_log10() +
+    #scale_y_log10() +
+    labs(x = "Number of data rows - log10 scale",
+         y = "Time [milliseconds] - log10 scale",
+         color = "Method") 
+
+p2 <- ggplot(sparse_rows) +
+    aes(x = rows, y = time, color = method) +
+    geom_point() +
+    geom_line() +
+    scale_x_log10() +
+    scale_y_log10() +
+    labs(x = "Number of data rows - log10 scale",
+         y = "Time [milliseconds] - log10 scale",
+         color = "Method") 
+
+p1 + p2 +
+    plot_annotation(title = "Comparison by number of data rows (left: linear scales, right: log scales)") +
+    plot_layout(ncol = 2, guides = "collect") & theme(legend.position = "bottom") 
+```
+
+```{r}
+p1 <- ggplot(sparse_cols) +
+    aes(x = cols, y = time, color = method) +
+    geom_point() +
+    geom_line() +
+    #scale_x_log10() +
+    #scale_y_log10() +
+    labs(x = "Number of data columns - log10 scale",
+         y = "Time [milliseconds] - log10 scale",
+         color = "Method")
+
+p2 <- ggplot(sparse_cols) +
+    aes(x = cols, y = time, color = method) +
+    geom_point() +
+    geom_line() +
+    scale_x_log10() +
+    scale_y_log10() +
+    labs(x = "Number of data columns - log10 scale",
+         y = "Time [milliseconds] - log10 scale",
+         color = "Method")
+
+p1 + p2 +
+    plot_annotation(title = "Comparison by number of data columns (left: linear scales, right: log scales)") +
+    plot_layout(ncol = 2, guides = "collect") & theme(legend.position = "bottom") 
+```
+
