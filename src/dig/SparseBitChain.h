@@ -102,9 +102,23 @@ public:
           n(a.n)
     {
         data.reserve(std::min(a.data.size(), b.data.size()));
-        std::set_intersection(a.data.begin(), a.data.end(),
-                              b.data.begin(), b.data.end(),
-                              std::back_inserter(data));
+
+        auto i = a.data.begin();
+        auto j = b.data.begin();
+
+        while (i != a.data.end() && j != b.data.end()) {
+            if (*i < *j) {
+                ++i;
+            }
+            else if (*i > *j) {
+                ++j;
+            }
+            else {
+                data.push_back(*i);
+                ++i; ++j;
+            }
+        }
+
         this->sum = data.size();
     }
 
