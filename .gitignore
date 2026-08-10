@@ -56,10 +56,5 @@ config.status
 docs
 inst/doc
 
-# Performance tests
-performance/*.csv
-performance/*.rds
-performance/*.xlsx
-performance/results/*
 _codeql_detected_source_root
 .positai
