@@ -21,7 +21,6 @@
 
 #include "../common.h"
 #include "../timer.h"
-#include "Clause.h"
 
 
 /**
@@ -30,7 +29,7 @@
  * parameter of Digger.
  *
  * BaseChain handles the common functionality of chains, such as storing the
- * clause (vector of predicate ids), the sum of TRUEs or membership degrees,
+ * last predicate of the clause, the sum of TRUEs or membership degrees,
  * and the predicate type (condition, focus, or both). Constructors are provided
  * for creating chains from a single predicate, combining two chains, and
  * creating an empty chain or chain with cached sum. (Chain with cached sum
@@ -65,14 +64,15 @@ public:
 
     /**
      * Default constructor that creates an empty chain of type CONDITION with
-     * empty clause.
+     * empty predicate. Predicates are indexed from 1, so 0 is used to represent
+     * an empty predicate.
      *
      * @param sum The sum of TRUEs (for binary data) or membership degrees
      *     (for fuzzy data) of the chain.
      */
     BaseChain(double sum)
         : sum(sum),
-          clause(),
+          predicate(0),
           predicateType(CONDITION),
           cached(false)
     {
@@ -93,11 +93,14 @@ public:
      */
     BaseChain(size_t id, PredicateType type, double sum)
         : sum(sum),
-          clause({ id }),
+          predicate(id),
           predicateType(type),
           cached(false)
     {
         IF_DEBUG(
+            if (predicate == 0)
+                throw invalid_argument("BaseChain: predicate id cannot be 0");
+
             if (sum < 0.0)
                 throw invalid_argument("BaseChain: sum cannot be negative");
         )
@@ -105,20 +108,24 @@ public:
 
     /**
      * Constructor that creates a chain by combining two chains with
-     * a conjunction.
+     * a conjunction. The stored predicate is taken from the second chain,
+     * because the first chain's predicate is expected to go to Digger::prefix.
      *
      * @param a The first chain.
      * @param b The second chain.
      */
     BaseChain(const BaseChain& a, const BaseChain& b)
         : sum(0),
-          clause(mergeClauses(a.clause, b.clause)),
+          predicate(b.predicate),
           predicateType(b.predicateType),
           cached(false)
     {
         IF_DEBUG(
             if (!a.isCondition())
                 throw invalid_argument("BaseChain: first chain is not a condition");
+
+            if (b.predicate == 0)
+                throw invalid_argument("BaseChain: second chain has empty predicate");
         )
     }
 
@@ -133,13 +140,16 @@ public:
      */
     BaseChain(const BaseChain& a, const BaseChain& b, const double sum)
         : sum(sum),
-          clause(mergeClauses(a.clause, b.clause)),
+          predicate(b.predicate),
           predicateType(PredicateType::FOCUS),
           cached(true)
     {
         IF_DEBUG(
             if (!a.isCondition())
                 throw invalid_argument("BaseChain: first chain is not a condition");
+
+            if (b.predicate == 0)
+                throw invalid_argument("BaseChain: second chain has empty predicate");
 
             if (b.predicateType != PredicateType::BOTH)
                 throw invalid_argument("BaseChain: illegal conversion to FOCUS");
@@ -167,7 +177,7 @@ public:
     {
         return (sum == other.sum)
             && (predicateType == other.predicateType)
-            && (clause == other.clause);
+            && (predicate == other.predicate);
     }
 
     /**
@@ -180,12 +190,23 @@ public:
     { return !(*this == other); }
 
     /**
-     * Returns the clause of the chain, i.e., the vector of predicate ids.
+     * Returns the predicate of the chain, i.e., the last predicate of the clause.
+     * (Assuming that the prefix of the clause is stored in Digger::prefix.)
      *
-     * @return The clause of the chain.
+     * @return The last predicate of the chain.
      */
-    inline const Clause& getClause() const
-    { return clause; }
+    inline const size_t& getPredicate() const
+    {
+        IF_DEBUG(
+            if (predicate == 0)
+                throw invalid_argument("BaseChain: predicate is empty");
+        )
+
+        return predicate;
+    }
+
+    inline bool hasPredicate() const
+    { return predicate != 0; }
 
     /**
      * Returns the sum of TRUEs (for binary data) or membership degrees (for
@@ -273,36 +294,6 @@ public:
     inline bool isFocusOnly() const
     { return predicateType == FOCUS; }
 
-    /**
-     * Merges two clauses into a new clause by combining the predicate ids from
-     * both clauses. The clauses are expected to have the same size and identical
-     * prefixes, except for the last predicate id.
-     *
-     * @param a The first clause to merge.
-     * @param b The second clause to merge.
-     * @return A new clause containing the merged predicate ids from both clauses.
-     */
-    inline static Clause mergeClauses(const Clause& a, const Clause& b)
-    {
-        BLOCK_INC_TIMER(st, t, "BaseChain::mergeClauses");
-        IF_DEBUG(
-            if (a.size() != b.size())
-                throw invalid_argument("BaseChain: clause sizes differ");
-
-            for (size_t i = 0; i < a.size() - 1; ++i) {
-                if (a[i] != b[i])
-                    throw invalid_argument("BaseChain: clause prefixes differ");
-            }
-        )
-
-        Clause result;
-        result.reserve(a.size() + 1);
-        result.assign(a.begin(), a.end());
-        result.push_back(b.back());
-
-        return result;
-    }
-
 protected:
     /**
      * The sum of TRUEs (for binary data) or membership degrees (for
@@ -311,9 +302,10 @@ protected:
     double sum;
 
     /**
-     * The clause of the chain, i.e., the vector of predicate ids.
+     * The last predicate in the condition. It forms the complete condition
+     * clause together with the prefix stored in Digger::prefix.
      */
-    Clause clause;
+    size_t predicate;
 
     /**
      * The type of the predicate represented by this chain, i.e.,

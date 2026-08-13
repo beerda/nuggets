@@ -88,7 +88,8 @@ public:
      *     to the predicate ID, and the value at that index represents the sum of
      *     TRUEs or membership degrees for that predicate.
      */
-    void store(const CHAIN& chain,
+    void store(const vector<size_t> prefix,
+               const CHAIN& chain,
                const ChainCollection<CHAIN>& collection,
                const Selector& selector,
                const vector<double>& predicateSums)
@@ -99,11 +100,11 @@ public:
         vector<string> argNames;
         argNames.reserve(INITIAL_ARGUMENTS_CAPACITY);
 
-        processConditionArgument(args, argNames, chain);
+        processConditionArgument(args, argNames, prefix, chain);
         processSumArgument(args, argNames, chain);
         processSupportArgument(args, argNames, chain);
-        processIndicesArgument(args, argNames, chain);
-        processWeightsArgument(args, argNames, chain);
+        processIndicesArgument(args, argNames, prefix, chain);
+        processWeightsArgument(args, argNames, prefix, chain);
         processFociSupportsArgument(args, argNames, chain, collection, selector);
         processContiArguments(args, argNames, chain, collection, selector, predicateSums);
 
@@ -166,15 +167,21 @@ private:
      */
     inline void processConditionArgument(vector<RObject>& args,
                                          vector<string>& argNames,
+                                         const vector<size_t>& prefix,
                                          const CHAIN& chain)
     {
         if (config.hasConditionArgument()) {
-            IntegerVector vals(chain.getClause().size());
-            CharacterVector valNames(chain.getClause().size());
-            for (size_t i = 0; i < chain.getClause().size(); ++i) {
-                size_t predicate = chain.getClause()[i];
+            IntegerVector vals(prefix.size() + chain.hasPredicate());
+            CharacterVector valNames(prefix.size() + chain.hasPredicate());
+            for (size_t i = 0; i < prefix.size(); ++i) {
+                size_t predicate = prefix[i];
                 vals[i] = predicate;
                 valNames[i] = config.getChainName(predicate);
+            }
+            if (chain.hasPredicate()) {
+                size_t predicate = chain.getPredicate();
+                vals[prefix.size()] = predicate;
+                valNames[prefix.size()] = config.getChainName(predicate);
             }
             if (vals.size() > 0) {
                 vals.names() = valNames;
@@ -240,10 +247,11 @@ private:
      */
     inline void processIndicesArgument(vector<RObject>& args,
                                        vector<string>& argNames,
+                                       const vector<size_t>& prefix,
                                        const CHAIN& chain)
     {
         if (config.hasIndicesArgument()) {
-            if (chain.getClause().empty()) {
+            if (prefix.empty() && !chain.hasPredicate()) {
                 LogicalVector vals(config.getNrow(), true);
                 args.push_back(vals);
                 argNames.push_back("indices");
@@ -272,10 +280,11 @@ private:
      */
     inline void processWeightsArgument(vector<RObject>& args,
                                        vector<string>& argNames,
+                                       const vector<size_t>& prefix,
                                        const CHAIN& chain)
     {
         if (config.hasWeightsArgument()) {
-            if (chain.getClause().empty()) {
+            if (prefix.empty() && !chain.hasPredicate()) {
                 NumericVector vals(config.getNrow(), 1.0);
                 args.push_back(vals);
                 argNames.push_back("weights");
@@ -323,7 +332,7 @@ private:
                     continue;
 
                 const CHAIN& focus = collection[i + collection.firstFocusIndex()];
-                size_t predicate = focus.getClause().back();
+                size_t predicate = focus.getPredicate();
                 vals[j] = focus.getSum() / config.getNrow();
                 valNames[j] = config.getChainName(predicate);
                 j++;
@@ -388,7 +397,7 @@ private:
                     continue;
 
                 const CHAIN& focus = collection[i + collection.firstFocusIndex()];
-                size_t predicate = focus.getClause().back();
+                size_t predicate = focus.getPredicate();
                 valNames[j] = config.getChainName(predicate);
 
                 if (pp) {

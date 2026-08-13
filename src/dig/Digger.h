@@ -66,14 +66,16 @@ public:
           searchStats(),
           initialCollection(data, isCondition, isFocus),
           predicateSums(data.size() + 1),
+          prefix(),
           selectorSingleton(initialCollection.focusCount()),
           cache(data.size() + 1),
           deductionEngine(data.size() + 1, config.getExcluded()),
           progress(nullptr)
     {
         BLOCK_TIMER(t, "Digger::Constructor");
+        prefix.reserve(std::min(config.getMaxLength(), initialCollection.conditionCount()));
         for (const CHAIN& chain : initialCollection) {
-            size_t id = chain.getClause().back();
+            size_t id = chain.getPredicate();
             predicateSums[id] = chain.getSum();
         }
     }
@@ -104,7 +106,7 @@ public:
 
         for (size_t i = 0; i < initialCollection.size(); ++i) {
             CHAIN& chain = initialCollection[i];
-            addSumToCache(chain);
+            addSumToCache(0, chain.getPredicate(), chain.getSum());
             if (isNonRedundant(emptyChain, chain)
                     && isCandidate(chain)
                     && !isDerivableFromAxioms(chain)) {
@@ -181,6 +183,12 @@ private:
     vector<double> predicateSums;
 
     /**
+     * Prefix of the current condition being processed. Vector stores IDs
+     * of predicates.
+     */
+    vector<size_t> prefix;
+
+    /**
      * A singleton Selector object used to avoid unnecessary allocations during
      * the search process.
      */
@@ -209,6 +217,15 @@ private:
      */
     CombinatorialProgress* progress;
 
+    string getPrefixAsString() const
+    {
+        stringstream ss;
+        for (size_t p : prefix) {
+            ss << p << " ";
+        }
+        return ss.str();
+    }
+
     /**
      * Processes the child chains of a given chain recursively. It takes a chain
      * as a prefix and creates new chains by combining the prefix with each of
@@ -220,42 +237,53 @@ private:
      * @param collection The collection of chains to be combined with the prefix
      *     chain.
      */
-    void processChildrenChains(const CHAIN& chain, ChainCollection<CHAIN>& collection)
+    void processChildrenChains(const CHAIN& parentChain, ChainCollection<CHAIN>& collection)
     {
         if (!config.hasFilterEmptyFoci() || collection.hasFoci()) {
-            if (isStorable(chain)) {
+            if (isStorable(parentChain)) {
                 BLOCK_INC_TIMER(st, t, "Digger::processChildrenChains - store");
 
                 // return singleton selector to avoid allocations
-                const Selector& selector = initializeSelectorOfStorable(chain, collection);
+                const Selector& selector = initializeSelectorOfStorable(parentChain, collection);
                 if (isStorable(selector)) {
-                    storage.store(chain, collection, selector, predicateSums);
+                    storage.store(prefix, parentChain, collection, selector, predicateSums);
                 }
             }
             progress->increment(1);
 
-            if (isExtendable(chain)) {
+            if (isExtendable(parentChain)) {
+                // from here we switch to new prefix
+                if (parentChain.hasPredicate()) {
+                    prefix.push_back(parentChain.getPredicate());
+                }
+
                 for (size_t i = 0; i < collection.conditionCount(); ++i) {
                     ChainCollection<CHAIN> childCollection;
                     CHAIN& chain = collection[i];
-                    auto batch = progress->createBatch(chain.getClause().size(),
+                    auto batch = progress->createBatch(prefix.size() + chain.hasPredicate(),
                                                        collection.conditionCount() - i - 1);
                     {
                         BLOCK_INC_TIMER(st, t, "Digger::processChildrenChains - for loop");
 
                         if (isExtendable(chain)) {
-                            // need conjunction with everything
+                            // need conjunction of i-th chain with everything
                             combine(childCollection, collection, i, false);
                         }
                         else if (collection.hasFoci()) {
-                            // need conjunction with foci only
+                            // need conjunction of i-th chain with foci only
                             combine(childCollection, collection, i, true);
                         }
                         else {
                             // do not need childCollection at all
                         }
                     }
+
                     processChildrenChains(chain, childCollection);
+                }
+
+                // backtrack to previous prefix
+                if (parentChain.hasPredicate()) {
+                    prefix.pop_back();
                 }
             }
         }
@@ -333,7 +361,9 @@ private:
                 && (!isDerivableFocusOnly(conditionChain, secondChain))) {
             CHAIN newChain(conditionChain, secondChain);
             searchStats.incrementComputedConjunctions();
-            addSumToCache(newChain);
+            addSumToCache(conditionChain.getPredicate(),
+                          secondChain.getPredicate(),
+                          newChain.getSum());
             if (isCandidate(newChain)) {
                 target.append(std::move(newChain));
             }
@@ -358,13 +388,14 @@ private:
                 // no need to test for isDerivableConditionOnly here, because
                 // the secondChain is cached and therefore not condition-only
                 && (!isDerivableFocusOnly(conditionChain, secondChain))) {
-            CHAIN newChain(conditionChain, secondChain, 0);
+
             searchStats.incrementCachedConjunctions();
-            double sum = getSumFromCache(newChain);
+            double sum = getSumFromCache(conditionChain.getPredicate(),
+                                         secondChain.getPredicate());
 
             // not being in the cache means that the conjunction is redundant
             if (sum != Cache::NOT_IN_CACHE) {
-                newChain.setSum(sum);
+                CHAIN newChain(conditionChain, secondChain, sum);
                 if (isCandidate(newChain)) {
                     target.append(std::move(newChain));
                 }
@@ -373,7 +404,7 @@ private:
     }
 
     /**
-     * Checks if the last predicate of the Clause stored in the given chain can
+     * Checks if the predicate stored in the given chain can
      * be derived from the initial axioms in the deduction engine. If the
      * predicate can be derived, it means that the chain is redundant and should
      * not be considered for further processing. By initial axioms we mean
@@ -385,35 +416,34 @@ private:
      *
      * @param chain The chain to be checked for derivability from the initial
      *     axioms.
-     * @return true if the last predicate of the Clause in the chain can be
+     * @return true if the predicate from the chain can be
      *     derived from the initial axioms, false otherwise.
      */
     inline bool isDerivableFromAxioms(const CHAIN& chain)
-    {
-        return deductionEngine.isDerivableWithout(Clause(),
-                                                  chain.getClause().back());
-    }
+    { return false; }
+    // { return deductionEngine.isDerivableWithout({ }, chain.getPredicate()); }
 
     /**
      * If the second chain is condition-only (not both condition and focus),
-     * this method checks if the last predicate of the Clause stored in the
+     * this method checks if the predicate of the
      * second chain can be derived from initial axioms and predicates of the
-     * Clause stored in the first chain.
+     * prefix and the predicate of the first chain.
      *
      * @param conditionChain The first chain, whose predicates are used as
      *     initial axioms for the derivation check.
      * @param secondChain The second chain to be checked for derivability.
-     * @return true if the second chain is condition-only and the last predicate
-     *     of the Clause in the second chain can be derived from the initial
-     *     axioms and predicates of the Clause in the first chain, false
-     *     otherwise.
+     * @return true if the second chain is focus-only and the predicate of the
+     *     second chain can be derived from the initial axioms and predicates
+     *     from the prefix and from the first chain, false otherwise.
      */
     inline bool isDerivableConditionOnly(
             const CHAIN& conditionChain, const CHAIN& secondChain)
     {
         if (secondChain.isConditionOnly()) {
-            return deductionEngine.isDerivableWithout(conditionChain.getClause(),
-                                                      secondChain.getClause().back());
+            return false;
+            // return deductionEngine.isDerivableWithout(prefix,
+            //                                           conditionChain.getPredicate(),
+            //                                           secondChain.getPredicate());
         }
 
         return false;
@@ -421,32 +451,32 @@ private:
 
     /**
      * If the second chain is focus-only (not both condition and focus),
-     * this method checks if the last predicate of the Clause stored in the
+     * this method checks if the predicate of the
      * second chain can be derived from initial axioms and predicates of the
-     * Clause stored in the first chain.
+     * prefix and the predicate of the first chain.
      *
      * @param conditionChain The first chain, whose predicates are used as
      *     initial axioms for the derivation check.
      * @param secondChain The second chain to be checked for derivability.
-     * @return true if the second chain is focus-only and the last predicate
-     *     of the Clause in the second chain can be derived from the initial
-     *     axioms and predicates of the Clause in the first chain, false
-     *     otherwise.
+     * @return true if the second chain is focus-only and the predicate of the
+     *     second chain can be derived from the initial axioms and predicates
+     *     from the prefix and from the first chain, false otherwise.
      */
     inline bool isDerivableFocusOnly(
             const CHAIN& conditionChain, const CHAIN& secondChain)
     {
         if (secondChain.isFocusOnly()) {
-            return deductionEngine.isDerivableWithout(conditionChain.getClause(),
-                                                      secondChain.getClause().back());
+            return false;
+            // return deductionEngine.isDerivableWithout(conditionChain.getClause(),
+            //                                           secondChain.getClause().back());
         }
 
         return false;
     }
 
     /**
-     * Checks if the last predicate of the Clause stored in the given chain is
-     * non-redundant with respect to the last predicate of the Clause stored in
+     * Checks if the predicate stored in the given chain is
+     * non-redundant with respect to the predicate stored in
      * the parent chain. Two predicates are considered redundant if they belong
      * to the same disjoint set, as defined in the configuration. If the parent
      * chain is empty, the method returns true, indicating that the chain is
@@ -460,9 +490,9 @@ private:
      */
     inline bool isNonRedundant(const CHAIN& parent, const CHAIN& chain) const
     {
-        if (parent.getClause().size() > 0) {
-            size_t pref = parent.getClause().back();
-            size_t curr = chain.getClause().back();
+        if (parent.hasPredicate()) {
+            size_t pref = parent.getPredicate();
+            size_t curr = chain.getPredicate();
             if (pref == curr) {
                 // Filter of focus even if disjoint is not defined
                 // (should never happen as we always have disjoint defined)
@@ -508,7 +538,7 @@ private:
      */
     inline bool isExtendable(const CHAIN& chain) const
     {
-        bool res = chain.getClause().size() < config.getMaxLength()
+        bool res = (prefix.size() + chain.hasPredicate()) < config.getMaxLength()
             && chain.getSum() >= config.getMinSum()
             && storage.size() < config.getMaxResults();
 
@@ -523,11 +553,13 @@ private:
      */
     inline bool isStorable(const CHAIN& chain)
     {
-        bool res = chain.getClause().size() >= config.getMinLength()
+        bool res = (prefix.size() + chain.hasPredicate()) >= config.getMinLength()
             && chain.getSum() >= config.getMinSum()
             && chain.getSum() <= config.getMaxSum()
             && storage.size() < config.getMaxResults()
-            && !deductionEngine.hasRedundant(chain.getClause());
+            && !deductionEngine.hasRedundant(prefix,
+                                             chain.hasPredicate() ? &(chain.getPredicate()) : nullptr);
+        // TODO: to s tim deduction engine je hodne divoke, zkus refactorovat napr temporary upravou prefixu
 
         return res;
     }
@@ -560,8 +592,11 @@ private:
         if (!constant) {
             for (size_t i = 0; i < collection.focusCount(); ++i) {
                 const CHAIN& focus = collection[i + collection.firstFocusIndex()];
-                if ((1.0 * focus.getSum() / chain.getSum() < config.getMinConditionalFocusSupport())
-                        || deductionEngine.isDerivableWithout(chain.getClause(), focus.getClause().back())) {
+                double confidence = 1.0 * focus.getSum() / chain.getSum();
+                if (confidence < config.getMinConditionalFocusSupport()
+                        || deductionEngine.isDerivableWithout(prefix,
+                                                              chain.hasPredicate() ? &(chain.getPredicate()) : nullptr,
+                                                              focus.getPredicate())) {
                     selectorSingleton.unselect(i);
                 }
             }
@@ -577,13 +612,27 @@ private:
      *
      * @param chain The chain whose sum is to be added to the cache.
      */
-    inline void addSumToCache(const CHAIN& chain)
+    inline void addSumToCache(const size_t predicate1, const size_t predicate2, const double sum)
     {
         BLOCK_INC_TIMER(st, t, "Digger::addSumToCache");
 
-        Clause clause = chain.getClause().clone();
-        clause.sort();
-        cache.add(clause, chain.getSum());
+        //TODO: get rid of this copying and sorting
+        vector<size_t> clause;
+        clause.reserve(prefix.size() + 2);
+        for (size_t p : prefix) {
+            clause.push_back(p);
+        }
+        if (predicate1 != 0) {
+            clause.push_back(predicate1);
+        }
+        if (predicate2 != 0) {
+            clause.push_back(predicate2);
+        }
+        std::sort(clause.begin(), clause.end());
+
+        cache.add(clause, sum);
+
+        // TODO: remove Clause.h?
     }
 
     /**
@@ -593,12 +642,24 @@ private:
      *
      * @param chain The chain whose sum is to be retrieved from the cache.
      */
-    inline double getSumFromCache(const CHAIN& chain) const
+    inline double getSumFromCache(const size_t predicate1, const size_t predicate2) const
     {
         BLOCK_INC_TIMER(st, t, "Digger::getSumFromCache");
 
-        Clause clause = chain.getClause().clone();
-        clause.sort();
+        //TODO: get rid of this copying and sorting
+        vector<size_t> clause;
+        clause.reserve(prefix.size() + 2);
+        for (size_t p : prefix) {
+            clause.push_back(p);
+        }
+        if (predicate1 != 0) {
+            clause.push_back(predicate1);
+        }
+        if (predicate2 != 0) {
+            clause.push_back(predicate2);
+        }
+        std::sort(clause.begin(), clause.end());
+
         return cache.get(clause);
     }
 };

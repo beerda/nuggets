@@ -13,8 +13,8 @@ context("dig/SparseBitChain.h") {
 
         SparseBitChain b(3, PredicateType::FOCUS, v);
 
-        expect_true(b.getClause().size() == 1);
-        expect_true(b.getClause()[0] == 3);
+        expect_true(b.hasPredicate() == true);
+        expect_true(b.getPredicate() == 3);
         expect_true(!b.empty());
         expect_true(b.size() == 5);
         expect_true(b.getSum() == 3);
@@ -49,9 +49,8 @@ context("dig/SparseBitChain.h") {
             SparseBitChain b(20, PredicateType::BOTH, lb);
 
             SparseBitChain c1(b, a1);
-            expect_true(c1.getClause().size() == 2);
-            expect_true(c1.getClause()[0] == 20);
-            expect_true(c1.getClause()[1] == 10);
+            expect_true(c1.hasPredicate() == true);
+            expect_true(c1.getPredicate() == 10);
             expect_true(!c1.empty());
             expect_true(c1.size() == 5);
             expect_true(c1.getSum() == 1);
@@ -65,17 +64,14 @@ context("dig/SparseBitChain.h") {
             expect_true(c1.toString() == "[n=5]00100");
 
             SparseBitChain c2(b, a2);
-            expect_true(c2.getClause().size() == 2);
-            expect_true(c2.getClause()[0] == 20);
-            expect_true(c2.getClause()[1] == 11);
+            expect_true(c2.hasPredicate() == true);
+            expect_true(c2.getPredicate() == 11);
             expect_true(c2.getSum() == 1);
             expect_true(c2.toString() == "[n=5]00100");
 
             SparseBitChain d(c1, c2);
-            expect_true(d.getClause().size() == 3);
-            expect_true(d.getClause()[0] == 20);
-            expect_true(d.getClause()[1] == 10);
-            expect_true(d.getClause()[2] == 11);
+            expect_true(d.hasPredicate() == true);
+            expect_true(d.getPredicate() == 11);
             expect_true(d.getSum() == 1);
             expect_true(d.toString() == "[n=5]00100");
         }

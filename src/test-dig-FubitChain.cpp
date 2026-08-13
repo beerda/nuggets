@@ -18,8 +18,8 @@ context("dig/FubitChain.h") {
 
         FubitChain<TNorm::GOEDEL, 4> b(3, PredicateType::FOCUS, v);
 
-        expect_true(b.getClause().size() == 1);
-        expect_true(b.getClause()[0] == 3);
+        expect_true(b.hasPredicate() == true);
+        expect_true(b.getPredicate() == 3);
         expect_true(!b.empty());
         expect_true(b.size() == 5);
         expect_true(EQUAL(b.getSum(), 3));
@@ -42,8 +42,8 @@ context("dig/FubitChain.h") {
 
         FubitChain<TNorm::GOEDEL, 8> b(3, PredicateType::FOCUS, v);
 
-        expect_true(b.getClause().size() == 1);
-        expect_true(b.getClause()[0] == 3);
+        expect_true(b.hasPredicate() == true);
+        expect_true(b.getPredicate() == 3);
         expect_true(!b.empty());
         expect_true(b.size() == 5);
         expect_true(abs(b.getSum() - 2.3) < 0.01);
@@ -66,8 +66,8 @@ context("dig/FubitChain.h") {
 
         FubitChain<TNorm::LUKASIEWICZ, 4> b(3, PredicateType::FOCUS, v);
 
-        expect_true(b.getClause().size() == 1);
-        expect_true(b.getClause()[0] == 3);
+        expect_true(b.hasPredicate() == true);
+        expect_true(b.getPredicate() == 3);
         expect_true(!b.empty());
         expect_true(b.size() == 5);
         expect_true(EQUAL100(b.getSum(), 3));
@@ -90,8 +90,8 @@ context("dig/FubitChain.h") {
 
         FubitChain<TNorm::LUKASIEWICZ, 8> b(3, PredicateType::FOCUS, v);
 
-        expect_true(b.getClause().size() == 1);
-        expect_true(b.getClause()[0] == 3);
+        expect_true(b.hasPredicate() == true);
+        expect_true(b.getPredicate() == 3);
         expect_true(!b.empty());
         expect_true(b.size() == 5);
         expect_true(EQUAL100(b.getSum(), 2.3));
@@ -114,8 +114,8 @@ context("dig/FubitChain.h") {
 
         FubitChain<TNorm::GOGUEN, 4> b(3, PredicateType::FOCUS, v);
 
-        expect_true(b.getClause().size() == 1);
-        expect_true(b.getClause()[0] == 3);
+        expect_true(b.hasPredicate() == true);
+        expect_true(b.getPredicate() == 3);
         expect_true(!b.empty());
         expect_true(b.size() == 5);
         expect_true(EQUAL100(b.getSum(), 3));
@@ -138,8 +138,8 @@ context("dig/FubitChain.h") {
 
         FubitChain<TNorm::GOGUEN, 8> b(3, PredicateType::FOCUS, v);
 
-        expect_true(b.getClause().size() == 1);
-        expect_true(b.getClause()[0] == 3);
+        expect_true(b.hasPredicate() == true);
+        expect_true(b.getPredicate() == 3);
         expect_true(!b.empty());
         expect_true(b.size() == 5);
         expect_true(EQUAL100(b.getSum(), 2.3));

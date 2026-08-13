@@ -82,7 +82,8 @@ public:
      * represents the antecedent of the rule, and each focus chain represents a
      * consequent.
      */
-    void store(const CHAIN& chain,
+    void store(const vector<size_t>& prefix,
+               const CHAIN& chain,
                const ChainCollection<CHAIN>& collection,
                const Selector& selector,
                const vector<double>& predicateSums)
@@ -90,19 +91,19 @@ public:
         if (rules.size() >= config.getMaxResults())
             return;
 
-        String ante = formatCondition(chain);
+        String ante = formatCondition(prefix, chain);
         for (size_t i = 0; i < collection.focusCount(); ++i) {
             if (!selector.isSelected(i))
                 continue;
 
             const CHAIN& focus = collection[i + collection.firstFocusIndex()];
-            size_t predicate = focus.getClause().back();
+            size_t predicate = focus.getPredicate();
             string chainName = config.getChainName(predicate);
 
             Rule rule;
             rule.antecedent = ante;
             rule.consequent = "{" + chainName + "}";
-            rule.antecedentLength = chain.getClause().size();
+            rule.antecedentLength = prefix.size() + chain.hasPredicate();
             rule.focusSum = focus.getSum();
             rule.chainSum = chain.getSum();
             rule.predicateSum = predicateSums[predicate];
@@ -194,64 +195,74 @@ private:
      * The condition is represented as a set of predicate names enclosed in
      * curly braces.
      */
-    string formatCondition(const CHAIN& chain) const
+    string formatCondition(const vector<size_t>& prefix, const CHAIN& chain) const
     {
-        const Clause& clause = chain.getClause();
-        if (clause.empty())
+        if (prefix.empty() && !chain.hasPredicate()) {
             return "{}";
+        }
+
+        // from now on, chain must have predicate
+        IF_DEBUG(
+            if (!chain.hasPredicate())
+                throw invalid_argument("AssocStorage: formatCondition: chain has no predicate");
+        )
+
 
         stringstream res;
         res << "{";
 
-        if (clause.size() == 1) {
-            res << config.getChainName(clause[0]);
+        if (prefix.size() == 0) {
+            res << config.getChainName(chain.getPredicate());
         }
-        else if (clause.size() == 2) {
-            const string& name0 = config.getChainName(clause[0]);
-            const string& name1 = config.getChainName(clause[1]);
-            if (name0 < name1) {
-                res << name0 << "," << name1;
-            } else {
-                res << name1 << "," << name0;
-            }
-        }
-        else if (clause.size() == 3) {
-            const string& name0 = config.getChainName(clause[0]);
-            const string& name1 = config.getChainName(clause[1]);
-            const string& name2 = config.getChainName(clause[2]);
-            if (name0 <= name1) {
-                if (name1 <= name2) {
-                    res << name0 << "," << name1 << "," << name2;
+        else {
+            const string& name0 = config.getChainName(chain.getPredicate());
+
+            if (prefix.size() == 1) {
+                const string& name1 = config.getChainName(prefix[0]);
+                if (name0 < name1) {
+                    res << name0 << "," << name1;
+                } else {
+                    res << name1 << "," << name0;
                 }
-                else if (name0 <= name2) {
-                    res << name0 << "," << name2 << "," << name1;
+            }
+            else if (prefix.size() == 2) {
+                const string& name1 = config.getChainName(prefix[0]);
+                const string& name2 = config.getChainName(prefix[1]);
+                if (name0 <= name1) {
+                    if (name1 <= name2) {
+                        res << name0 << "," << name1 << "," << name2;
+                    }
+                    else if (name0 <= name2) {
+                        res << name0 << "," << name2 << "," << name1;
+                    }
+                    else {
+                        res << name2 << "," << name0 << "," << name1;
+                    }
                 }
                 else {
-                    res << name2 << "," << name0 << "," << name1;
+                    if (name0 <= name2) {
+                        res << name1 << "," << name0 << "," << name2;
+                    }
+                    else if (name1 <= name2) {
+                        res << name1 << "," << name2 << "," << name0;
+                    }
+                    else {
+                        res << name2 << "," << name1 << "," << name0;
+                    }
                 }
             }
             else {
-                if (name0 <= name2) {
-                    res << name1 << "," << name0 << "," << name2;
+                vector<string> parts;
+                parts.reserve(prefix.size() + 1);
+                parts.push_back(name0);
+                for (size_t predicate : prefix) {
+                    parts.push_back(config.getChainName(predicate));
                 }
-                else if (name1 <= name2) {
-                    res << name1 << "," << name2 << "," << name0;
+                sort(parts.begin(), parts.end());
+                res << parts.front();
+                for (size_t i = 1; i < parts.size(); ++i) {
+                    res << "," << parts[i];
                 }
-                else {
-                    res << name2 << "," << name1 << "," << name0;
-                }
-            }
-        }
-        else {
-            vector<string> parts;
-            parts.reserve(clause.size());
-            for (size_t predicate : clause) {
-                parts.push_back(config.getChainName(predicate));
-            }
-            sort(parts.begin(), parts.end());
-            res << parts.front();
-            for (size_t i = 1; i < parts.size(); ++i) {
-                res << "," << parts[i];
             }
         }
 

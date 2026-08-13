@@ -7,7 +7,7 @@ context("dig/BaseChain.h") {
     test_that("default constructor") {
         BaseChain c(0.3f);
 
-        expect_true(c.getClause().empty());
+        expect_true(c.hasPredicate() == false);
         expect_true(c.getPredicateType() == CONDITION);
         expect_true(c.getSum() == 0.3f);
         expect_true(c.isCondition());
@@ -17,8 +17,8 @@ context("dig/BaseChain.h") {
     test_that("constructor with id and type") {
         BaseChain c(5, FOCUS, 1.2f);
 
-        expect_true(c.getClause().size() == 1);
-        expect_true(c.getClause()[0] == 5);
+        expect_true(c.hasPredicate() == true);
+        expect_true(c.getPredicate() == 5);
         expect_true(c.getPredicateType() == FOCUS);
         expect_true(c.getSum() == 1.2f);
         expect_true(!c.isCondition());
@@ -31,9 +31,8 @@ context("dig/BaseChain.h") {
 
         BaseChain c(a, b, 0.8f);
 
-        expect_true(c.getClause().size() == 2);
-        expect_true(c.getClause()[0] == 2);
-        expect_true(c.getClause()[1] == 3);
+        expect_true(c.hasPredicate() == true);
+        expect_true(c.getPredicate() == 3);
         expect_true(c.getPredicateType() == FOCUS);
         expect_true(c.getSum() == 0.8f);
         expect_true(!c.isCondition());
@@ -42,9 +41,8 @@ context("dig/BaseChain.h") {
 
         BaseChain d(a, b);
 
-        expect_true(d.getClause().size() == 2);
-        expect_true(d.getClause()[0] == 2);
-        expect_true(d.getClause()[1] == 3);
+        expect_true(c.hasPredicate() == true);
+        expect_true(d.getPredicate() == 3);
         expect_true(d.getPredicateType() == BOTH);
         expect_true(d.getSum() == 0.0f);
         expect_true(d.isCondition());

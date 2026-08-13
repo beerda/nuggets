@@ -7,9 +7,9 @@ context("dig/Cache.h") {
     test_that("empty Cache") {
         Cache cache(3);
 
-        Clause c0;
-        Clause c1({ 1 });
-        Clause c2({ 1, 2 });
+        Cache::Clause c0;
+        Cache::Clause c1({ 1 });
+        Cache::Clause c2({ 1, 2 });
 
         expect_true(cache.size() == 0);
         expect_error(cache.get(c0));
@@ -20,12 +20,12 @@ context("dig/Cache.h") {
     test_that("add and get") {
         Cache cache(3);
 
-        Clause c0;
-        Clause c1({ 1 });
-        Clause c2({ 1, 2 });
-        Clause c3({ 2 });
-        Clause c4({ 2, 3 });
-        Clause c5({ 1, 2, 3 });
+        Cache::Clause c0;
+        Cache::Clause c1({ 1 });
+        Cache::Clause c2({ 1, 2 });
+        Cache::Clause c3({ 2 });
+        Cache::Clause c4({ 2, 3 });
+        Cache::Clause c5({ 1, 2, 3 });
 
         expect_true(cache.size() == 0);
         expect_error(cache.get(c0));
@@ -74,7 +74,7 @@ context("dig/Cache.h") {
         expect_error(cache.add(c1, 1.0f));  // cannot add existing clause
         expect_error(cache.add(c2, 1.0f));  // cannot add existing clause
 
-        Clause cerr({ 4 });
+        Cache::Clause cerr({ 4 });
         expect_error(cache.add(cerr, 1.0f));  // predicate ID exceeds root size
 
     }

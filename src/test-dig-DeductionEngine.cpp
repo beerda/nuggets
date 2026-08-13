@@ -121,6 +121,14 @@ context("dig/DeductionEngine.h") {
         expect_true(!engine.isDerivableWithout(initial2, 4));
         expect_true(engine.isDerivableWithout(initial2, 5));
 
+        size_t initialptr = 2;
+        expect_true(!engine.isDerivableWithout(initial2, &initialptr, 1));
+        expect_true(!engine.isDerivableWithout(initial2, &initialptr, 2));
+        expect_true(engine.isDerivableWithout(initial2, &initialptr, 3));
+        expect_true(engine.isDerivableWithout(initial2, &initialptr, 4));
+        expect_true(engine.isDerivableWithout(initial2, &initialptr, 5));
+
+
         vector<size_t> initial3 = {5};
         expect_true(!engine.isDerivableWithout(initial3, 1));
         expect_true(!engine.isDerivableWithout(initial3, 2));

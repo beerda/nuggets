@@ -20,7 +20,6 @@
 #pragma once
 
 #include "../common.h"
-#include "Clause.h"
 
 
 /**
@@ -30,6 +29,8 @@
  */
 class Cache {
 public:
+    using Clause = vector<size_t>;
+
     /**
      * Constant representing a value that indicates that a Clause is not in the cache.
      * This value is used to differentiate between Clauses that have been added to
@@ -175,7 +176,7 @@ public:
                 node->sum = sum;
             }
             else {
-                throw runtime_error(string("Cache::add: trying to add existing clause: ") + clause.toString());
+                throw runtime_error(string("Cache::add: trying to add existing clause: ")); // + clause.toString());
             }
         }
         else {
@@ -186,7 +187,7 @@ public:
                 node->sum = sum;
             }
             else {
-                throw runtime_error(string("Cache::add: trying to add existing clause: ") + clause.toString());
+                throw runtime_error(string("Cache::add: trying to add existing clause: ")); // + clause.toString());
             }
         }
     }

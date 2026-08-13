@@ -13,8 +13,8 @@ context("dig/FloatChain.h") {
 
         FloatChain<TNorm::GOGUEN> b(3, PredicateType::FOCUS, v);
 
-        expect_true(b.getClause().size() == 1);
-        expect_true(b.getClause()[0] == 3);
+        expect_true(b.hasPredicate() == true);
+        expect_true(b.getPredicate() == 3);
         expect_true(!b.empty());
         expect_true(b.size() == 5);
         expect_true(EQUAL(b.getSum(), 3));
@@ -37,8 +37,8 @@ context("dig/FloatChain.h") {
 
         FloatChain<TNorm::GOGUEN> b(3, PredicateType::FOCUS, v);
 
-        expect_true(b.getClause().size() == 1);
-        expect_true(b.getClause()[0] == 3);
+        expect_true(b.hasPredicate() == true);
+        expect_true(b.getPredicate() == 3);
         expect_true(!b.empty());
         expect_true(b.size() == 5);
         expect_true(EQUAL(b.getSum(), 2.3));
@@ -72,9 +72,8 @@ context("dig/FloatChain.h") {
             FloatChain<TNorm::GOGUEN> b(20, PredicateType::BOTH, lb);
 
             FloatChain<TNorm::GOGUEN> c1(b, a1);
-            expect_true(c1.getClause().size() == 2);
-            expect_true(c1.getClause()[0] == 20);
-            expect_true(c1.getClause()[1] == 10);
+            expect_true(c1.hasPredicate() == true);
+            expect_true(c1.getPredicate() == 10);
             expect_true(!c1.empty());
             expect_true(c1.size() == 5);
             expect_true(c1.getSum() == 1);
@@ -88,17 +87,14 @@ context("dig/FloatChain.h") {
             expect_true(c1.at(4) == 0.0);
 
             FloatChain<TNorm::GOGUEN> c2(b, a2);
-            expect_true(c2.getClause().size() == 2);
-            expect_true(c2.getClause()[0] == 20);
-            expect_true(c2.getClause()[1] == 11);
+            expect_true(c1.hasPredicate() == true);
+            expect_true(c2.getPredicate() == 11);
             expect_true(c2.getSum() == 1);
             expect_true(!c2.isCached());
 
             FloatChain<TNorm::GOGUEN> d(c1, c2);
-            expect_true(d.getClause().size() == 3);
-            expect_true(d.getClause()[0] == 20);
-            expect_true(d.getClause()[1] == 10);
-            expect_true(d.getClause()[2] == 11);
+            expect_true(c1.hasPredicate() == true);
+            expect_true(d.getPredicate() == 11);
             expect_true(d.getSum() == 1);
             expect_true(!d.isCached());
         }

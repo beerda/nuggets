@@ -60,12 +60,12 @@ context("dig/ChainCollection") {
             expect_true(cc.size() == 6);
             expect_true(cc.empty() == false);
 
-            expect_true(cc.at(0).getClause().back() == 1);
-            expect_true(cc.at(1).getClause().back() == 3);
-            expect_true(cc.at(2).getClause().back() == 5);
-            expect_true(cc.at(3).getClause().back() == 2);
-            expect_true(cc.at(4).getClause().back() == 4);
-            expect_true(cc.at(5).getClause().back() == 6);
+            expect_true(cc.at(0).getPredicate() == 1);
+            expect_true(cc.at(1).getPredicate() == 3);
+            expect_true(cc.at(2).getPredicate() == 5);
+            expect_true(cc.at(3).getPredicate() == 2);
+            expect_true(cc.at(4).getPredicate() == 4);
+            expect_true(cc.at(5).getPredicate() == 6);
 
             expect_true(cc.at(0).isCondition());
             expect_true(cc.at(1).isCondition());
@@ -95,12 +95,12 @@ context("dig/ChainCollection") {
             expect_true(cc.size() == 6);
             expect_true(cc.empty() == false);
 
-            expect_true(cc.at(0).getClause().back() == 3);
-            expect_true(cc.at(1).getClause().back() == 5);
-            expect_true(cc.at(2).getClause().back() == 6);
-            expect_true(cc.at(3).getClause().back() == 4);
-            expect_true(cc.at(4).getClause().back() == 1);
-            expect_true(cc.at(5).getClause().back() == 2);
+            expect_true(cc.at(0).getPredicate() == 3);
+            expect_true(cc.at(1).getPredicate() == 5);
+            expect_true(cc.at(2).getPredicate() == 6);
+            expect_true(cc.at(3).getPredicate() == 4);
+            expect_true(cc.at(4).getPredicate() == 1);
+            expect_true(cc.at(5).getPredicate() == 2);
 
             expect_true(cc.at(0).isCondition());
             expect_true(cc.at(1).isCondition());
