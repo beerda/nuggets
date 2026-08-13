@@ -121,12 +121,11 @@ context("dig/DeductionEngine.h") {
         expect_true(!engine.isDerivableWithout(initial2, 4));
         expect_true(engine.isDerivableWithout(initial2, 5));
 
-        size_t initialptr = 2;
-        expect_true(!engine.isDerivableWithout(initial2, &initialptr, 1));
-        expect_true(!engine.isDerivableWithout(initial2, &initialptr, 2));
-        expect_true(engine.isDerivableWithout(initial2, &initialptr, 3));
-        expect_true(engine.isDerivableWithout(initial2, &initialptr, 4));
-        expect_true(engine.isDerivableWithout(initial2, &initialptr, 5));
+        expect_true(!engine.isDerivableWithout(initial2, 2, 1));
+        expect_true(!engine.isDerivableWithout(initial2, 2, 2));
+        expect_true(engine.isDerivableWithout(initial2, 2, 3));
+        expect_true(engine.isDerivableWithout(initial2, 2, 4));
+        expect_true(engine.isDerivableWithout(initial2, 2, 5));
 
 
         vector<size_t> initial3 = {5};
@@ -158,12 +157,15 @@ context("dig/DeductionEngine.h") {
 
         vector<size_t> initial2 = {1};
         expect_true(!engine.hasRedundant(initial2));
+        expect_true(!engine.hasRedundant(initial2, 2));
 
         vector<size_t> initial3 = {1, 2, 3};
         expect_true(engine.hasRedundant(initial3));
+        expect_true(engine.hasRedundant(initial1, 3));
 
         vector<size_t> initial4 = {1, 2, 4};
         expect_true(engine.hasRedundant(initial4));
+        expect_true(engine.hasRedundant(initial1, 4));
 
         vector<size_t> initial5 = {5};
         expect_true(engine.hasRedundant(initial5));

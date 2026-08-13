@@ -109,7 +109,7 @@ public:
             addSumToCache(0, chain.getPredicate(), chain.getSum());
             if (isNonRedundant(emptyChain, chain)
                     && isCandidate(chain)
-                    && !isDerivableFromAxioms(chain)) {
+                    && !deductionEngine.isDerivableFromAxioms(chain.getPredicate())) {
                 filteredCollection.append(std::move(chain));
             }
         }
@@ -404,26 +404,6 @@ private:
     }
 
     /**
-     * Checks if the predicate stored in the given chain can
-     * be derived from the initial axioms in the deduction engine. If the
-     * predicate can be derived, it means that the chain is redundant and should
-     * not be considered for further processing. By initial axioms we mean
-     * implications with an empty antecedent.
-     *
-     * This check is used to filter out redundant predicates during the creation
-     * of the initial collection of chains, ensuring that only non-redundant
-     * chains are processed further in the search algorithm.
-     *
-     * @param chain The chain to be checked for derivability from the initial
-     *     axioms.
-     * @return true if the predicate from the chain can be
-     *     derived from the initial axioms, false otherwise.
-     */
-    inline bool isDerivableFromAxioms(const CHAIN& chain)
-    { return false; }
-    // { return deductionEngine.isDerivableWithout({ }, chain.getPredicate()); }
-
-    /**
      * If the second chain is condition-only (not both condition and focus),
      * this method checks if the predicate of the
      * second chain can be derived from initial axioms and predicates of the
@@ -439,11 +419,15 @@ private:
     inline bool isDerivableConditionOnly(
             const CHAIN& conditionChain, const CHAIN& secondChain)
     {
+        IF_DEBUG(
+            if (!conditionChain.hasPredicate())
+                throw invalid_argument("Digger::isDerivableConditionOnly: first chain has no predicate");
+        )
+
         if (secondChain.isConditionOnly()) {
-            return false;
-            // return deductionEngine.isDerivableWithout(prefix,
-            //                                           conditionChain.getPredicate(),
-            //                                           secondChain.getPredicate());
+            return deductionEngine.isDerivableWithout(prefix,
+                                                      conditionChain.getPredicate(),
+                                                      secondChain.getPredicate());
         }
 
         return false;
@@ -465,10 +449,15 @@ private:
     inline bool isDerivableFocusOnly(
             const CHAIN& conditionChain, const CHAIN& secondChain)
     {
+        IF_DEBUG(
+            if (!conditionChain.hasPredicate())
+                throw invalid_argument("Digger::isDerivableFocusOnly: first chain has no predicate");
+        )
+
         if (secondChain.isFocusOnly()) {
-            return false;
-            // return deductionEngine.isDerivableWithout(conditionChain.getClause(),
-            //                                           secondChain.getClause().back());
+            return deductionEngine.isDerivableWithout(prefix,
+                                                      conditionChain.getPredicate(),
+                                                      secondChain.getPredicate());
         }
 
         return false;
@@ -553,15 +542,19 @@ private:
      */
     inline bool isStorable(const CHAIN& chain)
     {
-        bool res = (prefix.size() + chain.hasPredicate()) >= config.getMinLength()
-            && chain.getSum() >= config.getMinSum()
-            && chain.getSum() <= config.getMaxSum()
-            && storage.size() < config.getMaxResults()
-            && !deductionEngine.hasRedundant(prefix,
-                                             chain.hasPredicate() ? &(chain.getPredicate()) : nullptr);
-        // TODO: to s tim deduction engine je hodne divoke, zkus refactorovat napr temporary upravou prefixu
+        if ((prefix.size() + chain.hasPredicate()) >= config.getMinLength()
+                && chain.getSum() >= config.getMinSum()
+                && chain.getSum() <= config.getMaxSum()
+                && storage.size() < config.getMaxResults()) {
+            if (chain.hasPredicate()) {
+                return !deductionEngine.hasRedundant(prefix, chain.getPredicate());
+            }
+            else {
+                return !deductionEngine.hasRedundant(prefix);
+            }
+        }
 
-        return res;
+        return false;
     }
 
     /**
@@ -588,15 +581,27 @@ private:
     {
         bool constant = (config.getMinConditionalFocusSupport() <= 0.0)
                 && deductionEngine.empty();
+
         selectorSingleton.initialize(collection.focusCount(), constant);
         if (!constant) {
             for (size_t i = 0; i < collection.focusCount(); ++i) {
                 const CHAIN& focus = collection[i + collection.firstFocusIndex()];
                 double confidence = 1.0 * focus.getSum() / chain.getSum();
-                if (confidence < config.getMinConditionalFocusSupport()
-                        || deductionEngine.isDerivableWithout(prefix,
-                                                              chain.hasPredicate() ? &(chain.getPredicate()) : nullptr,
-                                                              focus.getPredicate())) {
+
+                bool mustUnselect = (confidence < config.getMinConditionalFocusSupport());
+                if (!mustUnselect) {
+                    if (chain.hasPredicate()) {
+                        mustUnselect = deductionEngine.isDerivableWithout(prefix,
+                                                                          chain.getPredicate(),
+                                                                          focus.getPredicate());
+                    }
+                    else {
+                        mustUnselect = deductionEngine.isDerivableWithout(prefix,
+                                                                          focus.getPredicate());
+                    }
+                }
+
+                if (mustUnselect) {
                     selectorSingleton.unselect(i);
                 }
             }

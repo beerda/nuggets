@@ -145,6 +145,17 @@ public:
     }
 
     /**
+     * Checks whether the target predicate can be deduced from the implications
+     * stored in the engine.
+     *
+     * @param target The predicate ID to check for.
+     * @return True if the target predicate can be deduced from the
+     *     implications, false otherwise.
+     */
+    inline bool isDerivableFromAxioms(const size_t target)
+    { return internalIsDerivableWithout({}, nullptr, target);}
+
+    /**
      * Checks whether the target predicate can be deduced from the initial
      * predicates and the implications stored in the engine. If the target
      * predicate is one of the initial predicates, it is removed from the
@@ -158,7 +169,7 @@ public:
      */
     inline bool isDerivableWithout(const vector<size_t>& initial,
                                    const size_t target)
-    { return isDerivableWithout(initial, nullptr, target); }
+    { return internalIsDerivableWithout(initial, nullptr, target); }
 
     /**
      * Checks whether the target predicate can be deduced from the initial
@@ -175,71 +186,9 @@ public:
      *     predicates and the implications, false otherwise.
      */
     bool isDerivableWithout(const vector<size_t>& initial,
-                            const size_t* initial2,
+                            const size_t initial2,
                             const size_t target)
-    {
-        if (producedBy[target].empty()) {
-            // no implications produce the target, so it cannot be redundant
-            return false;
-        }
-
-        queryId++;
-        vector<size_t> unprocessed;
-
-        auto addPredicate = [&](size_t predicate) {
-            if (actualPredicateStamp[predicate] != queryId) {
-                actualPredicateStamp[predicate] = queryId;
-                unprocessed.push_back(predicate);
-            }
-        };
-
-        // process empty-antecedent implications
-        for (size_t i : emptyAntecedentImplications) {
-            if (consequents[i] == target) {
-                // the target can be deduced from an empty antecedent, so it is redundant
-                return true;
-            }
-            addPredicate(consequents[i]);
-        }
-
-        // process the initial predicates
-        for (size_t predicate : initial) {
-            if (predicate != target)
-                addPredicate(predicate);
-        }
-
-        // process the second initial predicate if provided
-        if (initial2 != nullptr && *initial2 != target) {
-            addPredicate(*initial2);
-        }
-
-        while (!unprocessed.empty()) {
-            size_t predicate = unprocessed.back();
-            unprocessed.pop_back();
-
-            // for each implication that has this predicate in its antecedent...
-            for (size_t i : appearsIn[predicate]) {
-                if (remainingStamp[i] != queryId) {
-                    // first time this implication is processed in this query,
-                    // so reset the remaining count
-                    remainingStamp[i] = queryId;
-                    remaining[i] = needs[i];
-                }
-
-                remaining[i]--;
-
-                if (remaining[i] == 0) {
-                    if (consequents[i] == target) {
-                        // the target can be deduced, so it is redundant
-                        return true;
-                    }
-                    addPredicate(consequents[i]);
-                }
-            }
-        }
-
-        return false;
-    }
+    { return internalIsDerivableWithout(initial, &initial2, target); }
 
     /**
      * Checks whether any of the initial predicates can be deduced from the
@@ -249,23 +198,19 @@ public:
      * @return True if any of the initial predicates can be deduced from the
      *    other initial predicates and the implications, false otherwise.
      */
-    bool hasRedundant(const vector<size_t>& initial, const size_t* initial2 = nullptr)
-    {
-        for (size_t predicate : initial) {
-            if (isDerivableWithout(initial, initial2, predicate)) {
-                return true;
-            }
-        }
+    inline bool hasRedundant(const vector<size_t>& initial)
+    { return internalHasRedundant(initial, nullptr); }
 
-        if (initial2 != nullptr) {
-            if (isDerivableWithout(initial, nullptr, *initial2)) {
-                return true;
-            }
-        }
-
-        return false;
-
-    }
+    /**
+     * Checks whether any of the initial predicates can be deduced from the
+     * other initial predicates and the implications stored in the engine.
+     *
+     * @param initial A vector of predicate IDs that are initially known to be true.
+     * @return True if any of the initial predicates can be deduced from the
+     *    other initial predicates and the implications, false otherwise.
+     */
+    inline bool hasRedundant(const vector<size_t>& initial, const size_t initial2)
+    { return internalHasRedundant(initial, &initial2); }
 
 private:
     /**
@@ -353,4 +298,113 @@ private:
      */
     static size_t createConsequent(const IntegerVector& implication)
     { return implication[implication.size() - 1]; }
+
+    /**
+     * Checks whether the target predicate can be deduced from the initial
+     * predicates and the implications stored in the engine. If the target
+     * predicate is one of the initial predicates, it is removed from the
+     * initial predicates before checking.
+     *
+     * @param initial A vector of predicate IDs that are initially known to be true.
+     * @param initial2 An optional pointer to a second initial predicate ID that
+     *     is also known to be true.
+     * @param target The predicate ID to check for (may be present
+     *     in the initial predicates).
+     * @return True if the target predicate can be deduced from the initial
+     *     predicates and the implications, false otherwise.
+     */
+    bool internalIsDerivableWithout(const vector<size_t>& initial,
+                                    const size_t* initial2,
+                                    const size_t target)
+    {
+        if (producedBy[target].empty()) {
+            // no implications produce the target, so it cannot be redundant
+            return false;
+        }
+
+        queryId++;
+        vector<size_t> unprocessed;
+
+        auto addPredicate = [&](size_t predicate) {
+            if (actualPredicateStamp[predicate] != queryId) {
+                actualPredicateStamp[predicate] = queryId;
+                unprocessed.push_back(predicate);
+            }
+        };
+
+        // process empty-antecedent implications
+        for (size_t i : emptyAntecedentImplications) {
+            if (consequents[i] == target) {
+                // the target can be deduced from an empty antecedent, so it is redundant
+                return true;
+            }
+            addPredicate(consequents[i]);
+        }
+
+        // process the initial predicates
+        for (size_t predicate : initial) {
+            if (predicate != target)
+                addPredicate(predicate);
+        }
+
+        // process the second initial predicate if provided
+        if (initial2 != nullptr && *initial2 != target) {
+            addPredicate(*initial2);
+        }
+
+        while (!unprocessed.empty()) {
+            size_t predicate = unprocessed.back();
+            unprocessed.pop_back();
+
+            // for each implication that has this predicate in its antecedent...
+            for (size_t i : appearsIn[predicate]) {
+                if (remainingStamp[i] != queryId) {
+                    // first time this implication is processed in this query,
+                    // so reset the remaining count
+                    remainingStamp[i] = queryId;
+                    remaining[i] = needs[i];
+                }
+
+                remaining[i]--;
+
+                if (remaining[i] == 0) {
+                    if (consequents[i] == target) {
+                        // the target can be deduced, so it is redundant
+                        return true;
+                    }
+                    addPredicate(consequents[i]);
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks whether any of the initial predicates can be deduced from the
+     * other initial predicates and the implications stored in the engine.
+     *
+     * @param initial A vector of predicate IDs that are initially known to be true.
+     * @param initial2 An optional pointer to a second initial predicate ID that
+     *     is also known to be true.
+     * @return True if any of the initial predicates can be deduced from the
+     *    other initial predicates and the implications, false otherwise.
+     */
+    bool internalHasRedundant(const vector<size_t>& initial,
+                              const size_t* initial2 = nullptr)
+    {
+        for (size_t predicate : initial) {
+            if (internalIsDerivableWithout(initial, initial2, predicate)) {
+                return true;
+            }
+        }
+
+        if (initial2 != nullptr) {
+            if (internalIsDerivableWithout(initial, nullptr, *initial2)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 };
