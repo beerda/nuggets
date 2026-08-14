@@ -123,22 +123,22 @@ warmup <- bench(rows = 10^6, cols = c(10, 15), prob_1 = 0.5)
 res <- bench(rows = c(10^3, 10^4, 10^5, 10^6),
              cols = 10,
              prob_1 = 0.5)
-saveRDS(res, file = "misc/nuggets_vs_arules/result_dense_rows.rds")
+saveRDS(res, file = "result_dense_rows.rds")
 
 res <- bench(rows = 10^4,
              cols = c(10, 20, 30, 50, 80),
              prob_1 = 0.5)
-saveRDS(res, file = "misc/nuggets_vs_arules/result_dense_cols.rds")
+saveRDS(res, file = "result_dense_cols.rds")
 
 
 
 res <- bench(rows = c(10^3, 10^4, 10^5, 10^6),
              cols = 10,
              prob_1 = 0.1)
-saveRDS(res, file = "misc/nuggets_vs_arules/result_sparse_rows.rds")
+saveRDS(res, file = "result_sparse_rows.rds")
 
 res <- bench(rows = 10^5,
              cols = c(10, 20, 30, 50, 80),
              prob_1 = 0.1)
-saveRDS(res, file = "misc/nuggets_vs_arules/result_sparse_cols.rds")
+saveRDS(res, file = "result_sparse_cols.rds")
 
