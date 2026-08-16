@@ -58,11 +58,6 @@ private:
     size_t num_blocks;
 
     /**
-     * The number of bits that are set to true in the Bitset.
-     */
-    size_t count_true;
-
-    /**
      * The number of bits stored in each block.
      */
     static constexpr size_t BITS_PER_BLOCK = 64;
@@ -102,8 +97,7 @@ public:
     Bitset()
         : blocks(nullptr),
           num_bits(0),
-          num_blocks(0),
-          count_true(0)
+          num_blocks(0)
     { }
 
     /**
@@ -116,8 +110,7 @@ public:
     explicit Bitset(size_t n)
         : blocks(nullptr),
           num_bits(n),
-          num_blocks((n + BITS_PER_BLOCK - 1) / BITS_PER_BLOCK),
-          count_true(0)
+          num_blocks((n + BITS_PER_BLOCK - 1) / BITS_PER_BLOCK)
     {
         if (num_blocks > 0) {
             blocks = static_cast<uint64_t*>(
@@ -137,13 +130,11 @@ public:
     Bitset(Bitset&& other) noexcept
         : blocks(other.blocks),
           num_bits(other.num_bits),
-          num_blocks(other.num_blocks),
-          count_true(other.count_true)
+          num_blocks(other.num_blocks)
     {
         other.blocks = nullptr;
         other.num_blocks = 0;
         other.num_bits = 0;
-        other.count_true = 0;
     }
 
     // Move assignment operator
@@ -156,11 +147,9 @@ public:
             blocks = other.blocks;
             num_blocks = other.num_blocks;
             num_bits = other.num_bits;
-            count_true = other.count_true;
             other.blocks = nullptr;
             other.num_blocks = 0;
             other.num_bits = 0;
-            other.count_true = 0;
         }
         return *this;
     }
@@ -187,9 +176,6 @@ public:
                 throw std::out_of_range("Bitset::set: position out of range");
         )
 
-        if (!this->operator[](pos)) {
-            ++count_true;
-        }
         blocks[blockIndex(pos)] |= bitMask(pos);
     }
 
@@ -199,7 +185,11 @@ public:
      * @return The count of bits set to true.
      */
     inline size_t count() const
-    { return count_true; }
+    {
+        BLOCK_INC_TIMER(st2, t2, "Bitset::count");
+
+        return popcnt(blocks, num_blocks * sizeof(uint64_t));
+    }
 
     /**
      * Returns the value of the bit at the specified position.
@@ -281,11 +271,6 @@ public:
 #endif
         }
 
-        {
-            BLOCK_INC_TIMER(st2, t2, "Bitset::operator&::popcnt");
-            result.count_true = popcnt(result.blocks, result.num_blocks * sizeof(uint64_t));
-        }
-
         return result;
     }
 
@@ -301,10 +286,6 @@ public:
     {
         if (num_bits != other.num_bits)
             return false;
-
-        if (count_true != other.count_true) {
-            return false;
-        }
 
         for (size_t i = 0; i < num_blocks; ++i) {
             if (blocks[i] != other.blocks[i]) {
