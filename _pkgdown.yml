@@ -18,6 +18,7 @@ articles:
       - conditional-correlations
       - contrast-patterns
       - custom-patterns
+      - comparison-with-arules
 
 reference:
   - title: "Data Preparation"

@@ -61,6 +61,8 @@ Suggests:
     htmltools,
     htmlwidgets,
     jsonlite,
+    kableExtra,
+    patchwork,
     shiny,
     shinyjs,
     shinyWidgets,

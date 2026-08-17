@@ -3,7 +3,6 @@ library(microbenchmark)
 library(arules)
 library(nuggets)
 
-
 run_nuggets <- function(d, settings) {
     rules <- dig_associations(d,
                                min_support = settings$min_support,
@@ -36,6 +35,7 @@ run_arules_eclat <- function(d, settings) {
                    parameter = list(minlen = 1,
                                     maxlen = settings$max_length + 1, # nuggets does not count the consequent in max_length, but arules does
                                     supp = settings$min_support,
+                                    #maxtime = 0, -- not available for eclat
                                     target = "frequent itemsets"),
                      control = list(verbose = FALSE))
     rules <- ruleInduction(rules, confidence = settings$min_confidence)
@@ -117,28 +117,41 @@ bench <- function(rows, cols, prob_1) {
 }
 
 
+cpuinfo <- function() {
+    res <- readLines("/proc/cpuinfo")
+    too <- min(which(res == "")) - 1
+    res <- res[seq_len(too)]
+    res <- gsub("\t+: ", ":", res)
+    res <- strsplit(res, ":")
+
+    result <- lapply(res, function(x) x[2])
+    names(result) <- sapply(res, function(x) x[1])
+
+    result
+}
+
+
+raminfo <- function() {
+    res <- readLines("/proc/meminfo")
+    res <- gsub(": +", ":", res)
+    res <- gsub(" kB", "", res)
+    res <- strsplit(res, ":")
+    result <- lapply(res, function(x) as.numeric(x[2]))
+    names(result) <- sapply(res, function(x) x[1])
+    result
+}
+
+
+result <- list(cpu = cpuinfo()$`model name`,
+               cache = cpuinfo()$`cache size`,
+               ram = raminfo()$MemTotal / 1024 / 1024)  # in GB
+
 warmup <- bench(rows = 10^6, cols = c(10, 15), prob_1 = 0.5)
 
+result$dense_rows <- bench(rows = c(10^3, 10^4, 10^5, 10^6), cols = 10, prob_1 = 0.5)
+result$dense_cols <- bench(rows = 10^4, cols = c(10, 20, 30, 50, 80), prob_1 = 0.5)
+result$sparse_rows <- bench(rows = c(10^3, 10^4, 10^5, 10^6), cols = 10, prob_1 = 0.1)
+result$sparse_cols <- bench(rows = 10^5, cols = c(10, 20, 30, 50, 80), prob_1 = 0.1)
 
-res <- bench(rows = c(10^3, 10^4, 10^5, 10^6),
-             cols = 10,
-             prob_1 = 0.5)
-saveRDS(res, file = "result_dense_rows.rds")
-
-res <- bench(rows = 10^4,
-             cols = c(10, 20, 30, 50, 80),
-             prob_1 = 0.5)
-saveRDS(res, file = "result_dense_cols.rds")
-
-
-
-res <- bench(rows = c(10^3, 10^4, 10^5, 10^6),
-             cols = 10,
-             prob_1 = 0.1)
-saveRDS(res, file = "result_sparse_rows.rds")
-
-res <- bench(rows = 10^5,
-             cols = c(10, 20, 30, 50, 80),
-             prob_1 = 0.1)
-saveRDS(res, file = "result_sparse_cols.rds")
+saveRDS(result, "result.rds")
 
