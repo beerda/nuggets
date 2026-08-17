@@ -1,8 +1,8 @@
 ---
-title: "Performance of nuggets and arules in Association Rule Mining"
+title: "Comparison of nuggets and arules performance"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Performance of nuggets and arules in Association Rule Mining}
+  %\VignetteIndexEntry{Comparison of nuggets and arules performance}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -38,11 +38,11 @@ preprocess <- function(d) {
 
 
 two_fig <- function(d, x, xname, title) {
-    nice_colnames <- c(cols = "number of data columns",
-                        rows = "number of data rows",
-                        min_support = "min support",
-                        min_confidence = "min confidence",
-                        max_length = "max antecedent length")
+    nice_colnames <- c(cols = "# of data columns",
+                        rows = "# of data rows",
+                        min_support = "min supp",
+                        min_confidence = "min conf",
+                        max_length = "max ante length")
     fixed <- list()
     for (col in c("rows", "cols", "min_support", "min_confidence", "max_length")) {
         if (length(unique(d[[col]])) == 1) {
@@ -251,16 +251,16 @@ the best performance.
 ## Why `nuggets` performs well
 
 A likely explanation for the strong performance of `nuggets` is its highly 
-optimized implementation of conjunction counting and support computation.
+optimized implementation of conjunction computation and support counting.
 These operations are central to rule discovery, and in `nuggets` they are
-accelerated using SIMD instructions together with an efficient `popcount`
-method. This makes the evaluation of candidate conjunctions particularly fast
-and is reflected in the consistently strong performance of `nuggets` in
-experiments with increasing numbers of rows. In such settings, the amount of
-data to be processed grows, but the low-level optimizations allow `nuggets`
-to maintain a substantial runtime advantage. All nuggets optimizations are
-available with the default compiler directives recommended by CRAN, without
-requiring any non-standard package installation settings.
+accelerated using SIMD instructions. This makes the evaluation of candidate
+conjunctions particularly fast and is reflected in the consistently strong
+performance of `nuggets` in experiments with increasing numbers of rows. In such
+settings, the amount of data to be processed grows, but the low-level
+optimizations allow `nuggets` to maintain a substantial runtime advantage. All
+nuggets optimizations are available with the default compiler directives 
+recommended by CRAN, without requiring any non-standard package installation 
+settings.
 
 
 # Summary
