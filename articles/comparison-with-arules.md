@@ -135,7 +135,9 @@ conjunctions particularly fast and is reflected in the consistently
 strong performance of `nuggets` in experiments with increasing numbers
 of rows. In such settings, the amount of data to be processed grows, but
 the low-level optimizations allow `nuggets` to maintain a substantial
-runtime advantage.
+runtime advantage. All nuggets optimizations are available with the
+default compiler directives recommended by CRAN, without requiring any
+non-standard package installation settings.
 
 ## Summary
 
