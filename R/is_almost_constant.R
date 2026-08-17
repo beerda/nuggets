@@ -41,7 +41,7 @@
 #'     equal to `threshold`.
 #'   Otherwise, returns `FALSE`.
 #'
-#' @seealso [remove_almost_constant()], [unique()], [table()]
+#' @seealso [remove_almost_constant()], [base::unique()], [table()]
 #'
 #' @author Michal Burda
 #'

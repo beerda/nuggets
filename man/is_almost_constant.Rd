@@ -44,7 +44,7 @@ is_almost_constant(c(NA, NA, NA, 1, 2), threshold = 0.5, na_rm = TRUE)
 
 }
 \seealso{
-\code{\link[=remove_almost_constant]{remove_almost_constant()}}, \code{\link[=unique]{unique()}}, \code{\link[=table]{table()}}
+\code{\link[=remove_almost_constant]{remove_almost_constant()}}, \code{\link[base:unique]{base::unique()}}, \code{\link[=table]{table()}}
 }
 \author{
 Michal Burda
