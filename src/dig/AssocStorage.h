@@ -20,6 +20,7 @@
 #pragma once
 
 #include "../common.h"
+#include "Clause.h"
 #include "Config.h"
 #include "ChainCollection.h"
 #include "Selector.h"
@@ -82,7 +83,7 @@ public:
      * represents the antecedent of the rule, and each focus chain represents a
      * consequent.
      */
-    void store(const vector<size_t>& prefix,
+    void store(const Clause& prefix,
                const CHAIN& chain,
                const ChainCollection<CHAIN>& collection,
                const Selector& selector,
@@ -195,7 +196,7 @@ private:
      * The condition is represented as a set of predicate names enclosed in
      * curly braces.
      */
-    string formatCondition(const vector<size_t>& prefix, const CHAIN& chain) const
+    string formatCondition(const Clause& prefix, const CHAIN& chain) const
     {
         if (prefix.empty() && !chain.hasPredicate()) {
             return "{}";

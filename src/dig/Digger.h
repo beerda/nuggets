@@ -24,6 +24,7 @@
 #include "../common.h"
 #include "../timer.h"
 #include "Cache.h"
+#include "Clause.h"
 #include "Config.h"
 #include "ChainCollection.h"
 #include "CombinatorialProgress.h"
@@ -202,7 +203,7 @@ private:
      * Prefix of the current condition being processed. Vector stores IDs
      * of predicates.
      */
-    vector<size_t> prefix;
+    Clause prefix;
 
     /**
      * A singleton Selector object used to avoid unnecessary allocations during
@@ -222,7 +223,7 @@ private:
      * Preallocated vector used to query the cache for sums of chains.
      * It is used to avoid unnecessary allocations.
      */
-    vector<size_t> cacheQuery;
+    Clause cacheQuery;
 
     /**
      * A deduction engine used to check whether a predicate can be derived from

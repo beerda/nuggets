@@ -22,8 +22,6 @@
 #include "../common.h"
 #include "Clause.h"
 
-#include <vector>
-
 
 /**
  * A class that implements a deduction engine for inferring predicates based on

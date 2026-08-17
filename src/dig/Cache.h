@@ -20,6 +20,7 @@
 #pragma once
 
 #include "../common.h"
+#include "Clause.h"
 
 
 /**
@@ -29,8 +30,6 @@
  */
 class Cache {
 public:
-    using Clause = vector<size_t>;
-
     /**
      * Constant representing a value that indicates that a Clause is not in the cache.
      * This value is used to differentiate between Clauses that have been added to

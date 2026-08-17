@@ -20,6 +20,7 @@
 #pragma once
 
 #include "../common.h"
+#include "Clause.h"
 #include "Config.h"
 #include "ChainCollection.h"
 #include "Selector.h"
@@ -88,7 +89,7 @@ public:
      *     to the predicate ID, and the value at that index represents the sum of
      *     TRUEs or membership degrees for that predicate.
      */
-    void store(const vector<size_t> prefix,
+    void store(const Clause& prefix,
                const CHAIN& chain,
                const ChainCollection<CHAIN>& collection,
                const Selector& selector,
@@ -167,7 +168,7 @@ private:
      */
     inline void processConditionArgument(vector<RObject>& args,
                                          vector<string>& argNames,
-                                         const vector<size_t>& prefix,
+                                         const Clause& prefix,
                                          const CHAIN& chain)
     {
         if (config.hasConditionArgument()) {
@@ -247,7 +248,7 @@ private:
      */
     inline void processIndicesArgument(vector<RObject>& args,
                                        vector<string>& argNames,
-                                       const vector<size_t>& prefix,
+                                       const Clause& prefix,
                                        const CHAIN& chain)
     {
         if (config.hasIndicesArgument()) {
@@ -280,7 +281,7 @@ private:
      */
     inline void processWeightsArgument(vector<RObject>& args,
                                        vector<string>& argNames,
-                                       const vector<size_t>& prefix,
+                                       const Clause& prefix,
                                        const CHAIN& chain)
     {
         if (config.hasWeightsArgument()) {
