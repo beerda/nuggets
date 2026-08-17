@@ -47,6 +47,7 @@ library(nuggets)
 result <- NULL
 for (test in tests) {
     cat("Executing test: ", test, "\n", sep = "")
+    source("preheat.R")
     res <- source(test)$value
     res$file <- test
     result <- rbind(result, res)
