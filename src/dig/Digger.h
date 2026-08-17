@@ -65,18 +65,25 @@ public:
           config(config),
           searchStats(),
           initialCollection(data, isCondition, isFocus),
+          sortedPositions(data.size() + 1),
           predicateSums(data.size() + 1),
           prefix(),
           selectorSingleton(initialCollection.focusCount()),
           cache(data.size() + 1),
+          cacheQuery(),
           deductionEngine(data.size() + 1, config.getExcluded()),
           progress(nullptr)
     {
         BLOCK_TIMER(t, "Digger::Constructor");
         prefix.reserve(std::min(config.getMaxLength(), initialCollection.conditionCount()));
+        cacheQuery.reserve(std::min(config.getMaxLength(), initialCollection.conditionCount()));
+
+        size_t index = 0;
         for (const CHAIN& chain : initialCollection) {
             size_t id = chain.getPredicate();
+            sortedPositions[id] = index;
             predicateSums[id] = chain.getSum();
+            index++;
         }
     }
 
@@ -106,7 +113,7 @@ public:
 
         for (size_t i = 0; i < initialCollection.size(); ++i) {
             CHAIN& chain = initialCollection[i];
-            addSumToCache(0, chain.getPredicate(), chain.getSum());
+            addSumToCache(emptyChain, chain, chain.getSum());
             if (isNonRedundant(emptyChain, chain)
                     && isCandidate(chain)
                     && !deductionEngine.isDerivableFromAxioms(chain.getPredicate())) {
@@ -173,6 +180,15 @@ private:
     ChainCollection<CHAIN> initialCollection;
 
     /**
+     * A vector that stores the sorted positions of predicates based on their
+     * sums of TRUEs or membership degrees. The index of the vector corresponds
+     * to the predicate ID, and the value at that index represents the position
+     * of the predicate in the sorted order. The vector is indexed from 1 to
+     * match R's indexing convention, with index 0 reserved for the empty chain.
+     */
+    vector<size_t> sortedPositions;
+
+    /**
      * A vector that stores the sums of TRUEs (for binary data) or membership degrees
      * (for fuzzy data) for each predicate in the data. The index of the vector
      * corresponds to the predicate ID, and the value at that index represents
@@ -201,6 +217,12 @@ private:
      * membership degrees.
      */
     Cache cache;
+
+    /**
+     * Preallocated vector used to query the cache for sums of chains.
+     * It is used to avoid unnecessary allocations.
+     */
+    vector<size_t> cacheQuery;
 
     /**
      * A deduction engine used to check whether a predicate can be derived from
@@ -361,8 +383,8 @@ private:
                 && (!isDerivableFocusOnly(conditionChain, secondChain))) {
             CHAIN newChain(conditionChain, secondChain);
             searchStats.incrementComputedConjunctions();
-            addSumToCache(conditionChain.getPredicate(),
-                          secondChain.getPredicate(),
+            addSumToCache(conditionChain,
+                          secondChain,
                           newChain.getSum());
             if (isCandidate(newChain)) {
                 target.append(std::move(newChain));
@@ -390,8 +412,7 @@ private:
                 && (!isDerivableFocusOnly(conditionChain, secondChain))) {
 
             searchStats.incrementCachedConjunctions();
-            double sum = getSumFromCache(conditionChain.getPredicate(),
-                                         secondChain.getPredicate());
+            double sum = getSumFromCache(conditionChain, secondChain);
 
             // not being in the cache means that the conjunction is redundant
             if (sum != Cache::NOT_IN_CACHE) {
@@ -617,27 +638,35 @@ private:
      *
      * @param chain The chain whose sum is to be added to the cache.
      */
-    inline void addSumToCache(const size_t predicate1, const size_t predicate2, const double sum)
+    inline void addSumToCache(const CHAIN& chain1, const CHAIN& chain2, const double sum)
     {
         BLOCK_INC_TIMER(st, t, "Digger::addSumToCache");
 
-        //TODO: get rid of this copying and sorting
-        vector<size_t> clause;
-        clause.reserve(prefix.size() + 2);
-        for (size_t p : prefix) {
-            clause.push_back(p);
-        }
-        if (predicate1 != 0) {
-            clause.push_back(predicate1);
-        }
-        if (predicate2 != 0) {
-            clause.push_back(predicate2);
-        }
-        std::sort(clause.begin(), clause.end());
+        IF_DEBUG(
+            if (!chain2.hasPredicate())
+                throw invalid_argument("Digger::addSumToCache: second chain has no predicate");
+        )
 
-        cache.add(clause, sum);
+        // cout << "Adding : " << getPrefixAsString()
+        //      << ", " << predicate1
+        //      << " | " << predicate2
+        //      << endl;
 
-        // TODO: remove Clause.h?
+        // When adding to cache, the order of predicate IDs in prefix/chain1/chain2
+        // is already sorted, so we can just push_back and pop_back to avoid
+        // unnecessary copying and sorting.
+
+        if (chain1.hasPredicate()) {
+            prefix.push_back(chain1.getPredicate());
+        }
+
+        prefix.push_back(chain2.getPredicate());
+        cache.add(prefix, sum);
+        prefix.pop_back();
+
+        if (chain1.hasPredicate()) {
+            prefix.pop_back();
+        }
     }
 
     /**
@@ -647,24 +676,49 @@ private:
      *
      * @param chain The chain whose sum is to be retrieved from the cache.
      */
-    inline double getSumFromCache(const size_t predicate1, const size_t predicate2) const
+    inline double getSumFromCache(const CHAIN& chain1, const CHAIN& chain2)
     {
+        IF_DEBUG(
+            if (!chain1.hasPredicate())
+                throw invalid_argument("Digger::getSumFromCache: first chain has no predicate");
+
+            if (!chain2.hasPredicate())
+                throw invalid_argument("Digger::getSumFromCache: second chain has no predicate");
+        )
+
         BLOCK_INC_TIMER(st, t, "Digger::getSumFromCache");
 
-        //TODO: get rid of this copying and sorting
-        vector<size_t> clause;
-        clause.reserve(prefix.size() + 2);
-        for (size_t p : prefix) {
-            clause.push_back(p);
-        }
-        if (predicate1 != 0) {
-            clause.push_back(predicate1);
-        }
-        if (predicate2 != 0) {
-            clause.push_back(predicate2);
-        }
-        std::sort(clause.begin(), clause.end());
+        // cout << "Getting: " << getPrefixAsString()
+        //      << ", " << chain1.getPredicate()
+        //      << " | " << chain2.getPredicate()
+        //      << endl;
 
-        return cache.get(clause);
+        // When getting from cache, the order of predicate IDs in prefix/chain1
+        // is already sorted, however, chain2's predicate is always unsorted,
+        // so we need to insert it into the right place.
+
+        prefix.push_back(chain1.getPredicate());
+
+        cacheQuery.resize(prefix.size() + 1);
+        size_t p2pos = sortedPositions[chain2.getPredicate()];
+        size_t offset = 0;
+        for (size_t i = 0; i < prefix.size(); ++i) {
+            if (p2pos < sortedPositions[prefix[i]]) {
+                cacheQuery[i] = chain2.getPredicate();
+                offset = 1;
+                p2pos = std::numeric_limits<size_t>::max(); // ensure we don't insert again
+            }
+            cacheQuery[i + offset] = prefix[i];
+        }
+
+        // cout << " - query: ";
+        // for (size_t p : cacheQuery) {
+        //     cout << p << " ";
+        // }
+        // cout << endl;
+
+        prefix.pop_back();
+
+        return cache.get(cacheQuery);
     }
 };
