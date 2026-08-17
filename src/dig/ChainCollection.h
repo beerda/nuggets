@@ -75,7 +75,7 @@ public:
                 }
                 else if (Rf_isReal(data[i])) {
                     const NumericVector& vec = data[i];
-                    chains.emplace_back(id, PredicateType(type), vec);
+                    chains.emplace_back(id, type, vec);
                 }
                 else {
                     throw std::invalid_argument("ChainCollection: unsupported data type");
