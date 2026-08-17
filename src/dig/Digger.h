@@ -648,26 +648,17 @@ private:
                 throw invalid_argument("Digger::addSumToCache: second chain has no predicate");
         )
 
-        // cout << "Adding : " << getPrefixAsString()
-        //      << ", " << predicate1
-        //      << " | " << predicate2
-        //      << endl;
-
         // When adding to cache, the order of predicate IDs in prefix/chain1/chain2
         // is already sorted, so we can just push_back and pop_back to avoid
         // unnecessary copying and sorting.
 
+        size_t oldSize = prefix.size();
         if (chain1.hasPredicate()) {
             prefix.push_back(chain1.getPredicate());
         }
-
         prefix.push_back(chain2.getPredicate());
         cache.add(prefix, sum);
-        prefix.pop_back();
-
-        if (chain1.hasPredicate()) {
-            prefix.pop_back();
-        }
+        prefix.resize(oldSize);
     }
 
     /**
@@ -689,18 +680,12 @@ private:
 
         BLOCK_INC_TIMER(st, t, "Digger::getSumFromCache");
 
-        // cout << "Getting: " << getPrefixAsString()
-        //      << ", " << chain1.getPredicate()
-        //      << " | " << chain2.getPredicate()
-        //      << endl;
-
         // When getting from cache, the order of predicate IDs in prefix/chain1
         // is already sorted, however, chain2's predicate is always unsorted,
         // so we need to insert it into the right place.
 
+        cacheQuery.resize(prefix.size() + 2);
         prefix.push_back(chain1.getPredicate());
-
-        cacheQuery.resize(prefix.size() + 1);
         size_t p2pos = sortedPositions[chain2.getPredicate()];
         size_t offset = 0;
         for (size_t i = 0; i < prefix.size(); ++i) {
@@ -711,13 +696,6 @@ private:
             }
             cacheQuery[i + offset] = prefix[i];
         }
-
-        // cout << " - query: ";
-        // for (size_t p : cacheQuery) {
-        //     cout << p << " ";
-        // }
-        // cout << endl;
-
         prefix.pop_back();
 
         return cache.get(cacheQuery);
