@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Performance of nuggets and arules in Association Rule Mining • nuggets</title>
+<title>Comparison of nuggets and arules performance • nuggets</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -21,7 +21,7 @@
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Performance of nuggets and arules in Association Rule Mining">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Comparison of nuggets and arules performance">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -50,7 +50,7 @@
     <li><a class="dropdown-item" href="../articles/conditional-correlations.html">Conditional Correlations</a></li>
     <li><a class="dropdown-item" href="../articles/contrast-patterns.html">Contrast Patterns</a></li>
     <li><a class="dropdown-item" href="../articles/custom-patterns.html">Custom Pattern Search with dig()</a></li>
-    <li><a class="dropdown-item" href="../articles/comparison-with-arules.html">Performance of nuggets and arules in Association Rule Mining</a></li>
+    <li><a class="dropdown-item" href="../articles/comparison-with-arules.html">Comparison of nuggets and arules performance</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -80,7 +80,7 @@
 <script src="comparison-with-arules_files/kePrint-0.0.1/kePrint.js"></script><link href="comparison-with-arules_files/lightable-0.0.1/lightable.css" rel="stylesheet">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Performance of nuggets and arules in Association Rule Mining</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Comparison of nuggets and arules performance</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/vignettes/comparison-with-arules.Rmd" class="external-link"><code>vignettes/comparison-with-arules.Rmd</code></a></small>
@@ -667,14 +667,13 @@ the best performance.</p>
 </h3>
 <p>A likely explanation for the strong performance of
 <code>nuggets</code> is its highly optimized implementation of
-conjunction counting and support computation. These operations are
+conjunction computation and support counting. These operations are
 central to rule discovery, and in <code>nuggets</code> they are
-accelerated using SIMD instructions together with an efficient
-<code>popcount</code> method. This makes the evaluation of candidate
-conjunctions particularly fast and is reflected in the consistently
-strong performance of <code>nuggets</code> in experiments with
-increasing numbers of rows. In such settings, the amount of data to be
-processed grows, but the low-level optimizations allow
+accelerated using SIMD instructions. This makes the evaluation of
+candidate conjunctions particularly fast and is reflected in the
+consistently strong performance of <code>nuggets</code> in experiments
+with increasing numbers of rows. In such settings, the amount of data to
+be processed grows, but the low-level optimizations allow
 <code>nuggets</code> to maintain a substantial runtime advantage. All
 nuggets optimizations are available with the default compiler directives
 recommended by CRAN, without requiring any non-standard package
