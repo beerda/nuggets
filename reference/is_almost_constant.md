@@ -45,7 +45,7 @@ A logical scalar. Returns `TRUE` in the following cases:
 ## See also
 
 [`remove_almost_constant()`](https://beerda.github.io/nuggets/reference/remove_almost_constant.md),
-[`unique()`](https://rdrr.io/r/base/unique.html),
+[`base::unique()`](https://rdrr.io/r/base/unique.html),
 [`table()`](https://rdrr.io/r/base/table.html)
 
 ## Author

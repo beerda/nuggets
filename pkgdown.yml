@@ -3,12 +3,13 @@ pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   association-rules: association-rules.html
+  comparison-with-arules: comparison-with-arules.html
   conditional-correlations: conditional-correlations.html
   contrast-patterns: contrast-patterns.html
   custom-patterns: custom-patterns.html
   data-preparation: data-preparation.html
   nuggets: nuggets.html
-last_built: 2026-08-12T08:25Z
+last_built: 2026-08-17T16:52Z
 urls:
   reference: https://beerda.github.io/nuggets/reference
   article: https://beerda.github.io/nuggets/articles
