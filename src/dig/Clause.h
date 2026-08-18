@@ -82,7 +82,7 @@ public:
             return false;
 
         for (size_t i = 0; i < size(); ++i) {
-            if (at(i) != other.at(i))
+            if (operator[](i) != other.operator[](i))
                 return false;
         }
 

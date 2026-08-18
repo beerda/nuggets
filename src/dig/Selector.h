@@ -120,7 +120,7 @@ private:
     /**
      * Flags indicating which elements have been unselected.
      */
-    vector<short> pruned;
+    vector<uint8_t> pruned;
 
     /**
      * Whether all elements are implicitly selected.

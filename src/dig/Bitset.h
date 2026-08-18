@@ -116,9 +116,8 @@ public:
             blocks = static_cast<uint64_t*>(
                 xsimd::aligned_malloc(num_blocks * sizeof(uint64_t),
                                       xsimd::default_arch::alignment()));
-            for (size_t i = 0; i < num_blocks; ++i) {
-                blocks[i] = 0;
-            }
+            // Initialize all blocks to zero
+            memset(blocks, 0, num_blocks * sizeof(uint64_t));
         }
     }
 
@@ -259,13 +258,13 @@ public:
 
             // Process remaining blocks that don't fit in a SIMD batch
             for (; i < num_blocks; ++i) {
-                int64_t value = blocks[i] & other.blocks[i];
+                uint64_t value = blocks[i] & other.blocks[i];
                 result.blocks[i] = value;
             }
 #else
             // Fallback for architectures without SIMD support
             for (size_t i = 0; i < num_blocks; ++i) {
-                int64_t value = blocks[i] & other.blocks[i];
+                uint64_t value = blocks[i] & other.blocks[i];
                 result.blocks[i] = value;
             }
 #endif
