@@ -144,7 +144,9 @@ raminfo <- function() {
 
 result <- list(cpu = cpuinfo()$`model name`,
                cache = cpuinfo()$`cache size`,
-               ram = raminfo()$MemTotal / 1024 / 1024)  # in GB
+               ram = raminfo()$MemTotal / 1024 / 1024,  # in GB
+               nuggets_version = as.character(packageVersion("nuggets")),
+               arules_version = as.character(packageVersion("arules")))
 
 warmup <- bench(rows = 10^6, cols = c(10, 15), prob_1 = 0.5)
 
@@ -153,5 +155,5 @@ result$dense_cols <- bench(rows = 10^4, cols = c(10, 20, 30, 50, 80), prob_1 = 0
 result$sparse_rows <- bench(rows = c(10^3, 10^4, 10^5, 10^6), cols = 10, prob_1 = 0.1)
 result$sparse_cols <- bench(rows = 10^5, cols = c(10, 20, 30, 50, 80), prob_1 = 0.1)
 
-saveRDS(result, "result.rds")
+saveRDS(result, "comparison-with-arules.rds")
 

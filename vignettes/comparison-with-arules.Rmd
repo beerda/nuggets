@@ -104,10 +104,13 @@ sparse_cols <- data$sparse_cols |> preprocess()
 
 # Introduction
 
-This vignette compares the performance of the `nuggets` and `arules` packages 
-in R on the task of *association rule mining*. The comparison focuses on the
-time needed to discover association rules *from Boolean datasets* of varying
-sizes and sparsity levels. The goal is to provide a rough comparison of 
+This vignette compares the performance of the following R packages:
+
+- `nuggets` `r data$nuggets_version`
+- `arules` `r data$arules_version`
+
+The task of interest is the discovery of association rules in Boolean (TRUE/FALSE) datasets.
+The goal is to provide a rough comparison of 
 computational power rather than a full comparison of package functionality,
 so advanced features, filtering options, and other factors that may affect
 practical performance are not considered here.
