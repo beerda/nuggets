@@ -5,77 +5,73 @@
 
 context("dig/Cache.h") {
     test_that("empty Cache") {
-        Cache cache(3);
+        Cache cache(3, 3);
 
         Clause c0;
         Clause c1({ 1 });
         Clause c2({ 1, 2 });
 
         expect_true(cache.size() == 0);
-        expect_error(cache.get(c0));
-        expect_error(cache.get(c1));
-        expect_error(cache.get(c2));
+        expect_true(cache.get(c0) == -1); // -1 = NOT_IN_CACHE
+        expect_true(cache.get(c1) == -1); // -1 = NOT_IN_CACHE
+        expect_true(cache.get(c2) == -1); // -1 = NOT_IN_CACHE
     }
 
     test_that("add and get") {
-        Cache cache(3);
+        Cache cache(3, 3);
 
-        Clause c0;
         Clause c1({ 1 });
-        Clause c2({ 1, 2 });
-        Clause c3({ 2 });
-        Clause c4({ 2, 3 });
-        Clause c5({ 1, 2, 3 });
+        Clause c12({ 1, 2 });
+        Clause c123({ 1, 2, 3 });
+        Clause c2({ 2 });
+        Clause c23({ 2, 3 });
 
         expect_true(cache.size() == 0);
-        expect_error(cache.get(c0));
-        expect_error(cache.get(c1));
-        expect_error(cache.get(c2));
-        expect_error(cache.get(c3));
-        expect_error(cache.get(c4));
-        expect_error(cache.get(c5));
+        expect_true(cache.get(c1) == -1);
+        expect_true(cache.get(c12) == -1);
+        expect_true(cache.get(c123) == -1);
+        expect_true(cache.get(c2) == -1);
+        expect_true(cache.get(c23) == -1);
 
         cache.add(c1, 0.5f);
         expect_true(cache.size() == 1);
-        expect_error(cache.get(c0));
         expect_true(cache.get(c1) == 0.5f);
+        expect_true(cache.get(c12) == -1);
+        expect_true(cache.get(c123) == -1);
+        expect_true(cache.get(c2) == -1);
+        expect_true(cache.get(c23) == -1);
 
         cache.add(c2, 1.5f);
         expect_true(cache.size() == 2);
-        expect_error(cache.get(c0));
         expect_true(cache.get(c1) == 0.5f);
+        expect_true(cache.get(c12) == -1);
+        expect_true(cache.get(c123) == -1);
         expect_true(cache.get(c2) == 1.5f);
+        expect_true(cache.get(c23) == -1);
 
-        cache.add(c3, 2.5f);
+        cache.add(c12, 2.5f);
         expect_true(cache.size() == 3);
-        expect_error(cache.get(c0));
         expect_true(cache.get(c1) == 0.5f);
+        expect_true(cache.get(c12) == 2.5f);
+        expect_true(cache.get(c123) == -1);
         expect_true(cache.get(c2) == 1.5f);
-        expect_true(cache.get(c3) == 2.5f);
+        expect_true(cache.get(c23) == -1);
 
-        cache.add(c4, 3.5f);
+        cache.add(c123, 3.5f);
         expect_true(cache.size() == 4);
-        expect_error(cache.get(c0));
         expect_true(cache.get(c1) == 0.5f);
+        expect_true(cache.get(c12) == 2.5f);
+        expect_true(cache.get(c123) == 3.5f);
         expect_true(cache.get(c2) == 1.5f);
-        expect_true(cache.get(c3) == 2.5f);
-        expect_true(cache.get(c4) == 3.5f);
+        expect_true(cache.get(c23) == -1);
 
-        cache.add(c5, 4.5f);
+        cache.add(c23, 4.5f);
         expect_true(cache.size() == 5);
-        expect_error(cache.get(c0));
         expect_true(cache.get(c1) == 0.5f);
+        expect_true(cache.get(c12) == 2.5f);
+        expect_true(cache.get(c123) == 3.5f);
         expect_true(cache.get(c2) == 1.5f);
-        expect_true(cache.get(c3) == 2.5f);
-        expect_true(cache.get(c4) == 3.5f);
-        expect_true(cache.get(c5) == 4.5f);
-
-        expect_error(cache.add(c0, 0.0f));  // cannot add empty clause
-        expect_error(cache.add(c1, 1.0f));  // cannot add existing clause
-        expect_error(cache.add(c2, 1.0f));  // cannot add existing clause
-
-        Clause cerr({ 4 });
-        expect_error(cache.add(cerr, 1.0f));  // predicate ID exceeds root size
+        expect_true(cache.get(c23) == 4.5f);
 
     }
 }

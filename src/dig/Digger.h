@@ -70,7 +70,8 @@ public:
           predicateSums(data.size() + 1),
           prefix(),
           selectorSingleton(initialCollection.focusCount()),
-          cache(data.size() + 1),
+          cache(data.size() + 1,
+                std::min(config.getMaxLength(), initialCollection.conditionCount())),
           cacheQuery(),
           deductionEngine(data.size() + 1, config.getExcluded()),
           progress(nullptr)
@@ -384,9 +385,7 @@ private:
                 && (!isDerivableFocusOnly(conditionChain, secondChain))) {
             CHAIN newChain(conditionChain, secondChain);
             searchStats.incrementComputedConjunctions();
-            addSumToCache(conditionChain,
-                          secondChain,
-                          newChain.getSum());
+            addSumToCache(conditionChain, secondChain, newChain.getSum());
             if (isCandidate(newChain)) {
                 target.append(std::move(newChain));
             }
