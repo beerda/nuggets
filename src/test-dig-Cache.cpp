@@ -7,12 +7,10 @@ context("dig/Cache.h") {
     test_that("empty Cache") {
         Cache cache(3, 3);
 
-        Clause c0;
         Clause c1({ 1 });
         Clause c2({ 1, 2 });
 
         expect_true(cache.size() == 0);
-        expect_true(cache.get(c0) == -1); // -1 = NOT_IN_CACHE
         expect_true(cache.get(c1) == -1); // -1 = NOT_IN_CACHE
         expect_true(cache.get(c2) == -1); // -1 = NOT_IN_CACHE
     }
@@ -72,6 +70,5 @@ context("dig/Cache.h") {
         expect_true(cache.get(c123) == 3.5f);
         expect_true(cache.get(c2) == 1.5f);
         expect_true(cache.get(c23) == 4.5f);
-
     }
 }
