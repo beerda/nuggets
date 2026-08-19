@@ -92,14 +92,19 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>This vignette compares the performance of the <code>nuggets</code>
-and <code>arules</code> packages in R on the task of <em>association
-rule mining</em>. The comparison focuses on the time needed to discover
-association rules <em>from Boolean datasets</em> of varying sizes and
-sparsity levels. The goal is to provide a rough comparison of
-computational power rather than a full comparison of package
-functionality, so advanced features, filtering options, and other
-factors that may affect practical performance are not considered
+<p>This vignette compares the performance of the following R
+packages:</p>
+<ul>
+<li>
+<code>nuggets</code> 2.2.3</li>
+<li>
+<code>arules</code> 1.7.14</li>
+</ul>
+<p>The task of interest is the discovery of <strong>association rules in
+Boolean (TRUE/FALSE) datasets</strong>. The goal is to provide a
+comparison of brute computational power rather than a full comparison of
+package functionality, so advanced features, filtering options, and
+other factors that may affect practical performance are not considered
 here.</p>
 <p>For reproducibility, the <a href="https://github.com/beerda/nuggets/tree/main/misc/performance/nuggets_vs_arules" class="external-link">benchmark
 script used in this vignette</a> is available in the package repository
@@ -140,11 +145,14 @@ datasets)</li>
 <li>the maximum length of antecedents: 3</li>
 </ul>
 <p>Each experiment was repeated 5 times to ensure the reliability of the
-results, and the average execution time was recorded. The results are
-visualized using both linear and logarithmic scales to provide insights
-into the performance characteristics of each method. All experiments
+results, and the average execution time was recorded. All experiments
 were conducted on AMD Ryzen 9 5900X 12-Core Processor (512 KB cache)
-with 62.7 GB of RAM available.</p>
+with 62.7 GB of RAM available under the GNU/Linux operating system. The
+CPU frequency governor was set to “performance” mode and the running
+process was pinned to a single CPU core.</p>
+<p>The results are visualized using both linear and logarithmic scales
+to provide insights into the performance characteristics of each
+method.</p>
 </div>
 <div class="section level2">
 <h2 id="results">Results<a class="anchor" aria-label="anchor" href="#results"></a>
@@ -189,16 +197,16 @@ apriori (arules)
 1e+03
 </td>
 <td style="text-align:right;">
-10
+30
 </td>
 <td style="text-align:right;">
-1.65
+17
 </td>
 <td style="text-align:right;">
-7.62
+47
 </td>
 <td style="text-align:right;">
-8.09
+58
 </td>
 </tr>
 <tr>
@@ -206,16 +214,16 @@ apriori (arules)
 1e+04
 </td>
 <td style="text-align:right;">
-10
+30
 </td>
 <td style="text-align:right;">
-2.38
+20
 </td>
 <td style="text-align:right;">
-10.10
+58
 </td>
 <td style="text-align:right;">
-13.10
+105
 </td>
 </tr>
 <tr>
@@ -223,16 +231,16 @@ apriori (arules)
 1e+05
 </td>
 <td style="text-align:right;">
-10
+30
 </td>
 <td style="text-align:right;">
-9.45
+55
 </td>
 <td style="text-align:right;">
-34.91
+252
 </td>
 <td style="text-align:right;">
-70.47
+799
 </td>
 </tr>
 <tr>
@@ -240,16 +248,33 @@ apriori (arules)
 1e+06
 </td>
 <td style="text-align:right;">
-10
+30
 </td>
 <td style="text-align:right;">
-81.62
+478
 </td>
 <td style="text-align:right;">
-347.38
+1958
 </td>
 <td style="text-align:right;">
-1082.64
+9102
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1e+07
+</td>
+<td style="text-align:right;">
+30
+</td>
+<td style="text-align:right;">
+6043
+</td>
+<td style="text-align:right;">
+16875
+</td>
+<td style="text-align:right;">
+107752
 </td>
 </tr>
 </tbody>
@@ -293,87 +318,87 @@ apriori (arules)
 <tbody>
 <tr>
 <td style="text-align:right;">
-10000
+1e+05
 </td>
 <td style="text-align:right;">
 10
 </td>
 <td style="text-align:right;">
-2.37
+9
 </td>
 <td style="text-align:right;">
-10.12
+35
 </td>
 <td style="text-align:right;">
-13.23
+70
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-10000
+1e+05
 </td>
 <td style="text-align:right;">
 20
 </td>
 <td style="text-align:right;">
-8.10
+22
 </td>
 <td style="text-align:right;">
-22.46
+81
 </td>
 <td style="text-align:right;">
-46.26
+339
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-10000
+1e+05
 </td>
 <td style="text-align:right;">
 30
 </td>
 <td style="text-align:right;">
-33.64
+55
 </td>
 <td style="text-align:right;">
-63.02
+196
 </td>
 <td style="text-align:right;">
-114.08
+742
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-10000
+1e+05
 </td>
 <td style="text-align:right;">
 50
 </td>
 <td style="text-align:right;">
-338.34
+292
 </td>
 <td style="text-align:right;">
-457.43
+1044
 </td>
 <td style="text-align:right;">
-682.53
+2651
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-10000
+1e+05
 </td>
 <td style="text-align:right;">
 80
 </td>
 <td style="text-align:right;">
-3934.05
+2042
 </td>
 <td style="text-align:right;">
-4412.56
+7062
 </td>
 <td style="text-align:right;">
-5246.76
+13937
 </td>
 </tr>
 </tbody>
@@ -420,16 +445,16 @@ apriori (arules)
 1e+03
 </td>
 <td style="text-align:right;">
-10
+30
 </td>
 <td style="text-align:right;">
-1.54
+8
 </td>
 <td style="text-align:right;">
-7.28
+15
 </td>
 <td style="text-align:right;">
-7.42
+15
 </td>
 </tr>
 <tr>
@@ -437,16 +462,16 @@ apriori (arules)
 1e+04
 </td>
 <td style="text-align:right;">
-10
+30
 </td>
 <td style="text-align:right;">
-2.09
+11
 </td>
 <td style="text-align:right;">
-8.54
+17
 </td>
 <td style="text-align:right;">
-9.59
+17
 </td>
 </tr>
 <tr>
@@ -454,16 +479,16 @@ apriori (arules)
 1e+05
 </td>
 <td style="text-align:right;">
-10
+30
 </td>
 <td style="text-align:right;">
-7.89
+67
 </td>
 <td style="text-align:right;">
-21.90
+85
 </td>
 <td style="text-align:right;">
-35.14
+79
 </td>
 </tr>
 <tr>
@@ -471,16 +496,33 @@ apriori (arules)
 1e+06
 </td>
 <td style="text-align:right;">
-10
+30
 </td>
 <td style="text-align:right;">
-66.54
+642
 </td>
 <td style="text-align:right;">
-190.44
+857
 </td>
 <td style="text-align:right;">
-498.36
+981
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1e+07
+</td>
+<td style="text-align:right;">
+30
+</td>
+<td style="text-align:right;">
+6359
+</td>
+<td style="text-align:right;">
+8321
+</td>
+<td style="text-align:right;">
+14660
 </td>
 </tr>
 </tbody>
@@ -530,13 +572,13 @@ apriori (arules)
 10
 </td>
 <td style="text-align:right;">
-7.87
+8
 </td>
 <td style="text-align:right;">
-23.04
+22
 </td>
 <td style="text-align:right;">
-35.01
+36
 </td>
 </tr>
 <tr>
@@ -547,13 +589,13 @@ apriori (arules)
 20
 </td>
 <td style="text-align:right;">
-26.82
+27
 </td>
 <td style="text-align:right;">
-44.66
+44
 </td>
 <td style="text-align:right;">
-56.00
+56
 </td>
 </tr>
 <tr>
@@ -564,13 +606,13 @@ apriori (arules)
 30
 </td>
 <td style="text-align:right;">
-69.61
+67
 </td>
 <td style="text-align:right;">
-85.23
+85
 </td>
 <td style="text-align:right;">
-80.34
+80
 </td>
 </tr>
 <tr>
@@ -581,13 +623,13 @@ apriori (arules)
 50
 </td>
 <td style="text-align:right;">
-284.26
+257
 </td>
 <td style="text-align:right;">
-259.06
+287
 </td>
 <td style="text-align:right;">
-147.52
+146
 </td>
 </tr>
 <tr>
@@ -598,13 +640,13 @@ apriori (arules)
 80
 </td>
 <td style="text-align:right;">
-1492.80
+1073
 </td>
 <td style="text-align:right;">
-955.08
+986
 </td>
 <td style="text-align:right;">
-360.59
+383
 </td>
 </tr>
 </tbody>
@@ -615,81 +657,34 @@ apriori (arules)
 <div class="section level2">
 <h2 id="discussion">Discussion<a class="anchor" aria-label="anchor" href="#discussion"></a>
 </h2>
-<p>The results show that the relative performance of
-<code>nuggets</code> and <code>arules</code> depends strongly on the
-structure of the data, particularly on its dimensionality and sparsity.
-In general, <code>nuggets</code> performs best when the number of
-predicates is small to moderate, whereas <code>arules</code> becomes
-increasingly competitive as the data become sparser and the number of
-predicates grows.</p>
-<div class="section level3">
-<h3 id="dense-data">Dense data<a class="anchor" aria-label="anchor" href="#dense-data"></a>
-</h3>
-<p>For dense datasets with a fixed number of rows, all methods become
-slower as the number of columns increases. Nevertheless, nuggets remains
-the fastest across the entire range considered. <code>arule</code>’s
-<code>eclat()</code> is consistently slower than <code>nuggets</code>
-but faster than <code>arule</code>’s <code>apriori()</code>. Although
-the computational cost rises rapidly for all three methods as the number
-of predicates grows, the relative ordering does not change in the
-dense-data experiments.</p>
-</div>
-<div class="section level3">
-<h3 id="sparse-data">Sparse data<a class="anchor" aria-label="anchor" href="#sparse-data"></a>
-</h3>
-<p>For sparse datasets with a fixed number of columns, the same general
-ranking is observed as in the dense case. Execution time increases with
-the number of rows, but <code>nuggets</code> remains the fastest method
-throughout, with <code>arule</code>’s <code>eclat()</code> second and
-<code>apriori()</code> third. The results suggest that
-<code>nuggets</code> also scales favorably with increasing dataset size
-in sparse data, at least when the number of columns remains small.</p>
-<p>A different pattern emerges when the number of columns increases in
-sparse datasets. For smaller and moderate numbers of columns,
-<code>nuggets</code> remains the fastest method. However, the gap
-between methods narrows as dimensionality grows. At higher numbers of
-columns, <code>arule</code>’s <code>apriori()</code> overtakes both
-Eclat-based approaches (yes, <code>nuggets</code> is inspirred with the
-Eclat algorithm internally) and becomes the fastest method, while
-<code>nuggets</code> becomes the slowest among the three. This indicates
-that sparse, high-dimensional data favor the search strategy used by
-<code>apriori()</code> over the recursion-based approaches used by
-<code>eclat()</code> and <code>nuggets</code>.</p>
-<p>Overall, the experiments indicate that <code>nuggets</code> performs
-best in low- to medium-dimensional settings, both dense and sparse, and
-shows very good scalability with increasing numbers of rows. In
-contrast, for sparse datasets with many predicates,
-<code>apriori()</code> becomes more efficient and ultimately provides
-the best performance.</p>
-</div>
-<div class="section level3">
-<h3 id="why-nuggets-performs-well">Why <code>nuggets</code> performs well<a class="anchor" aria-label="anchor" href="#why-nuggets-performs-well"></a>
-</h3>
-<p>A likely explanation for the strong performance of
-<code>nuggets</code> is its highly optimized implementation of
-conjunction computation and support counting. These operations are
-central to rule discovery, and in <code>nuggets</code> they are
-accelerated using SIMD instructions. This makes the evaluation of
-candidate conjunctions particularly fast and is reflected in the
-consistently strong performance of <code>nuggets</code> in experiments
-with increasing numbers of rows. In such settings, the amount of data to
-be processed grows, but the low-level optimizations allow
-<code>nuggets</code> to maintain a substantial runtime advantage. All
-nuggets optimizations are available with the default compiler directives
-recommended by CRAN, without requiring any non-standard package
-installation settings.</p>
-</div>
+<p>Similarly as <code>arules:eclat()</code>, <code>nuggets</code> is
+based on the ECLAT algorithm. Therefore, both variants are expected to
+perform similarly well. A likely explanation for the strong performance
+of <code>nuggets</code> on dense data is its highly optimized
+implementation of conjunction computation and support counting. These
+operations are central to rule discovery, and in <code>nuggets</code>
+they are accelerated using:</p>
+<ul>
+<li>SIMD instructions via the <a href="https://github.com/xtensor-stack/xsimd" class="external-link">XSIMD library</a>
+</li>
+<li>highly optimized bit population count via the <a href="https://github.com/kimwalisch/libpopcnt" class="external-link">libpopcnt
+library</a>
+</li>
+</ul>
+<p>This makes the evaluation of candidate conjunctions fast particularly
+for dense datasets.</p>
+<p>Note that all <code>nuggets</code> optimizations are available with
+the default compiler directives recommended by CRAN, without requiring
+any non-standard package installation settings.</p>
 </div>
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
 </h2>
 <p>The results show that <code>nuggets</code> is particularly effective
-for low- to medium-dimensional data, where its optimized implementation
-provides consistently strong performance. For sparse data with many
-predicates, however, <code>arules</code>, especially
-<code>apriori()</code>, becomes more advantageous. Overall, the
-comparison highlights that the best choice depends mainly on data
-sparsity and dimensionality.</p>
+for dense data, where its optimized implementation provides consistently
+strong performance. For sparse data with many predicates, however,
+<code>arules</code>, especially <code>apriori()</code>, becomes more
+advantageous.</p>
 <p>For additional information on the <code>nuggets</code> package,
 see:</p>
 <ul>
