@@ -1,5 +1,5 @@
 # nuggets 2.2.3
-- released: ???
+- released: 2026-08-19
 - added `permute()`
 - improved filtering by axioms specified in `excluded` argument of `dig*()`
 - improved the core search algorithm by better handling of condition prefixes

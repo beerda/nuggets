@@ -1,7 +1,7 @@
 Package: nuggets
 Title: Fast and Extensible Pattern Discovery in Tabular Data
-Version: 2.2.2
-Date: 2026-07-22
+Version: 2.2.3
+Date: 2026-08-19
 Authors@R: 
     person(given = "Michal",
            family = "Burda",
