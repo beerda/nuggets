@@ -150,9 +150,9 @@ result <- list(cpu = cpuinfo()$`model name`,
 
 warmup <- bench(rows = 10^6, cols = c(10, 15), prob_1 = 0.5)
 
-result$dense_rows <- bench(rows = c(10^3, 10^4, 10^5, 10^6), cols = 10, prob_1 = 0.5)
-result$dense_cols <- bench(rows = 10^4, cols = c(10, 20, 30, 50, 80), prob_1 = 0.5)
-result$sparse_rows <- bench(rows = c(10^3, 10^4, 10^5, 10^6), cols = 10, prob_1 = 0.1)
+result$dense_rows <- bench(rows = c(10^3, 10^4, 10^5, 10^6, 10^7), cols = 30, prob_1 = 0.5)
+result$dense_cols <- bench(rows = 10^5, cols = c(10, 20, 30, 50, 80), prob_1 = 0.5)
+result$sparse_rows <- bench(rows = c(10^3, 10^4, 10^5, 10^6, 10^7), cols = 30, prob_1 = 0.1)
 result$sparse_cols <- bench(rows = 10^5, cols = c(10, 20, 30, 50, 80), prob_1 = 0.1)
 
 saveRDS(result, "comparison-with-arules.rds")
