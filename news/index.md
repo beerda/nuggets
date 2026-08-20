@@ -2,7 +2,7 @@
 
 ## nuggets 2.2.3
 
-- released: ???
+- released: 2026-08-19
 - added
   [`permute()`](https://beerda.github.io/nuggets/reference/permute.md)
 - improved filtering by axioms specified in `excluded` argument of
