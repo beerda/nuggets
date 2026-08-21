@@ -1,3 +1,7 @@
+# nuggets 2.3
+- released: ???
+- added `as_nugget()` to convert arules object to nuggets object
+
 # nuggets 2.2.3
 - released: 2026-08-19
 - added `permute()`
