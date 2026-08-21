@@ -29,8 +29,8 @@
                               paste(sprintf('"%s"', missing_packages), collapse = ", "))
         cli_abort(c(
             "Packages required to run graphical user interface are not installed.",
-            "x" = paste("Missing packages:", paste(missing_packages, collapse = ", ")),
-            "i" = paste("Install them with:", install_cmd)
+            "x" = paste("Missing packages:", paste0("{.pkg ", missing_packages, "}", collapse = ", ")),
+            "i" = paste0("Install them with: {.run ", install_cmd, "}")
         ))
     }
 }
