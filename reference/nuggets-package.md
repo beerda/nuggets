@@ -16,7 +16,7 @@ conditional correlations (Hájek, 1978,
 [doi:10.1007/978-3-642-66943-9](https://doi.org/10.1007/978-3-642-66943-9)
 ). User-defined functions may be supplied to guide custom pattern
 searches, making the framework applicable beyond traditional
-assoociation-rule mining. Efficient implementation enables pattern
+association-rule mining. Efficient implementation enables pattern
 discovery on large and dense data sets. Package includes methods for
 visualization and supports interactive exploration through integrated
 Shiny applications.
