@@ -25,6 +25,10 @@ large and dense data sets. Package includes methods for
 **visualization** and supports **interactive exploration** through
 integrated Shiny applications.
 
+## Live Demo!
+
+[Association Rules Explorer](https://irafm.shinyapps.io/nuggets_demo/)
+
 ## What Patterns Can You Discover?
 
 - **Association Rules**: *“University educated people in middle age
