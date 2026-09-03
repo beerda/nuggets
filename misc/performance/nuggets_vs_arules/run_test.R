@@ -163,8 +163,6 @@ run_instance <- function(settings) {
     time_ff <- mean(bench_ff$time)
     time_fr <- mean(bench_fr$time)
     time_fs <- mean(bench_fs$time)
-    n_version <- as.character(packageVersion("nuggets"))
-    a_version <- as.character(packageVersion("arules"))
 
     #if (nrow(res_nu) != nrow(res_aa) || nrow(res_nu) != nrow(res_ae)) {
         #print(list(res_nu = nrow(res_nu), res_aa = nrow(res_aa), res_ae = nrow(res_ae)))
@@ -246,7 +244,8 @@ result <- list(cpu = cpuinfo()$`model name`,
                cache = cpuinfo()$`cache size`,
                ram = raminfo()$MemTotal / 1024 / 1024,  # in GB
                nuggets_version = as.character(packageVersion("nuggets")),
-               arules_version = as.character(packageVersion("arules")))
+               arules_version = as.character(packageVersion("arules")),
+               fim4r_version = as.character(packageVersion("fim4r")))
 
 warmup <- bench(rows = 10^6, cols = c(30), prob_1 = 0.5)
 
