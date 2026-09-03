@@ -1,5 +1,5 @@
 ---
-title: "Comparison of nuggets and arules performance"
+title: "Comparison of nuggets performance with arules nad fim4r"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Comparison of nuggets and arules performance}
@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
     echo = FALSE,
     comment = "#>",
     fig.width = 7,
-    fig.height = 4
+    fig.height = 5
 )
 options(tibble.width = Inf)
 
@@ -22,22 +22,31 @@ library(tidyr)
 library(ggplot2)
 library(patchwork)
 library(kableExtra)
+library(forcats)
 
 preprocess <- function(d) {
     d |>
-        pivot_longer(cols = c("nuggets", "arules_apriori", "arules_eclat"),
+        pivot_longer(cols = c("nuggets", "arules_apriori", "arules_eclat",
+                              "fim4r_apriori", "fim4r_eclat", "fim4r_fpgrowth",
+                              "fim4r_relim", "fim4r_sam"),
                      names_to = "method",
                      values_to = "time")  |>
         mutate(time = time / 1e6,  # convert nanoseconds to milli-seconds
                method = dplyr::recode(method,
                                 "nuggets" = "nuggets",
                                 "arules_apriori" = "apriori (arules)",
-                                "arules_eclat" = "eclat (arules)"),
-               method = factor(method)) 
+                                "arules_eclat" = "eclat (arules)",
+                                "fim4r_apriori" = "apriori (fim4r)",
+                                "fim4r_eclat" = "eclat (fim4r)",
+                                "fim4r_fpgrowth" = "fpgrowth (fim4r)",
+                                "fim4r_relim" = "relim (fim4r)",
+                                "fim4r_sam" = "sam (fim4r)"),
+               method = factor(method)) |>
+        arrange(rows, cols, method)
 }
 
 
-two_fig <- function(d, x, xname, title) {
+two_fig <- function(d, x, xname, title, pkg) {
     nice_colnames <- c(cols = "# of data columns",
                         rows = "# of data rows",
                         min_support = "min supp",
@@ -53,17 +62,22 @@ two_fig <- function(d, x, xname, title) {
                        paste(nice_colnames[names(fixed)], fixed, sep = " = ", collapse = ", "),
                        ")")
     
+    d <- d |>
+        filter(grepl(pkg, as.character(method), fixed = TRUE) | method == "nuggets") |>
+        mutate(method = fct_relevel(method, "nuggets"))
+    
     p1 <- ggplot(d) +
-        aes(x = !!x, y = time, color = method) +
+        aes(x = !!x, y = time, color = method, shape = method) +
         geom_point() +
         geom_line() +
         labs(title = "linear scales",
              x = xname,
              y = "Time [ms]",
+             shape = "Method",
              color = "Method")
     
     p2 <- ggplot(d) +
-        aes(x = !!x, y = time, color = method) +
+        aes(x = !!x, y = time, color = method, shape = method) +
         geom_point() +
         geom_line() +
         scale_x_log10() +
@@ -71,6 +85,7 @@ two_fig <- function(d, x, xname, title) {
         labs(title = "log scales",
              x = xname,
              y = "Time [ms]",
+             shape = "Method",
              color = "Method")
     
     p1 + p2 +
@@ -85,12 +100,12 @@ tab <- function(d, title) {
         select(rows, cols, method, time) |>
         mutate(time = round(time, 0)) |>
         pivot_wider(names_from = method, values_from = time) |>
-        relocate(`eclat (arules)`, .after = `nuggets`) |>
+        relocate(`nuggets`, .after = `cols`) |>
         arrange(rows, cols) |> 
         #kable(caption = title) |> 
         kable() |> 
         kable_styling(full_width = TRUE) |> 
-        add_header_above(c(" " = 1, " " = 1, "Time [ms]" = 3))
+        add_header_above(c(" " = 1, " " = 1, "Time [ms]" = 8))
 }
 
 data <- readRDS("comparison-with-arules.rds")
@@ -108,12 +123,22 @@ This vignette compares the performance of the following R packages:
 
 - `nuggets` `r data$nuggets_version`
 - `arules` `r data$arules_version`
+- `fim4r` `r data$fim4r_version` (installed and executed via `arules`)
 
 The task of interest is the discovery of **association rules in Boolean
 (TRUE/FALSE) datasets**. The goal is to provide a comparison of brute
 computational power rather than a full comparison of package functionality,
 so advanced features, filtering options, and other factors that may affect
 practical performance are not considered here.
+
+The following algorithm implementations were evaluated and compared with `nuggets`:
+
+```{r results='asis'}
+m <- unique(dense_rows$method)
+m <- setdiff(m, "nuggets")
+cat(paste("- ", m, collapse = "\n"))
+```
+
 
 For reproducibility, the
 [benchmark script used in this vignette](https://github.com/beerda/nuggets/tree/main/misc/performance/nuggets_vs_arules)
@@ -122,10 +147,14 @@ is available in the package repository on GitHub.
 # Materials and Methods
 
 A series of experiments were conducted to evaluate the performance of the
-`nuggets` and `arules` packages. For `arules`, two different algorithms were
-evaluated: the Apriori algorithm (`apriori()`) and and the Eclat algorithm 
-(`eclat()`). For `nuggets`, the `dig_associations()` function was used to 
-discover association rules. The experiments were designed to measure the 
+`nuggets`, `fim4r`, and `arules` packages. For `arules`, two different algorithms
+were evaluated: the Apriori algorithm (`apriori()`) and and the Eclat algorithm 
+(`eclat()`). For `fim4r`, five different algorithms were evaluated: Apriori, Eclat,
+FP-Growth, Relim, and SAM (`fim4r` algorithms were executed via the `arules`
+package, see `arules::fim4r()`). For `nuggets`, the `dig_associations()` function
+was used to  discover association rules.
+
+The experiments were designed to measure the 
 execution time of each method under different conditions, including varying the
 number of rows and columns in the datasets, as well as the sparsity of the data.
 
@@ -168,7 +197,16 @@ tab(dense_rows, "Execution time on dense data with varying number of rows")
 two_fig(dense_rows, 
         sym("rows"),
         "Number of data rows",
-        "Execution time on dense data with varying number of rows")
+        "Execution time on dense data with varying number of rows (nuggets + arules)",
+        "arules")
+```
+
+```{r}
+two_fig(dense_rows, 
+        sym("rows"),
+        "Number of data rows",
+        "Execution time on dense data with varying number of rows (nuggets + fim4r)",
+        "fim4r")
 ```
 
 ## Dense data: varying number of columns
@@ -181,7 +219,16 @@ tab(dense_cols, "Execution time on dense data with varying number of columns")
 two_fig(dense_cols, 
         sym("cols"),
         "Number of data columns",
-        "Execution time on dense data with varying number of columns")
+        "Execution time on dense data with varying number of columns (nuggets + arules)",
+        "arules")
+```
+
+```{r}
+two_fig(dense_cols, 
+        sym("cols"),
+        "Number of data columns",
+        "Execution time on dense data with varying number of columns (nuggets + fim4r)",
+        "fim4r")
 ```
 
 ## Sparse data: varying number of rows
@@ -194,7 +241,16 @@ tab(sparse_rows, "Execution time on sparse data with varying number of rows")
 two_fig(sparse_rows, 
         sym("rows"),
         "Number of data rows",
-        "Execution time on sparse data with varying number of rows")
+        "Execution time on sparse data with varying number of rows (nuggets + arules)",
+        "arules")
+```
+
+```{r}
+two_fig(sparse_rows, 
+        sym("rows"),
+        "Number of data rows",
+        "Execution time on sparse data with varying number of rows (nuggets + fim4r)",
+        "fim4r")
 ```
 
 ## Sparse data: varying number of columns
@@ -207,15 +263,28 @@ tab(sparse_cols, "Execution time on sparse data with varying number of columns")
 two_fig(sparse_cols, 
         sym("cols"),
         "Number of data columns",
-        "Execution time on sparse data with varying number of columns")
+        "Execution time on sparse data with varying number of columns (nuggets + arules)",
+        "arules")
+```
+
+```{r}
+two_fig(sparse_cols, 
+        sym("cols"),
+        "Number of data columns",
+        "Execution time on sparse data with varying number of columns (nuggets + fim4r)",
+        "fim4r")
 ```
 
 
 # Discussion
 
-Similarly as `arules:eclat()`, `nuggets` is based on the ECLAT algorithm.
-Therefore, both variants are expected to perform similarly well.
-A likely explanation for the strong performance of `nuggets` on dense data
+As can be seen from the results, `nuggets` performance is consistently among
+the best. Only for sparse data with many columns, `arules:apriori()` becomes
+clearly more efficient.
+
+`nuggets` is based on the ECLAT algorithm similarly as `arules:eclat()` or
+`fim4r::fim4r_eclat()`. Therefore, both variants are expected to perform similarly
+well. A likely explanation for the strong performance of `nuggets` on dense data
 is its highly optimized implementation of conjunction computation and support
 counting. These operations are central to rule discovery, and in `nuggets` they
 are accelerated using:
