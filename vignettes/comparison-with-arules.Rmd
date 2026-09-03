@@ -22,7 +22,6 @@ library(tidyr)
 library(ggplot2)
 library(patchwork)
 library(kableExtra)
-library(forcats)
 
 preprocess <- function(d) {
     d |>
@@ -62,9 +61,10 @@ two_fig <- function(d, x, xname, title, pkg) {
                        paste(nice_colnames[names(fixed)], fixed, sep = " = ", collapse = ", "),
                        ")")
     
-    d <- d |>
-        filter(grepl(pkg, as.character(method), fixed = TRUE) | method == "nuggets") |>
-        mutate(method = fct_relevel(method, "nuggets"))
+    d <- filter(d, grepl(pkg, as.character(method), fixed = TRUE) | method == "nuggets") 
+    levs <- levels(d$method)
+    levs <- setdiff(levs, "nuggets")
+    d$method <- factor(as.character(d$method), levels = c("nuggets", levs))
     
     p1 <- ggplot(d) +
         aes(x = !!x, y = time, color = method, shape = method) +
