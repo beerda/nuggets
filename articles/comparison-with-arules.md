@@ -1,17 +1,29 @@
-# Comparison of nuggets and arules performance
+# Comparison of nuggets performance with arules nad fim4r
 
 ## Introduction
 
 This vignette compares the performance of the following R packages:
 
-- `nuggets` 2.2.3
+- `nuggets` 2.2.2
 - `arules` 1.7.14
+- `fim4r` 1.8 (installed and executed via `arules`)
 
 The task of interest is the discovery of **association rules in Boolean
 (TRUE/FALSE) datasets**. The goal is to provide a comparison of brute
 computational power rather than a full comparison of package
 functionality, so advanced features, filtering options, and other
 factors that may affect practical performance are not considered here.
+
+The following algorithm implementations were evaluated and compared with
+`nuggets`:
+
+- apriori (arules)
+- apriori (fim4r)
+- eclat (arules)
+- eclat (fim4r)
+- fpgrowth (fim4r)
+- relim (fim4r)
+- sam (fim4r)
 
 For reproducibility, the [benchmark script used in this
 vignette](https://github.com/beerda/nuggets/tree/main/misc/performance/nuggets_vs_arules)
@@ -20,14 +32,19 @@ is available in the package repository on GitHub.
 ## Materials and Methods
 
 A series of experiments were conducted to evaluate the performance of
-the `nuggets` and `arules` packages. For `arules`, two different
-algorithms were evaluated: the Apriori algorithm (`apriori()`) and and
-the Eclat algorithm (`eclat()`). For `nuggets`, the
+the `nuggets`, `fim4r`, and `arules` packages. For `arules`, two
+different algorithms were evaluated: the Apriori algorithm (`apriori()`)
+and and the Eclat algorithm (`eclat()`). For `fim4r`, five different
+algorithms were evaluated: Apriori, Eclat, FP-Growth, Relim, and SAM
+(`fim4r` algorithms were executed via the `arules` package, see
+[`arules::fim4r()`](https://rdrr.io/pkg/arules/man/fim4r.html)). For
+`nuggets`, the
 [`dig_associations()`](https://beerda.github.io/nuggets/reference/dig_associations.md)
-function was used to discover association rules. The experiments were
-designed to measure the execution time of each method under different
-conditions, including varying the number of rows and columns in the
-datasets, as well as the sparsity of the data.
+function was used to discover association rules.
+
+The experiments were designed to measure the execution time of each
+method under different conditions, including varying the number of rows
+and columns in the datasets, as well as the sparsity of the data.
 
 The test datasets were randomly generated with binary values
 (TRUE/FALSE) and varying numbers of rows and columns. The sparsity of
@@ -64,34 +81,46 @@ provide insights into the performance characteristics of each method.
 
 [TABLE]
 
-![](comparison-with-arules_files/figure-html/unnamed-chunk-3-1.png)
+![](comparison-with-arules_files/figure-html/unnamed-chunk-4-1.png)
+
+![](comparison-with-arules_files/figure-html/unnamed-chunk-5-1.png)
 
 ### Dense data: varying number of columns
 
 [TABLE]
 
-![](comparison-with-arules_files/figure-html/unnamed-chunk-5-1.png)
+![](comparison-with-arules_files/figure-html/unnamed-chunk-7-1.png)
+
+![](comparison-with-arules_files/figure-html/unnamed-chunk-8-1.png)
 
 ### Sparse data: varying number of rows
 
 [TABLE]
 
-![](comparison-with-arules_files/figure-html/unnamed-chunk-7-1.png)
+![](comparison-with-arules_files/figure-html/unnamed-chunk-10-1.png)
+
+![](comparison-with-arules_files/figure-html/unnamed-chunk-11-1.png)
 
 ### Sparse data: varying number of columns
 
 [TABLE]
 
-![](comparison-with-arules_files/figure-html/unnamed-chunk-9-1.png)
+![](comparison-with-arules_files/figure-html/unnamed-chunk-13-1.png)
+
+![](comparison-with-arules_files/figure-html/unnamed-chunk-14-1.png)
 
 ## Discussion
 
-Similarly as `arules:eclat()`, `nuggets` is based on the ECLAT
-algorithm. Therefore, both variants are expected to perform similarly
-well. A likely explanation for the strong performance of `nuggets` on
-dense data is its highly optimized implementation of conjunction
-computation and support counting. These operations are central to rule
-discovery, and in `nuggets` they are accelerated using:
+As can be seen from the results, `nuggets` performance is consistently
+among the best. Only for sparse data with many columns,
+`arules:apriori()` becomes clearly more efficient.
+
+`nuggets` is based on the ECLAT algorithm similarly as `arules:eclat()`
+or `fim4r::fim4r_eclat()`. Therefore, both variants are expected to
+perform similarly well. A likely explanation for the strong performance
+of `nuggets` on dense data is its highly optimized implementation of
+conjunction computation and support counting. These operations are
+central to rule discovery, and in `nuggets` they are accelerated using:
 
 - SIMD instructions via the [XSIMD
   library](https://github.com/xtensor-stack/xsimd)

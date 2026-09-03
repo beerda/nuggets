@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Comparison of nuggets and arules performance • nuggets</title>
+<title>Comparison of nuggets performance with arules nad fim4r • nuggets</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -21,7 +21,7 @@
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Comparison of nuggets and arules performance">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Comparison of nuggets performance with arules nad fim4r">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -50,7 +50,7 @@
     <li><a class="dropdown-item" href="../articles/conditional-correlations.html">Conditional Correlations</a></li>
     <li><a class="dropdown-item" href="../articles/contrast-patterns.html">Contrast Patterns</a></li>
     <li><a class="dropdown-item" href="../articles/custom-patterns.html">Custom Pattern Search with dig()</a></li>
-    <li><a class="dropdown-item" href="../articles/comparison-with-arules.html">Comparison of nuggets and arules performance</a></li>
+    <li><a class="dropdown-item" href="../articles/comparison-with-arules.html">Comparison of nuggets performance with arules nad fim4r</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -80,7 +80,7 @@
 <script src="comparison-with-arules_files/kePrint-0.0.1/kePrint.js"></script><link href="comparison-with-arules_files/lightable-0.0.1/lightable.css" rel="stylesheet">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Comparison of nuggets and arules performance</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Comparison of nuggets performance with arules nad fim4r</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/beerda/nuggets/blob/main/vignettes/comparison-with-arules.Rmd" class="external-link"><code>vignettes/comparison-with-arules.Rmd</code></a></small>
@@ -96,9 +96,12 @@
 packages:</p>
 <ul>
 <li>
-<code>nuggets</code> 2.2.3</li>
+<code>nuggets</code> 2.2.2</li>
 <li>
 <code>arules</code> 1.7.14</li>
+<li>
+<code>fim4r</code> 1.8 (installed and executed via
+<code>arules</code>)</li>
 </ul>
 <p>The task of interest is the discovery of <strong>association rules in
 Boolean (TRUE/FALSE) datasets</strong>. The goal is to provide a
@@ -106,6 +109,17 @@ comparison of brute computational power rather than a full comparison of
 package functionality, so advanced features, filtering options, and
 other factors that may affect practical performance are not considered
 here.</p>
+<p>The following algorithm implementations were evaluated and compared
+with <code>nuggets</code>:</p>
+<ul>
+<li>apriori (arules)</li>
+<li>apriori (fim4r)</li>
+<li>eclat (arules)</li>
+<li>eclat (fim4r)</li>
+<li>fpgrowth (fim4r)</li>
+<li>relim (fim4r)</li>
+<li>sam (fim4r)</li>
+</ul>
 <p>For reproducibility, the <a href="https://github.com/beerda/nuggets/tree/main/misc/performance/nuggets_vs_arules" class="external-link">benchmark
 script used in this vignette</a> is available in the package repository
 on GitHub.</p>
@@ -114,15 +128,18 @@ on GitHub.</p>
 <h2 id="materials-and-methods">Materials and Methods<a class="anchor" aria-label="anchor" href="#materials-and-methods"></a>
 </h2>
 <p>A series of experiments were conducted to evaluate the performance of
-the <code>nuggets</code> and <code>arules</code> packages. For
-<code>arules</code>, two different algorithms were evaluated: the
-Apriori algorithm (<code>apriori()</code>) and and the Eclat algorithm
-(<code>eclat()</code>). For <code>nuggets</code>, the
-<code><a href="../reference/dig_associations.html">dig_associations()</a></code> function was used to discover
-association rules. The experiments were designed to measure the
-execution time of each method under different conditions, including
-varying the number of rows and columns in the datasets, as well as the
-sparsity of the data.</p>
+the <code>nuggets</code>, <code>fim4r</code>, and <code>arules</code>
+packages. For <code>arules</code>, two different algorithms were
+evaluated: the Apriori algorithm (<code>apriori()</code>) and and the
+Eclat algorithm (<code>eclat()</code>). For <code>fim4r</code>, five
+different algorithms were evaluated: Apriori, Eclat, FP-Growth, Relim,
+and SAM (<code>fim4r</code> algorithms were executed via the
+<code>arules</code> package, see <code><a href="https://rdrr.io/pkg/arules/man/fim4r.html" class="external-link">arules::fim4r()</a></code>). For
+<code>nuggets</code>, the <code><a href="../reference/dig_associations.html">dig_associations()</a></code> function was
+used to discover association rules.</p>
+<p>The experiments were designed to measure the execution time of each
+method under different conditions, including varying the number of rows
+and columns in the datasets, as well as the sparsity of the data.</p>
 <p>The test datasets were randomly generated with binary values
 (TRUE/FALSE) and varying numbers of rows and columns. The sparsity of
 the data was controlled by adjusting the probability of TRUE values in
@@ -167,7 +184,7 @@ method.</p>
 </th>
 <th style="empty-cells: hide;border-bottom:hidden;" colspan="1">
 </th>
-<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="3">
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="8">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
 Time [ms]
 </div>
@@ -184,10 +201,25 @@ cols
 nuggets
 </th>
 <th style="text-align:right;">
+apriori (arules)
+</th>
+<th style="text-align:right;">
+apriori (fim4r)
+</th>
+<th style="text-align:right;">
 eclat (arules)
 </th>
 <th style="text-align:right;">
-apriori (arules)
+eclat (fim4r)
+</th>
+<th style="text-align:right;">
+fpgrowth (fim4r)
+</th>
+<th style="text-align:right;">
+relim (fim4r)
+</th>
+<th style="text-align:right;">
+sam (fim4r)
 </th>
 </tr>
 </thead>
@@ -200,13 +232,28 @@ apriori (arules)
 30
 </td>
 <td style="text-align:right;">
-17
+16
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:right;">
+2588
 </td>
 <td style="text-align:right;">
 47
 </td>
 <td style="text-align:right;">
-58
+2667
+</td>
+<td style="text-align:right;">
+2641
+</td>
+<td style="text-align:right;">
+1276
+</td>
+<td style="text-align:right;">
+1281
 </td>
 </tr>
 <tr>
@@ -220,10 +267,25 @@ apriori (arules)
 20
 </td>
 <td style="text-align:right;">
+104
+</td>
+<td style="text-align:right;">
+2430
+</td>
+<td style="text-align:right;">
 58
 </td>
 <td style="text-align:right;">
-105
+2567
+</td>
+<td style="text-align:right;">
+2407
+</td>
+<td style="text-align:right;">
+1518
+</td>
+<td style="text-align:right;">
+1510
 </td>
 </tr>
 <tr>
@@ -234,13 +296,28 @@ apriori (arules)
 30
 </td>
 <td style="text-align:right;">
-55
+54
 </td>
 <td style="text-align:right;">
-252
+747
 </td>
 <td style="text-align:right;">
-799
+3038
+</td>
+<td style="text-align:right;">
+197
+</td>
+<td style="text-align:right;">
+3193
+</td>
+<td style="text-align:right;">
+2880
+</td>
+<td style="text-align:right;">
+2131
+</td>
+<td style="text-align:right;">
+1941
 </td>
 </tr>
 <tr>
@@ -251,13 +328,28 @@ apriori (arules)
 30
 </td>
 <td style="text-align:right;">
-478
+382
 </td>
 <td style="text-align:right;">
-1958
+8867
 </td>
 <td style="text-align:right;">
-9102
+10035
+</td>
+<td style="text-align:right;">
+1696
+</td>
+<td style="text-align:right;">
+12234
+</td>
+<td style="text-align:right;">
+9882
+</td>
+<td style="text-align:right;">
+9001
+</td>
+<td style="text-align:right;">
+6317
 </td>
 </tr>
 <tr>
@@ -268,18 +360,34 @@ apriori (arules)
 30
 </td>
 <td style="text-align:right;">
-6043
+6165
 </td>
 <td style="text-align:right;">
-16875
+109570
 </td>
 <td style="text-align:right;">
-107752
+91620
+</td>
+<td style="text-align:right;">
+17444
+</td>
+<td style="text-align:right;">
+114317
+</td>
+<td style="text-align:right;">
+60962
+</td>
+<td style="text-align:right;">
+99087
+</td>
+<td style="text-align:right;">
+47538
 </td>
 </tr>
 </tbody>
 </table>
-<p><img src="comparison-with-arules_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="comparison-with-arules_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="comparison-with-arules_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="672"></p>
 </div>
 <div class="section level3">
 <h3 id="dense-data-varying-number-of-columns">Dense data: varying number of columns<a class="anchor" aria-label="anchor" href="#dense-data-varying-number-of-columns"></a>
@@ -291,7 +399,7 @@ apriori (arules)
 </th>
 <th style="empty-cells: hide;border-bottom:hidden;" colspan="1">
 </th>
-<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="3">
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="8">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
 Time [ms]
 </div>
@@ -308,10 +416,25 @@ cols
 nuggets
 </th>
 <th style="text-align:right;">
+apriori (arules)
+</th>
+<th style="text-align:right;">
+apriori (fim4r)
+</th>
+<th style="text-align:right;">
 eclat (arules)
 </th>
 <th style="text-align:right;">
-apriori (arules)
+eclat (fim4r)
+</th>
+<th style="text-align:right;">
+fpgrowth (fim4r)
+</th>
+<th style="text-align:right;">
+relim (fim4r)
+</th>
+<th style="text-align:right;">
+sam (fim4r)
 </th>
 </tr>
 </thead>
@@ -327,10 +450,25 @@ apriori (arules)
 9
 </td>
 <td style="text-align:right;">
-35
+71
 </td>
 <td style="text-align:right;">
-70
+62
+</td>
+<td style="text-align:right;">
+34
+</td>
+<td style="text-align:right;">
+62
+</td>
+<td style="text-align:right;">
+61
+</td>
+<td style="text-align:right;">
+47
+</td>
+<td style="text-align:right;">
+46
 </td>
 </tr>
 <tr>
@@ -344,10 +482,25 @@ apriori (arules)
 22
 </td>
 <td style="text-align:right;">
-81
+345
 </td>
 <td style="text-align:right;">
-339
+686
+</td>
+<td style="text-align:right;">
+82
+</td>
+<td style="text-align:right;">
+541
+</td>
+<td style="text-align:right;">
+477
+</td>
+<td style="text-align:right;">
+273
+</td>
+<td style="text-align:right;">
+269
 </td>
 </tr>
 <tr>
@@ -361,10 +514,25 @@ apriori (arules)
 55
 </td>
 <td style="text-align:right;">
-196
+775
 </td>
 <td style="text-align:right;">
-742
+3048
+</td>
+<td style="text-align:right;">
+254
+</td>
+<td style="text-align:right;">
+3202
+</td>
+<td style="text-align:right;">
+2900
+</td>
+<td style="text-align:right;">
+2165
+</td>
+<td style="text-align:right;">
+1978
 </td>
 </tr>
 <tr>
@@ -375,13 +543,28 @@ apriori (arules)
 50
 </td>
 <td style="text-align:right;">
-292
+327
 </td>
 <td style="text-align:right;">
-1044
+2829
 </td>
 <td style="text-align:right;">
-2651
+22467
+</td>
+<td style="text-align:right;">
+1099
+</td>
+<td style="text-align:right;">
+26146
+</td>
+<td style="text-align:right;">
+24955
+</td>
+<td style="text-align:right;">
+26466
+</td>
+<td style="text-align:right;">
+24971
 </td>
 </tr>
 <tr>
@@ -392,18 +575,34 @@ apriori (arules)
 80
 </td>
 <td style="text-align:right;">
-2042
+2019
 </td>
 <td style="text-align:right;">
-7062
+13955
 </td>
 <td style="text-align:right;">
-13937
+150160
+</td>
+<td style="text-align:right;">
+7015
+</td>
+<td style="text-align:right;">
+171701
+</td>
+<td style="text-align:right;">
+178611
+</td>
+<td style="text-align:right;">
+187277
+</td>
+<td style="text-align:right;">
+219270
 </td>
 </tr>
 </tbody>
 </table>
-<p><img src="comparison-with-arules_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="comparison-with-arules_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="comparison-with-arules_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="672"></p>
 </div>
 <div class="section level3">
 <h3 id="sparse-data-varying-number-of-rows">Sparse data: varying number of rows<a class="anchor" aria-label="anchor" href="#sparse-data-varying-number-of-rows"></a>
@@ -415,7 +614,7 @@ apriori (arules)
 </th>
 <th style="empty-cells: hide;border-bottom:hidden;" colspan="1">
 </th>
-<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="3">
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="8">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
 Time [ms]
 </div>
@@ -432,10 +631,25 @@ cols
 nuggets
 </th>
 <th style="text-align:right;">
+apriori (arules)
+</th>
+<th style="text-align:right;">
+apriori (fim4r)
+</th>
+<th style="text-align:right;">
 eclat (arules)
 </th>
 <th style="text-align:right;">
-apriori (arules)
+eclat (fim4r)
+</th>
+<th style="text-align:right;">
+fpgrowth (fim4r)
+</th>
+<th style="text-align:right;">
+relim (fim4r)
+</th>
+<th style="text-align:right;">
+sam (fim4r)
 </th>
 </tr>
 </thead>
@@ -454,7 +668,22 @@ apriori (arules)
 15
 </td>
 <td style="text-align:right;">
-15
+638
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+628
+</td>
+<td style="text-align:right;">
+629
+</td>
+<td style="text-align:right;">
+182
+</td>
+<td style="text-align:right;">
+177
 </td>
 </tr>
 <tr>
@@ -468,10 +697,25 @@ apriori (arules)
 11
 </td>
 <td style="text-align:right;">
-17
+16
+</td>
+<td style="text-align:right;">
+1278
 </td>
 <td style="text-align:right;">
 17
+</td>
+<td style="text-align:right;">
+1218
+</td>
+<td style="text-align:right;">
+1253
+</td>
+<td style="text-align:right;">
+87
+</td>
+<td style="text-align:right;">
+84
 </td>
 </tr>
 <tr>
@@ -482,13 +726,28 @@ apriori (arules)
 30
 </td>
 <td style="text-align:right;">
-67
+66
+</td>
+<td style="text-align:right;">
+80
+</td>
+<td style="text-align:right;">
+1346
 </td>
 <td style="text-align:right;">
 85
 </td>
 <td style="text-align:right;">
-79
+1314
+</td>
+<td style="text-align:right;">
+1320
+</td>
+<td style="text-align:right;">
+148
+</td>
+<td style="text-align:right;">
+146
 </td>
 </tr>
 <tr>
@@ -499,13 +758,28 @@ apriori (arules)
 30
 </td>
 <td style="text-align:right;">
-642
+606
 </td>
 <td style="text-align:right;">
-857
+907
 </td>
 <td style="text-align:right;">
-981
+1794
+</td>
+<td style="text-align:right;">
+743
+</td>
+<td style="text-align:right;">
+1773
+</td>
+<td style="text-align:right;">
+1714
+</td>
+<td style="text-align:right;">
+503
+</td>
+<td style="text-align:right;">
+550
 </td>
 </tr>
 <tr>
@@ -516,18 +790,34 @@ apriori (arules)
 30
 </td>
 <td style="text-align:right;">
-6359
+6262
 </td>
 <td style="text-align:right;">
-8321
+15056
 </td>
 <td style="text-align:right;">
-14660
+8521
+</td>
+<td style="text-align:right;">
+8667
+</td>
+<td style="text-align:right;">
+8135
+</td>
+<td style="text-align:right;">
+7604
+</td>
+<td style="text-align:right;">
+6116
+</td>
+<td style="text-align:right;">
+6261
 </td>
 </tr>
 </tbody>
 </table>
-<p><img src="comparison-with-arules_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="comparison-with-arules_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="comparison-with-arules_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="672"></p>
 </div>
 <div class="section level3">
 <h3 id="sparse-data-varying-number-of-columns">Sparse data: varying number of columns<a class="anchor" aria-label="anchor" href="#sparse-data-varying-number-of-columns"></a>
@@ -539,7 +829,7 @@ apriori (arules)
 </th>
 <th style="empty-cells: hide;border-bottom:hidden;" colspan="1">
 </th>
-<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="3">
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="8">
 <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
 Time [ms]
 </div>
@@ -556,10 +846,25 @@ cols
 nuggets
 </th>
 <th style="text-align:right;">
+apriori (arules)
+</th>
+<th style="text-align:right;">
+apriori (fim4r)
+</th>
+<th style="text-align:right;">
 eclat (arules)
 </th>
 <th style="text-align:right;">
-apriori (arules)
+eclat (fim4r)
+</th>
+<th style="text-align:right;">
+fpgrowth (fim4r)
+</th>
+<th style="text-align:right;">
+relim (fim4r)
+</th>
+<th style="text-align:right;">
+sam (fim4r)
 </th>
 </tr>
 </thead>
@@ -575,10 +880,25 @@ apriori (arules)
 8
 </td>
 <td style="text-align:right;">
+36
+</td>
+<td style="text-align:right;">
+37
+</td>
+<td style="text-align:right;">
 22
 </td>
 <td style="text-align:right;">
-36
+37
+</td>
+<td style="text-align:right;">
+37
+</td>
+<td style="text-align:right;">
+26
+</td>
+<td style="text-align:right;">
+26
 </td>
 </tr>
 <tr>
@@ -589,13 +909,28 @@ apriori (arules)
 20
 </td>
 <td style="text-align:right;">
-27
+26
 </td>
 <td style="text-align:right;">
-44
+57
 </td>
 <td style="text-align:right;">
-56
+281
+</td>
+<td style="text-align:right;">
+45
+</td>
+<td style="text-align:right;">
+259
+</td>
+<td style="text-align:right;">
+271
+</td>
+<td style="text-align:right;">
+85
+</td>
+<td style="text-align:right;">
+83
 </td>
 </tr>
 <tr>
@@ -609,10 +944,25 @@ apriori (arules)
 67
 </td>
 <td style="text-align:right;">
+80
+</td>
+<td style="text-align:right;">
+1347
+</td>
+<td style="text-align:right;">
 85
 </td>
 <td style="text-align:right;">
-80
+1355
+</td>
+<td style="text-align:right;">
+1347
+</td>
+<td style="text-align:right;">
+116
+</td>
+<td style="text-align:right;">
+112
 </td>
 </tr>
 <tr>
@@ -623,13 +973,28 @@ apriori (arules)
 50
 </td>
 <td style="text-align:right;">
-257
+254
 </td>
 <td style="text-align:right;">
-287
+218
 </td>
 <td style="text-align:right;">
-146
+10480
+</td>
+<td style="text-align:right;">
+315
+</td>
+<td style="text-align:right;">
+11007
+</td>
+<td style="text-align:right;">
+10831
+</td>
+<td style="text-align:right;">
+416
+</td>
+<td style="text-align:right;">
+415
 </td>
 </tr>
 <tr>
@@ -640,30 +1005,49 @@ apriori (arules)
 80
 </td>
 <td style="text-align:right;">
-1073
+1057
 </td>
 <td style="text-align:right;">
-986
+390
 </td>
 <td style="text-align:right;">
-383
+71753
+</td>
+<td style="text-align:right;">
+980
+</td>
+<td style="text-align:right;">
+71500
+</td>
+<td style="text-align:right;">
+71174
+</td>
+<td style="text-align:right;">
+1546
+</td>
+<td style="text-align:right;">
+1673
 </td>
 </tr>
 </tbody>
 </table>
-<p><img src="comparison-with-arules_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="comparison-with-arules_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="comparison-with-arules_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="" width="672"></p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="discussion">Discussion<a class="anchor" aria-label="anchor" href="#discussion"></a>
 </h2>
-<p>Similarly as <code>arules:eclat()</code>, <code>nuggets</code> is
-based on the ECLAT algorithm. Therefore, both variants are expected to
-perform similarly well. A likely explanation for the strong performance
-of <code>nuggets</code> on dense data is its highly optimized
-implementation of conjunction computation and support counting. These
-operations are central to rule discovery, and in <code>nuggets</code>
-they are accelerated using:</p>
+<p>As can be seen from the results, <code>nuggets</code> performance is
+consistently among the best. Only for sparse data with many columns,
+<code>arules:apriori()</code> becomes clearly more efficient.</p>
+<p><code>nuggets</code> is based on the ECLAT algorithm similarly as
+<code>arules:eclat()</code> or <code>fim4r::fim4r_eclat()</code>.
+Therefore, both variants are expected to perform similarly well. A
+likely explanation for the strong performance of <code>nuggets</code> on
+dense data is its highly optimized implementation of conjunction
+computation and support counting. These operations are central to rule
+discovery, and in <code>nuggets</code> they are accelerated using:</p>
 <ul>
 <li>SIMD instructions via the <a href="https://github.com/xtensor-stack/xsimd" class="external-link">XSIMD library</a>
 </li>
