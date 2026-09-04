@@ -99,6 +99,9 @@ For comparison, two Python libraries performed as follows:
 - `mlxtend` (Python, boolean logic, frequent itemsets only): **4h 11m
   22.5s**
 
+See also a detailed [Performance
+Comparison](https://beerda.github.io/nuggets/articles/comparison-with-arules.html)!
+
 ## Installation
 
 To install the stable version of `nuggets` from CRAN, type the following
@@ -170,6 +173,8 @@ The package currently includes the following vignettes:
   Patterns](https://beerda.github.io/nuggets/articles/contrast-patterns.html)
 - [Custom Pattern Search with
   dig()](https://beerda.github.io/nuggets/articles/custom-patterns.html)
+- [Comparison of nuggets performance with arules nad
+  fim4r](https://beerda.github.io/nuggets/articles/comparison-with-arules.html)
 
 ## Contributing
 
