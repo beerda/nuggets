@@ -368,6 +368,7 @@ dig_grid <- function(x,
                                     arg_max_results = error_context$arg_max_results,
                                     arg_verbose = error_context$arg_verbose,
                                     arg_threads = error_context$arg_threads,
+                                    deprecate_threads = FALSE,
                                     call = error_context$call))
     digattr <- attributes(res)
     res <- do.call(bind_rows, res)

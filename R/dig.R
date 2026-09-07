@@ -178,7 +178,7 @@
 #'   is reached, generation of further conditions stops. Use a positive
 #'   integer to enable early stopping; set to `Inf` to remove the cap.
 #' @param verbose Logical; if `TRUE`, print progress messages.
-#' @param threads Number of threads for parallel computation.
+#' @param threads (Deprecated.) Number of threads for parallel computation.
 #' @param error_context A list of details to be used when constructing error
 #'   messages. This is mainly useful when `dig()` is called from another
 #'   function and errors should refer to the caller’s argument names rather
@@ -281,7 +281,7 @@ dig <- function(x,
                 t_norm = "goguen",
                 max_results = Inf,
                 verbose = FALSE,
-                threads = 1L,
+                threads = deprecated(),
                 error_context = list(arg_x = "x",
                                      arg_f = "f",
                                      arg_condition = "condition",
@@ -314,6 +314,15 @@ dig <- function(x,
 
     fun <- function(l) {
         do.call(f, l)
+    }
+
+    if (lifecycle::is_present(threads) &&
+        (is.null(error_context$deprecate_threads) || isTRUE(error_context$deprecate_threads))) {
+        deprecate_warn(when = "2.3.0",
+                       what = "nuggets::dig(threads)",
+                       details = "The `threads` argument is deprecated and will be removed in future versions.")
+    } else if (!lifecycle::is_present(threads)) {
+        threads <- 1L
     }
 
     .dig(x = x,
