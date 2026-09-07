@@ -25,17 +25,17 @@ test_that("dig_itemsets basic output", {
     res <- dig_itemsets(d,
                         items = everything(),
                         min_support = 0.0001)
-    res <- res[order(res$length, res$items), ]
+    res <- res[order(res$length, res$itemset), ]
 
     expect_true(is_nugget(res, "itemsets"))
     expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_itemsets")
     expect_equal(attr(res, "call_args")$items, c("a", "b", "c"))
     expect_equal(attr(res, "call_args")$min_support, 0.0001)
-    expect_equal(colnames(res), c("items", "support", "count", "length"))
-    expect_equal(res$items, c("{}", "{a}", "{b}", "{c}", "{a,b}", "{b,c}"))
+    expect_equal(colnames(res), c("itemset", "support", "n", "length"))
+    expect_equal(res$itemset, c("{}", "{a}", "{b}", "{c}", "{a,b}", "{b,c}"))
     expect_equal(round(res$support, 6), c(1.0, 0.4, 0.8, 0.4, 0.4, 0.2))
-    expect_equal(res$count, c(5, 2, 4, 2, 2, 1))
+    expect_equal(res$n, c(5, 2, 4, 2, 2, 1))
     expect_equal(res$length, c(0, 1, 1, 1, 2, 2))
 })
 

@@ -126,9 +126,9 @@ public:
             lengthVec[i] = itemset.length;
         }
 
-        return List::create(Named("items") = itemsVec,
+        return List::create(Named("itemset") = itemsVec,
                             Named("support") = supportVec,
-                            Named("count") = countVec,
+                            Named("n") = countVec,
                             Named("length") = lengthVec);
     }
 
