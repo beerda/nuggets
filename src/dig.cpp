@@ -151,6 +151,27 @@ List runDig(const List& data,
 }
 
 
+template <typename RUNNER>
+List dispatchDigRunType(DigRunType runType,
+                        const RUNNER& runner)
+{
+    switch (runType) {
+        case DigRunType::RT_DENSE:
+            return runner.template run<BIT_CHAIN_DENSE>();
+        case DigRunType::RT_SPARSE:
+            return runner.template run<BIT_CHAIN_SPARSE>();
+        case DigRunType::RT_GOEDEL:
+            return runner.template run<GOEDEL_CHAIN>();
+        case DigRunType::RT_GOGUEN:
+            return runner.template run<GOGUEN_CHAIN>();
+        case DigRunType::RT_LUKASIEWICZ:
+            return runner.template run<LUKASIEWICZ_CHAIN>();
+    }
+
+    stop("internal error in dispatchDigRunType()");
+}
+
+
 // [[Rcpp::plugins(openmp)]]
 // [[Rcpp::export]]
 List dig_(const List& data,
@@ -163,25 +184,23 @@ List dig_(const List& data,
     START_TIMER(bt, "dig_");
 
     Config config(confList, namesVector);
-    List result;
+    struct Runner {
+        const List& data;
+        const LogicalVector& isCondition;
+        const LogicalVector& isFocus;
+        const Function& callback;
+        const Config& config;
 
-    switch (getDigRunType(data, config)) {
-        case DigRunType::RT_DENSE:
-            result = runDig<BIT_CHAIN_DENSE>(data, isCondition, isFocus, callback, config);
-            break;
-        case DigRunType::RT_SPARSE:
-            result = runDig<BIT_CHAIN_SPARSE>(data, isCondition, isFocus, callback, config);
-            break;
-        case DigRunType::RT_GOEDEL:
-            result = runDig<GOEDEL_CHAIN>(data, isCondition, isFocus, callback, config);
-            break;
-        case DigRunType::RT_GOGUEN:
-            result = runDig<GOGUEN_CHAIN>(data, isCondition, isFocus, callback, config);
-            break;
-        case DigRunType::RT_LUKASIEWICZ:
-            result = runDig<LUKASIEWICZ_CHAIN>(data, isCondition, isFocus, callback, config);
-            break;
-    }
+        template <typename CHAIN>
+        List run() const
+        {
+            return runDig<CHAIN>(data, isCondition, isFocus, callback, config);
+        }
+    };
+    List result = dispatchDigRunType(
+        getDigRunType(data, config),
+        Runner{data, isCondition, isFocus, callback, config}
+    );
 
     STOP_TIMER(bt);
     CLEAR_INC_TIMERS();
@@ -222,25 +241,22 @@ List dig_associations_(const List& data,
     START_TIMER(bt, "dig_associations_");
 
     Config config(confList, namesVector);
-    List result;
+    struct Runner {
+        const List& data;
+        const LogicalVector& isCondition;
+        const LogicalVector& isFocus;
+        const Config& config;
 
-    switch (getDigRunType(data, config)) {
-        case DigRunType::RT_DENSE:
-            result = runDigAssoc<BIT_CHAIN_DENSE>(data, isCondition, isFocus, config);
-            break;
-        case DigRunType::RT_SPARSE:
-            result = runDigAssoc<BIT_CHAIN_SPARSE>(data, isCondition, isFocus, config);
-            break;
-        case DigRunType::RT_GOEDEL:
-            result = runDigAssoc<GOEDEL_CHAIN>(data, isCondition, isFocus, config);
-            break;
-        case DigRunType::RT_GOGUEN:
-            result = runDigAssoc<GOGUEN_CHAIN>(data, isCondition, isFocus, config);
-            break;
-        case DigRunType::RT_LUKASIEWICZ:
-            result = runDigAssoc<LUKASIEWICZ_CHAIN>(data, isCondition, isFocus, config);
-            break;
-    }
+        template <typename CHAIN>
+        List run() const
+        {
+            return runDigAssoc<CHAIN>(data, isCondition, isFocus, config);
+        }
+    };
+    List result = dispatchDigRunType(
+        getDigRunType(data, config),
+        Runner{data, isCondition, isFocus, config}
+    );
 
     STOP_TIMER(bt);
     CLEAR_INC_TIMERS();
