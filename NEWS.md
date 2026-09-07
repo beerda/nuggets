@@ -1,6 +1,10 @@
 # nuggets 2.3
 - released: ???
 - added `as_nugget()` to convert arules object to nuggets object
+- added `dig_itemsets()` to find frequent itemsets
+- added `explore.itemsets()` to explore frequent itemsets interactively
+- deprecated `threads` argument in `dig()` and other `dig_*()` functions
+  because the search is performed always in a single thread
 
 # nuggets 2.2.3
 - released: 2026-08-19
