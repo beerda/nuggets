@@ -204,6 +204,7 @@ List dig_associations_(const List& data,
                        const CharacterVector& namesVector,
                        const LogicalVector& isCondition,
                        const LogicalVector& isFocus,
+                       const Function& callback,
                        const List& confList)
 {
     START_TIMER(bt, "dig_associations_");
@@ -244,6 +245,7 @@ List dig_itemsets_(const List& data,
                    const CharacterVector& namesVector,
                    const LogicalVector& isCondition,
                    const LogicalVector& isFocus,
+                   const Function& callback,
                    const List& confList)
 {
     START_TIMER(bt, "dig_itemsets_");

@@ -326,6 +326,7 @@ dig <- function(x,
     }
 
     .dig(x = x,
+         internal_function = dig_,
          xname = deparse(substitute(x)),
          call_function = "dig",
          callback = fun,
@@ -350,6 +351,7 @@ dig <- function(x,
 
 
 .dig <- function(x,
+                 internal_function,
                  xname,
                  call_function,
                  callback,
@@ -552,28 +554,20 @@ dig <- function(x,
         cli_inform(msgs)
     }
 
-    if (call_function == "dig") {
-        res <- dig_(cols,
-                    names(cols),
-                    condition_cols$selected,
-                    foci_cols$selected,
-                    callback,
-                    config)
-    } else if (call_function == "dig_associations") {
-        res <- dig_associations_(cols,
-                                 names(cols),
-                                 condition_cols$selected,
-                                 foci_cols$selected,
-                                 config)
-    } else if (call_function == "dig_itemsets") {
-        res <- dig_itemsets_(cols,
+    if (!is.function(internal_function)) {
+        cli_abort("Internal error: {.arg internal_function} must be a function.")
+    }
+
+    if (is.null(callback)) {
+        callback <- identity  # dummy function that is unused
+    }
+
+    res <- internal_function(cols,
                              names(cols),
                              condition_cols$selected,
                              foci_cols$selected,
+                             callback,
                              config)
-    } else {
-        cli_abort("Unknown internal call function {.fun {call_function}}.")
-    }
 
     nugget(res,
            flavour = NULL,

@@ -251,6 +251,7 @@ dig_associations <- function(x,
     }
 
     res <- .dig(x = x,
+                internal_function = dig_associations_,
                 xname = deparse(substitute(x)),
                 call_function = "dig_associations",
                 callback = NULL,

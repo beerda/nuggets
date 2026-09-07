@@ -106,6 +106,7 @@ dig_itemsets <- function(x,
     items <- enquo(items)
 
     res <- .dig(x = x,
+                internal_function = dig_itemsets_,
                 xname = deparse(substitute(x)),
                 call_function = "dig_itemsets",
                 callback = NULL,
