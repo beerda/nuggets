@@ -389,8 +389,7 @@ test_that("dig_associations return object details", {
                             min_support = 0.3,
                             min_confidence = 0.5,
                             t_norm = "lukas",
-                            max_results = 10,
-                            threads = 1)
+                            max_results = 10)
 
     expect_true(is_nugget(res, "associations"))
     expect_true(is_tibble(res))
@@ -413,7 +412,6 @@ test_that("dig_associations return object details", {
     expect_equal(attr(res, "call_args")$contingency_table, TRUE)
     expect_equal(attr(res, "call_args")$t_norm, "lukas")
     expect_equal(attr(res, "call_args")$max_results, 10)
-    expect_equal(attr(res, "call_args")$threads, 1)
     expect_true(is_tibble(res))
 })
 
@@ -452,8 +450,6 @@ test_that("dig_associations errors", {
                  "`max_results` must be an integerish scalar.")
     expect_error(dig_associations(d, verbose = "x"),
                  "`verbose` must be a flag.")
-    expect_error(dig_associations(d, threads = "x"),
-                 "`threads` must be an integerish scalar.")
 })
 
 test_that("dig_associations return nothing", {
@@ -470,8 +466,7 @@ test_that("dig_associations return nothing", {
                             min_confidence = 0.2,
                             t_norm = "lukas",
                             max_results = 5,
-                            verbose = FALSE,
-                            threads = 1)
+                            verbose = FALSE)
 
     expect_true(is_nugget(res, "associations"))
     expect_true(is_tibble(res))

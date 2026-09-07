@@ -554,8 +554,7 @@ test_that("dig_grid call args", {
                     min_support = 0.1,
                     max_support = 0.9,
                     max_results = 100L,
-                    verbose = TRUE,
-                    threads = 1L))
+                    verbose = TRUE))
 
     expect_true(is_nugget(res))
     expect_true(is_tibble(res))
@@ -580,7 +579,6 @@ test_that("dig_grid call args", {
     expect_equal(attr(res, "call_args")$max_support, 0.9)
     expect_equal(attr(res, "call_args")$max_results, 100L)
     expect_equal(attr(res, "call_args")$verbose, TRUE)
-    expect_equal(attr(res, "call_args")$threads, 1L)
 })
 
 test_that("errors", {
@@ -623,8 +621,6 @@ test_that("errors", {
                  "`max_length` must be an integerish scalar")
     expect_error(dig_grid(d, f = fb, type = "crisp", condition = l, min_support = "x"),
                  "`min_support` must be a double scalar")
-    expect_error(dig_grid(d, f = fb, type = "crisp", condition = l, threads = "x"),
-                 "`threads` must be an integerish scalar")
 
     expect_error(dig_grid(d, f = fb, disjoint = list("x")),
                  "`disjoint` must be a plain vector")
