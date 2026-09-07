@@ -172,6 +172,21 @@ List dispatchDigRunType(DigRunType runType,
 }
 
 
+struct DigRunner {
+    const List& data;
+    const LogicalVector& isCondition;
+    const LogicalVector& isFocus;
+    const Function& callback;
+    const Config& config;
+
+    template <typename CHAIN>
+    List run() const
+    {
+        return runDig<CHAIN>(data, isCondition, isFocus, callback, config);
+    }
+};
+
+
 // [[Rcpp::plugins(openmp)]]
 // [[Rcpp::export]]
 List dig_(const List& data,
@@ -184,22 +199,9 @@ List dig_(const List& data,
     START_TIMER(bt, "dig_");
 
     Config config(confList, namesVector);
-    struct Runner {
-        const List& data;
-        const LogicalVector& isCondition;
-        const LogicalVector& isFocus;
-        const Function& callback;
-        const Config& config;
-
-        template <typename CHAIN>
-        List run() const
-        {
-            return runDig<CHAIN>(data, isCondition, isFocus, callback, config);
-        }
-    };
     List result = dispatchDigRunType(
         getDigRunType(data, config),
-        Runner{data, isCondition, isFocus, callback, config}
+        DigRunner{data, isCondition, isFocus, callback, config}
     );
 
     STOP_TIMER(bt);
@@ -230,6 +232,20 @@ List runDigAssoc(const List& data,
 }
 
 
+struct DigAssocRunner {
+    const List& data;
+    const LogicalVector& isCondition;
+    const LogicalVector& isFocus;
+    const Config& config;
+
+    template <typename CHAIN>
+    List run() const
+    {
+        return runDigAssoc<CHAIN>(data, isCondition, isFocus, config);
+    }
+};
+
+
 // [[Rcpp::plugins(openmp)]]
 // [[Rcpp::export]]
 List dig_associations_(const List& data,
@@ -241,21 +257,9 @@ List dig_associations_(const List& data,
     START_TIMER(bt, "dig_associations_");
 
     Config config(confList, namesVector);
-    struct Runner {
-        const List& data;
-        const LogicalVector& isCondition;
-        const LogicalVector& isFocus;
-        const Config& config;
-
-        template <typename CHAIN>
-        List run() const
-        {
-            return runDigAssoc<CHAIN>(data, isCondition, isFocus, config);
-        }
-    };
     List result = dispatchDigRunType(
         getDigRunType(data, config),
-        Runner{data, isCondition, isFocus, config}
+        DigAssocRunner{data, isCondition, isFocus, config}
     );
 
     STOP_TIMER(bt);
