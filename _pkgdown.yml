@@ -70,6 +70,7 @@ reference:
     desc: >
       Other functions that can be useful in the pattern extraction process.
     contents:
+      - as_nugget.rules
       - bound_range
       - fire
       - format_condition
