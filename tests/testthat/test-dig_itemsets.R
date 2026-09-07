@@ -1,6 +1,6 @@
 #######################################################################
 # nuggets: An R framework for exploration of patterns in data
-# Copyright (C) 2025 Michal Burda
+# Copyright (C) 2026 Michal Burda
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ test_that("dig_itemsets max_results limiting", {
 
 test_that("dig_itemsets errors", {
     d <- matrix(rep(c(T, F), 10), ncol = 2)
-    expect_error(dig_itemsets(as.list(d)), "`x` must be a matrix or data frame.")
+    expect_error(dig_itemsets(as.list(d)), "`x` must be a matrix or a data frame.")
     expect_error(dig_itemsets(d, min_support = "x"),
                  "`min_support` must be a double scalar.")
     expect_error(dig_itemsets(d, max_results = "x"),

@@ -1,6 +1,6 @@
 #######################################################################
 # nuggets: An R framework for exploration of patterns in data
-# Copyright (C) 2025 Michal Burda
+# Copyright (C) 2026 Michal Burda
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
