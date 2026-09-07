@@ -24,6 +24,7 @@
 #include "dig/FloatChain.h"
 #include "dig/CallbackCaller.h"
 #include "dig/AssocStorage.h"
+#include "dig/ItemsetStorage.h"
 #include "dig/Config.h"
 #include "dig/ChainCollection.h"
 #include "dig/Digger.h"
@@ -210,6 +211,46 @@ List dig_associations_(const List& data,
     Config config(confList, namesVector);
     DispatchArgs args{data, isCondition, isFocus, config};
     List result = dispatchDig(args, DigAssocRunner{ });
+
+    STOP_TIMER(bt);
+    CLEAR_INC_TIMERS();
+
+    return result;
+}
+
+
+struct DigItemsetRunner {
+    template <typename CHAIN>
+    List run(const DispatchArgs& args) const
+    {
+        using STORAGE = ItemsetStorage<CHAIN>;
+
+        START_TIMER(t, "DigItemsetRunner - initialization");
+        STORAGE storage(args.config);
+        Digger<CHAIN, STORAGE> digger(args.config, args.data, args.isCondition, args.isFocus,
+                                      storage);
+        STOP_TIMER(t);
+
+        BLOCK_TIMER(bt, "DigItemsetRunner - run");
+        digger.run();
+
+        return digger.getResult();
+    }
+};
+
+
+// [[Rcpp::export]]
+List dig_itemsets_(const List& data,
+                   const CharacterVector& namesVector,
+                   const LogicalVector& isCondition,
+                   const LogicalVector& isFocus,
+                   const List& confList)
+{
+    START_TIMER(bt, "dig_itemsets_");
+
+    Config config(confList, namesVector);
+    DispatchArgs args{data, isCondition, isFocus, config};
+    List result = dispatchDig(args, DigItemsetRunner{ });
 
     STOP_TIMER(bt);
     CLEAR_INC_TIMERS();

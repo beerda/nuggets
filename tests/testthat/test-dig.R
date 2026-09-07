@@ -1542,14 +1542,6 @@ test_that("t-norm lukas", {
 })
 
 
-#test_that("multithread", {
-#    m <- matrix(T, ncol = 10, nrow=100)
-#
-#    res <- dig(m, function() 1, threads = 24)
-#    expect_equal(length(res), 1024)
-#})
-
-
 test_that("min_focus_support & filter_empty_foci", {
     m <- matrix(c(c(1,1,1,1,1,1,1,1,0,0),
                   c(1,1,1,1,1,1,0,0,1,1),
@@ -1701,8 +1693,7 @@ test_that("dig return object details", {
                filter_empty_foci = TRUE,
                t_norm = "goedel",
                max_results = 1000,
-               verbose = TRUE,
-               threads = 1))
+               verbose = TRUE))
 
     expect_true(is_nugget(res))
     expect_true(is.list(res))
@@ -1727,7 +1718,6 @@ test_that("dig return object details", {
     expect_equal(attr(res, "call_args")$t_norm, "goedel")
     expect_equal(attr(res, "call_args")$max_results, 1000)
     expect_equal(attr(res, "call_args")$verbose, TRUE)
-    expect_equal(attr(res, "call_args")$threads, 1)
     expect_true(is.list(attr(res, "search_stats")))
     expect_true(attr(res, "search_stats")$runtime_millis > 0.0)
     expect_true(attr(res, "search_stats")$computed_conjunctions >= 0)
@@ -1797,10 +1787,6 @@ test_that("errors", {
                  "`max_results` must be >= 1.")
     expect_error(dig(d, f, condition = n, verbose = "x"),
                  "`verbose` must be a flag")
-    expect_error(dig(d, f, condition = n, threads = "x"),
-                 "`threads` must be an integerish scalar.")
-    expect_error(dig(d, f, condition = n, threads = 0),
-                 "`threads` must be >= 1.")
     expect_error(dig(d, f, condition = n, excluded = FALSE),
                  "`excluded` must be a list or NULL.")
     expect_error(dig(d, f, condition = n, excluded = list(c(FALSE, TRUE))),

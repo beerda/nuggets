@@ -565,6 +565,12 @@ dig <- function(x,
                                  condition_cols$selected,
                                  foci_cols$selected,
                                  config)
+    } else if (call_function == "dig_itemsets") {
+        res <- dig_itemsets_(cols,
+                             names(cols),
+                             condition_cols$selected,
+                             foci_cols$selected,
+                             config)
     } else {
         cli_abort("Unknown internal call function {.fun {call_function}}.")
     }
