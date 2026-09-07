@@ -120,7 +120,8 @@
 #'      to set `max_results` to a reasonable positive value. Setting `max_results`
 #'      to `Inf` will generate all possible conditions.
 #' @param verbose a logical value indicating whether to print progress messages.
-#' @param threads the number of threads to use for parallel computation.
+#' @param threads (Deprecated.) the number of threads to use for parallel
+#'      computation.
 #' @param error_context a named list providing context for error messages.
 #'      This is mainly useful when `dig_associations()` is called from another
 #'      function and you want error messages to refer to the argument names
@@ -172,7 +173,7 @@ dig_associations <- function(x,
                              t_norm = "goguen",
                              max_results = Inf,
                              verbose = FALSE,
-                             threads = 1,
+                             threads = deprecated(),
                              error_context = list(arg_x = "x",
                                                   arg_antecedent = "antecedent",
                                                   arg_consequent = "consequent",
@@ -217,6 +218,16 @@ dig_associations <- function(x,
     } else {
         contingency_table <- TRUE
     }
+
+    if (lifecycle::is_present(threads) &&
+        (is.null(error_context$deprecate_threads) || isTRUE(error_context$deprecate_threads))) {
+        deprecate_warn(when = "2.2.0",
+                       what = "nuggets::dig_associations(threads)",
+                       details = "The `threads` argument is deprecated and will be removed in future versions.")
+    } else if (!lifecycle::is_present(threads)) {
+        threads <- 1L
+    }
+
     .must_be_flag(contingency_table,
                   arg = error_context$arg_contingency_table,
                   call = error_context$call)

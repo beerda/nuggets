@@ -123,7 +123,8 @@
 #'      to set `max_results` to a reasonable positive value. Setting `max_results`
 #'      to `Inf` will generate all possible conditions.
 #' @param verbose a logical scalar indicating whether to print progress messages.
-#' @param threads the number of threads to use for parallel computation.
+#' @param threads (Deprecated.) the number of threads to use for parallel
+#'      computation.
 #' @param error_context a list of details to be used in error messages.
 #'      This argument is useful when `dig_grid()` is called from another
 #'      function to provide error messages, which refer to arguments of the
@@ -203,7 +204,7 @@ dig_grid <- function(x,
                      max_support = 1.0,
                      max_results = Inf,
                      verbose = FALSE,
-                     threads = 1L,
+                     threads = deprecated(),
                      error_context = list(arg_x = "x",
                                           arg_f = "f",
                                           arg_condition = "condition",
@@ -241,6 +242,15 @@ dig_grid <- function(x,
                           optional = NULL,
                           arg = error_context$arg_f,
                           call = error_context$call)
+    }
+
+    if (lifecycle::is_present(threads) &&
+        (is.null(error_context$deprecate_threads) || isTRUE(error_context$deprecate_threads))) {
+        deprecate_warn(when = "2.2.0",
+                       what = "nuggets::dig_grid(threads)",
+                       details = "The `threads` argument is deprecated and will be removed in future versions.")
+    } else if (!lifecycle::is_present(threads)) {
+        threads <- 1L
     }
 
     condition <- enquo(condition)
@@ -385,4 +395,3 @@ dig_grid <- function(x,
                             verbose = digattr$call_args$verbose,
                             threads = digattr$call_args$threads))
 }
-
