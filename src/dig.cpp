@@ -99,59 +99,64 @@ long countLogicalValues(const List& data)
 }
 
 
-enum DigRunType {
-    RT_DENSE,
-    RT_SPARSE,
-    RT_GOEDEL,
-    RT_GOGUEN,
-    RT_LUKASIEWICZ
+struct DispatchArgs {
+    const List& data;
+    const LogicalVector& isCondition;
+    const LogicalVector& isFocus;
+    const Config& config;
 };
 
 
-DigRunType getDigRunType(const List& data,
-                         const Config& config)
+template <typename RUNNER>
+List dispatchDig(const DispatchArgs& args,
+                 const RUNNER& runner)
 {
-    if (dataAreAllLogical(data)) {
-        long count = countLogicalValues(data);
-        LogicalVector vec = data[0];
-        if (count * BITCHAIN_SPARSENESS_LIMIT < data.size() * vec.size())
-            return DigRunType::RT_SPARSE;
-        else
-            return DigRunType::RT_DENSE;
+    if (dataAreAllLogical(args.data)) {
+        long count = countLogicalValues(args.data);
+        LogicalVector vec = args.data[0];
+        if (count * BITCHAIN_SPARSENESS_LIMIT < args.data.size() * vec.size()) {
+            return runner.template run<BIT_CHAIN_SPARSE>(args);
+        }
+        else {
+            return runner.template run<BIT_CHAIN_DENSE>(args);
+        }
     }
-    else if (config.getTNorm() == TNorm::GOEDEL)
-        return DigRunType::RT_GOEDEL;
-    else if (config.getTNorm() == TNorm::GOGUEN)
-        return DigRunType::RT_GOGUEN;
-    else if (config.getTNorm() == TNorm::LUKASIEWICZ)
-        return DigRunType::RT_LUKASIEWICZ;
-    else
-        stop("internal error in getDigRunType()");
+    else if (args.config.getTNorm() == TNorm::GOEDEL) {
+        return runner.template run<GOEDEL_CHAIN>(args);
+    }
+    else if (args.config.getTNorm() == TNorm::GOGUEN) {
+        return runner.template run<GOGUEN_CHAIN>(args);
+    }
+    else if (args.config.getTNorm() == TNorm::LUKASIEWICZ) {
+        return runner.template run<LUKASIEWICZ_CHAIN>(args);
+    }
+
+    stop("internal error in getDigRunType()");
 }
 
 
-template <typename CHAIN>
-List runDig(const List& data,
-            const LogicalVector& isCondition,
-            const LogicalVector& isFocus,
-            const Function& callback,
-            const Config& config)
-{
-    using STORAGE = CallbackCaller<CHAIN>;
+struct DigRunner {
+    const Function& callback;
 
-    START_TIMER(t, "runDig - initialization");
-    STORAGE storage(config, callback);
-    Digger<CHAIN, STORAGE> digger(config, data, isCondition, isFocus, storage);
-    STOP_TIMER(t);
+    template <typename CHAIN>
+    List run(const DispatchArgs& args) const
+    {
+        using STORAGE = CallbackCaller<CHAIN>;
 
-    BLOCK_TIMER(bt, "runDig - run");
-    digger.run();
+        START_TIMER(t, "DigRunner - initialization");
+        STORAGE storage(args.config, callback);
+        Digger<CHAIN, STORAGE> digger(args.config, args.data, args.isCondition, args.isFocus,
+                                      storage);
+        STOP_TIMER(t);
 
-    return digger.getResult();
-}
+        BLOCK_TIMER(bt, "DigRunner - run");
+        digger.run();
+
+        return digger.getResult();
+    }
+};
 
 
-// [[Rcpp::plugins(openmp)]]
 // [[Rcpp::export]]
 List dig_(const List& data,
           const CharacterVector& namesVector,
@@ -163,25 +168,8 @@ List dig_(const List& data,
     START_TIMER(bt, "dig_");
 
     Config config(confList, namesVector);
-    List result;
-
-    switch (getDigRunType(data, config)) {
-        case DigRunType::RT_DENSE:
-            result = runDig<BIT_CHAIN_DENSE>(data, isCondition, isFocus, callback, config);
-            break;
-        case DigRunType::RT_SPARSE:
-            result = runDig<BIT_CHAIN_SPARSE>(data, isCondition, isFocus, callback, config);
-            break;
-        case DigRunType::RT_GOEDEL:
-            result = runDig<GOEDEL_CHAIN>(data, isCondition, isFocus, callback, config);
-            break;
-        case DigRunType::RT_GOGUEN:
-            result = runDig<GOGUEN_CHAIN>(data, isCondition, isFocus, callback, config);
-            break;
-        case DigRunType::RT_LUKASIEWICZ:
-            result = runDig<LUKASIEWICZ_CHAIN>(data, isCondition, isFocus, callback, config);
-            break;
-    }
+    DispatchArgs args{data, isCondition, isFocus, config};
+    List result = dispatchDig(args, DigRunner{ callback });
 
     STOP_TIMER(bt);
     CLEAR_INC_TIMERS();
@@ -190,28 +178,26 @@ List dig_(const List& data,
 }
 
 
-template <typename CHAIN>
-List runDigAssoc(const List& data,
-                 const LogicalVector& isCondition,
-                 const LogicalVector& isFocus,
-                 const Config& config)
-{
-    START_TIMER(t1, "runDigAssoc - initialization");
-    using STORAGE = AssocStorage<CHAIN>;
+struct DigAssocRunner {
+    template <typename CHAIN>
+    List run(const DispatchArgs& args) const
+    {
+        using STORAGE = AssocStorage<CHAIN>;
 
-    STORAGE storage(config);
-    Digger<CHAIN, STORAGE> digger(config, data, isCondition, isFocus, storage);
+        START_TIMER(t, "DigAssocRunner - initialization");
+        STORAGE storage(args.config);
+        Digger<CHAIN, STORAGE> digger(args.config, args.data, args.isCondition, args.isFocus,
+                                      storage);
+        STOP_TIMER(t);
 
-    STOP_TIMER(t1);
-    START_TIMER(t2, "runDigAssoc - run");
-    digger.run();
-    STOP_TIMER(t2);
+        BLOCK_TIMER(bt, "DigAssocRunner - run");
+        digger.run();
 
-    return digger.getResult();
-}
+        return digger.getResult();
+    }
+};
 
 
-// [[Rcpp::plugins(openmp)]]
 // [[Rcpp::export]]
 List dig_associations_(const List& data,
                        const CharacterVector& namesVector,
@@ -222,25 +208,8 @@ List dig_associations_(const List& data,
     START_TIMER(bt, "dig_associations_");
 
     Config config(confList, namesVector);
-    List result;
-
-    switch (getDigRunType(data, config)) {
-        case DigRunType::RT_DENSE:
-            result = runDigAssoc<BIT_CHAIN_DENSE>(data, isCondition, isFocus, config);
-            break;
-        case DigRunType::RT_SPARSE:
-            result = runDigAssoc<BIT_CHAIN_SPARSE>(data, isCondition, isFocus, config);
-            break;
-        case DigRunType::RT_GOEDEL:
-            result = runDigAssoc<GOEDEL_CHAIN>(data, isCondition, isFocus, config);
-            break;
-        case DigRunType::RT_GOGUEN:
-            result = runDigAssoc<GOGUEN_CHAIN>(data, isCondition, isFocus, config);
-            break;
-        case DigRunType::RT_LUKASIEWICZ:
-            result = runDigAssoc<LUKASIEWICZ_CHAIN>(data, isCondition, isFocus, config);
-            break;
-    }
+    DispatchArgs args{data, isCondition, isFocus, config};
+    List result = dispatchDig(args, DigAssocRunner{ });
 
     STOP_TIMER(bt);
     CLEAR_INC_TIMERS();
