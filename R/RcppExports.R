@@ -77,6 +77,10 @@ dig_associations_ <- function(data, namesVector, isCondition, isFocus, confList)
     .Call(`_nuggets_dig_associations_`, data, namesVector, isCondition, isFocus, confList)
 }
 
+dig_itemsets_ <- function(data, namesVector, isCondition, isFocus, confList) {
+    .Call(`_nuggets_dig_itemsets_`, data, namesVector, isCondition, isFocus, confList)
+}
+
 .parse_condition <- function(x) {
     .Call(`_nuggets_parse_condition`, x)
 }
@@ -92,4 +96,3 @@ triangle_ <- function(x, ctx) {
 which_antichain_ <- function(x, dist) {
     .Call(`_nuggets_which_antichain_`, x, dist)
 }
-

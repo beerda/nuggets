@@ -35,6 +35,7 @@ reference:
     desc: >
       Functions for extraction of pre-defined patterns from input data.
     contents:
+      - dig_itemsets
       - dig_associations
       - dig_correlations
       - dig_baseline_contrasts
