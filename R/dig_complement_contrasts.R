@@ -209,12 +209,6 @@ dig_complement_contrasts <- function(x,
     .must_be_double_scalar(wilcox_tol_root)
     .must_be_double_scalar(wilcox_digits_rank)
 
-    if (lifecycle::is_present(threads)) {
-        deprecate_warn(when = "2.3.0",
-                       what = "nuggets::dig_complement_contrasts(threads)",
-                       details = "The `threads` argument is deprecated and will be removed in future versions.")
-    }
-
     condition <- enquo(condition)
     vars <- enquo(vars)
 
@@ -257,6 +251,12 @@ dig_complement_contrasts <- function(x,
 
     } else {
         stop("Internal error - unknown method: ", method)
+    }
+
+    if (lifecycle::is_present(threads)) {
+        deprecate_warn(when = "2.3.0",
+                       what = "nuggets::dig_complement_contrasts(threads)",
+                       details = "The `threads` argument is deprecated and will be removed in future versions.")
     }
 
     res <- dig_grid(x = x,

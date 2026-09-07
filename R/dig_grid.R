@@ -244,15 +244,6 @@ dig_grid <- function(x,
                           call = error_context$call)
     }
 
-    if (lifecycle::is_present(threads) &&
-        (is.null(error_context$deprecate_threads) || isTRUE(error_context$deprecate_threads))) {
-        deprecate_warn(when = "2.3.0",
-                       what = "nuggets::dig_grid(threads)",
-                       details = "The `threads` argument is deprecated and will be removed in future versions.")
-    } else if (!lifecycle::is_present(threads)) {
-        threads <- 1L
-    }
-
     condition <- enquo(condition)
 
     cols <- .convert_data_to_list(x, error_context = error_context)
@@ -343,6 +334,15 @@ dig_grid <- function(x,
             processF(condition, support, result)
         }
         callbackF <- tempF3
+    }
+
+    if (lifecycle::is_present(threads) &&
+        (is.null(error_context$deprecate_threads) || isTRUE(error_context$deprecate_threads))) {
+        deprecate_warn(when = "2.3.0",
+                       what = "nuggets::dig_grid(threads)",
+                       details = "The `threads` argument is deprecated and will be removed in future versions.")
+    } else if (!lifecycle::is_present(threads)) {
+        threads <- 1L
     }
 
     res <- dig(x = x,

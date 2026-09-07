@@ -140,12 +140,6 @@ dig_correlations <- function(x,
     .must_be_enum(alternative, c("two.sided", "less", "greater"))
     .must_be_flag(exact, null = TRUE)
 
-    if (lifecycle::is_present(threads)) {
-        deprecate_warn(when = "2.3.0",
-                       what = "nuggets::dig_correlations(threads)",
-                       details = "The `threads` argument is deprecated and will be removed in future versions.")
-    }
-
     condition <- enquo(condition)
     xvars <- enquo(xvars)
     yvars <- enquo(yvars)
@@ -161,6 +155,12 @@ dig_correlations <- function(x,
                     method = fit$method,
                     alternative = fit$alternative,
                     n = nrow(pd)))
+    }
+
+    if (lifecycle::is_present(threads)) {
+        deprecate_warn(when = "2.3.0",
+                       what = "nuggets::dig_correlations(threads)",
+                       details = "The `threads` argument is deprecated and will be removed in future versions.")
     }
 
     res <- dig_grid(x = x,

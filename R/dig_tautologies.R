@@ -108,12 +108,6 @@ dig_tautologies <- function(x,
     .must_be_integerish_scalar(max_results)
     .must_be_greater_eq(max_results, 1)
 
-    if (lifecycle::is_present(threads)) {
-        deprecate_warn(when = "2.3.0",
-                       what = "nuggets::dig_tautologies(threads)",
-                       details = "The `threads` argument is deprecated and will be removed in future versions.")
-    }
-
     antecedent <- enquo(antecedent)
     consequent <- enquo(consequent)
     tautologies <- list()
@@ -131,6 +125,12 @@ dig_tautologies <- function(x,
                                         error_context = list(arg_selection = "antecedent",
                                                              call = current_env()))
         max_length <- sum(ante_cols$selected)
+    }
+
+    if (lifecycle::is_present(threads)) {
+        deprecate_warn(when = "2.3.0",
+                       what = "nuggets::dig_tautologies(threads)",
+                       details = "The `threads` argument is deprecated and will be removed in future versions.")
     }
 
     digattr <- NULL

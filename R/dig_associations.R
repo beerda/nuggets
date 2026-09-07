@@ -212,20 +212,11 @@ dig_associations <- function(x,
                       call = error_context$call)
 
     if (lifecycle::is_present(contingency_table)) {
-        deprecate_warn(when = "2.3.0",
+        deprecate_warn(when = "2.2.0",
                        what = "nuggets::dig_associations(contingency_table)",
                        details = "The `contingency_table` argument is deprecated and will be removed in future versions. dig_associations() works as 'contingency_table = TRUE' would be specified by default.")
     } else {
         contingency_table <- TRUE
-    }
-
-    if (lifecycle::is_present(threads) &&
-        (is.null(error_context$deprecate_threads) || isTRUE(error_context$deprecate_threads))) {
-        deprecate_warn(when = "2.3.0",
-                       what = "nuggets::dig_associations(threads)",
-                       details = "The `threads` argument is deprecated and will be removed in future versions.")
-    } else if (!lifecycle::is_present(threads)) {
-        threads <- 1L
     }
 
     .must_be_flag(contingency_table,
@@ -249,6 +240,15 @@ dig_associations <- function(x,
 
     antecedent <- enquo(antecedent)
     consequent <- enquo(consequent)
+
+    if (lifecycle::is_present(threads) &&
+        (is.null(error_context$deprecate_threads) || isTRUE(error_context$deprecate_threads))) {
+        deprecate_warn(when = "2.3.0",
+                       what = "nuggets::dig_associations(threads)",
+                       details = "The `threads` argument is deprecated and will be removed in future versions.")
+    } else if (!lifecycle::is_present(threads)) {
+        threads <- 1L
+    }
 
     res <- .dig(x = x,
                 xname = deparse(substitute(x)),
