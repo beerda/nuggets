@@ -20,6 +20,7 @@
 #pragma once
 
 #include "../common.h"
+#include "BaseStorage.h"
 #include "Clause.h"
 #include "Config.h"
 #include "ChainCollection.h"
@@ -33,7 +34,7 @@
  * rule is represented by an antecedent, consequent, and various statistics.
  */
 template <typename CHAIN>
-class AssocStorage {
+class AssocStorage : public BaseStorage {
     /**
      * The initial capacity of the rules vector. It is used to reserve memory for
      * the rules vector to avoid frequent reallocations during the search process.
@@ -59,8 +60,8 @@ public:
      * @param config The configuration object containing search parameters.
      */
     AssocStorage(const Config& config)
-        : rules(),
-          config(config)
+        : BaseStorage(config),
+          rules()
     {
         size_t capacity = config.getMaxResults();
         if (capacity >= SIZE_MAX) {
@@ -92,7 +93,7 @@ public:
         if (rules.size() >= config.getMaxResults())
             return;
 
-        String ante = formatCondition(prefix, chain);
+        String ante = formatCondition(prefix, chain.getPredicatePtr());
         for (size_t i = 0; i < collection.focusCount(); ++i) {
             if (!selector.isSelected(i))
                 continue;
@@ -185,90 +186,4 @@ private:
      * A vector of stored association rules.
      */
     vector<Rule> rules;
-
-    /**
-     * The configuration object.
-     */
-    const Config& config;
-
-    /**
-     * Formats the condition (antecedent) of a chain as a string representation.
-     * The condition is represented as a set of predicate names enclosed in
-     * curly braces.
-     */
-    string formatCondition(const Clause& prefix, const CHAIN& chain) const
-    {
-        if (prefix.empty() && !chain.hasPredicate()) {
-            return "{}";
-        }
-
-        // from now on, chain must have predicate
-        IF_DEBUG(
-            if (!chain.hasPredicate())
-                throw invalid_argument("AssocStorage: formatCondition: chain has no predicate");
-        )
-
-
-        stringstream res;
-        res << "{";
-
-        if (prefix.size() == 0) {
-            res << config.getChainName(chain.getPredicate());
-        }
-        else {
-            const string& name0 = config.getChainName(chain.getPredicate());
-
-            if (prefix.size() == 1) {
-                const string& name1 = config.getChainName(prefix[0]);
-                if (name0 < name1) {
-                    res << name0 << "," << name1;
-                } else {
-                    res << name1 << "," << name0;
-                }
-            }
-            else if (prefix.size() == 2) {
-                const string& name1 = config.getChainName(prefix[0]);
-                const string& name2 = config.getChainName(prefix[1]);
-                if (name0 <= name1) {
-                    if (name1 <= name2) {
-                        res << name0 << "," << name1 << "," << name2;
-                    }
-                    else if (name0 <= name2) {
-                        res << name0 << "," << name2 << "," << name1;
-                    }
-                    else {
-                        res << name2 << "," << name0 << "," << name1;
-                    }
-                }
-                else {
-                    if (name0 <= name2) {
-                        res << name1 << "," << name0 << "," << name2;
-                    }
-                    else if (name1 <= name2) {
-                        res << name1 << "," << name2 << "," << name0;
-                    }
-                    else {
-                        res << name2 << "," << name1 << "," << name0;
-                    }
-                }
-            }
-            else {
-                vector<string> parts;
-                parts.reserve(prefix.size() + 1);
-                parts.push_back(name0);
-                for (size_t predicate : prefix) {
-                    parts.push_back(config.getChainName(predicate));
-                }
-                sort(parts.begin(), parts.end());
-                res << parts.front();
-                for (size_t i = 1; i < parts.size(); ++i) {
-                    res << "," << parts[i];
-                }
-            }
-        }
-
-        res << "}";
-
-        return res.str();
-    }
 };

@@ -190,6 +190,14 @@ public:
     { return !(*this == other); }
 
     /**
+     * Returns TRUE if the chain has a predicate, i.e., if the predicate is not empty.
+     *
+     * @return True if the chain has a predicate, false otherwise.
+     */
+    inline bool hasPredicate() const
+    { return predicate != 0; }
+
+    /**
      * Returns the predicate of the chain, i.e., the last predicate of the clause.
      * (Assuming that the prefix of the clause is stored in Digger::prefix.)
      *
@@ -205,8 +213,21 @@ public:
         return predicate;
     }
 
-    inline bool hasPredicate() const
-    { return predicate != 0; }
+    /**
+     * Returns a pointer to the predicate of the chain, i.e., the last predicate
+     * of the clause. (Assuming that the prefix of the clause is stored in
+     * Digger::prefix.) If the predicate is empty, returns nullptr.
+     *
+     * @return A pointer to the last predicate of the chain, or nullptr if
+     *     the predicate is empty.
+     */
+    inline const size_t* getPredicatePtr() const
+    {
+        if (predicate == 0)
+            return nullptr;
+
+        return &predicate;
+    }
 
     /**
      * Returns the sum of TRUEs (for binary data) or membership degrees (for

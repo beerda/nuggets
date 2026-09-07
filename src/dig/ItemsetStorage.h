@@ -20,6 +20,7 @@
 #pragma once
 
 #include "../common.h"
+#include "BaseStorage.h"
 #include "Clause.h"
 #include "Config.h"
 #include "ChainCollection.h"
@@ -31,7 +32,7 @@
  * discovered itemsets with basic statistics.
  */
 template <typename CHAIN>
-class ItemsetStorage {
+class ItemsetStorage : public BaseStorage {
     /**
      * The initial capacity of the itemsets vector.
      */
@@ -53,8 +54,8 @@ public:
      * @param config The configuration object containing search parameters.
      */
     ItemsetStorage(const Config& config)
-        : itemsets(),
-          config(config)
+        : BaseStorage(config),
+          itemsets()
     {
         size_t capacity = config.getMaxResults();
         if (capacity >= SIZE_MAX) {
@@ -94,7 +95,7 @@ public:
             return;
 
         Itemset itemset;
-        itemset.items = formatCondition(prefix, chain);
+        itemset.items = formatCondition(prefix, chain.getPredicatePtr());
         itemset.length = prefix.size() + chain.hasPredicate();
         itemset.chainSum = chain.getSum();
         itemsets.push_back(itemset);
@@ -137,91 +138,4 @@ private:
      * A vector of stored itemsets.
      */
     vector<Itemset> itemsets;
-
-    /**
-     * The configuration object.
-     */
-    const Config& config;
-
-    /**
-     * Formats itemset predicates as a string representation enclosed in
-     * curly braces.
-     *
-     * @param prefix Prefix of predicate IDs.
-     * @param chain Chain holding the currently processed predicate.
-     * @return Formatted itemset string.
-     */
-    string formatCondition(const Clause& prefix, const CHAIN& chain) const
-    {
-        if (prefix.empty() && !chain.hasPredicate()) {
-            return "{}";
-        }
-
-        IF_DEBUG(
-            if (!chain.hasPredicate())
-                throw invalid_argument("ItemsetStorage: formatCondition: chain has no predicate");
-        )
-
-        stringstream res;
-        res << "{";
-
-        if (prefix.size() == 0) {
-            res << config.getChainName(chain.getPredicate());
-        }
-        else {
-            const string& name0 = config.getChainName(chain.getPredicate());
-
-            if (prefix.size() == 1) {
-                const string& name1 = config.getChainName(prefix[0]);
-                if (name0 < name1) {
-                    res << name0 << "," << name1;
-                } else {
-                    res << name1 << "," << name0;
-                }
-            }
-            else if (prefix.size() == 2) {
-                const string& name1 = config.getChainName(prefix[0]);
-                const string& name2 = config.getChainName(prefix[1]);
-                if (name0 <= name1) {
-                    if (name1 <= name2) {
-                        res << name0 << "," << name1 << "," << name2;
-                    }
-                    else if (name0 <= name2) {
-                        res << name0 << "," << name2 << "," << name1;
-                    }
-                    else {
-                        res << name2 << "," << name0 << "," << name1;
-                    }
-                }
-                else {
-                    if (name0 <= name2) {
-                        res << name1 << "," << name0 << "," << name2;
-                    }
-                    else if (name1 <= name2) {
-                        res << name1 << "," << name2 << "," << name0;
-                    }
-                    else {
-                        res << name2 << "," << name1 << "," << name0;
-                    }
-                }
-            }
-            else {
-                vector<string> parts;
-                parts.reserve(prefix.size() + 1);
-                parts.push_back(name0);
-                for (size_t predicate : prefix) {
-                    parts.push_back(config.getChainName(predicate));
-                }
-                sort(parts.begin(), parts.end());
-                res << parts.front();
-                for (size_t i = 1; i < parts.size(); ++i) {
-                    res << "," << parts[i];
-                }
-            }
-        }
-
-        res << "}";
-
-        return res.str();
-    }
 };
