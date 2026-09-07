@@ -25,7 +25,7 @@ dig_baseline_contrasts(
   wilcox_digits_rank = Inf,
   max_results = Inf,
   verbose = FALSE,
-  threads = 1
+  threads = deprecated()
 )
 }
 \arguments{
@@ -123,7 +123,8 @@ to \code{Inf} will generate all possible conditions.}
 
 \item{verbose}{a logical scalar indicating whether to print progress messages.}
 
-\item{threads}{the number of threads to use for parallel computation.}
+\item{threads}{(Deprecated.) the number of threads to use for parallel
+computation.}
 }
 \value{
 An S3 object which is an instance of \code{baseline_contrasts} and \code{nugget}

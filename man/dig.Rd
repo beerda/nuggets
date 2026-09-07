@@ -21,7 +21,7 @@ dig(
   t_norm = "goguen",
   max_results = Inf,
   verbose = FALSE,
-  threads = 1L,
+  threads = deprecated(),
   error_context = list(arg_x = "x", arg_f = "f", arg_condition = "condition", arg_focus =
     "focus", arg_disjoint = "disjoint", arg_excluded = "excluded", arg_min_length =
     "min_length", arg_max_length = "max_length", arg_min_support = "min_support",
@@ -135,7 +135,7 @@ integer to enable early stopping; set to \code{Inf} to remove the cap.}
 
 \item{verbose}{Logical; if \code{TRUE}, print progress messages.}
 
-\item{threads}{Number of threads for parallel computation.}
+\item{threads}{(Deprecated.) Number of threads for parallel computation.}
 
 \item{error_context}{A list of details to be used when constructing error
 messages. This is mainly useful when \code{dig()} is called from another

@@ -19,7 +19,7 @@ dig_associations(
   t_norm = "goguen",
   max_results = Inf,
   verbose = FALSE,
-  threads = 1,
+  threads = deprecated(),
   error_context = list(arg_x = "x", arg_antecedent = "antecedent", arg_consequent =
     "consequent", arg_disjoint = "disjoint", arg_excluded = "excluded", arg_min_length =
     "min_length", arg_max_length = "max_length", arg_min_coverage = "min_coverage",
@@ -104,7 +104,8 @@ to \code{Inf} will generate all possible conditions.}
 
 \item{verbose}{a logical value indicating whether to print progress messages.}
 
-\item{threads}{the number of threads to use for parallel computation.}
+\item{threads}{(Deprecated.) the number of threads to use for parallel
+computation.}
 
 \item{error_context}{a named list providing context for error messages.
 This is mainly useful when \code{dig_associations()} is called from another

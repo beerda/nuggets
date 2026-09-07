@@ -21,7 +21,7 @@ dig_grid(
   max_support = 1,
   max_results = Inf,
   verbose = FALSE,
-  threads = 1L,
+  threads = deprecated(),
   error_context = list(arg_x = "x", arg_f = "f", arg_condition = "condition", arg_xvars =
     "xvars", arg_yvars = "yvars", arg_disjoint = "disjoint", arg_excluded = "excluded",
     arg_allow = "allow", arg_na_rm = "na_rm", arg_type = "type", arg_min_length =
@@ -137,7 +137,8 @@ to \code{Inf} will generate all possible conditions.}
 
 \item{verbose}{a logical scalar indicating whether to print progress messages.}
 
-\item{threads}{the number of threads to use for parallel computation.}
+\item{threads}{(Deprecated.) the number of threads to use for parallel
+computation.}
 
 \item{error_context}{a list of details to be used in error messages.
 This argument is useful when \code{dig_grid()} is called from another
