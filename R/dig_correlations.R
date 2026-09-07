@@ -93,7 +93,8 @@
 #'      to set `max_results` to a reasonable positive value. Setting `max_results`
 #'      to `Inf` will generate all possible conditions.
 #' @param verbose a logical scalar indicating whether to print progress messages.
-#' @param threads the number of threads to use for parallel computation.
+#' @param threads (Deprecated.) the number of threads to use for parallel
+#'      computation.
 #' @return An S3 object which is an instance of `correlations` and `nugget`
 #'      classes and which is tibble with found patterns.
 #'      The `nugget` object also contains metadata about the search
@@ -134,7 +135,7 @@ dig_correlations <- function(x,
                              max_support = 1.0,
                              max_results = Inf,
                              verbose = FALSE,
-                             threads = 1) {
+                             threads = deprecated()) {
     .must_be_enum(method, c("pearson", "kendall", "spearman"))
     .must_be_enum(alternative, c("two.sided", "less", "greater"))
     .must_be_flag(exact, null = TRUE)
@@ -154,6 +155,12 @@ dig_correlations <- function(x,
                     method = fit$method,
                     alternative = fit$alternative,
                     n = nrow(pd)))
+    }
+
+    if (lifecycle::is_present(threads)) {
+        deprecate_warn(when = "2.3.0",
+                       what = "nuggets::dig_correlations(threads)",
+                       details = "The `threads` argument is deprecated and will be removed in future versions.")
     }
 
     res <- dig_grid(x = x,
@@ -185,6 +192,7 @@ dig_correlations <- function(x,
                                          arg_max_results = "max_results",
                                          arg_verbose = "verbose",
                                          arg_threads = "threads",
+                                         deprecate_threads = FALSE,
                                          call = current_env()))
     digattr <- attributes(res)
 

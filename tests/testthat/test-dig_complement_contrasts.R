@@ -98,8 +98,7 @@ test_that("dig_complement_contrasts call args", {
                          wilcox_tol_root = 1e-3,
                          wilcox_digits_rank = 5,
                          max_results = 5,
-                         verbose = TRUE,
-                         threads = 1))
+                         verbose = TRUE))
 
     expect_true(is_nugget(res, flavour = "complement_contrasts"))
     expect_true(is_tibble(res))
@@ -137,7 +136,6 @@ test_that("dig_complement_contrasts call args", {
     expect_equal(attr(res, "call_args")$wilcox_digits_rank, 5)
     expect_equal(attr(res, "call_args")$max_results, 5)
     expect_equal(attr(res, "call_args")$verbose, TRUE)
-    expect_equal(attr(res, "call_args")$threads, 1L)
 })
 
 test_that("dig_paired contrasts errors", {

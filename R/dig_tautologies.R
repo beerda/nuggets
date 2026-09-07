@@ -75,7 +75,8 @@
 #'      to set `max_results` to a reasonable positive value. Setting `max_results`
 #'      to `Inf` will generate all possible conditions.
 #' @param verbose a logical value indicating whether to print progress messages.
-#' @param threads the number of threads to use for parallel computation.
+#' @param threads (Deprecated.) the number of threads to use for parallel
+#'      computation.
 #' @returns An S3 object which is an instance of `associations` and `nugget`
 #'      classes and which is a tibble with found tautologies in the format equal
 #'      to the output of [dig_associations()].
@@ -100,7 +101,7 @@ dig_tautologies <- function(x,
                             t_norm = "goguen",
                             max_results = Inf,
                             verbose = FALSE,
-                            threads = 1) {
+                            threads = deprecated()) {
     .must_be_integerish_scalar(max_length)
     .must_be_greater_eq(max_length, 0)
 
@@ -124,6 +125,12 @@ dig_tautologies <- function(x,
                                         error_context = list(arg_selection = "antecedent",
                                                              call = current_env()))
         max_length <- sum(ante_cols$selected)
+    }
+
+    if (lifecycle::is_present(threads)) {
+        deprecate_warn(when = "2.3.0",
+                       what = "nuggets::dig_tautologies(threads)",
+                       details = "The `threads` argument is deprecated and will be removed in future versions.")
     }
 
     digattr <- NULL
@@ -163,6 +170,7 @@ dig_tautologies <- function(x,
                                                      arg_max_results = "internal `maxres`",
                                                      arg_verbose = "verbose",
                                                      arg_threads = "threads",
+                                                     deprecate_threads = FALSE,
                                                      call = current_env()))
 
         if (is.null(digattr)) {
@@ -195,5 +203,5 @@ dig_tautologies <- function(x,
                             t_norm = t_norm,
                             max_results = max_results,
                             verbose = verbose,
-                            threads = threads))
+                            threads = digattr$call_args$threads))
 }

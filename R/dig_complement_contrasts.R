@@ -127,7 +127,8 @@
 #'      to set `max_results` to a reasonable positive value. Setting `max_results`
 #'      to `Inf` will generate all possible conditions.
 #' @param verbose a logical scalar indicating whether to print progress messages.
-#' @param threads the number of threads to use for parallel computation.
+#' @param threads (Deprecated.) the number of threads to use for parallel
+#'      computation.
 #' @return An S3 object which is an instance of `complement_contrasts` and `nugget`
 #'      classes and which is a tibble with found patterns in rows. The following
 #'      columns are always present:
@@ -194,7 +195,7 @@ dig_complement_contrasts <- function(x,
                                      wilcox_digits_rank = Inf,
                                      max_results = Inf,
                                      verbose = FALSE,
-                                     threads = 1L) {
+                                     threads = deprecated()) {
     .must_be_enum(method, c("t", "wilcox", "var"))
     .must_be_enum(alternative, c("two.sided", "less", "greater"))
     .must_be_double_scalar(h0)
@@ -252,6 +253,12 @@ dig_complement_contrasts <- function(x,
         stop("Internal error - unknown method: ", method)
     }
 
+    if (lifecycle::is_present(threads)) {
+        deprecate_warn(when = "2.3.0",
+                       what = "nuggets::dig_complement_contrasts(threads)",
+                       details = "The `threads` argument is deprecated and will be removed in future versions.")
+    }
+
     res <- dig_grid(x = x,
                     f = f,
                     condition = !!condition,
@@ -282,6 +289,7 @@ dig_complement_contrasts <- function(x,
                                          arg_max_results = "max_results",
                                          arg_verbose = "verbose",
                                          arg_threads = "threads",
+                                         deprecate_threads = FALSE,
                                          call = current_env()))
     digattr <- attributes(res)
 

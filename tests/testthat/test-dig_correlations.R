@@ -146,8 +146,7 @@ test_that("dig_correlations call args", {
                             min_support = 0.1,
                             max_support = 0.9,
                             max_results = 100,
-                            verbose = TRUE,
-                            threads = 1))
+                            verbose = TRUE))
     expect_true(is_nugget(res, flavour = "correlations"))
     expect_true(is_tibble(res))
     expect_equal(attr(res, "call_function"), "dig_correlations")
@@ -171,7 +170,6 @@ test_that("dig_correlations call args", {
     expect_equal(attr(res, "call_args")$max_support, 0.9)
     expect_equal(attr(res, "call_args")$max_results, 100)
     expect_equal(attr(res, "call_args")$verbose, TRUE)
-    expect_equal(attr(res, "call_args")$threads, 1)
 })
 
 
