@@ -141,7 +141,7 @@ dig_correlations <- function(x,
     .must_be_flag(exact, null = TRUE)
 
     if (lifecycle::is_present(threads)) {
-        deprecate_warn(when = "2.2.0",
+        deprecate_warn(when = "2.3.0",
                        what = "nuggets::dig_correlations(threads)",
                        details = "The `threads` argument is deprecated and will be removed in future versions.")
     }

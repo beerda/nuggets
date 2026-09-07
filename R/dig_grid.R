@@ -246,7 +246,7 @@ dig_grid <- function(x,
 
     if (lifecycle::is_present(threads) &&
         (is.null(error_context$deprecate_threads) || isTRUE(error_context$deprecate_threads))) {
-        deprecate_warn(when = "2.2.0",
+        deprecate_warn(when = "2.3.0",
                        what = "nuggets::dig_grid(threads)",
                        details = "The `threads` argument is deprecated and will be removed in future versions.")
     } else if (!lifecycle::is_present(threads)) {
