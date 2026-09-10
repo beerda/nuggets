@@ -118,6 +118,29 @@ context("dig/ChainCollection") {
 
             expect_true(cc.conditionCount() == 4);
             expect_true(cc.focusCount() == 3);
+
+            {
+                auto it = cc.conditionBegin();
+                expect_true(it->getPredicate() == 3);
+                ++it;
+                expect_true(it->getPredicate() == 5);
+                ++it;
+                expect_true(it->getPredicate() == 6);
+                ++it;
+                expect_true(it->getPredicate() == 4);
+                ++it;
+                expect_true(it == cc.conditionEnd());
+            }
+            {
+                auto it = cc.focusBegin();
+                expect_true(it->getPredicate() == 4);
+                ++it;
+                expect_true(it->getPredicate() == 1);
+                ++it;
+                expect_true(it->getPredicate() == 2);
+                ++it;
+                expect_true(it == cc.focusEnd());
+            }
         }
 
 

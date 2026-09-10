@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <iterator>
+
 #include "../common.h"
 #include "../timer.h"
 #include "BaseChain.h"
@@ -34,6 +36,29 @@ public:
      * Type of chains stored in the collection.
      */
     using ChainType = CHAIN;
+
+    /**
+     * Iterator class for iterating over the chains in the collection.
+     */
+    class Iterator {
+    private:
+        const CHAIN* ptr;
+
+    public:
+        Iterator(const CHAIN* p) : ptr(p) { }
+
+        const CHAIN& operator*() const { return *ptr; }
+        const CHAIN* operator->() const { return ptr; }
+
+        // Prefix increment
+        Iterator& operator++() { ptr++; return *this; }
+
+        // Postfix increment
+        Iterator operator++(int) { Iterator tmp = *this; ++(*this); return tmp; }
+
+        friend bool operator==(const Iterator& a, const Iterator& b) { return a.ptr == b.ptr; }
+        friend bool operator!=(const Iterator& a, const Iterator& b) { return a.ptr != b.ptr; }
+    };
 
     /**
      * Creates an empty chain collection.
@@ -156,6 +181,38 @@ public:
      */
     inline typename vector<CHAIN>::const_iterator end() const
     { return chains.end(); }
+
+    /**
+     * Returns an iterator to the first condition chain.
+     *
+     * @return An iterator to the first condition chain.
+     */
+    inline Iterator conditionBegin() const
+    { return Iterator(chains.data()); }
+
+    /**
+     * Returns an iterator past the last condition chain.
+     *
+     * @return An iterator past the last condition chain.
+     */
+    inline Iterator conditionEnd() const
+    { return Iterator(chains.data() + nConditions); }
+
+    /**
+     * Returns an iterator to the first focus chain.
+     *
+     * @return An iterator to the first focus chain.
+     */
+    inline Iterator focusBegin() const
+    { return Iterator(chains.data() + firstFocusIndex()); }
+
+    /**
+     * Returns an iterator past the last focus chain.
+     *
+     * @return An iterator past the last focus chain.
+     */
+    inline Iterator focusEnd() const
+    { return Iterator(chains.data() + chains.size()); }
 
     /**
      * Appends a chain by moving it into the collection.
