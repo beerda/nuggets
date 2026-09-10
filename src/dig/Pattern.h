@@ -20,20 +20,20 @@
 #pragma once
 
 #include "../common.h"
-#include "BaseChain.h"
+#include "Predicate.h"
 #include "Clause.h"
 
 
 class Pattern {
 public:
     Pattern(const Clause& prefix,
-            const BaseChain* chain,
-            const vector<const BaseChain*>& foci,
+            const Predicate* predicate,
+            const vector<const Predicate*>& foci,
             const vector<double>& predicateSums,
             std::function<LogicalVector()> indicesFunc,
             std::function<NumericVector()> weightsFunc)
         : prefix(prefix),
-          chain(chain),
+          predicate(predicate),
           foci(foci),
           predicateSums(predicateSums),
           indicesFunc(indicesFunc),
@@ -43,10 +43,23 @@ public:
     const Clause& getPrefix() const
     { return prefix; }
 
-    const BaseChain* getChain() const
-    { return chain; }
+    bool hasPredicate() const
+    { return predicate->hasPredicate(); }
 
-    const vector<const BaseChain*>& getFoci() const
+    size_t getConditionLength() const
+    { return prefix.size() + predicate->hasPredicate(); }
+
+    // TODO: zkusit tohle vymazat
+    const size_t* getPredicatePtr() const
+    { return predicate->getPredicatePtr(); }
+
+    size_t getPredicate() const
+    { return predicate->getPredicate(); }
+
+    double getConditionSum() const
+    { return predicate->getSum(); }
+
+    const vector<const Predicate*>& getFoci() const
     { return foci; }
 
     const vector<double>& getPredicateSums() const
@@ -60,8 +73,8 @@ public:
 
 private:
     const Clause& prefix;
-    const BaseChain* chain;
-    const vector<const BaseChain*>& foci;
+    const Predicate* predicate;
+    const vector<const Predicate*>& foci;
     const vector<double>& predicateSums;
     std::function<LogicalVector()> indicesFunc;
     std::function<NumericVector()> weightsFunc;

@@ -80,13 +80,10 @@ public:
      */
     void store(const Pattern& pattern)
     {
-        const Clause& prefix = pattern.getPrefix();
-        const BaseChain& chain = *pattern.getChain();
-
         Itemset itemset;
-        itemset.items = formatCondition(prefix, chain.getPredicatePtr());
-        itemset.length = prefix.size() + chain.hasPredicate();
-        itemset.chainSum = chain.getSum();
+        itemset.items = formatCondition(pattern.getPrefix(), pattern.getPredicatePtr());
+        itemset.length = pattern.getConditionLength();
+        itemset.chainSum = pattern.getConditionSum();
         itemsets.push_back(itemset);
     }
 

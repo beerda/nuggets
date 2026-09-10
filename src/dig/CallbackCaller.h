@@ -161,18 +161,17 @@ private:
                                          const Pattern& pattern)
     {
         const Clause& prefix = pattern.getPrefix();
-        const BaseChain& chain = *pattern.getChain();
 
         if (config.hasConditionArgument()) {
-            IntegerVector vals(prefix.size() + chain.hasPredicate());
-            CharacterVector valNames(prefix.size() + chain.hasPredicate());
+            IntegerVector vals(pattern.getConditionLength());
+            CharacterVector valNames(pattern.getConditionLength());
             for (size_t i = 0; i < prefix.size(); ++i) {
                 size_t predicate = prefix[i];
                 vals[i] = predicate;
                 valNames[i] = config.getChainName(predicate);
             }
-            if (chain.hasPredicate()) {
-                size_t predicate = chain.getPredicate();
+            if (pattern.hasPredicate()) {
+                size_t predicate = pattern.getPredicate();
                 vals[prefix.size()] = predicate;
                 valNames[prefix.size()] = config.getChainName(predicate);
             }
@@ -200,10 +199,8 @@ private:
                                    vector<string>& argNames,
                                    const Pattern& pattern)
     {
-        const BaseChain& chain = *pattern.getChain();
-
         if (config.hasSumArgument()) {
-            NumericVector vals({ chain.getSum() });
+            NumericVector vals({ pattern.getConditionSum() });
             args.push_back(vals);
             argNames.push_back("sum");
         }
@@ -225,10 +222,8 @@ private:
                                        vector<string>& argNames,
                                        const Pattern& pattern)
     {
-        const BaseChain& chain = *pattern.getChain();
-
         if (config.hasSupportArgument()) {
-            NumericVector vals({ chain.getSum() / config.getNrow() });
+            NumericVector vals({ pattern.getConditionSum() / config.getNrow() });
             args.push_back(vals);
             argNames.push_back("support");
         }
@@ -294,7 +289,7 @@ private:
                                             vector<string>& argNames,
                                             const Pattern& pattern)
     {
-        const vector<const BaseChain*>& foci = pattern.getFoci();
+        const vector<const Predicate*>& foci = pattern.getFoci();
 
         if (config.hasFociSupportsArgument()) {
             NumericVector vals(foci.size());
@@ -302,7 +297,7 @@ private:
 
             size_t j = 0;
             for (size_t i = 0; i < foci.size(); ++i) {
-                const BaseChain& focus = *foci[i];
+                const Predicate& focus = *foci[i];
                 size_t predicate = focus.getPredicate();
                 vals[j] = focus.getSum() / config.getNrow();
                 valNames[j] = config.getChainName(predicate);
@@ -332,8 +327,7 @@ private:
                                       vector<string>& argNames,
                                       const Pattern& pattern)
     {
-        const BaseChain& chain = *pattern.getChain();
-        const vector<const BaseChain*>& foci = pattern.getFoci();
+        const vector<const Predicate*>& foci = pattern.getFoci();
         const vector<double>& predicateSums = pattern.getPredicateSums();
 
         if (config.hasAnyContiArgument()) {
@@ -358,7 +352,7 @@ private:
 
             size_t j = 0;
             for (size_t i = 0; i < foci.size(); ++i) {
-                const BaseChain* focus = foci[i];
+                const Predicate* focus = foci[i];
                 size_t predicate = focus->getPredicate();
                 valNames[j] = config.getChainName(predicate);
 
@@ -366,13 +360,13 @@ private:
                     (*pp)[j] = focus->getSum();
                 }
                 if (pn) {
-                    (*pn)[j] = chain.getSum() - focus->getSum();
+                    (*pn)[j] = pattern.getConditionSum() - focus->getSum();
                 }
                 if (np) {
                     (*np)[j] = predicateSums[predicate] - focus->getSum();
                 }
                 if (nn) {
-                    (*nn)[j] = config.getNrow() - chain.getSum() - predicateSums[predicate] + focus->getSum();
+                    (*nn)[j] = config.getNrow() - pattern.getConditionSum() - predicateSums[predicate] + focus->getSum();
                 }
 
                 j++;

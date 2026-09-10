@@ -89,23 +89,21 @@ public:
      */
     void store(const Pattern& pattern)
     {
-        const Clause& prefix = pattern.getPrefix();
-        const BaseChain& chain = *pattern.getChain();
-        const vector<const BaseChain*>& foci = pattern.getFoci();
+        const vector<const Predicate*>& foci = pattern.getFoci();
         const vector<double>& predicateSums = pattern.getPredicateSums();
 
-        String ante = formatCondition(prefix, chain.getPredicatePtr());
+        String ante = formatCondition(pattern.getPrefix(), pattern.getPredicatePtr());
         for (size_t i = 0; i < foci.size(); ++i) {
-            const BaseChain& focus = *foci[i];
+            const Predicate& focus = *foci[i];
             size_t predicate = focus.getPredicate();
             string chainName = config.getChainName(predicate);
 
             Rule rule;
             rule.antecedent = ante;
             rule.consequent = "{" + chainName + "}";
-            rule.antecedentLength = prefix.size() + chain.hasPredicate();
+            rule.antecedentLength = pattern.getConditionLength();
             rule.focusSum = focus.getSum();
-            rule.chainSum = chain.getSum();
+            rule.chainSum = pattern.getConditionSum();
             rule.predicateSum = predicateSums[predicate];
 
             rules.push_back(rule);

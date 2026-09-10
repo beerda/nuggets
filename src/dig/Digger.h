@@ -714,7 +714,7 @@ private:
                                const ChainCollection<CHAIN>& collection,
                                const Selector& selector)
     {
-        vector<const BaseChain*> foci;
+        vector<const Predicate*> foci;
         foci.reserve(selector.getSelectedCount());
         for (size_t i = 0; i < collection.focusCount(); ++i) {
             if (selector.isSelected(i)) {
