@@ -3,6 +3,33 @@
 #include "dig/SparseBitChain.h"
 
 context("dig/SparseBitChain.h") {
+    test_that("empty chain") {
+        SparseBitChain b(5.0);
+
+        expect_true(b.hasPredicate() == false);
+        expect_true(b.empty());
+        expect_true(b.size() == 0);
+        expect_true(b.getSum() == 5.0);
+        expect_true(b.isCondition());
+        expect_true(!b.isFocus());
+
+        LogicalVector lv = b.getValuesAsLogicalVector();
+        expect_true(lv.size() == 5);
+        expect_true(lv[0] == true);
+        expect_true(lv[1] == true);
+        expect_true(lv[2] == true);
+        expect_true(lv[3] == true);
+        expect_true(lv[4] == true);
+
+        NumericVector nv = b.getValuesAsNumericVector();
+        expect_true(nv.size() == 5);
+        expect_true(nv[0] == 1.0);
+        expect_true(nv[1] == 1.0);
+        expect_true(nv[2] == 1.0);
+        expect_true(nv[3] == 1.0);
+        expect_true(nv[4] == 1.0);
+    }
+
     test_that("initialize from LogicalVector") {
         LogicalVector v(5);
         v[0] = true;
@@ -26,6 +53,22 @@ context("dig/SparseBitChain.h") {
         expect_true(b.at(3));
         expect_true(!b.at(4));
         expect_true(b.toString() == "[n=5]10110");
+
+        LogicalVector lv = b.getValuesAsLogicalVector();
+        expect_true(lv.size() == 5);
+        expect_true(lv[0] == true);
+        expect_true(lv[1] == false);
+        expect_true(lv[2] == true);
+        expect_true(lv[3] == true);
+        expect_true(lv[4] == false);
+
+        NumericVector nv = b.getValuesAsNumericVector();
+        expect_true(nv.size() == 5);
+        expect_true(nv[0] == 1.0);
+        expect_true(nv[1] == 0.0);
+        expect_true(nv[2] == 1.0);
+        expect_true(nv[3] == 1.0);
+        expect_true(nv[4] == 0.0);
     }
 
     test_that("initialize by conjunction") {

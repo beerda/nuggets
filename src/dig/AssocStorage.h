@@ -24,6 +24,7 @@
 #include "Clause.h"
 #include "Config.h"
 #include "ChainCollection.h"
+#include "Pattern.h"
 #include "Selector.h"
 
 
@@ -33,7 +34,6 @@
  * association rule is created and stored in the rules vector. Association
  * rule is represented by an antecedent, consequent, and various statistics.
  */
-template <typename CHAIN>
 class AssocStorage : public BaseStorage {
     /**
      * The initial capacity of the rules vector. It is used to reserve memory for
@@ -83,22 +83,20 @@ public:
      * association rules and stores them in the rules vector. Condition chain
      * represents the antecedent of the rule, and each focus chain represents a
      * consequent.
+     *
+     * @param pattern The Pattern object representing the discovered chain and its
+     *     associated data.
      */
-    void store(const Clause& prefix,
-               const CHAIN& chain,
-               const ChainCollection<CHAIN>& collection,
-               const Selector& selector,
-               const vector<double>& predicateSums)
+    void store(const Pattern& pattern)
     {
-        if (rules.size() >= config.getMaxResults())
-            return;
+        const Clause& prefix = pattern.getPrefix();
+        const BaseChain& chain = *pattern.getChain();
+        const vector<const BaseChain*>& foci = pattern.getFoci();
+        const vector<double>& predicateSums = pattern.getPredicateSums();
 
         String ante = formatCondition(prefix, chain.getPredicatePtr());
-        for (size_t i = 0; i < collection.focusCount(); ++i) {
-            if (!selector.isSelected(i))
-                continue;
-
-            const CHAIN& focus = collection[i + collection.firstFocusIndex()];
+        for (size_t i = 0; i < foci.size(); ++i) {
+            const BaseChain& focus = *foci[i];
             size_t predicate = focus.getPredicate();
             string chainName = config.getChainName(predicate);
 

@@ -114,7 +114,7 @@ public:
      * @param sum The sum of membership degrees of the chain.
      */
     FubitChain(float sum)
-        : BaseChain(sum)
+        : BaseChain(sum), data(), n(0)
     { }
 
     /**
@@ -323,6 +323,44 @@ public:
      */
     inline bool empty() const
     { return n <= 0; }
+
+    /**
+     * Returns the values of the BitChain as a LogicalVector.
+     *
+     * @return A LogicalVector containing the values of the BitChain.
+     */
+    LogicalVector getValuesAsLogicalVector() const
+    {
+        if (hasPredicate()) {
+            LogicalVector vec(n);
+            for (size_t i = 0; i < n; ++i) {
+                vec[i] = (*this)[i] > 0.0f;
+            }
+            return vec;
+        }
+        else {
+            return LogicalVector(sum, true);
+        }
+    }
+
+    /**
+     * Returns the values of the BitChain as a NumericVector.
+     *
+     * @return A NumericVector containing the values of the BitChain.
+     */
+    NumericVector getValuesAsNumericVector() const
+    {
+        if (hasPredicate()) {
+            NumericVector vec(n);
+            for (size_t i = 0; i < n; ++i) {
+                vec[i] = static_cast<double>((*this)[i]);
+            }
+            return vec;
+        }
+        else {
+            return NumericVector(static_cast<size_t>(sum), 1.0);
+        }
+    }
 
     /**
      * Returns a string representation of the chain.

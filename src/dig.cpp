@@ -142,7 +142,7 @@ struct DigRunner {
     template <typename CHAIN>
     List run(const DispatchArgs& args) const
     {
-        using STORAGE = CallbackCaller<CHAIN>;
+        using STORAGE = CallbackCaller;
 
         START_TIMER(t, "DigRunner - initialization");
         STORAGE storage(args.config, callback);
@@ -183,7 +183,7 @@ struct DigAssocRunner {
     template <typename CHAIN>
     List run(const DispatchArgs& args) const
     {
-        using STORAGE = AssocStorage<CHAIN>;
+        using STORAGE = AssocStorage;
 
         START_TIMER(t, "DigAssocRunner - initialization");
         STORAGE storage(args.config);
@@ -224,7 +224,7 @@ struct DigItemsetRunner {
     template <typename CHAIN>
     List run(const DispatchArgs& args) const
     {
-        using STORAGE = ItemsetStorage<CHAIN>;
+        using STORAGE = ItemsetStorage;
 
         START_TIMER(t, "DigItemsetRunner - initialization");
         STORAGE storage(args.config);

@@ -196,6 +196,44 @@ public:
     { return n <= 0; }
 
     /**
+     * Returns the values of the BitChain as a LogicalVector.
+     *
+     * @return A LogicalVector containing the values of the BitChain.
+     */
+    LogicalVector getValuesAsLogicalVector() const
+    {
+        if (hasPredicate()) {
+            LogicalVector vec(n, false);
+            for (size_t i : data) {
+                vec[i] = true;
+            }
+            return vec;
+        }
+        else {
+            return LogicalVector(sum, true);
+        }
+    }
+
+    /**
+     * Returns the values of the BitChain as a NumericVector.
+     *
+     * @return A NumericVector containing the values of the BitChain.
+     */
+    NumericVector getValuesAsNumericVector() const
+    {
+        if (hasPredicate()) {
+            NumericVector vec(n, 0.0);
+            for (size_t i : data) {
+                vec[i] = 1.0;
+            }
+            return vec;
+        }
+        else {
+            return NumericVector(static_cast<size_t>(sum), 1.0);
+        }
+    }
+
+    /**
      * Returns a string representation of the chain.
      *
      * @return The string representation of the chain.

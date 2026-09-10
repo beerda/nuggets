@@ -39,7 +39,7 @@ public:
      * @param sum The sum of TRUEs in the chain.
      */
     BitChain(double sum)
-        : BaseChain(sum)
+        : BaseChain(sum), data()
     { }
 
     /**
@@ -164,6 +164,44 @@ public:
      */
     inline bool empty() const
     { return data.empty(); }
+
+    /**
+     * Returns the values of the BitChain as a LogicalVector.
+     *
+     * @return A LogicalVector containing the values of the BitChain.
+     */
+    LogicalVector getValuesAsLogicalVector() const
+    {
+        if (hasPredicate()) {
+            LogicalVector vec(data.size());
+            for (size_t i = 0; i < data.size(); ++i) {
+                vec[i] = data[i];
+            }
+            return vec;
+        }
+        else {
+            return LogicalVector(sum, true);
+        }
+    }
+
+    /**
+     * Returns the values of the BitChain as a NumericVector.
+     *
+     * @return A NumericVector containing the values of the BitChain.
+     */
+    NumericVector getValuesAsNumericVector() const
+    {
+        if (hasPredicate()) {
+            NumericVector vec(data.size());
+            for (size_t i = 0; i < data.size(); ++i) {
+                vec[i] = data[i] ? 1.0 : 0.0;
+            }
+            return vec;
+        }
+        else {
+            return NumericVector(static_cast<size_t>(sum), 1.0);
+        }
+    }
 
     /**
      * Returns a string representation of the BitChain for debugging purposes.

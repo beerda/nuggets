@@ -24,6 +24,7 @@
 #include "Clause.h"
 #include "Config.h"
 #include "ChainCollection.h"
+#include "Pattern.h"
 #include "Selector.h"
 
 
@@ -31,7 +32,6 @@
  * A class applicable for STORAGE template parameter of Digger. It stores
  * discovered itemsets with basic statistics.
  */
-template <typename CHAIN>
 class ItemsetStorage : public BaseStorage {
     /**
      * The initial capacity of the itemsets vector.
@@ -75,24 +75,13 @@ public:
     /**
      * Stores a discovered itemset represented by the current prefix and chain.
      *
-     * @param prefix Prefix of predicate IDs from the search recursion.
-     * @param chain Current chain to be stored.
-     * @param collection Unused for itemset storage.
-     * @param selector Unused for itemset storage.
-     * @param predicateSums Unused for itemset storage.
+     * @param pattern The Pattern object representing the discovered chain and its
+     *     associated data.
      */
-    void store(const Clause& prefix,
-               const CHAIN& chain,
-               const ChainCollection<CHAIN>& collection,
-               const Selector& selector,
-               const vector<double>& predicateSums)
+    void store(const Pattern& pattern)
     {
-        (void) collection;
-        (void) selector;
-        (void) predicateSums;
-
-        if (itemsets.size() >= config.getMaxResults())
-            return;
+        const Clause& prefix = pattern.getPrefix();
+        const BaseChain& chain = *pattern.getChain();
 
         Itemset itemset;
         itemset.items = formatCondition(prefix, chain.getPredicatePtr());

@@ -29,6 +29,7 @@
 #include "ChainCollection.h"
 #include "CombinatorialProgress.h"
 #include "DeductionEngine.h"
+#include "Pattern.h"
 #include "SearchStats.h"
 #include "Selector.h"
 
@@ -270,7 +271,7 @@ private:
                 // return singleton selector to avoid allocations
                 const Selector& selector = initializeSelectorOfStorable(parentChain, collection);
                 if (isStorable(selector)) {
-                    storage.store(prefix, parentChain, collection, selector, predicateSums);
+                    storeToStorage(parentChain, collection, selector);
                 }
             }
             progress->increment(1);
@@ -698,5 +699,40 @@ private:
         prefix.pop_back();
 
         return cache.get(cacheQuery);
+    }
+
+    /**
+     * Stores the given chain and its selected foci in the storage. The method
+     * creates a Pattern object that represents the chain and its selected foci,
+     * and then stores it in the storage.
+     *
+     * @param parentChain The parent chain to be stored.
+     * @param collection The collection of chains containing the foci to be stored.
+     * @param selector The selector indicating which foci are selected for storage.
+     */
+    inline void storeToStorage(const CHAIN& parentChain,
+                               const ChainCollection<CHAIN>& collection,
+                               const Selector& selector)
+    {
+        vector<const BaseChain*> foci;
+        foci.reserve(selector.getSelectedCount());
+        for (size_t i = 0; i < collection.focusCount(); ++i) {
+            if (selector.isSelected(i)) {
+                const CHAIN& focus = collection[i + collection.firstFocusIndex()];
+                foci.push_back(&focus);
+            }
+        }
+
+        auto indicesFunc = [&parentChain]() -> LogicalVector {
+            return parentChain.getValuesAsLogicalVector();
+        };
+
+        auto weightsFunc = [&parentChain]() -> NumericVector {
+            return parentChain.getValuesAsNumericVector();
+        };
+
+        Pattern pattern(prefix, &parentChain, foci, predicateSums, indicesFunc, weightsFunc);
+
+        storage.store(pattern);
     }
 };

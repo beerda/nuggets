@@ -8,6 +8,33 @@
 
 
 context("dig/FubitChain.h") {
+    test_that("empty chain") {
+        FubitChain<TNorm::GOGUEN, 4> b(5.0);
+
+        expect_true(b.hasPredicate() == false);
+        expect_true(b.empty());
+        expect_true(b.size() == 0);
+        expect_true(b.getSum() == 5.0);
+        expect_true(b.isCondition());
+        expect_true(!b.isFocus());
+
+        LogicalVector lv = b.getValuesAsLogicalVector();
+        expect_true(lv.size() == 5);
+        expect_true(lv[0] == true);
+        expect_true(lv[1] == true);
+        expect_true(lv[2] == true);
+        expect_true(lv[3] == true);
+        expect_true(lv[4] == true);
+
+        NumericVector nv = b.getValuesAsNumericVector();
+        expect_true(nv.size() == 5);
+        expect_true(nv[0] == 1.0);
+        expect_true(nv[1] == 1.0);
+        expect_true(nv[2] == 1.0);
+        expect_true(nv[3] == 1.0);
+        expect_true(nv[4] == 1.0);
+    }
+
     test_that("initialize GOEDEL from LogicalVector") {
         LogicalVector v(5);
         v[0] = true;
@@ -30,6 +57,22 @@ context("dig/FubitChain.h") {
         expect_true(EQUAL(b.at(2), 1.0));
         expect_true(EQUAL(b.at(3), 1.0));
         expect_true(EQUAL(b.at(4), 0.0));
+
+        LogicalVector lv = b.getValuesAsLogicalVector();
+        expect_true(lv.size() == 5);
+        expect_true(lv[0] == true);
+        expect_true(lv[1] == false);
+        expect_true(lv[2] == true);
+        expect_true(lv[3] == true);
+        expect_true(lv[4] == false);
+
+        NumericVector nv = b.getValuesAsNumericVector();
+        expect_true(nv.size() == 5);
+        expect_true(nv[0] == 1.0);
+        expect_true(nv[1] == 0.0);
+        expect_true(nv[2] == 1.0);
+        expect_true(nv[3] == 1.0);
+        expect_true(nv[4] == 0.0);
     }
 
     test_that("initialize GOEDEL from NumericVector") {
@@ -54,6 +97,22 @@ context("dig/FubitChain.h") {
         expect_true(EQUAL100(b.at(2), 1.0));
         expect_true(EQUAL100(b.at(3), 0.0));
         expect_true(EQUAL100(b.at(4), 0.2));
+
+        LogicalVector lv = b.getValuesAsLogicalVector();
+        expect_true(lv.size() == 5);
+        expect_true(lv[0] == true);
+        expect_true(lv[1] == true);
+        expect_true(lv[2] == true);
+        expect_true(lv[3] == false);
+        expect_true(lv[4] == true);
+
+        NumericVector nv = b.getValuesAsNumericVector();
+        expect_true(nv.size() == 5);
+        expect_true(EQUAL100(nv[0], 0.8));
+        expect_true(EQUAL100(nv[1], 0.3));
+        expect_true(EQUAL100(nv[2], 1.0));
+        expect_true(EQUAL100(nv[3], 0.0));
+        expect_true(EQUAL100(nv[4], 0.2));
     }
 
     test_that("initialize LUKASIEWICZ from LogicalVector") {

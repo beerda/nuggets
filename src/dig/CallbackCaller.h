@@ -23,6 +23,7 @@
 #include "Clause.h"
 #include "Config.h"
 #include "ChainCollection.h"
+#include "Pattern.h"
 #include "Selector.h"
 
 
@@ -35,7 +36,6 @@
  * those arguments. The results of the callback function calls are stored in a
  * vector and can be retrieved as an R List.
  */
-template <typename CHAIN>
 class CallbackCaller {
     /**
      * The initial capacity of the result vector. It is used to reserve memory for
@@ -79,21 +79,10 @@ public:
      * The results of the callback function calls are stored in a vector of
      * results.
      *
-     * @param chain The condition chain representing the antecedent of the rule.
-     * @param collection The collection of focus chains representing the consequents
-     *     of the rules.
-     * @param selector The Selector object used to filter the focus chains based on
-     *     user-defined criteria.
-     * @param predicateSums A vector containing the sums of TRUEs or membership
-     *     degrees for each predicate in the data. The index of the vector corresponds
-     *     to the predicate ID, and the value at that index represents the sum of
-     *     TRUEs or membership degrees for that predicate.
+     * @param pattern The Pattern object representing the discovered chain and its
+     *     associated data.
      */
-    void store(const Clause& prefix,
-               const CHAIN& chain,
-               const ChainCollection<CHAIN>& collection,
-               const Selector& selector,
-               const vector<double>& predicateSums)
+    void store(const Pattern& pattern)
     {
         vector<RObject> args;
         args.reserve(INITIAL_ARGUMENTS_CAPACITY);
@@ -101,13 +90,13 @@ public:
         vector<string> argNames;
         argNames.reserve(INITIAL_ARGUMENTS_CAPACITY);
 
-        processConditionArgument(args, argNames, prefix, chain);
-        processSumArgument(args, argNames, chain);
-        processSupportArgument(args, argNames, chain);
-        processIndicesArgument(args, argNames, prefix, chain);
-        processWeightsArgument(args, argNames, prefix, chain);
-        processFociSupportsArgument(args, argNames, chain, collection, selector);
-        processContiArguments(args, argNames, chain, collection, selector, predicateSums);
+        processConditionArgument(args, argNames, pattern);
+        processSumArgument(args, argNames, pattern);
+        processSupportArgument(args, argNames, pattern);
+        processIndicesArgument(args, argNames, pattern);
+        processWeightsArgument(args, argNames, pattern);
+        processFociSupportsArgument(args, argNames, pattern);
+        processContiArguments(args, argNames, pattern);
 
         List argList = wrap(args);
         argList.names() = wrap(argNames);
@@ -164,13 +153,16 @@ private:
      *
      * @param args A reference to the vector of arguments for the callback function.
      * @param argNames A reference to the vector of argument names for the callback function.
-     * @param chain The condition chain representing the antecedent of the rule.
+     * @param pattern The Pattern object representing the discovered chain and its
+     *     associated data.
      */
     inline void processConditionArgument(vector<RObject>& args,
                                          vector<string>& argNames,
-                                         const Clause& prefix,
-                                         const CHAIN& chain)
+                                         const Pattern& pattern)
     {
+        const Clause& prefix = pattern.getPrefix();
+        const BaseChain& chain = *pattern.getChain();
+
         if (config.hasConditionArgument()) {
             IntegerVector vals(prefix.size() + chain.hasPredicate());
             CharacterVector valNames(prefix.size() + chain.hasPredicate());
@@ -201,12 +193,15 @@ private:
      *
      * @param args A reference to the vector of arguments for the callback function.
      * @param argNames A reference to the vector of argument names for the callback function.
-     * @param chain The condition chain representing the antecedent of the rule.
+     * @param pattern The Pattern object representing the discovered chain and its
+     *     associated data.
      */
     inline void processSumArgument(vector<RObject>& args,
                                    vector<string>& argNames,
-                                   const CHAIN& chain)
+                                   const Pattern& pattern)
     {
+        const BaseChain& chain = *pattern.getChain();
+
         if (config.hasSumArgument()) {
             NumericVector vals({ chain.getSum() });
             args.push_back(vals);
@@ -223,12 +218,15 @@ private:
      *
      * @param args A reference to the vector of arguments for the callback function.
      * @param argNames A reference to the vector of argument names for the callback function.
-     * @param chain The condition chain representing the antecedent of the rule.
+     * @param pattern The Pattern object representing the discovered chain and its
+     *     associated data.
      */
     inline void processSupportArgument(vector<RObject>& args,
                                        vector<string>& argNames,
-                                       const CHAIN& chain)
+                                       const Pattern& pattern)
     {
+        const BaseChain& chain = *pattern.getChain();
+
         if (config.hasSupportArgument()) {
             NumericVector vals({ chain.getSum() / config.getNrow() });
             args.push_back(vals);
@@ -244,28 +242,16 @@ private:
      *
      * @param args A reference to the vector of arguments for the callback function.
      * @param argNames A reference to the vector of argument names for the callback function.
-     * @param chain The condition chain representing the antecedent of the rule.
+     * @param pattern The Pattern object representing the discovered chain and its
+     *     associated data.
      */
     inline void processIndicesArgument(vector<RObject>& args,
                                        vector<string>& argNames,
-                                       const Clause& prefix,
-                                       const CHAIN& chain)
+                                       const Pattern& pattern)
     {
         if (config.hasIndicesArgument()) {
-            if (prefix.empty() && !chain.hasPredicate()) {
-                LogicalVector vals(config.getNrow(), true);
-                args.push_back(vals);
-                argNames.push_back("indices");
-            }
-            else {
-                LogicalVector vals(config.getNrow());
-                for (size_t i = 0; i < chain.size(); ++i) {
-                    // TODO: avoid chain[i]! SparseBitChain invokes binary search, which is costly here
-                    vals[i] = chain[i] > 0;
-                }
-                args.push_back(vals);
-                argNames.push_back("indices");
-            }
+            args.push_back(pattern.getIndices());
+            argNames.push_back("indices");
         }
     }
 
@@ -278,28 +264,16 @@ private:
      *
      * @param args A reference to the vector of arguments for the callback function.
      * @param argNames A reference to the vector of argument names for the callback function.
-     * @param chain The condition chain representing the antecedent of the rule.
+     * @param pattern The Pattern object representing the discovered chain and its
+     *     associated data.
      */
     inline void processWeightsArgument(vector<RObject>& args,
                                        vector<string>& argNames,
-                                       const Clause& prefix,
-                                       const CHAIN& chain)
+                                       const Pattern& pattern)
     {
         if (config.hasWeightsArgument()) {
-            if (prefix.empty() && !chain.hasPredicate()) {
-                NumericVector vals(config.getNrow(), 1.0);
-                args.push_back(vals);
-                argNames.push_back("weights");
-            }
-            else {
-                NumericVector vals(config.getNrow());
-                for (size_t i = 0; i < chain.size(); ++i) {
-                    // TODO: avoid chain[i]! SparseBitChain invokes binary search, which is costly here
-                    vals[i] = static_cast<double>(chain[i]);
-                }
-                args.push_back(vals);
-                argNames.push_back("weights");
-            }
+            args.push_back(pattern.getWeights());
+            argNames.push_back("weights");
         }
     }
 
@@ -313,28 +287,22 @@ private:
      *
      * @param args A reference to the vector of arguments for the callback function.
      * @param argNames A reference to the vector of argument names for the callback function.
-     * @param chain The condition chain representing the antecedent of the rule.
-     * @param collection The collection of focus chains representing the consequents
-     *     of the rules.
-     * @param selector The Selector object used to filter the focus chains based on
-     *     user-defined criteria.
+     * @param pattern The Pattern object representing the discovered chain and its
+     *     associated data.
      */
     inline void processFociSupportsArgument(vector<RObject>& args,
                                             vector<string>& argNames,
-                                            const CHAIN& chain,
-                                            const ChainCollection<CHAIN>& collection,
-                                            const Selector& selector)
+                                            const Pattern& pattern)
     {
+        const vector<const BaseChain*>& foci = pattern.getFoci();
+
         if (config.hasFociSupportsArgument()) {
-            NumericVector vals(selector.getSelectedCount());
-            CharacterVector valNames(selector.getSelectedCount());
+            NumericVector vals(foci.size());
+            CharacterVector valNames(foci.size());
 
             size_t j = 0;
-            for (size_t i = 0; i < collection.focusCount(); ++i) {
-                if (!selector.isSelected(i))
-                    continue;
-
-                const CHAIN& focus = collection[i + collection.firstFocusIndex()];
+            for (size_t i = 0; i < foci.size(); ++i) {
+                const BaseChain& focus = *foci[i];
                 size_t predicate = focus.getPredicate();
                 vals[j] = focus.getSum() / config.getNrow();
                 valNames[j] = config.getChainName(predicate);
@@ -357,63 +325,54 @@ private:
      *
      * @param args A reference to the vector of arguments for the callback function.
      * @param argNames A reference to the vector of argument names for the callback function.
-     * @param chain The condition chain representing the antecedent of the rule.
-     * @param collection The collection of focus chains representing the consequents
-     *     of the rules.
-     * @param selector The Selector object used to filter the focus chains based on
-     *     user-defined criteria.
-     * @param predicateSums A vector containing the sums of TRUEs or membership
-     *     degrees for each predicate in the data. The index of the vector corresponds
-     *     to the predicate ID, and the value at that index represents the sum of
-     *     TRUEs or membership degrees for that predicate.
+     * @param pattern The Pattern object representing the discovered chain and its
+     *     associated data.
      */
     inline void processContiArguments(vector<RObject>& args,
                                       vector<string>& argNames,
-                                      const CHAIN& chain,
-                                      const ChainCollection<CHAIN>& collection,
-                                      const Selector& selector,
-                                      const vector<double>& predicateSums)
+                                      const Pattern& pattern)
     {
+        const BaseChain& chain = *pattern.getChain();
+        const vector<const BaseChain*>& foci = pattern.getFoci();
+        const vector<double>& predicateSums = pattern.getPredicateSums();
+
         if (config.hasAnyContiArgument()) {
             NumericVector* pp = nullptr;
             NumericVector* np = nullptr;
             NumericVector* pn = nullptr;
             NumericVector* nn = nullptr;
-            CharacterVector valNames(selector.getSelectedCount());
+            CharacterVector valNames(foci.size());
 
             if (config.hasContiPpArgument()) {
-                pp = new NumericVector(selector.getSelectedCount());
+                pp = new NumericVector(foci.size());
             }
             if (config.hasContiNpArgument()) {
-                np = new NumericVector(selector.getSelectedCount());
+                np = new NumericVector(foci.size());
             }
             if (config.hasContiPnArgument()) {
-                pn = new NumericVector(selector.getSelectedCount());
+                pn = new NumericVector(foci.size());
             }
             if (config.hasContiNnArgument()) {
-                nn = new NumericVector(selector.getSelectedCount());
+                nn = new NumericVector(foci.size());
             }
 
             size_t j = 0;
-            for (size_t i = 0; i < collection.focusCount(); ++i) {
-                if (!selector.isSelected(i))
-                    continue;
-
-                const CHAIN& focus = collection[i + collection.firstFocusIndex()];
-                size_t predicate = focus.getPredicate();
+            for (size_t i = 0; i < foci.size(); ++i) {
+                const BaseChain* focus = foci[i];
+                size_t predicate = focus->getPredicate();
                 valNames[j] = config.getChainName(predicate);
 
                 if (pp) {
-                    (*pp)[j] = focus.getSum();
+                    (*pp)[j] = focus->getSum();
                 }
                 if (pn) {
-                    (*pn)[j] = chain.getSum() - focus.getSum();
+                    (*pn)[j] = chain.getSum() - focus->getSum();
                 }
                 if (np) {
-                    (*np)[j] = predicateSums[predicate] - focus.getSum();
+                    (*np)[j] = predicateSums[predicate] - focus->getSum();
                 }
                 if (nn) {
-                    (*nn)[j] = config.getNrow() - chain.getSum() - predicateSums[predicate] + focus.getSum();
+                    (*nn)[j] = config.getNrow() - chain.getSum() - predicateSums[predicate] + focus->getSum();
                 }
 
                 j++;
