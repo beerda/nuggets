@@ -260,6 +260,7 @@ private:
             else {
                 LogicalVector vals(config.getNrow());
                 for (size_t i = 0; i < chain.size(); ++i) {
+                    // TODO: avoid chain[i]! SparseBitChain invokes binary search, which is costly here
                     vals[i] = chain[i] > 0;
                 }
                 args.push_back(vals);
@@ -293,6 +294,7 @@ private:
             else {
                 NumericVector vals(config.getNrow());
                 for (size_t i = 0; i < chain.size(); ++i) {
+                    // TODO: avoid chain[i]! SparseBitChain invokes binary search, which is costly here
                     vals[i] = static_cast<double>(chain[i]);
                 }
                 args.push_back(vals);
