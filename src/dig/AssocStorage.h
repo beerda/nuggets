@@ -89,8 +89,6 @@ public:
      */
     void store(const Pattern& pattern)
     {
-        const vector<double>& predicateSums = pattern.getPredicateSums();
-
         String ante = formatCondition(pattern.getPrefix(), pattern.getPredicate());
         for (size_t i = 0; i < pattern.getFociCount(); ++i) {
             const Predicate& focus = pattern.getFocus(i);
@@ -103,7 +101,7 @@ public:
             rule.antecedentLength = pattern.getConditionLength();
             rule.focusSum = focus.getSum();
             rule.chainSum = pattern.getConditionSum();
-            rule.predicateSum = predicateSums[predicate];
+            rule.predicateSum = pattern.getPredicateSum(predicate);
 
             rules.push_back(rule);
         }

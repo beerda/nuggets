@@ -61,8 +61,8 @@ public:
     inline const Predicate& getFocus(size_t index) const
     { return *foci[index]; }
 
-    inline const vector<double>& getPredicateSums() const
-    { return predicateSums; }
+    inline double getPredicateSum(size_t index) const
+    { return predicateSums[index]; }
 
     inline LogicalVector getIndices() const
     { return indicesFunc(); }

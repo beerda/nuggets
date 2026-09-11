@@ -325,8 +325,6 @@ private:
                                       vector<string>& argNames,
                                       const Pattern& pattern)
     {
-        const vector<double>& predicateSums = pattern.getPredicateSums();
-
         if (config.hasAnyContiArgument()) {
             NumericVector* pp = nullptr;
             NumericVector* np = nullptr;
@@ -360,10 +358,10 @@ private:
                     (*pn)[j] = pattern.getConditionSum() - focus.getSum();
                 }
                 if (np) {
-                    (*np)[j] = predicateSums[predicate] - focus.getSum();
+                    (*np)[j] = pattern.getPredicateSum(predicate) - focus.getSum();
                 }
                 if (nn) {
-                    (*nn)[j] = config.getNrow() - pattern.getConditionSum() - predicateSums[predicate] + focus.getSum();
+                    (*nn)[j] = config.getNrow() - pattern.getConditionSum() - pattern.getPredicateSum(predicate) + focus.getSum();
                 }
 
                 j++;
