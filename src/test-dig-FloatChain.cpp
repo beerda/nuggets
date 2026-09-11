@@ -239,4 +239,30 @@ context("dig/FloatChain.h") {
         expect_true(EQUAL(c.at(4), 0.0));
         expect_true(EQUAL(c.getSum(), 0.7 + 0.1 + 0.5));
     }
+
+    test_that("clone copies const chain") {
+        NumericVector v(5);
+        v[0] = 0.8;
+        v[1] = 0.3;
+        v[2] = 1.0;
+        v[3] = 0.0;
+        v[4] = 0.2;
+
+        FloatChain<TNorm::GOGUEN> original(3, PredicateType::BOTH, v);
+        const FloatChain<TNorm::GOGUEN>& constOriginal = original;
+        FloatChain<TNorm::GOGUEN> copy = constOriginal.clone();
+
+        original.setSum(0.5);
+        original.setPredicateType(PredicateType::FOCUS);
+
+        expect_true(copy.getPredicate() == 3);
+        expect_true(EQUAL(copy.getSum(), 2.3));
+        expect_true(copy.isCondition());
+        expect_true(copy.isFocus());
+        expect_true(EQUAL(copy.at(0), 0.8));
+        expect_true(EQUAL(copy.at(1), 0.3));
+        expect_true(EQUAL(copy.at(2), 1.0));
+        expect_true(EQUAL(copy.at(3), 0.0));
+        expect_true(EQUAL(copy.at(4), 0.2));
+    }
 }

@@ -156,11 +156,7 @@ public:
         )
     }
 
-    // Disable copy
-    BaseChain(const BaseChain& other) = delete;
-    BaseChain& operator=(const BaseChain& other) = delete;
-
-    // Allow move
+    // Allow move, copy constructor is protected
     BaseChain(BaseChain&& other) = default;
     BaseChain& operator=(BaseChain&& other) = default;
 
@@ -261,4 +257,8 @@ protected:
      * computed from data chains.
      */
     bool cached;
+
+    // Protected copy constructor, derived classes have clone() function
+    BaseChain(const BaseChain& other) = default;
+    BaseChain& operator=(const BaseChain& other) = default;
 };

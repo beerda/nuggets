@@ -554,3 +554,22 @@ test_that("bug with cache", {
 
     expect_equal(as.list(res), as.list(ex05))
 })
+
+test_that("bug #56 - non-idenpotent t-norms", {
+    d <- data.frame(a = c(0.8, 0.6, 0.4, 0.2),
+                    b = c(0.9, 0.8, 0.7, 0.6),
+                    c = c(1,   1,   0,   1) )
+
+    rules <- nuggets::dig_associations(d,
+                                       antecedent = c(a, b),
+                                       consequent = c(c),
+                                       min_length = 2L,
+                                       max_length = 2L,
+                                       min_support = 0,
+                                       min_confidence = 0,
+                                       t_norm = "goguen")
+
+    expect_equal(rules$support[1],
+                 mean(d$a * d$b * d$c),
+                 tolerance = 1e-2)
+})

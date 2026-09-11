@@ -121,9 +121,41 @@ public:
         }
     }
 
-    // Disable copy
-    Bitset(const Bitset& other) = delete;
-    Bitset& operator=(const Bitset& other) = delete;
+    // Copy constructor
+    Bitset(const Bitset& other)
+        : blocks(nullptr),
+          num_bits(other.num_bits),
+          num_blocks(other.num_blocks)
+    {
+        if (num_blocks > 0) {
+            blocks = static_cast<uint64_t*>(
+                xsimd::aligned_malloc(num_blocks * sizeof(uint64_t),
+                                      xsimd::default_arch::alignment()));
+            memcpy(blocks, other.blocks, num_blocks * sizeof(uint64_t));
+        }
+    }
+
+    // Copy assignment operator
+    Bitset& operator=(const Bitset& other)
+    {
+        if (this != &other) {
+            if (blocks) {
+                xsimd::aligned_free(blocks);
+            }
+            num_bits = other.num_bits;
+            num_blocks = other.num_blocks;
+            if (num_blocks > 0) {
+                blocks = static_cast<uint64_t*>(
+                    xsimd::aligned_malloc(num_blocks * sizeof(uint64_t),
+                                          xsimd::default_arch::alignment()));
+                memcpy(blocks, other.blocks, num_blocks * sizeof(uint64_t));
+            } else {
+                blocks = nullptr;
+            }
+        }
+
+        return *this;
+    }
 
     // Move constructor
     Bitset(Bitset&& other) noexcept

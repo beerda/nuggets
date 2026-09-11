@@ -171,13 +171,17 @@ public:
           data()
     { }
 
-    // Disable copy
-    SimdChain(const SimdChain& other) = delete;
-    SimdChain& operator=(const SimdChain& other) = delete;
-
-    // Allow move
+    // Allow move, copy constructor is private
     SimdChain(SimdChain&& other) = default;
     SimdChain& operator=(SimdChain&& other) = default;
+
+    /**
+     * Creates a copy of this chain.
+     *
+     * @return A new instance that is a copy of this chain.
+     */
+    SimdChain clone() const
+    { return SimdChain(*this); }
 
     /**
      * Compares this chain with another chain for equality.
@@ -282,11 +286,30 @@ public:
         return res.str();
     }
 
+    /**
+     * Indicates whether the chain is idempotent, meaning that combining it
+     * with itself will yield the same result.
+     *
+     * @return true/false, indicating whether this chain type is idempotent.
+     */
+    static bool isIdempotent()
+    {
+        if constexpr (TNORM == TNorm::GOEDEL) {
+            return true;
+        }
+
+        return false;
+    }
+
 private:
     /**
      * Aligned storage of membership degrees used by AVX operations.
      */
     AlignedVector<float> data;
+
+    // Private copy constructor
+    SimdChain(const SimdChain& other) = default;
+    SimdChain& operator=(const SimdChain& other) = default;
 
     /**
      * Computes and stores the sum of membership degrees using AVX.
