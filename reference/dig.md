@@ -353,7 +353,7 @@ dig(x = d,
 #> 
 #> attr(,"search_stats")
 #> attr(,"search_stats")$runtime_millis
-#> [1] 0.273
+#> [1] 0.315
 #> 
 #> attr(,"search_stats")$computed_conjunctions
 #> [1] 6
