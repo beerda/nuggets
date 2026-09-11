@@ -1,4 +1,5 @@
 COMMITS := \
+	ba98027b7b9b811c40dead5ea6fbe9433f11a50a \
 	4485d4e1b611ed460025b2afcd65e556d8f665e8 \
     90a9d754908030dcff38ef3c37f516841655a03a \
 	b2702ff83bc45d803edd3ad5e88c10f0ac9f8e59 \
@@ -15,6 +16,7 @@ COMMITS := \
 	#303bdc31dfa4cd8cde5cdad618bdb4256ee4f969 \
 	#current
 
+	# ba98027b7b9b811c40dead5ea6fbe9433f11a50a  2026-09-11  v2.2.4 - refactored calling of storages
 	# 4485d4e1b611ed460025b2afcd65e556d8f665e8  2026-08-17  Added Digger::prefix + better Cache
 	# 90a9d754908030dcff38ef3c37f516841655a03a  2026-07-22  v2.2.2
 	# b2702ff83bc45d803edd3ad5e88c10f0ac9f8e59  2026-03-12  v2.2.0
