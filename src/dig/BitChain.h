@@ -103,13 +103,17 @@ public:
           data()
     { }
 
-    // Disable copy
-    BitChain(const BitChain& other) = delete;
-    BitChain& operator=(const BitChain& other) = delete;
-
-    // Allow move
+    // Allow move, copy constructor is private
     BitChain(BitChain&& other) = default;
     BitChain& operator=(BitChain&& other) = default;
+
+    /**
+     * Creates a copy of this chain.
+     *
+     * @return A new instance that is a copy of this chain.
+     */
+    BitChain clone() const
+    { return BitChain(*this); }
 
     /**
      * Checks if two BitChain objects are equal.
@@ -187,9 +191,23 @@ public:
         return res.str();
     }
 
+    /**
+     * Indicates whether the chain is idempotent, meaning that combining it
+     * with itself will yield the same result.
+     *
+     * @return true/false, indicating whether this chain type is idempotent.
+     */
+    static bool isIdempotent()
+    { return true; }
+
 private:
     /**
      * The underlying bitset storing the boolean values of the chain.
      */
     Bitset data;
+
+    // Copy constructor is private
+    BitChain(const BitChain& other) = default;
+    BitChain& operator=(const BitChain& other) = default;
+
 };

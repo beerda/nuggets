@@ -218,13 +218,17 @@ public:
           n(a.n)
     { }
 
-    // Disable copy
-    FubitChain(const FubitChain& other) = delete;
-    FubitChain& operator=(const FubitChain& other) = delete;
-
-    // Allow move
+    // Allow move, copy constructor is private
     FubitChain(FubitChain&& other) = default;
     FubitChain& operator=(FubitChain&& other) = default;
+
+    /**
+     * Creates a copy of this chain.
+     *
+     * @return A new instance that is a copy of this chain.
+     */
+    FubitChain clone() const
+    { return FubitChain(*this); }
 
     /**
      * Compares this chain with another chain for equality.
@@ -353,6 +357,21 @@ public:
         std::cout << std::endl;
     }
 
+    /**
+     * Indicates whether the chain is idempotent, meaning that combining it
+     * with itself will yield the same result.
+     *
+     * @return true/false, indicating whether this chain type is idempotent.
+     */
+    static bool isIdempotent()
+    {
+        if constexpr (TNORM == TNorm::GOEDEL) {
+            return true;
+        }
+
+        return false;
+    }
+
 private:
     /**
      * Packed fixed-bit membership degrees.
@@ -363,6 +382,10 @@ private:
      * Number of membership degrees stored in the chain.
      */
     size_t n;
+
+    // Private copy constructor
+    FubitChain(const FubitChain& other) = default;
+    FubitChain& operator=(const FubitChain& other) = default;
 
     /**
      * Stores a packed value at an index.

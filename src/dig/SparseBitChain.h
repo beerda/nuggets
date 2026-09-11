@@ -138,13 +138,17 @@ public:
           n(a.n)
     { }
 
-    // Disable copy
-    SparseBitChain(const SparseBitChain& other) = delete;
-    SparseBitChain& operator=(const SparseBitChain& other) = delete;
-
-    // Allow move
+    // Allow move, copy constructor is private
     SparseBitChain(SparseBitChain&& other) = default;
     SparseBitChain& operator=(SparseBitChain&& other) = default;
+
+    /**
+     * Creates a copy of this chain.
+     *
+     * @return A new instance that is a copy of this chain.
+     */
+    SparseBitChain clone() const
+    { return SparseBitChain(*this); }
 
     /**
      * Compares this chain with another chain for equality.
@@ -217,6 +221,15 @@ public:
         return res.str();
     }
 
+    /**
+     * Indicates whether the chain is idempotent, meaning that combining it
+     * with itself will yield the same result.
+     *
+     * @return true/false, indicating whether this chain type is idempotent.
+     */
+    static bool isIdempotent()
+    { return true; }
+
 private:
     /**
      * Sorted indices of values set to TRUE.
@@ -227,6 +240,10 @@ private:
      * Total number of values represented by the chain.
      */
     size_t n;
+
+    // Private copy
+    SparseBitChain(const SparseBitChain& other) = default;
+    SparseBitChain& operator=(const SparseBitChain& other) = default;
 
     /**
      * Returns the initial capacity for sparse indices.

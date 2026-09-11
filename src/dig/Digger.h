@@ -119,7 +119,17 @@ public:
             if (isNonRedundant(emptyChain, chain)
                     && isCandidate(chain)
                     && !deductionEngine.isDerivableFromAxioms(chain.getPredicate())) {
-                filteredCollection.append(std::move(chain));
+
+                if (CHAIN::isIdempotent()) {
+                    // move only for idempotent chains, we don't need
+                    // initialCollection for further processing
+                    filteredCollection.append(std::move(chain));
+                }
+                else {
+                    // non-idempotent chains are cloned because we need
+                    // initialCollection for further processing
+                    filteredCollection.append(chain.clone());
+                }
             }
         }
 
@@ -383,9 +393,14 @@ private:
         if (isNonRedundant(conditionChain, secondChain)
                 && (!isDerivableConditionOnly(conditionChain, secondChain))
                 && (!isDerivableFocusOnly(conditionChain, secondChain))) {
-            CHAIN newChain(conditionChain, secondChain);
+
+            const CHAIN& usedChain = CHAIN::isIdempotent()
+                ? secondChain
+                : initialCollection[sortedPositions[secondChain.getPredicate()]];
+
+            CHAIN newChain(conditionChain, usedChain);
             searchStats.incrementComputedConjunctions();
-            addSumToCache(conditionChain, secondChain, newChain.getSum());
+            addSumToCache(conditionChain, usedChain, newChain.getSum());
             if (isCandidate(newChain)) {
                 target.append(std::move(newChain));
             }

@@ -174,13 +174,17 @@ public:
           data()
     { }
 
-    // Disable copy
-    FloatChain(const FloatChain& other) = delete;
-    FloatChain& operator=(const FloatChain& other) = delete;
-
-    // Allow move
+    // Allow move, copy constructor is private
     FloatChain(FloatChain&& other) = default;
     FloatChain& operator=(FloatChain&& other) = default;
+
+    /**
+     * Creates a copy of this chain.
+     *
+     * @return A new instance that is a copy of this chain.
+     */
+    FloatChain clone() const
+    { return FloatChain(*this); }
 
     /**
      * Compares this chain with another chain for equality.
@@ -247,11 +251,30 @@ public:
         return res.str();
     }
 
+    /**
+     * Indicates whether the chain is idempotent, meaning that combining it
+     * with itself will yield the same result.
+     *
+     * @return true/false, indicating whether this chain type is idempotent.
+     */
+    static bool isIdempotent()
+    {
+        if constexpr (TNORM == TNorm::GOEDEL) {
+            return true;
+        }
+
+        return false;
+    }
+
 private:
     /**
      * Aligned storage of membership degrees.
      */
     AlignedVector<float> data;
+
+    // Private copy constructor
+    FloatChain(const FloatChain& other) = default;
+    FloatChain& operator=(const FloatChain& other) = default;
 
     /**
      * Computes the sum of membership degrees using SIMD where available.
