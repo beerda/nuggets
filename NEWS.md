@@ -5,6 +5,9 @@
 - added `explore.itemsets()` to explore frequent itemsets interactively
 - deprecated `threads` argument in `dig()` and other `dig_*()` functions
   because the search is performed always in a single thread
+
+# nuggets 2.2.4
+- released: 2026-09-11
 - merged fixes from upstream arules related to computation of interest measures (#55)
 - fixed computation of support with non-idempotent t-norms (#56)
 
