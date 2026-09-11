@@ -132,12 +132,26 @@ add_interest.associations <- function(x,
                               call = current_env())
 
     supported_measures <- .get_supported_association_measures()
+    deprecated_measure_names <- c(
+        casual_support = "causal_support",
+        casual_confidence = "causal_confidence"
+    )
+    accepted_measures <- c(names(supported_measures),
+                           names(deprecated_measure_names))
     .must_be_enum(measures,
-                  names(supported_measures),
+                  accepted_measures,
                   null = TRUE,
                   multi = TRUE)
     if (is.null(measures)) {
         measures <- names(supported_measures)
+    } else {
+        deprecated_idx <- measures %in% names(deprecated_measure_names)
+        if (any(deprecated_idx)) {
+            cli_warn(c("Some selected measure names are deprecated and were renamed.",
+                       "i" = "Use {.field {deprecated_measure_names[measures[deprecated_idx]]}} instead of {.field {measures[deprecated_idx]}}."),
+                     call = current_env())
+            measures[deprecated_idx] <- deprecated_measure_names[measures[deprecated_idx]]
+        }
     }
 
     .must_be_double_scalar(smooth_counts)
