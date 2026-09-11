@@ -159,7 +159,6 @@ context("dig/SparseBitChain.h") {
         const SparseBitChain& constOriginal = original;
         SparseBitChain copy = constOriginal.clone();
 
-        original.setSum(1);
         original.setPredicateType(PredicateType::FOCUS);
 
         expect_true(copy.getPredicate() == 3);

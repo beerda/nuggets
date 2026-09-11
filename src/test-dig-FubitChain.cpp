@@ -285,7 +285,6 @@ context("dig/FubitChain.h") {
         const FubitChain<TNorm::GOGUEN, 8>& constOriginal = original;
         FubitChain<TNorm::GOGUEN, 8> copy = constOriginal.clone();
 
-        original.setSum(0.5);
         original.setPredicateType(PredicateType::FOCUS);
 
         expect_true(copy.getPredicate() == 3);

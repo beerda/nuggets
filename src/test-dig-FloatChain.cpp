@@ -252,7 +252,6 @@ context("dig/FloatChain.h") {
         const FloatChain<TNorm::GOGUEN>& constOriginal = original;
         FloatChain<TNorm::GOGUEN> copy = constOriginal.clone();
 
-        original.setSum(0.5);
         original.setPredicateType(PredicateType::FOCUS);
 
         expect_true(copy.getPredicate() == 3);

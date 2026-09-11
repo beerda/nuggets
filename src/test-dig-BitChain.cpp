@@ -159,7 +159,6 @@ context("dig/BitChain.h") {
         const BitChain& constOriginal = original;
         BitChain copy = constOriginal.clone();
 
-        original.setSum(1);
         original.setPredicateType(PredicateType::FOCUS);
 
         expect_true(copy.getPredicate() == 3);
