@@ -129,6 +129,28 @@ test_that("add_interest.associations() test GUHA quantifiers", {
 })
 
 
+test_that("add_interest.associations() supports deprecated casual aliases", {
+    set.seed(2123)
+    d <- matrix(sample(c(T, F), 100 * 5, replace = TRUE), nrow = 100, ncol = 5)
+    colnames(d) <- letters[seq_len(5)]
+
+    fit <- dig_associations(d,
+                            min_support = 0.001,
+                            min_length = 0,
+                            max_length = 5,
+                            min_confidence = 0.5)
+
+    expect_warning(
+        res_alias <- add_interest(fit, measures = c("casual_support", "casual_confidence")),
+        "deprecated"
+    )
+    res_causal <- add_interest(fit, measures = c("causal_support", "causal_confidence"))
+
+    expect_equal(res_alias$causal_support, res_causal$causal_support)
+    expect_equal(res_alias$causal_confidence, res_causal$causal_confidence)
+})
+
+
 test_that("compare add_interest.associations to arules::interestMeasure", {
     skip_if_not_installed("arules")
     set.seed(2123)
@@ -157,12 +179,29 @@ test_that("compare add_interest.associations to arules::interestMeasure", {
         paste0(parts[1], paste0(res, collapse = ""))
     }
 
+    supports_causal_names <- !inherits(
+        try(arules::interestMeasure(afit[1], "causalSupport"), silent = TRUE),
+        "try-error"
+    )
+
+    measures_to_compare <- names(.arules_association_measures)
+    if (!supports_causal_names) {
+        # Comparing a reduced measure set because installed arules has pre-fix formulas.
+        measures_to_compare <- setdiff(
+            measures_to_compare,
+            c("collective_strength",
+              "causal_support",
+              "causal_confidence",
+              "least_contradiction")
+        )
+    }
+
     expected_no_smoothing <- expected
     expected_smooth1 <- expected
     rm(expected)
 
     expect_true(length(names(.arules_association_measures)) > 0)
-    for (m in names(.arules_association_measures)) {
+    for (m in measures_to_compare) {
         expected_no_smoothing[[m]] <- arules::interestMeasure(afit, to_camel(m))
         expected_smooth1[[m]] <- arules::interestMeasure(afit, to_camel(m), smoothCount = 1)
     }
@@ -186,7 +225,7 @@ test_that("compare add_interest.associations to arules::interestMeasure", {
 
     expect_equal(res$antecedent, expected_no_smoothing$LHS)
     expect_equal(res$consequent, expected_no_smoothing$RHS)
-    for (m in names(.arules_association_measures)) {
+    for (m in measures_to_compare) {
         expect_equal(res[[!!m]], !!(expected_no_smoothing[[m]]), tolerance = 1e-7)
     }
 
@@ -201,7 +240,7 @@ test_that("compare add_interest.associations to arules::interestMeasure", {
 
     expect_equal(res$antecedent, expected_smooth1$LHS)
     expect_equal(res$consequent, expected_smooth1$RHS)
-    for (m in names(.arules_association_measures)) {
+    for (m in measures_to_compare) {
         expect_equal(res[[!!m]], !!(expected_smooth1[[m]]), tolerance = 1e-7)
     }
 })

@@ -81,8 +81,8 @@
     sebag = "Sebag-Schoenauer",
     counterexample = "Example and Counter-Example Rate",
     confirmed_confidence = "Descriptive Confirmed Confidence",
-    casual_support = "Casual Support",
-    casual_confidence = "Casual Confidence",
+    causal_support = "Causal Support",
+    causal_confidence = "Causal Confidence",
     least_contradiction = "Least Contradiction",
     centered_confidence = "Centered Confidence",
     varying_liaison = "Varying Rates Liaison",
@@ -124,8 +124,9 @@
 
     collective_strength = function(counts, ...)
         with(counts,
-             n11 * n00 / (n1x * nx1 + n0x + nx0) *
-                 (n^2 - n1x * nx1 - n0x * nx0) / (n - n11 - n00)),
+             (n11 + n00) /
+                 ((n1x * nx1 + n0x * nx0) / n) *
+                 ((n1x * nx0 + n0x * nx1) / n) / (n10 + n01)),
 
     importance = function(counts, ...)
         with(counts,
@@ -194,14 +195,14 @@
     confirmed_confidence = function(counts, ...)
         with(counts, (n11 - n10) / n1x),
 
-    casual_support = function(counts, ...)
-        with(counts, (n1x + nx1 - 2 * n10) / n),
+    causal_support = function(counts, ...)
+        with(counts, (n11 + n00) / n),
 
-    casual_confidence = function(counts, ...)
-        with(counts, 1 - n10 / n * (1 / n1x + 1 / nx1)),
+    causal_confidence = function(counts, ...)
+        with(counts, (n11 / n1x + n00 / nx0) / 2),
 
     least_contradiction = function(counts, ...)
-        with(counts, (n1x - n10) / nx1),
+        with(counts, (n11 - n10) / nx1),
 
     centered_confidence = function(counts, ...)
         with(counts, nx0 / n - n10 / n1x),
