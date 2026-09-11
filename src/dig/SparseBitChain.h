@@ -147,8 +147,8 @@ public:
      *
      * @return A new instance that is a copy of this chain.
      */
-    SparseBitChain clone()
-    { SparseBitChain copy = *this; return copy; }
+    SparseBitChain clone() const
+    { return SparseBitChain(*this); }
 
     /**
      * Compares this chain with another chain for equality.

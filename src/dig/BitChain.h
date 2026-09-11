@@ -112,8 +112,8 @@ public:
      *
      * @return A new instance that is a copy of this chain.
      */
-    BitChain clone()
-    { BitChain copy = *this; return copy; }
+    BitChain clone() const
+    { return BitChain(*this); }
 
     /**
      * Checks if two BitChain objects are equal.

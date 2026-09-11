@@ -180,8 +180,8 @@ public:
      *
      * @return A new instance that is a copy of this chain.
      */
-    SimdChain clone()
-    { SimdChain copy = *this; return copy; }
+    SimdChain clone() const
+    { return SimdChain(*this); }
 
     /**
      * Compares this chain with another chain for equality.

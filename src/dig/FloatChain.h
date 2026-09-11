@@ -184,7 +184,7 @@ public:
      * @return A new instance that is a copy of this chain.
      */
     FloatChain clone() const
-    { FloatChain copy = *this; return copy; }
+    { return FloatChain(*this); }
 
     /**
      * Compares this chain with another chain for equality.

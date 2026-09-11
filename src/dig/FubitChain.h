@@ -228,7 +228,7 @@ public:
      * @return A new instance that is a copy of this chain.
      */
     FubitChain clone() const
-    { FubitChain copy = *this; return copy; }
+    { return FubitChain(*this); }
 
     /**
      * Compares this chain with another chain for equality.

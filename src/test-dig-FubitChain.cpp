@@ -213,6 +213,32 @@ context("dig/FubitChain.h") {
         expect_true(EQUAL1(luk.getSum(), 18));
 
     }
+
+    test_that("clone copies const chain") {
+        NumericVector v(5);
+        v[0] = 0.8;
+        v[1] = 0.3;
+        v[2] = 1.0;
+        v[3] = 0.0;
+        v[4] = 0.2;
+
+        FubitChain<TNorm::GOGUEN, 8> original(3, PredicateType::BOTH, v);
+        const FubitChain<TNorm::GOGUEN, 8>& constOriginal = original;
+        FubitChain<TNorm::GOGUEN, 8> copy = constOriginal.clone();
+
+        original.setSum(0.5);
+        original.setPredicateType(PredicateType::FOCUS);
+
+        expect_true(copy.getPredicate() == 3);
+        expect_true(EQUAL100(copy.getSum(), 2.3));
+        expect_true(copy.isCondition());
+        expect_true(copy.isFocus());
+        expect_true(EQUAL100(copy.at(0), 0.8));
+        expect_true(EQUAL100(copy.at(1), 0.3));
+        expect_true(EQUAL100(copy.at(2), 1.0));
+        expect_true(EQUAL100(copy.at(3), 0.0));
+        expect_true(EQUAL100(copy.at(4), 0.2));
+    }
 }
 
 #endif // __arm64__

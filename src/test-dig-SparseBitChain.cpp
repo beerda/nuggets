@@ -103,4 +103,26 @@ context("dig/SparseBitChain.h") {
             expect_true(c.toString() == "[cached:5.2]");
         }
     }
+
+    test_that("clone copies const chain") {
+        LogicalVector v(5);
+        v[0] = true;
+        v[1] = false;
+        v[2] = true;
+        v[3] = true;
+        v[4] = false;
+
+        SparseBitChain original(3, PredicateType::BOTH, v);
+        const SparseBitChain& constOriginal = original;
+        SparseBitChain copy = constOriginal.clone();
+
+        original.setSum(1);
+        original.setPredicateType(PredicateType::FOCUS);
+
+        expect_true(copy.getPredicate() == 3);
+        expect_true(copy.getSum() == 3);
+        expect_true(copy.isCondition());
+        expect_true(copy.isFocus());
+        expect_true(copy.toString() == "[n=5]10110");
+    }
 }

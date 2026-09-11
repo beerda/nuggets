@@ -128,6 +128,21 @@ context("dig/Bitset.h") {
         expect_true(!(a == d));
     }
 
+    test_that("copy constructor creates independent copy") {
+        Bitset original(10);
+        original.set(1);
+        original.set(6);
+
+        Bitset copy(original);
+        original.set(8);
+
+        expect_true(copy.size() == 10);
+        expect_true(copy.count() == 2);
+        expect_true(copy[1]);
+        expect_true(copy[6]);
+        expect_true(!copy[8]);
+    }
+
     test_that("large bitset") {
         Bitset b(1000);
         expect_true(b.size() == 1000);
