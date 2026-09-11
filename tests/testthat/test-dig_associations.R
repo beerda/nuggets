@@ -572,4 +572,17 @@ test_that("bug #56 - non-idenpotent t-norms", {
     expect_equal(rules$support[1],
                  mean(d$a * d$b * d$c),
                  tolerance = 1e-2)
+
+    rules <- nuggets::dig_associations(d,
+                                       antecedent = c(a, b),
+                                       consequent = c(c),
+                                       min_length = 2L,
+                                       max_length = 2L,
+                                       min_support = 0,
+                                       min_confidence = 0,
+                                       t_norm = "lukas")
+
+    expect_equal(rules$support[1],
+                 mean(pmax(0, d$a + d$b + d$c - 2)),
+                 tolerance = 1e-2)
 })
