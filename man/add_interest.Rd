@@ -86,8 +86,8 @@ Clopper-Pearson confidence interval for the binomial proportion:
 \item measures adopted from the \code{arules} package:
 \itemize{
 \item \code{"added_value"} - \emph{Added Value}, see \url{https://mhahsler.github.io/arules/docs/measures#addedvalue} for details
-\item \code{"casual_confidence"} - \emph{Casual Confidence}, see \url{https://mhahsler.github.io/arules/docs/measures#casualconfidence} for details
-\item \code{"casual_support"} - \emph{Casual Support}, see \url{https://mhahsler.github.io/arules/docs/measures#casualsupport} for details
+\item \code{"causal_confidence"} - \emph{Causal Confidence}, see \url{https://mhahsler.github.io/arules/docs/measures#causalconfidence} for details
+\item \code{"causal_support"} - \emph{Causal Support}, see \url{https://mhahsler.github.io/arules/docs/measures#causalsupport} for details
 \item \code{"centered_confidence"} - \emph{Centered Confidence}, see \url{https://mhahsler.github.io/arules/docs/measures#centeredconfidence} for details
 \item \code{"certainty"} - \emph{Certainty Factor}, see \url{https://mhahsler.github.io/arules/docs/measures#certainty} for details
 \item \code{"collective_strength"} - \emph{Collective Strength}, see \url{https://mhahsler.github.io/arules/docs/measures#collectivestrength} for details
