@@ -289,15 +289,13 @@ private:
                                             vector<string>& argNames,
                                             const Pattern& pattern)
     {
-        const vector<const Predicate*>& foci = pattern.getFoci();
-
         if (config.hasFociSupportsArgument()) {
-            NumericVector vals(foci.size());
-            CharacterVector valNames(foci.size());
+            NumericVector vals(pattern.getFociCount());
+            CharacterVector valNames(pattern.getFociCount());
 
             size_t j = 0;
-            for (size_t i = 0; i < foci.size(); ++i) {
-                const Predicate& focus = *foci[i];
+            for (size_t i = 0; i < pattern.getFociCount(); ++i) {
+                const Predicate& focus = pattern.getFocus(i);
                 size_t predicate = focus.getPredicate();
                 vals[j] = focus.getSum() / config.getNrow();
                 valNames[j] = config.getChainName(predicate);
@@ -327,7 +325,6 @@ private:
                                       vector<string>& argNames,
                                       const Pattern& pattern)
     {
-        const vector<const Predicate*>& foci = pattern.getFoci();
         const vector<double>& predicateSums = pattern.getPredicateSums();
 
         if (config.hasAnyContiArgument()) {
@@ -335,38 +332,38 @@ private:
             NumericVector* np = nullptr;
             NumericVector* pn = nullptr;
             NumericVector* nn = nullptr;
-            CharacterVector valNames(foci.size());
+            CharacterVector valNames(pattern.getFociCount());
 
             if (config.hasContiPpArgument()) {
-                pp = new NumericVector(foci.size());
+                pp = new NumericVector(pattern.getFociCount());
             }
             if (config.hasContiNpArgument()) {
-                np = new NumericVector(foci.size());
+                np = new NumericVector(pattern.getFociCount());
             }
             if (config.hasContiPnArgument()) {
-                pn = new NumericVector(foci.size());
+                pn = new NumericVector(pattern.getFociCount());
             }
             if (config.hasContiNnArgument()) {
-                nn = new NumericVector(foci.size());
+                nn = new NumericVector(pattern.getFociCount());
             }
 
             size_t j = 0;
-            for (size_t i = 0; i < foci.size(); ++i) {
-                const Predicate* focus = foci[i];
-                size_t predicate = focus->getPredicate();
+            for (size_t i = 0; i < pattern.getFociCount(); ++i) {
+                const Predicate& focus = pattern.getFocus(i);
+                size_t predicate = focus.getPredicate();
                 valNames[j] = config.getChainName(predicate);
 
                 if (pp) {
-                    (*pp)[j] = focus->getSum();
+                    (*pp)[j] = focus.getSum();
                 }
                 if (pn) {
-                    (*pn)[j] = pattern.getConditionSum() - focus->getSum();
+                    (*pn)[j] = pattern.getConditionSum() - focus.getSum();
                 }
                 if (np) {
-                    (*np)[j] = predicateSums[predicate] - focus->getSum();
+                    (*np)[j] = predicateSums[predicate] - focus.getSum();
                 }
                 if (nn) {
-                    (*nn)[j] = config.getNrow() - pattern.getConditionSum() - predicateSums[predicate] + focus->getSum();
+                    (*nn)[j] = config.getNrow() - pattern.getConditionSum() - predicateSums[predicate] + focus.getSum();
                 }
 
                 j++;

@@ -89,12 +89,11 @@ public:
      */
     void store(const Pattern& pattern)
     {
-        const vector<const Predicate*>& foci = pattern.getFoci();
         const vector<double>& predicateSums = pattern.getPredicateSums();
 
         String ante = formatCondition(pattern.getPrefix(), pattern.getPredicate());
-        for (size_t i = 0; i < foci.size(); ++i) {
-            const Predicate& focus = *foci[i];
+        for (size_t i = 0; i < pattern.getFociCount(); ++i) {
+            const Predicate& focus = pattern.getFocus(i);
             size_t predicate = focus.getPredicate();
             string chainName = config.getChainName(predicate);
 

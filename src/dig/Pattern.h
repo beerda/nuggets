@@ -55,8 +55,11 @@ public:
     inline double getConditionSum() const
     { return predicate->getSum(); }
 
-    inline const vector<const Predicate*>& getFoci() const
-    { return foci; }
+    inline size_t getFociCount() const
+    { return foci.size(); }
+
+    inline const Predicate& getFocus(size_t index) const
+    { return *foci[index]; }
 
     inline const vector<double>& getPredicateSums() const
     { return predicateSums; }
