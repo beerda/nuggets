@@ -1,5 +1,5 @@
 # nuggets 2.2.4
-- released: ???
+- released: 2026-09-11
 - merged fixes from upstream arules related to computation of interest measures (#55)
 - fixed computation of support with non-idempotent t-norms (#56)
 
