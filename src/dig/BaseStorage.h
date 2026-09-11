@@ -30,12 +30,6 @@ public:
         : config(config)
     { }
 
-protected:
-    /**
-     * The configuration object.
-     */
-    const Config& config;
-
     /**
      * Formats the condition (antecedent) of a chain as a string representation.
      * The condition is represented as a set of predicate names enclosed in
@@ -119,4 +113,10 @@ protected:
 
         return res.str();
     }
+
+protected:
+    /**
+     * The configuration object.
+     */
+    const Config& config;
 };
