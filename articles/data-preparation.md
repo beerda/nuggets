@@ -1286,7 +1286,7 @@ tautologies <- dig_tautologies(
 )
 
 print(tautologies)
-#> # A tibble: 59 × 13
+#> # A tibble: 91 × 13
 #>    antecedent            consequent  support confidence coverage conseq_support
 #>    <chr>                 <chr>         <dbl>      <dbl>    <dbl>          <dbl>
 #>  1 {gear=3}              {am=0}        0.469      1        0.469          0.594
@@ -1311,7 +1311,7 @@ print(tautologies)
 #>  8  1.78  3.98                 1  3.98 0      14.0   14  
 #>  9  2.11  3.93                 1  3.93 0.0513 11.1   16.9
 #> 10  2.29  3.98                 1  3.98 0      10.0   18  
-#> # ℹ 49 more rows
+#> # ℹ 81 more rows
 ```
 
 The function returns a tibble in the same format as

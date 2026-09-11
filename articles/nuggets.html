@@ -509,19 +509,19 @@ support:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">result</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">support</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 526 × 15</span></span></span>
-<span><span class="co">#&gt;    antecedent                     consequent support confidence coverage</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> {gear=3}                       {am=0}       0.469      1        0.469</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> {gear=3,vs=0}                  {am=0}       0.375      1        0.375</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> {cyl=eight,gear=3,vs=0}        {am=0}       0.375      1        0.375</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> {cyl=eight,vs=0}               {am=0}       0.375      0.857    0.438</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> {cyl=eight,gear=3}             {am=0}       0.375      1        0.375</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> {cyl=eight}                    {am=0}       0.375      0.857    0.438</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> {mpg=(-Inf;15;20)}             {am=0}       0.327      0.847    0.387</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> {drat=(-Inf;2.76;3.84)}        {am=0}       0.311      0.948    0.328</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> {gear=3,mpg=(-Inf;15;20)}      {am=0}       0.309      1        0.309</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> {drat=(-Inf;2.76;3.84),gear=3} {am=0}       0.307      1        0.307</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 9,245 × 15</span></span></span>
+<span><span class="co">#&gt;    antecedent                   consequent support confidence coverage</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> {gear=3}                     {am=0}       0.469      1        0.469</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> {gear=3,vs=0}                {am=0}       0.375      1        0.375</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> {cyl=eight,gear=3,vs=0}      {am=0}       0.375      1        0.375</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> {cyl=eight,vs=0}             {am=0}       0.375      0.857    0.438</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> {cyl=eight,gear=3}           {am=0}       0.375      1        0.375</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> {cyl=eight}                  {am=0}       0.375      0.857    0.438</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> {gear=3,hp=(52;194;335)}     {am=0}       0.335      1        0.335</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> {mpg=(-Inf;15;20)}           {am=0}       0.327      0.847    0.387</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> {gear=3,wt=(1.51;3.47;5.42)} {am=0}       0.325      1        0.325</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> {drat=(-Inf;2.76;3.84)}      {am=0}       0.311      0.948    0.328</span></span>
 <span><span class="co">#&gt;    conseq_support  lift count antecedent_length    pp    pn    np    nn</span></span>
 <span><span class="co">#&gt;             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>          0.594  1.68 15                    1 15    0      4     13  </span></span>
@@ -530,10 +530,10 @@ support:</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>          0.594  1.44 12                    2 12    2      7     11  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>          0.594  1.68 12                    2 12    0      7     13  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>          0.594  1.44 12                    1 12    2      7     11  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>          0.594  1.43 10.5                  1 10.5  1.90   8.52  11.1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>          0.594  1.60  9.96                 1  9.96 0.546  9.04  12.5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>          0.594  1.68  9.88                 2  9.88 0      9.12  13  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>          0.594  1.68  9.82                 2  9.82 0      9.18  13  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>          0.594  1.68 10.7                  2 10.7  0      8.29  13  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>          0.594  1.43 10.5                  1 10.5  1.90   8.52  11.1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>          0.594  1.68 10.4                  2 10.4  0      8.61  13  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>          0.594  1.60  9.96                 1  9.96 0.546  9.04  12.5</span></span>
 <span><span class="co">#&gt;    conviction leverage</span></span>
 <span><span class="co">#&gt;         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     <span style="color: #BB0000;">Inf</span>      0.190 </span></span>
@@ -542,11 +542,11 @@ support:</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>       2.84   0.115 </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     <span style="color: #BB0000;">Inf</span>      0.152 </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>       2.84   0.115 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>       2.65   0.097<span style="text-decoration: underline;">8</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>       7.82   0.116 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     <span style="color: #BB0000;">Inf</span>      0.125 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     <span style="color: #BB0000;">Inf</span>      0.125 </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 516 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     <span style="color: #BB0000;">Inf</span>      0.136 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>       2.65   0.097<span style="text-decoration: underline;">8</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     <span style="color: #BB0000;">Inf</span>      0.132 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>       7.82   0.116 </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 9,235 more rows</span></span></span></code></pre></div>
 <p>This example illustrates the typical workflow for mining association
 rules with <code>nuggets</code>. The same structure and arguments apply
 when analyzing either fuzzy or Boolean datasets.</p>
@@ -956,7 +956,7 @@ using a custom callback function with the datasets prepared earlier:</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">support</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">custom_result</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5,408 × 4</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 18,589 × 4</span></span></span>
 <span><span class="co">#&gt;    antecedent              consequent support confidence</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> {gear=3}                am=0          15         32  </span></span>
@@ -969,7 +969,7 @@ using a custom callback function with the datasets prepared earlier:</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> {cyl=eight,vs=0}        am=0          12         27.4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> {cyl=eight,gear=3}      am=0          12         32  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> {cyl=eight}             am=0          12         27.4</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 5,398 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 18,579 more rows</span></span></span></code></pre></div>
 <p>The callback function <code>f()</code> receives information based on
 its argument names:</p>
 <ul>

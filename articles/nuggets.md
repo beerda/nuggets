@@ -399,19 +399,19 @@ You can arrange the resulting rules, for example, by decreasing support:
 
 result <- arrange(result, desc(support))
 print(result)
-#> # A tibble: 526 × 15
-#>    antecedent                     consequent support confidence coverage
-#>    <chr>                          <chr>        <dbl>      <dbl>    <dbl>
-#>  1 {gear=3}                       {am=0}       0.469      1        0.469
-#>  2 {gear=3,vs=0}                  {am=0}       0.375      1        0.375
-#>  3 {cyl=eight,gear=3,vs=0}        {am=0}       0.375      1        0.375
-#>  4 {cyl=eight,vs=0}               {am=0}       0.375      0.857    0.438
-#>  5 {cyl=eight,gear=3}             {am=0}       0.375      1        0.375
-#>  6 {cyl=eight}                    {am=0}       0.375      0.857    0.438
-#>  7 {mpg=(-Inf;15;20)}             {am=0}       0.327      0.847    0.387
-#>  8 {drat=(-Inf;2.76;3.84)}        {am=0}       0.311      0.948    0.328
-#>  9 {gear=3,mpg=(-Inf;15;20)}      {am=0}       0.309      1        0.309
-#> 10 {drat=(-Inf;2.76;3.84),gear=3} {am=0}       0.307      1        0.307
+#> # A tibble: 9,245 × 15
+#>    antecedent                   consequent support confidence coverage
+#>    <chr>                        <chr>        <dbl>      <dbl>    <dbl>
+#>  1 {gear=3}                     {am=0}       0.469      1        0.469
+#>  2 {gear=3,vs=0}                {am=0}       0.375      1        0.375
+#>  3 {cyl=eight,gear=3,vs=0}      {am=0}       0.375      1        0.375
+#>  4 {cyl=eight,vs=0}             {am=0}       0.375      0.857    0.438
+#>  5 {cyl=eight,gear=3}           {am=0}       0.375      1        0.375
+#>  6 {cyl=eight}                  {am=0}       0.375      0.857    0.438
+#>  7 {gear=3,hp=(52;194;335)}     {am=0}       0.335      1        0.335
+#>  8 {mpg=(-Inf;15;20)}           {am=0}       0.327      0.847    0.387
+#>  9 {gear=3,wt=(1.51;3.47;5.42)} {am=0}       0.325      1        0.325
+#> 10 {drat=(-Inf;2.76;3.84)}      {am=0}       0.311      0.948    0.328
 #>    conseq_support  lift count antecedent_length    pp    pn    np    nn
 #>             <dbl> <dbl> <dbl>             <int> <dbl> <dbl> <dbl> <dbl>
 #>  1          0.594  1.68 15                    1 15    0      4     13  
@@ -420,10 +420,10 @@ print(result)
 #>  4          0.594  1.44 12                    2 12    2      7     11  
 #>  5          0.594  1.68 12                    2 12    0      7     13  
 #>  6          0.594  1.44 12                    1 12    2      7     11  
-#>  7          0.594  1.43 10.5                  1 10.5  1.90   8.52  11.1
-#>  8          0.594  1.60  9.96                 1  9.96 0.546  9.04  12.5
-#>  9          0.594  1.68  9.88                 2  9.88 0      9.12  13  
-#> 10          0.594  1.68  9.82                 2  9.82 0      9.18  13  
+#>  7          0.594  1.68 10.7                  2 10.7  0      8.29  13  
+#>  8          0.594  1.43 10.5                  1 10.5  1.90   8.52  11.1
+#>  9          0.594  1.68 10.4                  2 10.4  0      8.61  13  
+#> 10          0.594  1.60  9.96                 1  9.96 0.546  9.04  12.5
 #>    conviction leverage
 #>         <dbl>    <dbl>
 #>  1     Inf      0.190 
@@ -432,11 +432,11 @@ print(result)
 #>  4       2.84   0.115 
 #>  5     Inf      0.152 
 #>  6       2.84   0.115 
-#>  7       2.65   0.0978
-#>  8       7.82   0.116 
-#>  9     Inf      0.125 
-#> 10     Inf      0.125 
-#> # ℹ 516 more rows
+#>  7     Inf      0.136 
+#>  8       2.65   0.0978
+#>  9     Inf      0.132 
+#> 10       7.82   0.116 
+#> # ℹ 9,235 more rows
 ```
 
 This example illustrates the typical workflow for mining association
@@ -868,7 +868,7 @@ custom_result <- custom_result |>
   arrange(desc(support))
 
 print(custom_result)
-#> # A tibble: 5,408 × 4
+#> # A tibble: 18,589 × 4
 #>    antecedent              consequent support confidence
 #>    <chr>                   <chr>        <dbl>      <dbl>
 #>  1 {gear=3}                am=0          15         32  
@@ -881,7 +881,7 @@ print(custom_result)
 #>  8 {cyl=eight,vs=0}        am=0          12         27.4
 #>  9 {cyl=eight,gear=3}      am=0          12         32  
 #> 10 {cyl=eight}             am=0          12         27.4
-#> # ℹ 5,398 more rows
+#> # ℹ 18,579 more rows
 ```
 
 The callback function `f()` receives information based on its argument

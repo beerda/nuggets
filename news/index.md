@@ -1,5 +1,11 @@
 # Changelog
 
+## nuggets 2.2.4
+
+- released: ???
+- fixed computation of support with non-idempotent t-norms
+  ([\#56](https://github.com/beerda/nuggets/issues/56))
+
 ## nuggets 2.2.3
 
 - released: 2026-08-19
