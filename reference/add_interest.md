@@ -118,12 +118,12 @@ The supported interest measures that can be calculated include:
     <https://mhahsler.github.io/arules/docs/measures#addedvalue> for
     details
 
-  - `"casual_confidence"` - *Casual Confidence*, see
-    <https://mhahsler.github.io/arules/docs/measures#casualconfidence>
+  - `"causal_confidence"` - *Causal Confidence*, see
+    <https://mhahsler.github.io/arules/docs/measures#causalconfidence>
     for details
 
-  - `"casual_support"` - *Casual Support*, see
-    <https://mhahsler.github.io/arules/docs/measures#casualsupport> for
+  - `"causal_support"` - *Causal Support*, see
+    <https://mhahsler.github.io/arules/docs/measures#causalsupport> for
     details
 
   - `"centered_confidence"` - *Centered Confidence*, see
