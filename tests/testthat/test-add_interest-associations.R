@@ -186,7 +186,7 @@ test_that("compare add_interest.associations to arules::interestMeasure", {
 
     measures_to_compare <- names(.arules_association_measures)
     if (!supports_causal_names) {
-        testthat::inform("Comparing a reduced measure set because installed arules has pre-fix formulas.")
+        # Comparing a reduced measure set because installed arules has pre-fix formulas.
         measures_to_compare <- setdiff(
             measures_to_compare,
             c("collective_strength",
