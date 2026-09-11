@@ -21,8 +21,9 @@
 
 
 /**
- * A class representing a predicate - predicate ID and the sum of TRUEs (for
- * binary data) or membership degrees (for fuzzy data).
+ * A class representing a predicate with associated frequency, i.e. predicate ID
+ * and the count of TRUEs (for binary data) or sum of membership degrees (for
+ * fuzzy data).
  */
 class Predicate {
 public:
@@ -57,34 +58,13 @@ public:
     /**
      * Returns the predicate of the chain, i.e., the last predicate of the clause.
      * (Assuming that the prefix of the clause is stored in Digger::prefix.)
+     * Predicate IDs are counted from 1 to match R's indexing convention, with
+     * index 0 reserved for the empty value (i.e., no predicate).
      *
-     * @return The last predicate of the chain.
+     * @return The predicate ID.
      */
     inline const size_t& getPredicate() const
-    {
-        IF_DEBUG(
-            if (predicate == 0)
-                throw invalid_argument("Predicate: predicate is empty");
-        )
-
-        return predicate;
-    }
-
-    /**
-     * Returns a pointer to the predicate of the chain, i.e., the last predicate
-     * of the clause. (Assuming that the prefix of the clause is stored in
-     * Digger::prefix.) If the predicate is empty, returns nullptr.
-     *
-     * @return A pointer to the last predicate of the chain, or nullptr if
-     *     the predicate is empty.
-     */
-    inline const size_t* getPredicatePtr() const
-    {
-        if (predicate == 0)
-            return nullptr;
-
-        return &predicate;
-    }
+    { return predicate; }
 
 protected:
     /**

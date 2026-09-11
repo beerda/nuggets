@@ -40,35 +40,31 @@ public:
           weightsFunc(weightsFunc)
     { }
 
-    const Clause& getPrefix() const
+    inline const Clause& getPrefix() const
     { return prefix; }
 
-    bool hasPredicate() const
-    { return predicate->hasPredicate(); }
-
-    size_t getConditionLength() const
+    inline size_t getConditionLength() const
     { return prefix.size() + predicate->hasPredicate(); }
 
-    // TODO: zkusit tohle vymazat
-    const size_t* getPredicatePtr() const
-    { return predicate->getPredicatePtr(); }
+    inline bool hasPredicate() const
+    { return predicate->hasPredicate(); }
 
-    size_t getPredicate() const
+    inline size_t getPredicate() const
     { return predicate->getPredicate(); }
 
-    double getConditionSum() const
+    inline double getConditionSum() const
     { return predicate->getSum(); }
 
-    const vector<const Predicate*>& getFoci() const
+    inline const vector<const Predicate*>& getFoci() const
     { return foci; }
 
-    const vector<double>& getPredicateSums() const
+    inline const vector<double>& getPredicateSums() const
     { return predicateSums; }
 
-    LogicalVector getIndices() const
+    inline LogicalVector getIndices() const
     { return indicesFunc(); }
 
-    NumericVector getWeights() const
+    inline NumericVector getWeights() const
     { return weightsFunc(); }
 
 private:

@@ -39,17 +39,20 @@ protected:
     /**
      * Formats the condition (antecedent) of a chain as a string representation.
      * The condition is represented as a set of predicate names enclosed in
-     * curly braces.
+     * curly braces. The condition to be formatted is specified by two parts:
+     * the prefix clause and the atomic predicate. The predicate IDs are
+     * counted from 1 to match R's indexing convention, with index 0 reserved for
+     * the empty value (i.e., no predicate).
      */
-    string formatCondition(const Clause& prefix, const size_t* predicatePtr) const
+    string formatCondition(const Clause& prefix, const size_t predicate) const
     {
-        if (prefix.empty() && predicatePtr == nullptr) {
+        if (prefix.empty() && predicate == 0) {
             return "{}";
         }
 
         // from now on, chain must have predicate
         IF_DEBUG(
-            if (predicatePtr == nullptr)
+            if (predicate == 0)
                 throw invalid_argument("BaseStorage::formatCondition: chain has no predicate");
         )
 
@@ -58,10 +61,10 @@ protected:
         res << "{";
 
         if (prefix.size() == 0) {
-            res << config.getChainName(*predicatePtr);
+            res << config.getChainName(predicate);
         }
         else {
-            const string& name0 = config.getChainName(*predicatePtr);
+            const string& name0 = config.getChainName(predicate);
 
             if (prefix.size() == 1) {
                 const string& name1 = config.getChainName(prefix[0]);

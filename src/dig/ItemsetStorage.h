@@ -81,7 +81,7 @@ public:
     void store(const Pattern& pattern)
     {
         Itemset itemset;
-        itemset.items = formatCondition(pattern.getPrefix(), pattern.getPredicatePtr());
+        itemset.items = formatCondition(pattern.getPrefix(), pattern.getPredicate());
         itemset.length = pattern.getConditionLength();
         itemset.chainSum = pattern.getConditionSum();
         itemsets.push_back(itemset);

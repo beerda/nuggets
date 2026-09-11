@@ -92,7 +92,7 @@ public:
         const vector<const Predicate*>& foci = pattern.getFoci();
         const vector<double>& predicateSums = pattern.getPredicateSums();
 
-        String ante = formatCondition(pattern.getPrefix(), pattern.getPredicatePtr());
+        String ante = formatCondition(pattern.getPrefix(), pattern.getPredicate());
         for (size_t i = 0; i < foci.size(); ++i) {
             const Predicate& focus = *foci[i];
             size_t predicate = focus.getPredicate();
