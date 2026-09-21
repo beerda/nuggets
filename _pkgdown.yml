@@ -57,6 +57,7 @@ reference:
       - association_matrix
       - cluster_associations
       - dig_ancestors
+      - explore.itemsets
       - explore.associations
       - explore.baseline_contrasts
       - explore.complement_contrasts
