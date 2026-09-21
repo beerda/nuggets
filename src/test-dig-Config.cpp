@@ -91,7 +91,7 @@ context("dig/Config.h") {
         expect_true(c.hasIndicesArgument() == true);
         expect_true(c.hasSumArgument() == false);
         expect_true(c.hasSupportArgument() == false);
-        expect_true(c.hasWeightsArgument() == false);
+        expect_true(c.hasDegreesArgument() == false);
 
         expect_true(c.getChainName(0) == "");
         expect_true(c.getChainName(1) == "a");

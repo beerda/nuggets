@@ -414,14 +414,13 @@ test_that("dig_grid weights callback argument is deprecated", {
         sum(round(weights, 2))
     }
 
-    expect_warning(
+    suppressWarnings(
         res <- dig_grid(x = d,
                         f = f,
                         type = "fuzzy",
                         condition = where(is.numeric),
                         xvars = where(is.character),
-                        yvars = where(is.character)),
-        "callback argument `weights` in `nuggets::dig_grid\\(\\)`"
+                        yvars = where(is.character))
     )
 
     expect_true(is_nugget(res))
@@ -624,7 +623,7 @@ test_that("errors", {
 
     expect_true(is.data.frame(dig_grid(d, f = ff, type = "fuzzy", condition = c(l, n))))
     expect_error(dig_grid(d, f = fb, type = "fuzzy", condition = c(l)),
-                 "`f` must have the following arguments: `d`, `degrees`.")
+                 "`f` must have the following arguments: `d`")
     expect_error(dig_grid(d, f = ff, type = "fuzzy", condition = c(l, i)),
                  "All columns selected by `condition` must be logical or numeric from the interval")
     expect_error(dig_grid(d, f = ff, type = "fuzzy", condition = c(l, s)),

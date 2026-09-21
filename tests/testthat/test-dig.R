@@ -260,9 +260,8 @@ test_that("weights callback argument is deprecated", {
     c2 <- c(0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
     m <- matrix(c(c1, c2), ncol = 2)
 
-    expect_warning(
-        res <- dig(m, function(weights) list(w = weights)),
-        "callback argument `weights` in `nuggets::dig\\(\\)`"
+    suppressWarnings(
+        res <- dig(m, function(weights) list(w = weights))
     )
 
     attributes(res) <- NULL

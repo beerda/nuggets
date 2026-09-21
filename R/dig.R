@@ -316,8 +316,8 @@ dig <- function(x,
     has_weights_arg <- "weights" %in% arguments
     if (has_weights_arg) {
         deprecate_warn(when = "2.3.0",
-                       what = "callback argument `weights` in `nuggets::dig()`",
-                       with = "callback argument `degrees`",
+                       what = "f(weights)",
+                       with = "f(degrees)",
                        details = "The `weights` callback argument is deprecated and will be removed in future versions.")
     }
     arguments <- unique(ifelse(arguments == "weights", "degrees", arguments))
@@ -325,6 +325,9 @@ dig <- function(x,
     fun <- function(l) {
         if ("degrees" %in% names(l) && has_weights_arg && !"weights" %in% names(l)) {
             l$weights <- l$degrees
+        }
+        if ("degrees" %in% names(l) && !has_degrees_arg) {
+            l$degrees <- NULL
         }
         do.call(f, l)
     }

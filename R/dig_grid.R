@@ -293,8 +293,8 @@ dig_grid <- function(x,
         has_weights_arg <- "weights" %in% formalArgs(f)
         if (has_weights_arg) {
             deprecate_warn(when = "2.3.0",
-                           what = "callback argument `weights` in `nuggets::dig_grid()`",
-                           with = "callback argument `degrees`",
+                           what = "f(weights)",
+                           with = "f(degrees)",
                            details = "The `weights` callback argument is deprecated and will be removed in future versions.")
         }
 
