@@ -135,14 +135,6 @@ public:
     { return conditionArgument; }
 
     /**
-     * Returns whether the "foci_supports" result argument was requested.
-     *
-     * @return True if the argument was requested, otherwise false.
-     */
-    inline bool hasFociSupportsArgument() const
-    { return fociSupportsArgument; }
-
-    /**
      * Returns whether the positive-positive contingency result was requested.
      *
      * @return True if the result was requested, otherwise false.
@@ -467,10 +459,6 @@ private:
      */
     bool conditionArgument = false;
     /**
-     * Whether the "foci_supports" result argument was requested.
-     */
-    bool fociSupportsArgument = false;
-    /**
      * Whether the positive-positive contingency result was requested.
      */
     bool contiPpArgument = false;
@@ -552,8 +540,6 @@ private:
                 indicesArgument = true;
             else if (vec[i] == "degrees" || vec[i] == "weights")
                 degreesArgument = true;
-            else if (vec[i] == "foci_supports")
-                fociSupportsArgument = true;
         }
 
         anyContiArgument = contiPpArgument || contiNpArgument || contiPnArgument || contiNnArgument;

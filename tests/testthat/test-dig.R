@@ -273,10 +273,10 @@ test_that("weights callback argument is deprecated", {
 })
 
 
-test_that("foci_supports arg", {
+test_that("pp arg for focus supports", {
     m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
     res <- dig(m,
-               f = function(foci_supports) list(fs = foci_supports),
+               f = function(pp) list(fs = pp / nrow(m)),
                condition = "1",
                focus = "2")
 
@@ -933,10 +933,10 @@ test_that("conditions and foci are disjoint", {
                     c = c(T,    T, F, F, F),
                     d = c(T,    F, F, F, F))
 
-    f <- function(condition, foci_supports) {
+    f <- function(condition, pp) {
         paste(paste(sort(names(condition)), collapse = "&"),
               "~",
-              paste(sort(names(foci_supports)), collapse = "|"))
+              paste(sort(names(pp)), collapse = "|"))
     }
 
     expected <- c(" ~ a|b|c|d",
@@ -968,10 +968,10 @@ test_that("conditions and foci are disjoint even if disjoints are not defined", 
                     b = c(T,    F, T, T, T),
                     c = c(T,    T, F, F, F))
 
-    f <- function(condition, foci_supports) {
+    f <- function(condition, pp) {
         paste(paste(sort(names(condition)), collapse = "&"),
               "~",
-              paste(sort(names(foci_supports)), collapse = "|"))
+              paste(sort(names(pp)), collapse = "|"))
     }
 
     expected <- c(" ~ a|b|c",
@@ -1099,10 +1099,10 @@ test_that("exclude tautology 1", {
         unlist(result)
     }
 
-    f <- function(condition, foci_supports) {
+    f <- function(condition, pp) {
         paste(paste(sort(names(condition)), collapse = " & "),
               "|",
-              sort(names(foci_supports)))
+              sort(names(pp)))
     }
 
     sel <- c("a", "b", "c", "x", "y", "z")
@@ -1206,10 +1206,10 @@ test_that("exclude tautology 1", {
 
 
 test_that("exclude tautology in full combinations", {
-    f <- function(condition, foci_supports) {
+    f <- function(condition, pp) {
         paste(paste(sort(names(condition)), collapse = "&"),
               "|",
-              paste(sort(names(foci_supports)), collapse = ","))
+              paste(sort(names(pp)), collapse = ","))
     }
 
     orig_data <- data.frame(a = rep(T, 10),
@@ -1299,10 +1299,10 @@ test_that("exclude tautology in full combinations", {
 
 
 test_that("complex exclude tautology test", {
-    f <- function(condition, foci_supports) {
+    f <- function(condition, pp) {
         paste(paste(sort(names(condition)), collapse = "&"),
               "|",
-              paste(sort(names(foci_supports)), collapse = ","))
+              paste(sort(names(pp)), collapse = ","))
     }
 
     excl <- list(c("a", "b", "c"),
@@ -1386,9 +1386,9 @@ test_that("complex exclude tautology test", {
 
 
 test_that("complex exclude tautology test based on condition/focus variants", {
-    f <- function(condition, foci_supports) {
+    f <- function(condition, pp) {
         res <- list()
-        for (focus in names(foci_supports)) {
+        for (focus in names(pp)) {
             res <- c(res,
                      paste(paste0("c_", sort(names(condition)), collapse = " "), "|", paste0("f_", focus)))
         }
@@ -1565,10 +1565,10 @@ test_that("min_focus_support & filter_empty_foci", {
                   c(0,0,0,1,1,1,1,1,1,1),
                   c(0,0,0,0,1,1,1,1,1,1)), ncol = 4)
 
-    f <- function(condition, foci_supports) {
+    f <- function(condition, pp) {
        paste(paste(condition, collapse = " & "),
              "=",
-             paste(round(foci_supports, 1), collapse = ", "))
+             paste(round(pp / nrow(m), 1), collapse = ", "))
     }
 
     res <- dig(m,
@@ -1627,11 +1627,11 @@ test_that("min_conditional_focus_support & filter_empty_foci", {
                   c(0,0,0,1,1,1,1,1,1,1),
                   c(0,0,0,0,1,1,1,1,1,1)), ncol = 4)
 
-    f <- function(condition, support, foci_supports) {
+    f <- function(condition, support, pp) {
        paste(paste(condition, collapse = " & "),
              ":", round(support, 1),
              "=",
-             paste0(names(foci_supports), "/", round(foci_supports, 1), collapse = ", "))
+             paste0(names(pp), "/", round(pp / nrow(m), 1), collapse = ", "))
     }
 
     res <- dig(m,

@@ -95,7 +95,6 @@ public:
         processSupportArgument(args, argNames, pattern);
         processIndicesArgument(args, argNames, pattern);
         processDegreesArgument(args, argNames, pattern);
-        processFociSupportsArgument(args, argNames, pattern);
         processContiArguments(args, argNames, pattern);
 
         List argList = wrap(args);
@@ -269,43 +268,6 @@ private:
         if (config.hasDegreesArgument()) {
             args.push_back(pattern.getDegrees());
             argNames.push_back("degrees");
-        }
-    }
-
-    /**
-     * Processes the foci supports argument for the callback function based on the
-     * discovered chain and the collection of focus chains. If the configuration
-     * specifies that the foci supports argument should be included, this method
-     * creates a NumericVector containing the support values (sum divided by total
-     * number of rows) for each selected focus chain and adds it to the arguments
-     * vector.
-     *
-     * @param args A reference to the vector of arguments for the callback function.
-     * @param argNames A reference to the vector of argument names for the callback function.
-     * @param pattern The Pattern object representing the discovered chain and its
-     *     associated data.
-     */
-    inline void processFociSupportsArgument(vector<RObject>& args,
-                                            vector<string>& argNames,
-                                            const Pattern& pattern)
-    {
-        if (config.hasFociSupportsArgument()) {
-            NumericVector vals(pattern.getFociCount());
-            CharacterVector valNames(pattern.getFociCount());
-
-            size_t j = 0;
-            for (size_t i = 0; i < pattern.getFociCount(); ++i) {
-                const Predicate& focus = pattern.getFocus(i);
-                size_t predicate = focus.getPredicate();
-                vals[j] = focus.getSum() / config.getNrow();
-                valNames[j] = config.getChainName(predicate);
-                j++;
-            }
-            if (vals.size() > 0) {
-                vals.names() = valNames;
-            }
-            args.push_back(vals);
-            argNames.push_back("foci_supports");
         }
     }
 
