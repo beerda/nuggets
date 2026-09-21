@@ -14,5 +14,5 @@
   Patterns](https://beerda.github.io/nuggets/articles/contrast-patterns.md):
 - [Custom Pattern Search with
   dig()](https://beerda.github.io/nuggets/articles/custom-patterns.md):
-- [Comparison of nuggets performance with arules nad
+- [Comparison of nuggets performance with arules and
   fim4r](https://beerda.github.io/nuggets/articles/comparison-with-arules.md):

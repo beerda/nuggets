@@ -1,4 +1,4 @@
-# Comparison of nuggets performance with arules nad fim4r
+# Comparison of nuggets performance with arules and fim4r
 
 ## Introduction
 
