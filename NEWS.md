@@ -5,6 +5,8 @@
 - added `explore.itemsets()` to explore frequent itemsets interactively
 - deprecated `threads` argument in `dig()` and other `dig_*()` functions
   because the search is performed always in a single thread
+- renamed callback argument `weights` to `degrees` in `dig()` and `dig_grid()`;
+  callback argument `weights` is now deprecated
 
 # nuggets 2.2.4
 - released: 2026-09-11

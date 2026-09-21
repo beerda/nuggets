@@ -330,8 +330,8 @@ The callback function may declare any subset of the following arguments:
 - `indices`: row indices of the original dataset `x` satisfying the condition
   in crisp searches or the indices of rows with non-zero truth degrees in fuzzy
   searches.
-- `weights`: per-row truth degrees of the condition in dataset `x`; logical
-  (crisp) data is treated as 0/1 weights.
+- `degrees`: per-row truth degrees of the condition in dataset `x`; logical
+  (crisp) data is treated as 0/1 degrees.
 - `pp`, `pn`, `np`, `nn`: contingency-table entries for foci. The *i*-th* entry 
   of each vector corresponds to the *i*-th focus predicate. The
   entries are defined as follows:
@@ -349,14 +349,14 @@ In practice:
 - use `condition` when you need condition predicate names,
 - use `support` or `sum` for condition-level filtering or ranking,
 - use `indices` when you want to compute something on the original rows,
-- use `weights` for custom fuzzy summaries,
+- use `degrees` for custom fuzzy summaries,
 - use `pp`, `pn`, `np`, and `nn` when your pattern depends on foci and their
   frequency within the condition.
   
 Note: only declare the arguments you need. For example, if you don't need foci,
 don't declare `pp`, `pn`, `np`, or `nn`. This will save computation time,
 especially for large datasets or complex conditions. The most expensive values
-to compute are `indices` and `weights`. They require scanning the entire dataset
+to compute are `indices` and `degrees`. They require scanning the entire dataset
 for each generated condition. So avoid them if not needed.
 
 
@@ -419,14 +419,14 @@ additional diagnostics, or combine several criteria in one callback.
 
 For fuzzy searches, conditions are no longer simply satisfied or not satisfied.
 Instead, each row has a truth degree in the interval $[0,1]$. In that setting,
-`indices` and `weights` play different roles:
+`indices` and `degrees` play different roles:
 
 - `indices` tell you which rows have a non-zero truth degree for the condition,
-- `weights` tell you on scale $[0, 1]$ how strongly each row satisfies the condition.
+- `degrees` tell you on scale $[0, 1]$ how strongly each row satisfies the condition.
 
 The following example prepares fuzzy predicates from `iris` and then compares
 an unweighted summary based on `indices` with a weighted summary based on
-`weights`:
+`degrees`:
 
 ```{r}
 fuzzy_iris <- iris |>
@@ -435,16 +435,16 @@ fuzzy_iris <- iris |>
 
 head(fuzzy_iris, n = 3)
 
-fuzzy_callback <- function(condition, indices, weights) {
+fuzzy_callback <- function(condition, indices, degrees) {
     if (length(indices) < 20) {
         return(NULL)
     }
 
     list(condition = format_condition(names(condition)),
          nonzero_rows = sum(indices),
-         weighted_support = sum(weights) / nrow(fuzzy_iris),
+         weighted_support = sum(degrees) / nrow(fuzzy_iris),
          mean_petal_length_by_indices = mean(iris$Petal.Length[indices]),
-         mean_petal_length_by_weights = weighted.mean(iris$Petal.Length, weights))
+         mean_petal_length_by_degrees = weighted.mean(iris$Petal.Length, degrees))
 }
 
 fuzzy_result <- dig(x = fuzzy_iris,
@@ -459,10 +459,10 @@ fuzzy_result
 ```
 
 The unweighted mean based on `indices` treats all rows with non-zero membership
-equally. The weighted mean based on `weights` respects the fuzzy truth degrees,
+equally. The weighted mean based on `degrees` respects the fuzzy truth degrees,
 so rows that satisfy the condition more strongly contribute more. This is the
 main practical difference: `indices` identify the relevant rows, while
-`weights` quantify the strength of their membership.
+`degrees` quantify the strength of their membership.
 
 
 
@@ -477,7 +477,7 @@ main practical difference: `indices` identify the relevant rows, while
   named lists and flatten the result afterwards.
 - Use only the arguments you need in the callback function. This saves 
   computation time, especially for large datasets or complex conditions.
-- For fuzzy searches, use `weights` when truth degrees matter, and `indices`
+- For fuzzy searches, use `degrees` when truth degrees matter, and `indices`
   when you only need the rows with non-zero membership.
 
 

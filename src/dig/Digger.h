@@ -742,11 +742,11 @@ private:
             return parentChain.getValuesAsLogicalVector();
         };
 
-        auto weightsFunc = [&parentChain]() -> NumericVector {
+        auto degreesFunc = [&parentChain]() -> NumericVector {
             return parentChain.getValuesAsNumericVector();
         };
 
-        Pattern pattern(prefix, &parentChain, foci, predicateSums, indicesFunc, weightsFunc);
+        Pattern pattern(prefix, &parentChain, foci, predicateSums, indicesFunc, degreesFunc);
 
         storage.store(pattern);
     }

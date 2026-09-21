@@ -46,7 +46,7 @@ compute than others. The function \code{f} is expected to return an object
 (typically a list) representing a pattern or patterns related to the
 condition. The results of all calls of \code{f} are collected and returned as
 a list. Possible arguments are: \code{condition}, \code{sum}, \code{support}, \code{indices},
-\code{weights}, \code{pp}, \code{pn}, \code{np}, \code{nn}, or \code{foci_supports} (deprecated), which
+\code{degrees}, \code{pp}, \code{pn}, \code{np}, \code{nn}, or \code{foci_supports} (deprecated), which
 are thoroughly described below in the "Details" section.}
 
 \item{condition}{tidyselect expression (see
@@ -125,7 +125,7 @@ conditions with no remaining foci after filtering by \code{min_focus_support}
 or \code{min_conditional_focus_support}. If \code{TRUE}, \code{f} is called only when at
 least one focus remains. If \code{FALSE}, \code{f} is called regardless.}
 
-\item{t_norm}{T-norm used for conjunction of weights: \code{"goedel"} (minimum),
+\item{t_norm}{T-norm used for conjunction of truth degrees: \code{"goedel"} (minimum),
 \code{"goguen"} (product), or \code{"lukas"} (Łukasiewicz).}
 
 \item{max_results}{Maximum number of results (objects returned by the
@@ -222,8 +222,8 @@ logical data, or the sum of truth degrees for fuzzy data,
 \item \code{indices}: an integer vector of row indices of rows satisfying \eqn{C} for
 logical data, or the indices of rows with non-zero truth degrees for fuzzy
 data, \eqn{indices = \{r \in R : \mu_C(r) > 0\}}.
-\item \code{weights}: a numeric vector of truth degrees of \eqn{C} for each row in
-\eqn{R}, \eqn{weights[r] = \mu C(r)}. Logical data is treated as a special
+\item \code{degrees}: a numeric vector of truth degrees of \eqn{C} for each row in
+\eqn{R}, \eqn{degrees[r] = \mu C(r)}. Logical data is treated as a special
 case of fuzzy data, where \eqn{\mu_C(r)} is 1 for rows satisfying \eqn{C}
 and 0 otherwise.
 \item \code{pp}, \code{pn}, \code{np}, \code{nn}: a numeric vector of entries of a contingency table

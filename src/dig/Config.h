@@ -208,12 +208,12 @@ public:
     { return supportArgument; }
 
     /**
-     * Returns whether predicate weights should be included in results.
+     * Returns whether predicate truth degrees should be included in results.
      *
-     * @return True if weights should be included, otherwise false.
+     * @return True if truth degrees should be included, otherwise false.
      */
-    inline bool hasWeightsArgument() const
-    { return weightsArgument; }
+    inline bool hasDegreesArgument() const
+    { return degreesArgument; }
 
     /**
      * Returns whether disjoint predicate constraints were supplied.
@@ -503,9 +503,9 @@ private:
      */
     bool supportArgument = false;
     /**
-     * Whether predicate weights should be included in results.
+     * Whether predicate truth degrees should be included in results.
      */
-    bool weightsArgument = false;
+    bool degreesArgument = false;
 
     /**
      * Converts an R t-norm name to its native enumeration value.
@@ -550,8 +550,8 @@ private:
                 contiNnArgument = true;
             else if (vec[i] == "indices")
                 indicesArgument = true;
-            else if (vec[i] == "weights")
-                weightsArgument = true;
+            else if (vec[i] == "degrees" || vec[i] == "weights")
+                degreesArgument = true;
             else if (vec[i] == "foci_supports")
                 fociSupportsArgument = true;
         }

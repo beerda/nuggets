@@ -94,7 +94,7 @@ public:
         processSumArgument(args, argNames, pattern);
         processSupportArgument(args, argNames, pattern);
         processIndicesArgument(args, argNames, pattern);
-        processWeightsArgument(args, argNames, pattern);
+        processDegreesArgument(args, argNames, pattern);
         processFociSupportsArgument(args, argNames, pattern);
         processContiArguments(args, argNames, pattern);
 
@@ -251,10 +251,10 @@ private:
     }
 
     /**
-     * Processes the weights argument for the callback function based on the
-     * discovered chain. If the configuration specifies that the weights argument
+     * Processes the degrees argument for the callback function based on the
+     * discovered chain. If the configuration specifies that the degrees argument
      * should be included, this method creates a NumericVector containing the
-     * weights (membership degrees) for each row in the condition chain and adds it
+     * truth degrees for each row in the condition chain and adds it
      * to the arguments vector.
      *
      * @param args A reference to the vector of arguments for the callback function.
@@ -262,13 +262,13 @@ private:
      * @param pattern The Pattern object representing the discovered chain and its
      *     associated data.
      */
-    inline void processWeightsArgument(vector<RObject>& args,
+    inline void processDegreesArgument(vector<RObject>& args,
                                        vector<string>& argNames,
                                        const Pattern& pattern)
     {
-        if (config.hasWeightsArgument()) {
-            args.push_back(pattern.getWeights());
-            argNames.push_back("weights");
+        if (config.hasDegreesArgument()) {
+            args.push_back(pattern.getDegrees());
+            argNames.push_back("degrees");
         }
     }
 

@@ -65,7 +65,7 @@
 #'      the antecedent and the consequent, the antecedent but not the consequent,
 #'      the consequent but not the antecedent, and neither the antecedent nor the
 #'      consequent, respectively.
-#' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
+#' @param t_norm a t-norm used to compute conjunction of truth degrees. It must be one of
 #'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
 #'      (Łukasiewicz t-norm).
 #' @param max_results the maximum number of generated conditions to execute the

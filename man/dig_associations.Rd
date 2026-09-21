@@ -91,7 +91,7 @@ the antecedent and the consequent, the antecedent but not the consequent,
 the consequent but not the antecedent, and neither the antecedent nor the
 consequent, respectively.}
 
-\item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
+\item{t_norm}{a t-norm used to compute conjunction of truth degrees. It must be one of
 \code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}
 (Łukasiewicz t-norm).}
 

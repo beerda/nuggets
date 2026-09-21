@@ -49,8 +49,8 @@ satisfy the generated condition.
 \item If \code{type = "fuzzy"}, the callback function \code{f} must accept an argument
 \code{d} of type \code{data.frame} with single (if \code{yvars == NULL}) or two (if
 \code{yvars != NULL}) columns, accessible as \code{d[[1]]} and \code{d[[2]]}, and
-a numeric argument \code{weights} with the same length as the number of rows
-in \code{d}. The \code{weights} argument contains the truth degree
+a numeric argument \code{degrees} with the same length as the number of rows
+in \code{d}. The \code{degrees} argument contains the truth degree
 of the generated condition for each row of \code{d}. The truth degree is
 a number in the interval \eqn{[0, 1]} that represents the degree of
 satisfaction of the condition in the original data row.
@@ -203,9 +203,9 @@ fuzzyIris <- partition(iris,
 
 # a simple callback function that computes a weighted mean of a difference of
 # `xvar` and `yvar`
-f <- function(d, weights) {
-    list(m = weighted.mean(d[[1]] - d[[2]], w = weights),
-         w = sum(weights))
+f <- function(d, degrees) {
+    list(m = weighted.mean(d[[1]] - d[[2]], w = degrees),
+         w = sum(degrees))
 }
 
 # call f() for each fuzzy condition created from column fuzzy sets whose
