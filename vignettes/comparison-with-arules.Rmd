@@ -1,8 +1,8 @@
 ---
-title: "Comparison of nuggets performance with arules nad fim4r"
+title: "Comparison of nuggets performance with arules and fim4r"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Comparison of nuggets and arules performance}
+  %\VignetteIndexEntry{Comparison of nuggets performance with arules and fim4r}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
