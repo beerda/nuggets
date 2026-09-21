@@ -51,7 +51,7 @@ number of available predicates.}
 
 \item{min_support}{the minimum support of an itemset in the dataset \code{x}.}
 
-\item{t_norm}{a t-norm used to compute conjunction of weights. It must be one of
+\item{t_norm}{a t-norm used to compute conjunction of truth degrees. It must be one of
 \code{"goedel"} (minimum t-norm), \code{"goguen"} (product t-norm), or \code{"lukas"}
 (Łukasiewicz t-norm).}
 
