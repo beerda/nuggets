@@ -7,6 +7,7 @@
   because the search is performed always in a single thread
 - renamed callback argument `weights` to `degrees` in `dig()` and `dig_grid()`;
   callback argument `weights` is now deprecated
+- removed deprecated callback argument `foci_supports` from `dig()`
 
 # nuggets 2.2.4
 - released: 2026-09-11

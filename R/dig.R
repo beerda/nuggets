@@ -104,8 +104,8 @@
 #'   (typically a list) representing a pattern or patterns related to the
 #'   condition. The results of all calls of `f` are collected and returned as
 #'   a list. Possible arguments are: `condition`, `sum`, `support`, `indices`,
-#'   `degrees`, `pp`, `pn`, `np`, `nn`, or `foci_supports` (deprecated), which
-#'   are thoroughly described below in the "Details" section.
+#'   `degrees`, `pp`, `pn`, `np`, or `nn`, which are thoroughly described
+#'   below in the "Details" section.
 #' @param condition tidyselect expression (see
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying columns of `x` to use as condition predicates
@@ -302,7 +302,7 @@ dig <- function(x,
                                      call = current_env())) {
     .must_be_function(f,
                       required = NULL,
-                      optional = c("condition", "foci_supports",
+                      optional = c("condition",
                                    "pp", "np", "pn", "nn",
                                    "indices", "sum", "support", "degrees", "weights"),
                       arg = error_context$arg_f,
