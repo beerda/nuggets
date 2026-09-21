@@ -184,7 +184,7 @@ public:
             return vec;
         }
         else {
-            return LogicalVector(sum, true);
+            return LogicalVector(static_cast<size_t>(sum), true);
         }
     }
 
