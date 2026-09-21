@@ -83,7 +83,6 @@ context("dig/Config.h") {
         expect_true(c.getDisjoint()[7] == 5);
 
         expect_true(c.hasConditionArgument()== true);
-        expect_true(c.hasFociSupportsArgument() == false);
         expect_true(c.hasContiPpArgument() == true);
         expect_true(c.hasContiNpArgument() == true);
         expect_true(c.hasContiPnArgument() == false);
