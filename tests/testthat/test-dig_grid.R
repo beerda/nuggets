@@ -314,7 +314,7 @@ test_that("dig_grid with NULL results", {
     expect_equal(res$value,
                  rep(1, 8))
 
-    f <- function(d, weights) {
+    f <- function(d, degrees) {
         if (all(names(d) == c("x", "y"))) {
             return(NULL)
         }
@@ -355,10 +355,10 @@ test_that("dig_grid fuzzy", {
                     y = letters[11:20],
                     z = LETTERS[1:10])
 
-    f <- function(d, weights) {
+    f <- function(d, degrees) {
         paste(paste(d[[1]], collapse = "|"),
               paste(d[[2]], collapse = "|"),
-              sum(round(weights, 2)))
+              sum(round(degrees, 2)))
     }
 
     res <- dig_grid(x = d,
@@ -403,6 +403,31 @@ test_that("dig_grid fuzzy", {
     }
 })
 
+test_that("dig_grid weights callback argument is deprecated", {
+    d <- data.frame(a = 1.0,
+                    b = 1:10 / 10,
+                    x = letters[1:10],
+                    y = letters[11:20],
+                    z = LETTERS[1:10])
+
+    f <- function(d, weights) {
+        sum(round(weights, 2))
+    }
+
+    expect_warning(
+        res <- dig_grid(x = d,
+                        f = f,
+                        type = "fuzzy",
+                        condition = where(is.numeric),
+                        xvars = where(is.character),
+                        yvars = where(is.character)),
+        "callback argument `weights` in `nuggets::dig_grid\\(\\)`"
+    )
+
+    expect_true(is_nugget(res))
+    expect_true(is_tibble(res))
+})
+
 
 test_that("dig_grid number of columns in data frames", {
     d <- data.frame(a = TRUE,
@@ -439,7 +464,7 @@ test_that("dig_grid number of columns in data frames", {
 
     # fuzzy / xvars & yvars / d
     res <- dig_grid(x = d,
-                    f = function(d, weights) { ncol(d) },
+                    f = function(d, degrees) { ncol(d) },
                     type = "fuzzy",
                     condition = NULL,
                     xvars = where(is.character),
@@ -478,7 +503,7 @@ test_that("dig_grid number of columns in data frames", {
 
     # fuzzy / xvars only / d
     res <- dig_grid(x = d,
-                    f = function(d, weights) { ncol(d) },
+                    f = function(d, degrees) { ncol(d) },
                     type = "fuzzy",
                     condition = NULL,
                     xvars = where(is.character),
@@ -585,7 +610,7 @@ test_that("errors", {
     d <- data.frame(n = 1:5 / 5, l = TRUE, i = 1:5, s = letters[1:5])
     l <- as.list(d)
     fb <- function(pd) { 1 }
-    ff <- function(d, weights) { 1 }
+    ff <- function(d, degrees) { 1 }
 
     expect_true(is.data.frame(dig_grid(d, f = fb, type = "crisp", condition = c(l))))
     expect_error(dig_grid(d, f = ff, type = "crisp", condition = c(l)),
@@ -599,7 +624,7 @@ test_that("errors", {
 
     expect_true(is.data.frame(dig_grid(d, f = ff, type = "fuzzy", condition = c(l, n))))
     expect_error(dig_grid(d, f = fb, type = "fuzzy", condition = c(l)),
-                 "`f` must have the following arguments: `d`, `weights`.")
+                 "`f` must have the following arguments: `d`, `degrees`.")
     expect_error(dig_grid(d, f = ff, type = "fuzzy", condition = c(l, i)),
                  "All columns selected by `condition` must be logical or numeric from the interval")
     expect_error(dig_grid(d, f = ff, type = "fuzzy", condition = c(l, s)),

@@ -74,8 +74,8 @@
 #'   logical data, or the indices of rows with non-zero truth degrees for fuzzy
 #'   data, \eqn{indices = \{r \in R : \mu_C(r) > 0\}}.
 #'
-#' - `weights`: a numeric vector of truth degrees of \eqn{C} for each row in
-#'   \eqn{R}, \eqn{weights[r] = \mu C(r)}. Logical data is treated as a special
+#' - `degrees`: a numeric vector of truth degrees of \eqn{C} for each row in
+#'   \eqn{R}, \eqn{degrees[r] = \mu C(r)}. Logical data is treated as a special
 #'   case of fuzzy data, where \eqn{\mu_C(r)} is 1 for rows satisfying \eqn{C}
 #'   and 0 otherwise.
 #'
@@ -104,7 +104,7 @@
 #'   (typically a list) representing a pattern or patterns related to the
 #'   condition. The results of all calls of `f` are collected and returned as
 #'   a list. Possible arguments are: `condition`, `sum`, `support`, `indices`,
-#'   `weights`, `pp`, `pn`, `np`, `nn`, or `foci_supports` (deprecated), which
+#'   `degrees`, `pp`, `pn`, `np`, `nn`, or `foci_supports` (deprecated), which
 #'   are thoroughly described below in the "Details" section.
 #' @param condition tidyselect expression (see
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
@@ -171,7 +171,7 @@
 #'   conditions with no remaining foci after filtering by `min_focus_support`
 #'   or `min_conditional_focus_support`. If `TRUE`, `f` is called only when at
 #'   least one focus remains. If `FALSE`, `f` is called regardless.
-#' @param t_norm T-norm used for conjunction of weights: `"goedel"` (minimum),
+#' @param t_norm T-norm used for conjunction of truth degrees: `"goedel"` (minimum),
 #'   `"goguen"` (product), or `"lukas"` (Łukasiewicz).
 #' @param max_results Maximum number of results (objects returned by the
 #'   callback `f`) to store and return in the output list. When this limit
@@ -304,7 +304,7 @@ dig <- function(x,
                       required = NULL,
                       optional = c("condition", "foci_supports",
                                    "pp", "np", "pn", "nn",
-                                   "indices", "sum", "support", "weights"),
+                                   "indices", "sum", "support", "degrees", "weights"),
                       arg = error_context$arg_f,
                       call = error_context$call)
     arguments <- formalArgs(f)
@@ -312,7 +312,20 @@ dig <- function(x,
         arguments <- ""
     }
 
+    has_degrees_arg <- "degrees" %in% arguments
+    has_weights_arg <- "weights" %in% arguments
+    if (has_weights_arg) {
+        deprecate_warn(when = "2.3.0",
+                       what = "callback argument `weights` in `nuggets::dig()`",
+                       with = "callback argument `degrees`",
+                       details = "The `weights` callback argument is deprecated and will be removed in future versions.")
+    }
+    arguments <- unique(ifelse(arguments == "weights", "degrees", arguments))
+
     fun <- function(l) {
+        if ("degrees" %in% names(l) && has_weights_arg && !"weights" %in% names(l)) {
+            l$weights <- l$degrees
+        }
         do.call(f, l)
     }
 

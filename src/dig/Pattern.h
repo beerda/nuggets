@@ -31,13 +31,13 @@ public:
             const vector<const Predicate*>& foci,
             const vector<double>& predicateSums,
             std::function<LogicalVector()> indicesFunc,
-            std::function<NumericVector()> weightsFunc)
+            std::function<NumericVector()> degreesFunc)
         : prefix(prefix),
           predicate(predicate),
           foci(foci),
           predicateSums(predicateSums),
           indicesFunc(indicesFunc),
-          weightsFunc(weightsFunc)
+          degreesFunc(degreesFunc)
     { }
 
     inline const Clause& getPrefix() const
@@ -67,8 +67,8 @@ public:
     inline LogicalVector getIndices() const
     { return indicesFunc(); }
 
-    inline NumericVector getWeights() const
-    { return weightsFunc(); }
+    inline NumericVector getDegrees() const
+    { return degreesFunc(); }
 
 private:
     const Clause& prefix;
@@ -76,5 +76,5 @@ private:
     const vector<const Predicate*>& foci;
     const vector<double>& predicateSums;
     std::function<LogicalVector()> indicesFunc;
-    std::function<NumericVector()> weightsFunc;
+    std::function<NumericVector()> degreesFunc;
 };

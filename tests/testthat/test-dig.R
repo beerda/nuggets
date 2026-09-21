@@ -237,15 +237,33 @@ test_that("indices arg", {
 })
 
 
-test_that("weights arg", {
+test_that("degrees arg", {
     c1 <- c(0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
     c2 <- c(0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
     m <- matrix(c(c1, c2), ncol = 2)
-    res <- dig(m, function(weights) list(w = weights))
+    res <- dig(m, function(degrees) list(w = degrees))
 
     expect_true(is_nugget(res))
     expect_true(is.list(res))
     expect_equal(length(res), 4)
+
+    attributes(res) <- NULL
+    expect_equal(res, list(list(w = c(1,1,1,1,1,1)),
+                           list(w = c2),
+                           list(w = c1 * c2),
+                           list(w = c1)),
+                 tolerance = 1e-6)
+})
+
+test_that("weights callback argument is deprecated", {
+    c1 <- c(0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
+    c2 <- c(0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
+    m <- matrix(c(c1, c2), ncol = 2)
+
+    expect_warning(
+        res <- dig(m, function(weights) list(w = weights)),
+        "callback argument `weights` in `nuggets::dig\\(\\)`"
+    )
 
     attributes(res) <- NULL
     expect_equal(res, list(list(w = c(1,1,1,1,1,1)),
@@ -1464,7 +1482,7 @@ test_that("t-norm goedel", {
     m <- matrix(c(c1, c2), ncol = 2)
 
     res <- dig(m,
-               function(weights) list(w = weights),
+               function(degrees) list(w = degrees),
                min_length = 2,
                t_norm = "goedel")
 
@@ -1492,7 +1510,7 @@ test_that("t-norm goguen", {
     m <- matrix(c(c1, c2), ncol = 2)
 
     res <- dig(m,
-               function(weights) list(w = weights),
+               function(degrees) list(w = degrees),
                min_length = 2,
                t_norm = "goguen")
 
@@ -1520,7 +1538,7 @@ test_that("t-norm lukas", {
     m <- matrix(c(c1, c2), ncol = 2)
 
     res <- dig(m,
-               function(weights) list(w = weights),
+               function(degrees) list(w = degrees),
                min_length = 2,
                t_norm = "lukas")
 
@@ -1813,4 +1831,3 @@ test_that("bug on mixed logical and numeric chains", {
 
     expect_true(is_tibble(result))
 })
-

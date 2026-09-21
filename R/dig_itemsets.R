@@ -47,7 +47,7 @@
 #'      in an itemset. If equal to Inf, the maximum length is limited only by the
 #'      number of available predicates.
 #' @param min_support the minimum support of an itemset in the dataset `x`.
-#' @param t_norm a t-norm used to compute conjunction of weights. It must be one of
+#' @param t_norm a t-norm used to compute conjunction of truth degrees. It must be one of
 #'      `"goedel"` (minimum t-norm), `"goguen"` (product t-norm), or `"lukas"`
 #'      (Łukasiewicz t-norm).
 #' @param max_results the maximum number of generated itemsets. If the number of

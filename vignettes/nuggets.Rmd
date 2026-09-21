@@ -626,17 +626,17 @@ Here's an example that computes custom statistics for pairs of numeric variables
 
 ```{r}
 # Define callback for grid-based patterns
-grid_callback <- function(d, weights) {
+grid_callback <- function(d, degrees) {
     if (nrow(d) < 5) return(NULL)  # Skip if too few observations
     
     # Compute weighted correlation
-    wcor <- cov.wt(d, wt = weights, cor = TRUE)$cor[1, 2]
+    wcor <- cov.wt(d, wt = degrees, cor = TRUE)$cor[1, 2]
     
     list(
         correlation = wcor,
-        n_obs = sum(weights > 0.1),
-        mean_x = weighted.mean(d[[1]], weights),
-        mean_y = weighted.mean(d[[2]], weights)
+        n_obs = sum(degrees > 0.1),
+        mean_x = weighted.mean(d[[1]], degrees),
+        mean_y = weighted.mean(d[[2]], degrees)
     )
 }
 

@@ -50,8 +50,8 @@
 #'      \item If `type = "fuzzy"`, the callback function `f` must accept an argument
 #'      `d` of type `data.frame` with single (if `yvars == NULL`) or two (if
 #'      `yvars != NULL`) columns, accessible as `d[[1]]` and `d[[2]]`, and
-#'      a numeric argument `weights` with the same length as the number of rows
-#'      in `d`. The `weights` argument contains the truth degree
+#'      a numeric argument `degrees` with the same length as the number of rows
+#'      in `d`. The `degrees` argument contains the truth degree
 #'      of the generated condition for each row of `d`. The truth degree is
 #'      a number in the interval \eqn{[0, 1]} that represents the degree of
 #'      satisfaction of the condition in the original data row.
@@ -174,9 +174,9 @@
 #'
 #' # a simple callback function that computes a weighted mean of a difference of
 #' # `xvar` and `yvar`
-#' f <- function(d, weights) {
-#'     list(m = weighted.mean(d[[1]] - d[[2]], w = weights),
-#'          w = sum(weights))
+#' f <- function(d, degrees) {
+#'     list(m = weighted.mean(d[[1]] - d[[2]], w = degrees),
+#'          w = sum(degrees))
 #' }
 #'
 #' # call f() for each fuzzy condition created from column fuzzy sets whose
@@ -238,10 +238,16 @@ dig_grid <- function(x,
                           call = error_context$call)
     } else {
         .must_be_function(f,
-                          required = c("d", "weights"),
-                          optional = NULL,
+                          required = c("d"),
+                          optional = c("degrees", "weights"),
                           arg = error_context$arg_f,
                           call = error_context$call)
+        f_arguments <- formalArgs(f)
+        if (!any(c("degrees", "weights") %in% f_arguments)) {
+            cli_abort(c("{.arg {error_context$arg_f}} must have the following arguments: {.arg d}, {.arg degrees}.",
+                        "i" = "The callback argument {.arg weights} is deprecated."),
+                      call = error_context$call)
+        }
     }
 
     condition <- enquo(condition)
@@ -283,16 +289,35 @@ dig_grid <- function(x,
     }
 
     if (type == "fuzzy") {
+        has_degrees_arg <- "degrees" %in% formalArgs(f)
+        has_weights_arg <- "weights" %in% formalArgs(f)
+        if (has_weights_arg) {
+            deprecate_warn(when = "2.3.0",
+                           what = "callback argument `weights` in `nuggets::dig_grid()`",
+                           with = "callback argument `degrees`",
+                           details = "The `weights` callback argument is deprecated and will be removed in future versions.")
+        }
+
+        callback_f <- function(d, degrees) {
+            if (has_weights_arg && !has_degrees_arg) {
+                f(d = d, weights = degrees)
+            } else if (has_weights_arg && has_degrees_arg) {
+                f(d = d, degrees = degrees, weights = degrees)
+            } else {
+                f(d = d, degrees = degrees)
+            }
+        }
+
         # fuzzy variant
-        tempF1 <- function(condition, support, weights) {
+        tempF1 <- function(condition, support, degrees) {
             result <- apply(grid, 1, function(row) {
                 dd <- x[, row, drop = FALSE]
                 if (na_rm) {
                     dd <- na.omit(dd)
-                    weights <- weights[attr(dd, "na.action")]
+                    degrees <- degrees[attr(dd, "na.action")]
                 }
 
-                f(d = dd, weights = weights)
+                callback_f(d = dd, degrees = degrees)
             })
 
             processF(condition, support, result)
