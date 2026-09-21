@@ -46,8 +46,8 @@ compute than others. The function \code{f} is expected to return an object
 (typically a list) representing a pattern or patterns related to the
 condition. The results of all calls of \code{f} are collected and returned as
 a list. Possible arguments are: \code{condition}, \code{sum}, \code{support}, \code{indices},
-\code{degrees}, \code{pp}, \code{pn}, \code{np}, \code{nn}, or \code{foci_supports} (deprecated), which
-are thoroughly described below in the "Details" section.}
+\code{degrees}, \code{pp}, \code{pn}, \code{np}, or \code{nn}, which are thoroughly described
+below in the "Details" section.}
 
 \item{condition}{tidyselect expression (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
