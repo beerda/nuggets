@@ -43,13 +43,27 @@ public:
      * Default constructor that creates an empty chain of type CONDITION with
      * empty clause.
      *
-     * @param sum The sum of TRUE values of the chain.
+     * @param size The number of TRUE values of the chain.
      */
-    SparseBitChain(double sum)
-        : BaseChain(sum),
+    SparseBitChain(size_t size)
+        : BaseChain(0),
           data(),
           n(0)
-    { }
+    {
+        if (weights.empty()) {
+            this->sum = static_cast<double>(size);
+        }
+        else {
+            IF_DEBUG(
+                if (size != weights.size())
+                    throw std::invalid_argument("SparseBitChain: size does not match weights size");
+            )
+
+            for (size_t i = 0; i < size; ++i) {
+                this->sum += weights[i];
+            }
+        }
+    }
 
     /**
      * Constructor that creates a chain with the specified id, type and values.
@@ -68,9 +82,14 @@ public:
         for (size_t i = 0; i < n; ++i) {
             if (vec[i]) {
                 data.push_back(i);
+                if (!weights.empty()) {
+                    this->sum += weights[i];
+                }
             }
         }
-        this->sum = data.size();
+        if (weights.empty()) {
+            this->sum = data.size();
+        }
     }
 
     /**
@@ -105,6 +124,7 @@ public:
 
         auto i = a.data.begin();
         auto j = b.data.begin();
+        this->sum = 0.0;
 
         while (i != a.data.end() && j != b.data.end()) {
             if (*i < *j) {
@@ -115,11 +135,16 @@ public:
             }
             else {
                 data.push_back(*i);
+                if (!weights.empty()) {
+                    this->sum += weights[*i];
+                }
                 ++i; ++j;
             }
         }
 
-        this->sum = data.size();
+        if (weights.empty()) {
+            this->sum = data.size();
+        }
     }
 
     /**
@@ -213,8 +238,11 @@ public:
             }
             return vec;
         }
+        else if (weights.empty()) {
+            return LogicalVector(static_cast<size_t>(sum), true);
+        }
         else {
-            return LogicalVector(sum, true);
+            return LogicalVector(weights.size(), true);
         }
     }
 
@@ -228,12 +256,17 @@ public:
         if (hasPredicate()) {
             NumericVector vec(n, 0.0);
             for (size_t i : data) {
-                vec[i] = 1.0;
+                vec[i] = weights.empty() ? 1.0 : weights[i];
             }
             return vec;
         }
         else {
-            return NumericVector(static_cast<size_t>(sum), 1.0);
+            if (weights.empty()) {
+                return NumericVector(static_cast<size_t>(sum), 1.0);
+            }
+            else {
+                return NumericVector(weights.begin(), weights.end());
+            }
         }
     }
 
@@ -265,7 +298,7 @@ public:
      *
      * @return true/false, indicating whether this chain type is idempotent.
      */
-    static bool isIdempotent()
+    inline static bool isIdempotent()
     { return true; }
 
 private:

@@ -244,7 +244,27 @@ public:
     inline bool isFocusOnly() const
     { return predicateType == FOCUS; }
 
+    /**
+     * Sets the weights associated with the bits in the chain. This is a static
+     * member shared across all instances of BitChain.
+     *
+     * @param w A vector of weights to be associated with the bits in the chain.
+     */
+    inline static void setWeights(const std::vector<float>& w)
+    {
+        weights = w;
+    }
+
+    inline static void resetWeights()
+    { weights.clear(); }
+
 protected:
+    /**
+     * The weights associated with the bits in the chain. This is a static member
+     * shared across all instances of BitChain.
+     */
+    inline static std::vector<float> weights;
+
     /**
      * The type of the predicate represented by this chain, i.e.,
      * where the predicate may appear (in condition (antecedent),

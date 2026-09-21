@@ -36,11 +36,25 @@ public:
      * Default constructor that creates an empty chain of type CONDITION with
      * empty clause.
      *
-     * @param sum The sum of TRUEs in the chain.
+     * @param size The number of TRUEs in the chain.
      */
-    BitChain(double sum)
-        : BaseChain(sum), data()
-    { }
+    BitChain(size_t size)
+        : BaseChain(0), data()
+    {
+        if (weights.empty()) {
+            this->sum = static_cast<double>(size);
+        }
+        else {
+            IF_DEBUG(
+                if (size != weights.size())
+                    throw std::invalid_argument("BitChain: size does not match weights size");
+            )
+
+            for (size_t i = 0; i < size; ++i) {
+                this->sum += weights[i];
+            }
+        }
+    }
 
     /**
      * Constructor that creates a chain with the specified id and type from
@@ -58,7 +72,12 @@ public:
         for (R_xlen_t i = 0; i < vec.size(); ++i) {
             if (vec[i]) {
                 data.set(i);
-                this->sum++;
+                if (weights.empty()) {
+                    this->sum++;
+                }
+                else {
+                    this->sum += weights[i];
+                }
             }
         }
     }
@@ -86,7 +105,14 @@ public:
     BitChain(const BitChain& a, const BitChain& b)
         : BaseChain(a, b),
           data(a.data & b.data)
-    { sum = data.count(); }
+    {
+        if (weights.empty()) {
+            sum = data.count();
+        }
+        else {
+            sum = data.weightedCount(weights);
+        }
+    }
 
     /**
      * Constructor that creates a chain by combining two chains with a conjunction
@@ -183,8 +209,11 @@ public:
             }
             return vec;
         }
-        else {
+        else if (weights.empty()) {
             return LogicalVector(static_cast<size_t>(sum), true);
+        }
+        else {
+            return LogicalVector(weights.size(), true);
         }
     }
 
@@ -196,14 +225,21 @@ public:
     NumericVector getValuesAsNumericVector() const
     {
         if (hasPredicate()) {
-            NumericVector vec(data.size());
+            NumericVector vec(data.size(), 0.0);
             for (size_t i = 0; i < data.size(); ++i) {
-                vec[i] = data[i] ? 1.0 : 0.0;
+                if (data[i]) {
+                    vec[i] = weights.empty() ? 1.0 : weights[i];
+                }
             }
             return vec;
         }
         else {
-            return NumericVector(static_cast<size_t>(sum), 1.0);
+            if (weights.empty()) {
+                return NumericVector(static_cast<size_t>(sum), 1.0);
+            }
+            else {
+                return NumericVector(weights.begin(), weights.end());
+            }
         }
     }
 
@@ -235,7 +271,7 @@ public:
      *
      * @return true/false, indicating whether this chain type is idempotent.
      */
-    static bool isIdempotent()
+    inline static bool isIdempotent()
     { return true; }
 
 private:

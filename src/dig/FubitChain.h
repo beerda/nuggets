@@ -111,10 +111,10 @@ public:
      * Default constructor that creates an empty chain of type CONDITION with
      * empty clause.
      *
-     * @param sum The sum of membership degrees of the chain.
+     * @param size The number of membership degrees of the chain.
      */
-    FubitChain(float sum)
-        : BaseChain(sum), data(), n(0)
+    FubitChain(size_t size)
+        : BaseChain(static_cast<double>(size)), data(), n(0)
     { }
 
     /**

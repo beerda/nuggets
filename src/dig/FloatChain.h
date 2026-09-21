@@ -39,11 +39,25 @@ public:
      * Default constructor that creates an empty chain of type CONDITION with
      * empty clause.
      *
-     * @param sum The sum of membership degrees of the chain.
+     * @param size The number of membership degrees of the chain.
      */
-    FloatChain(float sum)
-        : BaseChain(sum), data()
-    { }
+    FloatChain(size_t size)
+        : BaseChain(0), data()
+    {
+        if (weights.empty()) {
+            this->sum = static_cast<double>(size);
+        }
+        else {
+            IF_DEBUG(
+                if (size != weights.size())
+                    throw std::invalid_argument("FloatChain: size does not match weights size");
+            )
+
+            for (size_t i = 0; i < size; ++i) {
+                this->sum += weights[i];
+            }
+        }
+    }
 
     /**
      * Constructor that creates a chain with the specified id, type and values.
@@ -60,7 +74,12 @@ public:
         for (R_xlen_t i = 0; i < vec.size(); i++) {
             if (vec[i]) {
                 data[i] = 1.0;
-                this->sum++;
+                if (weights.empty()) {
+                    this->sum++;
+                }
+                else {
+                    this->sum += weights[i];
+                }
             }
         }
     }
@@ -249,8 +268,11 @@ public:
             }
             return vec;
         }
+        else if (weights.empty()) {
+            return LogicalVector(static_cast<size_t>(sum), true);
+        }
         else {
-            return LogicalVector(sum, true);
+            return LogicalVector(weights.size(), true);
         }
     }
 
@@ -265,11 +287,19 @@ public:
             NumericVector vec(data.size());
             for (size_t i = 0; i < data.size(); ++i) {
                 vec[i] = static_cast<double>(data[i]);
+                if (!weights.empty()) {
+                    vec[i] *= weights[i];
+                }
             }
             return vec;
         }
         else {
-            return NumericVector(static_cast<size_t>(sum), 1.0);
+            if (weights.empty()) {
+                return NumericVector(static_cast<size_t>(sum), 1.0);
+            }
+            else {
+                return NumericVector(weights.begin(), weights.end());
+            }
         }
     }
 
@@ -321,6 +351,21 @@ private:
      */
     inline float computeSum() const
     {
+        if (weights.empty()) {
+            return computeSumNoWeights();
+        }
+        else {
+            return computeSumWithWeights();
+        }
+    }
+
+    /**
+     * Computes the sum of membership degrees without weights using SIMD where available.
+     *
+     * @return The sum of membership degrees.
+     */
+    inline float computeSumNoWeights() const
+    {
 #if !defined(XSIMD_NO_SUPPORTED_ARCHITECTURE)
         using batch_type = xsimd::batch<float>;
         constexpr size_t simd_size = batch_type::size;
@@ -351,5 +396,19 @@ private:
         }
         return result;
 #endif
+    }
+
+    /**
+     * Computes the sum of membership degrees with weights using SIMD where available.
+     *
+     * @return The sum of membership degrees with weights.
+     */
+    inline float computeSumWithWeights() const
+    {
+        float result = 0.0f;
+        for (size_t i = 0; i < data.size(); ++i) {
+            result += data[i] * weights[i];
+        }
+        return result;
     }
 };

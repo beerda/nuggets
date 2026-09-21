@@ -4,7 +4,8 @@
 
 context("dig/BitChain.h") {
     test_that("empty chain") {
-        BitChain b(5.0);
+        BitChain::resetWeights();
+        BitChain b(5);
 
         expect_true(b.hasPredicate() == false);
         expect_true(b.empty());
@@ -30,7 +31,36 @@ context("dig/BitChain.h") {
         expect_true(nv[4] == 1.0);
     }
 
+    test_that("empty chain with weights") {
+        BitChain::setWeights({1.0, 2.0, 3.0, 4.0, 5.0});
+        BitChain b(5);
+
+        expect_true(b.hasPredicate() == false);
+        expect_true(b.empty());
+        expect_true(b.size() == 0);
+        expect_true(b.getSum() == 15.0);
+        expect_true(b.isCondition());
+        expect_true(!b.isFocus());
+
+        LogicalVector lv = b.getValuesAsLogicalVector();
+        expect_true(lv.size() == 5);
+        expect_true(lv[0] == true);
+        expect_true(lv[1] == true);
+        expect_true(lv[2] == true);
+        expect_true(lv[3] == true);
+        expect_true(lv[4] == true);
+
+        NumericVector nv = b.getValuesAsNumericVector();
+        expect_true(nv.size() == 5);
+        expect_true(nv[0] == 1.0);
+        expect_true(nv[1] == 2.0);
+        expect_true(nv[2] == 3.0);
+        expect_true(nv[3] == 4.0);
+        expect_true(nv[4] == 5.0);
+    }
+
     test_that("initialize from LogicalVector") {
+        BitChain::resetWeights();
         LogicalVector v(5);
         v[0] = true;
         v[1] = false;
@@ -71,7 +101,50 @@ context("dig/BitChain.h") {
         expect_true(nv[4] == 0.0);
     }
 
+    test_that("initialize from LogicalVector with weights") {
+        BitChain::setWeights({1.0, 2.0, 3.0, 4.0, 5.0});
+        LogicalVector v(5);
+        v[0] = true;
+        v[1] = false;
+        v[2] = true;
+        v[3] = true;
+        v[4] = false;
+
+        BitChain b(3, PredicateType::FOCUS, v);
+
+        expect_true(b.hasPredicate() == true);
+        expect_true(b.getPredicate() == 3);
+        expect_true(!b.empty());
+        expect_true(b.size() == 5);
+        expect_true(b.getSum() == 1.0 + 3.0 + 4.0);
+        expect_true(!b.isCondition());
+        expect_true(b.isFocus());
+        expect_true(b.at(0));
+        expect_true(!b.at(1));
+        expect_true(b.at(2));
+        expect_true(b.at(3));
+        expect_true(!b.at(4));
+        expect_true(b.toString() == "[n=5]10110");
+
+        LogicalVector lv = b.getValuesAsLogicalVector();
+        expect_true(lv.size() == 5);
+        expect_true(lv[0] == true);
+        expect_true(lv[1] == false);
+        expect_true(lv[2] == true);
+        expect_true(lv[3] == true);
+        expect_true(lv[4] == false);
+
+        NumericVector nv = b.getValuesAsNumericVector();
+        expect_true(nv.size() == 5);
+        expect_true(nv[0] == 1.0);
+        expect_true(nv[1] == 0.0);
+        expect_true(nv[2] == 3.0);
+        expect_true(nv[3] == 4.0);
+        expect_true(nv[4] == 0.0);
+    }
+
     test_that("initialize by conjunction") {
+        BitChain::resetWeights();
         LogicalVector la(5);
         la[0] = true;
         la[1] = false;
@@ -147,7 +220,58 @@ context("dig/BitChain.h") {
         }
     }
 
+    test_that("initialize by conjunction with weights") {
+        BitChain::setWeights({1.0, 2.0, 3.0, 4.0, 5.0});
+        LogicalVector la(5);
+        la[0] = true;
+        la[1] = false;
+        la[2] = true;
+        la[3] = true;
+        la[4] = false;
+
+        LogicalVector lb(5);
+        lb[0] = false;
+        lb[1] = true;
+        lb[2] = true;
+        lb[3] = false;
+        lb[4] = true;
+
+        {
+            BitChain a1(10, PredicateType::BOTH, la);
+            BitChain a2(11, PredicateType::BOTH, la);
+            BitChain b(20, PredicateType::BOTH, lb);
+
+            BitChain c1(b, a1);
+            expect_true(c1.hasPredicate() == true);
+            expect_true(c1.getPredicate() == 10);
+            expect_true(!c1.empty());
+            expect_true(c1.size() == 5);
+            expect_true(c1.getSum() == 3.0); // weights[2] = 3.0
+            expect_true(c1.isCondition());
+            expect_true(c1.isFocus());
+            expect_true(!c1.at(0));
+            expect_true(!c1.at(1));
+            expect_true(c1.at(2));
+            expect_true(!c1.at(3));
+            expect_true(!c1.at(4));
+            expect_true(c1.toString() == "[n=5]00100");
+
+            BitChain c2(b, a2);
+            expect_true(c1.hasPredicate() == true);
+            expect_true(c2.getPredicate() == 11);
+            expect_true(c2.getSum() == 3.0);
+            expect_true(c2.toString() == "[n=5]00100");
+
+            BitChain d(c1, c2);
+            expect_true(c1.hasPredicate() == true);
+            expect_true(d.getPredicate() == 11);
+            expect_true(d.getSum() == 3.0);
+            expect_true(d.toString() == "[n=5]00100");
+        }
+    }
+
     test_that("clone copies const chain") {
+        BitChain::resetWeights();
         LogicalVector v(5);
         v[0] = true;
         v[1] = false;
