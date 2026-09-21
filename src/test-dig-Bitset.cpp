@@ -42,6 +42,34 @@ context("dig/Bitset.h") {
         expect_true(b.count() == 3);
     }
 
+    test_that("weightedCount") {
+        Bitset b(5);
+        b.set(0);
+        b.set(2);
+        b.set(4);
+
+        std::vector<float> weights = {1.0, 2.0, 3.0, 4.0, 5.0};
+        double weightedSum = b.weightedCount(weights);
+        expect_true(weightedSum == (1.0 + 3.0 + 5.0)); // bits 0, 2, and 4 are set
+    }
+
+    test_that("weightedCount 2") {
+        size_t n = 200;
+        Bitset b(n);
+        std::vector<float> weights(n);
+        double expectedSum = 0.0;
+
+        for (size_t i = 0; i < n; ++i) {
+            weights[i] = static_cast<float>(i);
+            if (i % 3 == 0) {
+                b.set(i);
+                expectedSum += static_cast<double>(i);
+            }
+        }
+
+        expect_true(b.weightedCount(weights) == expectedSum);
+    }
+
     test_that("operator[] access") {
         Bitset b(5);
         b.set(0);

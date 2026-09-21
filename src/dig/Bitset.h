@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <bit>
 #include <vector>
 #include <cstdint>
 #include <stdexcept>
@@ -37,6 +38,8 @@
  */
 class Bitset {
 private:
+    static constexpr std::size_t bitsPerBlock = sizeof(uint64_t) * 8;
+
     /**
      * A pointer to the array of 64-bit blocks that store the bits.
      * The blocks are allocated using aligned memory allocation
@@ -49,13 +52,13 @@ private:
      * and determines the size of the Bitset.
      *
      */
-    size_t num_bits;
+    size_t numBits;
 
     /**
      * The number of 64-bit blocks used to store the bits, i.e., the size of the
      * blocks array.
      */
-    size_t num_blocks;
+    size_t numBlocks;
 
     /**
      * The number of bits stored in each block.
@@ -96,8 +99,8 @@ public:
      */
     Bitset()
         : blocks(nullptr),
-          num_bits(0),
-          num_blocks(0)
+          numBits(0),
+          numBlocks(0)
     { }
 
     /**
@@ -109,29 +112,29 @@ public:
      */
     explicit Bitset(size_t n)
         : blocks(nullptr),
-          num_bits(n),
-          num_blocks((n + BITS_PER_BLOCK - 1) / BITS_PER_BLOCK)
+          numBits(n),
+          numBlocks((n + BITS_PER_BLOCK - 1) / BITS_PER_BLOCK)
     {
-        if (num_blocks > 0) {
+        if (numBlocks > 0) {
             blocks = static_cast<uint64_t*>(
-                xsimd::aligned_malloc(num_blocks * sizeof(uint64_t),
+                xsimd::aligned_malloc(numBlocks * sizeof(uint64_t),
                                       xsimd::default_arch::alignment()));
             // Initialize all blocks to zero
-            memset(blocks, 0, num_blocks * sizeof(uint64_t));
+            memset(blocks, 0, numBlocks * sizeof(uint64_t));
         }
     }
 
     // Copy constructor
     Bitset(const Bitset& other)
         : blocks(nullptr),
-          num_bits(other.num_bits),
-          num_blocks(other.num_blocks)
+          numBits(other.numBits),
+          numBlocks(other.numBlocks)
     {
-        if (num_blocks > 0) {
+        if (numBlocks > 0) {
             blocks = static_cast<uint64_t*>(
-                xsimd::aligned_malloc(num_blocks * sizeof(uint64_t),
+                xsimd::aligned_malloc(numBlocks * sizeof(uint64_t),
                                       xsimd::default_arch::alignment()));
-            memcpy(blocks, other.blocks, num_blocks * sizeof(uint64_t));
+            memcpy(blocks, other.blocks, numBlocks * sizeof(uint64_t));
         }
     }
 
@@ -142,13 +145,13 @@ public:
             if (blocks) {
                 xsimd::aligned_free(blocks);
             }
-            num_bits = other.num_bits;
-            num_blocks = other.num_blocks;
-            if (num_blocks > 0) {
+            numBits = other.numBits;
+            numBlocks = other.numBlocks;
+            if (numBlocks > 0) {
                 blocks = static_cast<uint64_t*>(
-                    xsimd::aligned_malloc(num_blocks * sizeof(uint64_t),
+                    xsimd::aligned_malloc(numBlocks * sizeof(uint64_t),
                                           xsimd::default_arch::alignment()));
-                memcpy(blocks, other.blocks, num_blocks * sizeof(uint64_t));
+                memcpy(blocks, other.blocks, numBlocks * sizeof(uint64_t));
             } else {
                 blocks = nullptr;
             }
@@ -160,12 +163,12 @@ public:
     // Move constructor
     Bitset(Bitset&& other) noexcept
         : blocks(other.blocks),
-          num_bits(other.num_bits),
-          num_blocks(other.num_blocks)
+          numBits(other.numBits),
+          numBlocks(other.numBlocks)
     {
         other.blocks = nullptr;
-        other.num_blocks = 0;
-        other.num_bits = 0;
+        other.numBlocks = 0;
+        other.numBits = 0;
     }
 
     // Move assignment operator
@@ -176,11 +179,11 @@ public:
                 xsimd::aligned_free(blocks);
             }
             blocks = other.blocks;
-            num_blocks = other.num_blocks;
-            num_bits = other.num_bits;
+            numBlocks = other.numBlocks;
+            numBits = other.numBits;
             other.blocks = nullptr;
-            other.num_blocks = 0;
-            other.num_bits = 0;
+            other.numBlocks = 0;
+            other.numBits = 0;
         }
         return *this;
     }
@@ -198,12 +201,12 @@ public:
     /**
      * Sets the bit at the specified position to true.
      *
-     * @param pos The position of the bit to set. Must be less than num_bits.
+     * @param pos The position of the bit to set. Must be less than numBits.
      */
     inline void set(size_t pos)
     {
         IF_DEBUG(
-            if (pos >= num_bits)
+            if (pos >= numBits)
                 throw std::out_of_range("Bitset::set: position out of range");
         )
 
@@ -219,13 +222,50 @@ public:
     {
         BLOCK_INC_TIMER(st2, t2, "Bitset::count");
 
-        return popcnt(blocks, num_blocks * sizeof(uint64_t));
+        return popcnt(blocks, numBlocks * sizeof(uint64_t));
+    }
+
+    /**
+     * Returns the weighted count of bits that are set to true in the Bitset,
+     * using the provided weights for each bit position.
+     *
+     * @param weights A vector of weights corresponding to each bit position.
+     *                The size of the weights vector must match numBits.
+     * @return The weighted count of bits set to true.
+     * @throws std::invalid_argument if the size of weights does not match numBits.
+     */
+    inline double weightedCount(const std::vector<float>& weights) const
+    {
+        BLOCK_INC_TIMER(st2, t2, "Bitset::weightedCount");
+
+        IF_DEBUG(
+            if (weights.size() != numBits) {
+                throw std::invalid_argument("Weights size must match Bitset size");
+            }
+        )
+
+        double total = 0.0;
+        for (size_t blockIndex = 0; blockIndex < numBlocks; ++blockIndex) {
+            uint64_t word = blocks[blockIndex];
+            while (word != 0) {
+                // Count zero bits from the least significant bit
+                size_t bitIndex = std::countr_zero(word);
+
+                size_t weightIndex = blockIndex * bitsPerBlock + bitIndex;
+                total += weights[weightIndex];
+
+                // Clear the least significant set bit
+                word &= word - 1;
+            }
+        }
+
+        return total;
     }
 
     /**
      * Returns the value of the bit at the specified position.
      *
-     * @param pos The position of the bit to check. Must be less than num_bits.
+     * @param pos The position of the bit to check. Must be less than numBits.
      * @return True if the bit is set, false otherwise.
      */
     inline bool operator[](size_t pos) const
@@ -234,13 +274,13 @@ public:
     /**
      * Returns the value of the bit at the specified position, with bounds checking.
      *
-     * @param pos The position of the bit to check. Must be less than num_bits.
+     * @param pos The position of the bit to check. Must be less than numBits.
      * @return True if the bit is set, false otherwise.
-     * @throws std::out_of_range if pos is greater than or equal to num_bits.
+     * @throws std::out_of_range if pos is greater than or equal to numBits.
      */
     inline bool at(size_t pos) const
     {
-        if (pos >= num_bits) {
+        if (pos >= numBits) {
             throw std::out_of_range("Bitset::at: position out of range");
         }
 
@@ -262,15 +302,15 @@ public:
         {
             BLOCK_INC_TIMER(st, t, "Bitset::operator&");
 
-            if (num_bits != other.num_bits) {
+            if (numBits != other.numBits) {
                 throw std::invalid_argument("Bitset::operator&: incompatible sizes");
             }
 
-            result.num_bits = num_bits;
-            result.num_blocks = num_blocks;
-            if (num_blocks > 0) {
+            result.numBits = numBits;
+            result.numBlocks = numBlocks;
+            if (numBlocks > 0) {
                 result.blocks = static_cast<uint64_t*>(
-                    xsimd::aligned_malloc(num_blocks * sizeof(uint64_t),
+                    xsimd::aligned_malloc(numBlocks * sizeof(uint64_t),
                                           xsimd::default_arch::alignment()));
             }
 
@@ -281,7 +321,7 @@ public:
 
             // Process blocks in SIMD batches using aligned operations
             size_t i = 0;
-            for (; i + simd_size <= num_blocks; i += simd_size) {
+            for (; i + simd_size <= numBlocks; i += simd_size) {
                 batch_type a = batch_type::load_aligned(&blocks[i]);
                 batch_type b = batch_type::load_aligned(&other.blocks[i]);
                 batch_type c = a & b;
@@ -289,13 +329,13 @@ public:
             }
 
             // Process remaining blocks that don't fit in a SIMD batch
-            for (; i < num_blocks; ++i) {
+            for (; i < numBlocks; ++i) {
                 uint64_t value = blocks[i] & other.blocks[i];
                 result.blocks[i] = value;
             }
 #else
             // Fallback for architectures without SIMD support
-            for (size_t i = 0; i < num_blocks; ++i) {
+            for (size_t i = 0; i < numBlocks; ++i) {
                 uint64_t value = blocks[i] & other.blocks[i];
                 result.blocks[i] = value;
             }
@@ -315,10 +355,10 @@ public:
      */
     inline bool operator==(const Bitset& other) const
     {
-        if (num_bits != other.num_bits)
+        if (numBits != other.numBits)
             return false;
 
-        for (size_t i = 0; i < num_blocks; ++i) {
+        for (size_t i = 0; i < numBlocks; ++i) {
             if (blocks[i] != other.blocks[i]) {
                 return false;
             }
@@ -333,7 +373,7 @@ public:
      * @return The total number of bits in the Bitset.
      */
     inline size_t size() const
-    { return num_bits; }
+    { return numBits; }
 
     /**
      * Checks if the Bitset is empty, i.e., has no bits set to true.
@@ -341,5 +381,5 @@ public:
      * @return True if the Bitset is empty, false otherwise.
      */
     inline bool empty() const
-    { return num_bits == 0; }
+    { return numBits == 0; }
 };
