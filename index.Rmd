@@ -208,3 +208,11 @@ BSD-3-Clause, and GPL-2 or later licenses. See `inst/COPYRIGHTS` for details.
 Burda, M. [Accelerating Pattern Mining on Fuzzy Data by Packing Truth Values into
 Blocks of Bits](https://doi.org/10.1016/j.asoc.2026.114661).
 *Applied Soft Computing*. 2026, **191** (April 2026), ISSN 1568-4946.
+
+
+
+## Acknowledgements
+
+This work has been produced within the project
+``Research of Excellence on Digital Technologies and Wellbeing CZ.02.01.01/00/22\_008/0004583''
+which is co-financed by the European Union.
