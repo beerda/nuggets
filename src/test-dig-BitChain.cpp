@@ -22,7 +22,15 @@ context("dig/BitChain.h") {
         expect_true(lv[3] == true);
         expect_true(lv[4] == true);
 
-        NumericVector nv = b.getValuesAsNumericVector();
+        NumericVector vv = b.getValuesAsNumericVector();
+        expect_true(vv.size() == 5);
+        expect_true(vv[0] == 1.0);
+        expect_true(vv[1] == 1.0);
+        expect_true(vv[2] == 1.0);
+        expect_true(vv[3] == 1.0);
+        expect_true(vv[4] == 1.0);
+
+        NumericVector nv = b.getWeightedValuesAsNumericVector();
         expect_true(nv.size() == 5);
         expect_true(nv[0] == 1.0);
         expect_true(nv[1] == 1.0);
@@ -50,7 +58,15 @@ context("dig/BitChain.h") {
         expect_true(lv[3] == true);
         expect_true(lv[4] == true);
 
-        NumericVector nv = b.getValuesAsNumericVector();
+        NumericVector vv = b.getValuesAsNumericVector();
+        expect_true(vv.size() == 5);
+        expect_true(vv[0] == 1.0);
+        expect_true(vv[1] == 1.0);
+        expect_true(vv[2] == 1.0);
+        expect_true(vv[3] == 1.0);
+        expect_true(vv[4] == 1.0);
+
+        NumericVector nv = b.getWeightedValuesAsNumericVector();
         expect_true(nv.size() == 5);
         expect_true(nv[0] == 1.0);
         expect_true(nv[1] == 2.0);
@@ -92,7 +108,15 @@ context("dig/BitChain.h") {
         expect_true(lv[3] == true);
         expect_true(lv[4] == false);
 
-        NumericVector nv = b.getValuesAsNumericVector();
+        NumericVector vv = b.getValuesAsNumericVector();
+        expect_true(vv.size() == 5);
+        expect_true(vv[0] == 1.0);
+        expect_true(vv[1] == 0.0);
+        expect_true(vv[2] == 1.0);
+        expect_true(vv[3] == 1.0);
+        expect_true(vv[4] == 0.0);
+
+        NumericVector nv = b.getWeightedValuesAsNumericVector();
         expect_true(nv.size() == 5);
         expect_true(nv[0] == 1.0);
         expect_true(nv[1] == 0.0);
@@ -134,7 +158,15 @@ context("dig/BitChain.h") {
         expect_true(lv[3] == true);
         expect_true(lv[4] == false);
 
-        NumericVector nv = b.getValuesAsNumericVector();
+        NumericVector vv = b.getValuesAsNumericVector();
+        expect_true(vv.size() == 5);
+        expect_true(vv[0] == 1.0);
+        expect_true(vv[1] == 0.0);
+        expect_true(vv[2] == 1.0);
+        expect_true(vv[3] == 1.0);
+        expect_true(vv[4] == 0.0);
+
+        NumericVector nv = b.getWeightedValuesAsNumericVector();
         expect_true(nv.size() == 5);
         expect_true(nv[0] == 1.0);
         expect_true(nv[1] == 0.0);

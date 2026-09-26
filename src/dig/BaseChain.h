@@ -251,9 +251,7 @@ public:
      * @param w A vector of weights to be associated with the bits in the chain.
      */
     inline static void setWeights(const std::vector<float>& w)
-    {
-        weights = w;
-    }
+    { weights = w; }
 
     inline static void resetWeights()
     { weights.clear(); }

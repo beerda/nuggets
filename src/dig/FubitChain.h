@@ -114,8 +114,23 @@ public:
      * @param size The number of membership degrees of the chain.
      */
     FubitChain(size_t size)
-        : BaseChain(static_cast<double>(size)), data(), n(0)
-    { }
+        : BaseChain(0), data(), n(0)
+    {
+        if (weights.empty()) {
+            this->sum = static_cast<double>(size);
+        }
+        else {
+            IF_DEBUG(
+                if (size != weights.size())
+                    throw std::invalid_argument("FubitChain: size does not match weights size");
+            )
+
+            for (size_t i = 0; i < size; ++i) {
+                this->sum += weights[i];
+            }
+        }
+
+    }
 
     /**
      * Constructor that creates a chain with the specified id, type and values.
@@ -342,8 +357,11 @@ public:
             }
             return vec;
         }
+        else if (weights.empty()) {
+            return LogicalVector(static_cast<size_t>(sum), true);
+        }
         else {
-            return LogicalVector(sum, true);
+            return LogicalVector(weights.size(), true);
         }
     }
 
@@ -361,8 +379,38 @@ public:
             }
             return vec;
         }
-        else {
+        else if (weights.empty()) {
             return NumericVector(static_cast<size_t>(sum), 1.0);
+        }
+        else {
+            return NumericVector(weights.size(), 1.0);
+        }
+    }
+
+    /**
+     * Returns the values of the BitChain as a NumericVector.
+     *
+     * @return A NumericVector containing the values of the BitChain.
+     */
+    NumericVector getWeightedValuesAsNumericVector() const
+    {
+        if (hasPredicate()) {
+            NumericVector vec(n);
+            for (size_t i = 0; i < n; ++i) {
+                vec[i] = static_cast<double>((*this)[i]);
+                if (!weights.empty()) {
+                    vec[i] *= weights[i];
+                }
+            }
+            return vec;
+        }
+        else {
+            if (weights.empty()) {
+                return NumericVector(static_cast<size_t>(sum), 1.0);
+            }
+            else {
+                return NumericVector(weights.begin(), weights.end());
+            }
         }
     }
 
@@ -459,7 +507,7 @@ private:
      *
      * @return The sum of packed values.
      */
-    inline BASE_TYPE internalSum() const
+    inline BASE_TYPE internalSumWithoutWeights() const
     {
         BASE_TYPE result = 0;
         size_t index = 0;
@@ -516,20 +564,33 @@ private:
      */
     inline void internalSetSum()
     {
-        if constexpr (TNORM == TNorm::GOEDEL) {
-            this->sum = ((float) internalSum()) / ((float) MAX_VALUE);
-        }
-        else if constexpr (TNORM == TNorm::LUKASIEWICZ) {
-            this->sum = n - ((float) internalSum()) / ((float) MAX_VALUE);
-        }
-        else if constexpr (TNORM == TNorm::GOGUEN) {
-            this->sum = 0;
-            for (size_t i = 0; i < n; ++i)
-                this->sum += operator[](i);
+        if (weights.empty()) {
+            if constexpr (TNORM == TNorm::GOEDEL) {
+                this->sum = ((float) internalSumWithoutWeights()) / ((float) MAX_VALUE);
+            }
+            else if constexpr (TNORM == TNorm::LUKASIEWICZ) {
+                this->sum = n - ((float) internalSumWithoutWeights()) / ((float) MAX_VALUE);
+            }
+            else if constexpr (TNORM == TNorm::GOGUEN) {
+                this->sum = 0;
+                for (size_t i = 0; i < n; ++i)
+                    this->sum += operator[](i);
+            }
+            else {
+                static_assert(TNORM != TNorm::GOEDEL && TNORM != TNorm::GOGUEN && TNORM != TNorm::LUKASIEWICZ,
+                              "Unsupported TNorm type");
+            }
         }
         else {
-            static_assert(TNORM != TNorm::GOEDEL && TNORM != TNorm::GOGUEN && TNORM != TNorm::LUKASIEWICZ,
-                          "Unsupported TNorm type");
+            if constexpr (TNORM == TNorm::GOEDEL || TNORM == TNorm::GOGUEN || TNORM == TNorm::LUKASIEWICZ) {
+                this->sum = 0;
+                for (size_t i = 0; i < n; ++i)
+                    this->sum += operator[](i) * weights[i];
+            }
+            else {
+                static_assert(TNORM != TNorm::GOEDEL && TNORM != TNorm::GOGUEN && TNORM != TNorm::LUKASIEWICZ,
+                              "Unsupported TNorm type");
+            }
         }
     }
 };

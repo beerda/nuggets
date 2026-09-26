@@ -227,19 +227,40 @@ public:
         if (hasPredicate()) {
             NumericVector vec(data.size(), 0.0);
             for (size_t i = 0; i < data.size(); ++i) {
-                if (data[i]) {
-                    vec[i] = weights.empty() ? 1.0 : weights[i];
+                vec[i] = static_cast<double>(data[i]);
+            }
+            return vec;
+        }
+        else if (weights.empty()) {
+            return NumericVector(static_cast<size_t>(sum), 1.0);
+        }
+        else {
+            return NumericVector(weights.size(), 1.0);
+        }
+    }
+
+    /**
+     * Returns the values of the BitChain as a NumericVector.
+     *
+     * @return A NumericVector containing the values of the BitChain.
+     */
+    NumericVector getWeightedValuesAsNumericVector() const
+    {
+        if (hasPredicate()) {
+            NumericVector vec(data.size(), 0.0);
+            for (size_t i = 0; i < data.size(); ++i) {
+                vec[i] = static_cast<double>(data[i]);
+                if (!weights.empty()) {
+                    vec[i] *= weights[i];
                 }
             }
             return vec;
         }
+        else if (weights.empty()) {
+            return NumericVector(static_cast<size_t>(sum), 1.0);
+        }
         else {
-            if (weights.empty()) {
-                return NumericVector(static_cast<size_t>(sum), 1.0);
-            }
-            else {
-                return NumericVector(weights.begin(), weights.end());
-            }
+            return NumericVector(weights.begin(), weights.end());
         }
     }
 
