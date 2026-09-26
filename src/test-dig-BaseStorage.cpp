@@ -6,6 +6,7 @@ context("dig/BaseStorage.h") {
     test_that("format condition") {
         List r = List::create(
             Named("nrow") = 600,
+            Named("weights") = NumericVector::create(),
             Named("threads") = 2,
             Named("minLength") = 3,
             Named("maxLength") = 5,

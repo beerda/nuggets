@@ -6,6 +6,7 @@ context("dig/Config.h") {
     test_that("non-defaults") {
         List r = List::create(
             Named("nrow") = 600,
+            Named("weights") = NumericVector(600, 0.5),
             Named("threads") = 2,
             Named("minLength") = 3,
             Named("maxLength") = 5,
@@ -29,11 +30,25 @@ context("dig/Config.h") {
 
         expect_true(c.getMaxLength() == 5);
         expect_true(c.getMaxResults() == 6);
+        expect_true(c.hasWeights() == true);
+        expect_true(c.getWeights().size() == 600);
+        expect_true(c.getWeights()[0] == 0.5);
+        expect_true(c.getWeights()[599] == 0.5);
+
+        r["weights"] = NumericVector::create(0.5);
+        bool threw = false;
+        try {
+            Config invalid(r, n);
+        } catch (const invalid_argument&) {
+            threw = true;
+        }
+        expect_true(threw);
     }
 
     test_that("complex test with defaults") {
         List r = List::create(
             Named("nrow") = 600,
+            Named("weights") = NumericVector::create(),
             Named("threads") = 2,
             Named("minLength") = 3,
             Named("maxLength") = -1,
@@ -56,6 +71,8 @@ context("dig/Config.h") {
         Config c(r, n);
 
         expect_true(c.getNrow() == 600);
+        expect_true(c.hasWeights() == false);
+        expect_true(c.getWeights().size() == 0);
         expect_true(c.getThreads() == 2);
         expect_true(c.getMinLength() == 3);
         expect_true(c.getMaxLength() == SIZE_MAX);

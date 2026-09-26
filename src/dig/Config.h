@@ -41,8 +41,7 @@ public:
      *
      * @param configuration R list containing algorithm configuration values.
      * @param namesVector R character vector of predicate chain names.
-     * @throws std::invalid_argument If a count is negative or a support is
-     * outside the inclusive range [0, 1].
+     * @throws std::invalid_argument If input configuration values are invalid.
      */
     Config(const List& configuration, const CharacterVector& namesVector)
     {
@@ -53,6 +52,11 @@ public:
             throw invalid_argument("nrow must be non-negative");
         else
             nrow = static_cast<size_t>(nrow_i);
+
+        weights = as<NumericVector>(configuration["weights"]);
+        if (static_cast<size_t>(weights.size()) != nrow
+                && static_cast<size_t>(weights.size()) != 0)
+            throw invalid_argument("weights must be empty or have the same length as nrow");
 
         int threads_i = as<IntegerVector>(configuration["threads"])[0];
         if (threads_i < 0)
@@ -267,6 +271,24 @@ public:
     { return nrow; }
 
     /**
+     * Returns whether observation weights were supplied from R.
+     *
+     * @return True if a non-empty weight vector is available.
+     */
+    inline bool hasWeights() const
+    { return weights.size() > 0; }
+
+    /**
+     * Returns the observation weights supplied from R.
+     *
+     * An empty vector indicates that no weight column was selected.
+     *
+     * @return Observation weights, or an empty vector.
+     */
+    inline const NumericVector& getWeights() const
+    { return weights; }
+
+    /**
      * Returns the requested number of worker threads.
      *
      * @return Requested worker thread count.
@@ -376,6 +398,10 @@ private:
      * Number of rows in the input data.
      */
     size_t nrow;
+    /**
+     * Optional observation weights supplied from R.
+     */
+    NumericVector weights;
     /**
      * Number of worker threads requested for the algorithm.
      */

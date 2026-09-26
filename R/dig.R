@@ -112,6 +112,10 @@
 #' @param focus tidyselect expression (see
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying columns of `x` to use as focus predicates
+#' @param weights `NULL` or a tidyselect expression (see
+#'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
+#'      selecting one numeric, finite, non-negative column of observation
+#'      weights.
 #' @param disjoint An atomic vector (length = number of columns in `x`) defining
 #'   groups of predicates. Columns in the same group cannot appear together in
 #'   a condition. With data from [partition()], use [var_names()] on column
@@ -269,6 +273,7 @@ dig <- function(x,
                 f,
                 condition = everything(),
                 focus = NULL,
+                weights = NULL,
                 disjoint = var_names(colnames(x)),
                 excluded = NULL,
                 min_length = 0,
@@ -286,6 +291,7 @@ dig <- function(x,
                                      arg_f = "f",
                                      arg_condition = "condition",
                                      arg_focus = "focus",
+                                     arg_weights = "weights",
                                      arg_disjoint = "disjoint",
                                      arg_excluded = "excluded",
                                      arg_min_length = "min_length",
@@ -349,6 +355,7 @@ dig <- function(x,
          callback_arguments = arguments,
          condition = !!enquo(condition),
          focus = !!enquo(focus),
+         weights = !!enquo(weights),
          disjoint = disjoint,
          excluded = excluded,
          min_length = min_length,
@@ -374,6 +381,7 @@ dig <- function(x,
                  callback_arguments,
                  condition,
                  focus,
+                 weights,
                  disjoint,
                  excluded,
                  min_length,
@@ -391,19 +399,25 @@ dig <- function(x,
     cols <- .convert_data_to_list(x,
                                   error_context = error_context)
     condition <- enquo(condition)
-    focus <- enquo(focus)
     condition_cols <- .extract_cols(cols,
                                     !!condition,
                                     allow_numeric = TRUE,
                                     allow_empty = TRUE,
                                     error_context = list(arg_selection = error_context$arg_condition,
                                                          call = error_context$call))
+    focus <- enquo(focus)
     foci_cols <- .extract_cols(cols,
                                !!focus,
                                allow_numeric = TRUE,
                                allow_empty = TRUE,
                                error_context = list(arg_selection = error_context$arg_focus,
                                                     call = error_context$call))
+
+    weights <- enquo(weights)
+    weights <- .extract_weights(cols,
+                                !!weights,
+                                error_context = list(arg_selection = error_context$arg_weights,
+                                                     call = error_context$call))
 
     logicalish <- vapply(cols, is_logicalish, logical(1))
     cols[logicalish] <- lapply(cols[logicalish], as.logical)
@@ -540,6 +554,7 @@ dig <- function(x,
     threads <- as.integer(threads)
 
     config <- list(nrow = nrow(x),
+                   weights = weights$value,
                    arguments = callback_arguments,
                    disjoint = disjoint,
                    excluded = excluded,
@@ -594,6 +609,7 @@ dig <- function(x,
            call_args = list(x = xname,
                             condition = names(cols)[condition_cols$selected],
                             focus = names(cols)[foci_cols$selected],
+                            weights = weights$name,
                             disjoint = orig_disjoint,
                             excluded = orig_excluded,
                             min_length = min_length,

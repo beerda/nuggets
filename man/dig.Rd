@@ -9,6 +9,7 @@ dig(
   f,
   condition = everything(),
   focus = NULL,
+  weights = NULL,
   disjoint = var_names(colnames(x)),
   excluded = NULL,
   min_length = 0,
@@ -23,14 +24,14 @@ dig(
   verbose = FALSE,
   threads = deprecated(),
   error_context = list(arg_x = "x", arg_f = "f", arg_condition = "condition", arg_focus =
-    "focus", arg_disjoint = "disjoint", arg_excluded = "excluded", arg_min_length =
-    "min_length", arg_max_length = "max_length", arg_min_support = "min_support",
-    arg_min_focus_support = "min_focus_support", arg_min_conditional_focus_support =
-    "min_conditional_focus_support", arg_max_support = "max_support",
-    arg_filter_empty_foci = "filter_empty_foci", arg_t_norm = "t_norm", arg_max_results =
-    "max_results", arg_verbose = "verbose", 
-     arg_threads = "threads", call =
-    current_env())
+    "focus", arg_weights = "weights", arg_disjoint = "disjoint", arg_excluded =
+    "excluded", arg_min_length = "min_length", arg_max_length = "max_length",
+    arg_min_support = "min_support", arg_min_focus_support = "min_focus_support",
+    arg_min_conditional_focus_support = "min_conditional_focus_support", arg_max_support
+    = "max_support", arg_filter_empty_foci = "filter_empty_foci", arg_t_norm = "t_norm",
+    arg_max_results = "max_results", 
+     arg_verbose = "verbose", arg_threads =
+    "threads", call = current_env())
 )
 }
 \arguments{
@@ -56,6 +57,11 @@ specifying columns of \code{x} to use as condition predicates}
 \item{focus}{tidyselect expression (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
 specifying columns of \code{x} to use as focus predicates}
+
+\item{weights}{\code{NULL} or a tidyselect expression (see
+\href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
+selecting one numeric, finite, non-negative column of observation
+weights.}
 
 \item{disjoint}{An atomic vector (length = number of columns in \code{x}) defining
 groups of predicates. Columns in the same group cannot appear together in

@@ -1746,7 +1746,12 @@ test_that("dig return object details", {
 
 test_that("errors", {
     f <- function(condition) { list() }
-    d <- data.frame(n = 1:5 / 5, l = TRUE, i = 1:5, s = letters[1:5])
+    d <- data.frame(n = 1:5 / 5,
+                    l = TRUE,
+                    i = 1:5,
+                    s = letters[1:5],
+                    negative = -1:-5,
+                    infinite = c(1, 1, Inf, 1, 1))
 
     expect_error(dig(list(), f), "`x` must be a matrix or a data frame.")
     expect_error(dig(matrix(0, nrow = 5, ncol = 0), f), "`x` must have at least one column.")
@@ -1763,6 +1768,19 @@ test_that("errors", {
                  "All columns selected by `focus` must be logical or numeric")
     expect_error(dig(d, f, condition = c(n, l), focus = c(n, l, s)),
                  "All columns selected by `focus` must be logical or numeric")
+
+    expect_equal(attr(dig(d, f, condition = l, weights = n), "call_args")$weights,
+                 "n")
+    expect_error(dig(d, f, condition = l, weights = c(n, i)),
+                 "`weights` must select at most one column.")
+    expect_error(dig(d, f, condition = l, weights = s),
+                 "`weights` must be numeric with all values finite and greater than 0.")
+    expect_error(dig(d, f, condition = l, weights = l),
+                 "`weights` must be numeric with all values finite and greater than 0.")
+    expect_error(dig(d, f, condition = l, weights = negative),
+                 "`weights` must be numeric with all values finite and greater than 0.")
+    expect_error(dig(d, f, condition = l, weights = infinite),
+                 "`weights` must be numeric with all values finite and greater than 0.")
 
     expect_error(dig(d, f = "x", condition = n),
                  "`f` must be a function.")
