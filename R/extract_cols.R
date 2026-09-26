@@ -18,8 +18,8 @@
 
 
 # Select elements from a list `cols` of columns by a tidyselect expression
-# `selection`. Also check that all selected columns are logical or numeric
-# from the interval [0,1].
+# `selection` that are intended for condition or focus. Also check that all
+# selected columns are logical or numeric from the interval [0,1].
 #
 # @param cols A list of columns.
 # @param selection A tidyselect expression selecting the columns to be extracted.
