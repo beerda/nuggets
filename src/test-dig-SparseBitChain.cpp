@@ -41,7 +41,7 @@ context("dig/SparseBitChain.h") {
 
     test_that("empty chain with weights") {
         SparseBitChain::setWeights({1.0, 2.0, 3.0, 4.0, 5.0});
-        SparseBitChain b(5);
+        SparseBitChain b(15.0);
 
         expect_true(b.hasPredicate() == false);
         expect_true(b.empty());

@@ -41,7 +41,7 @@ context("dig/BitChain.h") {
 
     test_that("empty chain with weights") {
         BitChain::setWeights({1.0, 2.0, 3.0, 4.0, 5.0});
-        BitChain b(5);
+        BitChain b(15);
 
         expect_true(b.hasPredicate() == false);
         expect_true(b.empty());

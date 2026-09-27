@@ -112,7 +112,7 @@ public:
 
         ChainCollection<CHAIN> filteredCollection;
         filteredCollection.reserve(initialCollection.size());
-        CHAIN emptyChain(config.getNrow());
+        CHAIN emptyChain(config.getWeightSum());
 
         for (size_t i = 0; i < initialCollection.size(); ++i) {
             CHAIN& chain = initialCollection[i];

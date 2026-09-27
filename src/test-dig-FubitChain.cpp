@@ -46,7 +46,7 @@ context("dig/FubitChain.h") {
 
     test_that("empty chain with weights") {
         FubitChain<TNorm::GOGUEN, 4>::setWeights({1.0, 2.0, 3.0, 4.0, 5.0});
-        FubitChain<TNorm::GOGUEN, 4> b(5);
+        FubitChain<TNorm::GOGUEN, 4> b(15.0);
 
         expect_true(b.hasPredicate() == false);
         expect_true(b.empty());

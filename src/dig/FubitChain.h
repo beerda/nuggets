@@ -111,26 +111,11 @@ public:
      * Default constructor that creates an empty chain of type CONDITION with
      * empty clause.
      *
-     * @param size The number of membership degrees of the chain.
+     * @param sum The number of elements or the sum of weights in the chain.
      */
-    FubitChain(size_t size)
-        : BaseChain(0), data(), n(0)
-    {
-        if (weights.empty()) {
-            this->sum = static_cast<double>(size);
-        }
-        else {
-            IF_DEBUG(
-                if (size != weights.size())
-                    throw std::invalid_argument("FubitChain: size does not match weights size");
-            )
-
-            for (size_t i = 0; i < size; ++i) {
-                this->sum += weights[i];
-            }
-        }
-
-    }
+    FubitChain(double sum)
+        : BaseChain(sum), data()
+    { }
 
     /**
      * Constructor that creates a chain with the specified id, type and values.
