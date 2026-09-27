@@ -18,6 +18,8 @@
 
 
 associationsDetailModule <- function(id, rules, meta, data) {
+    ns <- shiny::NS(id)
+
     for (i in seq_len(nrow(meta))) {
         col <- meta$data_name[i]
         if (meta$type[i] == "condition") {
@@ -34,6 +36,10 @@ associationsDetailModule <- function(id, rules, meta, data) {
                         )
     }
 
+    choicesForSize <- c("coverage", "confidence", "lift")
+    choicesForFill <- c("coverage", "confidence", "lift")
+    choicesForLinewidth <- c("coverage", "confidence", "lift")
+
     list(ui = function() {
             shiny::fluidRow(
                 shiny::column(width = 4,
@@ -41,16 +47,27 @@ associationsDetailModule <- function(id, rules, meta, data) {
                         shiny::uiOutput(shiny::NS(id, "selectedRule"))
                     ),
                     shinyWidgets::panel(heading = "Settings",
-                        shiny::radioButtons(shiny::NS(id, "shorteningRadio"),
-                                     "Abbreviation of predicates in the antecedent",
-                                     choices = c("letters", "abbrev4", "abbrev8", "none"),
-                                     selected = "letters",
-                                     inline = TRUE)
+                        shiny::conditionalPanel(
+                            condition = sprintf("input['%s'] == 'Contingency Table'", ns("ruleDetailTabs")),
+                            "No settings available."
+                        ),
+                        shiny::conditionalPanel(
+                            condition = sprintf("input['%s'] == 'Ancestors'", ns("ruleDetailTabs")),
+                            shiny::radioButtons(shiny::NS(id, "shorteningRadio"),
+                                         "Abbreviation of predicates in the antecedent",
+                                         choices = c("letters", "abbrev4", "abbrev8", "none"),
+                                         selected = "letters",
+                                         inline = TRUE),
+                            shiny::selectInput(shiny::NS(id, "plotSize"), "Node size", choices = choicesForSize, selected = "coverage"),
+                            shiny::selectInput(shiny::NS(id, "plotFill"), "Node fill", choices = choicesForFill, selected = "confidence"),
+                            shiny::selectInput(shiny::NS(id, "plotLinewidth"), "Line width", choices = choicesForLinewidth, selected = "confidence")
+                        )
                     )
                 ),
                 shiny::column(width = 8,
                     shinyWidgets::panel(heading = "Rule Detail",
                         shiny::tabsetPanel(
+                            id = shiny::NS(id, "ruleDetailTabs"),
                             shiny::tabPanel("Contingency Table",
                                 infoBox(paste("The contingency table shows how many data rows contain:",
                                               "both antecedent and consequent, antecedent only, consequent only, or neither.",
@@ -147,7 +164,10 @@ associationsDetailModule <- function(id, rules, meta, data) {
                     })
 
                     output$ancestorPlot <- shiny::renderPlot({
-                        shiny::req(input$shorteningRadio)
+                        shiny::req(input$shorteningRadio,
+                                   input$plotSize,
+                                   input$plotFill,
+                                   input$plotLinewidth)
                         res <- ancestors()
                         shiny::req(res)
 
@@ -158,9 +178,9 @@ associationsDetailModule <- function(id, rules, meta, data) {
 
                         ggplot(res) +
                             aes(condition = .data$antecedent,
-                                fill = .data$confidence,
-                                linewidth = .data$confidence,
-                                size = .data$coverage,
+                                fill = .data[[input$plotFill]],
+                                linewidth = .data[[input$plotLinewidth]],
+                                size = .data[[input$plotSize]],
                                 label = .data$label) +
                             geom_diamond(nudge_y = 0.25) +
                             scale_x_continuous(expand = expansion(mult = c(0, 0), add = c(0.5, 0.5)))
