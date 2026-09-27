@@ -63,25 +63,30 @@
 #' - `condition`: a named integer vector of column indices representing the
 #'   predicates of \eqn{C}. Names correspond to column names.
 #'
-#' - `sum`: a numeric scalar value of the number of rows satisfying \eqn{C} for
-#'   logical data, or the sum of truth degrees for fuzzy data,
+#' - `sum`: a numeric scalar value of the (*weighted*) number of rows satisfying \eqn{C} for
+#'   logical data, or the (*weighted*) sum of truth degrees for fuzzy data,
 #'   \eqn{sum = \sum_{r \in R} \mu_C(r)}.
 #'
-#' - `support`: a numeric scalar value of relative frequency of rows satisfying \eqn{C},
-#'   \eqn{supp = sum / |R|}.
+#' - `support`: a numeric scalar value of (*weighted*) relative frequency of rows
+#'   satisfying \eqn{C}, i.e., \eqn{supp = sum / |R|}, for unweighted data, or
+#'   \eqn{supp = sum / \sum_{r \in R} w(r)} for weighted data, where \eqn{w(r)} is the
+#'   weight of row \eqn{r}.
 #'
 #' - `indices`: an integer vector of row indices of rows satisfying \eqn{C} for
 #'   logical data, or the indices of rows with non-zero truth degrees for fuzzy
 #'   data, \eqn{indices = \{r \in R : \mu_C(r) > 0\}}.
 #'
-#' - `degrees`: a numeric vector of truth degrees of \eqn{C} for each row in
+#' - `degrees`: a numeric vector of (always *unweighted*) truth degrees
+#'   of \eqn{C} for each row in
 #'   \eqn{R}, \eqn{degrees[r] = \mu C(r)}. Logical data is treated as a special
 #'   case of fuzzy data, where \eqn{\mu_C(r)} is 1 for rows satisfying \eqn{C}
 #'   and 0 otherwise.
 #'
 #' - `pp`, `pn`, `np`, `nn`: a numeric vector of entries of a contingency table
 #'   for \eqn{C} and \eqn{F}, satisfying the Ruspini condition
-#'   \eqn{pp + pn + np + nn = |R|}.
+#'   \eqn{pp + pn + np + nn = |R|}, for unweighted data, or
+#'   \eqn{pp + pn + np + nn = \sum_{r \in R} w(r)} for
+#'   weighted data, where \eqn{w(r)} is the weight of row \eqn{r}.
 #'   The \eqn{i}-th elements of these vectors correspond to the \eqn{i}-th focus
 #'   \eqn{F_i} from \eqn{F} and are defined as:
 #'   * `pp[i]`: rows satisfying both \eqn{C} and \eqn{F_i},
@@ -91,7 +96,7 @@
 #'   * `np[i]`: rows satisfying \eqn{F_i} but not \eqn{C},
 #'     \eqn{np_i = \sum_{r \in R} \mu_{F_i}(r) - pp_i}.
 #'   * `nn[i]`: rows satisfying neither \eqn{C} nor \eqn{F_i},
-#'     \eqn{nn_i = |R| - (pp_i + pn_i + np_i)}.
+#'     \eqn{nn_i = \sum_{r \in R} w(r) - (pp_i + pn_i + np_i)}.
 #'
 #' @param x A matrix or data frame. If a matrix, it must be numeric (double) or
 #'   logical. If a data frame, all columns must be numeric (double) or logical.

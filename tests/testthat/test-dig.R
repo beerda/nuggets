@@ -1848,3 +1848,413 @@ test_that("bug on mixed logical and numeric chains", {
 
     expect_true(is_tibble(result))
 })
+
+
+test_that("weighted dense crisp", {
+    weights <- 1:6 / 10
+    m <- data.frame(a = c(T,T,T,T,F,F),
+                    b = c(T,F,T,F,T,F),
+                    d = c(F,T,T,T,F,T),
+                    w = weights)
+    res <- dig(m,
+               condition = a:b,
+               focus = d,
+               weights = w,
+               min_length = 0,
+               max_length = 2,
+               f = function(condition, sum, support, indices, degrees, pp, pn, np, nn) {
+                    res <- list(condition = sort(names(condition)),
+                                indices = indices,
+                                degrees = degrees,
+                                sum = sum,
+                                support = support,
+                                pp = pp,
+                                pn = pn,
+                                np = np,
+                                nn = nn)
+
+                    res <- list(x = res)
+                    names(res) <- paste0("_", paste0(sort(names(condition)), collapse = ""))
+
+                    res
+               })
+
+
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(length(res), 4)
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$weights, "w")
+
+    res <- do.call(c, res)
+
+    expect_equal(res[["_"]]$condition, NULL)
+    expect_equal(res[["_"]]$indices, c(T,T,T,T,T,T))
+    expect_equal(res[["_"]]$degrees, c(1,1,1,1,1,1))
+    expect_equal(res[["_"]]$sum, sum(weights), tolerance = 1e-6)
+    expect_equal(res[["_"]]$support, 1.0)
+    expect_equal(res[["_"]]$pp, c(d = 0.2 + 0.3 + 0.4 + 0.6), tolerance = 1e-6)
+    expect_equal(res[["_"]]$pn, c(d = 0.1 + 0.5), tolerance = 1e-6)
+    expect_equal(res[["_"]]$np, c(d = 0), tolerance = 1e-6)
+    expect_equal(res[["_"]]$nn, c(d = 0), tolerance = 1e-6)
+
+    expect_equal(res[["_a"]]$condition, "a")
+    expect_equal(res[["_a"]]$indices, c(T,T,T,T,F,F))
+    expect_equal(res[["_a"]]$degrees, c(1,1,1,1,0,0))
+    expect_equal(res[["_a"]]$sum, 0.1 + 0.2 + 0.3 + 0.4, tolerance = 1e-6)
+    expect_equal(res[["_a"]]$support, (0.1 + 0.2 + 0.3 + 0.4) / sum(weights), tolerance = 1e-6)
+    expect_equal(res[["_a"]]$pp, c(d = 0.2 + 0.3 + 0.4), tolerance = 1e-6)
+    expect_equal(res[["_a"]]$pn, c(d = 0.1), tolerance = 1e-6)
+    expect_equal(res[["_a"]]$np, c(d = 0.6), tolerance = 1e-6)
+    expect_equal(res[["_a"]]$nn, c(d = 0.5), tolerance = 1e-6)
+
+    expect_equal(res[["_b"]]$condition, "b")
+    expect_equal(res[["_b"]]$indices, c(T,F,T,F,T,F))
+    expect_equal(res[["_b"]]$degrees, c(1,0,1,0,1,0))
+    expect_equal(res[["_b"]]$sum, 0.1 + 0.3 + 0.5, tolerance = 1e-6)
+    expect_equal(res[["_b"]]$support, (0.1 + 0.3 + 0.5) / sum(weights), tolerance = 1e-6)
+    expect_equal(res[["_b"]]$pp, c(d = 0.3), tolerance = 1e-6)
+    expect_equal(res[["_b"]]$pn, c(d = 0.1 + 0.5), tolerance = 1e-6)
+    expect_equal(res[["_b"]]$np, c(d = 0.2 + 0.4 + 0.6), tolerance = 1e-6)
+    expect_equal(res[["_b"]]$nn, c(d = 0), tolerance = 1e-6)
+
+    expect_equal(res[["_ab"]]$condition, c("a", "b"))
+    expect_equal(res[["_ab"]]$indices, c(T,F,T,F,F,F))
+    expect_equal(res[["_ab"]]$degrees, c(1,0,1,0,0,0))
+    expect_equal(res[["_ab"]]$sum, 0.1 + 0.3)
+    expect_equal(res[["_ab"]]$support, (0.1 + 0.3) / sum(weights))
+    expect_equal(res[["_ab"]]$pp, c(d = 0.3), tolerance = 1e-6)
+    expect_equal(res[["_ab"]]$pn, c(d = 0.1), tolerance = 1e-6)
+    expect_equal(res[["_ab"]]$np, c(d = 0.2 + 0.4 + 0.6), tolerance = 1e-6)
+    expect_equal(res[["_ab"]]$nn, c(d = 0.5), tolerance = 1e-6)
+})
+
+
+test_that("weighted sparse crisp", {
+    weights <- c(1:6 / 10, rep(1, 100))
+    m <- data.frame(a = c(T,T,T,T,F,F, rep(F, 100)),
+                    b = c(T,F,T,F,T,F, rep(F, 100)),
+                    d = c(F,T,T,T,F,T, rep(F, 100)),
+                    w = weights)
+    res <- dig(m,
+               condition = a:b,
+               focus = d,
+               weights = w,
+               min_length = 0,
+               max_length = 2,
+               f = function(condition, sum, support, indices, degrees, pp, pn, np, nn) {
+                    res <- list(condition = sort(names(condition)),
+                                indices = indices,
+                                degrees = degrees,
+                                sum = sum,
+                                support = support,
+                                pp = pp,
+                                pn = pn,
+                                np = np,
+                                nn = nn)
+
+                    res <- list(x = res)
+                    names(res) <- paste0("_", paste0(sort(names(condition)), collapse = ""))
+
+                    res
+               })
+
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(length(res), 4)
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$weights, "w")
+
+    res <- do.call(c, res)
+
+    expect_equal(res[["_"]]$condition, NULL)
+    expect_equal(res[["_"]]$indices, c(T,T,T,T,T,T, rep(T, 100)))
+    expect_equal(res[["_"]]$degrees, c(1,1,1,1,1,1, rep(1, 100)))
+    expect_equal(res[["_"]]$sum, sum(weights), tolerance = 1e-6)
+    expect_equal(res[["_"]]$support, 1.0)
+    expect_equal(res[["_"]]$pp, c(d = 0.2 + 0.3 + 0.4 + 0.6), tolerance = 1e-6)
+    expect_equal(res[["_"]]$pn, c(d = 0.1 + 0.5 + 100), tolerance = 1e-6)
+    expect_equal(res[["_"]]$np, c(d = 0), tolerance = 1e-6)
+    expect_equal(res[["_"]]$nn, c(d = 0), tolerance = 1e-6)
+
+    expect_equal(res[["_a"]]$condition, "a")
+    expect_equal(res[["_a"]]$indices, c(T,T,T,T,F,F, rep(F, 100)))
+    expect_equal(res[["_a"]]$degrees, c(1,1,1,1,0,0, rep(0, 100)))
+    expect_equal(res[["_a"]]$sum, 0.1 + 0.2 + 0.3 + 0.4, tolerance = 1e-6)
+    expect_equal(res[["_a"]]$support, (0.1 + 0.2 + 0.3 + 0.4) / sum(weights), tolerance = 1e-6)
+    expect_equal(res[["_a"]]$pp, c(d = 0.2 + 0.3 + 0.4), tolerance = 1e-6)
+    expect_equal(res[["_a"]]$pn, c(d = 0.1), tolerance = 1e-6)
+    expect_equal(res[["_a"]]$np, c(d = 0.6), tolerance = 1e-6)
+    expect_equal(res[["_a"]]$nn, c(d = 0.5 + 100), tolerance = 1e-6)
+
+    expect_equal(res[["_b"]]$condition, "b")
+    expect_equal(res[["_b"]]$indices, c(T,F,T,F,T,F, rep(F, 100)))
+    expect_equal(res[["_b"]]$degrees, c(1,0,1,0,1,0, rep(0, 100)))
+    expect_equal(res[["_b"]]$sum, 0.1 + 0.3 + 0.5, tolerance = 1e-6)
+    expect_equal(res[["_b"]]$support, (0.1 + 0.3 + 0.5) / sum(weights), tolerance = 1e-6)
+    expect_equal(res[["_b"]]$pp, c(d = 0.3), tolerance = 1e-6)
+    expect_equal(res[["_b"]]$pn, c(d = 0.1 + 0.5), tolerance = 1e-6)
+    expect_equal(res[["_b"]]$np, c(d = 0.2 + 0.4 + 0.6), tolerance = 1e-6)
+    expect_equal(res[["_b"]]$nn, c(d = 100), tolerance = 1e-6)
+
+    expect_equal(res[["_ab"]]$condition, c("a", "b"))
+    expect_equal(res[["_ab"]]$indices, c(T,F,T,F,F,F, rep(F, 100)))
+    expect_equal(res[["_ab"]]$degrees, c(1,0,1,0,0,0, rep(0, 100)))
+    expect_equal(res[["_ab"]]$sum, 0.1 + 0.3)
+    expect_equal(res[["_ab"]]$support, (0.1 + 0.3) / sum(weights))
+    expect_equal(res[["_ab"]]$pp, c(d = 0.3), tolerance = 1e-6)
+    expect_equal(res[["_ab"]]$pn, c(d = 0.1), tolerance = 1e-6)
+    expect_equal(res[["_ab"]]$np, c(d = 0.2 + 0.4 + 0.6), tolerance = 1e-6)
+    expect_equal(res[["_ab"]]$nn, c(d = 0.5 + 100), tolerance = 1e-6)
+})
+
+
+test_that("weighted fuzzy goedel", {
+    weights <- 1:5 / 10
+    m <- data.frame(a = c(0.1, 0.0, 0.9, 0.6, 0.8),
+                    b = c(0.3, 0.8, 0.0, 1.0, 0.9),
+                    d = c(0.9, 0.4, 0.7, 0.9, 0.6),
+                    w = weights)
+    res <- dig(m,
+               condition = a:b,
+               focus = d,
+               weights = w,
+               t_norm = "goedel",
+               min_length = 0,
+               max_length = 2,
+               f = function(condition, sum, support, indices, degrees, pp, pn, np, nn) {
+                    res <- list(condition = sort(names(condition)),
+                                indices = indices,
+                                degrees = degrees,
+                                sum = sum,
+                                support = support,
+                                pp = pp,
+                                pn = pn,
+                                np = np,
+                                nn = nn)
+
+                    res <- list(x = res)
+                    names(res) <- paste0("_", paste0(sort(names(condition)), collapse = ""))
+
+                    res
+               })
+
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(length(res), 4)
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$weights, "w")
+
+    res <- do.call(c, res)
+
+    expect_equal(res[["_"]]$condition, NULL)
+    expect_equal(res[["_"]]$indices, c(T,T,T,T,T))
+    expect_equal(res[["_"]]$degrees, c(1,1,1,1,1))
+    expect_equal(res[["_"]]$sum, sum(weights), tolerance = 1e-6)
+    expect_equal(res[["_"]]$support, 1.0)
+    expect_equal(res[["_"]]$pp, c(d = sum(weights * m$d)), tolerance = 1e-2)
+    expect_equal(res[["_"]]$pn, c(d = sum(weights) - sum(weights * m$d)), tolerance = 1e-2)
+    expect_equal(res[["_"]]$np, c(d = 0), tolerance = 1e-6)
+    expect_equal(res[["_"]]$nn, c(d = 0), tolerance = 1e-6)
+
+    expect_equal(res[["_a"]]$condition, "a")
+    expect_equal(res[["_a"]]$indices, c(T,F,T,T,T))
+    expect_equal(res[["_a"]]$degrees, m$a, tolerance = 1e-2)
+    expect_equal(res[["_a"]]$sum, sum(weights * m$a), tolerance = 1e-2)
+    expect_equal(res[["_a"]]$support, sum(weights * m$a) / sum(weights), tolerance = 1e-2)
+    expect_equal(res[["_a"]]$pp, c(d = sum(weights * pmin(m$a, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_a"]]$pn, c(d = sum(weights * m$a) - sum(weights * pmin(m$a, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_a"]]$np, c(d = sum(weights * m$d) - sum(weights * pmin(m$a, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_a"]]$nn, c(d = as.vector(sum(weights) - res[["_a"]]$pp - res[["_a"]]$pn - res[["_a"]]$np)), tolerance = 1e-6)
+
+    expect_equal(res[["_b"]]$condition, "b")
+    expect_equal(res[["_b"]]$indices, c(T,T,F,T,T))
+    expect_equal(res[["_b"]]$degrees, m$b, tolerance = 1e-2)
+    expect_equal(res[["_b"]]$sum, sum(weights * m$b), tolerance = 1e-2)
+    expect_equal(res[["_b"]]$support, sum(weights * m$b) / sum(weights), tolerance = 1e-2)
+    expect_equal(res[["_b"]]$pp, c(d = sum(weights * pmin(m$b, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_b"]]$pn, c(d = sum(weights * m$b) - sum(weights * pmin(m$b, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_b"]]$np, c(d = sum(weights * m$d) - sum(weights * pmin(m$b, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_b"]]$nn, c(d = as.vector(sum(weights) - res[["_b"]]$pp - res[["_b"]]$pn - res[["_b"]]$np)), tolerance = 1e-6)
+
+    expect_equal(res[["_ab"]]$condition, c("a", "b"))
+    expect_equal(res[["_ab"]]$indices, c(T,F,F,T,T))
+    expect_equal(res[["_ab"]]$degrees, pmin(m$a, m$b), tolerance = 1e-2)
+    expect_equal(res[["_ab"]]$sum, sum(weights * pmin(m$a, m$b)), tolerance = 1e-2)
+    expect_equal(res[["_ab"]]$support, sum(weights * pmin(m$a, m$b)) / sum(weights), tolerance = 1e-2)
+    expect_equal(res[["_ab"]]$pp, c(d = sum(weights * pmin(m$a, m$b, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_ab"]]$pn, c(d = sum(weights * pmin(m$a, m$b)) - sum(weights * pmin(m$a, m$b, m$d))), tolerance = 1e-1)
+    expect_equal(res[["_ab"]]$np, c(d = sum(weights * m$d) - sum(weights * pmin(m$a, m$b, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_ab"]]$nn, c(d = as.vector(sum(weights) - res[["_ab"]]$pp - res[["_ab"]]$pn - res[["_ab"]]$np)), tolerance = 1e-6)
+})
+
+
+test_that("weighted fuzzy goguen", {
+    pgog <- function(...) {
+        args <- list(...)
+        Reduce(function(x, y) x * y, args)
+    }
+
+    weights <- 1:5 / 10
+    m <- data.frame(a = c(0.1, 0.0, 0.9, 0.6, 0.8),
+                    b = c(0.3, 0.8, 0.0, 1.0, 0.9),
+                    d = c(0.9, 0.4, 0.7, 0.9, 0.6),
+                    w = weights)
+    res <- dig(m,
+               condition = a:b,
+               focus = d,
+               weights = w,
+               t_norm = "goguen",
+               min_length = 0,
+               max_length = 2,
+               f = function(condition, sum, support, indices, degrees, pp, pn, np, nn) {
+                    res <- list(condition = sort(names(condition)),
+                                indices = indices,
+                                degrees = degrees,
+                                sum = sum,
+                                support = support,
+                                pp = pp,
+                                pn = pn,
+                                np = np,
+                                nn = nn)
+
+                    res <- list(x = res)
+                    names(res) <- paste0("_", paste0(sort(names(condition)), collapse = ""))
+
+                    res
+               })
+
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(length(res), 4)
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$weights, "w")
+
+    res <- do.call(c, res)
+
+    expect_equal(res[["_"]]$condition, NULL)
+    expect_equal(res[["_"]]$indices, c(T,T,T,T,T))
+    expect_equal(res[["_"]]$degrees, c(1,1,1,1,1))
+    expect_equal(res[["_"]]$sum, sum(weights), tolerance = 1e-6)
+    expect_equal(res[["_"]]$support, 1.0)
+    expect_equal(res[["_"]]$pp, c(d = sum(weights * m$d)), tolerance = 1e-2)
+    expect_equal(res[["_"]]$pn, c(d = sum(weights) - sum(weights * m$d)), tolerance = 1e-2)
+    expect_equal(res[["_"]]$np, c(d = 0), tolerance = 1e-6)
+    expect_equal(res[["_"]]$nn, c(d = 0), tolerance = 1e-6)
+
+    expect_equal(res[["_a"]]$condition, "a")
+    expect_equal(res[["_a"]]$indices, c(T,F,T,T,T))
+    expect_equal(res[["_a"]]$degrees, m$a, tolerance = 1e-2)
+    expect_equal(res[["_a"]]$sum, sum(weights * m$a), tolerance = 1e-2)
+    expect_equal(res[["_a"]]$support, sum(weights * m$a) / sum(weights), tolerance = 1e-2)
+    expect_equal(res[["_a"]]$pp, c(d = sum(weights * pgog(m$a, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_a"]]$pn, c(d = sum(weights * m$a) - sum(weights * pgog(m$a, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_a"]]$np, c(d = sum(weights * m$d) - sum(weights * pgog(m$a, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_a"]]$nn, c(d = as.vector(sum(weights) - res[["_a"]]$pp - res[["_a"]]$pn - res[["_a"]]$np)), tolerance = 1e-6)
+
+    expect_equal(res[["_b"]]$condition, "b")
+    expect_equal(res[["_b"]]$indices, c(T,T,F,T,T))
+    expect_equal(res[["_b"]]$degrees, m$b, tolerance = 1e-2)
+    expect_equal(res[["_b"]]$sum, sum(weights * m$b), tolerance = 1e-2)
+    expect_equal(res[["_b"]]$support, sum(weights * m$b) / sum(weights), tolerance = 1e-2)
+    expect_equal(res[["_b"]]$pp, c(d = sum(weights * pgog(m$b, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_b"]]$pn, c(d = sum(weights * m$b) - sum(weights * pgog(m$b, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_b"]]$np, c(d = sum(weights * m$d) - sum(weights * pgog(m$b, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_b"]]$nn, c(d = as.vector(sum(weights) - res[["_b"]]$pp - res[["_b"]]$pn - res[["_b"]]$np)), tolerance = 1e-6)
+
+    expect_equal(res[["_ab"]]$condition, c("a", "b"))
+    expect_equal(res[["_ab"]]$indices, c(T,F,F,T,T))
+    expect_equal(res[["_ab"]]$degrees, pgog(m$a, m$b), tolerance = 1e-2)
+    expect_equal(res[["_ab"]]$sum, sum(weights * pgog(m$a, m$b)), tolerance = 1e-2)
+    expect_equal(res[["_ab"]]$support, sum(weights * pgog(m$a, m$b)) / sum(weights), tolerance = 1e-2)
+    expect_equal(res[["_ab"]]$pp, c(d = sum(weights * pgog(m$a, m$b, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_ab"]]$pn, c(d = sum(weights * pgog(m$a, m$b)) - sum(weights * pgog(m$a, m$b, m$d))), tolerance = 1e-1)
+    expect_equal(res[["_ab"]]$np, c(d = sum(weights * m$d) - sum(weights * pgog(m$a, m$b, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_ab"]]$nn, c(d = as.vector(sum(weights) - res[["_ab"]]$pp - res[["_ab"]]$pn - res[["_ab"]]$np)), tolerance = 1e-6)
+})
+
+
+test_that("weighted fuzzy lukasiewicz", {
+    # elementwise lukasiewicz tnorm
+    pluk <- function(...) {
+        args <- list(...)
+        Reduce(function(x, y) pmax(0, x + y - 1), args)
+    }
+
+    weights <- 1:5 / 10
+    m <- data.frame(a = c(0.1, 0.0, 0.9, 0.6, 0.8),
+                    b = c(0.3, 0.8, 0.0, 1.0, 0.9),
+                    d = c(0.9, 0.4, 0.7, 0.9, 0.6),
+                    w = weights)
+    res <- dig(m,
+               condition = a:b,
+               focus = d,
+               weights = w,
+               t_norm = "lukas",
+               min_length = 0,
+               max_length = 2,
+               f = function(condition, sum, support, indices, degrees, pp, pn, np, nn) {
+                    res <- list(condition = sort(names(condition)),
+                                indices = indices,
+                                degrees = degrees,
+                                sum = sum,
+                                support = support,
+                                pp = pp,
+                                pn = pn,
+                                np = np,
+                                nn = nn)
+
+                    res <- list(x = res)
+                    names(res) <- paste0("_", paste0(sort(names(condition)), collapse = ""))
+
+                    res
+               })
+
+    expect_true(is_nugget(res))
+    expect_true(is.list(res))
+    expect_equal(length(res), 4)
+    expect_true(is.list(attr(res, "call_args")))
+    expect_equal(attr(res, "call_args")$weights, "w")
+
+    res <- do.call(c, res)
+
+    expect_equal(res[["_"]]$condition, NULL)
+    expect_equal(res[["_"]]$indices, c(T,T,T,T,T))
+    expect_equal(res[["_"]]$degrees, c(1,1,1,1,1))
+    expect_equal(res[["_"]]$sum, sum(weights), tolerance = 1e-6)
+    expect_equal(res[["_"]]$support, 1.0)
+    expect_equal(res[["_"]]$pp, c(d = sum(weights * m$d)), tolerance = 1e-2)
+    expect_equal(res[["_"]]$pn, c(d = sum(weights) - sum(weights * m$d)), tolerance = 1e-2)
+    expect_equal(res[["_"]]$np, c(d = 0), tolerance = 1e-6)
+    expect_equal(res[["_"]]$nn, c(d = 0), tolerance = 1e-6)
+
+    expect_equal(res[["_a"]]$condition, "a")
+    expect_equal(res[["_a"]]$indices, c(T,F,T,T,T))
+    expect_equal(res[["_a"]]$degrees, m$a, tolerance = 1e-2)
+    expect_equal(res[["_a"]]$sum, sum(weights * m$a), tolerance = 1e-2)
+    expect_equal(res[["_a"]]$support, sum(weights * m$a) / sum(weights), tolerance = 1e-2)
+    expect_equal(res[["_a"]]$pp, c(d = sum(weights * pluk(m$a, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_a"]]$pn, c(d = sum(weights * m$a) - sum(weights * pluk(m$a, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_a"]]$np, c(d = sum(weights * m$d) - sum(weights * pluk(m$a, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_a"]]$nn, c(d = as.vector(sum(weights) - res[["_a"]]$pp - res[["_a"]]$pn - res[["_a"]]$np)), tolerance = 1e-6)
+
+    expect_equal(res[["_b"]]$condition, "b")
+    expect_equal(res[["_b"]]$indices, c(T,T,F,T,T))
+    expect_equal(res[["_b"]]$degrees, m$b, tolerance = 1e-2)
+    expect_equal(res[["_b"]]$sum, sum(weights * m$b), tolerance = 1e-2)
+    expect_equal(res[["_b"]]$support, sum(weights * m$b) / sum(weights), tolerance = 1e-2)
+    expect_equal(res[["_b"]]$pp, c(d = sum(weights * pluk(m$b, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_b"]]$pn, c(d = sum(weights * m$b) - sum(weights * pluk(m$b, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_b"]]$np, c(d = sum(weights * m$d) - sum(weights * pluk(m$b, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_b"]]$nn, c(d = as.vector(sum(weights) - res[["_b"]]$pp - res[["_b"]]$pn - res[["_b"]]$np)), tolerance = 1e-6)
+
+    expect_equal(res[["_ab"]]$condition, c("a", "b"))
+    expect_equal(res[["_ab"]]$indices, c(F,F,F,T,T))
+    expect_equal(res[["_ab"]]$degrees, pluk(m$a, m$b), tolerance = 1e-2)
+    expect_equal(res[["_ab"]]$sum, sum(weights * pluk(m$a, m$b)), tolerance = 1e-2)
+    expect_equal(res[["_ab"]]$support, sum(weights * pluk(m$a, m$b)) / sum(weights), tolerance = 1e-2)
+    expect_equal(res[["_ab"]]$pp, c(d = sum(weights * pluk(m$a, m$b, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_ab"]]$pn, c(d = sum(weights * pluk(m$a, m$b)) - sum(weights * pluk(m$a, m$b, m$d))), tolerance = 1e-1)
+    expect_equal(res[["_ab"]]$np, c(d = sum(weights * m$d) - sum(weights * pluk(m$a, m$b, m$d))), tolerance = 1e-2)
+    expect_equal(res[["_ab"]]$nn, c(d = as.vector(sum(weights) - res[["_ab"]]$pp - res[["_ab"]]$pn - res[["_ab"]]$np)), tolerance = 1e-6)
+})

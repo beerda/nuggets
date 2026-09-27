@@ -108,7 +108,7 @@ public:
         for (size_t i = 0; i < itemsets.size(); ++i) {
             const Itemset& itemset = itemsets[i];
             itemsVec[i] = itemset.items;
-            supportVec[i] = itemset.chainSum / config.getNrow();
+            supportVec[i] = itemset.chainSum / config.getWeightSum();
             countVec[i] = itemset.chainSum;
             lengthVec[i] = itemset.length;
         }

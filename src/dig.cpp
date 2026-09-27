@@ -145,6 +145,13 @@ struct DigRunner {
         using STORAGE = CallbackCaller;
 
         START_TIMER(t, "DigRunner - initialization");
+        if (args.config.hasWeights()) {
+            CHAIN::setWeights(args.config.getWeights());
+        }
+        else {
+            CHAIN::resetWeights();
+        }
+
         STORAGE storage(args.config, callback);
         Digger<CHAIN, STORAGE> digger(args.config, args.data, args.isCondition, args.isFocus,
                                       storage);
@@ -186,6 +193,13 @@ struct DigAssocRunner {
         using STORAGE = AssocStorage;
 
         START_TIMER(t, "DigAssocRunner - initialization");
+        if (args.config.hasWeights()) {
+            CHAIN::setWeights(args.config.getWeights());
+        }
+        else {
+            CHAIN::resetWeights();
+        }
+
         STORAGE storage(args.config);
         Digger<CHAIN, STORAGE> digger(args.config, args.data, args.isCondition, args.isFocus,
                                       storage);
@@ -227,6 +241,13 @@ struct DigItemsetRunner {
         using STORAGE = ItemsetStorage;
 
         START_TIMER(t, "DigItemsetRunner - initialization");
+        if (args.config.hasWeights()) {
+            CHAIN::setWeights(args.config.getWeights());
+        }
+        else {
+            CHAIN::resetWeights();
+        }
+
         STORAGE storage(args.config);
         Digger<CHAIN, STORAGE> digger(args.config, args.data, args.isCondition, args.isFocus,
                                       storage);

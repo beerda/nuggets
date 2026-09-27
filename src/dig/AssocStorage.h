@@ -142,13 +142,13 @@ public:
         for (size_t i = 0; i < rules.size(); ++i) {
             const Rule& rule = rules[i];
             double conf = (rule.chainSum > 0) ? (rule.focusSum / rule.chainSum) : 0.0;
-            double conseqSupp = rule.predicateSum / config.getNrow();
+            double conseqSupp = rule.predicateSum / config.getWeightSum();
 
             antecedentVec[i] = rule.antecedent;
             consequentVec[i] = rule.consequent;
-            supportVec[i] = rule.focusSum / config.getNrow();
+            supportVec[i] = rule.focusSum / config.getWeightSum();
             confidenceVec[i] = conf;
-            coverageVec[i] = rule.chainSum / config.getNrow();
+            coverageVec[i] = rule.chainSum / config.getWeightSum();
             conseqSupportVec[i] = conseqSupp;
             liftVec[i] = conf / conseqSupp;
             countVec[i] = rule.focusSum;
@@ -156,7 +156,7 @@ public:
             ppVec[i] = rule.focusSum;
             pnVec[i] = rule.chainSum - rule.focusSum;
             npVec[i] = rule.predicateSum - rule.focusSum;
-            nnVec[i] = config.getNrow() - ppVec[i] - pnVec[i] - npVec[i];
+            nnVec[i] = config.getWeightSum() - ppVec[i] - pnVec[i] - npVec[i];
         }
 
         return List::create(Named("antecedent") = antecedentVec,

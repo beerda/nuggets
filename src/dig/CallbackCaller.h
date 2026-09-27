@@ -222,7 +222,7 @@ private:
                                        const Pattern& pattern)
     {
         if (config.hasSupportArgument()) {
-            NumericVector vals({ pattern.getConditionSum() / config.getNrow() });
+            NumericVector vals({ pattern.getConditionSum() / config.getWeightSum() });
             args.push_back(vals);
             argNames.push_back("support");
         }
@@ -323,7 +323,7 @@ private:
                     (*np)[j] = pattern.getPredicateSum(predicate) - focus.getSum();
                 }
                 if (nn) {
-                    (*nn)[j] = config.getNrow() - pattern.getConditionSum() - pattern.getPredicateSum(predicate) + focus.getSum();
+                    (*nn)[j] = config.getWeightSum() - pattern.getConditionSum() - pattern.getPredicateSum(predicate) + focus.getSum();
                 }
 
                 j++;

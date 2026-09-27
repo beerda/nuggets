@@ -53,10 +53,22 @@ public:
         else
             nrow = static_cast<size_t>(nrow_i);
 
-        weights = as<NumericVector>(configuration["weights"]);
-        if (static_cast<size_t>(weights.size()) != nrow
-                && static_cast<size_t>(weights.size()) != 0)
+        NumericVector weights_n = as<NumericVector>(configuration["weights"]);
+        if (static_cast<size_t>(weights_n.size()) != nrow
+                && static_cast<size_t>(weights_n.size()) != 0)
             throw invalid_argument("weights must be empty or have the same length as nrow");
+
+        if (weights_n.size() > 0) {
+            weightSum = 0.0;
+            weights.reserve(weights_n.size());
+            for (R_xlen_t i = 0; i < weights_n.size(); ++i) {
+                weights.push_back(static_cast<float>(weights_n[i]));
+                weightSum += weights.back();
+            }
+        }
+        else {
+            weightSum = static_cast<double>(nrow);
+        }
 
         int threads_i = as<IntegerVector>(configuration["threads"])[0];
         if (threads_i < 0)
@@ -285,8 +297,11 @@ public:
      *
      * @return Observation weights, or an empty vector.
      */
-    inline const NumericVector& getWeights() const
+    inline const vector<float>& getWeights() const
     { return weights; }
+
+    inline const double getWeightSum() const
+    { return weightSum; }
 
     /**
      * Returns the requested number of worker threads.
@@ -401,7 +416,11 @@ private:
     /**
      * Optional observation weights supplied from R.
      */
-    NumericVector weights;
+    std::vector<float> weights;
+    /**
+     * Sum of observation weights, or nrow if no weights were supplied.
+     */
+    double weightSum = 0.0;
     /**
      * Number of worker threads requested for the algorithm.
      */
