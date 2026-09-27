@@ -69,6 +69,10 @@
 #' @param consequent a tidyselect expression (see
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying the columns to use in the consequent (right) part of the rules
+#' @param weights `NULL` or a tidyselect expression (see
+#'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
+#'      selecting one numeric, finite, non-negative column of observation
+#'      weights.
 #' @param disjoint an atomic vector of size equal to the number of columns of `x`
 #'      that specifies the groups of predicates: if some elements of the `disjoint`
 #'      vector are equal, then the corresponding columns of `x` will NOT be
@@ -130,6 +134,7 @@
 #'          \item `arg_x` - name of the argument `x`
 #'          \item `arg_antecedent` - name of the argument `antecedent`
 #'          \item `arg_consequent` - name of the argument `consequent`
+#'          \item `arg_weights` - name of the argument `weights`
 #'          \item `arg_disjoint` - name of the argument `disjoint`
 #'          \item `arg_excluded` - name of the argument `excluded`
 #'          \item `arg_min_length` - name of the argument `min_length`
@@ -162,6 +167,7 @@
 dig_associations <- function(x,
                              antecedent = everything(),
                              consequent = everything(),
+                             weights = NULL,
                              disjoint = var_names(colnames(x)),
                              excluded = NULL,
                              min_length = 0L,
@@ -177,6 +183,7 @@ dig_associations <- function(x,
                              error_context = list(arg_x = "x",
                                                   arg_antecedent = "antecedent",
                                                   arg_consequent = "consequent",
+                                                  arg_weights = "weights",
                                                   arg_disjoint = "disjoint",
                                                   arg_excluded = "excluded",
                                                   arg_min_length = "min_length",
@@ -240,6 +247,7 @@ dig_associations <- function(x,
 
     antecedent <- enquo(antecedent)
     consequent <- enquo(consequent)
+    weights <- enquo(weights)
 
     if (lifecycle::is_present(threads) &&
         (is.null(error_context$deprecate_threads) || isTRUE(error_context$deprecate_threads))) {
@@ -258,6 +266,7 @@ dig_associations <- function(x,
                 callback_arguments = "",
                 condition = !!antecedent,
                 focus = !!consequent,
+                weights = !!weights,
                 disjoint = disjoint,
                 excluded = excluded,
                 min_length = min_length,
@@ -274,6 +283,7 @@ dig_associations <- function(x,
                 error_context = list(arg_x = error_context$arg_x,
                                      arg_condition = error_context$arg_antecedent,
                                      arg_focus = error_context$arg_consequent,
+                                     arg_weights = error_context$arg_weights,
                                      arg_disjoint = error_context$arg_disjoint,
                                      arg_excluded = error_context$arg_excluded,
                                      arg_min_length = error_context$arg_min_length,
@@ -305,6 +315,7 @@ dig_associations <- function(x,
            call_args = list(x = deparse(substitute(x)),
                             antecedent = digattr$call_args$condition,
                             consequent = digattr$call_args$focus,
+                            weights = digattr$call_args$weights,
                             disjoint = disjoint,
                             excluded = excluded,
                             min_length = min_length,

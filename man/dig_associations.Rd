@@ -8,6 +8,7 @@ dig_associations(
   x,
   antecedent = everything(),
   consequent = everything(),
+  weights = NULL,
   disjoint = var_names(colnames(x)),
   excluded = NULL,
   min_length = 0L,
@@ -21,12 +22,12 @@ dig_associations(
   verbose = FALSE,
   threads = deprecated(),
   error_context = list(arg_x = "x", arg_antecedent = "antecedent", arg_consequent =
-    "consequent", arg_disjoint = "disjoint", arg_excluded = "excluded", arg_min_length =
-    "min_length", arg_max_length = "max_length", arg_min_coverage = "min_coverage",
-    arg_min_support = "min_support", arg_min_confidence = "min_confidence",
-    arg_contingency_table = "contingency_table", arg_t_norm = "t_norm", arg_max_results =
-    "max_results", arg_verbose = "verbose", arg_threads = "threads", call =
-    current_env())
+    "consequent", arg_weights = "weights", arg_disjoint = "disjoint", arg_excluded =
+    "excluded", arg_min_length = "min_length", arg_max_length = "max_length",
+    arg_min_coverage = "min_coverage", arg_min_support = "min_support",
+    arg_min_confidence = "min_confidence", arg_contingency_table = "contingency_table",
+    arg_t_norm = "t_norm", arg_max_results = "max_results", arg_verbose = "verbose",
+    arg_threads = "threads", call = current_env())
 )
 }
 \arguments{
@@ -41,6 +42,11 @@ specifying the columns to use in the antecedent (left) part of the rules}
 \item{consequent}{a tidyselect expression (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
 specifying the columns to use in the consequent (right) part of the rules}
+
+\item{weights}{\code{NULL} or a tidyselect expression (see
+\href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
+selecting one numeric, finite, non-negative column of observation
+weights.}
 
 \item{disjoint}{an atomic vector of size equal to the number of columns of \code{x}
 that specifies the groups of predicates: if some elements of the \code{disjoint}
@@ -115,6 +121,7 @@ of that calling function. The list must contain the following elements:
 \item \code{arg_x} - name of the argument \code{x}
 \item \code{arg_antecedent} - name of the argument \code{antecedent}
 \item \code{arg_consequent} - name of the argument \code{consequent}
+\item \code{arg_weights} - name of the argument \code{weights}
 \item \code{arg_disjoint} - name of the argument \code{disjoint}
 \item \code{arg_excluded} - name of the argument \code{excluded}
 \item \code{arg_min_length} - name of the argument \code{min_length}

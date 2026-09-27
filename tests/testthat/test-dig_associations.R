@@ -77,6 +77,141 @@ test_that("dig_associations with contingency table", {
 })
 
 
+test_that("dig_associations computes weighted logical characteristics", {
+    weights <- 1:5 / 10
+    d <- data.frame(a = c(T, T, F, T, F),
+                    b = c(T, F, T, T, F),
+                    c = c(F, T, T, T, F),
+                    d = c(T, F, F, T, T),
+                    w = weights)
+    antecedents <- list(
+        "{}" = rep(TRUE, nrow(d)),
+        "{a}" = d$a,
+        "{b}" = d$b,
+        "{c}" = d$c,
+        "{a,b}" = d$a & d$b,
+        "{a,c}" = d$a & d$c,
+        "{b,c}" = d$b & d$c,
+        "{a,b,c}" = d$a & d$b & d$c
+    )
+    coverage <- vapply(antecedents, function(x) sum(weights * x), numeric(1))
+    count <- vapply(antecedents, function(x) sum(weights * x * d$d), numeric(1))
+    consequent_count <- sum(weights * d$d)
+
+    res <- dig_associations(d,
+                            antecedent = a:c,
+                            consequent = d,
+                            weights = w,
+                            min_support = 0)
+    res <- res[order(res$antecedent_length, res$antecedent), ]
+
+    expect_equal(attr(res, "call_args")$weights, "w")
+    expect_equal(res$antecedent, names(antecedents))
+    expect_equal(res$consequent, rep("{d}", length(antecedents)))
+    expect_equal(res$count, unname(count), tolerance = 1e-6)
+    expect_equal(res$support, unname(count / sum(weights)), tolerance = 1e-6)
+    expect_equal(res$coverage, unname(coverage / sum(weights)), tolerance = 1e-6)
+    expect_equal(res$conseq_support,
+                 rep(consequent_count / sum(weights), length(antecedents)),
+                 tolerance = 1e-6)
+    expect_equal(res$confidence, unname(count / coverage), tolerance = 1e-6)
+    expect_equal(res$antecedent_length, c(0L, 1L, 1L, 1L, 2L, 2L, 2L, 3L))
+    expect_equal(res$pp, unname(count), tolerance = 1e-6)
+    expect_equal(res$pn, unname(coverage - count), tolerance = 1e-6)
+    expect_equal(res$np, unname(consequent_count - count), tolerance = 1e-6)
+    expect_equal(res$nn, unname(sum(weights) - coverage - consequent_count + count),
+                 tolerance = 1e-6)
+})
+
+
+test_that("dig_associations uses weighted support for min_support", {
+    weights <- 1:5 / 10
+    d <- data.frame(a = c(T, T, F, T, F),
+                    b = c(T, F, T, T, F),
+                    c = c(F, T, T, T, F),
+                    d = c(T, F, F, T, T),
+                    w = weights)
+
+    res <- dig_associations(d,
+                            antecedent = a:c,
+                            consequent = d,
+                            weights = w,
+                            min_support = 0.65)
+
+    expect_equal(res$antecedent, "{}")
+    expect_equal(res$consequent, "{d}")
+    expect_equal(res$support, sum(weights * d$d) / sum(weights),
+                 tolerance = 1e-6)
+})
+
+
+test_that("dig_associations computes weighted numeric characteristics", {
+    weights <- 1:5 / 10
+    d <- data.frame(a = c(0.1, 0.7, 0.4, 0.9, 0.8),
+                    b = c(0.3, 0.8, 0.6, 1.0, 0.2),
+                    c = c(0.9, 0.5, 0.7, 0.6, 0.4),
+                    d = c(0.9, 0.4, 0.7, 0.9, 0.6),
+                    w = weights)
+    t_norms <- list(
+        goedel = function(x, y) pmin(x, y),
+        goguen = function(x, y) x * y,
+        lukas = function(x, y) pmax(0, x + y - 1)
+    )
+
+    for (t_norm_name in names(t_norms)) {
+        t_norm <- t_norms[[t_norm_name]]
+        antecedents <- list(
+            "{}" = rep(1, nrow(d)),
+            "{a}" = d$a,
+            "{b}" = d$b,
+            "{c}" = d$c,
+            "{a,b}" = t_norm(d$a, d$b),
+            "{a,c}" = t_norm(d$a, d$c),
+            "{b,c}" = t_norm(d$b, d$c),
+            "{a,b,c}" = t_norm(t_norm(d$a, d$b), d$c)
+        )
+        coverage <- vapply(antecedents, function(x) sum(weights * x), numeric(1))
+        count <- vapply(antecedents,
+                        function(x) sum(weights * t_norm(x, d$d)), numeric(1))
+        consequent_count <- sum(weights * d$d)
+
+        res <- dig_associations(d,
+                                antecedent = a:c,
+                                consequent = d,
+                                weights = w,
+                                min_support = 0,
+                                t_norm = t_norm_name)
+        res <- res[order(res$antecedent_length, res$antecedent), ]
+
+        expect_equal(res$antecedent, names(antecedents), info = t_norm_name)
+        expect_equal(res$consequent, rep("{d}", length(antecedents)),
+                     info = t_norm_name)
+        expect_equal(res$count, unname(count), tolerance = 1e-2,
+                     info = t_norm_name)
+        expect_equal(res$support, unname(count / sum(weights)), tolerance = 1e-2,
+                     info = t_norm_name)
+        expect_equal(res$coverage, unname(coverage / sum(weights)), tolerance = 1e-2,
+                     info = t_norm_name)
+        expect_equal(res$conseq_support,
+                     rep(consequent_count / sum(weights), length(antecedents)),
+                     tolerance = 1e-2, info = t_norm_name)
+        expect_equal(res$confidence, unname(count / coverage), tolerance = 1e-2,
+                     info = t_norm_name)
+        expect_equal(res$antecedent_length, c(0L, 1L, 1L, 1L, 2L, 2L, 2L, 3L),
+                     info = t_norm_name)
+        expect_equal(res$pp, unname(count), tolerance = 1e-2,
+                     info = t_norm_name)
+        expect_equal(res$pn, unname(coverage - count), tolerance = 1e-2,
+                     info = t_norm_name)
+        expect_equal(res$np, unname(consequent_count - count), tolerance = 1e-2,
+                     info = t_norm_name)
+        expect_equal(res$nn,
+                     unname(sum(weights) - coverage - consequent_count + count),
+                     tolerance = 1e-2, info = t_norm_name)
+    }
+})
+
+
 test_that("dig_associations with disjoint", {
     d <- data.frame(a = c(T, T, F, F, F),
                     b = c(T, T, T, T, F),

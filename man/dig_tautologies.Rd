@@ -8,6 +8,7 @@ dig_tautologies(
   x,
   antecedent = everything(),
   consequent = everything(),
+  weights = NULL,
   disjoint = var_names(colnames(x)),
   max_length = Inf,
   min_coverage = 0,
@@ -32,6 +33,11 @@ specifying the columns to use in the antecedent (left) part of the rules}
 \item{consequent}{a tidyselect expression (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
 specifying the columns to use in the consequent (right) part of the rules}
+
+\item{weights}{\code{NULL} or a tidyselect expression (see
+\href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
+selecting one numeric, finite, non-negative column of observation
+weights.}
 
 \item{disjoint}{an atomic vector of size equal to the number of columns of \code{x}
 that specifies the groups of predicates: if some elements of the \code{disjoint}

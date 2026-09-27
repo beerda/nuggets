@@ -8,6 +8,7 @@
 - renamed callback argument `weights` to `degrees` in `dig()` and `dig_grid()`;
   callback argument `weights` is now deprecated
 - removed deprecated callback argument `foci_supports` from `dig()`
+- added support for weighted data in `dig()` and other `dig_*()` functions
 
 # nuggets 2.2.4
 - released: 2026-09-11

@@ -43,6 +43,10 @@
 #' @param consequent a tidyselect expression (see
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying the columns to use in the consequent (right) part of the rules
+#' @param weights `NULL` or a tidyselect expression (see
+#'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
+#'      selecting one numeric, finite, non-negative column of observation
+#'      weights.
 #' @param disjoint an atomic vector of size equal to the number of columns of `x`
 #'      that specifies the groups of predicates: if some elements of the `disjoint`
 #'      vector are equal, then the corresponding columns of `x` will NOT be
@@ -92,6 +96,7 @@
 dig_tautologies <- function(x,
                             antecedent = everything(),
                             consequent = everything(),
+                            weights = NULL,
                             disjoint = var_names(colnames(x)),
                             max_length = Inf,
                             min_coverage = 0,
@@ -110,6 +115,7 @@ dig_tautologies <- function(x,
 
     antecedent <- enquo(antecedent)
     consequent <- enquo(consequent)
+    weights <- enquo(weights)
     tautologies <- list()
     result <- NULL
     len <- 0
@@ -143,6 +149,7 @@ dig_tautologies <- function(x,
         res <- dig_associations(x = x,
                                 antecedent = !!antecedent,
                                 consequent = !!consequent,
+                                weights = !!weights,
                                 disjoint = disjoint,
                                 excluded = tautologies,
                                 min_length = len,
@@ -158,6 +165,7 @@ dig_tautologies <- function(x,
                                 error_context = list(arg_x = "x",
                                                      arg_antecedent = "antecedent",
                                                      arg_consequent = "consequent",
+                                                     arg_weights = "weights",
                                                      arg_disjoint = "disjoint",
                                                      arg_excluded = "internal `tautologies`",
                                                      arg_min_length = "internal `len`",
@@ -195,6 +203,7 @@ dig_tautologies <- function(x,
            call_args = list(x = deparse(substitute(x)),
                             antecedent = digattr$call_args$antecedent,
                             consequent = digattr$call_args$consequent,
+                            weights = digattr$call_args$weights,
                             disjoint = disjoint,
                             max_length = max_length,
                             min_coverage = min_coverage,
