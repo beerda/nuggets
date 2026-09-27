@@ -41,7 +41,7 @@
                            error_call = error_context$call)
 
     if (length(indices) <= 0) {
-        return(list(name = character(), value = numeric()))
+        return(list(name = NULL, value = numeric()))
     } else if (length(indices) > 1) {
         cli_abort(c("{.arg {error_context$arg_selection}} must select at most one column.",
                     "x" = "{.arg {error_context$arg_selection}} resulted in {length(indices)} columns: {.field {names(cols[indices])}}."),

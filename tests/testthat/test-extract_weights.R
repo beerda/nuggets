@@ -24,7 +24,7 @@ test_that(".extract_weights", {
               d = c(Inf, 1, 2))
 
     expect_equal(.extract_weights(x, NULL),
-                 list(name = character(),
+                 list(name = NULL,
                       value = numeric()))
 
     expect_equal(.extract_weights(x, b),
