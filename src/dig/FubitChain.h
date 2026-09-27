@@ -114,7 +114,7 @@ public:
      * @param sum The number of elements or the sum of weights in the chain.
      */
     FubitChain(double sum)
-        : BaseChain(sum), data()
+        : BaseChain(sum), data(), n(0)
     { }
 
     /**
