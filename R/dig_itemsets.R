@@ -32,6 +32,10 @@
 #' @param items a tidyselect expression (see
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying the columns to use as item candidates.
+#' @param weights `NULL` or a tidyselect expression (see
+#'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
+#'      selecting one numeric, finite, non-negative column of observation
+#'      weights.
 #' @param disjoint an atomic vector of size equal to the number of columns of `x`
 #'      that specifies the groups of predicates: if some elements of the `disjoint`
 #'      vector are equal, then the corresponding columns of `x` will NOT be
@@ -65,6 +69,7 @@
 #' @export
 dig_itemsets <- function(x,
                          items = everything(),
+                         weights = NULL,
                          disjoint = var_names(colnames(x)),
                          excluded = NULL,
                          min_length = 0L,
@@ -75,7 +80,8 @@ dig_itemsets <- function(x,
                          verbose = FALSE,
                          error_context = list(arg_x = "x",
                                               arg_items = "items",
-                                              arg_disjoint = "disjoint",
+                         arg_weights = "weights",
+                         arg_disjoint = "disjoint",
                                               arg_excluded = "excluded",
                                               arg_min_length = "min_length",
                                               arg_max_length = "max_length",
@@ -104,6 +110,7 @@ dig_itemsets <- function(x,
                         call = error_context$call)
 
     items <- enquo(items)
+    weights <- enquo(weights)
 
     res <- .dig(x = x,
                 internal_function = dig_itemsets_,
@@ -113,6 +120,7 @@ dig_itemsets <- function(x,
                 callback_arguments = "",
                 condition = !!items,
                 focus = c(),
+                weights = !!weights,
                 disjoint = disjoint,
                 excluded = excluded,
                 min_length = min_length,
@@ -129,6 +137,7 @@ dig_itemsets <- function(x,
                 error_context = list(arg_x = error_context$arg_x,
                                      arg_condition = error_context$arg_items,
                                      arg_focus = "",
+                                     arg_weights = error_context$arg_weights,
                                      arg_disjoint = error_context$arg_disjoint,
                                      arg_excluded = error_context$arg_excluded,
                                      arg_min_length = error_context$arg_min_length,
@@ -161,6 +170,7 @@ dig_itemsets <- function(x,
                             colnames = as.character(colnames(x))),
            call_args = list(x = deparse(substitute(x)),
                             items = digattr$call_args$condition,
+                            weights = digattr$call_args$weights,
                             disjoint = disjoint,
                             excluded = excluded,
                             min_length = min_length,

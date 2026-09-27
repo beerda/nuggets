@@ -7,6 +7,7 @@
 dig_itemsets(
   x,
   items = everything(),
+  weights = NULL,
   disjoint = var_names(colnames(x)),
   excluded = NULL,
   min_length = 0L,
@@ -15,11 +16,11 @@ dig_itemsets(
   t_norm = "goguen",
   max_results = Inf,
   verbose = FALSE,
-  error_context = list(arg_x = "x", arg_items = "items", arg_disjoint = "disjoint",
-    arg_excluded = "excluded", arg_min_length = "min_length", arg_max_length =
-    "max_length", arg_min_support = "min_support", arg_t_norm = "t_norm", arg_max_results
-    = "max_results", arg_verbose = "verbose", arg_threads = "threads", call =
-    current_env())
+  error_context = list(arg_x = "x", arg_items = "items", arg_weights = "weights",
+    arg_disjoint = "disjoint", arg_excluded = "excluded", arg_min_length = "min_length",
+    arg_max_length = "max_length", arg_min_support = "min_support", arg_t_norm =
+    "t_norm", arg_max_results = "max_results", arg_verbose = "verbose", arg_threads =
+    "threads", call = current_env())
 )
 }
 \arguments{
@@ -30,6 +31,11 @@ must be either numeric (double) or logical.}
 \item{items}{a tidyselect expression (see
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
 specifying the columns to use as item candidates.}
+
+\item{weights}{\code{NULL} or a tidyselect expression (see
+\href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
+selecting one numeric, finite, non-negative column of observation
+weights.}
 
 \item{disjoint}{an atomic vector of size equal to the number of columns of \code{x}
 that specifies the groups of predicates: if some elements of the \code{disjoint}
