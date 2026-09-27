@@ -43,3 +43,49 @@ test_that("dig_ancestors of associations", {
 })
 
 
+test_that("dig_ancestors preserves the input rule weights", {
+    d <- data.frame(a = c(T, T, F, F),
+                    b = c(T, F, T, F),
+                    e = c(T, F, F, F),
+                    w = c(1, 1, 10, 10))
+
+    unweighted_rules <- dig_associations(d,
+                                         antecedent = a:b,
+                                         consequent = e,
+                                         min_support = 0,
+                                         min_confidence = 0)
+    weighted_rules <- dig_associations(d,
+                                       antecedent = a:b,
+                                       consequent = e,
+                                       weights = w,
+                                       min_support = 0,
+                                       min_confidence = 0)
+
+    unweighted_rule <- unweighted_rules[unweighted_rules$antecedent == "{a,b}", ]
+    weighted_rule <- weighted_rules[weighted_rules$antecedent == "{a,b}", ]
+
+    unweighted_ancestors <- dig_ancestors(unweighted_rule, d)
+    weighted_ancestors <- dig_ancestors(weighted_rule, d)
+    expected_unweighted <- dig_associations(d,
+                                            antecedent = a:b,
+                                            consequent = e,
+                                            min_support = 0,
+                                            min_confidence = 0)
+    expected_weighted <- dig_associations(d,
+                                          antecedent = a:b,
+                                          consequent = e,
+                                          weights = w,
+                                          min_support = 0,
+                                          min_confidence = 0)
+
+    expect_null(attr(unweighted_ancestors, "call_args")$weights)
+    expect_equal(attr(weighted_ancestors, "call_args")$weights, "w")
+    for (column in names(unweighted_ancestors)) {
+        expect_equal(unweighted_ancestors[[column]], expected_unweighted[[column]])
+        expect_equal(weighted_ancestors[[column]], expected_weighted[[column]])
+    }
+    expect_equal(unweighted_ancestors$support[unweighted_ancestors$antecedent == "{b}"],
+                 1 / 4)
+    expect_equal(weighted_ancestors$support[weighted_ancestors$antecedent == "{b}"],
+                 1 / 22)
+})

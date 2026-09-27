@@ -8,7 +8,8 @@
 - renamed callback argument `weights` to `degrees` in `dig()` and `dig_grid()`;
   callback argument `weights` is now deprecated
 - removed deprecated callback argument `foci_supports` from `dig()`
-- added support for weighted data in `dig()` and other `dig_*()` functions
+- added support for weighted data to: `dig()`, `dig_grid()`, `dig_itemsets()`, 
+  `dig_associations()`, `dig_ancestors()`
 - improved "Rule Detail" tab in `explore()` for associations: added graphical
   settings for the plot of ancestors
 
