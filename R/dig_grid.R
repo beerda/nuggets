@@ -71,6 +71,10 @@
 #'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
 #'      specifying the columns of `x`, whose names will be used as a domain for
 #'      combinations use at the second place (yvar)
+#' @param weights `NULL` or a tidyselect expression (see
+#'      [tidyselect syntax](https://tidyselect.r-lib.org/articles/syntax.html))
+#'      selecting one numeric, finite, non-negative column of observation
+#'      weights.
 #' @param disjoint an atomic vector of size equal to the number of columns of `x`
 #'      that specifies the groups of predicates: if some elements of the `disjoint`
 #'      vector are equal, then the corresponding columns of `x` will NEITHER be
@@ -193,6 +197,7 @@ dig_grid <- function(x,
                      condition = where(is.logical),
                      xvars = where(is.numeric),
                      yvars = where(is.numeric),
+                     weights = NULL,
                      disjoint = var_names(colnames(x)),
                      excluded = NULL,
                      allow = "all",
@@ -210,6 +215,7 @@ dig_grid <- function(x,
                                           arg_condition = "condition",
                                           arg_xvars = "xvars",
                                           arg_yvars = "yvars",
+                                          arg_weights = "weights",
                                           arg_disjoint = "disjoint",
                                           arg_excluded = "excluded",
                                           arg_allow = "allow",
@@ -262,6 +268,7 @@ dig_grid <- function(x,
 
     xvars <- enquo(xvars)
     yvars <- enquo(yvars)
+    weights <- enquo(weights)
     grid <- var_grid(x,
                      !!xvars,
                      !!yvars,
@@ -373,6 +380,7 @@ dig_grid <- function(x,
     res <- dig(x = x,
                f = callbackF,
                condition = !!condition,
+               weights = !!weights,
                disjoint = disjoint,
                excluded = excluded,
                min_length = min_length,
@@ -384,6 +392,7 @@ dig_grid <- function(x,
                threads = threads,
                error_context = list(arg_x = error_context$arg_x,
                                     arg_condition = error_context$arg_condition,
+                                    arg_weights = error_context$arg_weights,
                                     arg_disjoint = error_context$arg_disjoint,
                                     arg_excluded = error_context$arg_excluded,
                                     arg_min_length = error_context$arg_min_length,
@@ -408,6 +417,7 @@ dig_grid <- function(x,
                             condition = digattr$call_args$condition,
                             xvars = gridattr$xvars,
                             yvars = gridattr$yvars,
+                            weights = digattr$call_args$weights,
                             disjoint = digattr$call_args$disjoint,
                             excluded = digattr$call_args$excluded,
                             allow = allow,

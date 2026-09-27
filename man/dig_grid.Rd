@@ -10,6 +10,7 @@ dig_grid(
   condition = where(is.logical),
   xvars = where(is.numeric),
   yvars = where(is.numeric),
+  weights = NULL,
   disjoint = var_names(colnames(x)),
   excluded = NULL,
   allow = "all",
@@ -23,11 +24,11 @@ dig_grid(
   verbose = FALSE,
   threads = deprecated(),
   error_context = list(arg_x = "x", arg_f = "f", arg_condition = "condition", arg_xvars =
-    "xvars", arg_yvars = "yvars", arg_disjoint = "disjoint", arg_excluded = "excluded",
-    arg_allow = "allow", arg_na_rm = "na_rm", arg_type = "type", arg_min_length =
-    "min_length", arg_max_length = "max_length", arg_min_support = "min_support",
-    arg_max_support = "max_support", arg_max_results = "max_results", arg_verbose =
-    "verbose", arg_threads = "threads", call = current_env())
+    "xvars", arg_yvars = "yvars", arg_weights = "weights", arg_disjoint = "disjoint",
+    arg_excluded = "excluded", arg_allow = "allow", arg_na_rm = "na_rm", arg_type =
+    "type", arg_min_length = "min_length", arg_max_length = "max_length", arg_min_support
+    = "min_support", arg_max_support = "max_support", arg_max_results = "max_results",
+    arg_verbose = "verbose", arg_threads = "threads", call = current_env())
 )
 }
 \arguments{
@@ -73,6 +74,11 @@ combinations use at the first place (xvar)}
 \href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
 specifying the columns of \code{x}, whose names will be used as a domain for
 combinations use at the second place (yvar)}
+
+\item{weights}{\code{NULL} or a tidyselect expression (see
+\href{https://tidyselect.r-lib.org/articles/syntax.html}{tidyselect syntax})
+selecting one numeric, finite, non-negative column of observation
+weights.}
 
 \item{disjoint}{an atomic vector of size equal to the number of columns of \code{x}
 that specifies the groups of predicates: if some elements of the \code{disjoint}
