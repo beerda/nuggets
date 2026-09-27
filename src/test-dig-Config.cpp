@@ -34,6 +34,10 @@ context("dig/Config.h") {
         expect_true(c.getWeights().size() == 600);
         expect_true(c.getWeights()[0] == 0.5);
         expect_true(c.getWeights()[599] == 0.5);
+        expect_true(c.getWeightSum() == 300);
+        expect_true(c.getMinSum() == 150);
+        expect_true(c.getMinFocusSum() == 180);
+        expect_true(c.getMaxSum() == 240);
 
         r["weights"] = NumericVector::create(0.5);
         bool threw = false;

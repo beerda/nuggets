@@ -98,13 +98,13 @@ public:
         if (minSupport < 0.0 || minSupport > 1.0)
             throw invalid_argument("minSupport must be in the range [0, 1]");
 
-        minSum = minSupport * nrow;
+        minSum = minSupport * weightSum;
 
         minFocusSupport = as<NumericVector>(configuration["minFocusSupport"])[0];
         if (minFocusSupport < 0.0 || minFocusSupport > 1.0)
             throw invalid_argument("minFocusSupport must be in the range [0, 1]");
 
-        minFocusSum = minFocusSupport * nrow;
+        minFocusSum = minFocusSupport * weightSum;
 
         minConditionalFocusSupport = as<NumericVector>(configuration["minConditionalFocusSupport"])[0];
         if (minConditionalFocusSupport < 0.0 || minConditionalFocusSupport > 1.0)
@@ -114,7 +114,7 @@ public:
         if (maxSupport < 0.0 || maxSupport > 1.0)
             throw invalid_argument("maxSupport must be in the range [0, 1]");
 
-        maxSum = maxSupport * nrow;
+        maxSum = maxSupport * weightSum;
 
         tNorm = parseTNorm(configuration["tNorm"]);
 
@@ -344,7 +344,7 @@ public:
     { return minSupport; }
 
     /**
-     * Returns the minimum support sum derived from the row count.
+     * Returns the minimum support sum derived from the total weight.
      *
      * @return Minimum support sum.
      */
@@ -360,7 +360,7 @@ public:
     { return minFocusSupport; }
 
     /**
-     * Returns the minimum focus support sum derived from the row count.
+     * Returns the minimum focus support sum derived from the total weight.
      *
      * @return Minimum focus support sum.
      */
@@ -384,7 +384,7 @@ public:
     { return maxSupport; }
 
     /**
-     * Returns the maximum support sum derived from the row count.
+     * Returns the maximum support sum derived from the total weight.
      *
      * @return Maximum support sum.
      */
@@ -442,7 +442,7 @@ private:
      */
     double minSupport;
     /**
-     * Minimum support sum, computed as minSupport multiplied by nrow.
+     * Minimum support sum, computed as minSupport multiplied by weightSum.
      */
     double minSum;
     /**
@@ -450,7 +450,7 @@ private:
      */
     double minFocusSupport;
     /**
-     * Minimum focus support sum, computed as minFocusSupport multiplied by nrow.
+     * Minimum focus support sum, computed as minFocusSupport multiplied by weightSum.
      */
     double minFocusSum;
     /**
@@ -462,7 +462,7 @@ private:
      */
     double maxSupport;
     /**
-     * Maximum support sum, computed as maxSupport multiplied by nrow.
+     * Maximum support sum, computed as maxSupport multiplied by weightSum.
      */
     double maxSum;
     /**
