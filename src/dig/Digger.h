@@ -140,6 +140,7 @@ public:
         // cli progress bar has to be protected from R's garbage collector
         SEXP bar = PROTECT(cli_progress_bar(progress->getTotal(),
                                             List::create(Named("name") = "searching rules")));
+        cli_progress_set_clear(bar, true);
         progress->assignBar(bar);
 
         STOP_TIMER(t);
@@ -152,6 +153,7 @@ public:
         // free the protection from R's garbage collector
         UNPROTECT(1);
         searchStats.stopTimer();
+        searchStats.setFoundPatterns(storage.size());
     }
 
     /**

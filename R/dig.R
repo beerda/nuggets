@@ -577,7 +577,7 @@ dig <- function(x,
 
 
     if (isTRUE(verbose)) {
-        msgs <- c("Starting to dig for patterns.",
+        msgs <- c("Starting to dig for patterns:",
                   "i" = "Number of rows in {.arg {error_context$arg_x}}: {.val {nrow(x)}}.")
         if (!is.null(error_context$arg_condition) && error_context$arg_condition != "") {
             msgs <- c(msgs,
@@ -604,6 +604,13 @@ dig <- function(x,
                              foci_cols$selected,
                              callback,
                              config)
+
+    if (isTRUE(verbose)) {
+        stats <- attr(res, "search_stats")
+        cli_inform(c("Finished digging for patterns:",
+                     "i" = "Number of found patterns: {.val {stats$found_patterns}}.",
+                     "i" = "Elapsed time: {.val {round(stats$runtime_millis / 1000, 3)}} seconds."))
+    }
 
     nugget(res,
            flavour = NULL,

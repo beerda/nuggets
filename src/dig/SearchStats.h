@@ -41,7 +41,8 @@ public:
      */
     SearchStats()
         : computedConjunctions(0),
-          cachedConjunctions(0)
+          cachedConjunctions(0),
+          foundPatterns(0)
     { }
 
     /**
@@ -68,6 +69,9 @@ public:
     inline void incrementCachedConjunctions()
     { cachedConjunctions++; }
 
+    inline void setFoundPatterns(size_t count)
+    { foundPatterns = count; }
+
     /**
      * Returns the search statistics as an R List, including runtime in milliseconds,
      * counts of computed and cached conjunctions, and total conjunctions.
@@ -82,7 +86,8 @@ public:
         return List::create(Named("runtime_millis") = runtime,
                             Named("computed_conjunctions") = computedConjunctions,
                             Named("cached_conjunctions") = cachedConjunctions,
-                            Named("total_conjunctions") = computedConjunctions + cachedConjunctions);
+                            Named("total_conjunctions") = computedConjunctions + cachedConjunctions,
+                            Named("found_patterns") = foundPatterns);
     }
 
 private:
@@ -106,4 +111,9 @@ private:
      * search process.
      */
     size_t cachedConjunctions;
+
+    /**
+     * The count of patterns found during the search process.
+     */
+    size_t foundPatterns;
 };
