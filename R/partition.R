@@ -471,8 +471,9 @@ partition <- function(.data,
                       call = call)
 
         } else if (is.logical(x)) {
-            res <- tibble(a = !is.na(x) & x,
-                          b = !is.na(x) & !x)
+            not_na <- !is.na(x)
+            res <- tibble(a = not_na & x,
+                          b = not_na & !x)
             colnames(res) <- paste0(colname, "=", c("T", "F"))
 
         } else if (is.factor(x)) {
@@ -490,12 +491,9 @@ partition <- function(.data,
                 pp <- .prepare_crisp(x, colname, .breaks, .labels,
                                      .style, .style_params,
                                      .right, .span, .inc, call)
-                f <- if (.right) {
-                    function(x, br)  !is.na(x) & x > br[1] & x <= br[length(br)]
-                } else {
-                    function(x, br)  !is.na(x) & x >= br[1] & x < br[length(br)]
-                }
-                res <- .partition_numeric(x, pp, colname, f)
+                res <- partition_numeric_crisp_(x, pp$breaks, .right)
+                names(res) <- paste0(colname, "=", pp$labels)
+                res <- as_tibble(res)
 
             } else {
                 pp <- .prepare_fuzzy(x, colname, .breaks, .labels, .span, .inc, call)
@@ -646,11 +644,7 @@ partition <- function(.data,
                  warnSmallN = FALSE)
     args <- c(args, style_params)
     ii <- do.call(classIntervals, args)
-
     breaks <- ii$brks
-    #breaks <- seq(from = min(x, na.rm = TRUE),
-                  #to = max(x, na.rm = TRUE),
-                  #length.out = span + (n - 1) * inc + 1)
 
     c(-Inf, breaks[c(-1, -length(breaks))], Inf)
 }

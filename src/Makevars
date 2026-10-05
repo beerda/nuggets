@@ -7,6 +7,7 @@ SOURCES=RcppExports.cpp \
 	algebra.cpp \
 	dig.cpp \
 	parse_condition.cpp \
+	partition.cpp \
 	triangle.cpp \
 	raisedcos.cpp \
 	which_antichain.cpp \

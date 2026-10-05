@@ -85,6 +85,10 @@ dig_itemsets_ <- function(data, namesVector, isCondition, isFocus, callback, con
     .Call(`_nuggets_parse_condition`, x)
 }
 
+partition_numeric_crisp_ <- function(x, breaks, right) {
+    .Call(`_nuggets_partition_numeric_crisp_`, x, breaks, right)
+}
+
 raisedcos_ <- function(x, ctx) {
     .Call(`_nuggets_raisedcos_`, x, ctx)
 }

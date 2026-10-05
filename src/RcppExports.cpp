@@ -259,6 +259,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// partition_numeric_crisp_
+List partition_numeric_crisp_(const NumericVector& x, const List& breaks, const bool right);
+RcppExport SEXP _nuggets_partition_numeric_crisp_(SEXP xSEXP, SEXP breaksSEXP, SEXP rightSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const List& >::type breaks(breaksSEXP);
+    Rcpp::traits::input_parameter< const bool >::type right(rightSEXP);
+    rcpp_result_gen = Rcpp::wrap(partition_numeric_crisp_(x, breaks, right));
+    return rcpp_result_gen;
+END_RCPP
+}
 // raisedcos_
 NumericVector raisedcos_(const NumericVector& x, const NumericVector& ctx);
 RcppExport SEXP _nuggets_raisedcos_(SEXP xSEXP, SEXP ctxSEXP) {
@@ -320,6 +333,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_nuggets_dig_associations_", (DL_FUNC) &_nuggets_dig_associations_, 6},
     {"_nuggets_dig_itemsets_", (DL_FUNC) &_nuggets_dig_itemsets_, 6},
     {"_nuggets_parse_condition", (DL_FUNC) &_nuggets_parse_condition, 1},
+    {"_nuggets_partition_numeric_crisp_", (DL_FUNC) &_nuggets_partition_numeric_crisp_, 3},
     {"_nuggets_raisedcos_", (DL_FUNC) &_nuggets_raisedcos_, 2},
     {"_nuggets_triangle_", (DL_FUNC) &_nuggets_triangle_, 2},
     {"_nuggets_which_antichain_", (DL_FUNC) &_nuggets_which_antichain_, 2},
