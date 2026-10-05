@@ -53,6 +53,9 @@ importFrom(classInt,classIntervals)
 importFrom(cli,
   cli_abort,
   cli_inform,
+  cli_progress_bar,
+  cli_progress_done,
+  cli_progress_update,
   cli_warn
 )
 importFrom(dplyr,

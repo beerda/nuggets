@@ -428,6 +428,8 @@ partition <- function(.data,
         .breaks <- sort(.breaks)
     }
 
+    deparsed_sel <- vapply(substitute(list(.what, ...))[-1], deparse, character(1L))
+
     sel <- enquos(.what, ...)
     sel <- lapply(sel,
                   eval_select,
@@ -441,6 +443,13 @@ partition <- function(.data,
     if (length(sel) <= 0) {
         return(as_tibble(.data))
     }
+
+    progress_envir <- parent.frame()
+    progress <- cli_progress_bar(paste("Partitioning",
+                                       paste(deparsed_sel, collapse = ", ")),
+                                 total = length(sel),
+                                 clear = TRUE,
+                                 .envir = progress_envir)
 
     res <- lapply(seq_along(sel), function(i) {
         colname <- names(sel)[i]
@@ -513,12 +522,15 @@ partition <- function(.data,
             }
         }
 
+        cli_progress_update(.envir = progress_envir)
+
         res
     })
 
     res <- do.call(cbind, res)
     keeped <- if (.keep) .data else .data[-sel]
     res <- cbind(keeped, res)
+    cli_progress_done(.envir = progress_envir)
 
     as_tibble(res)
 }

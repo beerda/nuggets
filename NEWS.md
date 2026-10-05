@@ -12,6 +12,7 @@
   `dig_associations()`, `dig_ancestors()`
 - improved "Rule Detail" tab in `explore()` for associations: added graphical
   settings for the plot of ancestors
+- added progress bar to `partition()` function
 
 # nuggets 2.2.4
 - released: 2026-09-11
