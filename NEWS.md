@@ -13,7 +13,7 @@
 - improved "Rule Detail" tab in `explore()` for associations: added graphical
   settings for the plot of ancestors
 - added progress bar to `partition()` function
-- optimized performance of the `"crisp"` method of the `partition()` function
+- optimized performance of numeric methods of the `partition()` function
 
 # nuggets 2.2.4
 - released: 2026-09-11

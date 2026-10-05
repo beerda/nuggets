@@ -49,3 +49,81 @@ List partition_numeric_crisp_(const NumericVector& x,
 
     return result;
 }
+
+
+// [[Rcpp::export]]
+List partition_numeric_fuzzy_(const NumericVector& x,
+                              const List& breaks,
+                              const bool triangle)
+{
+    List result(breaks.size());
+    for (R_xlen_t j = 0; j < breaks.size(); ++j) {
+        const NumericVector& brk = breaks[j];
+        if (brk.size() < 2) {
+            stop("Each break must be a numeric vector of length at least 2");
+        }
+
+        double low = brk[0];
+        double ctr1 = brk[1];
+        double ctr2 = brk[brk.size() - 2];
+        double big = brk[brk.size() - 1];
+
+        NumericVector t(x.size());
+        for (R_xlen_t i = 0; i < x.size(); ++i) {
+            if (R_IsNA(x[i]) || R_IsNaN(x[i])) {
+                t[i] = 0;
+                continue;
+            }
+
+            if (triangle) {
+                if (x[i] < ctr1) {
+                    if (low == R_NegInf) {
+                        t[i] = 1;
+                    } else if (low == ctr1) {
+                        t[i] = 0;
+                    } else {
+                        t[i] = std::max(0.0, (x[i] - low) / (ctr1 - low));
+                    }
+                } else if (x[i] <= ctr2) {
+                    t[i] = 1;
+                } else {
+                    if (big == R_PosInf) {
+                        t[i] = 1;
+                    } else if (ctr2 == big) {
+                        t[i] = 0;
+                    } else {
+                        t[i] = std::max(0.0, (big - x[i]) / (big - ctr2));
+                    }
+                }
+            }
+            else { // raisedcos
+                if (x[i] < low || x[i] > big) {
+                    t[i] = 0;
+                } else if (x[i] < ctr1) {
+                    if (low == R_NegInf) {
+                        t[i] = 1;
+                    } else if (low == ctr1) {
+                        t[i] = 0;
+                    } else {
+                        t[i] = (cos((x[i] - ctr1) * M_PI / (ctr1 - low)) + 1) / 2;
+                    }
+                } else if (x[i] <= ctr2) {
+                    t[i] = 1;
+                } else {
+                    if (big == R_PosInf) {
+                        t[i] = 1;
+                    } else if (ctr2 == big) {
+                        t[i] = 0;
+                    } else {
+                        t[i] = (cos((x[i] - ctr2) * M_PI / (big - ctr2)) + 1) / 2;
+                    }
+                }
+            }
+        }
+
+        result[j] = t;
+    }
+
+    return result;
+
+}

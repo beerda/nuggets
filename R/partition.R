@@ -487,23 +487,20 @@ partition <- function(.data,
                 cli_abort(c("{.arg .breaks} must not be NULL in order to partition numeric column {.field {colname}}."),
                           call = call)
 
-            } else if (.method == "crisp") {
-                pp <- .prepare_crisp(x, colname, .breaks, .labels,
-                                     .style, .style_params,
-                                     .right, .span, .inc, call)
-                res <- partition_numeric_crisp_(x, pp$breaks, .right)
+            } else {
+                if (.method == "crisp") {
+                    pp <- .prepare_crisp(x, colname, .breaks, .labels,
+                                         .style, .style_params,
+                                         .right, .span, .inc, call)
+                    res <- partition_numeric_crisp_(x, pp$breaks, .right)
+
+                } else { # .method == "fuzzy"
+                    pp <- .prepare_fuzzy(x, colname, .breaks, .labels, .span, .inc, call)
+                    res <- partition_numeric_fuzzy_(x, pp$breaks, .method == "triangle")
+                }
+
                 names(res) <- paste0(colname, "=", pp$labels)
                 res <- as_tibble(res)
-
-            } else {
-                pp <- .prepare_fuzzy(x, colname, .breaks, .labels, .span, .inc, call)
-                f1 <- if (.method == "triangle") triangle_ else raisedcos_
-                f2 <- function(x, br) {
-                    res <- f1(x, br)
-                    res[is.na(res)] <- 0
-                    res
-                }
-                res <- .partition_numeric(x, pp, colname, f2)
             }
 
         } else {
@@ -655,14 +652,6 @@ partition <- function(.data,
     j <- seq(from = 1 + span, to = length(breaks), by = inc)
 
     lapply(seq_along(i), function(k) signif(breaks[i[k]:j[k]], 3))
-}
-
-
-.partition_numeric <- function(x, pp, colname, fun) {
-    res <- lapply(pp$breaks, function(br) fun(x, br))
-    names(res) <- paste0(colname, "=", pp$labels)
-
-    as_tibble(res)
 }
 
 

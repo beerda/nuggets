@@ -89,12 +89,8 @@ partition_numeric_crisp_ <- function(x, breaks, right) {
     .Call(`_nuggets_partition_numeric_crisp_`, x, breaks, right)
 }
 
-raisedcos_ <- function(x, ctx) {
-    .Call(`_nuggets_raisedcos_`, x, ctx)
-}
-
-triangle_ <- function(x, ctx) {
-    .Call(`_nuggets_triangle_`, x, ctx)
+partition_numeric_fuzzy_ <- function(x, breaks, triangle) {
+    .Call(`_nuggets_partition_numeric_fuzzy_`, x, breaks, triangle)
 }
 
 which_antichain_ <- function(x, dist) {

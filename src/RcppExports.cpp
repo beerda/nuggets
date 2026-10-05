@@ -272,27 +272,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// raisedcos_
-NumericVector raisedcos_(const NumericVector& x, const NumericVector& ctx);
-RcppExport SEXP _nuggets_raisedcos_(SEXP xSEXP, SEXP ctxSEXP) {
+// partition_numeric_fuzzy_
+List partition_numeric_fuzzy_(const NumericVector& x, const List& breaks, const bool triangle);
+RcppExport SEXP _nuggets_partition_numeric_fuzzy_(SEXP xSEXP, SEXP breaksSEXP, SEXP triangleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericVector& >::type x(xSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type ctx(ctxSEXP);
-    rcpp_result_gen = Rcpp::wrap(raisedcos_(x, ctx));
-    return rcpp_result_gen;
-END_RCPP
-}
-// triangle_
-NumericVector triangle_(const NumericVector& x, const NumericVector& ctx);
-RcppExport SEXP _nuggets_triangle_(SEXP xSEXP, SEXP ctxSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const NumericVector& >::type x(xSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type ctx(ctxSEXP);
-    rcpp_result_gen = Rcpp::wrap(triangle_(x, ctx));
+    Rcpp::traits::input_parameter< const List& >::type breaks(breaksSEXP);
+    Rcpp::traits::input_parameter< const bool >::type triangle(triangleSEXP);
+    rcpp_result_gen = Rcpp::wrap(partition_numeric_fuzzy_(x, breaks, triangle));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -334,8 +323,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_nuggets_dig_itemsets_", (DL_FUNC) &_nuggets_dig_itemsets_, 6},
     {"_nuggets_parse_condition", (DL_FUNC) &_nuggets_parse_condition, 1},
     {"_nuggets_partition_numeric_crisp_", (DL_FUNC) &_nuggets_partition_numeric_crisp_, 3},
-    {"_nuggets_raisedcos_", (DL_FUNC) &_nuggets_raisedcos_, 2},
-    {"_nuggets_triangle_", (DL_FUNC) &_nuggets_triangle_, 2},
+    {"_nuggets_partition_numeric_fuzzy_", (DL_FUNC) &_nuggets_partition_numeric_fuzzy_, 3},
     {"_nuggets_which_antichain_", (DL_FUNC) &_nuggets_which_antichain_, 2},
     {"run_testthat_tests",       (DL_FUNC) &run_testthat_tests,       1},
     {NULL, NULL, 0}
