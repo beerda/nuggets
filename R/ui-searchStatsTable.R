@@ -22,14 +22,18 @@ searchStatsTable <- function(rules) {
     if (is.null(aa)) {
         df <- data.frame()
     } else {
-        df <- data.frame(c("Search run time [ms]:",
+        df <- data.frame(c("Search run time [s]:",
                            "Computed conjunctions:",
                            "Cached conjunctions:",
-                           "Total conjunctions:"),
-                         c(round(aa$runtime_millis, 2),
+                           "Total conjunctions:",
+                           "Found patterns:",
+                           "Data representation:"),
+                         c(signif(aa$runtime_millis / 1000, 2),
                            aa$computed_conjunctions,
                            aa$cached_conjunctions,
-                           aa$total_conjunctions),
+                           aa$total_conjunctions,
+                           aa$found_patterns,
+                           aa$data_representation),
                          stringsAsFactors = FALSE)
     }
 

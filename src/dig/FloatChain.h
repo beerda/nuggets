@@ -331,7 +331,7 @@ public:
      *
      * @return true/false, indicating whether this chain type is idempotent.
      */
-    static bool isIdempotent()
+    inline static bool isIdempotent()
     {
         if constexpr (TNORM == TNorm::GOEDEL) {
             return true;
@@ -339,6 +339,14 @@ public:
 
         return false;
     }
+
+    /**
+     * Returns the name of the chain type as a string.
+     *
+     * @return The name of the chain type.
+     */
+    inline static string getName()
+    { return "FloatChain"; }
 
 private:
     /**

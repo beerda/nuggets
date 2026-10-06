@@ -72,6 +72,9 @@ public:
     inline void setFoundPatterns(size_t count)
     { foundPatterns = count; }
 
+    inline void setDataRepresentation(const std::string& rep)
+    { dataRepresentation = rep; }
+
     /**
      * Returns the search statistics as an R List, including runtime in milliseconds,
      * counts of computed and cached conjunctions, and total conjunctions.
@@ -87,7 +90,8 @@ public:
                             Named("computed_conjunctions") = computedConjunctions,
                             Named("cached_conjunctions") = cachedConjunctions,
                             Named("total_conjunctions") = computedConjunctions + cachedConjunctions,
-                            Named("found_patterns") = foundPatterns);
+                            Named("found_patterns") = foundPatterns,
+                            Named("data_representation") = dataRepresentation);
     }
 
 private:
@@ -116,4 +120,10 @@ private:
      * The count of patterns found during the search process.
      */
     size_t foundPatterns;
+
+    /**
+     * The representation of the data used in the search process (e.g., "BitChain",
+     * "FloatChain", etc.).
+     */
+    string dataRepresentation;
 };

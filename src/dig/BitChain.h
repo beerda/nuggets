@@ -281,6 +281,14 @@ public:
     inline static bool isIdempotent()
     { return true; }
 
+    /**
+     * Returns the name of the chain type as a string.
+     *
+     * @return The name of the chain type.
+     */
+    inline static string getName()
+    { return "BitChain"; }
+
 private:
     /**
      * The underlying bitset storing the boolean values of the chain.

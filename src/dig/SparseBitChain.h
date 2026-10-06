@@ -307,6 +307,14 @@ public:
     inline static bool isIdempotent()
     { return true; }
 
+    /**
+     * Returns the name of the chain type as a string.
+     *
+     * @return The name of the chain type.
+     */
+    inline static string getName()
+    { return "SparseBitChain"; }
+
 private:
     /**
      * Sorted indices of values set to TRUE.

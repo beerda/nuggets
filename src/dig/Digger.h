@@ -154,6 +154,7 @@ public:
         UNPROTECT(1);
         searchStats.stopTimer();
         searchStats.setFoundPatterns(storage.size());
+        searchStats.setDataRepresentation(CHAIN::getName());
     }
 
     /**
