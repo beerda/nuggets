@@ -22,19 +22,19 @@ searchStatsTable <- function(rules) {
     if (is.null(aa)) {
         df <- data.frame()
     } else {
-        df <- data.frame(c("Search run time [s]:",
-                           "Computed conjunctions:",
-                           "Cached conjunctions:",
-                           "Total conjunctions:",
-                           "Found patterns:",
-                           "Data representation:"),
-                         c(signif(aa$runtime_millis / 1000, 2),
-                           aa$computed_conjunctions,
-                           aa$cached_conjunctions,
-                           aa$total_conjunctions,
-                           aa$found_patterns,
-                           aa$data_representation),
-                         stringsAsFactors = FALSE)
+        if (!is.null(aa$runtime_millis)) {
+            aa$runtime_millis <- signif(aa$runtime_millis / 1000, 2)
+        }
+        vv <- unlist(aa)
+        nn <- names(aa)
+        nn <- gsub("_", " ", nn)
+        nn <- gsub("$", ":", nn)
+        nn <- gsub("runtime millis", "Search run time [s]", nn)
+
+        # make first letter uppercase
+        nn <- paste0(toupper(substr(nn, 1, 1)), substr(nn, 2, nchar(nn)))
+
+        df <- data.frame(nn, vv, stringsAsFactors = FALSE)
     }
 
     infoTable(df, class = "hlrows")
