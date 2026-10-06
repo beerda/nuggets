@@ -57,6 +57,8 @@ dig_ancestors.associations <- function(x,
     .must_have_n_rows(x, 1)
     .must_have_column(x, "antecedent")
     .must_have_column(x, "consequent")
+    .must_be_matrix_or_data_frame(data)
+    .must_be_from(x, data)
 
     ante <- parse_condition(x$antecedent)[[1]]
     cons <- parse_condition(x$consequent)[[1]]

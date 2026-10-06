@@ -178,6 +178,19 @@
 }
 
 
+.must_be_from <- function(rules,
+                          data,
+                          arg_rules = caller_arg(rules),
+                          arg_data = caller_arg(data),
+                          call = caller_env()) {
+    if (!is_from(rules, data)) {
+        cli_abort(c("{.arg {arg_rules}} must have been dug from {.arg {arg_data}}.",
+                    "x" = "{.arg {arg_rules}} has been obtained from a different data source than {.arg {arg_data}}."),
+                  call = call)
+    }
+}
+
+
 ..and_has_not_dim <- function(f) {
     function(x) {
         f(x) && is.null(dim(x))

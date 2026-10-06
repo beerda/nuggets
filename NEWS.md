@@ -16,6 +16,8 @@
 - optimized performance of numeric methods of the `partition()` function
 - added observed, expected, and diff counts to contingency table in `explore()`
   for associations
+- added `is_from()` to check if a nugget is originated from a given data frame
+  or matrix
 
 # nuggets 2.2.4
 - released: 2026-09-11

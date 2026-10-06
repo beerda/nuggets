@@ -59,9 +59,10 @@
 explore.correlations <- function(x, data = NULL, ...) {
     .require_shiny()
     .must_be_nugget(x, "correlations")
-    .must_be_data_frame(data, null = TRUE)
+    .must_be_matrix_or_data_frame(data, null = TRUE)
 
     if (!is.null(data)) {
+        .must_be_from(x, data)
         predicates <- parse_condition(x$condition)
         predicates <- unlist(predicates)
         predicates <- unique(predicates)
