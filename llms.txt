@@ -15,7 +15,8 @@ integrated Shiny applications.
 
 ## Live Demo!
 
-[Association Rules Explorer](https://irafm.shinyapps.io/nuggets_demo/)
+[Association Rules
+Explorer](https://beerda-nuggets.share.connect.posit.cloud/)
 
 ## What Patterns Can You Discover?
 
