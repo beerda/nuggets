@@ -77,8 +77,12 @@ exploreApp <- function(rules,
                 .mono {font-family: \"Courier New\", Courier, monospace;}
 
                 /* predicate syntax highlighting */
-                span.pred_n {color: darkble;}
+                span.pred_n {color: darkblue;}
                 span.pred_v {color: green;}
+
+                span.gray {color: gray;}
+                span.green {color: green;}
+                span.red {color: red;}
 
                 /* info box */
                 div.info-box {display: flex; align-items: center; gap: 10px;}

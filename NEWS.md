@@ -1,4 +1,4 @@
-# nuggets 2.3
+# nuggets 2.3.0
 - released: ???
 - added `as_nugget()` to convert arules object to nuggets object
 - added `dig_itemsets()` to find frequent itemsets
@@ -14,6 +14,8 @@
   settings for the plot of ancestors
 - added progress bar to `partition()` function
 - optimized performance of numeric methods of the `partition()` function
+- added observed, expected, and diff counts to contingency table in `explore()`
+  for associations
 
 # nuggets 2.2.4
 - released: 2026-09-11

@@ -71,6 +71,8 @@ associationsDetailModule <- function(id, rules, meta, data) {
                             shiny::tabPanel("Contingency Table",
                                 infoBox(paste("The contingency table shows how many data rows contain:",
                                               "both antecedent and consequent, antecedent only, consequent only, or neither.",
+                                              "'obs' is the observed count, 'exp' is the expected count if antecedent and consequent were independent, ",
+                                              "and 'diff' is the difference between observed and expected counts.",
                                               "Dashed lines in the plot indicate the expected values if antecedent and consequent were independent.")),
                                 shiny::fluidRow(
                                     shiny::column(width = 6,
@@ -120,13 +122,24 @@ associationsDetailModule <- function(id, rules, meta, data) {
                     rule <- selectedRule()
                     shiny::req(rule)
 
-                    res <- data.frame(c1 = c(rule$pp, rule$np),
-                                      c2 = c(rule$pn, rule$nn))
+                    n <- rule$pp + rule$pn + rule$np + rule$nn
+                    exp_pp <- (rule$pp + rule$pn) * (rule$pp + rule$np) / n
+                    exp_pn <- (rule$pp + rule$pn) * (rule$pn + rule$nn) / n
+                    exp_np <- (rule$np + rule$nn) * (rule$pp + rule$np) / n
+                    exp_nn <- (rule$np + rule$nn) * (rule$pn + rule$nn) / n
+
+                    pp_text <- .format_contingency_table_cell(rule$pp, exp_pp, n)
+                    pn_text <- .format_contingency_table_cell(rule$pn, exp_pn, n)
+                    np_text <- .format_contingency_table_cell(rule$np, exp_np, n)
+                    nn_text <- .format_contingency_table_cell(rule$nn, exp_nn, n)
+
+                    res <- data.frame(c1 = c(pp_text, np_text),
+                                      c2 = c(pn_text, nn_text))
                     rownames(res) <- c("<b>ante</b>", "<b>\u00acante</b>")
                     colnames(res) <- c("<b>conseq</b>", "<b>\u00acconseq</b>")
 
                     res
-                }, rownames = TRUE, sanitize.rownames.function = identity, sanitize.colnames.function = identity)
+                }, rownames = TRUE, sanitize.text.function = identity, sanitize.rownames.function = identity, sanitize.colnames.function = identity)
 
                 if (!is.null(data)) {
                     ancestors <- shiny::reactive({
@@ -189,4 +202,14 @@ associationsDetailModule <- function(id, rules, meta, data) {
             })
         }
     )
+}
+
+
+.format_contingency_table_cell <- function(obs, exp, n) {
+    dif <- obs - exp
+    clr <- ifelse(dif > 0, "green", ifelse(dif < 0, "red", "black"))
+
+    paste0("obs:&nbsp;", obs, "&nbsp;(", round(100 * obs / n, 1), "%)<br>",
+           '<span class="gray">exp:&nbsp;', round(exp, 1), " (", round(100 * exp / n, 1), "%)</span><br>",
+           '<span class="', clr, '">diff:&nbsp;', round(dif, 1), " (", round(100 * dif / n, 1), "%)</span>")
 }
