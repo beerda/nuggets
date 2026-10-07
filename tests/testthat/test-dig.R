@@ -1741,6 +1741,7 @@ test_that("dig return object details", {
     expect_true(attr(res, "search_stats")$cached_conjunctions >= 0)
     expect_equal(attr(res, "search_stats")$total_conjunctions,
                  attr(res, "search_stats")$computed_conjunctions + attr(res, "search_stats")$cached_conjunctions)
+    expect_equal(attr(res, "search_stats")$found_patterns, length(res))
 })
 
 
