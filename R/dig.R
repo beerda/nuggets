@@ -587,6 +587,15 @@ dig <- function(x,
              msgs <- c(msgs,
                        "i" = "Selected {.val {sum(foci_cols$selected)}} {.arg {error_context$arg_focus}} columns: {.field {names(cols)[foci_cols$selected]}}.")
         }
+        if (!is.null(error_context$arg_weights) && error_context$arg_weights != "") {
+            if (is.null(weights$name)) {
+                msgs <- c(msgs,
+                          "i" = "No weights column selected; all rows are treated equally.")
+            } else {
+                msgs <- c(msgs,
+                          "i" = "Selected {.arg {error_context$arg_weights}} column: {.field {weights$name}}.")
+            }
+        }
         cli_inform(msgs)
     }
 

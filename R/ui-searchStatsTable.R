@@ -23,13 +23,18 @@ searchStatsTable <- function(rules) {
         df <- data.frame()
     } else {
         if (!is.null(aa$runtime_millis)) {
-            aa$runtime_millis <- signif(aa$runtime_millis / 1000, 2)
+            seconds <- aa$runtime_millis / 1000
+            days <- floor(seconds / 86400)
+            hours <- floor((seconds %% 86400) / 3600)
+            minutes <- floor((seconds %% 3600) / 60)
+            secs <- seconds %% 60
+            aa$runtime_millis <- sprintf("%dd %02d:%02d:%05.2f", days, hours, minutes, secs)
         }
         vv <- unlist(aa)
         nn <- names(aa)
         nn <- gsub("_", " ", nn)
         nn <- gsub("$", ":", nn)
-        nn <- gsub("runtime millis", "Search run time [s]", nn)
+        nn <- gsub("runtime millis", "Search run time", nn)
 
         # make first letter uppercase
         nn <- paste0(toupper(substr(nn, 1, 1)), substr(nn, 2, nchar(nn)))
