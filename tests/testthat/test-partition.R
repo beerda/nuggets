@@ -549,6 +549,63 @@ test_that("partition crisp styles", {
                            .style = "kmeans"),
                  tibble("a=(-Inf;4.5]" = c(T,T,T,T,T,T,F,F,F,F),
                         "a=(4.5;Inf]"  = c(F,F,F,F,F,F,T,T,T,F)))
+
+    expect_equal(partition(data.frame(a = c(1:6, NA),
+                                      weights = c(1, 1, 1, 1, 1, 10, 1)),
+                           a,
+                           .breaks = 2,
+                           .keep = FALSE,
+                           .na = TRUE,
+                           .method = "crisp",
+                           .style = "weighted_quantile",
+                           .weights = weights),
+                 tibble("weights"    = c(1, 1, 1, 1, 1, 10, 1),
+                        "a=(-Inf;6]" = c(T,T,T,T,T,T,F),
+                        "a=(6;Inf]"  = c(F,F,F,F,F,F,F),
+                        "a=NA"       = c(F,F,F,F,F,F,T)))
+})
+
+
+test_that("partition weighted quantile style respects weights", {
+    data <- data.frame(a = c(1:12, NA),
+                       equal_weights = rep(1, 13),
+                       skewed_weights = c(rep(1, 11), 20, 1))
+
+    unweighted <- partition(data,
+                            a,
+                            .breaks = 3,
+                            .keep = FALSE,
+                            .na = TRUE,
+                            .method = "crisp",
+                            .style = "quantile")
+    equally_weighted <- partition(data,
+                                  a,
+                                  .breaks = 3,
+                                  .keep = FALSE,
+                                  .na = TRUE,
+                                  .method = "crisp",
+                                  .style = "weighted_quantile",
+                                  .weights = equal_weights)
+
+    expect_equal(equally_weighted, unweighted)
+
+    skewed_weighted <- partition(data,
+                                 a,
+                                 .breaks = 3,
+                                 .keep = FALSE,
+                                 .na = TRUE,
+                                 .method = "crisp",
+                                 .style = "weighted_quantile",
+                                 .weights = skewed_weights)
+    partition_columns <- grepl("^a=", names(unweighted))
+
+    expect_false(identical(unweighted[partition_columns],
+                           skewed_weighted[partition_columns]))
+    expect_equal(skewed_weighted[partition_columns],
+                 tibble("a=(-Inf;11.7]" = c(rep(TRUE, 11), FALSE, FALSE),
+                        "a=(11.7;12]"   = c(rep(FALSE, 11), TRUE, FALSE),
+                        "a=(12;Inf]"    = rep(FALSE, 13),
+                        "a=NA"          = c(rep(FALSE, 12), TRUE)))
 })
 
 
@@ -748,6 +805,42 @@ test_that("partition errors", {
                            .style = "quantile"),
                  "The `.style` argument is only applicable when `.method` is \"crisp\".")
 
+    # Test weighted quantile style errors
+    expect_error(partition(data.frame(a = 1:10), a,
+                           .method = "crisp",
+                           .breaks = 3,
+                           .style = "weighted_quantile"),
+                 "The `.weights` argument must select exactly one column when `.style` is \"weighted_quantile\".")
+    expect_error(partition(data.frame(a = 1:10, weights = 1:10), a,
+                           .method = "triangle",
+                           .breaks = 3,
+                           .style = "weighted_quantile",
+                           .weights = weights),
+                 "The `.style` argument is only applicable when `.method` is \"crisp\".")
+    expect_error(partition(data.frame(a = 1:10, weights = 1:10), a,
+                           .method = "crisp",
+                           .breaks = 3,
+                           .weights = weights),
+                 "The `.weights` argument is only applicable when `.style` is \"weighted_quantile\".")
+    expect_error(partition(data.frame(a = 1:10, weights = letters[1:10]), a,
+                           .method = "crisp",
+                           .breaks = 3,
+                           .style = "weighted_quantile",
+                           .weights = weights),
+                 "`.weights` must be numeric with all values finite and greater than 0.")
+    expect_error(partition(data.frame(a = 1:10, weights = c(rep(1, 9), 0)), a,
+                           .method = "crisp",
+                           .breaks = 3,
+                           .style = "weighted_quantile",
+                           .weights = weights),
+                 "`.weights` must be numeric with all values finite and greater than 0.")
+    expect_error(partition(data.frame(a = 1:10, weights_1 = 1:10, weights_2 = 1:10), a,
+                           .method = "crisp",
+                           .breaks = 3,
+                           .style = "weighted_quantile",
+                           .weights = starts_with("weights")),
+                 "`.weights` must select at most one column.")
+
     # Test .style_params errors
     expect_error(partition(d, a, .style_params = "invalid"),
                  "`.style_params` must be a list")
@@ -838,4 +931,3 @@ test_that("partition errors", {
     expect_error(partition(data.frame(a = factor(c("a", "b", "c"))), a, .subsets = 3),
                  "is too large for column")
 })
-

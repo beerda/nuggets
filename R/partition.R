@@ -127,20 +127,23 @@
 #'
 #' If `.breaks` is a single integer, it specifies the number of output
 #' intervals. Breakpoints are computed automatically according to `.style`
-#' and `.style_params`, and the outermost intervals are extended to `-Inf`
+#' and `.style_params`; for `.style = "weighted_quantile"`, they are also
+#' computed using `.weights`. The outermost intervals are extended to `-Inf`
 #' and `Inf`.
 #'
 #' If `.breaks` is a numeric vector, it directly specifies the sequence of
 #' break boundaries used to construct the interval predicates.
 #'
-#' Supported values of `.style` correspond to methods in
-#' [classInt::classIntervals()]:
+#' Supported values of `.style` include methods in
+#' [classInt::classIntervals()] and a weighted-quantile method:
 #'
 #' - `"equal"` – equal-width intervals across the column range (default);
 #' - `"quantile"` – equal-frequency intervals (see [quantile()] for additional
 #'    parameters that may be passed through `.style_params`; note that
 #'    the probs parameter is set automatically and should not be included in
 #'    `.style_params`);
+#' - `"weighted_quantile"` – equal-frequency intervals weighted by the one
+#'   column selected through `.weights` (using [Hmisc::wtd.quantile()]);
 #' - `"kmeans"` – intervals found by 1D k-means clustering (see [kmeans()]
 #'   for additional parameters);
 #' - `"sd"` – intervals based on standard deviations from the mean;
@@ -155,10 +158,9 @@
 #' - `"maximum"` – maximization-based partitioning;
 #' - `"box"` – breaks at boxplot hinges.
 #'
-#' Additional parameters for these methods can be passed through
-#' `.style_params`, which should be a named list of arguments accepted by the
-#' respective algorithm in [classInt::classIntervals()]. For example, when
-#' `.style = "kmeans"`, one can specify
+#' Additional parameters for the `classInt` methods can be passed through
+#' `.style_params`, which should be a named list of arguments accepted by
+#' [classInt::classIntervals()]. For example, when `.style = "kmeans"`, one can specify
 #' `.style_params = list(algorithm = "Lloyd")` to request Lloyd's algorithm
 #' for k-means clustering.
 #'
@@ -233,9 +235,11 @@
 #'   Ignored for logical and factor columns.
 #' @param .style Method used to compute breakpoints when `.method = "crisp"`
 #'   and `.breaks` is a single integer. Supported values correspond to methods
-#'   in [classInt::classIntervals()], e.g., `"equal"`, `"quantile"`, `"kmeans"`,
-#'   `"sd"`, `"hclust"`, `"bclust"`, `"fisher"`, `"jenks"`, `"dpih"`,
-#'   `"headtails"`, `"maximum"`, `"box"`.  Defaults to `"equal"`.
+#'   in [classInt::classIntervals()], e.g., `"equal"`, `"quantile"`,
+#'   `"weighted_quantile"`, `"kmeans"`, `"sd"`, `"hclust"`, `"bclust"`,
+#'   `"fisher"`, `"jenks"`, `"dpih"`, `"headtails"`, `"maximum"`, `"box"`.
+#'   Defaults to `"equal"`. The `"weighted_quantile"` style uses the weights
+#'   selected by `.weights`.
 #'
 #'   Ignored for logical columns, factor columns, numeric columns with
 #'   `.method = "dummy"`, and numeric columns where `.breaks` is a vector.
@@ -243,6 +247,9 @@
 #'   breakpoint computation method specified by `.style`.
 #'
 #'   Used only when `.method = "crisp"` and `.breaks` is a single integer.
+#' @param .weights A tidyselect expression selecting one numeric, finite,
+#'   strictly positive column of observation weights. Required when `.style =
+#'   "weighted_quantile"` and otherwise must be `NULL`.
 #' @param .subsets For factor columns, and for numeric columns with
 #'   `.method = "dummy"`, an integer vector specifying the sizes of level
 #'   subsets for which predicates should be created.
@@ -323,6 +330,10 @@
 #' # Crisp transformation using quantile-based bins
 #' partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "quantile")
 #'
+#' # Crisp transformation using weighted quantile-based bins
+#' partition(CO2, conc, .method = "crisp", .breaks = 4,
+#'           .style = "weighted_quantile", .weights = uptake)
+#'
 #' # Crisp transformation using k-means clustering for breakpoints
 #' partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "kmeans")
 #'
@@ -388,6 +399,7 @@ partition <- function(.data,
                       .method = "crisp",
                       .style = "equal",
                       .style_params = list(),
+                      .weights = NULL,
                       .subsets = 1,
                       .right = TRUE,
                       .span = 1,
@@ -398,8 +410,9 @@ partition <- function(.data,
     .must_be_flag(.na)
     .must_be_flag(.keep)
     .must_be_enum(.method, c("dummy", "crisp", "triangle", "raisedcos"))
-    .must_be_enum(.style, c("equal", "quantile", "kmeans", "sd", "hclust", "bclust",
-                            "fisher", "jenks", "dpih", "headtails", "maximum", "box"))
+    .must_be_enum(.style, c("equal", "quantile", "weighted_quantile", "kmeans",
+                            "sd", "hclust", "bclust", "fisher", "jenks",
+                            "dpih", "headtails", "maximum", "box"))
     .must_be_list(.style_params)
 
     .must_be_integerish_vector(.subsets)
@@ -417,6 +430,20 @@ partition <- function(.data,
     if (.style != "equal" && .method != "crisp") {
         cli_abort(c("The {.arg .style} argument is only applicable when {.arg .method} is {.val crisp}.",
                     "i" = "You've supplied {.arg .style} = {.val { .style}} and {.arg .method} = {.val { .method}}."),
+                  call = current_env())
+    }
+
+    .weights <- enquo(.weights)
+    .weights <- .extract_weights(.data,
+                                !!.weights,
+                                error_context = list(arg_selection = ".weights",
+                                                     call = current_env()))
+    if (.style == "weighted_quantile" && is.null(.weights$name)) {
+        cli_abort("The {.arg .weights} argument must select exactly one column when {.arg .style} is {.val weighted_quantile}.",
+                  call = current_env())
+    } else if (.style != "weighted_quantile" && !is.null(.weights$name)) {
+        cli_abort(c("The {.arg .weights} argument is only applicable when {.arg .style} is {.val weighted_quantile}.",
+                    "i" = "You've supplied {.arg .weights} = {.field {(.weights$name)}} and {.arg .style} = {.val { .style}}."),
                   call = current_env())
     }
 
@@ -490,7 +517,7 @@ partition <- function(.data,
             } else {
                 if (.method == "crisp") {
                     pp <- .prepare_crisp(x, colname, .breaks, .labels,
-                                         .style, .style_params,
+                                         .style, .style_params, .weights,
                                          .right, .span, .inc, call)
                     res <- partition_numeric_crisp_(x, pp$breaks, .right)
 
@@ -574,11 +601,11 @@ partition <- function(.data,
 
 
 .prepare_crisp <- function(x, colname, breaks, labels,
-                           style, style_params,
+                           style, style_params, weights,
                            right, span, inc, call) {
     if (length(breaks) == 1) {
         .check_scalar_breaks(breaks, call)
-        br <- .determine_crisp_breaks(x, breaks, style, style_params, right, span, inc)
+        br <- .determine_crisp_breaks(x, breaks, style, style_params, weights, right, span, inc)
     } else {
         n <- (length(breaks) - span - 1) / inc + 1
         req <- span + (ceiling(n) - 1) * inc + 1
@@ -633,15 +660,23 @@ partition <- function(.data,
 }
 
 
-.determine_crisp_breaks <- function(x, n, style, style_params, right, span, inc) {
-    args <- list(var = na.omit(x),
-                 n = span + (n - 1) * inc,
-                 style = style,
-                 intervalClosure = if (right) "right" else "left",
-                 warnSmallN = FALSE)
-    args <- c(args, style_params)
-    ii <- do.call(classIntervals, args)
-    breaks <- ii$brks
+.determine_crisp_breaks <- function(x, n, style, style_params, weights, right, span, inc) {
+    breaks <- NULL
+    if (style == "weighted_quantile") {
+        breaks <- wtd.quantile(x = na.omit(x),
+                               weights = weights$value[!is.na(x)],
+                               probs = seq(0, 1, length.out = span + (n - 1) * inc + 1),
+                               normwt = TRUE)
+    } else {
+        args <- list(var = na.omit(x),
+                     n = span + (n - 1) * inc,
+                     style = style,
+                     intervalClosure = if (right) "right" else "left",
+                     warnSmallN = FALSE)
+        args <- c(args, style_params)
+        ii <- do.call(classIntervals, args)
+        breaks <- ii$brks
+    }
 
     c(-Inf, breaks[c(-1, -length(breaks))], Inf)
 }

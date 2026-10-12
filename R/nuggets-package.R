@@ -64,6 +64,7 @@
 #' @importFrom ggplot2 xlab
 #' @importFrom ggplot2 ylab
 #' @importFrom grid gList
+#' @importFrom Hmisc wtd.quantile
 #' @importFrom lifecycle deprecate_warn
 #' @importFrom lifecycle deprecated
 #' @importFrom methods formalArgs

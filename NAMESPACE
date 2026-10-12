@@ -49,6 +49,7 @@ export(values)
 export(var_grid)
 export(var_names)
 export(which_antichain)
+importFrom(Hmisc,wtd.quantile)
 importFrom(Rcpp,sourceCpp)
 importFrom(classInt,classIntervals)
 importFrom(cli,

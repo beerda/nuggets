@@ -15,6 +15,7 @@ partition(
   .method = "crisp",
   .style = "equal",
   .style_params = list(),
+  .weights = NULL,
   .subsets = 1,
   .right = TRUE,
   .span = 1,
@@ -68,9 +69,11 @@ Ignored for logical and factor columns.}
 
 \item{.style}{Method used to compute breakpoints when \code{.method = "crisp"}
 and \code{.breaks} is a single integer. Supported values correspond to methods
-in \code{\link[classInt:classIntervals]{classInt::classIntervals()}}, e.g., \code{"equal"}, \code{"quantile"}, \code{"kmeans"},
-\code{"sd"}, \code{"hclust"}, \code{"bclust"}, \code{"fisher"}, \code{"jenks"}, \code{"dpih"},
-\code{"headtails"}, \code{"maximum"}, \code{"box"}.  Defaults to \code{"equal"}.
+in \code{\link[classInt:classIntervals]{classInt::classIntervals()}}, e.g., \code{"equal"}, \code{"quantile"},
+\code{"weighted_quantile"}, \code{"kmeans"}, \code{"sd"}, \code{"hclust"}, \code{"bclust"},
+\code{"fisher"}, \code{"jenks"}, \code{"dpih"}, \code{"headtails"}, \code{"maximum"}, \code{"box"}.
+Defaults to \code{"equal"}. The \code{"weighted_quantile"} style uses the weights
+selected by \code{.weights}.
 
 Ignored for logical columns, factor columns, numeric columns with
 \code{.method = "dummy"}, and numeric columns where \code{.breaks} is a vector.}
@@ -79,6 +82,9 @@ Ignored for logical columns, factor columns, numeric columns with
 breakpoint computation method specified by \code{.style}.
 
 Used only when \code{.method = "crisp"} and \code{.breaks} is a single integer.}
+
+\item{.weights}{A tidyselect expression selecting one numeric, finite,
+strictly positive column of observation weights. Required when \code{.style = "weighted_quantile"} and otherwise must be \code{NULL}.}
 
 \item{.subsets}{For factor columns, and for numeric columns with
 \code{.method = "dummy"}, an integer vector specifying the sizes of level
@@ -247,20 +253,23 @@ predicates representing intervals.
 
 If \code{.breaks} is a single integer, it specifies the number of output
 intervals. Breakpoints are computed automatically according to \code{.style}
-and \code{.style_params}, and the outermost intervals are extended to \code{-Inf}
+and \code{.style_params}; for \code{.style = "weighted_quantile"}, they are also
+computed using \code{.weights}. The outermost intervals are extended to \code{-Inf}
 and \code{Inf}.
 
 If \code{.breaks} is a numeric vector, it directly specifies the sequence of
 break boundaries used to construct the interval predicates.
 
-Supported values of \code{.style} correspond to methods in
-\code{\link[classInt:classIntervals]{classInt::classIntervals()}}:
+Supported values of \code{.style} include methods in
+\code{\link[classInt:classIntervals]{classInt::classIntervals()}} and a weighted-quantile method:
 \itemize{
 \item \code{"equal"} – equal-width intervals across the column range (default);
 \item \code{"quantile"} – equal-frequency intervals (see \code{\link[=quantile]{quantile()}} for additional
 parameters that may be passed through \code{.style_params}; note that
 the probs parameter is set automatically and should not be included in
 \code{.style_params});
+\item \code{"weighted_quantile"} – equal-frequency intervals weighted by the one
+column selected through \code{.weights} (using \code{\link[Hmisc:wtd.quantile]{Hmisc::wtd.quantile()}});
 \item \code{"kmeans"} – intervals found by 1D k-means clustering (see \code{\link[=kmeans]{kmeans()}}
 for additional parameters);
 \item \code{"sd"} – intervals based on standard deviations from the mean;
@@ -276,10 +285,9 @@ for additional parameters);
 \item \code{"box"} – breaks at boxplot hinges.
 }
 
-Additional parameters for these methods can be passed through
-\code{.style_params}, which should be a named list of arguments accepted by the
-respective algorithm in \code{\link[classInt:classIntervals]{classInt::classIntervals()}}. For example, when
-\code{.style = "kmeans"}, one can specify
+Additional parameters for the \code{classInt} methods can be passed through
+\code{.style_params}, which should be a named list of arguments accepted by
+\code{\link[classInt:classIntervals]{classInt::classIntervals()}}. For example, when \code{.style = "kmeans"}, one can specify
 \code{.style_params = list(algorithm = "Lloyd")} to request Lloyd's algorithm
 for k-means clustering.
 
@@ -364,6 +372,10 @@ partition(CO2, conc, .method = "crisp", .breaks = 4)
 
 # Crisp transformation using quantile-based bins
 partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "quantile")
+
+# Crisp transformation using weighted quantile-based bins
+partition(CO2, conc, .method = "crisp", .breaks = 4,
+          .style = "weighted_quantile", .weights = uptake)
 
 # Crisp transformation using k-means clustering for breakpoints
 partition(CO2, conc, .method = "crisp", .breaks = 4, .style = "kmeans")

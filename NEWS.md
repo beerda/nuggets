@@ -10,6 +10,7 @@
 - removed deprecated callback argument `foci_supports` from `dig()`
 - added support for weighted data to: `dig()`, `dig_grid()`, `dig_itemsets()`, 
   `dig_associations()`, `dig_ancestors()`
+- added "weighted_quantile" style to `partition()` function
 - improved "Rule Detail" tab in `explore()` for associations: added graphical
   settings for the plot of ancestors
 - added progress bar to `partition()` function

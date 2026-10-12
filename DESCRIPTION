@@ -39,6 +39,7 @@ Imports:
     generics,
     ggplot2,
     grid,
+    Hmisc,
     lifecycle,
     methods,
     purrr,
