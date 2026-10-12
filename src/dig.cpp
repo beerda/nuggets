@@ -54,11 +54,22 @@
 //define GOGUEN_CHAIN FubitChain<TNorm::GOGUEN, 8>
 
 
-bool dataAreAllLogical(const List& data)
+struct DispatchArgs {
+    const List& data;
+    const LogicalVector& isCondition;
+    const LogicalVector& isFocus;
+    const Config& config;
+};
+
+
+bool dataAreAllLogical(const DispatchArgs& args)
 {
     bool allLogical = true;
-    for (R_xlen_t i = 0; i < data.size(); ++i) {
-        if (!Rf_isLogical(data[i])) {
+    for (R_xlen_t i = 0; i < args.data.size(); ++i) {
+        if (!args.isCondition[i] && !args.isFocus[i]) {
+            continue;
+        }
+        if (!Rf_isLogical(args.data[i])) {
             allLogical = false;
             break;
         }
@@ -68,15 +79,18 @@ bool dataAreAllLogical(const List& data)
 }
 
 
-long countLogicalValues(const List& data)
+size_t countLogicalValues(const DispatchArgs& args)
 {
     using batch_type = xsimd::batch<int32_t>;
     constexpr R_xlen_t simd_size = (R_xlen_t)batch_type::size;
     constexpr R_xlen_t chunk = R_xlen_t(1) << 32;
-    long count = 0;
+    size_t count = 0;
 
-    for (R_xlen_t i = 0; i < data.size(); ++i) {
-        LogicalVector vec = data[i];
+    for (R_xlen_t i = 0; i < args.data.size(); ++i) {
+        if (!args.isCondition[i] && !args.isFocus[i]) {
+            continue;
+        }
+        LogicalVector vec = args.data[i];
         const int* raw = vec.begin();
         const R_xlen_t n = vec.size();
         const R_xlen_t n_simd = n - n % simd_size;
@@ -100,22 +114,13 @@ long countLogicalValues(const List& data)
 }
 
 
-struct DispatchArgs {
-    const List& data;
-    const LogicalVector& isCondition;
-    const LogicalVector& isFocus;
-    const Config& config;
-};
-
-
 template <typename RUNNER>
 List dispatchDig(const DispatchArgs& args,
                  const RUNNER& runner)
 {
-    if (dataAreAllLogical(args.data)) {
-        long count = countLogicalValues(args.data);
-        LogicalVector vec = args.data[0];
-        if (count * BITCHAIN_SPARSENESS_LIMIT < args.data.size() * vec.size()) {
+    if (dataAreAllLogical(args)) {
+        size_t count = countLogicalValues(args);
+        if (count * BITCHAIN_SPARSENESS_LIMIT < args.data.size() * args.config.getNrow()) {
             return runner.template run<BIT_CHAIN_SPARSE>(args);
         }
         else {

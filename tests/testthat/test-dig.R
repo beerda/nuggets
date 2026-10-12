@@ -1922,7 +1922,7 @@ test_that("weighted dense crisp", {
     expect_equal(res[["_ab"]]$condition, c("a", "b"))
     expect_equal(res[["_ab"]]$indices, c(T,F,T,F,F,F))
     expect_equal(res[["_ab"]]$degrees, c(1,0,1,0,0,0))
-    expect_equal(res[["_ab"]]$sum, 0.1 + 0.3)
+    expect_equal(res[["_ab"]]$sum, 0.1 + 0.3, tolerance = 1e-6)
     expect_equal(res[["_ab"]]$support, (0.1 + 0.3) / sum(weights))
     expect_equal(res[["_ab"]]$pp, c(d = 0.3), tolerance = 1e-6)
     expect_equal(res[["_ab"]]$pn, c(d = 0.1), tolerance = 1e-6)
@@ -2001,8 +2001,8 @@ test_that("weighted sparse crisp", {
     expect_equal(res[["_ab"]]$condition, c("a", "b"))
     expect_equal(res[["_ab"]]$indices, c(T,F,T,F,F,F, rep(F, 100)))
     expect_equal(res[["_ab"]]$degrees, c(1,0,1,0,0,0, rep(0, 100)))
-    expect_equal(res[["_ab"]]$sum, 0.1 + 0.3)
-    expect_equal(res[["_ab"]]$support, (0.1 + 0.3) / sum(weights))
+    expect_equal(res[["_ab"]]$sum, 0.1 + 0.3, tolerance = 1e-6)
+    expect_equal(res[["_ab"]]$support, (0.1 + 0.3) / sum(weights), tolerance = 1e-6)
     expect_equal(res[["_ab"]]$pp, c(d = 0.3), tolerance = 1e-6)
     expect_equal(res[["_ab"]]$pn, c(d = 0.1), tolerance = 1e-6)
     expect_equal(res[["_ab"]]$np, c(d = 0.2 + 0.4 + 0.6), tolerance = 1e-6)
@@ -2258,4 +2258,72 @@ test_that("weighted fuzzy lukasiewicz", {
     expect_equal(res[["_ab"]]$pn, c(d = sum(weights * pluk(m$a, m$b)) - sum(weights * pluk(m$a, m$b, m$d))), tolerance = 1e-1)
     expect_equal(res[["_ab"]]$np, c(d = sum(weights * m$d) - sum(weights * pluk(m$a, m$b, m$d))), tolerance = 1e-2)
     expect_equal(res[["_ab"]]$nn, c(d = as.vector(sum(weights) - res[["_ab"]]$pp - res[["_ab"]]$pn - res[["_ab"]]$np)), tolerance = 1e-6)
+})
+
+
+test_that("select correct chain", {
+    dense <- data.frame(a = c(T,T,T,T,F,F),
+                        b = c(T,F,T,F,T,F),
+                        d = c(F,T,T,T,F,T),
+                        n = c(6:1 / 10),
+                        w = 1:6 / 10)
+
+    sparse <- data.frame(a = c(T,F,F,F,F,F,F,F,F,T),
+                         b = c(T,F,F,F,F,F,F,F,T,F),
+                         d = c(T,F,F,F,F,F,F,F,F,T),
+                         n = c(10:1 / 10),
+                         w = 1:10 / 10)
+
+    res <- dig(dense,
+               condition = a:b,
+               focus = d,
+               min_length = 0,
+               max_length = 1,
+               f = function(condition) { list(condition) })
+    expect_equal(attr(res, "search_stats")$data_representation, "BitChain")
+
+    res <- dig(dense,
+               condition = a:b,
+               focus = d,
+               weights = w,
+               min_length = 0,
+               max_length = 1,
+               f = function(condition) { list(condition) })
+    expect_equal(attr(res, "search_stats")$data_representation, "BitChain")
+
+    res <- dig(dense,
+               condition = a:b,
+               focus = d:n,
+               min_length = 0,
+               max_length = 1,
+               f = function(condition) { list(condition) },
+               t_norm = "goguen")
+    expect_equal(attr(res, "search_stats")$data_representation, "FloatChain")
+
+    res <- dig(dense,
+               condition = a:b,
+               focus = d:n,
+               weights = w,
+               min_length = 0,
+               max_length = 1,
+               f = function(condition) { list(condition) },
+               t_norm = "goguen")
+    expect_equal(attr(res, "search_stats")$data_representation, "FloatChain")
+
+    res <- dig(sparse,
+               condition = a:b,
+               focus = d,
+               min_length = 0,
+               max_length = 1,
+               f = function(condition) { list(condition) })
+    expect_equal(attr(res, "search_stats")$data_representation, "SparseBitChain")
+
+    res <- dig(sparse,
+               condition = a:b,
+               focus = d,
+               weights = w,
+               min_length = 0,
+               max_length = 1,
+               f = function(condition) { list(condition) })
+    expect_equal(attr(res, "search_stats")$data_representation, "SparseBitChain")
 })

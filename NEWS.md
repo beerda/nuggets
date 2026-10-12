@@ -18,6 +18,8 @@
   for associations
 - added `is_from()` to check if a nugget is originated from a given data frame
   or matrix
+- fixed selection of conjunction algorithm in `dig()` and other `dig_*()`
+  functions when data contain columns that are not used in the search
 
 # nuggets 2.2.4
 - released: 2026-09-11
