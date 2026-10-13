@@ -1,6 +1,8 @@
 # nuggets 2.3.0
 - released: ???
 - added `as_nugget()` to convert arules object to nuggets object
+- added `filter_satisfying()` and `filter_violating()` to select rows by a
+  condition's truth degree
 - added `dig_itemsets()` to find frequent itemsets
 - added `explore.itemsets()` to explore frequent itemsets interactively
 - deprecated `threads` argument in `dig()` and other `dig_*()` functions

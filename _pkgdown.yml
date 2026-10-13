@@ -74,6 +74,8 @@ reference:
     contents:
       - as_nugget.rules
       - bound_range
+      - filter_satisfying
+      - filter_violating
       - fire
       - format_condition
       - is_condition
