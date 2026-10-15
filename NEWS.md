@@ -5,22 +5,22 @@
   condition's truth degree
 - added `dig_itemsets()` to find frequent itemsets
 - added `explore.itemsets()` to explore frequent itemsets interactively
-- deprecated `threads` argument in `dig()` and other `dig_*()` functions
-  because the search is performed always in a single thread
-- renamed callback argument `weights` to `degrees` in `dig()` and `dig_grid()`;
-  callback argument `weights` is now deprecated
-- removed deprecated callback argument `foci_supports` from `dig()`
+- added `is_from()` to check if a nugget is originated from a given data frame
+  or matrix
 - added support for weighted data to: `dig()`, `dig_grid()`, `dig_itemsets()`, 
   `dig_associations()`, `dig_ancestors()`
 - added "weighted_quantile" style to `partition()` function
+- deprecated `threads` argument in `dig()` and other `dig_*()` functions
+  because the search is performed always in a single thread
+- added observed, expected, and diff counts to contingency table in `explore()`
+  for associations
 - improved "Rule Detail" tab in `explore()` for associations: added graphical
   settings for the plot of ancestors
 - added progress bar to `partition()` function
 - optimized performance of numeric methods of the `partition()` function
-- added observed, expected, and diff counts to contingency table in `explore()`
-  for associations
-- added `is_from()` to check if a nugget is originated from a given data frame
-  or matrix
+- renamed callback argument `weights` to `degrees` in `dig()` and `dig_grid()`;
+  callback argument `weights` is now deprecated
+- removed deprecated callback argument `foci_supports` from `dig()`
 - fixed selection of conjunction algorithm in `dig()` and other `dig_*()`
   functions when data contain columns that are not used in the search
 
