@@ -120,6 +120,8 @@ public:
 
         excluded = as<List>(configuration["excluded"]);
 
+        conditionTemplates = as<List>(configuration["conditionTemplates"]);
+
         filterEmptyFoci = as<LogicalVector>(configuration["filterEmptyFoci"])[0];
 
         verbose = as<LogicalVector>(configuration["verbose"])[0];
@@ -134,6 +136,7 @@ public:
         }
         disjointDefined = disjoint.size() > 1;
         filterExcluded = excluded.size() > 0;
+        filterConditionTemplates = conditionTemplates.size() > 0;
 
         chainNames.reserve(namesVector.size() + 1);
         chainNames.push_back(""); // 0th index is unused, as R uses predicates' indices starting from 1
@@ -248,6 +251,14 @@ public:
     { return filterExcluded; }
 
     /**
+     * Returns whether condition templates should be respected.
+     *
+     * @return True if condition templates should be respected, otherwise false.
+     */
+    inline bool hasFilterConditionTemplates() const
+    { return filterConditionTemplates; }
+
+    /**
      * Returns whether verbose algorithm output is enabled.
      *
      * @return True if verbose output is enabled, otherwise false.
@@ -273,6 +284,14 @@ public:
      */
     inline const List getExcluded() const
     { return excluded; }
+
+    /**
+     * Returns condition templates to be required.
+     *
+     * @return R list of condition templates.
+     */
+    inline const List getConditionTemplates() const
+    { return conditionTemplates; }
 
     /**
      * Returns the number of input data rows.
@@ -474,6 +493,10 @@ private:
      */
     List excluded;
     /**
+     * Condition templates to require.
+     */
+    List conditionTemplates;
+    /**
      * One-based mapping from predicate indices to disjoint-set identifiers.
      */
     vector<int> disjoint;
@@ -494,6 +517,10 @@ private:
      * Whether one or more excluded patterns were supplied.
      */
     bool filterExcluded;
+    /**
+     * Whether one or more condition templates were supplied.
+     */
+    bool filterConditionTemplates;
     /**
      * Whether one or more disjoint-set constraints were supplied.
      */
