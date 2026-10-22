@@ -177,31 +177,22 @@ public:
     explicit Trie(const std::vector<Sequence>& sequences)
     {
         std::size_t maxNodes = 1;
-
         for (const auto& sequence : sequences) {
-            if (sequence.size() > std::numeric_limits<std::size_t>::max() - maxNodes) {
+            if (sequence.size() >= static_cast<size_t>(INVALID) - maxNodes) {
                 throw std::length_error("Trie too large");
             }
             maxNodes += sequence.size();
         }
 
-        if (maxNodes >= INVALID)
-            throw std::length_error("Trie exceeds index capacity");
-
         std::vector<BuildNode> buildNodes;
         buildNodes.reserve(maxNodes);
         buildNodes.emplace_back();
-
-        for (const auto& sequence : sequences)
-        {
+        for (const auto& sequence : sequences) {
             Index current = 0;
-
             for (Value value : sequence) {
                 auto& children = buildNodes[current].children;
 
-                auto it = std::find_if(
-                    children.begin(),
-                    children.end(),
+                auto it = std::find_if(children.begin(), children.end(),
                     [value](const Edge& edge) { return edge.value == value; });
 
                 if (it != children.end()) {
@@ -210,8 +201,8 @@ public:
                 }
 
                 const Index child = checkedIndex(buildNodes.size());
-                children.push_back({value, child});
                 buildNodes.emplace_back();
+                children.push_back({ value, child });
                 current = child;
             }
 
@@ -222,25 +213,21 @@ public:
         }
 
         std::size_t totalEdges = 0;
-
         for (const auto& node : buildNodes) {
             if (node.children.size() > static_cast<std::size_t>(INVALID) - totalEdges) {
                 throw std::length_error("Trie has too many edges");
             }
-
             totalEdges += node.children.size();
         }
 
         nodes.resize(buildNodes.size());
         edges.reserve(totalEdges);
-
         for (std::size_t i = 0; i < buildNodes.size(); ++i) {
             const auto& children = buildNodes[i].children;
             Node& node = nodes[i];
             node.firstEdge = checkedIndex(edges.size());
             node.edgeCount = checkedIndex(children.size());
             node.terminal = buildNodes[i].terminal;
-
             edges.insert(edges.end(), children.begin(), children.end());
         }
     }
