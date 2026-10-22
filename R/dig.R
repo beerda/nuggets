@@ -139,7 +139,7 @@
 #'       axiom applications (transitive deduction).
 #'   }
 #'   The list of axioms can be obtained, for example, from [dig_tautologies()].
-#' @param condition_templates `NULL` or a list of character vectors specifying
+#' @param exact `NULL` or a list of character vectors specifying
 #'   exactly allowed conditions. (A NULL element in the list represents an empty
 #'   condition.) Predicates within a vector are treated as an unordered set. If
 #'   `NULL`, no limitations are imposed on generated conditions.
@@ -203,8 +203,7 @@
 #'     \item `arg_focus` – name of the argument `focus`
 #'     \item `arg_disjoint` – name of the argument `disjoint`
 #'     \item `arg_excluded` – name of the argument `excluded`
-#'     \item `arg_condition_templates` – name of the argument
-#'       `condition_templates`
+#'     \item `arg_exact` – name of the argument `exact`
 #'     \item `arg_min_length` – name of the argument `min_length`
 #'     \item `arg_max_length` – name of the argument `max_length`
 #'     \item `arg_min_support` – name of the argument `min_support`
@@ -287,7 +286,7 @@ dig <- function(x,
                 weights = NULL,
                 disjoint = var_names(colnames(x)),
                 excluded = NULL,
-                condition_templates = NULL,
+                exact = NULL,
                 min_length = 0,
                 max_length = Inf,
                 min_support = 0.0,
@@ -306,7 +305,7 @@ dig <- function(x,
                                      arg_weights = "weights",
                                      arg_disjoint = "disjoint",
                                      arg_excluded = "excluded",
-                                     arg_condition_templates = "condition_templates",
+                                     arg_exact = "exact",
                                      arg_min_length = "min_length",
                                      arg_max_length = "max_length",
                                      arg_min_support = "min_support",
@@ -371,7 +370,7 @@ dig <- function(x,
          weights = !!enquo(weights),
          disjoint = disjoint,
          excluded = excluded,
-         condition_templates = condition_templates,
+         exact = exact,
          min_length = min_length,
          max_length = max_length,
          min_support = min_support,
@@ -398,7 +397,7 @@ dig <- function(x,
                  weights,
                  disjoint,
                  excluded,
-                 condition_templates,
+                 exact,
                  min_length,
                  max_length,
                  min_support,
@@ -411,8 +410,7 @@ dig <- function(x,
                  verbose,
                  threads,
                  error_context) {
-    cols <- .convert_data_to_list(x,
-                                  error_context = error_context)
+    cols <- .convert_data_to_list(x, error_context = error_context)
     condition <- enquo(condition)
     condition_cols <- .extract_cols(cols,
                                     !!condition,
@@ -471,9 +469,7 @@ dig <- function(x,
                         "i" = "Consider using {.fun remove_ill_conditions} to remove conditions with undefined predicates.",
                         ..error_details(details)))
         }
-        excluded <- lapply(excluded,
-                           fmatch,
-                           colnames(x))
+        excluded <- lapply(excluded, fmatch, colnames(x))
     }
 
     .must_be_integerish_scalar(min_length,
@@ -556,26 +552,30 @@ dig <- function(x,
         max_results <- -1L
     }
 
-    .must_be_list_of_characters(condition_templates,
+    .must_be_list_of_characters(exact,
                                 null = TRUE,
                                 null_elements = TRUE,
-                                arg = error_context$arg_condition_templates,
+                                arg = error_context$arg_exact,
                                 call = error_context$call)
-    orig_condition_templates <- condition_templates
-    if (is.null(condition_templates)) {
-        condition_templates <- list()
+    orig_exact <- exact
+    if (is.null(exact)) {
+        exact <- list()
     } else {
-        condition_templates_predicates <- unique(unlist(condition_templates))
-        condition_templates_undefined <- setdiff(condition_templates_predicates, colnames(x))
-        if (length(condition_templates_undefined) > 0) {
-            details <- paste0("Column {.field ", condition_templates_undefined, "} can't be found.")
-            cli_abort(c("Can't find some column names in {.arg {error_context$arg_x}} that correspond to all predicates in {.arg {error_context$arg_condition_templates}}.",
+        exact_predicates <- unique(unlist(exact))
+        exact_undefined <- setdiff(exact_predicates, colnames(x))
+        exact_unselected <- setdiff(exact_predicates, names(cols)[condition_cols$selected])
+        if (length(exact_undefined) > 0) {
+            details <- paste0("Column {.field ", exact_undefined, "} can't be found.")
+            cli_abort(c("Can't find some column names in {.arg {error_context$arg_x}} that correspond to all predicates in {.arg {error_context$arg_exact}}.",
                         "i" = "Consider using {.fun remove_ill_conditions} to remove conditions with undefined predicates.",
                         ..error_details(details)))
         }
-        condition_templates <- lapply(condition_templates,
-                                      fmatch,
-                                      colnames(x))
+        if (length(exact_unselected) > 0) {
+            details <- paste0("Column {.field ", exact_unselected, "} is not selected by {.arg {error_context$arg_condition}}.")
+            cli_abort(c("Some predicates in {.arg {error_context$arg_exact}} are not selected by {.arg {error_context$arg_condition}}.",
+                        ..error_details(details)))
+        }
+        exact <- lapply(exact, fmatch, colnames(x))
     }
 
     .must_be_flag(verbose,
@@ -595,7 +595,7 @@ dig <- function(x,
                    arguments = callback_arguments,
                    disjoint = disjoint,
                    excluded = excluded,
-                   conditionTemplates = condition_templates,
+                   exact = exact,
                    minLength = min_length,
                    maxLength = max_length,
                    minSupport = min_support,
@@ -666,7 +666,7 @@ dig <- function(x,
                             weights = weights$name,
                             disjoint = orig_disjoint,
                             excluded = orig_excluded,
-                            condition_templates = orig_condition_templates,
+                            exact = orig_exact,
                             min_length = min_length,
                             max_length = if (max_length < 0) Inf else max_length,
                             min_support = min_support,

@@ -20,7 +20,7 @@ context("dig/BaseStorage.h") {
             Named("verbose") = false,
             Named("tNorm") = "goedel",
             Named("excluded") = List::create(),
-            Named("conditionTemplates") = List::create(),
+            Named("exact") = List::create(),
             Named("disjoint") = IntegerVector::create(1, 1, 2, 2, 2, 4, 5),
             Named("arguments") = CharacterVector::create("condition", "pp", "np", "indices")
         );

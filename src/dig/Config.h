@@ -120,7 +120,7 @@ public:
 
         excluded = as<List>(configuration["excluded"]);
 
-        conditionTemplates = as<List>(configuration["conditionTemplates"]);
+        exact = as<List>(configuration["exact"]);
 
         filterEmptyFoci = as<LogicalVector>(configuration["filterEmptyFoci"])[0];
 
@@ -136,7 +136,7 @@ public:
         }
         disjointDefined = disjoint.size() > 1;
         filterExcluded = excluded.size() > 0;
-        filterConditionTemplates = conditionTemplates.size() > 0;
+        filterExact = exact.size() > 0;
 
         chainNames.reserve(namesVector.size() + 1);
         chainNames.push_back(""); // 0th index is unused, as R uses predicates' indices starting from 1
@@ -255,8 +255,8 @@ public:
      *
      * @return True if condition templates should be respected, otherwise false.
      */
-    inline bool hasFilterConditionTemplates() const
-    { return filterConditionTemplates; }
+    inline bool hasFilterExact() const
+    { return filterExact; }
 
     /**
      * Returns whether verbose algorithm output is enabled.
@@ -286,12 +286,12 @@ public:
     { return excluded; }
 
     /**
-     * Returns condition templates to be required.
+     * Returns requested exact conditions.
      *
      * @return R list of condition templates.
      */
-    inline const List getConditionTemplates() const
-    { return conditionTemplates; }
+    inline const List getExact() const
+    { return exact; }
 
     /**
      * Returns the number of input data rows.
@@ -493,9 +493,9 @@ private:
      */
     List excluded;
     /**
-     * Condition templates to require.
+     * List of exact conditions requested by the user.
      */
-    List conditionTemplates;
+    List exact;
     /**
      * One-based mapping from predicate indices to disjoint-set identifiers.
      */
@@ -520,7 +520,7 @@ private:
     /**
      * Whether one or more condition templates were supplied.
      */
-    bool filterConditionTemplates;
+    bool filterExact;
     /**
      * Whether one or more disjoint-set constraints were supplied.
      */
