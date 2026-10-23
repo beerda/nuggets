@@ -116,6 +116,14 @@ private:
     };
 
     /**
+     * Vector of build nodes used during the construction of the Trie. Each
+     * build node contains information about its children and whether it is
+     * terminal. This vector is used to build the final nodes and edges of the
+     * Trie.
+     */
+    std::vector<BuildNode> buildNodes;
+
+    /**
      * Vector of nodes in the Trie. Each node contains information about its
      * edges and whether it is terminal.
      */
@@ -133,6 +141,8 @@ private:
      * method.
      */
     std::size_t sequenceCount = 0;
+
+    bool initialized = false;
 
     /**
      * Checks if the given value can be safely cast to the Index type without
@@ -174,43 +184,49 @@ private:
     }
 
 public:
-    explicit Trie(const std::vector<Sequence>& sequences)
+    explicit Trie(const size_t numSequences)
     {
-        std::size_t maxNodes = 1;
-        for (const auto& sequence : sequences) {
-            if (sequence.size() >= static_cast<size_t>(INVALID) - maxNodes) {
-                throw std::length_error("Trie too large");
-            }
-            maxNodes += sequence.size();
-        }
-
-        std::vector<BuildNode> buildNodes;
-        buildNodes.reserve(maxNodes);
+        buildNodes.reserve(numSequences * 4);
         buildNodes.emplace_back();
-        for (const auto& sequence : sequences) {
-            Index current = 0;
-            for (Value value : sequence) {
-                auto& children = buildNodes[current].children;
+    }
 
-                auto it = std::find_if(children.begin(), children.end(),
-                    [value](const Edge& edge) { return edge.value == value; });
+    void insert(const Sequence& sequence)
+    {
+        IF_DEBUG(
+            if (initialized)
+                throw runtime_error("Cannot insert sequence to trie after it is initialized.");
+        )
 
-                if (it != children.end()) {
-                    current = it->child;
-                    continue;
-                }
+        Index current = 0;
+        for (Value value : sequence) {
+            auto& children = buildNodes[current].children;
 
-                const Index child = checkedIndex(buildNodes.size());
-                buildNodes.emplace_back();
-                children.push_back({ value, child });
-                current = child;
+            auto it = std::find_if(children.begin(), children.end(),
+                [value](const Edge& edge) { return edge.value == value; });
+
+            if (it != children.end()) {
+                current = it->child;
+                continue;
             }
 
-            if (!buildNodes[current].terminal) {
-                buildNodes[current].terminal = true;
-                ++sequenceCount;
-            }
+            const Index child = checkedIndex(buildNodes.size());
+            buildNodes.emplace_back();
+            buildNodes[current].children.push_back({ value, child });
+            current = child;
         }
+
+        if (!buildNodes[current].terminal) {
+            buildNodes[current].terminal = true;
+            ++sequenceCount;
+        }
+    }
+
+    void initializeForQueries()
+    {
+        IF_DEBUG(
+            if (initialized)
+                throw std::runtime_error("Trie is already initialized.");
+        )
 
         std::size_t totalEdges = 0;
         for (const auto& node : buildNodes) {
@@ -230,6 +246,8 @@ public:
             node.terminal = buildNodes[i].terminal;
             edges.insert(edges.end(), children.begin(), children.end());
         }
+        buildNodes.clear();
+        initialized = true;
     }
 
     /**
@@ -242,8 +260,13 @@ public:
      * @param sequence The sequence to check for existence in the Trie.
      * @return True if the Trie contains the specified sequence, false otherwise.
      */
-    bool contains(const Sequence& sequence) const noexcept
+    bool contains(const Sequence& sequence) const
     {
+        IF_DEBUG(
+            if (!initialized)
+                throw std::runtime_error("Trie is not initialized for queries.");
+        )
+
         Index current = 0;
         for (Value value : sequence) {
             current = findChild(current, value);
@@ -265,8 +288,13 @@ public:
      * @return True if the specified sequence is a prefix of any stored sequence,
      *         false otherwise.
      */
-    bool isPrefix(const Sequence& sequence) const noexcept
+    bool isPrefix(const Sequence& sequence) const
     {
+        IF_DEBUG(
+            if (!initialized)
+                throw std::runtime_error("Trie is not initialized for queries.");
+        )
+
         Index current = 0;
         for (Value value : sequence) {
             current = findChild(current, value);

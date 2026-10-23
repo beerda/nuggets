@@ -4,7 +4,8 @@
 
 context("dig/Trie.h") {
     test_that("empty Trie") {
-        Trie<int> trie({});
+        Trie<int> trie(10);
+        trie.initializeForQueries();
 
         expect_true(trie.size() == 0);
         expect_true(!trie.contains({}));
@@ -14,11 +15,11 @@ context("dig/Trie.h") {
     }
 
     test_that("stores an empty sequence") {
-        Trie<int> trie({
-            {},
-            {},
-            { 1, 2 }
-        });
+        Trie<int> trie(10);
+        trie.insert({});
+        trie.insert({});
+        trie.insert({1,2});
+        trie.initializeForQueries();
 
         expect_true(trie.size() == 2);
         expect_true(trie.contains({}));
@@ -34,12 +35,12 @@ context("dig/Trie.h") {
     }
 
     test_that("contains sequences and prefixes") {
-        Trie<int> trie({
-            { 1, 2, 3 },
-            { 1, 2 },
-            { 1, 3 },
-            { 2, 3 }
-        });
+        Trie<int> trie(10);
+        trie.insert({ 1, 2, 3 });
+        trie.insert({ 1, 2 });
+        trie.insert({ 1, 3 });
+        trie.insert({ 2, 3 });
+        trie.initializeForQueries();
 
         expect_true(trie.size() == 4);
         expect_true(trie.contains({ 1, 2, 3 }));
@@ -61,12 +62,12 @@ context("dig/Trie.h") {
     }
 
     test_that("preserves non-ascending sequence order") {
-        Trie<int> trie({
-            { 4, 2, 5 },
-            { 4, 2, 3 },
-            { 3, 1 },
-            { 3, 1, 2 }
-        });
+        Trie<int> trie(10);
+        trie.insert({ 4, 2, 5 });
+        trie.insert({ 4, 2, 3 });
+        trie.insert({ 3, 1 });
+        trie.insert({ 3, 1, 2 });
+        trie.initializeForQueries();
 
         expect_true(trie.size() == 4);
         expect_true(trie.contains({ 4, 2, 5 }));
@@ -84,12 +85,12 @@ context("dig/Trie.h") {
     }
 
     test_that("deduplicates sequences") {
-        Trie<int> trie({
-            { 1, 2 },
-            { 1, 2 },
-            { 1, 2, 3 },
-            { 1, 2, 3 }
-        });
+        Trie<int> trie(10);
+        trie.insert({ 1, 2 });
+        trie.insert({ 1, 2 });
+        trie.insert({ 1, 2, 3 });
+        trie.insert({ 1, 2, 3 });
+        trie.initializeForQueries();
 
         expect_true(trie.size() == 2);
         expect_true(trie.contains({ 1, 2 }));
