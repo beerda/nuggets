@@ -142,6 +142,12 @@ private:
      */
     std::size_t sequenceCount = 0;
 
+    /**
+     * Flag indicating whether the Trie has been initialized for queries. This
+     * flag is set to true after the Trie has been constructed and is ready for
+     * read-only access. It is used to prevent modifications to the Trie after
+     * initialization.
+     */
     bool initialized = false;
 
     /**
@@ -183,6 +189,18 @@ private:
         return INVALID;
     }
 
+    /**
+     * Finds the child node of the given node that corresponds to the specified
+     * sequence of values. The method traverses the Trie based on the values in
+     * the sequence and returns the index of the final child node if all values
+     * lead to valid child nodes. If any value in the sequence does not lead to
+     * a valid child node, INVALID is returned.
+     *
+     * @param nodeIndex The index of the parent node to start the search from.
+     * @param sequence The sequence of values to traverse in the Trie.
+     * @return The index of the final child node if found, or INVALID if any value
+     *         in the sequence does not lead to a valid child node.
+     */
     inline Index findChild(Index nodeIndex, const Sequence& sequence) const noexcept
     {
         Index current = nodeIndex;
@@ -195,13 +213,23 @@ private:
         return current;
     }
 
+    /**
+     * Finds the child node of the given node that corresponds to the specified
+     * sequence of values followed by a final value. The method traverses the
+     * Trie based on the values in the sequence and returns the index of the final
+     * child node if all values lead to valid child nodes. If any value in the
+     * sequence does not lead to a valid child node, INVALID is returned.
+     *
+     * @param nodeIndex The index of the parent node to start the search from.
+     * @param sequence The sequence of values to traverse in the Trie.
+     * @param lastValue The final value to check for a child node after traversing
+     *                  the sequence.
+     * @return The index of the final child node if found, or INVALID if any value
+     *         in the sequence does not lead to a valid child node or if the final
+     *         value does not lead to a valid child node.
+     */
     inline Index findChild(Index nodeIndex, const Sequence& sequence, const Value lastValue) const noexcept
     {
-        IF_DEBUG(
-            if (!initialized)
-                throw std::runtime_error("Trie is not initialized for queries.");
-        )
-
         Index current = findChild(nodeIndex, sequence);
         if (current == INVALID)
             return INVALID;
@@ -212,12 +240,29 @@ private:
     }
 
 public:
+    /**
+     * Constructs a Trie with the specified number of sequences. The constructor
+     * reserves space for the build nodes based on the expected number of sequences
+     * and initializes the root node.
+     *
+     * @param numSequences The expected number of sequences to be stored in the Trie.
+     */
     explicit Trie(const size_t numSequences)
     {
         buildNodes.reserve(numSequences * 4);
         buildNodes.emplace_back();
     }
 
+    /**
+     * Inserts a sequence of values into the Trie. The method traverses the Trie
+     * based on the values in the sequence, creating new nodes and edges as needed.
+     * If the sequence is already present, it will not be added again. The method
+     * updates the terminal flag of the final node to indicate that it represents
+     * a stored sequence.
+     *
+     * @param sequence The sequence of values to insert into the Trie.
+     * @throws std::runtime_error if the Trie has already been initialized for queries.
+     */
     void insert(const Sequence& sequence)
     {
         IF_DEBUG(
@@ -249,6 +294,17 @@ public:
         }
     }
 
+    /**
+     * Initializes the Trie for read-only queries. This method finalizes the
+     * construction of the Trie by converting the build nodes into the final
+     * nodes and edges.
+     *
+     * After calling this method, the Trie is ready for queries such as checking
+     * for the existence of sequences and prefixes.
+     *
+     * @throws std::runtime_error if the Trie has already been initialized for queries.
+     * @throws std::length_error if the Trie has too many edges.
+     */
     void initializeForQueries()
     {
         IF_DEBUG(
@@ -302,6 +358,19 @@ public:
         return nodes[current].terminal;
     }
 
+    /**
+     * Checks if the Trie contains the specified sequence followed by a final value.
+     * The method traverses the Trie based on the values in the sequence and checks
+     * for the existence of a child node corresponding to the final value. If all
+     * values lead to valid child nodes and the final node is terminal, true is
+     * returned. Otherwise, false is returned.
+     *
+     * @param sequence The sequence to check for existence in the Trie.
+     * @param lastValue The final value to check for a child node after traversing
+     *                  the sequence.
+     * @return True if the Trie contains the specified sequence followed by the
+     *         final value, false otherwise.
+     */
     bool contains(const Sequence& sequence, const Value lastValue) const
     {
         IF_DEBUG(
@@ -339,6 +408,20 @@ public:
         return current != INVALID;
     }
 
+    /**
+     * Checks if the specified sequence followed by a final value is a prefix of
+     * any sequence stored in the Trie. The method traverses the Trie based on
+     * the values in the sequence and checks for the existence of a child node
+     * corresponding to the final value. If all values lead to valid child nodes,
+     * true is returned, indicating that the sequence followed by the final value
+     * is a prefix of at least one stored sequence. Otherwise, false is returned.
+     *
+     * @param sequence The sequence to check for being a prefix in the Trie.
+     * @param lastValue The final value to check for a child node after traversing
+     *                  the sequence.
+     * @return True if the specified sequence followed by the final value is a
+     *         prefix of any stored sequence, false otherwise.
+     */
     bool isPrefix(const Sequence& sequence, const Value lastValue) const
     {
         IF_DEBUG(
@@ -351,9 +434,77 @@ public:
         return current != INVALID;
     }
 
+    /**
+     * Checks if the specified sequence is a proper prefix of any sequence stored
+     * in the Trie. A proper prefix is defined as a prefix that is not equal to
+     * any stored sequence. The method traverses the Trie based on the values in
+     * the sequence and returns true if all values lead to valid child nodes and
+     * the final node has at least one child, indicating that the sequence is a
+     * proper prefix of at least one stored sequence. If any value in the sequence
+     * does not lead to a valid child node, or if the final node has no children,
+     * false is returned.
+     *
+     * @param sequence The sequence to check for being a proper prefix in the Trie.
+     * @return True if the specified sequence is a proper prefix of any stored
+     *         sequence, false otherwise.
+     */
+    bool isProperPrefix(const Sequence& sequence) const
+    {
+        IF_DEBUG(
+            if (!initialized)
+                throw std::runtime_error("Trie is not initialized for queries.");
+        )
+
+        Index current = findChild(0, sequence);
+        if (current == INVALID)
+            return false;
+
+        return nodes[current].edgeCount > 0;
+    }
+
+    /**
+     * Checks if the specified sequence followed by a final value is a proper
+     * prefix of any sequence stored in the Trie. A proper prefix is defined as
+     * a prefix that is not equal to any stored sequence. The method traverses
+     * the Trie based on the values in the sequence and checks for the existence
+     * of a child node corresponding to the final value. If all values lead to
+     * valid child nodes and the final node has at least one child, true is
+     * returned, indicating that the sequence followed by the final value is a
+     * proper prefix of at least one stored sequence. Otherwise, false is returned.
+     *
+     * @param sequence The sequence to check for being a proper prefix in the Trie.
+     * @param lastValue The final value to check for a child node after traversing
+     *                  the sequence.
+     * @return True if the specified sequence followed by the final value is a
+     *         proper prefix of any stored sequence, false otherwise.
+     */
+    bool isProperPrefix(const Sequence& sequence, const Value lastValue) const
+    {
+        IF_DEBUG(
+            if (!initialized)
+                throw std::runtime_error("Trie is not initialized for queries.");
+        )
+
+        Index current = findChild(0, sequence, lastValue);
+        if (current == INVALID)
+            return false;
+
+        return nodes[current].edgeCount > 0;
+    }
+
+    /**
+     * Returns the total number of sequences stored in the Trie.
+     *
+     * @return The total number of sequences stored in the Trie.
+     */
     inline std::size_t size() const noexcept
     { return sequenceCount; }
 
+    /**
+     * Checks if the Trie is empty, meaning it contains no sequences.
+     *
+     * @return True if the Trie is empty, false otherwise.
+     */
     inline bool empty() const noexcept
     { return sequenceCount == 0; }
 };
