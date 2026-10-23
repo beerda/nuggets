@@ -64,7 +64,7 @@ public:
      * Creates an empty chain collection.
      */
     ChainCollection()
-        : chains(), nConditions(0), nFoci(0)
+        : chains(), nConditions(0), nFoci(0), nDataCols(0)
     { }
 
     /**
@@ -77,7 +77,7 @@ public:
     ChainCollection(const List& data,
                     const LogicalVector& isConditionVec,
                     const LogicalVector& isFocusVec)
-        : chains(), nConditions(0), nFoci(0)
+        : chains(), nConditions(0), nFoci(0), nDataCols(data.size())
     {
         BLOCK_TIMER(bt, "ChainCollection::ChainCollection - load data into chains");
 
@@ -266,6 +266,37 @@ public:
     inline bool hasFoci() const
     { return nFoci > 0; }
 
+    /**
+     * Returns a vector of positions of chains by their predicate ID.
+     * Indexes in the returned vector correspond to predicate IDs, and the
+     * values at those indices indicate the position of the chain in the collection.
+     *
+     * @return A vector of positions
+     */
+    vector<size_t> getSortedPositions() const
+    {
+        vector<size_t> sortedPositions(nDataCols + 1, 0); // +1 to account for 1-based indexing
+        size_t index = 0;
+        for (const CHAIN& chain : chains) {
+            size_t id = chain.getPredicate();
+            sortedPositions[id] = index;
+            index++;
+        }
+
+        return sortedPositions;
+    }
+
+    vector<double> getPredicateSums() const
+    {
+        vector<double> predicateSums(nDataCols + 1, 0.0); // +1 to account for 1-based indexing
+        for (const CHAIN& chain : chains) {
+            size_t id = chain.getPredicate();
+            predicateSums[id] = chain.getSum();
+        }
+
+        return predicateSums;
+    }
+
 private:
     /**
      * Chains sorted by predicate type and descending sum.
@@ -281,6 +312,11 @@ private:
      * Number of chains that may appear in a focus.
      */
     size_t nFoci;
+
+    /**
+     * Number of data columns (predicates) in the input data.
+     */
+    size_t nDataCols;
 
     /**
      * Sorts chains by predicate type and descending sum.

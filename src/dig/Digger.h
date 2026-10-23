@@ -67,8 +67,8 @@ public:
           config(config),
           searchStats(),
           initialCollection(data, isCondition, isFocus),
-          sortedPositions(data.size() + 1),
-          predicateSums(data.size() + 1),
+          sortedPositions(initialCollection.getSortedPositions()),
+          predicateSums(initialCollection.getPredicateSums()),
           prefix(),
           selectorSingleton(initialCollection.focusCount()),
           cache(data.size() + 1,
@@ -80,14 +80,6 @@ public:
         BLOCK_TIMER(t, "Digger::Constructor");
         prefix.reserve(std::min(config.getMaxLength(), initialCollection.conditionCount()));
         cacheQuery.reserve(std::min(config.getMaxLength(), initialCollection.conditionCount()));
-
-        size_t index = 0;
-        for (const CHAIN& chain : initialCollection) {
-            size_t id = chain.getPredicate();
-            sortedPositions[id] = index;
-            predicateSums[id] = chain.getSum();
-            index++;
-        }
     }
 
     // Disable copy
