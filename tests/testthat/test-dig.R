@@ -1789,12 +1789,25 @@ test_that("errors", {
                  "Function `f` is allowed to have the following arguments")
     expect_error(dig(d, f, condition = n, disjoint = list("x")),
                  "`disjoint` must be a plain vector")
+    expect_error(dig(d, f, condition = n, disjoint = "x"),
+                 "The length of `disjoint` must be 0 or must be equal to the number of columns in `x`.")
+
     expect_error(dig(d, f, condition = n, excluded = 3),
                  "`excluded` must be a list or NULL.")
     expect_error(dig(d, f, condition = n, excluded = list(3)),
                  "`excluded` must be a list of character vectors.")
-    expect_error(dig(d, f, condition = n, disjoint = "x"),
-                 "The length of `disjoint` must be 0 or must be equal to the number of columns in `x`.")
+    expect_error(dig(d, f, condition = n, excluded = list(c("n", "l", "foo"))),
+                 "Can't find some column names in `x` that correspond to all predicates in `excluded`.")
+
+    expect_error(dig(d, f, condition = n, exact = 3),
+                 "`exact` must be a list or NULL.")
+    expect_error(dig(d, f, condition = n, exact = list(3)),
+                 "`exact` must be a list of character vectors.")
+    expect_error(dig(d, f, condition = n:l, exact = list(c("n", "l", "foo"))),
+                 "Can't find some column names in `x` that correspond to all predicates in `exact`.")
+    expect_error(dig(d, f, condition = n, exact = list(c("n", "l"))),
+                 "Some predicates in `exact` are not selected by `condition`.")
+
     expect_error(dig(d, f, condition = n, min_length = "x"),
                  "`min_length` must be an integerish scalar.")
     expect_error(dig(d, f, condition = n, min_length = Inf),
@@ -1823,12 +1836,6 @@ test_that("errors", {
                  "`max_results` must be >= 1.")
     expect_error(dig(d, f, condition = n, verbose = "x"),
                  "`verbose` must be a flag")
-    expect_error(dig(d, f, condition = n, excluded = FALSE),
-                 "`excluded` must be a list or NULL.")
-    expect_error(dig(d, f, condition = n, excluded = list(c(FALSE, TRUE))),
-                 "`excluded` must be a list of character vectors.")
-    expect_error(dig(d, f, condition = n, excluded = list(c("n", "l", "foo"))),
-                 "Can't find some column names in `x` that correspond to all predicates in `excluded`.")
 })
 
 
