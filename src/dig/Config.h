@@ -117,13 +117,9 @@ public:
         maxSum = maxSupport * weightSum;
 
         tNorm = parseTNorm(configuration["tNorm"]);
-
         excluded = as<List>(configuration["excluded"]);
-
         exact = as<List>(configuration["exact"]);
-
         filterEmptyFoci = as<LogicalVector>(configuration["filterEmptyFoci"])[0];
-
         verbose = as<LogicalVector>(configuration["verbose"])[0];
 
         parseArguments(configuration["arguments"]);
@@ -135,8 +131,6 @@ public:
             disjoint.push_back(disjVec[i]);
         }
         disjointDefined = disjoint.size() > 1;
-        filterExcluded = excluded.size() > 0;
-        filterExact = exact.size() > 0;
 
         chainNames.reserve(namesVector.size() + 1);
         chainNames.push_back(""); // 0th index is unused, as R uses predicates' indices starting from 1
@@ -241,22 +235,6 @@ public:
      */
     inline bool hasFilterEmptyFoci() const
     { return filterEmptyFoci; }
-
-    /**
-     * Returns whether excluded patterns should be filtered out.
-     *
-     * @return True if excluded patterns should be filtered, otherwise false.
-     */
-    inline bool hasFilterExcluded() const
-    { return filterExcluded; }
-
-    /**
-     * Returns whether condition templates should be respected.
-     *
-     * @return True if condition templates should be respected, otherwise false.
-     */
-    inline bool hasFilterExact() const
-    { return filterExact; }
 
     /**
      * Returns whether verbose algorithm output is enabled.
@@ -513,14 +491,6 @@ private:
      * Whether verbose algorithm output is enabled.
      */
     bool verbose;
-    /**
-     * Whether one or more excluded patterns were supplied.
-     */
-    bool filterExcluded;
-    /**
-     * Whether one or more condition templates were supplied.
-     */
-    bool filterExact;
     /**
      * Whether one or more disjoint-set constraints were supplied.
      */
