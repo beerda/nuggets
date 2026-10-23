@@ -678,13 +678,13 @@ private:
         // is already sorted, so we can just push_back and pop_back to avoid
         // unnecessary copying and sorting.
 
-        size_t oldSize = prefix.size();
+        prefix.rememberSize();
         if (chain1.hasPredicate()) {
             prefix.push_back(chain1.getPredicate());
         }
         prefix.push_back(chain2.getPredicate());
         cache.add(prefix, sum);
-        prefix.resize(oldSize);
+        prefix.recallSize();
     }
 
     /**
@@ -711,6 +711,7 @@ private:
         // so we need to insert it into the right place.
 
         cacheQuery.resize(prefix.size() + 2);
+        prefix.rememberSize();
         prefix.push_back(chain1.getPredicate());
         size_t p2pos = sortedPositions[chain2.getPredicate()];
         size_t offset = 0;
@@ -722,7 +723,7 @@ private:
             }
             cacheQuery[i + offset] = prefix[i];
         }
-        prefix.pop_back();
+        prefix.recallSize();
 
         return cache.get(cacheQuery);
     }

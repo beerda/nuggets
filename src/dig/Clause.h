@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <limits>
+
 #include "../common.h"
 
 
@@ -28,6 +30,8 @@
  */
 class Clause : public vector<size_t> {
 private:
+    size_t rememberedSize = std::numeric_limits<size_t>::max();
+
     // Copy constructor is private, use clone() for public copy
     Clause(const Clause& other) = default;
 
@@ -141,6 +145,28 @@ public:
      */
     inline bool contains(size_t predicate) const
     { return std::find(begin(), end(), predicate) != end(); }
+
+    void rememberSize()
+    {
+        IF_DEBUG(
+            if (rememberedSize != std::numeric_limits<size_t>::max())
+                throw std::logic_error("Clause::rememberSize: size already remembered");
+        )
+        rememberedSize = size();
+    }
+
+    void recallSize()
+    {
+        IF_DEBUG(
+            if (rememberedSize == std::numeric_limits<size_t>::max())
+                throw std::logic_error("Clause::recallSize: size not remembered");
+
+            if (rememberedSize > size())
+                throw std::logic_error("Clause::recallSize: remembered size is greater than current size");
+        )
+        resize(rememberedSize);
+        rememberedSize = std::numeric_limits<size_t>::max();
+    }
 
     /**
      * Returns a string representation of the Clause in the format
