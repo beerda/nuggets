@@ -11,6 +11,7 @@ dig_associations(
   weights = NULL,
   disjoint = var_names(colnames(x)),
   excluded = NULL,
+  exact = NULL,
   min_length = 0L,
   max_length = Inf,
   min_coverage = 0,
@@ -23,8 +24,8 @@ dig_associations(
   threads = deprecated(),
   error_context = list(arg_x = "x", arg_antecedent = "antecedent", arg_consequent =
     "consequent", arg_weights = "weights", arg_disjoint = "disjoint", arg_excluded =
-    "excluded", arg_min_length = "min_length", arg_max_length = "max_length",
-    arg_min_coverage = "min_coverage", arg_min_support = "min_support",
+    "excluded", arg_exact = "exact", arg_min_length = "min_length", arg_max_length =
+    "max_length", arg_min_coverage = "min_coverage", arg_min_support = "min_support",
     arg_min_confidence = "min_confidence", arg_contingency_table = "contingency_table",
     arg_t_norm = "t_norm", arg_max_results = "max_results", arg_verbose = "verbose",
     arg_threads = "threads", call = current_env())
@@ -71,6 +72,11 @@ deduction).
 }
 The list of axioms can be obtained, for example, from
 \code{\link[=dig_tautologies]{dig_tautologies()}}.}
+
+\item{exact}{\code{NULL} or a list of character vectors specifying
+exactly allowed antecedents. (A NULL element in the list represents an empty
+condition.) Predicates within a vector are treated as an unordered set. If
+\code{NULL}, no limitations are imposed on generated antecedents.}
 
 \item{min_length}{the minimum length, i.e., the minimum number of predicates in the
 antecedent, of a rule to be generated. Value must be greater or equal to 0.
@@ -124,6 +130,7 @@ of that calling function. The list must contain the following elements:
 \item \code{arg_weights} - name of the argument \code{weights}
 \item \code{arg_disjoint} - name of the argument \code{disjoint}
 \item \code{arg_excluded} - name of the argument \code{excluded}
+\item \code{arg_exact} - name of the argument \code{exact}
 \item \code{arg_min_length} - name of the argument \code{min_length}
 \item \code{arg_max_length} - name of the argument \code{max_length}
 \item \code{arg_min_coverage} - name of the argument \code{min_coverage}

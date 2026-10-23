@@ -12,6 +12,7 @@ dig(
   weights = NULL,
   disjoint = var_names(colnames(x)),
   excluded = NULL,
+  exact = NULL,
   min_length = 0,
   max_length = Inf,
   min_support = 0,
@@ -25,13 +26,14 @@ dig(
   threads = deprecated(),
   error_context = list(arg_x = "x", arg_f = "f", arg_condition = "condition", arg_focus =
     "focus", arg_weights = "weights", arg_disjoint = "disjoint", arg_excluded =
-    "excluded", arg_min_length = "min_length", arg_max_length = "max_length",
-    arg_min_support = "min_support", arg_min_focus_support = "min_focus_support",
-    arg_min_conditional_focus_support = "min_conditional_focus_support", arg_max_support
-    = "max_support", arg_filter_empty_foci = "filter_empty_foci", arg_t_norm = "t_norm",
-    arg_max_results = "max_results", 
-     arg_verbose = "verbose", arg_threads =
-    "threads", call = current_env())
+    "excluded", arg_exact = "exact", arg_min_length = "min_length", arg_max_length =
+    "max_length", arg_min_support = "min_support", arg_min_focus_support =
+    "min_focus_support", arg_min_conditional_focus_support =
+    "min_conditional_focus_support", arg_max_support = "max_support",
+    arg_filter_empty_foci = "filter_empty_foci", arg_t_norm = "t_norm", arg_max_results =
+    "max_results", 
+     arg_verbose = "verbose", arg_threads = "threads", call =
+    current_env())
 )
 }
 \arguments{
@@ -82,6 +84,11 @@ predicates using the axioms, possibly via a chain of multiple
 axiom applications (transitive deduction).
 }
 The list of axioms can be obtained, for example, from \code{\link[=dig_tautologies]{dig_tautologies()}}.}
+
+\item{exact}{\code{NULL} or a list of character vectors specifying
+exactly allowed conditions. (A NULL element in the list represents an empty
+condition.) Predicates within a vector are treated as an unordered set. If
+\code{NULL}, no limitations are imposed on generated conditions.}
 
 \item{min_length}{Minimum number of predicates in a condition required to
 trigger the callback \code{f}. Must be \eqn{\ge 0}. If set to 0, the empty
@@ -154,6 +161,7 @@ than those of \code{dig()}. The list must contain:
 \item \code{arg_focus} – name of the argument \code{focus}
 \item \code{arg_disjoint} – name of the argument \code{disjoint}
 \item \code{arg_excluded} – name of the argument \code{excluded}
+\item \code{arg_exact} – name of the argument \code{exact}
 \item \code{arg_min_length} – name of the argument \code{min_length}
 \item \code{arg_max_length} – name of the argument \code{max_length}
 \item \code{arg_min_support} – name of the argument \code{min_support}
