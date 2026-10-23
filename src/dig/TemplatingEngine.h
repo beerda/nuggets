@@ -45,15 +45,11 @@ public:
         trie.initializeForQueries();
     }
 
-    bool matches(Clause& clause) const
-    {
-        return trie.empty() || trie.contains(clause);
-    }
+    inline bool isStorable(Clause& clause) const
+    { return trie.empty() || trie.contains(clause); }
 
-    bool matches(Clause& clause, const size_t predicate) const
-    {
-        return trie.empty() || trie.contains(clause, predicate);
-    }
+    inline bool isNonRedundant(Clause& clause) const
+    { return trie.empty() || trie.isPrefix(clause); }
 
 private:
     Trie<size_t, Clause> trie;

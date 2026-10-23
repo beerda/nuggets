@@ -466,13 +466,16 @@ private:
                 throw invalid_argument("Digger::isDerivableConditionOnly: first chain has no predicate");
         )
 
+        bool result = false;
         if (secondChain.isConditionOnly()) {
-            return deductionEngine.isDerivableWithout(prefix,
-                                                      conditionChain.getPredicate(),
-                                                      secondChain.getPredicate());
+            prefix.rememberSize();
+            prefix.push_back(conditionChain.getPredicate());
+            result = deductionEngine.isDerivableWithout(prefix,
+                                                        secondChain.getPredicate());
+            prefix.recallSize();
         }
 
-        return false;
+        return result;
     }
 
     /**
@@ -496,13 +499,16 @@ private:
                 throw invalid_argument("Digger::isDerivableFocusOnly: first chain has no predicate");
         )
 
+        bool result = false;
         if (secondChain.isFocusOnly()) {
-            return deductionEngine.isDerivableWithout(prefix,
-                                                      conditionChain.getPredicate(),
-                                                      secondChain.getPredicate());
+            prefix.rememberSize();
+            prefix.push_back(conditionChain.getPredicate());
+            result = deductionEngine.isDerivableWithout(prefix,
+                                                        secondChain.getPredicate());
+            prefix.recallSize();
         }
 
-        return false;
+        return result;
     }
 
     /**
@@ -519,24 +525,37 @@ private:
      *     non-redundant with respect to the last predicate of the Clause in the
      *     parent chain, false otherwise.
      */
-    inline bool isNonRedundant(const CHAIN& parent, const CHAIN& chain) const
+    inline bool isNonRedundant(const CHAIN& parent, const CHAIN& chain)
     {
+        bool result = true;
         if (parent.hasPredicate()) {
             size_t pref = parent.getPredicate();
             size_t curr = chain.getPredicate();
             if (pref == curr) {
                 // Filter of focus even if disjoint is not defined
                 // (should never happen as we always have disjoint defined)
-                return false;
+                result = false;
             }
-            if (config.hasDisjoint() && config.getDisjoint()[pref] == config.getDisjoint()[curr]) {
+            else if (config.hasDisjoint() && config.getDisjoint()[pref] == config.getDisjoint()[curr]) {
                 // It is enough to check the last element of the prefix because
                 // previous elements were already checked in parent tasks
-                return false;
+                result = false;
             }
         }
 
-        return true;
+        // if (result) {
+        //     prefix.rememberSize();
+        //     if (parent.hasPredicate()) {
+        //         prefix.push_back(parent.getPredicate());
+        //     }
+        //     prefix.push_back(chain.getPredicate());
+        //     if (!templatingEngine.isNonRedundant(prefix)) {
+        //         result = false;
+        //     }
+        //     prefix.recallSize();
+        // }
+
+        return result;
     }
 
     /**
@@ -584,25 +603,24 @@ private:
      */
     inline bool isStorable(const CHAIN& chain)
     {
+        bool result = false;
         if ((prefix.size() + chain.hasPredicate()) >= config.getMinLength()
                 && chain.getSum() >= config.getMinSum()
                 && chain.getSum() <= config.getMaxSum()
                 && storage.size() < config.getMaxResults()) {
+
+            prefix.rememberSize();
             if (chain.hasPredicate()) {
-                if (!deductionEngine.hasRedundant(prefix, chain.getPredicate())
-                        && templatingEngine.matches(prefix, chain.getPredicate())) {
-                    return true;
-                }
+                prefix.push_back(chain.getPredicate());
             }
-            else {
-                if (!deductionEngine.hasRedundant(prefix)
-                        && templatingEngine.matches(prefix)) {
-                    return true;
-                }
+            if (!deductionEngine.hasRedundant(prefix)
+                    && templatingEngine.isStorable(prefix)) {
+                result = true;
             }
+            prefix.recallSize();
         }
 
-        return false;
+        return result;
     }
 
     /**
@@ -638,15 +656,13 @@ private:
 
                 bool mustUnselect = (confidence < config.getMinConditionalFocusSupport());
                 if (!mustUnselect) {
+                    prefix.rememberSize();
                     if (chain.hasPredicate()) {
-                        mustUnselect = deductionEngine.isDerivableWithout(prefix,
-                                                                          chain.getPredicate(),
-                                                                          focus.getPredicate());
+                        prefix.push_back(chain.getPredicate());
                     }
-                    else {
-                        mustUnselect = deductionEngine.isDerivableWithout(prefix,
-                                                                          focus.getPredicate());
-                    }
+                    mustUnselect = deductionEngine.isDerivableWithout(prefix,
+                                                                      focus.getPredicate());
+                    prefix.recallSize();
                 }
 
                 if (mustUnselect) {
