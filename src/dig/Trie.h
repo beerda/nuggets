@@ -170,7 +170,7 @@ private:
      * @param value The value associated with the edge leading to the child node.
      * @return The index of the child node if found, or INVALID if not found.
      */
-    Index findChild(Index nodeIndex, Value value) const noexcept
+    inline Index findChild(const Index nodeIndex, const Value value) const noexcept
     {
         const Node& node = nodes[nodeIndex];
         const Edge* first = edges.data() + node.firstEdge;
@@ -181,6 +181,34 @@ private:
         }
 
         return INVALID;
+    }
+
+    inline Index findChild(Index nodeIndex, const Sequence& sequence) const noexcept
+    {
+        Index current = nodeIndex;
+        for (Value value : sequence) {
+            current = findChild(current, value);
+            if (current == INVALID)
+                return INVALID;
+        }
+
+        return current;
+    }
+
+    inline Index findChild(Index nodeIndex, const Sequence& sequence, const Value lastValue) const noexcept
+    {
+        IF_DEBUG(
+            if (!initialized)
+                throw std::runtime_error("Trie is not initialized for queries.");
+        )
+
+        Index current = findChild(nodeIndex, sequence);
+        if (current == INVALID)
+            return INVALID;
+
+        current = findChild(current, lastValue);
+
+        return current;
     }
 
 public:
@@ -267,12 +295,23 @@ public:
                 throw std::runtime_error("Trie is not initialized for queries.");
         )
 
-        Index current = 0;
-        for (Value value : sequence) {
-            current = findChild(current, value);
-            if (current == INVALID)
-                return false;
-        }
+        Index current = findChild(0, sequence);
+        if (current == INVALID)
+            return false;
+
+        return nodes[current].terminal;
+    }
+
+    bool contains(const Sequence& sequence, const Value lastValue) const
+    {
+        IF_DEBUG(
+            if (!initialized)
+                throw std::runtime_error("Trie is not initialized for queries.");
+        )
+
+        Index current = findChild(0, sequence, lastValue);
+        if (current == INVALID)
+            return false;
 
         return nodes[current].terminal;
     }
@@ -295,16 +334,26 @@ public:
                 throw std::runtime_error("Trie is not initialized for queries.");
         )
 
-        Index current = 0;
-        for (Value value : sequence) {
-            current = findChild(current, value);
-            if (current == INVALID)
-                return false;
-        }
+        Index current = findChild(0, sequence);
 
-        return true;
+        return current != INVALID;
+    }
+
+    bool isPrefix(const Sequence& sequence, const Value lastValue) const
+    {
+        IF_DEBUG(
+            if (!initialized)
+                throw std::runtime_error("Trie is not initialized for queries.");
+        )
+
+        Index current = findChild(0, sequence, lastValue);
+
+        return current != INVALID;
     }
 
     inline std::size_t size() const noexcept
     { return sequenceCount; }
+
+    inline bool empty() const noexcept
+    { return sequenceCount == 0; }
 };
