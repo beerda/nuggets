@@ -29,6 +29,7 @@
 #include "ChainCollection.h"
 #include "CombinatorialProgress.h"
 #include "DeductionEngine.h"
+#include "TemplatingEngine.h"
 #include "Pattern.h"
 #include "SearchStats.h"
 #include "Selector.h"
@@ -75,6 +76,7 @@ public:
                 std::min(config.getMaxLength(), initialCollection.conditionCount())),
           cacheQuery(),
           deductionEngine(data.size() + 1, config.getExcluded()),
+          templatingEngine(config.getExact(), sortedPositions),
           progress(nullptr)
     {
         BLOCK_TIMER(t, "Digger::Constructor");
@@ -240,6 +242,13 @@ private:
     DeductionEngine deductionEngine;
 
     /**
+     * A templating engine used to check whether the generated condition
+     * matches any of the templates defined in the configuration. It is used to
+     * filter out chains that do not match the templates during the search process.
+     */
+    TemplatingEngine templatingEngine;
+
+    /**
      * A pointer to a CombinatorialProgress object used to track the progress of
      * the search process. It provides a progress bar and allows for incremental
      * updates of the search progress. The progress object is created and deleted
@@ -368,7 +377,8 @@ private:
             }
         }
         for (size_t i = parent.firstFocusIndex(); i < conditionChainIndex; ++i) {
-            combineByCache(target, conditionChain, parent[i]);
+            CHAIN& secondChain = parent[i];
+            combineByCache(target, conditionChain, secondChain);
         }
     }
 
@@ -579,10 +589,16 @@ private:
                 && chain.getSum() <= config.getMaxSum()
                 && storage.size() < config.getMaxResults()) {
             if (chain.hasPredicate()) {
-                return !deductionEngine.hasRedundant(prefix, chain.getPredicate());
+                if (!deductionEngine.hasRedundant(prefix, chain.getPredicate())
+                        && templatingEngine.matches(prefix, chain.getPredicate())) {
+                    return true;
+                }
             }
             else {
-                return !deductionEngine.hasRedundant(prefix);
+                if (!deductionEngine.hasRedundant(prefix)
+                        && templatingEngine.matches(prefix)) {
+                    return true;
+                }
             }
         }
 

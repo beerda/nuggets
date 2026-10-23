@@ -96,12 +96,40 @@ public:
     { std::sort(begin(), end()); }
 
     /**
+     * Sorts the predicate IDs in the Clause based on a specified order.
+     *
+     * @param order A vector that defines the order of predicate IDs. The
+     *     predicate IDs in the Clause will be sorted according to their
+     *     corresponding values in this order vector.
+     */
+    inline void sort(const vector<size_t>& order)
+    {
+        std::sort(begin(), end(), [&order](size_t a, size_t b) {
+            return order[a] < order[b];
+        });
+    }
+
+    /**
      * Sorts the predicate IDs in the Clause in ascending order and removes
      * duplicate predicate IDs.
      */
     inline void sortAndUnique()
     {
-        std::sort(begin(), end());
+        sort();
+        erase(std::unique(begin(), end()), end());
+    }
+
+    /**
+     * Sorts the predicate IDs in the Clause based on a specified order and
+     * removes duplicate predicate IDs.
+     *
+     * @param order A vector that defines the order of predicate IDs. The
+     *     predicate IDs in the Clause will be sorted according to their
+     *     corresponding values in this order vector.
+     */
+    inline void sortAndUnique(const vector<size_t>& order)
+    {
+        sort(order);
         erase(std::unique(begin(), end()), end());
     }
 

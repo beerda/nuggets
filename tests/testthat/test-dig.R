@@ -188,6 +188,119 @@ test_that("condition arg with names", {
 })
 
 
+test_that("exact condition filter", {
+    m <- data.frame(a = c(T, T, T, F, F, F),
+                    b = c(T, T, T, T, T, F),
+                    c = c(T, F, T, F, T, F))
+
+    res <- dig(m,
+               focus = everything(),
+               f = function(condition, pp) list(condition = sort(condition),
+                                                foci = sort(names(pp))),
+               exact = list(NULL, c("c", "a"), "b"))
+
+    attributes(res) <- NULL
+    expect_setequal(res, list(list(condition = integer(0),
+                                   foci = c("a", "b", "c")),
+                              list(condition = c("a" = 1L, "c" = 3L),
+                                   foci = c("b")),
+                              list(condition = c("b" = 2L),
+                                   foci = c("a", "c"))))
+})
+
+
+test_that("exact condition filter with all conditions", {
+    m <- data.frame(a = c(T, T, T, F, F, F),
+                    b = c(T, T, T, T, T, F),
+                    c = c(T, F, T, F, T, F))
+
+    res <- dig(m,
+               focus = everything(),
+               f = function(condition, pp) list(condition = sort(condition),
+                                                foci = sort(names(pp))),
+               exact = list(NULL,
+                            "a",
+                            "b",
+                            "c",
+                            c("a", "b"),
+                            c("a", "c"),
+                            c("b", "c"),
+                            c("a", "b", "c")))
+
+    attributes(res) <- NULL
+    expect_setequal(res, list(list(condition = integer(0),
+                                   foci = c("a", "b", "c")),
+                              list(condition = c("a" = 1L),
+                                   foci = c("b", "c")),
+                              list(condition = c("b" = 2L),
+                                   foci = c("a", "c")),
+                              list(condition = c("c" = 3L),
+                                   foci = c("a", "b")),
+                              list(condition = c("a" = 1L, "b" = 2L),
+                                   foci = c("c")),
+                              list(condition = c("a" = 1L, "c" = 3L),
+                                   foci = c("b")),
+                              list(condition = c("b" = 2L, "c" = 3L),
+                                   foci = c("a")),
+                              list(condition = c("a" = 1L, "b" = 2L, "c" = 3L),
+                                   foci = NULL)))
+})
+
+
+test_that("exact condition filter excludes each omitted condition", {
+    m <- data.frame(a = c(T, T, T, F, F, F),
+                    b = c(T, T, T, T, T, F),
+                    c = c(T, F, T, F, T, F))
+
+    exact <- list(NULL,
+                  "a",
+                  "b",
+                  "c",
+                  c("a", "b"),
+                  c("a", "c"),
+                  c("b", "c"),
+                  c("a", "b", "c"))
+    expected <- list(list(condition = integer(0),
+                          foci = c("a", "b", "c")),
+                     list(condition = c("a" = 1L),
+                          foci = c("b", "c")),
+                     list(condition = c("b" = 2L),
+                          foci = c("a", "c")),
+                     list(condition = c("c" = 3L),
+                          foci = c("a", "b")),
+                     list(condition = c("a" = 1L, "b" = 2L),
+                          foci = c("c")),
+                     list(condition = c("a" = 1L, "c" = 3L),
+                          foci = c("b")),
+                     list(condition = c("b" = 2L, "c" = 3L),
+                          foci = c("a")),
+                     list(condition = c("a" = 1L, "b" = 2L, "c" = 3L),
+                          foci = NULL))
+
+    for (removed in seq_along(exact)) {
+        res <- dig(m,
+                   focus = everything(),
+                   f = function(condition, pp) list(condition = sort(condition),
+                                                    foci = sort(names(pp))),
+                   exact = exact[-removed])
+
+        attributes(res) <- NULL
+        expect_setequal(res, expected[-removed])
+    }
+
+    for (removed in seq_along(exact)) {
+        res <- dig(m,
+                   focus = everything(),
+                   f = function(condition, pp) list(condition = sort(condition),
+                                                    foci = sort(names(pp))),
+                   exact = exact[removed])
+
+        attributes(res) <- NULL
+        expect_setequal(res, expected[removed])
+    }
+})
+
+
 test_that("support arg", {
     m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
     res <- dig(m, function(support) list(sup = support))
