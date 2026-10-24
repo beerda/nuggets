@@ -5,6 +5,8 @@
   condition's truth degree
 - added `dig_itemsets()` to find frequent itemsets
 - added `explore.itemsets()` to explore frequent itemsets interactively
+- added `validate` to re-run the search and validate the results of `dig()` and
+  other `dig_*()` functions on a new dataset
 - added `is_from()` to check if a nugget is originated from a given data frame
   or matrix
 - added support for weighted data to: `dig()`, `dig_grid()`, `dig_itemsets()`, 
@@ -14,6 +16,8 @@
   because the search is performed always in a single thread
 - added observed, expected, and diff counts to contingency table in `explore()`
   for associations
+- added `exact` argument to `dig()`, `dig_associations()`, and `dig_itemsets()`
+  to force search of enumerated conditions only
 - improved "Rule Detail" tab in `explore()` for associations: added graphical
   settings for the plot of ancestors
 - added progress bar to `partition()` function

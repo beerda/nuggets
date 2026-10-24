@@ -29,6 +29,7 @@
 #include "ChainCollection.h"
 #include "CombinatorialProgress.h"
 #include "DeductionEngine.h"
+#include "TemplatingEngine.h"
 #include "Pattern.h"
 #include "SearchStats.h"
 #include "Selector.h"
@@ -67,27 +68,20 @@ public:
           config(config),
           searchStats(),
           initialCollection(data, isCondition, isFocus),
-          sortedPositions(data.size() + 1),
-          predicateSums(data.size() + 1),
+          sortedPositions(initialCollection.getSortedPositions()),
+          predicateSums(initialCollection.getPredicateSums()),
           prefix(),
           selectorSingleton(initialCollection.focusCount()),
           cache(data.size() + 1,
                 std::min(config.getMaxLength(), initialCollection.conditionCount())),
           cacheQuery(),
           deductionEngine(data.size() + 1, config.getExcluded()),
+          templatingEngine(config.getExact(), sortedPositions),
           progress(nullptr)
     {
         BLOCK_TIMER(t, "Digger::Constructor");
         prefix.reserve(std::min(config.getMaxLength(), initialCollection.conditionCount()));
         cacheQuery.reserve(std::min(config.getMaxLength(), initialCollection.conditionCount()));
-
-        size_t index = 0;
-        for (const CHAIN& chain : initialCollection) {
-            size_t id = chain.getPredicate();
-            sortedPositions[id] = index;
-            predicateSums[id] = chain.getSum();
-            index++;
-        }
     }
 
     // Disable copy
@@ -248,6 +242,13 @@ private:
     DeductionEngine deductionEngine;
 
     /**
+     * A templating engine used to check whether the generated condition
+     * matches any of the templates defined in the configuration. It is used to
+     * filter out chains that do not match the templates during the search process.
+     */
+    TemplatingEngine templatingEngine;
+
+    /**
      * A pointer to a CombinatorialProgress object used to track the progress of
      * the search process. It provides a progress bar and allows for incremental
      * updates of the search progress. The progress object is created and deleted
@@ -376,7 +377,8 @@ private:
             }
         }
         for (size_t i = parent.firstFocusIndex(); i < conditionChainIndex; ++i) {
-            combineByCache(target, conditionChain, parent[i]);
+            CHAIN& secondChain = parent[i];
+            combineByCache(target, conditionChain, secondChain);
         }
     }
 
@@ -394,10 +396,7 @@ private:
     {
         BLOCK_INC_TIMER(st, t, "Digger::combineByConjunction");
 
-        if (isNonRedundant(conditionChain, secondChain)
-                && (!isDerivableConditionOnly(conditionChain, secondChain))
-                && (!isDerivableFocusOnly(conditionChain, secondChain))) {
-
+        if (isNonRedundant(conditionChain, secondChain)) {
             const CHAIN& usedChain = CHAIN::isIdempotent()
                 ? secondChain
                 : initialCollection[sortedPositions[secondChain.getPredicate()]];
@@ -425,11 +424,7 @@ private:
     {
         BLOCK_INC_TIMER(st, t, "Digger::combineByCache");
 
-        if (isNonRedundant(conditionChain, secondChain)
-                // no need to test for isDerivableConditionOnly here, because
-                // the secondChain is cached and therefore not condition-only
-                && (!isDerivableFocusOnly(conditionChain, secondChain))) {
-
+        if (isNonRedundant(conditionChain, secondChain)) {
             searchStats.incrementCachedConjunctions();
             double sum = getSumFromCache(conditionChain, secondChain);
 
@@ -444,66 +439,6 @@ private:
     }
 
     /**
-     * If the second chain is condition-only (not both condition and focus),
-     * this method checks if the predicate of the
-     * second chain can be derived from initial axioms and predicates of the
-     * prefix and the predicate of the first chain.
-     *
-     * @param conditionChain The first chain, whose predicates are used as
-     *     initial axioms for the derivation check.
-     * @param secondChain The second chain to be checked for derivability.
-     * @return true if the second chain is focus-only and the predicate of the
-     *     second chain can be derived from the initial axioms and predicates
-     *     from the prefix and from the first chain, false otherwise.
-     */
-    inline bool isDerivableConditionOnly(
-            const CHAIN& conditionChain, const CHAIN& secondChain)
-    {
-        IF_DEBUG(
-            if (!conditionChain.hasPredicate())
-                throw invalid_argument("Digger::isDerivableConditionOnly: first chain has no predicate");
-        )
-
-        if (secondChain.isConditionOnly()) {
-            return deductionEngine.isDerivableWithout(prefix,
-                                                      conditionChain.getPredicate(),
-                                                      secondChain.getPredicate());
-        }
-
-        return false;
-    }
-
-    /**
-     * If the second chain is focus-only (not both condition and focus),
-     * this method checks if the predicate of the
-     * second chain can be derived from initial axioms and predicates of the
-     * prefix and the predicate of the first chain.
-     *
-     * @param conditionChain The first chain, whose predicates are used as
-     *     initial axioms for the derivation check.
-     * @param secondChain The second chain to be checked for derivability.
-     * @return true if the second chain is focus-only and the predicate of the
-     *     second chain can be derived from the initial axioms and predicates
-     *     from the prefix and from the first chain, false otherwise.
-     */
-    inline bool isDerivableFocusOnly(
-            const CHAIN& conditionChain, const CHAIN& secondChain)
-    {
-        IF_DEBUG(
-            if (!conditionChain.hasPredicate())
-                throw invalid_argument("Digger::isDerivableFocusOnly: first chain has no predicate");
-        )
-
-        if (secondChain.isFocusOnly()) {
-            return deductionEngine.isDerivableWithout(prefix,
-                                                      conditionChain.getPredicate(),
-                                                      secondChain.getPredicate());
-        }
-
-        return false;
-    }
-
-    /**
      * Checks if the predicate stored in the given chain is
      * non-redundant with respect to the predicate stored in
      * the parent chain. Two predicates are considered redundant if they belong
@@ -511,30 +446,39 @@ private:
      * chain is empty, the method returns true, indicating that the chain is
      * non-redundant.
      *
-     * @param parent The parent chain to compare against.
-     * @param chain The chain to be checked for non-redundancy.
+     * @param conditionChain The parent chain to compare against.
+     * @param secondChain The chain to be checked for non-redundancy.
      * @return true if the last predicate of the Clause in the chain is
      *     non-redundant with respect to the last predicate of the Clause in the
      *     parent chain, false otherwise.
      */
-    inline bool isNonRedundant(const CHAIN& parent, const CHAIN& chain) const
+    inline bool isNonRedundant(const CHAIN& conditionChain, const CHAIN& secondChain)
     {
-        if (parent.hasPredicate()) {
-            size_t pref = parent.getPredicate();
-            size_t curr = chain.getPredicate();
+        bool result = true;
+        if (conditionChain.hasPredicate()) {
+            size_t pref = conditionChain.getPredicate();
+            size_t curr = secondChain.getPredicate();
             if (pref == curr) {
                 // Filter of focus even if disjoint is not defined
                 // (should never happen as we always have disjoint defined)
-                return false;
+                result = false;
             }
-            if (config.hasDisjoint() && config.getDisjoint()[pref] == config.getDisjoint()[curr]) {
+            else if (config.hasDisjoint() && config.getDisjoint()[pref] == config.getDisjoint()[curr]) {
                 // It is enough to check the last element of the prefix because
                 // previous elements were already checked in parent tasks
-                return false;
+                result = false;
+            }
+            else if (secondChain.isConditionOnly() || secondChain.isFocusOnly()) {
+                prefix.rememberSize();
+                prefix.push_back(conditionChain.getPredicate());
+                result =
+                    !deductionEngine.isDerivableWithout(prefix, secondChain.getPredicate())
+                    && templatingEngine.isNonRedundant(prefix);
+                prefix.recallSize();
             }
         }
 
-        return true;
+        return result;
     }
 
     /**
@@ -582,19 +526,24 @@ private:
      */
     inline bool isStorable(const CHAIN& chain)
     {
+        bool result = false;
         if ((prefix.size() + chain.hasPredicate()) >= config.getMinLength()
                 && chain.getSum() >= config.getMinSum()
                 && chain.getSum() <= config.getMaxSum()
                 && storage.size() < config.getMaxResults()) {
+
+            prefix.rememberSize();
             if (chain.hasPredicate()) {
-                return !deductionEngine.hasRedundant(prefix, chain.getPredicate());
+                prefix.push_back(chain.getPredicate());
             }
-            else {
-                return !deductionEngine.hasRedundant(prefix);
+            if (!deductionEngine.hasRedundant(prefix)
+                    && templatingEngine.isStorable(prefix)) {
+                result = true;
             }
+            prefix.recallSize();
         }
 
-        return false;
+        return result;
     }
 
     /**
@@ -630,15 +579,13 @@ private:
 
                 bool mustUnselect = (confidence < config.getMinConditionalFocusSupport());
                 if (!mustUnselect) {
+                    prefix.rememberSize();
                     if (chain.hasPredicate()) {
-                        mustUnselect = deductionEngine.isDerivableWithout(prefix,
-                                                                          chain.getPredicate(),
-                                                                          focus.getPredicate());
+                        prefix.push_back(chain.getPredicate());
                     }
-                    else {
-                        mustUnselect = deductionEngine.isDerivableWithout(prefix,
-                                                                          focus.getPredicate());
-                    }
+                    mustUnselect = deductionEngine.isDerivableWithout(prefix,
+                                                                      focus.getPredicate());
+                    prefix.recallSize();
                 }
 
                 if (mustUnselect) {
@@ -670,13 +617,13 @@ private:
         // is already sorted, so we can just push_back and pop_back to avoid
         // unnecessary copying and sorting.
 
-        size_t oldSize = prefix.size();
+        prefix.rememberSize();
         if (chain1.hasPredicate()) {
             prefix.push_back(chain1.getPredicate());
         }
         prefix.push_back(chain2.getPredicate());
         cache.add(prefix, sum);
-        prefix.resize(oldSize);
+        prefix.recallSize();
     }
 
     /**
@@ -703,6 +650,7 @@ private:
         // so we need to insert it into the right place.
 
         cacheQuery.resize(prefix.size() + 2);
+        prefix.rememberSize();
         prefix.push_back(chain1.getPredicate());
         size_t p2pos = sortedPositions[chain2.getPredicate()];
         size_t offset = 0;
@@ -714,7 +662,7 @@ private:
             }
             cacheQuery[i + offset] = prefix[i];
         }
-        prefix.pop_back();
+        prefix.recallSize();
 
         return cache.get(cacheQuery);
     }

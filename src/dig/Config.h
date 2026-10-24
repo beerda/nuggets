@@ -117,11 +117,9 @@ public:
         maxSum = maxSupport * weightSum;
 
         tNorm = parseTNorm(configuration["tNorm"]);
-
         excluded = as<List>(configuration["excluded"]);
-
+        exact = as<List>(configuration["exact"]);
         filterEmptyFoci = as<LogicalVector>(configuration["filterEmptyFoci"])[0];
-
         verbose = as<LogicalVector>(configuration["verbose"])[0];
 
         parseArguments(configuration["arguments"]);
@@ -133,7 +131,6 @@ public:
             disjoint.push_back(disjVec[i]);
         }
         disjointDefined = disjoint.size() > 1;
-        filterExcluded = excluded.size() > 0;
 
         chainNames.reserve(namesVector.size() + 1);
         chainNames.push_back(""); // 0th index is unused, as R uses predicates' indices starting from 1
@@ -240,14 +237,6 @@ public:
     { return filterEmptyFoci; }
 
     /**
-     * Returns whether excluded patterns should be filtered out.
-     *
-     * @return True if excluded patterns should be filtered, otherwise false.
-     */
-    inline bool hasFilterExcluded() const
-    { return filterExcluded; }
-
-    /**
      * Returns whether verbose algorithm output is enabled.
      *
      * @return True if verbose output is enabled, otherwise false.
@@ -273,6 +262,14 @@ public:
      */
     inline const List getExcluded() const
     { return excluded; }
+
+    /**
+     * Returns requested exact conditions.
+     *
+     * @return R list of condition templates.
+     */
+    inline const List getExact() const
+    { return exact; }
 
     /**
      * Returns the number of input data rows.
@@ -474,6 +471,10 @@ private:
      */
     List excluded;
     /**
+     * List of exact conditions requested by the user.
+     */
+    List exact;
+    /**
      * One-based mapping from predicate indices to disjoint-set identifiers.
      */
     vector<int> disjoint;
@@ -490,10 +491,6 @@ private:
      * Whether verbose algorithm output is enabled.
      */
     bool verbose;
-    /**
-     * Whether one or more excluded patterns were supplied.
-     */
-    bool filterExcluded;
     /**
      * Whether one or more disjoint-set constraints were supplied.
      */

@@ -95,6 +95,10 @@
 #'      }
 #'      The list of axioms can be obtained, for example, from
 #'      [dig_tautologies()].
+#' @param exact `NULL` or a list of character vectors specifying
+#'   exactly allowed antecedents. (A NULL element in the list represents an empty
+#'   condition.) Predicates within a vector are treated as an unordered set. If
+#'   `NULL`, no limitations are imposed on generated antecedents.
 #' @param min_length the minimum length, i.e., the minimum number of predicates in the
 #'      antecedent, of a rule to be generated. Value must be greater or equal to 0.
 #'       If 0, rules with empty antecedent are generated in the first place.
@@ -137,6 +141,7 @@
 #'          \item `arg_weights` - name of the argument `weights`
 #'          \item `arg_disjoint` - name of the argument `disjoint`
 #'          \item `arg_excluded` - name of the argument `excluded`
+#'          \item `arg_exact` - name of the argument `exact`
 #'          \item `arg_min_length` - name of the argument `min_length`
 #'          \item `arg_max_length` - name of the argument `max_length`
 #'          \item `arg_min_coverage` - name of the argument `min_coverage`
@@ -170,6 +175,7 @@ dig_associations <- function(x,
                              weights = NULL,
                              disjoint = var_names(colnames(x)),
                              excluded = NULL,
+                             exact = NULL,
                              min_length = 0L,
                              max_length = Inf,
                              min_coverage = 0,
@@ -186,6 +192,7 @@ dig_associations <- function(x,
                                                   arg_weights = "weights",
                                                   arg_disjoint = "disjoint",
                                                   arg_excluded = "excluded",
+                                                  arg_exact = "exact",
                                                   arg_min_length = "min_length",
                                                   arg_max_length = "max_length",
                                                   arg_min_coverage = "min_coverage",
@@ -269,6 +276,7 @@ dig_associations <- function(x,
                 weights = !!weights,
                 disjoint = disjoint,
                 excluded = excluded,
+                exact = exact,
                 min_length = min_length,
                 max_length = max_length,
                 min_support = min_coverage,
@@ -286,6 +294,7 @@ dig_associations <- function(x,
                                      arg_weights = error_context$arg_weights,
                                      arg_disjoint = error_context$arg_disjoint,
                                      arg_excluded = error_context$arg_excluded,
+                                     arg_exact = error_context$arg_exact,
                                      arg_min_length = error_context$arg_min_length,
                                      arg_max_length = error_context$arg_max_length,
                                      arg_min_support = error_context$arg_min_coverage,
@@ -318,6 +327,7 @@ dig_associations <- function(x,
                             weights = digattr$call_args$weights,
                             disjoint = disjoint,
                             excluded = excluded,
+                            exact = exact,
                             min_length = min_length,
                             max_length = max_length,
                             min_coverage = orig_min_coverage,

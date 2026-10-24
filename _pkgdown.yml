@@ -66,6 +66,7 @@ reference:
       - geom_diamond
       - plot_contingency
       - remove_ill_conditions
+      - validate
       - which_antichain
 
   - title: "Tools and Helper Functions"

@@ -20,6 +20,7 @@ context("dig/Config.h") {
             Named("verbose") = false,
             Named("tNorm") = "goedel",
             Named("excluded") = List::create(),
+            Named("exact") = List::create(),
             Named("disjoint") = IntegerVector::create(1, 1, 2, 2, 2, 4, 5),
             Named("arguments") = CharacterVector::create("condition", "pp", "np", "indices")
         );
@@ -66,6 +67,8 @@ context("dig/Config.h") {
             Named("verbose") = false,
             Named("tNorm") = "goedel",
             Named("excluded") = List::create(),
+            Named("exact") = List::create(CharacterVector::create("a", "b"),
+                                          CharacterVector::create("c")),
             Named("disjoint") = IntegerVector::create(1, 1, 2, 2, 2, 4, 5),
             Named("arguments") = CharacterVector::create("condition", "pp", "np", "indices")
         );
@@ -91,6 +94,7 @@ context("dig/Config.h") {
         expect_true(c.isVerbose() == false);
 
         expect_true(c.getExcluded().size() == 0);
+        expect_true(c.getExact().size() == 2);
 
         expect_true(c.hasDisjoint() == true);
         expect_true(c.getDisjoint().size() == 8);

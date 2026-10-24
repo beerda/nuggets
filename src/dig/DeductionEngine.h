@@ -151,7 +151,7 @@ public:
      *     implications, false otherwise.
      */
     inline bool isDerivableFromAxioms(const size_t target)
-    { return internalIsDerivableWithout({}, nullptr, target);}
+    { return internalIsDerivableWithout({}, target);}
 
     /**
      * Checks whether the target predicate can be deduced from the initial
@@ -167,26 +167,7 @@ public:
      */
     inline bool isDerivableWithout(const vector<size_t>& initial,
                                    const size_t target)
-    { return internalIsDerivableWithout(initial, nullptr, target); }
-
-    /**
-     * Checks whether the target predicate can be deduced from the initial
-     * predicates and the implications stored in the engine. If the target
-     * predicate is one of the initial predicates, it is removed from the
-     * initial predicates before checking.
-     *
-     * @param initial A vector of predicate IDs that are initially known to be true.
-     * @param initial2 An optional pointer to a second initial predicate ID that
-     *     is also known to be true.
-     * @param target The predicate ID to check for (may be present
-     *     in the initial predicates).
-     * @return True if the target predicate can be deduced from the initial
-     *     predicates and the implications, false otherwise.
-     */
-    bool isDerivableWithout(const vector<size_t>& initial,
-                            const size_t initial2,
-                            const size_t target)
-    { return internalIsDerivableWithout(initial, &initial2, target); }
+    { return internalIsDerivableWithout(initial, target); }
 
     /**
      * Checks whether any of the initial predicates can be deduced from the
@@ -197,18 +178,7 @@ public:
      *    other initial predicates and the implications, false otherwise.
      */
     inline bool hasRedundant(const vector<size_t>& initial)
-    { return internalHasRedundant(initial, nullptr); }
-
-    /**
-     * Checks whether any of the initial predicates can be deduced from the
-     * other initial predicates and the implications stored in the engine.
-     *
-     * @param initial A vector of predicate IDs that are initially known to be true.
-     * @return True if any of the initial predicates can be deduced from the
-     *    other initial predicates and the implications, false otherwise.
-     */
-    inline bool hasRedundant(const vector<size_t>& initial, const size_t initial2)
-    { return internalHasRedundant(initial, &initial2); }
+    { return internalHasRedundant(initial); }
 
 private:
     /**
@@ -304,15 +274,12 @@ private:
      * initial predicates before checking.
      *
      * @param initial A vector of predicate IDs that are initially known to be true.
-     * @param initial2 An optional pointer to a second initial predicate ID that
-     *     is also known to be true.
      * @param target The predicate ID to check for (may be present
      *     in the initial predicates).
      * @return True if the target predicate can be deduced from the initial
      *     predicates and the implications, false otherwise.
      */
     bool internalIsDerivableWithout(const vector<size_t>& initial,
-                                    const size_t* initial2,
                                     const size_t target)
     {
         if (producedBy[target].empty()) {
@@ -343,11 +310,6 @@ private:
         for (size_t predicate : initial) {
             if (predicate != target)
                 addPredicate(predicate);
-        }
-
-        // process the second initial predicate if provided
-        if (initial2 != nullptr && *initial2 != target) {
-            addPredicate(*initial2);
         }
 
         while (!unprocessed.empty()) {
@@ -383,22 +345,13 @@ private:
      * other initial predicates and the implications stored in the engine.
      *
      * @param initial A vector of predicate IDs that are initially known to be true.
-     * @param initial2 An optional pointer to a second initial predicate ID that
-     *     is also known to be true.
      * @return True if any of the initial predicates can be deduced from the
      *    other initial predicates and the implications, false otherwise.
      */
-    bool internalHasRedundant(const vector<size_t>& initial,
-                              const size_t* initial2 = nullptr)
+    inline bool internalHasRedundant(const vector<size_t>& initial)
     {
         for (size_t predicate : initial) {
-            if (internalIsDerivableWithout(initial, initial2, predicate)) {
-                return true;
-            }
-        }
-
-        if (initial2 != nullptr) {
-            if (internalIsDerivableWithout(initial, nullptr, *initial2)) {
+            if (internalIsDerivableWithout(initial, predicate)) {
                 return true;
             }
         }

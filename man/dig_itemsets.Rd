@@ -10,6 +10,7 @@ dig_itemsets(
   weights = NULL,
   disjoint = var_names(colnames(x)),
   excluded = NULL,
+  exact = NULL,
   min_length = 0L,
   max_length = Inf,
   min_support = 0,
@@ -17,10 +18,10 @@ dig_itemsets(
   max_results = Inf,
   verbose = FALSE,
   error_context = list(arg_x = "x", arg_items = "items", arg_weights = "weights",
-    arg_disjoint = "disjoint", arg_excluded = "excluded", arg_min_length = "min_length",
-    arg_max_length = "max_length", arg_min_support = "min_support", arg_t_norm =
-    "t_norm", arg_max_results = "max_results", arg_verbose = "verbose", arg_threads =
-    "threads", call = current_env())
+    arg_disjoint = "disjoint", arg_excluded = "excluded", arg_exact = "exact",
+    arg_min_length = "min_length", arg_max_length = "max_length", arg_min_support =
+    "min_support", arg_t_norm = "t_norm", arg_max_results = "max_results", arg_verbose =
+    "verbose", arg_threads = "threads", call = current_env())
 )
 }
 \arguments{
@@ -47,6 +48,11 @@ is a convenient way to create the \code{disjoint} vector.}
 \item{excluded}{\code{NULL} or a list of character vectors, each representing a
 known implication (axiom). In each vector, all but the last element
 form the antecedent and the last element is the consequent.}
+
+\item{exact}{\code{NULL} or a list of character vectors specifying
+exactly allowed itemsets. (A NULL element in the list represents an empty
+condition.) Predicates within a vector are treated as an unordered set. If
+\code{NULL}, no limitations are imposed on generated itemsets.}
 
 \item{min_length}{the minimum length, i.e., the minimum number of predicates
 in an itemset. Value must be greater or equal to 0.}

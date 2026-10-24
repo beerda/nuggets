@@ -188,6 +188,125 @@ test_that("condition arg with names", {
 })
 
 
+test_that("exact condition filter", {
+    m <- data.frame(a = c(T, T, T, F, F, F),
+                    b = c(T, T, T, T, T, F),
+                    c = c(T, F, T, F, T, F),
+                    d = c(T, T, T, T, T, T),
+                    e = c(F, T, T, F, F, F))
+
+    res <- dig(m,
+               focus = everything(),
+               f = function(condition, pp) list(condition = sort(condition),
+                                                foci = sort(names(pp))),
+               exact = list(NULL, c("c", "a"), "b"))
+
+    attributes(res) <- NULL
+    expect_setequal(res, list(list(condition = integer(0),
+                                   foci = c("a", "b", "c", "d", "e")),
+                              list(condition = c("a" = 1L, "c" = 3L),
+                                   foci = c("b", "d", "e")),
+                              list(condition = c("b" = 2L),
+                                   foci = c("a", "c", "d", "e"))))
+})
+
+
+test_that("exact condition filter with all conditions", {
+    m <- data.frame(a = c(T, T, T, F, F, F),
+                    b = c(T, T, T, T, T, F),
+                    c = c(T, F, T, F, T, F),
+                    d = c(T, T, T, T, T, T),
+                    e = c(F, T, T, F, F, F))
+
+    res <- dig(m,
+               focus = everything(),
+               f = function(condition, pp) list(condition = sort(condition),
+                                                foci = sort(names(pp))),
+               exact = list(NULL,
+                            "a",
+                            "b",
+                            "c",
+                            c("a", "b"),
+                            c("a", "c"),
+                            c("b", "c"),
+                            c("a", "b", "c")))
+
+    attributes(res) <- NULL
+    expect_setequal(res, list(list(condition = integer(0),
+                                   foci = c("a", "b", "c", "d", "e")),
+                              list(condition = c("a" = 1L),
+                                   foci = c("b", "c", "d", "e")),
+                              list(condition = c("b" = 2L),
+                                   foci = c("a", "c", "d", "e")),
+                              list(condition = c("c" = 3L),
+                                   foci = c("a", "b", "d", "e")),
+                              list(condition = c("a" = 1L, "b" = 2L),
+                                   foci = c("c", "d", "e")),
+                              list(condition = c("a" = 1L, "c" = 3L),
+                                   foci = c("b", "d", "e")),
+                              list(condition = c("b" = 2L, "c" = 3L),
+                                   foci = c("a", "d", "e")),
+                              list(condition = c("a" = 1L, "b" = 2L, "c" = 3L),
+                                   foci = c("d", "e"))))
+})
+
+
+test_that("exact condition filter excludes each omitted condition", {
+    m <- data.frame(a = c(T, T, T, F, F, F),
+                    b = c(T, T, T, T, T, F),
+                    c = c(T, F, T, F, T, F),
+                    d = c(T, T, T, T, T, T),
+                    e = c(F, T, T, F, F, F))
+
+    exact <- list(NULL,
+                  "a",
+                  "b",
+                  "c",
+                  c("a", "b"),
+                  c("a", "c"),
+                  c("b", "c"),
+                  c("a", "b", "c"))
+    expected <- list(list(condition = integer(0),
+                          foci = c("a", "b", "c", "d", "e")),
+                     list(condition = c("a" = 1L),
+                          foci = c("b", "c", "d", "e")),
+                     list(condition = c("b" = 2L),
+                          foci = c("a", "c", "d", "e")),
+                     list(condition = c("c" = 3L),
+                          foci = c("a", "b", "d", "e")),
+                     list(condition = c("a" = 1L, "b" = 2L),
+                          foci = c("c", "d", "e")),
+                     list(condition = c("a" = 1L, "c" = 3L),
+                          foci = c("b", "d", "e")),
+                     list(condition = c("b" = 2L, "c" = 3L),
+                          foci = c("a", "d", "e")),
+                     list(condition = c("a" = 1L, "b" = 2L, "c" = 3L),
+                          foci = c("d", "e")))
+
+    for (removed in seq_along(exact)) {
+        res <- dig(m,
+                   focus = everything(),
+                   f = function(condition, pp) list(condition = sort(condition),
+                                                    foci = sort(names(pp))),
+                   exact = exact[-removed])
+
+        attributes(res) <- NULL
+        expect_setequal(res, expected[-removed])
+    }
+
+    for (removed in seq_along(exact)) {
+        res <- dig(m,
+                   focus = everything(),
+                   f = function(condition, pp) list(condition = sort(condition),
+                                                    foci = sort(names(pp))),
+                   exact = exact[removed])
+
+        attributes(res) <- NULL
+        expect_setequal(res, expected[removed])
+    }
+})
+
+
 test_that("support arg", {
     m <- matrix(c(T,T,T,T,F,F, T,F,T,F,T,F), ncol = 2)
     res <- dig(m, function(support) list(sup = support))
@@ -1789,12 +1908,25 @@ test_that("errors", {
                  "Function `f` is allowed to have the following arguments")
     expect_error(dig(d, f, condition = n, disjoint = list("x")),
                  "`disjoint` must be a plain vector")
+    expect_error(dig(d, f, condition = n, disjoint = "x"),
+                 "The length of `disjoint` must be 0 or must be equal to the number of columns in `x`.")
+
     expect_error(dig(d, f, condition = n, excluded = 3),
                  "`excluded` must be a list or NULL.")
     expect_error(dig(d, f, condition = n, excluded = list(3)),
                  "`excluded` must be a list of character vectors.")
-    expect_error(dig(d, f, condition = n, disjoint = "x"),
-                 "The length of `disjoint` must be 0 or must be equal to the number of columns in `x`.")
+    expect_error(dig(d, f, condition = n, excluded = list(c("n", "l", "foo"))),
+                 "Can't find some column names in `x` that correspond to all predicates in `excluded`.")
+
+    expect_error(dig(d, f, condition = n, exact = 3),
+                 "`exact` must be a list or NULL.")
+    expect_error(dig(d, f, condition = n, exact = list(3)),
+                 "`exact` must be a list of character vectors.")
+    expect_error(dig(d, f, condition = n:l, exact = list(c("n", "l", "foo"))),
+                 "Can't find some column names in `x` that correspond to all predicates in `exact`.")
+    expect_error(dig(d, f, condition = n, exact = list(c("n", "l"))),
+                 "Some predicates in `exact` are not selected by `condition`.")
+
     expect_error(dig(d, f, condition = n, min_length = "x"),
                  "`min_length` must be an integerish scalar.")
     expect_error(dig(d, f, condition = n, min_length = Inf),
@@ -1823,12 +1955,6 @@ test_that("errors", {
                  "`max_results` must be >= 1.")
     expect_error(dig(d, f, condition = n, verbose = "x"),
                  "`verbose` must be a flag")
-    expect_error(dig(d, f, condition = n, excluded = FALSE),
-                 "`excluded` must be a list or NULL.")
-    expect_error(dig(d, f, condition = n, excluded = list(c(FALSE, TRUE))),
-                 "`excluded` must be a list of character vectors.")
-    expect_error(dig(d, f, condition = n, excluded = list(c("n", "l", "foo"))),
-                 "Can't find some column names in `x` that correspond to all predicates in `excluded`.")
 })
 
 

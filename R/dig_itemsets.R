@@ -45,6 +45,10 @@
 #' @param excluded `NULL` or a list of character vectors, each representing a
 #'      known implication (axiom). In each vector, all but the last element
 #'      form the antecedent and the last element is the consequent.
+#' @param exact `NULL` or a list of character vectors specifying
+#'   exactly allowed itemsets. (A NULL element in the list represents an empty
+#'   condition.) Predicates within a vector are treated as an unordered set. If
+#'   `NULL`, no limitations are imposed on generated itemsets.
 #' @param min_length the minimum length, i.e., the minimum number of predicates
 #'      in an itemset. Value must be greater or equal to 0.
 #' @param max_length The maximum length, i.e., the maximum number of predicates
@@ -72,6 +76,7 @@ dig_itemsets <- function(x,
                          weights = NULL,
                          disjoint = var_names(colnames(x)),
                          excluded = NULL,
+                         exact = NULL,
                          min_length = 0L,
                          max_length = Inf,
                          min_support = 0,
@@ -80,9 +85,10 @@ dig_itemsets <- function(x,
                          verbose = FALSE,
                          error_context = list(arg_x = "x",
                                               arg_items = "items",
-                         arg_weights = "weights",
-                         arg_disjoint = "disjoint",
+                                              arg_weights = "weights",
+                                              arg_disjoint = "disjoint",
                                               arg_excluded = "excluded",
+                                              arg_exact = "exact",
                                               arg_min_length = "min_length",
                                               arg_max_length = "max_length",
                                               arg_min_support = "min_support",
@@ -123,6 +129,7 @@ dig_itemsets <- function(x,
                 weights = !!weights,
                 disjoint = disjoint,
                 excluded = excluded,
+                exact = exact,
                 min_length = min_length,
                 max_length = max_length,
                 min_support = min_support,
@@ -140,6 +147,7 @@ dig_itemsets <- function(x,
                                      arg_weights = error_context$arg_weights,
                                      arg_disjoint = error_context$arg_disjoint,
                                      arg_excluded = error_context$arg_excluded,
+                                     arg_exact = error_context$arg_exact,
                                      arg_min_length = error_context$arg_min_length,
                                      arg_max_length = error_context$arg_max_length,
                                      arg_min_support = error_context$arg_min_support,
@@ -173,6 +181,7 @@ dig_itemsets <- function(x,
                             weights = digattr$call_args$weights,
                             disjoint = disjoint,
                             excluded = excluded,
+                            exact = exact,
                             min_length = min_length,
                             max_length = max_length,
                             min_support = min_support,

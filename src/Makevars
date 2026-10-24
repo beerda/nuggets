@@ -26,6 +26,7 @@ SOURCES=RcppExports.cpp \
 	test-dig-FubitChain.cpp \
 	test-dig-Selector.cpp \
 	test-dig-SparseBitChain.cpp \
+	test-dig-Trie.cpp \
 
 # Obtain the object files
 OBJECTS=$(SOURCES:.cpp=.o)
