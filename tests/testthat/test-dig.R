@@ -191,7 +191,9 @@ test_that("condition arg with names", {
 test_that("exact condition filter", {
     m <- data.frame(a = c(T, T, T, F, F, F),
                     b = c(T, T, T, T, T, F),
-                    c = c(T, F, T, F, T, F))
+                    c = c(T, F, T, F, T, F),
+                    d = c(T, T, T, T, T, T),
+                    e = c(F, T, T, F, F, F))
 
     res <- dig(m,
                focus = everything(),
@@ -201,18 +203,20 @@ test_that("exact condition filter", {
 
     attributes(res) <- NULL
     expect_setequal(res, list(list(condition = integer(0),
-                                   foci = c("a", "b", "c")),
+                                   foci = c("a", "b", "c", "d", "e")),
                               list(condition = c("a" = 1L, "c" = 3L),
-                                   foci = c("b")),
+                                   foci = c("b", "d", "e")),
                               list(condition = c("b" = 2L),
-                                   foci = c("a", "c"))))
+                                   foci = c("a", "c", "d", "e"))))
 })
 
 
 test_that("exact condition filter with all conditions", {
     m <- data.frame(a = c(T, T, T, F, F, F),
                     b = c(T, T, T, T, T, F),
-                    c = c(T, F, T, F, T, F))
+                    c = c(T, F, T, F, T, F),
+                    d = c(T, T, T, T, T, T),
+                    e = c(F, T, T, F, F, F))
 
     res <- dig(m,
                focus = everything(),
@@ -229,28 +233,30 @@ test_that("exact condition filter with all conditions", {
 
     attributes(res) <- NULL
     expect_setequal(res, list(list(condition = integer(0),
-                                   foci = c("a", "b", "c")),
+                                   foci = c("a", "b", "c", "d", "e")),
                               list(condition = c("a" = 1L),
-                                   foci = c("b", "c")),
+                                   foci = c("b", "c", "d", "e")),
                               list(condition = c("b" = 2L),
-                                   foci = c("a", "c")),
+                                   foci = c("a", "c", "d", "e")),
                               list(condition = c("c" = 3L),
-                                   foci = c("a", "b")),
+                                   foci = c("a", "b", "d", "e")),
                               list(condition = c("a" = 1L, "b" = 2L),
-                                   foci = c("c")),
+                                   foci = c("c", "d", "e")),
                               list(condition = c("a" = 1L, "c" = 3L),
-                                   foci = c("b")),
+                                   foci = c("b", "d", "e")),
                               list(condition = c("b" = 2L, "c" = 3L),
-                                   foci = c("a")),
+                                   foci = c("a", "d", "e")),
                               list(condition = c("a" = 1L, "b" = 2L, "c" = 3L),
-                                   foci = NULL)))
+                                   foci = c("d", "e"))))
 })
 
 
 test_that("exact condition filter excludes each omitted condition", {
     m <- data.frame(a = c(T, T, T, F, F, F),
                     b = c(T, T, T, T, T, F),
-                    c = c(T, F, T, F, T, F))
+                    c = c(T, F, T, F, T, F),
+                    d = c(T, T, T, T, T, T),
+                    e = c(F, T, T, F, F, F))
 
     exact <- list(NULL,
                   "a",
@@ -261,21 +267,21 @@ test_that("exact condition filter excludes each omitted condition", {
                   c("b", "c"),
                   c("a", "b", "c"))
     expected <- list(list(condition = integer(0),
-                          foci = c("a", "b", "c")),
+                          foci = c("a", "b", "c", "d", "e")),
                      list(condition = c("a" = 1L),
-                          foci = c("b", "c")),
+                          foci = c("b", "c", "d", "e")),
                      list(condition = c("b" = 2L),
-                          foci = c("a", "c")),
+                          foci = c("a", "c", "d", "e")),
                      list(condition = c("c" = 3L),
-                          foci = c("a", "b")),
+                          foci = c("a", "b", "d", "e")),
                      list(condition = c("a" = 1L, "b" = 2L),
-                          foci = c("c")),
+                          foci = c("c", "d", "e")),
                      list(condition = c("a" = 1L, "c" = 3L),
-                          foci = c("b")),
+                          foci = c("b", "d", "e")),
                      list(condition = c("b" = 2L, "c" = 3L),
-                          foci = c("a")),
+                          foci = c("a", "d", "e")),
                      list(condition = c("a" = 1L, "b" = 2L, "c" = 3L),
-                          foci = NULL))
+                          foci = c("d", "e")))
 
     for (removed in seq_along(exact)) {
         res <- dig(m,
