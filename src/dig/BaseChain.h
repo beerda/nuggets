@@ -148,7 +148,7 @@ public:
             if (b.predicate == 0)
                 throw invalid_argument("BaseChain: second chain has empty predicate");
 
-            if (b.predicateType != PredicateType::BOTH)
+            if (!b.isFocus())
                 throw invalid_argument("BaseChain: illegal conversion to FOCUS");
 
             if (sum < 0.0)
