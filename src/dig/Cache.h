@@ -25,8 +25,12 @@
 
 /**
  * Cache stores sums associated with Clauses (itemsets) in a tree structure.
- * Cache expects that predicates have IDs starting from 1 and also that
- * the clauses added to the cache are sorted in ascending order.
+ * Predicate IDs in clauses must start from 1 and always preserve some ordering,
+ * not necesarilly by their numeric value.
+ * Parents must be added before their children. Because children are represented
+ * by a contiguous range in a flat vector, all children of one parent must be
+ * added consecutively: once a child of another parent is added, no more
+ * children may be added to the earlier parent.
  */
 class Cache {
 public:
@@ -50,14 +54,10 @@ public:
             if (clause.empty()) {
                 throw runtime_error("Cache::add: cannot add empty clause");
             }
-            if (sum < 0.0) {
-                throw runtime_error("Cache::addSibling: sum cannot be negative");
+            if (!isfinite(sum) || sum < 0.0) {
+                throw runtime_error("Cache::add: sum must be finite and non-negative");
             }
         )
-
-        // Create new node
-        size_t newIndex = nodes.size();
-        nodes.emplace_back(clause.back(), sum);
 
         // Find the parent node
         size_t parent = 0;
@@ -67,6 +67,21 @@ public:
                 throw runtime_error("Cache::add: parent node not found for clause");
             }
         }
+
+        IF_DEBUG(
+            const Node& existingParentNode = nodes[parent];
+            if (findChildIndex(existingParentNode, clause.back()) != NOT_FOUND) {
+                throw runtime_error("Cache::add: clause is already in the cache");
+            }
+            if (existingParentNode.nChildren > 0 &&
+                existingParentNode.firstChild + existingParentNode.nChildren != nodes.size()) {
+                throw runtime_error("Cache::add: children of a parent must be added consecutively");
+            }
+        )
+
+        // Create and attach the new child node.
+        size_t newIndex = nodes.size();
+        nodes.emplace_back(clause.back(), sum);
 
         // Update parent node to adopt the new node as a child
         Node& parentNode = nodes[parent];
