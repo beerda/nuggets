@@ -34,5 +34,20 @@ callDataTable <- function(rules, meta) {
         d[["disjoint"]] <- call_args$disjoint
     }
 
-    infoTable(d, header = TRUE, class = "center hlrows")
+    d2 <- tibble(label = c("Number of rows:",
+                           "Number of columns:",
+                           "Weighted rows:",
+                           "Type of predicates:",
+                           "Conjunction operator:"),
+                 value = c(call_data$nrow,
+                           call_data$ncol,
+                           ifelse(is.null(call_args$weights), "no", "yes"),
+                           ifelse(call_data$fuzzy, "fuzzy", "Boolean"),
+                           ifelse(call_data$fuzzy, paste(call_args$t_norm, "t-norm"), "AND")))
+
+    shiny::tagList(
+        infoTable(d2, header = FALSE, class = "left hlrows"),
+        htmltools::br(),
+        infoTable(d, header = TRUE, class = "center hlrows")
+    )
 }

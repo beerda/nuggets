@@ -431,9 +431,12 @@ dig <- function(x,
                                 !!weights,
                                 error_context = list(arg_selection = error_context$arg_weights,
                                                      call = error_context$call))
+    is_weighted <- !is.null(weights$name)
 
     logicalish <- vapply(cols, is_logicalish, logical(1))
     cols[logicalish] <- lapply(cols[logicalish], as.logical)
+    all_cols <- condition_cols$selected | foci_cols$selected
+    is_fuzzy <- !all(vapply(cols[all_cols], is.logical, logical(1)))
 
     .must_be_vector_or_factor(disjoint,
                               null = TRUE,
@@ -621,13 +624,20 @@ dig <- function(x,
                        "i" = "Selected {.val {sum(foci_cols$selected)}} {.arg {error_context$arg_focus}} columns: {.field {names(cols)[foci_cols$selected]}}.")
         }
         if (!is.null(error_context$arg_weights) && error_context$arg_weights != "") {
-            if (is.null(weights$name)) {
-                msgs <- c(msgs,
-                          "i" = "No weights column selected; all rows are treated equally.")
-            } else {
+            if (is_weighted) {
                 msgs <- c(msgs,
                           "i" = "Selected {.arg {error_context$arg_weights}} column: {.field {weights$name}}.")
+            } else {
+                msgs <- c(msgs,
+                          "i" = "No weights column selected; all rows are treated equally.")
             }
+        }
+        if (is_fuzzy) {
+            msgs <- c(msgs,
+                      "i" = "Input predicates are numeric; fuzzy logic will be used (t-norm: {.val {t_norm}}).")
+        } else {
+            msgs <- c(msgs,
+                      "i" = "Input predicates are all logical; Boolean logic will be used.")
         }
         cli_inform(msgs)
     }
@@ -659,7 +669,9 @@ dig <- function(x,
            call_function = call_function,
            call_data = list(nrow = nrow(x),
                             ncol = ncol(x),
-                            colnames = as.character(colnames(x))),
+                            colnames = as.character(colnames(x)),
+                            fuzzy = is_fuzzy,
+                            weighted = is_weighted),
            call_args = list(x = xname,
                             condition = names(cols)[condition_cols$selected],
                             focus = names(cols)[foci_cols$selected],

@@ -103,7 +103,7 @@ test_that("dig_tautologies max_length 1", {
     expect_true(is.list(attr(res, "call_data")))
     expect_equal(attr(res, "call_data")$nrow, nrow(d))
     expect_equal(attr(res, "call_data")$ncol, ncol(d))
-    expect_equal(attr(res, "call_data")$colnames, as.character(colnames(d)))
+    expect_equal(attr(res, "call_data")$colnames, colnames(d))
     expect_true(is.list(attr(res, "call_args")))
     expect_equal(attr(res, "call_args")$x, "d")
 
@@ -190,7 +190,7 @@ test_that("dig_tautologies argument forwarding and attributes", {
     expect_true(is.list(attr(res, "call_data")))
     expect_equal(attr(res, "call_data")$nrow, nrow(d))
     expect_equal(attr(res, "call_data")$ncol, ncol(d))
-    expect_equal(attr(res, "call_data")$colnames, as.character(colnames(d)))
+    expect_equal(attr(res, "call_data")$colnames, colnames(d))
     expect_true(is.list(attr(res, "call_args")))
     expect_equal(attr(res, "call_args")$x, "d")
     args <- attr(res, "call_args")

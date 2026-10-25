@@ -147,7 +147,9 @@ as_nugget.rules <- function(x, ...) {
            call_function = call_function,
            call_data = list(nrow = x@info$ntransactions,
                             ncol = length(items),
-                            colnames = items),
+                            colnames = items,
+                            fuzzy = FALSE,
+                            weighted = FALSE),
            call_args = call_args)
 }
 
